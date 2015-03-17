@@ -1,0 +1,58 @@
+info it worked if it ends with ok
+verbose cli [ 'node', '/usr/bin/npm', 'install', 'bower' ]
+info using npm@1.1.4
+info using node@v0.6.12
+verbose config file /home/sssw/.npmrc
+verbose config file /usr/etc/npmrc
+verbose config file /usr/share/npm/npmrc
+verbose cache add [ 'bower', null ]
+silly cache add: name, spec, args [ undefined, 'bower', [ 'bower', null ] ]
+verbose parsed url { pathname: 'bower', path: 'bower', href: 'bower' }
+verbose addNamed [ 'bower', '' ]
+verbose addNamed [ null, '' ]
+silly name, range, hasData [ 'bower', '', false ]
+verbose raw, before any munging bower
+verbose url resolving [ 'http://registry.npmjs.org/', './bower' ]
+verbose url resolved http://registry.npmjs.org/bower
+verbose etag "BP1YZKBGAIE38MKI0RCNK8G2H"
+http GET http://registry.npmjs.org/bower
+http 304 http://registry.npmjs.org/bower
+silly get cb [ 304,
+silly get cb   { date: 'Mon, 02 Mar 2015 19:36:14 GMT',
+silly get cb     via: '1.1 varnish',
+silly get cb     'last-modified': 'Mon, 02 Mar 2015 19:36:14 GMT',
+silly get cb     'cache-control': 'max-age=60',
+silly get cb     etag: '"BP1YZKBGAIE38MKI0RCNK8G2H"',
+silly get cb     age: '50',
+silly get cb     connection: 'keep-alive',
+silly get cb     'x-served-by': 'cache-sjc3132-SJC',
+silly get cb     'x-cache': 'HIT',
+silly get cb     'x-cache-hits': '1',
+silly get cb     'x-timer': 'S1425324974.794293,VS0,VE0',
+silly get cb     vary: 'Accept' } ]
+verbose etag bower from cache
+silly name, range, hasData 2 [ 'bower', '', true ]
+silly versions [ 'bower', [] ]
+ERR! Error: No compatible version found: bower
+ERR! No valid targets found.
+ERR! Perhaps not compatible with your version of node?
+ERR!     at installTargetsError (/usr/share/npm/lib/cache.js:488:10)
+ERR!     at next_ (/usr/share/npm/lib/cache.js:438:17)
+ERR!     at next (/usr/share/npm/lib/cache.js:415:44)
+ERR!     at /usr/share/npm/lib/cache.js:408:5
+ERR!     at saved (/usr/share/npm/lib/utils/npm-registry-client/get.js:147:7)
+ERR!     at Object.oncomplete (/usr/lib/nodejs/graceful-fs.js:230:7)
+ERR! You may report this log at:
+ERR!     <http://bugs.debian.org/npm>
+ERR! or use
+ERR!     reportbug --attach /home/sssw/Projects/PromenadeUI/polymer-tutorial-master/npm-debug.log npm
+ERR! 
+ERR! System Linux 3.5.0-54-generic
+ERR! command "node" "/usr/bin/npm" "install" "bower"
+ERR! cwd /home/sssw/Projects/PromenadeUI/polymer-tutorial-master
+ERR! node -v v0.6.12
+ERR! npm -v 1.1.4
+ERR! message No compatible version found: bower
+ERR! message No valid targets found.
+ERR! message Perhaps not compatible with your version of node?
+verbose exit [ 1, true ]

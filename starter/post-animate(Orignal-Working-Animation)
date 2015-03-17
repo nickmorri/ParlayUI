@@ -1,0 +1,306 @@
+<polymer-element name="post-animate" attributes='show'>
+
+<core-icon icon="polymer"></core-icon>
+  <template>
+
+    <style>
+      .chip-container {
+        position: absolute;
+        top: 100px;
+        right: 0;
+        left: 0;
+        text-align: center;
+      }
+
+      .chip {
+        display: inline-block;
+        position: relative;
+        border-radius: 3px;
+        margin: 4px;
+        overflow: hidden;
+        text-align: start;
+        background-color: #fff;
+        box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.16);
+      }
+
+      .chip-top {
+        width: 200px;
+        height: 200px;
+      }
+
+      .chip-bottom {
+        padding: 8px;
+        line-height: 1.5;
+      }
+
+      .chip-name-title {
+        font-weight: bold;
+      }
+
+      #details {
+        padding: 100px 0% 0;
+      }
+
+      #device_tabs{
+        position: absolute;
+        top: 50px;
+        left:50px;
+        right: 50px;
+      }
+
+      paper-tabs::shadow #selectionBar{
+          background-color: black;
+      }
+
+      paper-tabs 
+      {
+        background-color: #DB7093;
+      }
+
+      .card {
+        height: 400px;
+        border-radius: 3px;
+        text-align: start;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+      }
+
+      .card-left {
+        width: 400px;
+      }
+
+      .card-right {
+        padding: 24px;
+      }
+
+      .card-icon {
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        margin-right: 16px;
+      }
+
+      .card-name-title {
+        font-size: 2em;
+      }
+    </style>
+
+    <core-animated-pages selected="{{page}}" transitions="hero-transition" on-core-animated-pages-transition-end="{{done}}" hidden?="{{(show != 'Devices')}}">
+
+      <section>
+            <paper-tabs id="device_tabs" selected="All" self-end>
+                <paper-tab name="All">All</paper-tab>
+                <paper-tab name="Motors">Motors</paper-tab>
+                <paper-tab name="Promenade">Promenade</paper-tab>
+                <paper-tab name="iVar">iVar</paper-tab>
+                <paper-tab name="COM">COM</paper-tab>
+            </paper-tabs>
+
+            <div class="chip-container" hero-p on-tap="{{transition}}">
+            <core-animated-pages id="animate-chips" transitions="hero-transition" selected="{{device_selected}}">
+
+              <section>
+              <template repeat="{{items1 as item}}">
+                <div class="chip" hero-id="{{item.type_name}}-{{item.name}}" hero?="{{item1_selected == 1}}" hidden?="{{item.hidden}}"> 
+                  <div class="chip-top" style="background:{{item.color}};" hero-id="{{item.type_name}}-{{item.name}}-art"></div>
+                  <div class="chip-bottom">
+                    <div class="chip-name-title">{{item.name}}</div>
+                    <div class="chip-type_name">{{item.type_name}}</div>
+                  </div>
+                </div>
+              </template>
+
+              <div class="chip" hero-id="newElement-newChip" hero?="{{item1_selected == 1}}" hidden?="{{device_selected != 0}}"> 
+                  <div class="chip-top" style="background: black" hero-id="create-new-chip-art"></div>
+                  <div class="chip-bottom">
+                    <div class="chip-name-title">Create new chip</div>
+                    <div class="chip-type_name">newElement</div>
+                  </div>
+              </div>
+
+              </section>
+
+              <section>
+              <template repeat="{{items0 as item}}" >
+                <div class="chip" hero-id="{{item.type_name}}-{{item.name}}" hero?="{{item0_selected == 1}}" hidden?="{{item.hidden}}">
+                  <div class="chip-top" style="background:{{item.color}};" hero-id="{{item.type_name}}-{{item.name}}-art"></div>
+                  <div class="chip-bottom">
+                    <div class="chip-name-title">{{item.name}}</div>
+                    <div class="chip-type_name">{{item.type_name}}</div>
+                  </div>
+                </div>
+              </template>
+
+              <div class="chip" hero-id="newElement-newChip" hero?="{{item0_selected == 1}}" hidden?="{{device_selected != 1}}"> 
+                  <div class="chip-top" style="background: black" hero-id="create-new-chip-art"></div>
+                  <div class="chip-bottom">
+                    <div class="chip-name-title">Create new chip</div>
+                    <div class="chip-type_name">newElement</div>
+                  </div>
+              </div>
+
+              </section>
+
+            </core-animated-pages>
+            </div>
+
+      </section>
+
+
+      <section id="details">
+
+        <paper-tabs id="device_tabs" selected="All" self-end>
+                <paper-tab name="All">All</paper-tab>
+                <paper-tab name="Motors">Motors</paper-tab>
+                <paper-tab name="Promenade">Promenade</paper-tab>
+                <paper-tab name="iVar">iVar</paper-tab>
+                <paper-tab name="COM">COM</paper-tab>
+        </paper-tabs> 
+
+        <div class="card" layout horizontal hero-id="{{selectedname.type_name}}-{{selectedname.name}}" hero on-tap="{{transition}}">
+          <div class="card-left" style="background:{{selectedname.color}};" hero-id="{{selectedname.type_name}}-{{selectedname.name}}-art" hero></div>
+          <div class="card-right" flex>
+            <div layout horizontal center>
+              <div>
+                <div class="card-icon" style="background:{{selectedname.color}};"></div>
+              </div>
+              <div flex>
+                <div class="card-name-title">{{selectedname.name}}</div>
+                <div class="card-name-type_name">{{selectedname.type_name}}</div>
+              </div>
+            </div>
+            <div layout horizontal center>
+                <p> {{selectedname.details}} </p>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </core-animated-pages>
+
+  </template>
+  <script>
+
+    Polymer('post-animate', {
+
+      page: 0,
+      item0_selected: 1,
+      item1_selected: 1,
+
+      items0: [
+        { type_name: 'Promenade', name: 'Tama', color: '#f4db33' },
+        { type_name: 'Promenade', name: 'Jarvis', color: '#972ff8' },
+        { type_name: 'Promenade', name: 'SweetMotor', color: '#7dd6fe' },
+        { type_name: 'Motors', name: 'MotorX', color: '#00FF00', details: 'This is motor X' },
+        { type_name: 'Promenade', name: 'SweetTalk', color: '#dc3c84' },
+        { type_name: 'iVar', name: 'iVar1', color: '#8B4513', details: 'This is an iVar'},
+        { type_name: 'Motors', name: 'MotorY', color: '#00FF00', details: 'This is motor Y' },
+        { type_name: 'iVar', name: 'iVar2', color: '#8B4513', details: 'This is an iVar'},
+        { type_name: 'iVar', name: 'iVar3', color: '#8B4513', details: 'This is an iVar'},
+        { type_name: 'iVar', name: 'iVar4', color: '#8B4513', details: 'This is an iVar'},
+        { type_name: 'Motors', name: 'MotorZ', color: '#00FF00', details: 'This is motor Z' },
+        { type_name: 'iVar', name: 'iVar5', color: '#8B4513', details: 'This is an iVar' },
+        { type_name: 'iVar', name: 'iVar6', color: '#8B4513', details: 'This is an iVar' }
+      ],
+
+      items1: [
+      { type_name: 'Promenade', name: 'Tama', color: '#f4db33' },
+        { type_name: 'Promenade', name: 'Jarvis', color: '#972ff8' },
+        { type_name: 'Promenade', name: 'SweetMotor', color: '#7dd6fe' },
+        { type_name: 'Motors', name: 'MotorX', color: '#00FF00', details: 'This is motor X' },
+        { type_name: 'Promenade', name: 'SweetTalk', color: '#dc3c84' },
+        { type_name: 'iVar', name: 'iVar1', color: '#8B4513', details: 'This is an iVar'},
+        { type_name: 'Motors', name: 'MotorY', color: '#00FF00', details: 'This is motor Y' },
+        { type_name: 'iVar', name: 'iVar2', color: '#8B4513', details: 'This is an iVar'},
+        { type_name: 'iVar', name: 'iVar3', color: '#8B4513', details: 'This is an iVar'},
+        { type_name: 'iVar', name: 'iVar4', color: '#8B4513', details: 'This is an iVar'},
+        { type_name: 'Motors', name: 'MotorZ', color: '#00FF00', details: 'This is motor Z' },
+        { type_name: 'iVar', name: 'iVar5', color: '#8B4513', details: 'This is an iVar' },
+        { type_name: 'iVar', name: 'iVar6', color: '#8B4513', details: 'This is an iVar' }
+      ],
+
+      selectedname: null,
+
+      ready: function(){
+        var animated_page = this.shadowRoot.querySelector('core-animated-pages');
+        var device_tabs = this.shadowRoot.querySelector('paper-tabs');
+        var animate_post = this;
+        this.device_selected = 0;
+        device_tabs.addEventListener('core-select', function(e) 
+        {
+          if (e.detail.isSelected)
+          {
+                if (animate_post.device_selected == 0)
+                {
+                    for (var i = 0; i < animate_post.items0.length; i++)
+                    {
+                        animate_post.items0[i].hidden = true;
+                        if (animate_post.items0[i].type_name == device_tabs.selected  || device_tabs.selected == "All")
+                        {
+                          animate_post.items0[i].hidden = false;
+                        }
+                    }
+                    animate_post.device_selected = 1;
+                }
+                else
+                {
+                    for (var i = 0; i < animate_post.items1.length; i++)
+                    {
+                        animate_post.items1[i].hidden = true;
+                        if (animate_post.items1[i].type_name == device_tabs.selected  || device_tabs.selected == "All")
+                        {
+                          animate_post.items1[i].hidden = false;
+                        }
+                    }
+                    animate_post.device_selected = 0;
+                }
+                 console.log("Device selected is now"  + animate_post.device_selected);
+          }
+        });
+    },
+
+      done: function()
+      {
+        var temp = this.shadowRoot.querySelector('paper-tabs').selected;
+        if (this.device_selected == 0)
+        {
+          this.item0_selected = 1;
+        }
+        else
+        {
+          this.item1_selected = 1;
+        }
+      },
+
+
+      transition: function(e) {
+        if (this.device_selected == 0)
+        {
+          this.item0_selected = 0;
+        }
+        else
+        {
+          this.item1_selected = 0;
+        }
+        if ( (this.page == 0) && (e.target.parentElement.className === "chip" || e.target.templateInstance.model.item) ){
+          this.last_selectedname = e.target;
+          this.last_selectedname.offsetParent.style.zIndex = 1000000;
+          this.selectedname = e.target.templateInstance.model.item;
+          if (this.selectedname == null)
+          {
+            this.selectedname = {type_name: "newElement", name: "newChip", color: "black"}
+          }
+          this.page = 1;
+
+        } else {
+          this.page = 0;
+        }
+      }
+    });
+    
+
+  </script>
+  </polymer-element>
+

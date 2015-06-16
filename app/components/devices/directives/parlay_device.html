@@ -1,0 +1,24 @@
+<md-card flex>
+    <div class="inset">
+        <md-card-content>
+            <h2>Device {{device}}</h2>
+
+            <md-tabs>
+                <md-tab label="one">
+                    <md-content class="md-padding">
+                        <md-slider flex class="md-primary" md-discrete ng-model="rating3" step="1" min="1" max="5" aria-label="rating"></md-slider>
+                    </md-content>
+                </md-tab>
+                <md-tab label="two">
+                    <md-content class="md-padding">
+                        <md-progress-linear md-mode="indeterminate"></md-progress-linear>
+                    </md-content>
+                </md-tab>
+            </md-tabs>
+            
+        </md-card-content>
+        <div class="md-actions" layout="row" layout-align="end center">
+            <md-button class="md-raised md-warn" ng-click="disconnect_device($index)">Disconnect</md-button>
+        </div>
+    </div>
+</md-card>

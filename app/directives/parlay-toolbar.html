@@ -1,0 +1,21 @@
+<md-content>
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <md-button class="md-icon-button" aria-label="More">
+                <ng-md-icon icon="menu"></ng-md-icon>
+            </md-button>
+            <h2>Parlay</h2>
+            <span flex></span>
+            <md-menu>
+                <md-button class="md-icon-button" ng-click="$mdOpenMenu()" aria-label="More">
+                    <ng-md-icon md-menu-origin icon="more_vert"></ng-md-icon>
+                </md-button>
+                <md-menu-content>
+                    <md-menu-item>
+                        <md-switch ng-model="data">Debug</md-switch>
+                    </md-menu-item>
+                </md-menu-content>
+            </md-menu>
+        </div>
+    </md-toolbar>
+</md-content>

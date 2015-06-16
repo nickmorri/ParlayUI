@@ -1,0 +1,34 @@
+md-toolbar ng-md-icon {
+    fill: white; 
+}
+.md-button {
+    line-height: 0 !important;
+}
+md-list-item > a {
+    text-decoration: none;
+    color: black;
+}
+
+$gray: #eee;
+
+md-content.md-default-theme {
+  background-color: $gray;
+}
+md-card {
+  background-color: #fff;
+  h2:first-of-type {
+    margin-top: 0;
+  }
+}
+md-toolbar {
+  .md-button.md-default-theme {
+    border-radius: 99%; // round toolbar buttons
+  }
+}
+md-sidenav {
+  fill: #737373;
+  ng-md-icon {
+    position: relative;
+    top: 5px; // adjust for svg viewbox
+  }
+}

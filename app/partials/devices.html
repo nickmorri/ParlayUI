@@ -1,0 +1,12 @@
+<div layout-fill>
+    
+    <md-button class="md-fab md-fab-bottom-right" ng-click="setup_device()">
+        <ng-md-icon icon="add"></ng-md-icon>
+        <md-tooltip>Add device</md-tooltip>
+    </md-button>
+    
+    <md-content layout-margin layout-wrap layout="row">
+        <parlay-device ng-repeat="device in active_devices"></parlay-device>
+    </md-content>
+    
+</div>

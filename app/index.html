@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+        <link rel="stylesheet" href="bower_components/angular-material/angular-material.css">
+        <link rel="stylesheet" href="/css/main.css">
+    </head>
+    <body ng-app="parlay.main">
+
+        <parlay-toolbar></parlay-toolbar>
+
+        <div layout="row">
+            <parlay-nav></parlay-nav>
+            <ui-view flex></ui-view>
+        </div>
+
+        <script src="bower_components/angular/angular.js"></script>
+        <script src="bower_components/angular-animate/angular-animate.js"></script>
+        <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+        <script src="bower_components/angular-aria/angular-aria.js"></script>
+        <script src="bower_components/angular-material-icons/angular-material-icons.js"></script>
+        <script src="bower_components/angular-material/angular-material.js"></script>
+        <script src="components/app.js"></script>
+        <script src="components/navigation/navigation.js"></script>
+        <script src="components/devices/devices.js"></script>
+        <script src="components/editor/editor.js"></script>
+        
+    </body>
+</html>

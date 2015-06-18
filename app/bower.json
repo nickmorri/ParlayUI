@@ -1,0 +1,14 @@
+{
+  "name": "parlay",
+  "private": true,
+  "dependencies": {
+    "angular": "angular#1.4.1",
+    "angular-material": "angular-material#0.10.0",
+    "angular-material-icons": "angular-material-icons#0.4.0",
+    "angular-ui-router": "angular-ui-router#master",
+    "angular-ui-ace": "angular-ui-ace#bower"
+  },
+  "resolutions": {
+    "angular": "1.4.1"
+  }
+}

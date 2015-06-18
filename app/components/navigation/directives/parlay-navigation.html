@@ -1,0 +1,34 @@
+<md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="parlayNavMenu" md-is-locked-open="parlayNavToggleOpen">
+    <md-toolbar class="md-hue-2">
+        <h1 class="md-toolbar-tools">Menu</h1>
+    </md-toolbar>
+    <md-list>
+        <md-list-item ng-repeat="state in states">
+            <a ui-sref="{{state.route}}">
+                <md-item-content md-ink-ripple layout="row" layout-align="start center">
+                    <ng-md-icon icon="{{state.icon}}"></ng-md-icon>
+                    <div class="inset parlay-nav-menu-item">{{state.name}}</div>
+                </md-item-content>
+            </a>
+        </md-list-item>
+    </md-list>
+    <span flex></span>
+    <md-list>
+        <md-list-item>
+            <a ui-sref="help">
+                <md-item-content md-ink-ripple layout="row" layout-align="start center">
+                    <ng-md-icon icon="help"></ng-md-icon>
+                    <div class="inset parlay-nav-menu-item">Help</div>
+                </md-item-content>
+            </a>
+        </md-list-item>
+        <md-list-item>
+            <a ui-sref="settings">
+                <md-item-content md-ink-ripple layout="row" layout-align="start center">
+                    <ng-md-icon icon="settings"></ng-md-icon>
+                    <div class="inset parlay-nav-menu-item">Settings</div>
+                </md-item-content>
+            </a>
+        </md-list-item>
+    </md-list>    
+</md-sidenav>

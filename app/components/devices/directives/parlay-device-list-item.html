@@ -1,0 +1,25 @@
+<md-list-item>
+    <p>Device {{$index}}</p>
+    <md-fab-speed-dial md-direction="left" class="md-fling">
+        <md-fab-trigger>
+            <md-button aria-label="menu" class="md-fab md-mini md-warn md-default-theme">
+                <ng-md-icon class="white" icon="menu"></ng-md-icon>
+            </md-button>
+        </md-fab-trigger>
+        <md-fab-actions>
+            <md-button aria-label="Lock" class="md-fab md-raised md-mini">
+                <ng-md-icon icon="lock_outline"></ng-md-icon>
+                <md-tooltip>Lock</md-tooltip>
+            </md-button>
+            <md-button aria-label="Swap" class="md-fab md-raised md-mini">
+                <ng-md-icon icon="swap_vert"></ng-md-icon>
+                <md-tooltip>Swap</md-tooltip>
+            </md-button>
+            <md-button aria-label="disconnect" class="md-fab md-raised md-mini" ng-click="disconnectDevice($index)">
+                <ng-md-icon icon="sync_disabled"></ng-md-icon>
+                <md-tooltip>Disconnect</md-tooltip>
+            </md-button>
+        </md-fab-actions>
+    </md-fab-speed-dial>
+    
+</md-list-item>

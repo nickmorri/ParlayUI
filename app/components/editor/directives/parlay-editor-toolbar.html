@@ -1,0 +1,100 @@
+<md-toolbar ng-class="editor.saved ? 'md-hue-2' : 'md-warn'">
+    <div class="md-toolbar-tools">
+        
+        <md-menu>
+            <md-button aria-label="Open phone interactions menu" ng-click="$mdOpenMenu()">
+                File
+            </md-button>
+            <md-menu-content width="4">
+                <md-menu-item>
+                    <md-button ng-click="open()" class="btn-file">
+                        <ng-md-icon icon="folder" md-menu-align-target></ng-md-icon>
+                        Open
+                        <input type="file" file="editor.file" parlay-file-upload>
+                    </md-button>
+                </md-menu-item>
+                <md-menu-item>
+                    <md-button ng-click="save()">
+                        <ng-md-icon icon="save"></ng-md-icon>
+                        Save
+                    </md-button>
+                </md-menu-item>
+            </md-menu-content>
+        </md-menu>
+        <md-menu>
+            <md-button aria-label="Open phone interactions menu" ng-click="$mdOpenMenu()">
+                Edit
+            </md-button>
+            <md-menu-content width="4">
+                <md-menu-item>
+                    <md-button>
+                        <ng-md-icon icon="functions" md-menu-align-target></ng-md-icon>
+                        Functions
+                    </md-button>
+                </md-menu-item>
+                <md-menu-item>
+                    <md-button>
+                        <ng-md-icon icon="search"></ng-md-icon>
+                        Find
+                    </md-button>
+                </md-menu-item>
+                <md-menu-item>
+                    <md-button>
+                        <ng-md-icon icon="find_replace"></ng-md-icon>
+                        Replace
+                    </md-button>
+                </md-menu-item>
+            </md-menu-content>
+        </md-menu>
+        <md-button class="md-icon-button" ng-click="editor.undoManager.undo()" ng-disabled="!editor.undoManager.hasUndo()">
+            <ng-md-icon class="white" icon="undo"></ng-md-icon>
+            <md-tooltip>Undo</md-tooltip>
+        </md-button>
+        <md-button class="md-icon-button" ng-click="editor.undoManager.redo()" ng-disabled="!editor.undoManager.hasRedo()">
+            <ng-md-icon class="white" icon="redo"></ng-md-icon>
+            <md-tooltip>Redo</md-tooltip>
+        </md-button>        
+        
+        <span flex></span>
+        
+        <md-menu>
+            <md-button aria-label="Open phone interactions menu" ng-click="$mdOpenMenu()">
+                Run
+            </md-button>
+            <md-menu-content width="4">
+                <md-menu-item>
+                    <md-button>
+                        <ng-md-icon icon="dns" md-menu-align-target></ng-md-icon>
+                        Send to broker
+                    </md-button>
+                </md-menu-item>
+                <md-menu-item>
+                    <md-button>
+                        <ng-md-icon icon="query_builder"></ng-md-icon>
+                        Deferred run
+                    </md-button>
+                </md-menu-item>
+            </md-menu-content>
+        </md-menu>
+        <md-menu>
+            <md-button aria-label="Open phone interactions menu" ng-click="$mdOpenMenu()">
+                Test
+            </md-button>
+            <md-menu-content width="4">
+                <md-menu-item>
+                    <md-button>
+                        <ng-md-icon icon="verified_user" md-menu-align-target></ng-md-icon>
+                        Coverage test
+                    </md-button>
+                </md-menu-item>
+                <md-menu-item>
+                    <md-button>
+                        <ng-md-icon icon="receipt"></ng-md-icon>
+                        Unit tests
+                    </md-button>
+                </md-menu-item>
+            </md-menu-content>
+        </md-menu>
+        
+    </div>
+</md-toolbar>

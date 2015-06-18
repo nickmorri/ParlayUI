@@ -1,9 +1,8 @@
-var parlay = angular.module('parlay.main', ['ngMaterial', 'ngMdIcons', 'ui.router', 'parlay.navigation', 'parlay.devices', 'parlay.editor']);
+var parlay = angular.module('parlay.main', ['ngMaterial', 'ngMdIcons', 'ui.router', 'parlay.navigation', 'parlay.devices', 'parlay.editor', 'parlay.console', 'parlay.settings', 'parlay.help']);
 
 parlay.config(function ($stateProvider, $urlRouterProvider, $mdThemingProvider) {
     
     // Theme configuration
-    
     $mdThemingProvider.theme('default')
         .accentPalette('red');
     
@@ -25,9 +24,17 @@ parlay.config(function ($stateProvider, $urlRouterProvider, $mdThemingProvider) 
     .state('console', {
         url: '/console',
         templateUrl: '../partials/console.html',
-        controller: function ($scope) {
-            
-        }
+        controller: 'consoleCtrl'
+    })
+    .state('settings', {
+        url: '/settings',
+        templateUrl: '../partials/settings.html',
+        controller: 'settingsCtrl'
+    }).
+    state('help', {
+        url: '/help',
+        templateUrl: '../partials/help.html',
+        controller: 'helpCtrl'
     });
     
 });

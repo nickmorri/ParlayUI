@@ -1,62 +1,67 @@
-var editor = angular.module('parlay.editor', []);
+var editor = angular.module('parlay.editor', ['ui.ace']);
 
-devices.controller('editorCtrl', function ($scope, $log) {
+editor.controller('editorCtrl', function ($scope, $window) {
+    $scope.fileManager = FileManager;
     
-    var $scope = $scope;
-    $scope.simulateQuery = false;
-    $scope.isDisabled    = false;
-    // list of `state` value/display objects
+    // Container for editor file data and configuration options
+    $scope.editor = {
+        file: {
+            name: undefined,
+            data: ''
+        },
+        options: {
+            mode: 'python',
+            onLoad: function (_editor) {
+                $scope.editor.undoManager = _editor.session.$undoManager;
+            },
+            onChange: function (event) {
+                $scope.editor.saved = $scope.editor.isDifferent();
+            }
+        },
+        saved: true,
+        isDifferent: function () {
+            return this.file.data == '';
+        }
+    };
     
+    $scope.save = function () {
+        $scope.editor.saved = true;
+    };
     
-    // ******************************
-    // Internal methods
-    // ******************************
-    /**
-     * Search for states... use $timeout to simulate
-     * remote dataservice call.
-     */
-    $scope.querySearch = function (query) {
-      var results = query ? $scope.states.filter( $scope.createFilterFor(query) ) : $scope.states,
-          deferred;
-      if ($scope.simulateQuery) {
-        deferred = $q.defer();
-        $timeout(function () { deferred.resolve( results ); }, Math.random() * 1000, false);
-        return deferred.promise;
-      } else {
-        return results;
-      }
-    }
-    $scope.searchTextChange = function(text) {
-      $log.info('Text changed to ' + text);
-    }
-    $scope.selectedItemChange = function(item) {
-      $log.info('Item changed to ' + JSON.stringify(item));
-    }
-    /**
-     * Build `states` list of key/value pairs
-     */
-    $scope.loadAll = function() {
-      var allStates = 'test.txt, script.txt, file.txt, test.py, script.py, test.py';
-      return allStates.split(/, +/g).map( function (state) {
-        return {
-          value: state.toLowerCase(),
-          display: state
-        };
-      });
-    }
-    /**
-     * Create filter function for a query string
-     */
-    $scope.createFilterFor = function(query) {
-      var lowercaseQuery = angular.lowercase(query);
-      return function filterFn(state) {
-        return (state.value.indexOf(lowercaseQuery) === 0);
-      };
-    }
+    $scope.open = function () {
+        $scope.editor.saved = false;
+    };
     
-    $scope.states = $scope.loadAll();
-    $scope.querySearch = $scope.querySearch;
-    $scope.selectedItemChange = $scope.selectedItemChange;
-    $scope.searchTextChange = $scope.searchTextChange;
-    
+});
+
+editor.directive('parlayEditorToolbar', function () {
+    return {
+        templateUrl: 'components/editor/directives/parlay-editor-toolbar.html'
+    }
+});
+
+// File upload button directive
+editor.directive('parlayFileUpload', function () {
+    return {
+        scope: {
+            file: '='
+        },
+        link: function (scope, element, attributes) {
+            element.bind('change', function (event) {
+                scope.file.name = event.target.files[0].name;
+                
+                // Instantiate FileReader object 
+                var fileReader = new FileReader();
+                fileReader.onload = function (event) {
+                    // When file is loaded apply it to the Angular scope
+                    scope.$apply(function () {
+                        scope.file.data = event.target.result;
+                    });
+                };
+                
+                // Read file as ArrayBuffer data type
+                fileReader.readAsText(event.target.files[0]);
+            });
+        }
+    }
 });

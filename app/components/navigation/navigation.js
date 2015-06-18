@@ -39,7 +39,7 @@ navigation.directive('parlayNav', function () {
             // Default icons
             $scope.fetchIcon = function (state) {
                 var icons = {
-                    'devices': 'extension',
+                    'endpoints': 'extension',
                     'editor': 'create',
                     'console': 'message'
                 };

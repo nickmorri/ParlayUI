@@ -1,14 +1,14 @@
 <md-card class="md-whiteframe-z3" flex>
     <div class="inset">
         <md-card-content>
-            <h2>Device {{$index}}</h2>
+            <h2>Endpoint {{$index}}</h2>
 
             <md-slider flex class="md-primary" md-discrete ng-model="rating3" step="1" min="1" max="5" aria-label="rating"></md-slider>
             <md-progress-linear md-mode="indeterminate"></md-progress-linear>
             
         </md-card-content>
         <div class="md-actions" layout="row" layout-align="end center">
-            <md-button class="md-raised md-warn" ng-click="disconnectDevice($index)">Disconnect</md-button>
+            <md-button class="md-raised md-warn" ng-click="disconnectEndpoint($index)">Disconnect</md-button>
         </div>
     </div>
 </md-card>

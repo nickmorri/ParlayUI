@@ -13,4 +13,9 @@ p.note {
     margin-right: auto;
 }
 md-fab-toolbar.md-left md-fab-trigger.align-with-text {
-  left: 7px; }
+    left: 7px;
+}
+
+md-autocomplete {
+    min-width: 100%;
+}

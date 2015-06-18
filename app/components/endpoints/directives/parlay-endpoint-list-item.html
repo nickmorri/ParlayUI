@@ -1,5 +1,5 @@
 <md-list-item>
-    <p>Device {{$index}}</p>
+    <p>Endpoint {{$index}}</p>
     <md-fab-speed-dial md-direction="left" class="md-fling">
         <md-fab-trigger>
             <md-button aria-label="menu" class="md-fab md-mini md-warn md-default-theme">
@@ -15,7 +15,7 @@
                 <ng-md-icon icon="swap_vert"></ng-md-icon>
                 <md-tooltip>Swap</md-tooltip>
             </md-button>
-            <md-button aria-label="disconnect" class="md-fab md-raised md-mini" ng-click="disconnectDevice($index)">
+            <md-button aria-label="disconnect" class="md-fab md-raised md-mini" ng-click="disconnectEndpoint($index)">
                 <ng-md-icon icon="sync_disabled"></ng-md-icon>
                 <md-tooltip>Disconnect</md-tooltip>
             </md-button>

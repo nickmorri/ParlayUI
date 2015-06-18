@@ -1,7 +1,6 @@
-var editor = angular.module('parlay.editor', ['ui.ace']);
+var editor = angular.module('parlay.editor', ['ui.ace', 'ngMaterial', 'ngMdIcons']);
 
-editor.controller('editorCtrl', function ($scope, $window) {
-    $scope.fileManager = FileManager;
+editor.controller('editorController', ['$scope', '$window', function ($scope, $window) {
     
     // Container for editor file data and configuration options
     $scope.editor = {
@@ -12,7 +11,7 @@ editor.controller('editorCtrl', function ($scope, $window) {
         options: {
             mode: 'python',
             onLoad: function (_editor) {
-                $scope.editor.undoManager = _editor.session.$undoManager;
+                $scope.editor.undoManager = _editor.session.$undoManager;                
             },
             onChange: function (event) {
                 $scope.editor.saved = $scope.editor.isDifferent();
@@ -20,7 +19,7 @@ editor.controller('editorCtrl', function ($scope, $window) {
         },
         saved: true,
         isDifferent: function () {
-            return this.file.data == '';
+            return this.file.data.length !== 0;
         }
     };
     
@@ -32,7 +31,7 @@ editor.controller('editorCtrl', function ($scope, $window) {
         $scope.editor.saved = false;
     };
     
-});
+}]);
 
 editor.directive('parlayEditorToolbar', function () {
     return {

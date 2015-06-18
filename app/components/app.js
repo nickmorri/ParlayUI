@@ -1,4 +1,4 @@
-var parlay = angular.module('parlay.main', ['ngMaterial', 'ngMdIcons', 'ui.router', 'parlay.navigation', 'parlay.devices', 'parlay.editor', 'parlay.console', 'parlay.settings', 'parlay.help']);
+var parlay = angular.module('parlay.main', ['ui.router', 'parlay.navigation', 'parlay.endpoints', 'parlay.editor', 'parlay.console', 'parlay.settings', 'parlay.help']);
 
 parlay.config(function ($stateProvider, $urlRouterProvider, $mdThemingProvider) {
     
@@ -7,34 +7,34 @@ parlay.config(function ($stateProvider, $urlRouterProvider, $mdThemingProvider) 
         .accentPalette('red');
     
     // Default state for unmatched URLs
-    $urlRouterProvider.otherwise('/devices')
+    $urlRouterProvider.otherwise('/endpoints')
     
     // State definitions
     $stateProvider
-    .state('devices', {
-        url: '/devices',
-        templateUrl: '../partials/devices.html',
-        controller: 'deviceCtrl'
+    .state('endpoints', {
+        url: '/endpoints',
+        templateUrl: '../partials/endpoints.html',
+        controller: 'endpointController'
     })
     .state('editor', {
         url: '/editor',
         templateUrl: '../partials/editor.html',
-        controller: 'editorCtrl'
+        controller: 'editorController'
     })
     .state('console', {
         url: '/console',
         templateUrl: '../partials/console.html',
-        controller: 'consoleCtrl'
+        controller: 'consoleController'
     })
     .state('settings', {
         url: '/settings',
         templateUrl: '../partials/settings.html',
-        controller: 'settingsCtrl'
+        controller: 'settingsController'
     }).
     state('help', {
         url: '/help',
         templateUrl: '../partials/help.html',
-        controller: 'helpCtrl'
+        controller: 'helpController'
     });
     
 });

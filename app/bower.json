@@ -3,10 +3,12 @@
   "private": true,
   "dependencies": {
     "angular": "angular#1.4.1",
+    "angular-mocks": "angular-mocks#1.4.1",
     "angular-material": "angular-material#0.10.0",
     "angular-material-icons": "angular-material-icons#0.4.0",
     "angular-ui-router": "angular-ui-router#master",
-    "angular-ui-ace": "angular-ui-ace#bower"
+    "angular-ui-ace": "angular-ui-ace#bower",
+    "angular-websocket": "~1.0.13"
   },
   "resolutions": {
     "angular": "1.4.1"

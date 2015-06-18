@@ -1,8 +1,8 @@
-<md-toolbar ng-class="editor.saved ? 'md-hue-2' : 'md-warn'">
+<md-toolbar class="editor-toolbar" ng-class="editor.saved ? 'md-hue-2' : 'md-warn'">
     <div class="md-toolbar-tools">
         
         <md-menu>
-            <md-button aria-label="Open phone interactions menu" ng-click="$mdOpenMenu()">
+            <md-button aria-label="Open file interactions menu" ng-click="$mdOpenMenu()">
                 File
             </md-button>
             <md-menu-content width="4">
@@ -22,7 +22,7 @@
             </md-menu-content>
         </md-menu>
         <md-menu>
-            <md-button aria-label="Open phone interactions menu" ng-click="$mdOpenMenu()">
+            <md-button aria-label="Open editing menu" ng-click="$mdOpenMenu()">
                 Edit
             </md-button>
             <md-menu-content width="4">
@@ -46,6 +46,7 @@
                 </md-menu-item>
             </md-menu-content>
         </md-menu>
+        
         <md-button class="md-icon-button" ng-click="editor.undoManager.undo()" ng-disabled="!editor.undoManager.hasUndo()">
             <ng-md-icon class="white" icon="undo"></ng-md-icon>
             <md-tooltip>Undo</md-tooltip>
@@ -53,12 +54,12 @@
         <md-button class="md-icon-button" ng-click="editor.undoManager.redo()" ng-disabled="!editor.undoManager.hasRedo()">
             <ng-md-icon class="white" icon="redo"></ng-md-icon>
             <md-tooltip>Redo</md-tooltip>
-        </md-button>        
-        
+        </md-button>
+
         <span flex></span>
         
         <md-menu>
-            <md-button aria-label="Open phone interactions menu" ng-click="$mdOpenMenu()">
+            <md-button aria-label="Open run menu" ng-click="$mdOpenMenu()">
                 Run
             </md-button>
             <md-menu-content width="4">
@@ -77,7 +78,7 @@
             </md-menu-content>
         </md-menu>
         <md-menu>
-            <md-button aria-label="Open phone interactions menu" ng-click="$mdOpenMenu()">
+            <md-button aria-label="Open test menu" ng-click="$mdOpenMenu()">
                 Test
             </md-button>
             <md-menu-content width="4">

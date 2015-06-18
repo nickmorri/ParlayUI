@@ -1,5 +1,5 @@
 .ace_editor {
-    height: 500px;
+    position: fixed !important;
 }
 .btn-file {
     position: relative;

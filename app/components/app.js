@@ -1,4 +1,4 @@
-var parlay = angular.module('parlay.main', ['ui.router', 'parlay.navigation', 'parlay.endpoints', 'parlay.editor', 'parlay.console', 'parlay.settings', 'parlay.help']);
+var parlay = angular.module('parlay.main', ['ui.router', 'parlay.socket', 'parlay.navigation', 'parlay.endpoints', 'parlay.editor', 'parlay.console', 'parlay.settings', 'parlay.help']);
 
 parlay.config(function ($stateProvider, $urlRouterProvider, $mdThemingProvider) {
     

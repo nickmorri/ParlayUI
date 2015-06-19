@@ -1,11 +1,13 @@
-var navigation = angular.module('parlay.navigation', [])
+var navigation = angular.module('parlay.navigation', ['parlay.socket'])
 
 navigation.value('parlayNavToggleOpen', true);
 
 navigation.directive('parlayToolbar', function () {
     return {
         templateUrl: 'components/navigation/directives/parlay-toolbar.html',
-        controller: function ($scope, $mdSidenav, $mdMedia, parlayNavToggleOpen) {
+        controller: ['$scope', '$mdSidenav', '$mdMedia', 'parlayNavToggleOpen', 'ParlaySocket', function ($scope, $mdSidenav, $mdMedia, parlayNavToggleOpen, ParlaySocket) {
+            
+            $scope.socket = ParlaySocket;
             
             // If we are on a screen size greater than the medium layout breakpoint we should open the navigation menu by default
             $scope.parlayNavToggleOpen = $mdMedia('gt-md');
@@ -15,13 +17,17 @@ navigation.directive('parlayToolbar', function () {
                 $scope.parlayNavToggleOpen = !$scope.parlayNavToggleOpen;
             };
             
+            $scope.disconnect = function () {
+                $scope.socket.close();
+            };
+            
             // If the media query for greater than medium screen size breakpoint is false we should collapse the menu
             $scope.$watch(function () {
                 return $mdMedia('gt-md');
             }, function (value) {
                 if (!value && $mdSidenav('parlayNavMenu').isLockedOpen()) $scope.toggleMenu();
             });
-        }
+        }]
     }
 });
 

@@ -1,4 +1,4 @@
-var endpoints = angular.module('parlay.endpoints', ['ngMaterial', 'ngMdIcons']);
+var endpoints = angular.module('parlay.endpoints', ['ngMaterial', 'ngMdIcons', 'parlay.socket']);
 
 endpoints.factory('parlayEndpoint', function () {
     var Public = {};
@@ -7,9 +7,11 @@ endpoints.factory('parlayEndpoint', function () {
     return Public;
 });
 
-endpoints.factory('EndpointManager', ['$q', 'parlayEndpoint', function ($q, parlayEndpoint) {
+endpoints.factory('EndpointManager', ['$q', 'parlayEndpoint', 'ParlaySocket', function ($q, parlayEndpoint, ParlaySocket) {
     var Public = {};
-    var Private = {};
+    var Private = {
+        socket: ParlaySocket
+    };
     
     Public.active_endpoints = [];
     
@@ -31,7 +33,33 @@ endpoints.factory('EndpointManager', ['$q', 'parlayEndpoint', function ($q, parl
             Public.active_endpoints.push({});
             resolve(Public.active_endpoints.length);
         });
-    }    
+    };
+    
+    Private.socket.onMessage(['motor', 'arm'], function (message) {
+        debugger
+    });
+    
+    Private.socket.onMessage({
+        'motor': function (message) {
+            debugger
+        },
+        'arm': function (message) {
+            debugger
+        }
+    });
+    
+    Private.socket.onMessage('wheel', function (message) {
+        debugger
+    });
+     
+    Private.socket.sendMessage('motor', {data: []});
+    Private.socket.sendMessage('arm', {data: []});
+    Private.socket.sendMessage('wheel', {data: []});
+    Private.socket.sendMessage('engine', {data: []}, function (message) {
+        debugger
+    });
+    
+    
     
     return Public;
 }]);

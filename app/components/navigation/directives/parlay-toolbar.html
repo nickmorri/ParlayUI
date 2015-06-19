@@ -3,5 +3,24 @@
         <md-button class="md-icon-button" ng-click="toggleMenu()"aria-label="Menu"><ng-md-icon class="white" icon="menu"></ng-md-icon></md-button>
         <h2>Parlay</h2>
         <span flex></span>
+        
+        <md-menu>
+            <md-button aria-label="Open editing menu" ng-click="$mdOpenMenu()">
+                <md-button class="md-icon-button" aria-label="Menu">
+                    <ng-md-icon ng-if="socket.connected" class="white" icon="cloud"></ng-md-icon>
+                    <ng-md-icon ng-if="!socket.connected" class="white" icon="cloud_queue"></ng-md-icon>
+                </md-button>
+            </md-button>
+            <md-menu-content width="4">
+                <md-menu-item ng-if="socket.connected">
+                    <md-button ng-click="disconnect()">
+                        <ng-md-icon icon="cloud_off" md-menu-align-target></ng-md-icon>
+                        Disconnect from broker
+                    </md-button>
+                </md-menu-item>
+            </md-menu-content>
+        </md-menu>
+        
+        
     </div>
 </md-toolbar>

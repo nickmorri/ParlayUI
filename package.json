@@ -1,0 +1,27 @@
+{
+  "name": "ParlayUI",
+  "namelower": "parlayui",
+  "version": "0.0.1",
+  "description": "A web client for the Parlay broker system",
+  "author": "Nick Morris <nick@promenadesoftware.com>",
+  "scripts": {
+    "test": "karma start",
+    "start": "http-server",
+    "postinstall": "bower install"
+  },
+  "main": "app/app.js",
+  "repository": {
+    "type": "git",
+    "url": "promenade-build:root/Parlay"
+  },
+  "devDependencies": {
+    "bower": "latest",
+    "grunt": "latest",
+    "grunt-karma": "latest",
+    "grunt-cli": "latest",
+    "jshint": "latest",
+    "karma-jasmine": "latest",
+    "karma-phantomjs-launcher": "latest"
+  },
+  "private": true
+}

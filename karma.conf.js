@@ -13,24 +13,6 @@ module.exports = function(config) {
     frameworks: ['jasmine'],
 
 
-    // list of files / patterns to load in the browser
-    files: [
-      'bower_components/angular/angular.js',
-      'bower_components/angular-material/angular-material.js',
-      'bower_components/angular-material/angular-material-mocks.js',
-      'bower_components/angular-ui-router/release/angular-ui-router.js',
-      'bower_components/angular-aria/angular-aria.js',
-      'bower_components/angular-material-icons/angular-material-icons.js',
-      'bower_components/angular-animate/angular-animate.js',
-      'bower_components/angular-ui-ace/ui-ace.js',
-      'bower_components/angular-websocket/angular-websocket.js',
-      'bower_components/angular-mocks/angular-mocks.js',
-      'app.js',
-      'parlay_components/**/*.js',
-      'test/**/*.js'
-    ],
-
-
     // list of files to exclude
     exclude: [
     ],
@@ -72,6 +54,6 @@ module.exports = function(config) {
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false
+    singleRun: true
   });
 };

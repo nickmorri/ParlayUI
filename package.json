@@ -5,7 +5,7 @@
   "description": "A web client for the Parlay broker system",
   "author": "Nick Morris <nick@promenadesoftware.com>",
   "scripts": {
-    "test": "karma start",
+    "test": "grunt test",
     "start": "http-server",
     "postinstall": "bower install"
   },
@@ -17,11 +17,20 @@
   "devDependencies": {
     "bower": "latest",
     "grunt": "latest",
+    "grunt-contrib-clean": "latest",
+    "grunt-contrib-concat": "latest",
+    "grunt-contrib-copy": "latest",
+    "grunt-contrib-jshint": "latest",
+    "grunt-contrib-uglify": "latest",
+    "grunt-contrib-watch": "latest",
+    "grunt-express": "latest",
+    "grunt-jsdoc": "latest",
     "grunt-karma": "latest",
-    "grunt-cli": "latest",
-    "jshint": "latest",
+    "grunt-open": "latest",
+    "grunt-processhtml": "^0.3.8",
     "karma-jasmine": "latest",
-    "karma-phantomjs-launcher": "latest"
+    "karma-phantomjs-launcher": "latest",
+    "matchdep": "latest"
   },
   "private": true
 }

@@ -1,4 +1,4 @@
-var navigation = angular.module('parlay.navigation', ['parlay.socket'])
+var navigation = angular.module('parlay.navigation', ['parlay.socket']);
 
 navigation.value('parlayNavToggleOpen', true);
 
@@ -28,7 +28,7 @@ navigation.directive('parlayToolbar', function () {
                 if (!value && $mdSidenav('parlayNavMenu').isLockedOpen()) $scope.toggleMenu();
             });
         }]
-    }
+    };
 });
 
 navigation.directive('parlayNav', function () {
@@ -84,5 +84,5 @@ navigation.directive('parlayNav', function () {
                 $scope.parlayNavToggleOpen = false;
             });
         }
-    }
+    };
 });

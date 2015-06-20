@@ -84,7 +84,7 @@ socket.factory('ParlaySocket', ['$websocket', '$q', '$rootScope', '$log', functi
             }
         }
         else {
-            throw new TypeError('tets')
+            throw new TypeError('tets');
         }
         
     };

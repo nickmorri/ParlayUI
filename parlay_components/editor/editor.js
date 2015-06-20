@@ -36,7 +36,7 @@ editor.controller('editorController', ['$scope', '$window', function ($scope, $w
 editor.directive('parlayEditorToolbar', function () {
     return {
         templateUrl: 'parlay_components/editor/directives/parlay-editor-toolbar.html'
-    }
+    };
 });
 
 // File upload button directive
@@ -62,5 +62,5 @@ editor.directive('parlayFileUpload', function () {
                 fileReader.readAsText(event.target.files[0]);
             });
         }
-    }
+    };
 });

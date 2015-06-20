@@ -36,27 +36,27 @@ endpoints.factory('EndpointManager', ['$q', 'parlayEndpoint', 'ParlaySocket', fu
     };
     
     Private.socket.onMessage(['motor', 'arm'], function (message) {
-        debugger
+        //
     });
     
     Private.socket.onMessage({
         'motor': function (message) {
-            debugger
+            //
         },
         'arm': function (message) {
-            debugger
+            //
         }
     });
     
     Private.socket.onMessage('wheel', function (message) {
-        debugger
+        //
     });
      
     Private.socket.sendMessage('motor', {data: []});
     Private.socket.sendMessage('arm', {data: []});
     Private.socket.sendMessage('wheel', {data: []});
     Private.socket.sendMessage('engine', {data: []}, function (message) {
-        debugger
+        //
     });
     
     
@@ -117,17 +117,17 @@ endpoints.controller('endpointController', ['$scope', '$mdToast', 'EndpointManag
 endpoints.directive('parlayEndpointCardItem', function () {
     return {
         templateUrl: 'parlay_components/endpoints/directives/parlay-endpoint-card-item.html'
-    }
+    };
 });
 
 endpoints.directive('parlayEndpointListItem', function () {
     return {
         templateUrl: 'parlay_components/endpoints/directives/parlay-endpoint-list-item.html'
-    }
+    };
 });
 
 endpoints.directive('parlayEndpointsToolbar', function () {
     return {
         templateUrl: 'parlay_components/endpoints/directives/parlay-endpoints-toolbar.html'
-    }
+    };
 });

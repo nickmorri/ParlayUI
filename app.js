@@ -7,7 +7,7 @@ parlay.config(function ($stateProvider, $urlRouterProvider, $mdThemingProvider) 
         .accentPalette('red');
     
     // Default state for unmatched URLs
-    $urlRouterProvider.otherwise('/endpoints')
+    $urlRouterProvider.otherwise('/endpoints');
     
     // State definitions
     $stateProvider

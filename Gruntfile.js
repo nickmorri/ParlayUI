@@ -29,7 +29,7 @@ module.exports = function (grunt) {
       'tests': 'test/**/*.js',
       'htmlDirectives': 'parlay_components/**/directives/*.html',
       'htmlPartials': 'partials/*.html',
-      'stylesheets': ['css/*.css', 'bower_components/angular-material/angular-material.css']
+      'stylesheets': 'css/*.css'
     },
 
     'express': {
@@ -87,7 +87,7 @@ module.exports = function (grunt) {
           'configFile': 'karma.conf.js',
           'files': [
             '<%= meta.bowerComponents %>',
-            '<%= meta.destination %>/<%= pkg.namelower %>-<%= pkg.version %>.js',
+            '<%= meta.destination %>/<%= pkg.namelower %>.js',
             '<%= meta.tests %>'
           ]
         }
@@ -97,7 +97,7 @@ module.exports = function (grunt) {
           'configFile': 'karma.conf.js',
           'files': [
             '<%= meta.bowerComponents %>',
-            '<%= meta.destination %>/<%= pkg.namelower %>-<%= pkg.version %>.min.js',
+            '<%= meta.destination %>/<%= pkg.namelower %>.min.js',
             '<%= meta.tests %>'
           ],
         }
@@ -116,18 +116,23 @@ module.exports = function (grunt) {
     'build': {
       'files': [
         {'expand': true, 'src': ['<%= meta.htmlDirectives %>'], 'dest': '<%= meta.destination %>'},
-        {'expand':true, 'src': 'index.html', 'dest': '<%= meta.destination %>'},
+        {'expand': true, 'src': 'bower_components/angular-material/angular-material.css', 'dest': '<%= meta.destination %>'},
         {'expand':true, 'src': '<%= meta.bowerComponents %>', 'dest': '<%= meta.destination %>'},
-        {'expand':true, 'src': '<%= meta.htmlPartials %>', 'dest': '<%= meta.destination %>'},
-        {'expand':true, 'src': '<%= meta.stylesheets %>', 'dest': '<%= meta.destination %>'}
+        {'expand':true, 'src': '<%= meta.htmlPartials %>', 'dest': '<%= meta.destination %>'}
       ]
+    }
+  },
+
+   'processhtml': {
+    'dist': {
+      'files': {'<%= meta.destination %>/index.html': ['index.html']}
     }
   },
 
   'concat': {
     'dist': {
       'src': ['<%= meta.source %>'],
-      'dest': '<%= meta.destination %>/<%= pkg.namelower %>-<%= pkg.version %>.js'
+      'dest': '<%= meta.destination %>/<%= pkg.namelower %>.js'
     }
   },
 
@@ -137,8 +142,18 @@ module.exports = function (grunt) {
       },  
       'dist': {
         'files': {
-          '<%= meta.destination %>/<%= pkg.namelower %>-<%= pkg.version %>.min.js': ['<%= meta.destination %>/<%= pkg.namelower %>-<%= pkg.version %>.js']
+          '<%= meta.destination %>/<%= pkg.namelower %>.min.js': ['<%= meta.destination %>/<%= pkg.namelower %>.js']
         }
+      }
+    },
+
+    'cssmin': {
+      'options': {
+        'shorthandCompacting': false,
+        'roundingPrecision': -1
+      },
+      'dist': {
+        'files': {'<%= meta.destination %>/<%= pkg.namelower %>.min.css': '<%= meta.stylesheets %>'}
       }
     },
 
@@ -168,6 +183,8 @@ module.exports = function (grunt) {
     'uglify',
     'karma:minified',
     'copy',
+    'cssmin',
+    'processhtml',
     'jsdoc'    
   ]);
 

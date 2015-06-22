@@ -1,24 +1,21 @@
 md-sidenav {
-  fill: #737373;
-  ng-md-icon {
+    fill: #737373;
+}
+md-sidenav ng-md-icon {
     position: relative;
     top: 5px; // adjust for svg viewbox
-  }
 }
 .parlay-nav-menu-item {
     text-transform: capitalize;
 }
 
-md-toolbar {
-    .md-button.md-default-theme {
-        border-radius: 99%; // round toolbar buttons
-  }
+md-toolbar .md-button.md-default-theme {
+    border-radius: 99%; // round toolbar buttons
 }
 md-menu-content > md-menu-item > button.md-button > ng-md-icon {
     margin-top: 5px;
     margin-right: 16px;
 }
-
 .md-toolbar-tools .md-button {
     line-height: 0 !important;
 }

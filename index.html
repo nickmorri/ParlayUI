@@ -4,10 +4,12 @@
     <head>
         <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
         <link rel="stylesheet" href="bower_components/angular-material/angular-material.css">
+        <!-- build:css parlayui.min.css -->
         <link rel="stylesheet" href="css/main.css">
         <link rel="stylesheet" href="css/editor.css">
         <link rel="stylesheet" href="css/navigation.css">
         <link rel="stylesheet" href="css/endpoints.css">
+        <!-- /build -->
     </head>
     <body ng-app="parlay.main">
         
@@ -22,7 +24,7 @@
             
         </md-content>
 
-        <!-- Bower Components -->
+        <!-- Bower Compontents -->
         <script src="bower_components/angular/angular.js"></script>
         <script src="bower_components/angular-animate/angular-animate.js"></script>
         <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
@@ -32,8 +34,9 @@
         <script src="bower_components/ace-builds/src/ace.js"></script>
         <script src="bower_components/angular-ui-ace/ui-ace.js"></script>
         <script src="bower_components/angular-websocket/angular-websocket.js"></script>
+
         
-        <!-- Parlay Components -->
+        <!-- build:js parlayui.min.js -->
         <script src="app.js"></script>
         <script src="parlay_components/communication/socket.js"></script>
         <script src="parlay_components/navigation/navigation.js"></script>
@@ -42,5 +45,6 @@
         <script src="parlay_components/console/console.js"></script>
         <script src="parlay_components/settings/settings.js"></script>
         <script src="parlay_components/help/help.js"></script>
+        <!-- /build -->>
     </body>
 </html>

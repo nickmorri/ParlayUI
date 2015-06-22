@@ -5,17 +5,10 @@
 .md-fab.md-mini > ng-md-icon {
     line-height: 55px;
 }
-ng-md-icon.white {
+.white {
     fill: white !important;
 }
 md-list-item > a {
     text-decoration: none;
     color: black;
-}
-
-md-card {
-  background-color: #fff; 
-}
-md-card h2:first-of-type {
-    margin-top: 0;
 }

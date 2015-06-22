@@ -3,14 +3,10 @@ md-sidenav {
 }
 md-sidenav ng-md-icon {
     position: relative;
-    top: 5px; // adjust for svg viewbox
+    top: 5px;
 }
 .parlay-nav-menu-item {
     text-transform: capitalize;
-}
-
-md-toolbar .md-button.md-default-theme {
-    border-radius: 99%; // round toolbar buttons
 }
 md-menu-content > md-menu-item > button.md-button > ng-md-icon {
     margin-top: 5px;

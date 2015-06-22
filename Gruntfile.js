@@ -70,17 +70,30 @@ module.exports = function (grunt) {
 
     'bower': {
       'dist': {
-          'base': 'bower_components',
-          'dest': '<%= meta.dist_destination %>/bower_components',
-          'options': {
-              'checkExistence': true,
-              'debugging': true,
-              'paths': {
-                  'bowerDirectory': 'bower_components',
-                  'bowerrc': '.bowerrc',
-                  'bowerJson': 'bower.json'
-              }
-          }
+        'base': 'bower_components',
+        'dest': '<%= meta.dist_destination %>/bower_components',
+        'options': {
+            'checkExistence': true,
+            'debugging': true,
+            'paths': {
+                'bowerDirectory': 'bower_components',
+                'bowerrc': '.bowerrc',
+                'bowerJson': 'bower.json'
+            }
+        }
+      },
+      'dev': {
+        'base': 'bower_components',
+        'dest': '<%= meta.dev_destination %>/bower_components',
+        'options': {
+            'checkExistence': true,
+            'debugging': true,
+            'paths': {
+                'bowerDirectory': 'bower_components',
+                'bowerrc': '.bowerrc',
+                'bowerJson': 'bower.json'
+            }
+        }
       }
     },
 
@@ -96,17 +109,19 @@ module.exports = function (grunt) {
           'livereload': true
         },
         'files': '<%= meta.source %>',
-        'tasks': ['jshint:source', 'karma:dev']
+        'tasks': ['jshint:source', 'karma:dev', 'newer:copy:dev']
       },
       'stylesheets': {
         'options': {
+          'debounceDelay': 100,
           'livereload': true
         },
         'files': '<%= meta.stylesheets %>',
-        'tasks': ['newer:copy']
+        'tasks': ['csslint:dev', 'newer:copy']
       },
       'html': {
         'options': {
+          'debounceDelay': 100,
           'livereload': true
         },
         'files': ['<%= meta.htmlDirectives %>', '<%= meta.htmlPartials %>', 'index.html'],
@@ -159,13 +174,13 @@ module.exports = function (grunt) {
     },
 
     'csslint': {
-      'strict': {
+      'dist': {
         'options': {
           'import': 2
         },
         'src': '<%= meta.stylesheets %>'
       },
-      'lax': {
+      'dev': {
         'src': '<%= meta.stylesheets %>',
         'options': {
           'important': false,
@@ -189,7 +204,7 @@ module.exports = function (grunt) {
       },
       'dev': {
         'files': [
-          {'expand': true, 'src': ['<%= meta.source %>', '<%= meta.bowerComponents %>', 'index.html', '<%= meta.htmlDirectives %>', '<%= meta.htmlPartials %>', '<%= meta.stylesheets %>', 'bower_components/angular-material/angular-material.css'], 'dest': '<%= meta.dev_destination %>'}
+          {'expand': true, 'src': ['<%= meta.source %>', 'index.html', '<%= meta.htmlDirectives %>', '<%= meta.htmlPartials %>', '<%= meta.stylesheets %>', 'bower_components/angular-material/angular-material.css'], 'dest': '<%= meta.dev_destination %>'}
         ]
       }
     },
@@ -238,9 +253,11 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('develop', [
-    'jshint',
     'clean:dev',
+    'jshint',
+    'csslint:dev',
     'karma:dev',
+    'bower:dev',
     'copy:dev',
     'express:dev',
     'open',
@@ -252,9 +269,9 @@ module.exports = function (grunt) {
   grunt.registerTask('dist', [
     'clean:dist',
     'bower-install-simple:dist',
-    'bower',
+    'bower:dist',
     'jshint:source',
-    'csslint:lax',
+    'csslint:dev',
     'karma:dev',
     'concat:dist',
     'karma:dist',
@@ -270,7 +287,7 @@ module.exports = function (grunt) {
   grunt.registerTask('build', ['dist']);
 
   grunt.registerTask('server', [
-    'build',
+    'dist',
     'express:dist',
     'open',
     'watch'

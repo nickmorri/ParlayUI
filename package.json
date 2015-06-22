@@ -4,11 +4,6 @@
   "version": "0.0.1",
   "description": "A web client for the Parlay broker system",
   "author": "Nick Morris <nick@promenadesoftware.com>",
-  "scripts": {
-    "test": "grunt test",
-    "start": "grunt server",
-    "postinstall": "grunt build"
-  },
   "main": "app/app.js",
   "repository": {
     "type": "git",

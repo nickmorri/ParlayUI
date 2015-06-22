@@ -11,7 +11,9 @@ module.exports = function (grunt) {
         'app.js',
         'parlay_components/**/*.js'
       ],
-      'destination': 'dist',
+      'dist_destination': 'dist',
+      'dev_destination': 'dev',
+      'doc_destination': 'doc',
       'bowerComponents': [
         'bower_components/angular/angular.js',
         'bower_components/angular-material/angular-material.js',
@@ -33,11 +35,11 @@ module.exports = function (grunt) {
     },
 
     'express': {
-      'all': {
+      'dev': {
         'options': {
           'port': 9000,
           'hostname': '0.0.0.0',
-          'bases': ['<%= meta.destination %>'],
+          'bases': ['<%= meta.dev_destination %>'],
           'livereload': true
         }
       }
@@ -46,33 +48,35 @@ module.exports = function (grunt) {
     'watch': {
       'scripts': {
         'options': {
-          'livereload': false
+          'livereload': true
         },
         'files': '<%= meta.source %>',
-        'tasks': ['jshint', 'concat', 'uglify']
+        'tasks': ['jshint:source', 'karma:dev']
       },
       'stylesheets': {
         'options': {
-          'livereload': false
+          'livereload': true
         },
-        'files': '<%= meta.stylesheets %>'
+        'files': '<%= meta.stylesheets %>',
+        'tasks': ['copy:dev']
       },
       'html': {
         'options': {
-          'livereload': false
+          'livereload': true
         },
-        'files': ['<%= meta.htmlDirectives %>', '<%= meta.htmlPartials %>', 'index.html']
+        'files': ['<%= meta.htmlDirectives %>', '<%= meta.htmlPartials %>', 'index.html'],
+        'tasks': ['copy:dev']
       }
     },
 
     'open': {
-      'all': {
-        'path': 'http://localhost:<%= express.all.options.port %>'
+      'dev': {
+        'path': 'http://localhost:<%= express.dev.options.port %>'
       }
     },
 
     'karma': {
-      'development': {
+      'dev': {
         'configFile': 'karma.conf.js',
         'options': {
           'files': [
@@ -87,7 +91,7 @@ module.exports = function (grunt) {
           'configFile': 'karma.conf.js',
           'files': [
             '<%= meta.bowerComponents %>',
-            '<%= meta.destination %>/<%= pkg.namelower %>.js',
+            '<%= meta.dist_destination %>/<%= pkg.namelower %>.js',
             '<%= meta.tests %>'
           ]
         }
@@ -97,52 +101,66 @@ module.exports = function (grunt) {
           'configFile': 'karma.conf.js',
           'files': [
             '<%= meta.bowerComponents %>',
-            '<%= meta.destination %>/<%= pkg.namelower %>.min.js',
+            '<%= meta.dist_destination %>/<%= pkg.namelower %>.min.js',
             '<%= meta.tests %>'
           ],
         }
       }
-	},
+	  },
 
-  'jshint': {
-    'beforeconcat': ['<%= meta.source %>']
-  },
+    'jshint': {
+      'source': '<%= meta.source %>',
+      'gruntfile': 'Gruntfile.js'
+    },
 
-  'clean': {
-    'build': ['<%= meta.destination %>']
-  },
+    'clean': {
+      'dist': '<%= meta.dist_destination %>',
+      'dev': '<%= meta.dev_destination %>',
+      'doc': '<%= meta.doc_destination %>'
+    },
 
-  'copy': {
-    'build': {
-      'files': [
-        {'expand': true, 'src': ['<%= meta.htmlDirectives %>'], 'dest': '<%= meta.destination %>'},
-        {'expand': true, 'src': 'bower_components/angular-material/angular-material.css', 'dest': '<%= meta.destination %>'},
-        {'expand':true, 'src': '<%= meta.bowerComponents %>', 'dest': '<%= meta.destination %>'},
-        {'expand':true, 'src': '<%= meta.htmlPartials %>', 'dest': '<%= meta.destination %>'}
-      ]
-    }
-  },
+    'copy': {
+      'dist': {
+        'files': [
+          {'expand': true, 'src': '<%= meta.htmlDirectives %>', 'dest': '<%= meta.dist_destination %>'},
+          {'expand': true, 'src': 'bower_components/angular-material/angular-material.css', 'dest': '<%= meta.dist_destination %>'},
+          {'expand': true, 'src': '<%= meta.bowerComponents %>', 'dest': '<%= meta.dist_destination %>'},
+          {'expand': true, 'src': '<%= meta.htmlPartials %>', 'dest': '<%= meta.dist_destination %>'}
+        ]
+      },
+      'dev': {
+        'files': [
+          {'expand': true, 'src': '<%= meta.source %>', 'dest': '<%= meta.dev_destination %>'},
+          {'expand': true, 'src': 'index.html', 'dest': '<%= meta.dev_destination %>'},
+          {'expand': true, 'src': 'bower_components/angular-material/angular-material.css', 'dest': '<%= meta.dev_destination %>'},
+          {'expand': true, 'src': '<%= meta.bowerComponents %>', 'dest': '<%= meta.dev_destination %>'},
+          {'expand': true, 'src': '<%= meta.htmlDirectives %>', 'dest': '<%= meta.dev_destination %>'},
+          {'expand': true, 'src': '<%= meta.htmlPartials %>', 'dest': '<%= meta.dev_destination %>'},
+          {'expand': true, 'src': '<%= meta.stylesheets %>', 'dest': '<%= meta.dev_destination %>'},
+        ]
+      }
+    },
 
-   'processhtml': {
-    'dist': {
-      'files': {'<%= meta.destination %>/index.html': ['index.html']}
-    }
-  },
+    'processhtml': {
+      'dist': {
+        'files': {'<%= meta.dist_destination %>/index.html': ['index.html']}
+      }
+    },
 
-  'concat': {
-    'dist': {
-      'src': ['<%= meta.source %>'],
-      'dest': '<%= meta.destination %>/<%= pkg.namelower %>.js'
-    }
-  },
+    'concat': {
+      'dist': {
+        'src': ['<%= meta.source %>'],
+        'dest': '<%= meta.dist_destination %>/<%= pkg.namelower %>.js'
+      }
+    },
 
-  'uglify': {
+    'uglify': {
       'options': {
         'mangle': false
       },  
       'dist': {
         'files': {
-          '<%= meta.destination %>/<%= pkg.namelower %>.min.js': ['<%= meta.destination %>/<%= pkg.namelower %>.js']
+          '<%= meta.dist_destination %>/<%= pkg.namelower %>.min.js': ['<%= meta.dist_destination %>/<%= pkg.namelower %>.js']
         }
       }
     },
@@ -153,38 +171,42 @@ module.exports = function (grunt) {
         'roundingPrecision': -1
       },
       'dist': {
-        'files': {'<%= meta.destination %>/<%= pkg.namelower %>.min.css': '<%= meta.stylesheets %>'}
+        'files': {'<%= meta.dist_destination %>/<%= pkg.namelower %>.min.css': '<%= meta.stylesheets %>'}
       }
     },
 
     'jsdoc': {
       'src': ['<%= meta.source %>'],
       'options': {
-        'destination': 'doc'
+        'destination': '<%= meta.doc_destination %>'
       }
     }
 
   });
 
-  grunt.registerTask('server', [
-    'express',
-    'open',
+  grunt.registerTask('develop', [
+    'jshint',
+    'clean:dev',
+    'karma:dev',
+    'copy:dev',
+    'express:dev',
+    'open:dev',
     'watch'
   ]);
 
   grunt.registerTask('test', ['karma:development']);
 
   grunt.registerTask('build', [
-    'clean',
-    'jshint',
-    'karma:development',
-    'concat',
+    'clean:dist',
+    'jshint:source',
+    'karma:dev',
+    'concat:dist',
     'karma:dist',
-    'uglify',
+    'uglify:dist',
     'karma:minified',
-    'copy',
-    'cssmin',
-    'processhtml',
+    'copy:dist',
+    'cssmin:dist',
+    'processhtml:dist',
     'jsdoc'    
   ]);
 

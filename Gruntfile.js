@@ -1,8 +1,7 @@
 module.exports = function (grunt) {
 
-  // Load Grunt tasks declared in the package.json file
-  require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
   grunt.loadNpmTasks('main-bower-files');
+  require('load-grunt-tasks')(grunt);
 
   grunt.initConfig({
     'pkg': grunt.file.readJSON('package.JSON'),
@@ -167,7 +166,12 @@ module.exports = function (grunt) {
         'src': '<%= meta.stylesheets %>'
       },
       'lax': {
-        'src': '<%= meta.stylesheets %>'
+        'src': '<%= meta.stylesheets %>',
+        'options': {
+          'important': false,
+          'adjoining-classes': false,
+          'known-properties': false
+        },
       }
     },
 

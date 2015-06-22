@@ -1,8 +1,7 @@
 module.exports = function (grunt) {
 
-  // Load Grunt tasks declared in the package.json file
-  require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
   grunt.loadNpmTasks('main-bower-files');
+  require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
   grunt.initConfig({
     'pkg': grunt.file.readJSON('package.JSON'),
@@ -266,7 +265,7 @@ module.exports = function (grunt) {
   grunt.registerTask('build', ['dist']);
 
   grunt.registerTask('server', [
-    'build',
+    'dist',
     'express:dist',
     'open',
     'watch'

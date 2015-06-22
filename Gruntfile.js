@@ -270,7 +270,7 @@ module.exports = function (grunt) {
   grunt.registerTask('build', ['dist']);
 
   grunt.registerTask('server', [
-    'build',
+    'dist',
     'express:dist',
     'open',
     'watch'

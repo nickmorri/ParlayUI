@@ -2,6 +2,7 @@ module.exports = function (grunt) {
 
   // Load Grunt tasks declared in the package.json file
   require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
+  grunt.loadNpmTasks('main-bower-files');
 
   grunt.initConfig({
     'pkg': grunt.file.readJSON('package.JSON'),
@@ -35,13 +36,58 @@ module.exports = function (grunt) {
     },
 
     'express': {
+      'options': {
+        'port': 9000,
+        'hostname': '0.0.0.0'
+      },
       'dev': {
         'options': {
-          'port': 9000,
-          'hostname': '0.0.0.0',
           'bases': ['<%= meta.dev_destination %>'],
           'livereload': true
         }
+      },
+      'dist': {
+        'options': {
+          'bases': ['<%= meta.dist_destination %>']
+        }
+      }
+    },
+
+    'bower-install-simple': {
+      'options': {
+          'directory': "bower_components"
+      },
+      'dist': {
+          'options': {
+              'production': true
+          }
+      },
+      'dev': {
+          'options': {
+              'production': false
+          }
+      }
+    },
+
+    'bower': {
+      'dist': {
+          'base': 'bower_components',
+          'dest': '<%= meta.dist_destination %>/bower_components',
+          'options': {
+              'checkExistence': true,
+              'debugging': true,
+              'paths': {
+                  'bowerDirectory': 'bower_components',
+                  'bowerrc': '.bowerrc',
+                  'bowerJson': 'bower.json'
+              }
+          }
+      }
+    },
+
+    'wiredep': {
+      'dist': {
+        'src': '<%= meta.dist_destination %>/index.html'
       }
     },
 
@@ -58,20 +104,20 @@ module.exports = function (grunt) {
           'livereload': true
         },
         'files': '<%= meta.stylesheets %>',
-        'tasks': ['copy:dev']
+        'tasks': ['newer:copy']
       },
       'html': {
         'options': {
           'livereload': true
         },
         'files': ['<%= meta.htmlDirectives %>', '<%= meta.htmlPartials %>', 'index.html'],
-        'tasks': ['copy:dev']
+        'tasks': ['newer:copy']
       }
     },
 
     'open': {
-      'dev': {
-        'path': 'http://localhost:<%= express.dev.options.port %>'
+      'all': {
+        'path': 'http://localhost:<%= express.options.port %>'
       }
     },
 
@@ -113,6 +159,18 @@ module.exports = function (grunt) {
       'gruntfile': 'Gruntfile.js'
     },
 
+    'csslint': {
+      'strict': {
+        'options': {
+          'import': 2
+        },
+        'src': '<%= meta.stylesheets %>'
+      },
+      'lax': {
+        'src': '<%= meta.stylesheets %>'
+      }
+    },
+
     'clean': {
       'dist': '<%= meta.dist_destination %>',
       'dev': '<%= meta.dev_destination %>',
@@ -120,23 +178,14 @@ module.exports = function (grunt) {
     },
 
     'copy': {
-      'dist': {
+      'all': {
         'files': [
-          {'expand': true, 'src': '<%= meta.htmlDirectives %>', 'dest': '<%= meta.dist_destination %>'},
-          {'expand': true, 'src': 'bower_components/angular-material/angular-material.css', 'dest': '<%= meta.dist_destination %>'},
-          {'expand': true, 'src': '<%= meta.bowerComponents %>', 'dest': '<%= meta.dist_destination %>'},
-          {'expand': true, 'src': '<%= meta.htmlPartials %>', 'dest': '<%= meta.dist_destination %>'}
+          {'expand': true, 'src': ['<%= meta.htmlPartials %>', '<%= meta.htmlDirectives %>', 'bower_components/angular-material/angular-material.css', 'bower_components/ace-builds/src/mode-python.js'], 'dest': '<%= meta.dist_destination %>'}
         ]
       },
       'dev': {
         'files': [
-          {'expand': true, 'src': '<%= meta.source %>', 'dest': '<%= meta.dev_destination %>'},
-          {'expand': true, 'src': 'index.html', 'dest': '<%= meta.dev_destination %>'},
-          {'expand': true, 'src': 'bower_components/angular-material/angular-material.css', 'dest': '<%= meta.dev_destination %>'},
-          {'expand': true, 'src': '<%= meta.bowerComponents %>', 'dest': '<%= meta.dev_destination %>'},
-          {'expand': true, 'src': '<%= meta.htmlDirectives %>', 'dest': '<%= meta.dev_destination %>'},
-          {'expand': true, 'src': '<%= meta.htmlPartials %>', 'dest': '<%= meta.dev_destination %>'},
-          {'expand': true, 'src': '<%= meta.stylesheets %>', 'dest': '<%= meta.dev_destination %>'},
+          {'expand': true, 'src': ['<%= meta.source %>', '<%= meta.bowerComponents %>', 'index.html', '<%= meta.htmlDirectives %>', '<%= meta.htmlPartials %>', '<%= meta.stylesheets %>', 'bower_components/angular-material/angular-material.css'], 'dest': '<%= meta.dev_destination %>'}
         ]
       }
     },
@@ -190,26 +239,37 @@ module.exports = function (grunt) {
     'karma:dev',
     'copy:dev',
     'express:dev',
-    'open:dev',
+    'open',
     'watch'
   ]);
 
   grunt.registerTask('test', ['karma:development']);
 
-  grunt.registerTask('build', [
+  grunt.registerTask('dist', [
     'clean:dist',
+    'bower-install-simple:dist',
+    'bower',
     'jshint:source',
+    'csslint:lax',
     'karma:dev',
     'concat:dist',
     'karma:dist',
     'uglify:dist',
     'karma:minified',
-    'copy:dist',
+    'copy:all',
     'cssmin:dist',
     'processhtml:dist',
+    'wiredep:dist',
     'jsdoc'    
   ]);
 
-  grunt.registerTask('default', ['build']);
+  grunt.registerTask('build', ['dist']);
+
+  grunt.registerTask('server', [
+    'build',
+    'express:dist',
+    'open',
+    'watch'
+  ]);
 
 };

@@ -257,7 +257,7 @@ module.exports = function (grunt) {
     'watch'
   ]);
 
-  grunt.registerTask('test', ['karma:development']);
+  grunt.registerTask('test', ['karma:dev']);
 
   grunt.registerTask('dist', [
     'clean:dist',

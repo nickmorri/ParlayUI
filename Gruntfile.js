@@ -26,7 +26,8 @@ module.exports = function (grunt) {
         'bower_components/ace-builds/src/mode-python.js',
         'bower_components/angular-ui-ace/ui-ace.js',
         'bower_components/angular-websocket/angular-websocket.js',
-        'bower_components/angular-mocks/angular-mocks.js'        
+        'bower_components/angular-mocks/angular-mocks.js',
+        'bower_components/es6-shim/es6-shim.js'        
       ],
       'tests': 'test/**/*.js',
       'htmlDirectives': 'parlay_components/**/directives/*.html',

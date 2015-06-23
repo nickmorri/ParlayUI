@@ -27,7 +27,7 @@ describe('parlay.editor', function() {
 				scope.open();
 				expect(scope.editor.saved).toBeFalsy();
 				scope.save();
-				expect(scope.editor.saved).toBeFalsy();
+				expect(scope.editor.saved).toBeTruthy();
 			});
 
 			it('loads', function () {

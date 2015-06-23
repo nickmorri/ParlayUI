@@ -9,7 +9,7 @@ socket.factory('ParlaySocket', ['$websocket', '$q', '$rootScope', '$log', functi
     var Private = {
         rootScope: $rootScope,
         public: Public,
-        socket: $websocket('ws://echo.websocket.org'),
+        socket: $websocket('ws://localhost:' + 8085),
         onMessageActions: {}
     };
     

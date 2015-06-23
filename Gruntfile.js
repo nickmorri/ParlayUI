@@ -241,13 +241,6 @@ module.exports = function (grunt) {
       'dist': {
         'files': {'<%= meta.dist_destination %>/<%= pkg.namelower %>.min.css': '<%= meta.stylesheets %>'}
       }
-    },
-
-    'jsdoc': {
-      'src': ['<%= meta.source %>'],
-      'options': {
-        'destination': '<%= meta.doc_destination %>'
-      }
     }
 
   });

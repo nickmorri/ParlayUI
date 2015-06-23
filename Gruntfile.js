@@ -110,7 +110,7 @@ module.exports = function (grunt) {
           'livereload': true
         },
         'files': '<%= meta.source %>',
-        'tasks': ['jshint:source', 'karma:dev', 'newer:copy:dev']
+        'tasks': ['jshint:dev', 'karma:dev', 'newer:copy:dev']
       },
       'stylesheets': {
         'options': {
@@ -170,8 +170,16 @@ module.exports = function (grunt) {
 	  },
 
     'jshint': {
-      'source': '<%= meta.source %>',
-      'gruntfile': 'Gruntfile.js'
+      'dev': {
+        'options': {
+          'debug': true,
+        },
+        'src': '<%= meta.source %>',
+        'gruntfile': 'Gruntfile.js'
+      },
+      'dist': {
+        'src': '<%= meta.source %>'
+      }
     },
 
     'csslint': {
@@ -248,7 +256,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('develop', [
     'clean:dev',
-    'jshint',
+    'jshint:dev',
     'csslint:dev',
     'karma:dev',
     'bower:dev',
@@ -258,13 +266,13 @@ module.exports = function (grunt) {
     'watch'
   ]);
 
-  grunt.registerTask('test', ['karma:dev']);
+  grunt.registerTask('test', ['jshint:dist', 'karma:dev']);
 
   grunt.registerTask('dist', [
     'clean:dist',
     'bower-install-simple:dist',
     'bower:dist',
-    'jshint:source',
+    'jshint',
     'csslint:dev',
     'karma:dev',
     'concat:dist',

@@ -35,31 +35,26 @@ endpoints.factory('EndpointManager', ['$q', 'parlayEndpoint', 'ParlaySocket', fu
         });
     };
     
-    Private.socket.onMessage(['motor', 'arm'], function (message) {
+    Private.socket.onMessage({'type': 'motor'}, function (message) {
         //
     });
     
-    Private.socket.onMessage({
-        'motor': function (message) {
-            //
-        },
-        'arm': function (message) {
-            //
-        }
-    });
-    
-    Private.socket.onMessage('wheel', function (message) {
+    Private.socket.onMessage({'type': 'wheel'}, function (message) {
         //
     });
      
-    Private.socket.sendMessage('motor', {data: []});
-    Private.socket.sendMessage('arm', {data: []});
-    Private.socket.sendMessage('wheel', {data: []});
-    Private.socket.sendMessage('engine', {data: []}, function (message) {
+    Private.socket.sendMessage({'type': 'motor'}, {data: []});
+    Private.socket.sendMessage({'type': 'arm'}, {data: []});
+    Private.socket.sendMessage({'type': 'wheel'}, {data: []});
+    Private.socket.sendMessage({'type': 'engine'}, {data: []}, function (message) {
         //
     });
     
+    Private.socket.sendMessage({'topics': {'type': 'broker', 'request':'get_protocols'}, 'contents': {}});
     
+    Private.socket.onOpen(function () {
+        Public.active_endpoints.push({});
+    });
     
     return Public;
 }]);

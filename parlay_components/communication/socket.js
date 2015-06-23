@@ -1,6 +1,6 @@
 var socket = angular.module('parlay.socket', ['ngWebSocket']);
 
-socket.factory('ParlaySocket', ['$websocket', '$q', '$rootScope', '$log', function ($websocket, $q, $rootScope, $log) {
+socket.factory('ParlaySocket', ['$websocket', '$q', '$rootScope', function ($websocket, $q, $rootScope) {
     
     var Public = {
         connected: false
@@ -10,22 +10,42 @@ socket.factory('ParlaySocket', ['$websocket', '$q', '$rootScope', '$log', functi
         rootScope: $rootScope,
         public: Public,
         socket: $websocket('ws://localhost:' + 8085),
-        onMessageActions: {}
+        onMessageCallbacks: new Map(),
+        onOpenCallbacks: []
     };
     
+    /**
+     * 
+     */
     Private.socket.onOpen(function (event) {
         Private.rootScope.$applyAsync(function () {
             Private.public.connected = true;
         });
         
+        Private.onOpenCallbacks.forEach(function(callback) {
+            callback();
+        });
     });
     
     Private.socket.onClose(function (event) {
         Private.rootScope.$applyAsync(function () {
             Private.public.connected = false;
         });
-    });    
+    });
     
+    Private.socket.onMessage(function(messageEvent) {
+        var message = JSON.parse(messageEvent.data);
+        Private.invokeCallbacks(message.topics, message.contents);        
+    });
+    
+    Public.onOpen = function (func) {
+        Private.onOpenCallbacks.push(func);
+    };    
+    
+    /**
+     * Closes $websocket and returns Promise when complete.
+     * @returns {$q.defer.promise} Resolved after $websocket.close()
+     */
     Private.close = function () {
         $q(function (resolve, reject) {
             Private.socket.close();
@@ -33,74 +53,92 @@ socket.factory('ParlaySocket', ['$websocket', '$q', '$rootScope', '$log', functi
         });
     };
     
+    /**
+     * Passes message down to $websocket.send()
+     */
     Private.send = function (message) {
         return Private.socket.send(message);
     };
     
-    Private.socket.onMessage(function(messageEvent) {
-        var message = JSON.parse(messageEvent.data);
-        try {
-            Private.onMessageActions[message.topic] = Private.onMessageActions[message.topic].filter(function (action) {
-                action.callback(this);
-                return action.permenant;
-            }, message.contents);
-        } catch (error) {
-            $log.error(error.message);
-        }
+    /**
+     * Sets a key/value pair in the onMessageCallbacks Map where the key is the topics and the value is a callback function.
+     * @param {Object} topics - Map of key/value pairs.
+     * @param {Function} callbackFunc - Callback function which will be invoked when a messaged is received that topic signature.
+     * @param {Bool} persist - If false callback function will be removed after a invocation, if true it will persist.
+     */
+    Private.registerListener = function(topics, callbackFunc, persist) {
+        var callbackFuncIndex = 0;
+        var callbacks = Private.onMessageCallbacks.get(topics);
+            
+        if (callbacks !== undefined) callbackFuncIndex = callbacks.push({func: callbackFunc, persist: persist}) - 1;
+        else Private.onMessageCallbacks.set(topics, [{func: callbackFunc, persist: persist}]);
         
-    });
-    
-    Public.onOpen = function (topic, contents) {
+        Private.doTest();
         
+        return function deregisterListener() {
+            Private.deregisterListener(topics, callbackFuncIndex);
+        };        
     };
     
-    Public.onMessage = function (topics, callback) {
-        if (typeof topics === 'string') {
-            if (Private.onMessageActions.hasOwnProperty(topics)) {
-                Private.onMessageActions[topics].push({callback: callback, permenant: true});    
-            }
-            else {
-                Private.onMessageActions[topics] = [{callback: callback, permenant: true}];
-            }
+    /**
+     * Removes the callback associated with the topics and callbackFuncIndex.
+     * @param {Object} topics - Map of key/value pairs.
+     * @param {Integer} callbackFuncIndex - Position of callback function within array of callbacks.
+     */    
+    Private.deregisterListener = function (topics, callbackFuncIndex) {
+        var callbacks = Private.onMessageCallbacks.get(topics);
+        callbacks.splice(callbackFuncIndex, 1);
+        if (callbacks !== undefined) {
+            if (callbacks.length > 0) Private.onMessageCallbacks.set(topics, callbacks);
+            else Private.onMessageCallbacks.delete(topics);
         }
-        else if (Array.isArray(topics)) {
-            topics.forEach(function (topic) {
-                if (this.hasOwnProperty(topic)) {
-                    this[topic].push({callback: callback, permenant: true});
-                }
-                else {
-                    this[topic] = [{callback: callback, permenant: true}];    
-                }                
-            }, Private.onMessageActions);    
-        }
-        else if (typeof topics === 'object') {
-            for (var topic in topics) {
-                if (Private.onMessageActions.hasOwnProperty(topic)) {
-                    Private.onMessageActions[topic].push({callback: topics[topic], permenant: true});
-                }
-                else {
-                    Private.onMessageActions[topic] = [{callback: topics[topic], permenant: true}];
-                }
-            }
+    };
+    
+    /**
+     * Invokes callbacks associated with the topics, passes contents as parameters.
+     * If the callback is not persistent it will be removed after invocation.
+     * @param {Object} topics - Map of key/value pairs.
+     * @param {Object} contents - Map of key/value pairs.
+     */
+    Private.invokeCallbacks = function (topics, contents) {
+        var callbacks = Private.onMessageCallbacks.get(topics);
+        if (callbacks !== undefined) Private.onMessageCallbacks.set(topics, callbacks.filter(function (callback) {
+            callback.func(contents);
+            return callback.persist;
+        }));
+    };
+    
+    /**
+     * Registers a callback to be associated with topics. Callback is invoked when message is received over WebSocket from Broker with matching signature.
+     * @param {Object} topics - Map of key/value pairs.
+     * @param {Function} callbackFunc - Callback function which will be invoked when a messaged is received that topic signature.
+     * @returns {Function} Deregistration function for this message listener.
+     */
+    Public.onMessage = function (topics, callbackFunc) {
+        if (typeof topics === 'object') return Private.registerListener(topics, callbackFunc, true);
+        else throw new TypeError('Invalid type for topics, accepts Map.', 'socket.js');
+    };
+    
+    /**
+     * Sends message to connected Broker over WebSocket with associated topics and contents. 
+     * Optionally registers a callback which will be called upon reply with matching topic signature.
+     * @param {Object} topics - Map of key/value pairs.
+     * @param {Object} contents - Map of key/value pairs.
+     * @returns {$q.defer.promise} Resolves once message has been passed to socket.
+     */
+    Public.sendMessage = function (topics, contents, callbackFunc) {
+        if (typeof topics === 'object') {
+            if (callbackFunc !== undefined) Private.registerListener(topics, callbackFunc, false);
+            return Private.send({topics: topics, contents: contents});
         }
         else {
-            throw new TypeError('tets');
+            throw new TypeError('Invalid type for topics, accepts Map.', 'socket.js');
         }
-        
     };
     
-    Public.sendMessage = function (topic, contents, callback) {
-        if (callback !== undefined) {
-            if (Private.onMessageActions.hasOwnProperty(topic)) {
-                Private.onMessageActions[topic].push({callback: callback, permenant: false});
-            }
-            else {
-                Private.onMessageActions[topic] = [{callback: callback, permenant: false}];
-            }
-        }
-        return Private.send({topic: topic, contents: contents});
-    };
-    
+    /**
+     * Calls Private.close()
+     */
     Public.close = function () {
         return Private.close();
     };

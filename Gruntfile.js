@@ -273,8 +273,7 @@ module.exports = function (grunt) {
     'copy:all',
     'cssmin:dist',
     'processhtml:dist',
-    'wiredep:dist',
-    'jsdoc'    
+    'wiredep:dist'
   ]);
 
   grunt.registerTask('build', ['dist']);

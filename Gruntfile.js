@@ -4,7 +4,7 @@ module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt);
 
   grunt.initConfig({
-    'pkg': grunt.file.readJSON('package.JSON'),
+    'pkg': grunt.file.readJSON('package.json'),
 
     'meta': {
       'source': [
@@ -241,13 +241,6 @@ module.exports = function (grunt) {
       'dist': {
         'files': {'<%= meta.dist_destination %>/<%= pkg.namelower %>.min.css': '<%= meta.stylesheets %>'}
       }
-    },
-
-    'jsdoc': {
-      'src': ['<%= meta.source %>'],
-      'options': {
-        'destination': '<%= meta.doc_destination %>'
-      }
     }
 
   });
@@ -280,8 +273,7 @@ module.exports = function (grunt) {
     'copy:all',
     'cssmin:dist',
     'processhtml:dist',
-    'wiredep:dist',
-    'jsdoc'    
+    'wiredep:dist'
   ]);
 
   grunt.registerTask('build', ['dist']);

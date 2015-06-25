@@ -10,19 +10,6 @@ describe('parlay.endpoints', function() {
 			endpointController = $controller('endpointController', {$scope: scope});
 		}));
 
-		describe('toast alert positioning', function () {
-			it('sets', function() {
-				expect(scope.toastPosition.bottom).toBeTruthy();
-				expect(scope.toastPosition.left).toBeTruthy();
-				expect(scope.toastPosition.top).toBeFalsy();
-				expect(scope.toastPosition.right).toBeFalsy();
-			});
-
-			it('retrieval', function () {
-				expect(scope.getToastPosition()).toBe('bottom left');
-			});
-		});
-
 		describe('search state', function () {
 
 			it('initilization', function () {

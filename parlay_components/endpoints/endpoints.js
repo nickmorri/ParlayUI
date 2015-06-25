@@ -62,19 +62,6 @@ endpoints.factory('EndpointManager', ['$q', 'parlayEndpoint', 'ParlaySocket', fu
 endpoints.controller('endpointController', ['$scope', '$mdToast', 'EndpointManager', function ($scope, $mdToast, EndpointManager) {
     $scope.endpointManager = EndpointManager;
     
-    // Toast alert position configuration
-    $scope.toastPosition = {
-        bottom: true,
-        left: true,
-        top: false,
-        right: false
-    };
-
-    // Retrieves toast position
-    $scope.getToastPosition = function() {
-        return Object.keys($scope.toastPosition).filter(function(pos) { return $scope.toastPosition[pos]; }).join(' ');
-    };
-    
     $scope.isSearching = false;
     
     $scope.toggleSearch = function () {
@@ -101,9 +88,8 @@ endpoints.controller('endpointController', ['$scope', '$mdToast', 'EndpointManag
             // Display toast alert notifying user of lost connection
             $mdToast.show($mdToast.simple()
                 .content('Disconnected ' + index + ' endpoint!')
-                .action('Reconnect')
-                .highlightAction(true)
-                .position($scope.getToastPosition()).hideDelay(3000)).then($scope.reconnectEndpoint);
+                .action('Reconnect').highlightAction(true)
+                .position('bottom left').hideDelay(3000)).then($scope.reconnectEndpoint);
         });        
     };    
     

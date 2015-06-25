@@ -127,6 +127,10 @@ module.exports = function (grunt) {
         },
         'files': ['<%= meta.htmlDirectives %>', '<%= meta.htmlPartials %>', 'index.html'],
         'tasks': ['newer:copy']
+      },
+      'tests': {
+        'files': '<%= meta.tests %>',
+        'tasks': 'karma:dev'
       }
     },
 

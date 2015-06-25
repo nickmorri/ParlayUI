@@ -1,4 +1,4 @@
-var socket = angular.module('parlay.socket', ['ngWebSocket']);
+var socket = angular.module('parlay.socket', ['ngWebsocket', 'ngMaterial']);
 
 socket.factory('ParlaySocket', ['$websocket', '$q', '$rootScope', '$mdToast', function ($websocket, $q, $rootScope, $mdToast) {
     
@@ -58,18 +58,17 @@ socket.factory('ParlaySocket', ['$websocket', '$q', '$rootScope', '$mdToast', fu
      * @returns {$q.defer.promise} Resolves once message has been passed to socket.
      */
     Public.sendMessage = function (topics, contents, callbackFunc) {
-        if (typeof topics === 'object') {
-            if (callbackFunc !== undefined) Private.registerListener(topics, callbackFunc, false);
-            return Private.send({topics: topics, contents: contents});
-        }
+        if (typeof topics === 'object') return Private.send({topics: topics, contents: contents}, callbackFunc);
         else throw new TypeError('Invalid type for topics, accepts Map.', 'socket.js');
     };
     
     /**
      * Calls Private.open()
+     * @param {Boolean} mock - If true this is a mock socket, used for testing. Otherwise it is false and for production.
      */
-    Public.open = function () {
-        return Private.open();
+    Public.open = function (mock) {
+        if (mock === undefined || !mock) return Private.open(false);
+        else return Private.open(mock);
     };
     
     /**
@@ -81,13 +80,20 @@ socket.factory('ParlaySocket', ['$websocket', '$q', '$rootScope', '$mdToast', fu
     
     /**
      * Opens $websocket and attaches event listeners.
-     * @returns {$q.defer.promise} Resolved after $websocket.open()
+     * @param {Boolean} mock - If true this is a mock socket, used for testing. Otherwise it is false and for production.
+     * @returns {$q.defer.promise} Resolved after WebSocket creation
      */
-    Private.open = function () {
+    Private.open = function (mock) {
         return $q(function (resolve, reject) {
-            Private.socket = $websocket('ws://localhost:' + 8085);
+            Private.socket = $websocket.$new({
+                url: 'ws://' + location.hostname + ':8085',
+                protocol: [],
+                lazy: false,
+                reconnect: false,
+                mock: mock
+            });
             
-            Private.socket.onOpen(function (event) {
+            Private.socket.$on('$open', function (event) {
                 Private.rootScope.$applyAsync(function () {
                     Private.public.connected = true;
                 });
@@ -97,7 +103,7 @@ socket.factory('ParlaySocket', ['$websocket', '$q', '$rootScope', '$mdToast', fu
                 });
             });
             
-            Private.socket.onClose(function (event) {
+            Private.socket.$on('$close', function (event) {
                 Private.rootScope.$applyAsync(function () {
                     Private.public.connected = false;
                 });
@@ -113,15 +119,17 @@ socket.factory('ParlaySocket', ['$websocket', '$q', '$rootScope', '$mdToast', fu
                 });
             });
             
-            Private.socket.onError(function (event) {
+            Private.socket.$on('$error', function (event) {
                 Private.onErrorCallbacks.forEach(function(callback) {
                     callback();
                 });
             });
             
-            Private.socket.onMessage(function(messageEvent) {
-                var message = JSON.parse(messageEvent.data);
-                Private.invokeCallbacks(message.topics, message.contents);        
+            Private.socket.$on('$message', function(messageEvent) {
+                if (messageEvent !== undefined && messageEvent.hasOwnProperty('data')) {
+                    var message = JSON.parse(messageEvent.data);
+                    Private.invokeCallbacks(message.topics, message.contents);
+                }                
             });
             
             resolve();    
@@ -134,7 +142,7 @@ socket.factory('ParlaySocket', ['$websocket', '$q', '$rootScope', '$mdToast', fu
      */
     Private.close = function () {
         $q(function (resolve, reject) {
-            Private.socket.close();
+            Private.socket.$close();
             resolve();
         });
     };
@@ -142,8 +150,9 @@ socket.factory('ParlaySocket', ['$websocket', '$q', '$rootScope', '$mdToast', fu
     /**
      * Passes message down to $websocket.send()
      */
-    Private.send = function (message) {
-        return Private.socket.send(message);
+    Private.send = function (message, callbackFunc) {
+        if (callbackFunc !== undefined) Private.registerListener(topics, callbackFunc, false);
+        return Private.socket.$emit(JSON.stringify(message));
     };
     
     /**
@@ -214,9 +223,6 @@ socket.factory('ParlaySocket', ['$websocket', '$q', '$rootScope', '$mdToast', fu
             return callback.persist;
         }));
     };
-    
-    // On instantiation of ParlaySocket we should open the underlying $websocket.   
-    Private.open();
     
     return Public;
 }]);

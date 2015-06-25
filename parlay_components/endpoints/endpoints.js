@@ -35,26 +35,9 @@ endpoints.factory('EndpointManager', ['$q', 'parlayEndpoint', 'ParlaySocket', fu
         });
     };
     
-    Private.socket.onMessage({'type': 'motor'}, function (message) {
-        //
-    });
+    Private.socket.open();
     
-    Private.socket.onMessage({'type': 'wheel'}, function (message) {
-        //
-    });
-     
-    Private.socket.sendMessage({'type': 'motor'}, {data: []});
-    Private.socket.sendMessage({'type': 'arm'}, {data: []});
-    Private.socket.sendMessage({'type': 'wheel'}, {data: []});
-    Private.socket.sendMessage({'type': 'engine'}, {data: []}, function (message) {
-        //
-    });
-    
-    Private.socket.sendMessage({'topics': {'type': 'broker', 'request':'get_protocols'}, 'contents': {}});
-    
-    Private.socket.onOpen(function () {
-        Public.active_endpoints.push({});
-    });
+    Private.socket.sendMessage({type: 'motor'}, {data:[]});
     
     return Public;
 }]);
@@ -91,7 +74,7 @@ endpoints.controller('endpointController', ['$scope', '$mdToast', 'EndpointManag
                 .action('Reconnect').highlightAction(true)
                 .position('bottom left').hideDelay(3000)).then($scope.reconnectEndpoint);
         });        
-    };    
+    };
     
 }]);
 

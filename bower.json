@@ -8,8 +8,8 @@
     "angular-material-icons": "angular-material-icons#0.4.0",
     "angular-ui-router": "angular-ui-router#master",
     "ace-builds": "ace-builds#master",
+    "ng-websocket": "~0.2.1",
     "angular-ui-ace": "angular-ui-ace#bower",
-    "angular-websocket": "~1.0.13",
     "es6-shim": "~0.32.3"
   },
   "resolutions": {
@@ -22,9 +22,6 @@
     },
     "angular-material-icons": {
       "main": "angular-material-icons.js"
-    },
-    "angular-websocket": {
-      "main": "angular-websocket.js"
     }
   }
 }

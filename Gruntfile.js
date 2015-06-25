@@ -233,8 +233,11 @@ module.exports = function (grunt) {
 
     'uglify': {
       'options': {
-        'mangle': false
-      },  
+        'mangle': true,
+        'compress': true,
+        'sourceMap': true,
+        'preserveComments': false,
+      },
       'dist': {
         'files': {
           '<%= meta.dist_destination %>/<%= pkg.namelower %>.min.js': ['<%= meta.dist_destination %>/<%= pkg.namelower %>.js']

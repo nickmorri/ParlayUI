@@ -21,6 +21,10 @@ navigation.directive('parlayToolbar', function () {
                 $scope.socket.close();
             };
             
+            $scope.connect = function () {
+                $scope.socket.open();
+            };
+            
             // If the media query for greater than medium screen size breakpoint is false we should collapse the menu
             $scope.$watch(function () {
                 return $mdMedia('gt-md');

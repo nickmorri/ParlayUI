@@ -11,16 +11,21 @@
                     <ng-md-icon ng-if="!socket.connected" class="white" icon="cloud_queue"></ng-md-icon>
                 </md-button>
             </md-button>
-            <md-menu-content width="4">
-                <md-menu-item ng-if="socket.connected">
+            <md-menu-content width="4" ng-switch="socket.connected">
+                <md-menu-item ng-switch-when="true">
                     <md-button ng-click="disconnect()">
                         <ng-md-icon icon="cloud_off" md-menu-align-target></ng-md-icon>
                         Disconnect from broker
                     </md-button>
                 </md-menu-item>
+                <md-menu-item ng-switch-when="false">
+                    <md-button ng-click="connect()">
+                        <ng-md-icon icon="cloud" md-menu-align-target></ng-md-icon>
+                        Connect to broker
+                    </md-button>
+                </md-menu-item>
             </md-menu-content>
         </md-menu>
-        
         
     </div>
 </md-toolbar>

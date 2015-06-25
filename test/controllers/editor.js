@@ -1,13 +1,15 @@
+"use strict";
+
 describe('parlay.editor', function() {
     
     beforeEach(module('parlay.editor'));
     
 	describe('editorController', function () {
-		var scope, controller;
+		var scope, editorController;
 
 		beforeEach(inject(function($rootScope, $controller) {
 			scope = $rootScope.$new();
-			endpointController = $controller('editorController', {$scope: scope});
+			editorController = $controller('editorController', {$scope: scope});
 		}));
 
 		describe('ace editor', function () {

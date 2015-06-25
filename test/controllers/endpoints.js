@@ -1,9 +1,11 @@
+"use strict";
+
 describe('parlay.endpoints', function() {
     
     beforeEach(module('parlay.endpoints'));
     
 	describe('endpointController', function () {
-		var scope, controller;
+		var scope, endpointController;
 
 		beforeEach(inject(function($rootScope, $controller) {
 			scope = $rootScope.$new();

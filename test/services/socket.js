@@ -5,18 +5,21 @@ describe('parlay.socket', function() {
     beforeEach(module('parlay.socket'));
     
 	describe('ParlaySocket', function () {
-		var ParlaySocket, $websocketBackend;
+		var ParlaySocket;
 
-		beforeEach(inject(function(_parlaySocket_, _$websocketBackend_) {
-    		ParlaySocket = _parlaySocket_;
-            $websocketBackend = _$websocketBackend_;
-            
-            $websocketBackend.mock();
-            $websocketBackend.expectConnect('ws://localhost:8085');
+		beforeEach(inject(function(_ParlaySocket_) {
+    		ParlaySocket = _ParlaySocket_;
 		}));
+
 		
-		
-		
-	});
+		describe('initialization', function () {
+
+			it('should connect', function () {
+    			
+            });
+    
+        });
+    		
+    });
     
 });

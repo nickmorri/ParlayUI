@@ -1,14 +1,30 @@
 var socket = angular.module('parlay.socket', ['ngWebsocket', 'ngMaterial']);
 
-socket.factory('ParlaySocket', ['$websocket', '$q', '$rootScope', '$mdToast', function ($websocket, $q, $rootScope, $mdToast) {
+socket.factory('ParlaySocketService', function () {
+    var ParlaySocketService = {};
     
-    var Public = {
-        connected: false
+    // Stores registered sockets by URL
+    ParlaySocketService.registeredSockets = {};
+    
+    // If we find a socket registered to a URL we should return it.
+    ParlaySocketService.get = function(url) {
+        if (ParlaySocketService.registeredSockets[url] !== undefined) return ParlaySocketService.registeredSockets[url];
+        else return undefined;
     };
+    
+    // Register a socket to a URL.
+    ParlaySocketService.register = function (url, socket) {
+        ParlaySocketService.registeredSockets[url] = socket;  
+    };
+    
+    return ParlaySocketService;
+    
+});
+
+socket.factory('ParlaySocket', ['ParlaySocketService', '$websocket', '$q', '$rootScope', '$mdToast', function (ParlaySocketService, $websocket, $q, $rootScope, $mdToast) {
     
     var Private = {
         rootScope: $rootScope,
-        public: Public,
         onMessageCallbacks: new Map(),
         onOpenCallbacks: [],
         onCloseCallbacks: [],
@@ -16,126 +32,24 @@ socket.factory('ParlaySocket', ['$websocket', '$q', '$rootScope', '$mdToast', fu
     };
     
     /**
-     * Registers a callback which will be invoked on socket open.
-     * @param {Function} callbackFunc - Callback function which will be invoked on socket open.
+     * Is this a mocked socket? Used for unit testing. Should not be true in production.
+     * @returns {Boolean} True if it is a mocked socket, false if not.
      */
-    Public.onOpen = function (callbackFunc) {
-        Private.onOpenCallbacks.push(callbackFunc);
+    Private.isMock = function () {
+        return Private.socket.$mockup();
     };
     
     /**
-     * Registers a callback which will be invoked on socket close.
-     * @param {Function} callbackFunc - Callback function which will be invoked on socket close.
+     * Opens $websocket and returns Promise when complete.
+     * @returns {$q.defer.promise} Resolved after $websocket.open()
      */
-    Public.onClose = function (callbackFunc) {
-        Private.onCloseCallbacks.push(callbackFunc);
+    Private.open = function () {
+        $q(function (resolve, reject) {
+            Private.socket.$open();
+            resolve(); 
+        });
     };
-    
-    /**
-     * Registers a callback which will be invoked on socket error.
-     * @param {Function} callbackFunc - Callback function which will be invoked on socket error.
-     */
-    Public.onError = function (callbackFunc) {
-        Private.onErrorCallbacks.push(callbackFunc);  
-    };
-    
-    /**
-     * Registers a callback to be associated with topics. Callback is invoked when message is received over WebSocket from Broker with matching signature.
-     * @param {Object} topics - Map of key/value pairs.
-     * @param {Function} callbackFunc - Callback function which will be invoked when a messaged is received that topic signature.
-     * @returns {Function} Deregistration function for this message listener.
-     */
-    Public.onMessage = function (topics, callbackFunc) {
-        if (typeof topics === 'object') return Private.registerListener(topics, callbackFunc, true);
-        else throw new TypeError('Invalid type for topics, accepts Map.', 'socket.js');
-    };
-    
-    /**
-     * Sends message to connected Broker over WebSocket with associated topics and contents. 
-     * Optionally registers a callback which will be called upon reply with matching topic signature.
-     * @param {Object} topics - Map of key/value pairs.
-     * @param {Object} contents - Map of key/value pairs.
-     * @returns {$q.defer.promise} Resolves once message has been passed to socket.
-     */
-    Public.sendMessage = function (topics, contents, callbackFunc) {
-        if (typeof topics === 'object') return Private.send({topics: topics, contents: contents}, callbackFunc);
-        else throw new TypeError('Invalid type for topics, accepts Map.', 'socket.js');
-    };
-    
-    /**
-     * Calls Private.open()
-     * @param {Boolean} mock - If true this is a mock socket, used for testing. Otherwise it is false and for production.
-     */
-    Public.open = function (mock) {
-        if (mock === undefined || !mock) return Private.open(false);
-        else return Private.open(mock);
-    };
-    
-    /**
-     * Calls Private.close()
-     */
-    Public.close = function () {
-        return Private.close();
-    };    
-    
-    /**
-     * Opens $websocket and attaches event listeners.
-     * @param {Boolean} mock - If true this is a mock socket, used for testing. Otherwise it is false and for production.
-     * @returns {$q.defer.promise} Resolved after WebSocket creation
-     */
-    Private.open = function (mock) {
-        return $q(function (resolve, reject) {
-            Private.socket = $websocket.$new({
-                url: 'ws://' + location.hostname + ':8085',
-                protocol: [],
-                lazy: false,
-                reconnect: false,
-                mock: mock
-            });
-            
-            Private.socket.$on('$open', function (event) {
-                Private.rootScope.$applyAsync(function () {
-                    Private.public.connected = true;
-                });
-                
-                Private.onOpenCallbacks.forEach(function(callback) {
-                    callback();
-                });
-            });
-            
-            Private.socket.$on('$close', function (event) {
-                Private.rootScope.$applyAsync(function () {
-                    Private.public.connected = false;
-                });
-                
-                // When socket is closed we should show a toast alert giving the user the option to reconnect.
-                $mdToast.show($mdToast.simple()
-                    .content('Disconnected from Parlay Broker!')
-                    .action('Reconnect').highlightAction(true)
-                    .position('bottom left').hideDelay(3000)).then(Private.open);
-                
-                Private.onCloseCallbacks.forEach(function(callback) {
-                    callback();
-                });
-            });
-            
-            Private.socket.$on('$error', function (event) {
-                Private.onErrorCallbacks.forEach(function(callback) {
-                    callback();
-                });
-            });
-            
-            Private.socket.$on('$message', function(messageEvent) {
-                if (messageEvent !== undefined && messageEvent.hasOwnProperty('data')) {
-                    var message = JSON.parse(messageEvent.data);
-                    Private.invokeCallbacks(message.topics, message.contents);
-                }                
-            });
-            
-            resolve();    
-        });        
-    };
-    
+        
     /**
      * Closes $websocket and returns Promise when complete.
      * @returns {$q.defer.promise} Resolved after $websocket.close()
@@ -150,9 +64,10 @@ socket.factory('ParlaySocket', ['$websocket', '$q', '$rootScope', '$mdToast', fu
     /**
      * Passes message down to $websocket.send()
      */
-    Private.send = function (message, callbackFunc) {
+    Private.send = function (topics, contents, callbackFunc) {
         if (callbackFunc !== undefined) Private.registerListener(topics, callbackFunc, false);
-        return Private.socket.$emit(JSON.stringify(message));
+        if (Private.isMock()) return Private.socket.$emit(Private.encodeTopics(topics), {topics: topics, contents: contents});
+        else return Private.socket.$$send({topics: topics, contents: contents});
     };
     
     /**
@@ -224,5 +139,156 @@ socket.factory('ParlaySocket', ['$websocket', '$q', '$rootScope', '$mdToast', fu
         }));
     };
     
-    return Public;
+    return function (config) {
+        
+        var Public = {};
+        
+        // Check to see if we have already registered a socket connection to the requested URL.
+        var existingSocket = ParlaySocketService.get(config.url);
+        
+        if (existingSocket !== undefined) return existingSocket;
+        else ParlaySocketService.register(config.url, Public);
+
+        Private.public = Public;
+        Public._private = Private;
+        
+        // If a module has already instantiated the singleton WebSocket instance grab it.
+        // Otherwise setup a new WebSocket.
+        Private.socket = $websocket.$new({
+            url: config.url,
+            protocol: [],
+            enqueue: true,
+            reconnect: false,
+            mock: config.mock === undefined ? false : config.mock
+        });
+        
+        // When the WebSocket opens set the connected status and execute onOpen callbacks.
+        Private.socket.$on('$open', function (event) {
+            Private.rootScope.$applyAsync(function () {
+                Private.public.connected = Private.socket.$STATUS;
+            });
+            
+            Private.onOpenCallbacks.forEach(function(callback) {
+                callback();
+            });
+        });
+        
+        // When the WebSocket closes set the connected status and execute onClose callbacks.
+        Private.socket.$on('$close', function (event) {
+            Private.rootScope.$applyAsync(function () {
+                Private.public.connected = Private.socket.$STATUS;
+            });
+            
+            debugger;
+            
+            // When socket is closed we should show a toast alert giving the user the option to reconnect.
+            $mdToast.show($mdToast.simple()
+                .content('Disconnected from Parlay Broker!')
+                .action('Reconnect').highlightAction(true)
+                .position('bottom left').hideDelay(3000)).then(Private.open);
+            
+            Private.onCloseCallbacks.forEach(function(callback) {
+                callback();
+            });
+        });
+        
+        // When the WebSocket receives a message invokeCallbacks.
+        // If this is a mock socket we expect a slightly different message structuring.
+        Private.socket.$on('$message', function(messageString) {
+            if (Public.isMock()) Private.invokeCallbacks(messageString.data.topics, messageString.data.contents);
+            else if (messageString !== undefined) {
+                var message = JSON.parse(messageString);
+                Private.invokeCallbacks(message.topics, message.contents);
+            }                
+        });
+        
+        // When the WebSocket encounters an error execute onError callbacks.
+        Private.socket.$on('$error', function (event) {
+            Private.onErrorCallbacks.forEach(function(callback) {
+                callback();
+            });
+        });
+        
+        /**
+         * Registers a callback which will be invoked on socket open.
+         * @param {Function} callbackFunc - Callback function which will be invoked on socket open.
+         */
+        Public.onOpen = function (callbackFunc) {
+            Private.onOpenCallbacks.push(callbackFunc);
+        };
+        
+        /**
+         * Registers a callback which will be invoked on socket close.
+         * @param {Function} callbackFunc - Callback function which will be invoked on socket close.
+         */
+        Public.onClose = function (callbackFunc) {
+            Private.onCloseCallbacks.push(callbackFunc);
+        };
+        
+        /**
+         * Registers a callback which will be invoked on socket error.
+         * @param {Function} callbackFunc - Callback function which will be invoked on socket error.
+         */
+        Public.onError = function (callbackFunc) {
+            Private.onErrorCallbacks.push(callbackFunc);  
+        };
+        
+        /**
+         * Registers a callback to be associated with topics. Callback is invoked when message is received over WebSocket from Broker with matching signature.
+         * @param {Object} topics - Map of key/value pairs.
+         * @param {Function} callbackFunc - Callback function which will be invoked when a messaged is received that topic signature.
+         * @returns {Function} Deregistration function for this message listener.
+         */
+        Public.onMessage = function (topics, callbackFunc) {
+            if (typeof topics === 'object') return Private.registerListener(topics, callbackFunc, true);
+            else throw new TypeError('Invalid type for topics, accepts Map.', 'socket.js');
+        };
+        
+        /**
+         * Sends message to connected Broker over WebSocket with associated topics and contents. 
+         * Optionally registers a callback which will be called upon reply with matching topic signature.
+         * @param {Object} topics - Map of key/value pairs.
+         * @param {Object} contents - Map of key/value pairs.
+         * @returns {$q.defer.promise} Resolves once message has been passed to socket.
+         */
+        Public.sendMessage = function (topics, contents, callbackFunc) {
+            if (typeof topics === 'object') return Private.send(topics, contents, callbackFunc);
+            else throw new TypeError('Invalid type for topics, accepts Map.', 'socket.js');
+        };
+        
+        /**
+         * Calls Private.open()
+         */
+        Public.open = function () {
+            return Private.open();
+        };
+                
+        /**
+         * Calls Private.close()
+         */
+        Public.close = function () {
+            return Private.close();
+        };
+        
+        /**
+         * Asks Private data if we are using mock socket.
+         * @returns {Boolean} True if it is a mocked socket, false if not.
+         */
+        Public.isMock = function () {
+            return Private.isMock();
+        };
+        
+        /**
+         * Checks status of underlying WebSocket
+         * @returns {Boolean} True if we are currently connected, false if not.
+         */
+        Public.isConnected = function () {
+            Public.connected = Private.socket.$status() === Private.socket.$OPEN;
+            return Public.connected;
+        };
+        
+        return Public;
+            
+    };
+    
 }]);

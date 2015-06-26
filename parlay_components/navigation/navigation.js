@@ -7,7 +7,9 @@ navigation.directive('parlayToolbar', function () {
         templateUrl: 'parlay_components/navigation/directives/parlay-toolbar.html',
         controller: ['$scope', '$mdSidenav', '$mdMedia', 'parlayNavToggleOpen', 'ParlaySocket', function ($scope, $mdSidenav, $mdMedia, parlayNavToggleOpen, ParlaySocket) {
             
-            $scope.socket = ParlaySocket;
+            $scope.socket = ParlaySocket({
+                url: 'ws://' + location.hostname + ':8085'
+            });
             
             // If we are on a screen size greater than the medium layout breakpoint we should open the navigation menu by default
             $scope.parlayNavToggleOpen = $mdMedia('gt-md');

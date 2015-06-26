@@ -7,11 +7,11 @@
         <md-menu>
             <md-button aria-label="Open editing menu" ng-click="$mdOpenMenu()">
                 <md-button class="md-icon-button" aria-label="Menu">
-                    <ng-md-icon ng-if="socket.connected" class="white" icon="cloud"></ng-md-icon>
-                    <ng-md-icon ng-if="!socket.connected" class="white" icon="cloud_queue"></ng-md-icon>
+                    <ng-md-icon ng-if="socket.isConnected()" class="white" icon="cloud"></ng-md-icon>
+                    <ng-md-icon ng-if="!socket.isConnected()" class="white" icon="cloud_queue"></ng-md-icon>
                 </md-button>
             </md-button>
-            <md-menu-content width="4" ng-switch="socket.connected">
+            <md-menu-content width="4" ng-switch="socket.isConnected()">
                 <md-menu-item ng-switch-when="true">
                     <md-button ng-click="disconnect()">
                         <ng-md-icon icon="cloud_off" md-menu-align-target></ng-md-icon>

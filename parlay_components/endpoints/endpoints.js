@@ -10,7 +10,9 @@ endpoints.factory('parlayEndpoint', function () {
 endpoints.factory('EndpointManager', ['$q', 'parlayEndpoint', 'ParlaySocket', function ($q, parlayEndpoint, ParlaySocket) {
     var Public = {};
     var Private = {
-        socket: ParlaySocket
+        socket: ParlaySocket({
+            url: 'ws://' + location.hostname + ':8085'
+        })
     };
     
     Public.active_endpoints = [];
@@ -34,11 +36,7 @@ endpoints.factory('EndpointManager', ['$q', 'parlayEndpoint', 'ParlaySocket', fu
             resolve(Public.active_endpoints.length);
         });
     };
-    
-    Private.socket.open();
-    
-    Private.socket.sendMessage({type: 'motor'}, {data:[]});
-    
+        
     return Public;
 }]);
 

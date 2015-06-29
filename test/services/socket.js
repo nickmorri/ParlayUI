@@ -201,6 +201,8 @@ describe('parlay.socket', function() {
         
         describe('encodes', function () {
             
+            // NOTE: Encoding is done by sorting topics by comparison of keys in Unicode code point order.
+            
             it('strings', function () {
                 expect(ParlaySocket._private.encodeTopics({"type": "motor"})).toBe('{"type":"motor"}');
             });
@@ -209,12 +211,27 @@ describe('parlay.socket', function() {
                 expect(ParlaySocket._private.encodeTopics({"to_device": 22})).toBe('{"to_device":22}');   
             });
             
+            it('arrays', function () {
+                expect(ParlaySocket._private.encodeTopics({"params": []})).toBe('{"params":[]}');
+                expect(ParlaySocket._private.encodeTopics({"params": [5, 10]})).toBe('{"params":[10,5]}');
+                expect(ParlaySocket._private.encodeTopics({"params": [{"type":1}, 10]})).toBe('{"params":[10,{"type":1}]}');
+            });
+            
             it('multiple topics', function () {
                 expect(ParlaySocket._private.encodeTopics({"type": "motor", "weight":"bold"})).toBe('{"type":"motor","weight":"bold"}');
             });
             
             it('mixed types', function () {
                 expect(ParlaySocket._private.encodeTopics({"to_device": 22})).toBe('{"to_device":22}');
+            });
+            
+            it('nested', function () {
+                expect(ParlaySocket._private.encodeTopics({"params": {"port": 22, "socket":"localhost"}, "data": []})).toBe('{"data":[],"params":{"port":22,"socket":"localhost"}}');
+            });
+            
+            it('orders topics consistently', function () {
+                expect(ParlaySocket._private.encodeTopics({"aaa":0, "bbb":1})).toBe('{"aaa":0,"bbb":1}');
+                expect(ParlaySocket._private.encodeTopics({"bbb":1, "aaa":0})).toBe('{"aaa":0,"bbb":1}');
             });
             
         });

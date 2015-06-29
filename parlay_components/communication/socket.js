@@ -76,19 +76,23 @@ socket.factory('ParlaySocket', ['ParlaySocketService', '$websocket', '$q', '$roo
      * @returns {String} Translation of key, values to String.
      */
     Private.encodeTopics = function (topics) {
-        return Object.keys(topics).sort().reduce(function (previous, current, index) {
+        if (typeof topics === 'string') return '"' + topics + '"';
+        else if (typeof topics === 'number') return topics.valueOf();
+        else if (Array.isArray(topics)) return topics.sort().reduce(function (previous, current, index) {
             var currentString = previous;
             
             if (index > 0) currentString += ",";
-            currentString += '"' + current + '":';
             
-            if (typeof topics[current] === "string") currentString += '"' + topics[current] + '"';
-            else if (typeof topics[current] === 'number') currentString += topics[current].valueOf();
-            else if (typeof topics[current] === 'object') currentString += Private.encodeTopics(topics[current]);
-            else currentString += topics[current].toString();
+            return currentString + Private.encodeTopics(current);
+        }, "[") + "]";
+        else if (typeof topics === 'object') return Object.keys(topics).sort().reduce(function (previous, current, index) {
+            var currentString = previous;
             
-            return currentString;
+            if (index > 0) currentString += ",";
+            
+            return currentString + '"' + current + '":' + Private.encodeTopics(topics[current]);
         }, "{") + "}";
+        else return topics.toString();
     };
     
     /**

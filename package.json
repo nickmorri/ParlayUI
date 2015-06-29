@@ -9,6 +9,9 @@
     "type": "git",
     "url": "promenade-build:root/Parlay"
   },
+  "scripts": {
+    "postinstall": "grunt build"
+  },
   "devDependencies": {
     "bower": "latest",
     "grunt": "^0.4.5",

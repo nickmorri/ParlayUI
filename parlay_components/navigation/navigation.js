@@ -47,11 +47,8 @@ navigation.controller('parlayNavController', ['$scope', '$state', '$rootScope', 
             'console': 'message'
         };
         
-        try {
-            return icons[state];
-        } catch (e) {
-            return '';
-        }
+        if (icons.hasOwnProperty(state)) return icons[state];
+        else return '';
     };
     
     // Retrieve and format state information to build navigation elements

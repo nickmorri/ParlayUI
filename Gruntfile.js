@@ -139,6 +139,12 @@ module.exports = function (grunt) {
     'open': {
       'all': {
         'path': 'http://localhost:<%= express.options.port %>'
+      },
+      'coverage': {
+        'path': function () {
+          var reports = grunt.file.expand('coverage/PhantomJS*/index.html');
+          return reports[reports.length - 1].toString();
+        }
       }
     },
 
@@ -146,6 +152,15 @@ module.exports = function (grunt) {
       'dev': {
         'configFile': 'karma.conf.js',
         'options': {
+          'reporters': ['progress', 'coverage'],
+          'preprocessors': {
+            'parlay_components/*.js': ['coverage'],
+            'parlay_components/**/*.js': ['coverage']
+          },
+          'coverageReporter': {
+            'type': 'html',
+            'dir': 'coverage'
+          },
           'files': [
             '<%= meta.bowerComponents %>',
             '<%= meta.staticComponents %>',
@@ -156,17 +171,7 @@ module.exports = function (grunt) {
       },
       'dist': {
         'options': {
-          'configFile': 'karma.conf.js',
-          'files': [
-            '<%= meta.bowerComponents %>',
-            '<%= meta.staticComponents %>',
-            '<%= meta.dist_destination %>/<%= pkg.namelower %>.js',
-            '<%= meta.tests %>'
-          ]
-        }
-      },
-      'minified': {
-        'options': {
+          'reporters': ['progress'],
           'configFile': 'karma.conf.js',
           'files': [
             '<%= meta.bowerComponents %>',
@@ -234,13 +239,6 @@ module.exports = function (grunt) {
       }
     },
 
-    'concat': {
-      'dist': {
-        'src': ['<%= meta.source %>'],
-        'dest': '<%= meta.dist_destination %>/<%= pkg.namelower %>.js'
-      }
-    },
-
     'uglify': {
       'options': {
         'mangle': true,
@@ -250,7 +248,7 @@ module.exports = function (grunt) {
       },
       'dist': {
         'files': {
-          '<%= meta.dist_destination %>/<%= pkg.namelower %>.min.js': ['<%= meta.dist_destination %>/<%= pkg.namelower %>.js']
+          '<%= meta.dist_destination %>/<%= pkg.namelower %>.min.js': ['<%= meta.source %>']
         }
       }
     },
@@ -280,7 +278,7 @@ module.exports = function (grunt) {
     'watch'
   ]);
 
-  grunt.registerTask('test', ['jshint:dist', 'karma:dev']);
+  grunt.registerTask('test', ['jshint', 'karma:dev']);
 
   grunt.registerTask('dist', [
     'clean:dist',
@@ -289,10 +287,8 @@ module.exports = function (grunt) {
     'jshint',
     'csslint:dev',
     'karma:dev',
-    'concat:dist',
-    'karma:dist',
     'uglify:dist',
-    'karma:minified',
+    'karma:dist',
     'copy:dist',
     'cssmin:dist',
     'processhtml:dist',

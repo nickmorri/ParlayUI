@@ -102,11 +102,12 @@ socket.factory('ParlaySocket', ['ParlaySocketService', '$websocket', '$q', '$roo
      * @param {Bool} persist - If false callback function will be removed after a invocation, if true it will persist.
      */
     Private.registerListener = function(topics, callbackFunc, persist) {
+        var encoded_topic_string = Private.encodeTopics(topics);
         var callbackFuncIndex = 0;
-        var callbacks = Private.onMessageCallbacks.get(Private.encodeTopics(topics));
+        var callbacks = Private.onMessageCallbacks.has(encoded_topic_string) ? Private.onMessageCallbacks.get(encoded_topic_string) : [];
             
-        if (callbacks !== undefined) callbackFuncIndex = callbacks.push({func: callbackFunc, persist: persist}) - 1;
-        else Private.onMessageCallbacks.set(Private.encodeTopics(topics), [{func: callbackFunc, persist: persist}]);
+        callbackFuncIndex = callbacks.push({func: callbackFunc, persist: persist}) - 1;
+        Private.onMessageCallbacks.set(encoded_topic_string, callbacks);
         
         return function deregisterListener() {
             Private.deregisterListener(topics, callbackFuncIndex);

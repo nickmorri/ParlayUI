@@ -153,7 +153,7 @@ describe('parlay.socket', function() {
                 
             });
             
-            xit('multiple listeners', function (done) {
+            it('multiple listeners', function (done) {
                 
                 var registrations = [];
                 var update_count = 0;
@@ -166,12 +166,14 @@ describe('parlay.socket', function() {
                     update_count++;
                 }));
                 
+                ParlaySocket.sendMessage({"type":"motor"});
+                
                 registrations.pop()();
                 
                 setTimeout(function () {
                     expect(update_count).toBe(1);
                     done();
-                }, 1000);
+                }, 100);
                 
             });
             

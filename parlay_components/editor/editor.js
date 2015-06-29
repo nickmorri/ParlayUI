@@ -1,4 +1,4 @@
-var editor = angular.module('parlay.editor', ['ui.router', 'ngMaterial', 'ngMdIcons', 'ui.ace']);
+var editor = angular.module('parlay.editor', ['ui.router', 'ngMaterial', 'ngMdIcons', 'ui.ace', 'templates-main']);
 
 /* istanbul ignore next */
 editor.config(function ($stateProvider) {

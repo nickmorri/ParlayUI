@@ -8,7 +8,8 @@ module.exports = function (grunt) {
 
     'meta': {
       'source': [
-        'app.js',
+	    'app.js',
+        'tmp/templates.js',
         'parlay_components/**/*.js'
       ],
       'dist_destination': 'dist',
@@ -162,7 +163,7 @@ module.exports = function (grunt) {
             'dir': 'coverage'
           },
           'files': [
-            '<%= meta.bowerComponents %>',
+			'<%= meta.bowerComponents %>',
             '<%= meta.staticComponents %>',
             '<%= meta.source %>',
             '<%= meta.tests %>'
@@ -222,13 +223,13 @@ module.exports = function (grunt) {
     'copy': {
       'dist': {
         'files': [
-          {'expand': true, 'src': ['<%= meta.htmlPartials %>', '<%= meta.htmlDirectives %>', 'bower_components/angular-material/angular-material.css', 'bower_components/ace-builds/src/mode-python.js', 'static_components/ng-websocket/ng-websocket.js'], 'dest': '<%= meta.dist_destination %>'}
+          {'expand': true, 'src': ['bower_components/angular-material/angular-material.css', 'bower_components/ace-builds/src/mode-python.js', 'static_components/ng-websocket/ng-websocket.js'], 'dest': '<%= meta.dist_destination %>'}
         ]
       },
       'dev': {
         'files': [
           {'expand': true, 'src': ['<%= meta.source %>', 'index.html', '<%= meta.stylesheets %>'], 'dest': '<%= meta.dev_destination %>'},
-          {'expand': true, 'src': ['<%= meta.htmlPartials %>', '<%= meta.htmlDirectives %>', 'bower_components/angular-material/angular-material.css', 'bower_components/ace-builds/src/mode-python.js', 'static_components/ng-websocket/ng-websocket.js'], 'dest': '<%= meta.dev_destination %>'}
+          {'expand': true, 'src': ['bower_components/angular-material/angular-material.css', 'bower_components/ace-builds/src/mode-python.js', 'static_components/ng-websocket/ng-websocket.js'], 'dest': '<%= meta.dev_destination %>'}
         ]
       }
     },
@@ -241,7 +242,7 @@ module.exports = function (grunt) {
 
     'uglify': {
       'options': {
-        'mangle': true,
+        'mangle': false,
         'compress': true,
         'sourceMap': true,
         'preserveComments': false,
@@ -261,6 +262,13 @@ module.exports = function (grunt) {
       'dist': {
         'files': {'<%= meta.dist_destination %>/<%= pkg.namelower %>.min.css': '<%= meta.stylesheets %>'}
       }
+    },
+
+    'html2js': {
+      'main': {
+        'src': ['<%= meta.htmlPartials %>', '<%= meta.htmlDirectives %>'],
+        'dest': 'tmp/templates.js'
+      }
     }
 
   });
@@ -271,6 +279,7 @@ module.exports = function (grunt) {
     'jshint:dev',
     'csslint:dev',
     'karma:dev',
+    'html2js',
     'bower:dev',
     'copy:dev',
     'express:dev',
@@ -287,6 +296,7 @@ module.exports = function (grunt) {
     'jshint',
     'csslint:dev',
     'karma:dev',
+    'html2js',
     'uglify:dist',
     'karma:dist',
     'copy:dist',

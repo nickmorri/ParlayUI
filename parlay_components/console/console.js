@@ -1,4 +1,4 @@
-var console = angular.module('parlay.console', ['ui.router']);
+var console = angular.module('parlay.console', ['ui.router', 'templates-main']);
 
 /* istanbul ignore next */
 console.config(function ($stateProvider) {

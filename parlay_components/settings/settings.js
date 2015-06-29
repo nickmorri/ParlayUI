@@ -1,4 +1,4 @@
-var settings = angular.module('parlay.settings', ['ui.router']);
+var settings = angular.module('parlay.settings', ['ui.router', 'templates-main']);
 
 /* istanbul ignore next */
 settings.config(function ($stateProvider) {

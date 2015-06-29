@@ -1,7 +1,8 @@
-var endpoints = angular.module('parlay.endpoints', ['ui.router', 'ngMaterial', 'ngMdIcons', 'parlay.socket']);
+var endpoints = angular.module('parlay.endpoints', ['ui.router', 'ngMaterial', 'ngMdIcons', 'parlay.socket', 'templates-main']);
 
 /* istanbul ignore next */
 endpoints.config(function($stateProvider) {
+
     $stateProvider.state('endpoints', {
         url: '/endpoints',
         templateUrl: '../partials/endpoints.html',
@@ -88,20 +89,20 @@ endpoints.controller('endpointController', ['$scope', '$mdToast', 'EndpointManag
 /* istanbul ignore next */
 endpoints.directive('parlayEndpointCardItem', function () {
     return {
-        templateUrl: 'parlay_components/endpoints/directives/parlay-endpoint-card-item.html'
+        templateUrl: '../parlay_components/endpoints/directives/parlay-endpoint-card-item.html'
     };
 });
 
 /* istanbul ignore next */
 endpoints.directive('parlayEndpointListItem', function () {
     return {
-        templateUrl: 'parlay_components/endpoints/directives/parlay-endpoint-list-item.html'
+        templateUrl: '../parlay_components/endpoints/directives/parlay-endpoint-list-item.html'
     };
 });
 
 /* istanbul ignore next */
 endpoints.directive('parlayEndpointsToolbar', function () {
     return {
-        templateUrl: 'parlay_components/endpoints/directives/parlay-endpoints-toolbar.html'
+        templateUrl: '../parlay_components/endpoints/directives/parlay-endpoints-toolbar.html'
     };
 });

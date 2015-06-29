@@ -27,6 +27,7 @@
     "grunt-contrib-uglify": "latest",
     "grunt-contrib-watch": "latest",
     "grunt-express": "latest",
+    "grunt-html2js": "^0.3.2",
     "grunt-karma": "latest",
     "grunt-newer": "^1.1.1",
     "grunt-open": "latest",

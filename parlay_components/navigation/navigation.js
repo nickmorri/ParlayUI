@@ -1,4 +1,4 @@
-var navigation = angular.module('parlay.navigation', ['ui.router', 'ngMaterial', 'ngMdIcons', 'parlay.socket']);
+var navigation = angular.module('parlay.navigation', ['ui.router', 'ngMaterial', 'ngMdIcons', 'parlay.socket', 'templates-main']);
 
 navigation.value('parlayNavToggleOpen', true);
 
@@ -85,7 +85,7 @@ navigation.controller('parlayNavController', ['$scope', '$state', '$rootScope', 
 /* istanbul ignore next */
 navigation.directive('parlayToolbar', function () {
     return {
-        templateUrl: 'parlay_components/navigation/directives/parlay-toolbar.html',
+        templateUrl: '../parlay_components/navigation/directives/parlay-toolbar.html',
         controller: 'parlayToolbarController'
     };
 });
@@ -93,7 +93,7 @@ navigation.directive('parlayToolbar', function () {
 /* istanbul ignore next */
 navigation.directive('parlayNav', function () {
     return {
-        templateUrl: 'parlay_components/navigation/directives/parlay-navigation.html',
+        templateUrl: '../parlay_components/navigation/directives/parlay-navigation.html',
         replace: true,
         controller: 'parlayNavController'
     };

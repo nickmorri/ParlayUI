@@ -1,4 +1,4 @@
-var navigation = angular.module('parlay.navigation', ['parlay.socket']);
+var navigation = angular.module('parlay.navigation', ['ui.router', 'ngMaterial', 'ngMdIcons', 'parlay.socket']);
 
 navigation.value('parlayNavToggleOpen', true);
 
@@ -27,12 +27,12 @@ navigation.controller('parlayToolbarController', ['$scope', '$mdSidenav', '$mdMe
     // If the media query for greater than medium screen size breakpoint is false we should collapse the menu
     $scope.$watch(function () {
         return $mdMedia('gt-md');
-    }, function (value) {
-        if (!value && $mdSidenav('parlayNavMenu').isLockedOpen()) $scope.toggleMenu();
+    }, function (greater_than) {
+        if (!greater_than && $mdSidenav('parlayNavMenu').isLockedOpen()) $scope.toggleMenu();
     });
 }]);
 
-navigation.controller('parlayNavController', function ($scope, $state, $rootScope, parlayNavToggleOpen) {
+navigation.controller('parlayNavController', ['$scope', '$state', '$rootScope', 'parlayNavToggleOpen', function ($scope, $state, $rootScope, parlayNavToggleOpen) {
             
     $scope.parlayNavToggleOpen = parlayNavToggleOpen;
     
@@ -58,7 +58,7 @@ navigation.controller('parlayNavController', function ($scope, $state, $rootScop
     $scope.buildNavFromStates = function () {
         var excluded = ['settings', 'help'];
         return $state.get().filter(function (state) {
-            return !state.abstract && excluded.indexOf(state.name) == -1;
+            return !state.abstract && excluded.indexOf(state.name) === -1;
         }).map(function (state) {
             return {
                 name: state.name,
@@ -68,6 +68,7 @@ navigation.controller('parlayNavController', function ($scope, $state, $rootScop
         });
     };
     
+    // Allows view to access information from $state object. Using $current.self.name for display in toolbar
     $scope.$state = $state;
     
     // Retrieve states so we can dynamically build navigation menu
@@ -82,7 +83,7 @@ navigation.controller('parlayNavController', function ($scope, $state, $rootScop
         
         $scope.parlayNavToggleOpen = false;
     });
-});
+}]);
 
 navigation.directive('parlayToolbar', function () {
     return {

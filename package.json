@@ -7,7 +7,7 @@
   "main": "app/app.js",
   "repository": {
     "type": "git",
-    "url": "promenade-build:root/Parlay"
+    "url": "promenade-build:PromenadeCommon/Parlay"
   },
   "scripts": {
     "postinstall": "grunt build"

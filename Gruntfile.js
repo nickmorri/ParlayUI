@@ -217,7 +217,7 @@ module.exports = function (grunt) {
       },
       'dev': {
         'files': [
-          {'expand': true, 'src': ['<%= meta.source %>', 'index.html', '<%= meta.htmlDirectives %>', '<%= meta.htmlPartials %>', '<%= meta.stylesheets %>', 'bower_components/angular-material/angular-material.css'], 'dest': '<%= meta.dev_destination %>'}
+          {'expand': true, 'src': ['<%= meta.source %>', 'index.html', '<%= meta.htmlDirectives %>', '<%= meta.htmlPartials %>', '<%= meta.stylesheets %>', 'bower_components/angular-material/angular-material.css', 'bower_components/ace-builds/src/mode-python.js'], 'dest': '<%= meta.dev_destination %>'}
         ]
       }
     },

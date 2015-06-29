@@ -179,8 +179,6 @@ socket.factory('ParlaySocket', ['ParlaySocketService', '$websocket', '$q', '$roo
                 Private.public.connected = Private.socket.$STATUS;
             });
             
-            debugger;
-            
             // When socket is closed we should show a toast alert giving the user the option to reconnect.
             $mdToast.show($mdToast.simple()
                 .content('Disconnected from Parlay Broker!')

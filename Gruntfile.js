@@ -28,6 +28,9 @@ module.exports = function (grunt) {
         'bower_components/angular-mocks/angular-mocks.js',
         'bower_components/es6-shim/es6-shim.js'
       ],
+      'staticComponents': [
+        'static_components/ng-websocket/ng-websocket.js'
+      ],
       'tests': 'test/**/*.js',
       'htmlDirectives': 'parlay_components/**/directives/*.html',
       'htmlPartials': 'partials/*.html',
@@ -145,6 +148,7 @@ module.exports = function (grunt) {
         'options': {
           'files': [
             '<%= meta.bowerComponents %>',
+            '<%= meta.staticComponents %>',
             '<%= meta.source %>',
             '<%= meta.tests %>'
           ],
@@ -155,6 +159,7 @@ module.exports = function (grunt) {
           'configFile': 'karma.conf.js',
           'files': [
             '<%= meta.bowerComponents %>',
+            '<%= meta.staticComponents %>',
             '<%= meta.dist_destination %>/<%= pkg.namelower %>.js',
             '<%= meta.tests %>'
           ]
@@ -165,6 +170,7 @@ module.exports = function (grunt) {
           'configFile': 'karma.conf.js',
           'files': [
             '<%= meta.bowerComponents %>',
+            '<%= meta.staticComponents %>',
             '<%= meta.dist_destination %>/<%= pkg.namelower %>.min.js',
             '<%= meta.tests %>'
           ],
@@ -209,14 +215,15 @@ module.exports = function (grunt) {
     },
 
     'copy': {
-      'all': {
+      'dist': {
         'files': [
-          {'expand': true, 'src': ['<%= meta.htmlPartials %>', '<%= meta.htmlDirectives %>', 'bower_components/angular-material/angular-material.css', 'bower_components/ace-builds/src/mode-python.js'], 'dest': '<%= meta.dist_destination %>'}
+          {'expand': true, 'src': ['<%= meta.htmlPartials %>', '<%= meta.htmlDirectives %>', 'bower_components/angular-material/angular-material.css', 'bower_components/ace-builds/src/mode-python.js', 'static_components/ng-websocket/ng-websocket.js'], 'dest': '<%= meta.dist_destination %>'}
         ]
       },
       'dev': {
         'files': [
-          {'expand': true, 'src': ['<%= meta.source %>', 'index.html', '<%= meta.htmlDirectives %>', '<%= meta.htmlPartials %>', '<%= meta.stylesheets %>', 'bower_components/angular-material/angular-material.css', 'bower_components/ace-builds/src/mode-python.js'], 'dest': '<%= meta.dev_destination %>'}
+          {'expand': true, 'src': ['<%= meta.source %>', 'index.html', '<%= meta.stylesheets %>'], 'dest': '<%= meta.dev_destination %>'},
+          {'expand': true, 'src': ['<%= meta.htmlPartials %>', '<%= meta.htmlDirectives %>', 'bower_components/angular-material/angular-material.css', 'bower_components/ace-builds/src/mode-python.js', 'static_components/ng-websocket/ng-websocket.js'], 'dest': '<%= meta.dev_destination %>'}
         ]
       }
     },
@@ -262,6 +269,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('develop', [
     'clean:dev',
+    'copy:dev',
     'jshint:dev',
     'csslint:dev',
     'karma:dev',
@@ -285,7 +293,7 @@ module.exports = function (grunt) {
     'karma:dist',
     'uglify:dist',
     'karma:minified',
-    'copy:all',
+    'copy:dist',
     'cssmin:dist',
     'processhtml:dist',
     'wiredep:dist'

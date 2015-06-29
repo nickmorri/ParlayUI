@@ -1,4 +1,12 @@
-var endpoints = angular.module('parlay.endpoints', ['ngMaterial', 'ngMdIcons', 'parlay.socket']);
+var endpoints = angular.module('parlay.endpoints', ['ui.router', 'ngMaterial', 'ngMdIcons', 'parlay.socket']);
+
+endpoints.config(function($stateProvider) {
+    $stateProvider.state('endpoints', {
+        url: '/endpoints',
+        templateUrl: '../partials/endpoints.html',
+        controller: 'endpointController'
+    });
+});
 
 endpoints.factory('parlayEndpoint', function () {
     var Public = {};

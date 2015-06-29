@@ -1,4 +1,12 @@
-var editor = angular.module('parlay.editor', ['ui.ace', 'ngMaterial', 'ngMdIcons']);
+var editor = angular.module('parlay.editor', ['ui.router', 'ngMaterial', 'ngMdIcons', 'ui.ace']);
+
+editor.config(function ($stateProvider) {
+    $stateProvider.state('editor', {
+        url: '/editor',
+        templateUrl: '../partials/editor.html',
+        controller: 'editorController'
+    });
+});
 
 editor.controller('editorController', ['$scope', '$window', function ($scope, $window) {
     

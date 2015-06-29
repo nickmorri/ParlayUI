@@ -12,3 +12,6 @@ md-list-item > a {
     text-decoration: none;
     color: black;
 }
+.capitalize {
+    text-transform: capitalize;
+}

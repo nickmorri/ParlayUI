@@ -1,7 +1,7 @@
 <md-toolbar>
     <div class="md-toolbar-tools">
-        <md-button class="md-icon-button" ng-click="toggleMenu()"aria-label="Menu"><ng-md-icon class="white" icon="menu"></ng-md-icon></md-button>
-        <h2>Parlay</h2>
+        <md-button ng-show="! parlayNavToggleOpen" class="md-icon-button" ng-click="toggleMenu()"aria-label="Menu"><ng-md-icon class="white" icon="menu"></ng-md-icon></md-button>
+        <h2 class="capitalize">{{$state.$current.self.name}}</h2>
         <span flex></span>
         
         <md-menu>

@@ -1,6 +1,9 @@
 <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="parlayNavMenu" md-is-locked-open="parlayNavToggleOpen">
     <md-toolbar class="md-hue-2">
-        <h1 class="md-toolbar-tools">Menu</h1>
+        <div class="md-toolbar-tools">
+            <md-button class="md-icon-button" ng-click="toggleMenu()" aria-label="Menu" style="line-height: 36px !important;"><ng-md-icon class="white" icon="menu"></ng-md-icon></md-button>
+            <h2>Parlay</h2>
+        </div>
     </md-toolbar>
     <md-list>
         <md-list-item ng-repeat="state in states">

@@ -85,6 +85,7 @@ navigation.controller('parlayNavController', ['$scope', '$state', '$rootScope', 
     });
 }]);
 
+/* istanbul ignore next */
 navigation.directive('parlayToolbar', function () {
     return {
         templateUrl: 'parlay_components/navigation/directives/parlay-toolbar.html',
@@ -92,6 +93,7 @@ navigation.directive('parlayToolbar', function () {
     };
 });
 
+/* istanbul ignore next */
 navigation.directive('parlayNav', function () {
     return {
         templateUrl: 'parlay_components/navigation/directives/parlay-navigation.html',

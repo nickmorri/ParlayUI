@@ -1,5 +1,6 @@
 var console = angular.module('parlay.console', ['ui.router']);
 
+/* istanbul ignore next */
 console.config(function ($stateProvider) {
     $stateProvider.state('console', {
         url: '/console',

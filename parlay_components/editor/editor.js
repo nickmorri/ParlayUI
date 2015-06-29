@@ -1,5 +1,6 @@
 var editor = angular.module('parlay.editor', ['ui.router', 'ngMaterial', 'ngMdIcons', 'ui.ace']);
 
+/* istanbul ignore next */
 editor.config(function ($stateProvider) {
     $stateProvider.state('editor', {
         url: '/editor',
@@ -41,6 +42,7 @@ editor.controller('editorController', ['$scope', '$window', function ($scope, $w
     
 }]);
 
+/* istanbul ignore next */
 editor.directive('parlayEditorToolbar', function () {
     return {
         templateUrl: 'parlay_components/editor/directives/parlay-editor-toolbar.html'

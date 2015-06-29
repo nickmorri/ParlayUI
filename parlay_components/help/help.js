@@ -1,5 +1,6 @@
 var help = angular.module('parlay.help', ['ui.router']);
 
+/* istanbul ignore next */
 help.config(function ($stateProvider) {
     $stateProvider.state('help', {
         url: '/help',

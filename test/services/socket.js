@@ -4,6 +4,76 @@ describe('parlay.socket', function() {
     
     beforeEach(module('parlay.socket'));
     
+    describe('ParlaySocketService', function () {
+        var ParlaySocketService;
+        
+        beforeEach(inject(function(_ParlaySocketService_) {
+            ParlaySocketService = _ParlaySocketService_;
+        }));
+        
+        describe('initialization', function () {
+            
+            it('is empty', function () {
+                expect(Object.keys(ParlaySocketService.registeredSockets).length).toBe(0);
+            });
+            
+        });
+        
+        describe('retrieve a ParlaySocket instance', function () {
+            
+            it('returns undefined for url references that have not been registered', function () {
+                expect(ParlaySocketService.get('ws://localhost:8085')).toBeUndefined();
+            });
+            
+            it('returns the same instance if the same url is requested', function () {
+                var MockSocket = {};
+                expect(ParlaySocketService.get('ws://localhost:8085')).toBeUndefined();
+                ParlaySocketService.register('ws://localhost:8085', MockSocket);
+                expect(ParlaySocketService.get('ws://localhost:8085')).toBe(MockSocket);
+            });
+            
+            it('returns a different instance if a different url is requested', function () {
+                var MockSocket1 = {};
+                var MockSocket2 = {};
+                expect(ParlaySocketService.get('ws://localhost:8085')).toBeUndefined();
+                expect(ParlaySocketService.get('ws://localhost:9000')).toBeUndefined();
+                ParlaySocketService.register('ws://localhost:8085', MockSocket1);
+                ParlaySocketService.register('ws://localhost:9000', MockSocket2);
+                expect(ParlaySocketService.get('ws://localhost:8085')).toBe(MockSocket1);
+                expect(ParlaySocketService.get('ws://localhost:9000')).toBe(MockSocket2);
+                expect(ParlaySocketService.get('ws://localhost:9000')).not.toBe(MockSocket1);
+            });
+            
+        });
+        
+        describe('registers a ParlaySocket instance', function () {
+            
+            it('adds one', function () {
+                expect(Object.keys(ParlaySocketService.registeredSockets).length).toBe(0);
+                ParlaySocketService.register('ws://localhost:8085', {});
+                expect(Object.keys(ParlaySocketService.registeredSockets).length).toBe(1);
+            });
+            
+            it('adds an equivalent one', function () {
+                expect(Object.keys(ParlaySocketService.registeredSockets).length).toBe(0);
+                ParlaySocketService.register('ws://localhost:8085', {});
+                expect(Object.keys(ParlaySocketService.registeredSockets).length).toBe(1);
+                ParlaySocketService.register('ws://localhost:8085', {});
+                expect(Object.keys(ParlaySocketService.registeredSockets).length).toBe(1);
+            });
+            
+            it('adds a different one', function () {
+                expect(Object.keys(ParlaySocketService.registeredSockets).length).toBe(0);
+                ParlaySocketService.register('ws://localhost:8085', {});
+                expect(Object.keys(ParlaySocketService.registeredSockets).length).toBe(1);
+                ParlaySocketService.register('ws://localhost:9000', {});
+                expect(Object.keys(ParlaySocketService.registeredSockets).length).toBe(2);
+            });
+            
+        });
+        
+    });
+    
 	describe('ParlaySocket', function () {
 		var ParlaySocket;
 
@@ -37,6 +107,10 @@ describe('parlay.socket', function() {
     
         });
         
+        xdescribe('retrieve registered ParlaySocket', function () {
+            
+        });
+        
         describe('destructs', function () {
             
             it('is closed', function (done) {
@@ -48,6 +122,25 @@ describe('parlay.socket', function() {
                     ParlaySocket.close();
                 });
                 
+            });
+            
+            it('closes and reopens', function (done) {
+                var has_closed = false;
+                
+                ParlaySocket.onOpen(function () {
+                    
+                    expect(ParlaySocket.isConnected()).toBeTruthy();
+                    
+                    if (has_closed) done();
+                    
+                    ParlaySocket.onClose(function () {
+                        has_closed = true;
+                        expect(ParlaySocket.isConnected()).toBeFalsy();
+                        ParlaySocket.open();
+                    });
+                    if (!has_closed) ParlaySocket.close();
+                    
+                });
             });
             
         });
@@ -86,6 +179,12 @@ describe('parlay.socket', function() {
                 });
             });
             
+            it('invalid topics type', function () {
+                expect(function () {
+                    ParlaySocket.sendMessage('test topics');
+                }).toThrowError(TypeError);
+            });
+            
         });
         
         describe('listens for', function () {
@@ -107,6 +206,12 @@ describe('parlay.socket', function() {
                 ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"});
                 ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"});
                 ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"});
+            });
+            
+            it('invalid topics type', function () {
+                expect(function () {
+                    ParlaySocket.onMessage('test topics');
+                }).toThrowError(TypeError);
             });
             
         });
@@ -236,7 +341,13 @@ describe('parlay.socket', function() {
                 expect(ParlaySocket._private.encodeTopics({"bbb":1, "aaa":0})).toBe('{"aaa":0,"bbb":1}');
             });
             
+            it('other type', function () {
+                expect(ParlaySocket._private.encodeTopics(Boolean(true))).toBe('true');
+            });
+            
         });
+        
+        
     		
     });
     

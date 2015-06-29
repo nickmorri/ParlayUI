@@ -55,6 +55,10 @@ describe('parlay.navigation', function() {
         		expect(scope.fetchIcon('console')).toBe('message');
     		});
     		
+    		it('non existant state', function () {
+        		expect(scope.fetchIcon('NULL')).toBe('')
+    		});
+    		
 		});
 		
 		it('builds nav menu from states', function () {

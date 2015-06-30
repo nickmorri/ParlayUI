@@ -1,7 +1,7 @@
-var console = angular.module('parlay.console', ['ui.router', 'templates-main']);
+var parlay_console = angular.module('parlay.console', ['ui.router', 'templates-main']);
 
 /* istanbul ignore next */
-console.config(function ($stateProvider) {
+parlay_console.config(function ($stateProvider) {
     $stateProvider.state('console', {
         url: '/console',
         templateUrl: '../partials/console.html',
@@ -9,6 +9,6 @@ console.config(function ($stateProvider) {
     });
 });
 
-console.controller('consoleCtrl', function () {
+parlay_console.controller('consoleCtrl', function () {
     
 });

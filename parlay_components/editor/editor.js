@@ -45,7 +45,7 @@ editor.controller('editorController', ['$scope', '$window', function ($scope, $w
 /* istanbul ignore next */
 editor.directive('parlayEditorToolbar', function () {
     return {
-        templateUrl: 'parlay_components/editor/directives/parlay-editor-toolbar.html'
+        templateUrl: '../parlay_components/editor/directives/parlay-editor-toolbar.html'
     };
 });
 

@@ -4,7 +4,7 @@ var parlay_console = angular.module('parlay.console', ['ui.router', 'templates-m
 parlay_console.config(function ($stateProvider) {
     $stateProvider.state('console', {
         url: '/console',
-        templateUrl: '../partials/console.html',
+        templateUrl: '../parlay_components/console/views/base.html',
         controller: 'consoleController'
     });
 });

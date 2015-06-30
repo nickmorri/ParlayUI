@@ -4,7 +4,7 @@ var editor = angular.module('parlay.editor', ['ui.router', 'ngMaterial', 'ngMdIc
 editor.config(function ($stateProvider) {
     $stateProvider.state('editor', {
         url: '/editor',
-        templateUrl: '../partials/editor.html',
+        templateUrl: '../parlay_components/editor/views/base.html',
         controller: 'editorController'
     });
 });

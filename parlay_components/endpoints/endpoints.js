@@ -5,7 +5,7 @@ endpoints.config(function($stateProvider) {
 
     $stateProvider.state('endpoints', {
         url: '/endpoints',
-        templateUrl: '../partials/endpoints.html',
+        templateUrl: '../parlay_components/endpoints/views/base.html',
         controller: 'endpointController'
     });
 });

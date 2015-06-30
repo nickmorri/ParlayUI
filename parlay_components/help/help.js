@@ -4,7 +4,7 @@ var help = angular.module('parlay.help', ['ui.router', 'templates-main']);
 help.config(function ($stateProvider) {
     $stateProvider.state('help', {
         url: '/help',
-        templateUrl: '../partials/help.html',
+        templateUrl: '../parlay_components/help/views/base.html',
         controller: 'helpController'
     });
 });

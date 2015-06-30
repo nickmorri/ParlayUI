@@ -4,7 +4,7 @@ var settings = angular.module('parlay.settings', ['ui.router', 'templates-main']
 settings.config(function ($stateProvider) {
     $stateProvider.state('settings', {
         url: '/settings',
-        templateUrl: '../partials/settings.html',
+        templateUrl: '../parlay_components/settings/views/base.html',
         controller: 'settingsController'
     });
 });

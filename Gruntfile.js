@@ -34,7 +34,7 @@ module.exports = function (grunt) {
       'tests': 'test/**/*.js',
       'compiledHtml': 'tmp/templates.js',
       'htmlDirectives': 'parlay_components/**/directives/*.html',
-      'htmlPartials': 'partials/*.html',
+      'htmlViews': 'parlay_components/**/views/*.html',
       'commonFiles': ['bower_components/angular-material/angular-material.css', 'bower_components/ace-builds/src/mode-python.js', 'static_components/ng-websocket/ng-websocket.js'],
       'stylesheets': 'css/*.css'
     },
@@ -132,7 +132,7 @@ module.exports = function (grunt) {
           'debounceDelay': 100,
           'livereload': true
         },
-        'files': ['<%= meta.htmlDirectives %>', '<%= meta.htmlPartials %>', 'index.html'],
+        'files': ['<%= meta.htmlDirectives %>', '<%= meta.htmlViews %>', 'index.html'],
         'tasks': ['newer:html2js', 'newer:copy']
       },
       'tests': {
@@ -274,7 +274,7 @@ module.exports = function (grunt) {
 
     'html2js': {
       'main': {
-      	'src': ['<%= meta.htmlPartials %>', '<%= meta.htmlDirectives %>'],
+      	'src': ['<%= meta.htmlViews %>', '<%= meta.htmlDirectives %>'],
         'dest': '<%= meta.compiledHtml %>'
       }
     }

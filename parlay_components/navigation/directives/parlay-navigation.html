@@ -1,7 +1,7 @@
 <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="parlayNavMenu" md-is-locked-open="parlayNavToggleOpen">
     <md-toolbar class="md-hue-2">
         <div class="md-toolbar-tools">
-            <md-button class="md-icon-button" ng-click="toggleMenu()" aria-label="Menu" style="line-height: 36px !important;"><ng-md-icon class="white" icon="menu"></ng-md-icon></md-button>
+            <md-button class="md-icon-button" ng-click="toggleMenu()" aria-label="Menu"><md-icon><ng-md-icon class="white" icon="menu"></ng-md-icon></md-icon></md-button>
             <h2>Parlay</h2>
         </div>
     </md-toolbar>
@@ -9,8 +9,8 @@
         <md-list-item ng-repeat="state in states">
             <a ui-sref="{{state.route}}">
                 <md-item-content md-ink-ripple layout="row" layout-align="start center">
-                    <ng-md-icon icon="{{state.icon}}"></ng-md-icon>
-                    <div class="inset parlay-nav-menu-item">{{state.name}}</div>
+                    <md-icon><ng-md-icon icon="{{state.icon}}"></ng-md-icon></md-icon>
+                    <div class="inset capitalize">{{state.name}}</div>
                 </md-item-content>
             </a>
         </md-list-item>
@@ -20,16 +20,16 @@
         <md-list-item>
             <a ui-sref="help">
                 <md-item-content md-ink-ripple layout="row" layout-align="start center">
-                    <ng-md-icon icon="help"></ng-md-icon>
-                    <div class="inset parlay-nav-menu-item">Help</div>
+                    <md-icon><ng-md-icon icon="help"></ng-md-icon></md-icon>
+                    <div class="inset capitalize">Help</div>
                 </md-item-content>
             </a>
         </md-list-item>
         <md-list-item>
             <a ui-sref="settings">
                 <md-item-content md-ink-ripple layout="row" layout-align="start center">
-                    <ng-md-icon icon="settings"></ng-md-icon>
-                    <div class="inset parlay-nav-menu-item">Settings</div>
+                    <md-icon><ng-md-icon icon="settings"></ng-md-icon></md-icon>
+                    <div class="inset capitalize">Settings</div>
                 </md-item-content>
             </a>
         </md-list-item>

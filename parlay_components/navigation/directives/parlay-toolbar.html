@@ -1,14 +1,16 @@
 <md-toolbar>
     <div class="md-toolbar-tools">
-        <md-button ng-show="! parlayNavToggleOpen" class="md-icon-button" ng-click="toggleMenu()"aria-label="Menu"><ng-md-icon class="white" icon="menu"></ng-md-icon></md-button>
+        <md-button ng-hide="parlayNavToggleOpen" class="md-icon-button" ng-click="toggleMenu()"aria-label="Menu"><md-icon><ng-md-icon class="white" icon="menu"></ng-md-icon></md-icon></md-button>
         <h2 class="capitalize">{{$state.$current.self.name}}</h2>
         <span flex></span>
         
         <md-menu>
             <md-button aria-label="Open editing menu" ng-click="$mdOpenMenu()">
                 <md-button class="md-icon-button" aria-label="Menu">
-                    <ng-md-icon ng-if="socket.isConnected()" class="white" icon="cloud"></ng-md-icon>
-                    <ng-md-icon ng-if="!socket.isConnected()" class="white" icon="cloud_queue"></ng-md-icon>
+                    <md-icon>
+                        <ng-md-icon md-icon ng-if="socket.isConnected()" class="white" icon="cloud"></ng-md-icon>
+                        <ng-md-icon md-icon ng-if="!socket.isConnected()" class="white" icon="cloud_queue"></ng-md-icon>
+                    </md-icon>
                 </md-button>
             </md-button>
             <md-menu-content width="4" ng-switch="socket.isConnected()">

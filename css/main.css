@@ -1,6 +1,9 @@
 .md-button.md-icon-button {
     line-height: 36px;
 }
+md-toast .md-action {
+    line-height: 36px;
+}
 .white {
     fill: white !important;
 }

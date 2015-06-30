@@ -9,7 +9,6 @@ module.exports = function (grunt) {
     'meta': {
       'source': [
 	    'app.js',
-        'tmp/templates.js',
         'parlay_components/**/*.js'
       ],
       'dist_destination': 'dist',
@@ -33,8 +32,10 @@ module.exports = function (grunt) {
         'static_components/ng-websocket/ng-websocket.js'
       ],
       'tests': 'test/**/*.js',
+      'compiledHtml': 'tmp/templates.js',
       'htmlDirectives': 'parlay_components/**/directives/*.html',
       'htmlPartials': 'partials/*.html',
+      'commonFiles': ['bower_components/angular-material/angular-material.css', 'bower_components/ace-builds/src/mode-python.js', 'static_components/ng-websocket/ng-websocket.js'],
       'stylesheets': 'css/*.css'
     },
 
@@ -104,6 +105,9 @@ module.exports = function (grunt) {
     'wiredep': {
       'dist': {
         'src': '<%= meta.dist_destination %>/index.html'
+      },
+      'dev': {
+      	'src': '<%= meta.dev_destination %>/index.html'
       }
     },
 
@@ -129,7 +133,7 @@ module.exports = function (grunt) {
           'livereload': true
         },
         'files': ['<%= meta.htmlDirectives %>', '<%= meta.htmlPartials %>', 'index.html'],
-        'tasks': ['newer:copy']
+        'tasks': ['newer:html2js', 'newer:copy']
       },
       'tests': {
         'files': '<%= meta.tests %>',
@@ -165,6 +169,7 @@ module.exports = function (grunt) {
           'files': [
 			'<%= meta.bowerComponents %>',
             '<%= meta.staticComponents %>',
+            '<%= meta.compiledHtml %>',
             '<%= meta.source %>',
             '<%= meta.tests %>'
           ],
@@ -223,13 +228,13 @@ module.exports = function (grunt) {
     'copy': {
       'dist': {
         'files': [
-          {'expand': true, 'src': ['bower_components/angular-material/angular-material.css', 'bower_components/ace-builds/src/mode-python.js', 'static_components/ng-websocket/ng-websocket.js'], 'dest': '<%= meta.dist_destination %>'}
+          {'expand': true, 'src': '<%= meta.commonFiles %>', 'dest': '<%= meta.dist_destination %>'}
         ]
       },
       'dev': {
         'files': [
-          {'expand': true, 'src': ['<%= meta.source %>', 'index.html', '<%= meta.stylesheets %>'], 'dest': '<%= meta.dev_destination %>'},
-          {'expand': true, 'src': ['bower_components/angular-material/angular-material.css', 'bower_components/ace-builds/src/mode-python.js', 'static_components/ng-websocket/ng-websocket.js'], 'dest': '<%= meta.dev_destination %>'}
+          {'expand': true, 'src': ['<%= meta.source %>', '<%= meta.compiledHtml %>', '<%= meta.stylesheets %>'], 'dest': '<%= meta.dev_destination %>'},
+          {'expand': true, 'src': '<%= meta.commonFiles %>', 'dest': '<%= meta.dev_destination %>'}
         ]
       }
     },
@@ -237,6 +242,9 @@ module.exports = function (grunt) {
     'processhtml': {
       'dist': {
         'files': {'<%= meta.dist_destination %>/index.html': ['index.html']}
+      },
+      'dev': {
+      	'files': {'<%= meta.dev_destination %>/index.html': ['index.html']}
       }
     },
 
@@ -249,7 +257,7 @@ module.exports = function (grunt) {
       },
       'dist': {
         'files': {
-          '<%= meta.dist_destination %>/<%= pkg.namelower %>.min.js': ['<%= meta.source %>']
+          '<%= meta.dist_destination %>/<%= pkg.namelower %>.min.js': ['<%= meta.source %>', '<%= meta.compiledHtml %>']
         }
       }
     },
@@ -266,22 +274,24 @@ module.exports = function (grunt) {
 
     'html2js': {
       'main': {
-        'src': ['<%= meta.htmlPartials %>', '<%= meta.htmlDirectives %>'],
-        'dest': 'tmp/templates.js'
+      	'src': ['<%= meta.htmlPartials %>', '<%= meta.htmlDirectives %>'],
+        'dest': '<%= meta.compiledHtml %>'
       }
     }
 
   });
 
   grunt.registerTask('develop', [
-    'clean:dev',
-    'copy:dev',
     'jshint:dev',
     'csslint:dev',
-    'karma:dev',
-    'html2js',
+    'clean:dev',
+    'bower-install-simple:dev',
     'bower:dev',
+    'html2js',
     'copy:dev',
+    'karma:dev',
+    'processhtml:dev',
+    'wiredep:dev',
     'express:dev',
     'open',
     'watch'
@@ -290,13 +300,13 @@ module.exports = function (grunt) {
   grunt.registerTask('test', ['jshint', 'karma:dev']);
 
   grunt.registerTask('dist', [
+    'jshint:dist',
+    'csslint:dev',
     'clean:dist',
     'bower-install-simple:dist',
     'bower:dist',
-    'jshint',
-    'csslint:dev',
-    'karma:dev',
     'html2js',
+    'karma:dev',
     'uglify:dist',
     'karma:dist',
     'copy:dist',
@@ -308,10 +318,8 @@ module.exports = function (grunt) {
   grunt.registerTask('build', ['dist']);
 
   grunt.registerTask('server', [
-    'dist',
     'express:dist',
-    'open',
-    'watch'
+    'open'
   ]);
 
 };

@@ -19,11 +19,11 @@ describe('parlay.endpoints', function() {
 			});
 
 			it('toggle', function () {
-				expect(scope.isSearching).toBeFalsy();
+				expect(scope.searching).toBeFalsy();
 				scope.toggleSearch();
-				expect(scope.isSearching).toBeTruthy();
+				expect(scope.searching).toBeTruthy();
 				scope.toggleSearch();
-				expect(scope.isSearching).toBeFalsy();
+				expect(scope.searching).toBeFalsy();
 			});
 
 		});

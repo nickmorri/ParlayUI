@@ -12,11 +12,21 @@ describe('parlay.navigation', function() {
     });
     
 	describe('parlayToolbarController', function () {
-		var scope, parlayToolbarController;
+		var scope, parlayToolbarController, mediaSize;
 
 		beforeEach(inject(function($rootScope, $controller) {
+    		mediaSize = 'md';
 			scope = $rootScope.$new();
-			parlayToolbarController = $controller('parlayToolbarController', {$scope: scope});
+			parlayToolbarController = $controller('parlayToolbarController', {$scope: scope, ParlaySocket: function () {
+    			return {
+        			close: function () {
+            			// Do something
+        			},
+        			open: function () {
+            			// Do something
+        			}
+    			};
+			}});
 		}));
 		
 		describe('toggle nav menu', function () {
@@ -25,6 +35,16 @@ describe('parlay.navigation', function() {
         		scope.toggleMenu();
         		expect(scope.parlayNavToggleOpen).toBe(!$mdMedia('gt-md'));
     		}));
+		});
+		
+		describe('interacts with socket', function () {
+    		it('disconnects', function () {
+        		scope.disconnect();
+    		});
+    		
+    		it('opens', function () {
+        		scope.connect();
+    		});
 		});
 
 	});

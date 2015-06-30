@@ -53,14 +53,82 @@ endpoints.factory('EndpointManager', ['$q', 'parlayEndpoint', 'ParlaySocket', fu
 endpoints.controller('endpointController', ['$scope', '$mdToast', 'EndpointManager', function ($scope, $mdToast, EndpointManager) {
     $scope.endpointManager = EndpointManager;
     
-    $scope.isSearching = false;
-    
+    $scope.searching = false;
+    $scope.search_icon = 'search';
     $scope.toggleSearch = function () {
-        $scope.isSearching = !$scope.isSearching;
+        $scope.searching = !$scope.searching;
+        if (!$scope.searching) {
+            $scope.searchText = null;
+            $scope.search_icon = 'search';
+        }
+        else {
+            $scope.search_icon = 'close';
+        }
     };
+    $scope.selectedItem = null;
+
+    /**
+     * Search for endpoints.
+     */
+    $scope.querySearch = function(query) {
+      return query ? $scope.endpoints.filter(createFilterFor(query)) : $scope.endpoints;
+    };
+
+    /**
+     * Create filter function for a query string
+     */
+    function createFilterFor(query) {
+      var lowercaseQuery = angular.lowercase(query);
+
+      return function filterFn(endpoint) {
+        return (endpoint._lowername.indexOf(lowercaseQuery) === 0) ||
+            (endpoint._lowertype.indexOf(lowercaseQuery) === 0);
+      };
+
+    }
+    
+    $scope.loadEndpoints = function() {
+      return [
+        {
+          'name': 'Stepper',
+          'type': 'Motor'
+        },
+        {
+          'name': 'Universal',
+          'type': 'Motor'
+        },
+        {
+          'name': 'AC',
+          'type': 'Power Supply'
+        },
+        {
+          'name': 'DC',
+          'type': 'Power Supply'
+        },
+        {
+            'name': 'NAV',
+            'type': 'Avionics'
+        },
+        {
+            'name': 'Rotor',
+            'type': 'Medical'
+        }
+      ].map(function (end) {
+        end._lowername = end.name.toLowerCase();
+        end._lowertype = end.type.toLowerCase();
+        return end;
+      });
+    };
+    $scope.endpoints = $scope.loadEndpoints();
     
     // Default to display endpoint cards
     $scope.displayCards = true;
+    $scope.display_icon = 'now_widgets';
+    
+    $scope.$watch('displayCards', function (previous, current) {
+        if (previous) $scope.display_icon = 'now_widgets';
+        else $scope.display_icon = 'list';
+    });
     
     // Do endpoint setup
     $scope.setupEndpoint = function () {

@@ -1,9 +1,5 @@
-.md-fab > ng-md-icon {
-    padding-top: 20px;
-    line-height: 70px;
-}
-.md-fab.md-mini > ng-md-icon {
-    line-height: 55px;
+.md-button.md-icon-button {
+    line-height: 36px;
 }
 .white {
     fill: white !important;

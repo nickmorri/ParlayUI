@@ -1,12 +1,12 @@
-var navigation = angular.module('parlay.navigation', ['ui.router', 'ngMaterial', 'ngMdIcons', 'parlay.socket', 'templates-main']);
+var navigation = angular.module('parlay.navigation', ['ui.router', 'ngMaterial', 'ngMdIcons', 'promenade.broker', 'templates-main']);
 
 navigation.value('parlayNavToggleOpen', true);
 
-navigation.controller('parlayToolbarController', ['$scope', '$mdSidenav', '$mdMedia', 'parlayNavToggleOpen', 'ParlaySocket', function ($scope, $mdSidenav, $mdMedia, parlayNavToggleOpen, ParlaySocket) {
+navigation.controller('parlayToolbarController', ['$scope', '$mdSidenav', '$mdMedia', 'parlayNavToggleOpen', 'PromenadeBroker', function ($scope, $mdSidenav, $mdMedia, parlayNavToggleOpen, PromenadeBroker) {
     
-    $scope.socket = ParlaySocket({
-        url: 'ws://' + location.hostname + ':8085'
-    });
+    $scope.broker = PromenadeBroker;
+    
+    $scope.connection_icon = 'cloud_off';
     
     // If we are on a screen size greater than the medium layout breakpoint we should open the navigation menu by default
     $scope.parlayNavToggleOpen = $mdMedia('gt-md');
@@ -16,12 +16,21 @@ navigation.controller('parlayToolbarController', ['$scope', '$mdSidenav', '$mdMe
         $scope.parlayNavToggleOpen = !$scope.parlayNavToggleOpen;
     };
     
+    $scope.isConnected = function () {
+        return $scope.broker.isConnected();
+    };
+    
     $scope.disconnect = function () {
-        $scope.socket.close();
+        $scope.broker.disconnect();
     };
     
     $scope.connect = function () {
-        $scope.socket.open();
+        $scope.broker.connect();
+    };
+    
+    $scope.toggleConnection = function () {
+        if($scope.isConnected()) $scope.disconnect();
+        else $scope.connect();
     };
     
     // If the media query for greater than medium screen size breakpoint is false we should collapse the menu
@@ -29,6 +38,12 @@ navigation.controller('parlayToolbarController', ['$scope', '$mdSidenav', '$mdMe
         return $mdMedia('gt-md');
     }, function (greater_than) {
         if (!greater_than && $mdSidenav('parlayNavMenu').isLockedOpen()) $scope.toggleMenu();
+    });
+    
+    $scope.$watch(function () {
+        return $scope.isConnected();
+    }, function (connected) {
+        $scope.connection_icon = connected ? 'cloud' : 'cloud_off';
     });
 }]);
 

@@ -4,30 +4,13 @@
         <h2 class="capitalize">{{$state.$current.self.name}}</h2>
         <span flex></span>
         
-        <md-menu>
-            <md-button aria-label="Open editing menu" ng-click="$mdOpenMenu()">
-                <md-button class="md-icon-button" aria-label="Menu">
-                    <md-icon>
-                        <ng-md-icon md-icon ng-if="socket.isConnected()" class="white" icon="cloud"></ng-md-icon>
-                        <ng-md-icon md-icon ng-if="!socket.isConnected()" class="white" icon="cloud_queue"></ng-md-icon>
-                    </md-icon>
-                </md-button>
+        <md-button aria-label="Open editing menu" ng-click="toggleConnection()">
+            <md-button class="md-icon-button" aria-label="Menu">
+                <md-icon>
+                    <ng-md-icon md-icon class="white" icon="{{connection_icon}}"></ng-md-icon>
+                </md-icon>
             </md-button>
-            <md-menu-content width="4" ng-switch="socket.isConnected()">
-                <md-menu-item ng-switch-when="true">
-                    <md-button ng-click="disconnect()">
-                        <md-icon><ng-md-icon icon="cloud_off" md-menu-align-target></ng-md-icon></md-icon>
-                        Disconnect from broker
-                    </md-button>
-                </md-menu-item>
-                <md-menu-item ng-switch-when="false">
-                    <md-button ng-click="connect()">
-                        <md-icon><ng-md-icon icon="cloud" md-menu-align-target></ng-md-icon></md-icon>
-                        Connect to broker
-                    </md-button>
-                </md-menu-item>
-            </md-menu-content>
-        </md-menu>
+        </md-button>
         
     </div>
 </md-toolbar>

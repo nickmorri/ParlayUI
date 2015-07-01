@@ -3,16 +3,33 @@ var socket = angular.module('parlay.socket', ['ngWebsocket', 'ngMaterial']);
 socket.factory('ParlaySocketService', function () {
     var ParlaySocketService = {};
     
-    // Stores registered sockets by URL
+    // Stores registered sockets by URL.
     ParlaySocketService.registeredSockets = {};
     
-    // If we find a socket registered to a URL we should return it.
+    /**
+     * Determine registration status of requested URL.
+     * @param {String} url - WebSocket server URL
+     * @returns {Boolean} 
+     */
+    ParlaySocketService.has = function (url) {
+        return ParlaySocketService.get(url) !== undefined;
+    };
+    
+    /**
+     * Return ParlaySocket registered to requested URL.
+     * @param {String} url - WebSocket server URL
+     * @returns {ParlaySocket} registered ParlaySocket instance or undefined.
+     */
     ParlaySocketService.get = function(url) {
         if (ParlaySocketService.registeredSockets[url] !== undefined) return ParlaySocketService.registeredSockets[url];
         else return undefined;
     };
     
-    // Register a socket to a URL.
+    /**
+     * Register a socket to a URL.
+     * @params {String} url - WebSocket server URL
+     * @params {ParlaySocket} ParlaySocket to register with service
+     */
     ParlaySocketService.register = function (url, socket) {
         ParlaySocketService.registeredSockets[url] = socket;  
     };
@@ -64,8 +81,7 @@ socket.factory('ParlaySocket', ['ParlaySocketService', '$websocket', '$q', '$roo
     /**
      * Passes message down to $websocket.send()
      */
-    Private.send = function (topics, contents, callbackFunc) {
-        if (callbackFunc !== undefined) Private.registerListener(topics, callbackFunc, false);
+    Private.send = function (topics, contents) {
         if (Private.isMock()) return Private.socket.$emit(Private.encodeTopics(topics), {topics: topics, contents: contents});
         else return Private.socket.$$send({topics: topics, contents: contents});
     };
@@ -97,20 +113,20 @@ socket.factory('ParlaySocket', ['ParlaySocketService', '$websocket', '$q', '$roo
     
     /**
      * Sets a key/value pair in the onMessageCallbacks Map where the key is the topics and the value is a callback function.
-     * @param {Object} topics - Map of key/value pairs.
-     * @param {Function} callbackFunc - Callback function which will be invoked when a messaged is received that topic signature.
+     * @param {Object} response_topics - Map of key/value pairs.
+     * @param {Function} response_callback - Callback function which will be invoked when a messaged is received that topic signature.
      * @param {Bool} persist - If false callback function will be removed after a invocation, if true it will persist.
      */
-    Private.registerListener = function(topics, callbackFunc, persist) {
-        var encoded_topic_string = Private.encodeTopics(topics);
+    Private.registerListener = function(response_topics, response_callback, persist) {
+        var encoded_topic_string = Private.encodeTopics(response_topics);
         var callbackFuncIndex = 0;
         var callbacks = Private.onMessageCallbacks.has(encoded_topic_string) ? Private.onMessageCallbacks.get(encoded_topic_string) : [];
             
-        callbackFuncIndex = callbacks.push({func: callbackFunc, persist: persist}) - 1;
+        callbackFuncIndex = callbacks.push({func: response_callback, persist: persist}) - 1;
         Private.onMessageCallbacks.set(encoded_topic_string, callbacks);
         
         return function deregisterListener() {
-            Private.deregisterListener(topics, callbackFuncIndex);
+            Private.deregisterListener(encoded_topic_string, callbackFuncIndex);
         };        
     };
     
@@ -119,23 +135,23 @@ socket.factory('ParlaySocket', ['ParlaySocketService', '$websocket', '$q', '$roo
      * @param {Object} topics - Map of key/value pairs.
      * @param {Integer} callbackFuncIndex - Position of callback function within array of callbacks.
      */    
-    Private.deregisterListener = function (topics, callbackFuncIndex) {
-        var callbacks = Private.onMessageCallbacks.get(Private.encodeTopics(topics));
+    Private.deregisterListener = function (encoded_topic_string, callbackFuncIndex) {
+        var callbacks = Private.onMessageCallbacks.get(encoded_topic_string);
         callbacks.splice(callbackFuncIndex, 1);
         if (callbacks !== undefined) {
-            if (callbacks.length > 0) Private.onMessageCallbacks.set(Private.encodeTopics(topics), callbacks);
-            else Private.onMessageCallbacks.delete(topics);
+            if (callbacks.length > 0) Private.onMessageCallbacks.set(encoded_topic_string, callbacks);
+            else Private.onMessageCallbacks.delete(encoded_topic_string);
         }
     };
     
     /**
      * Invokes callbacks associated with the topics, passes contents as parameters.
      * If the callback is not persistent it will be removed after invocation.
-     * @param {Object} topics - Map of key/value pairs.
+     * @param {Object} response_topics - Map of key/value pairs.
      * @param {Object} contents - Map of key/value pairs.
      */
-    Private.invokeCallbacks = function (topics, contents) {
-        var encoded_topics = Private.encodeTopics(topics);
+    Private.invokeCallbacks = function (response_topics, contents) {
+        var encoded_topics = Private.encodeTopics(response_topics);
         var callbacks = Private.onMessageCallbacks.get(encoded_topics);
         
         if (callbacks !== undefined) Private.onMessageCallbacks.set(encoded_topics, callbacks.filter(function (callback) {
@@ -148,24 +164,39 @@ socket.factory('ParlaySocket', ['ParlaySocketService', '$websocket', '$q', '$roo
         
         var Public = {};
         
-        // Check to see if we have already registered a socket connection to the requested URL.
-        var existingSocket = ParlaySocketService.get(config.url);
+        if (typeof config === 'string') {
+            // Check to see if we have already registered a socket connection to the requested URL.
+            if (ParlaySocketService.has(config)) return ParlaySocketService.get(config);
+            else ParlaySocketService.register(config, Public);
+            
+            // If a module has already instantiated the singleton WebSocket instance grab it.
+            // Otherwise setup a new WebSocket.
+            Private.socket = $websocket.$new(config);
+        }
+        else if (typeof config === 'object') {
+            // Check to see if we have already registered a socket connection to the requested URL.
+            if (ParlaySocketService.has(config.url)) return ParlaySocketService.get(config.url);
+            else ParlaySocketService.register(config.url, Public);
+    
+            // If a module has already instantiated the singleton WebSocket instance grab it.
+            // Otherwise setup a new WebSocket.
+            Private.socket = $websocket.$new({
+                url: config.url,
+                protocol: [],
+                enqueue: true,
+                reconnect: false,
+                mock: config.mock === undefined ? false : config.mock
+            });    
+        }
+        else {
+            throw function ParlaySocketSetupException(message) {
+                this.message = message + " is not a valid configuration for ParlaySocket.";
+                this.name = "ParlaySocketSetupException";
+            }(typeof config);
+        }
         
-        if (existingSocket !== undefined) return existingSocket;
-        else ParlaySocketService.register(config.url, Public);
-
         Private.public = Public;
         Public._private = Private;
-        
-        // If a module has already instantiated the singleton WebSocket instance grab it.
-        // Otherwise setup a new WebSocket.
-        Private.socket = $websocket.$new({
-            url: config.url,
-            protocol: [],
-            enqueue: true,
-            reconnect: false,
-            mock: config.mock === undefined ? false : config.mock
-        });
         
         // When the WebSocket opens set the connected status and execute onOpen callbacks.
         Private.socket.$on('$open', function (event) {
@@ -238,12 +269,12 @@ socket.factory('ParlaySocket', ['ParlaySocketService', '$websocket', '$q', '$roo
         
         /**
          * Registers a callback to be associated with topics. Callback is invoked when message is received over WebSocket from Broker with matching signature.
-         * @param {Object} topics - Map of key/value pairs.
-         * @param {Function} callbackFunc - Callback function which will be invoked when a messaged is received that topic signature.
+         * @param {Object} response_topics - Map of key/value pairs.
+         * @param {Function} response_callback - Callback to invoke upon receipt of message matching response topics.
          * @returns {Function} Deregistration function for this message listener.
          */
-        Public.onMessage = function (topics, callbackFunc) {
-            if (typeof topics === 'object') return Private.registerListener(topics, callbackFunc, true);
+        Public.onMessage = function (response_topics, response_callback) {
+            if (typeof response_topics === 'object') return Private.registerListener(response_topics, response_callback, true);
             else throw new TypeError('Invalid type for topics, accepts Map.', 'socket.js');
         };
         
@@ -252,11 +283,25 @@ socket.factory('ParlaySocket', ['ParlaySocketService', '$websocket', '$q', '$roo
          * Optionally registers a callback which will be called upon reply with matching topic signature.
          * @param {Object} topics - Map of key/value pairs.
          * @param {Object} contents - Map of key/value pairs.
+         * @param {Object} response_topics - Map of key/value pairs.
+         * @param {Function} response_callback - Callback to invoke upon receipt of message matching response topics.
          * @returns {$q.defer.promise} Resolves once message has been passed to socket.
          */
-        Public.sendMessage = function (topics, contents, callbackFunc) {
-            if (typeof topics === 'object') return Private.send(topics, contents, callbackFunc);
-            else throw new TypeError('Invalid type for topics, accepts Map.', 'socket.js');
+        Public.sendMessage = function (topics, contents, response_topics, response_callback) {
+            
+            // Register response callback
+            if (response_topics !== undefined || response_callback !== undefined) {
+                if (response_topics === undefined || response_callback === undefined) throw new TypError('If a response callback is desired both response topics and response callback must be defined.', 'socket.js');
+                else Private.registerListener(response_topics, response_callback, false);
+            }
+            
+            // Push message down to Private.socket.send()
+            if (typeof topics === 'object') {
+                if (typeof contents === 'object') return Private.send(topics, contents, response_callback);
+                else if (typeof contents === 'undefined') return Private.send(topics, {}, response_callback);
+                else throw new Error('Invalid type for contents, accepts Object or undefined.', 'socket.js');
+            }
+            else throw new Error('Invalid type for topics, accepts Object.', 'socket.js');
         };
         
         /**

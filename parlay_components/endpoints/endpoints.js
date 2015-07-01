@@ -25,69 +25,7 @@ endpoints.factory('EndpointManager', ['$q', 'parlayEndpoint', 'ParlaySocket', fu
         })
     };
     
-    Public.active_endpoints = [];
-    
-    Public.setupEndpoint = function () {
-        return $q(function (resolve, reject) {
-            Public.active_endpoints.push({});
-            resolve(Public.active_endpoints.length);
-        });
-    };
-    
-    Public.disconnectEndpoint = function (index) {
-        return $q(function (resolve, reject) {
-            resolve(Public.active_endpoints.splice(index, 1));
-        });
-    };
-    
-    Public.reconnectEndpoint = function(index) {
-        return $q(function (resolve, reject) {
-            Public.active_endpoints.push({});
-            resolve(Public.active_endpoints.length);
-        });
-    };
-        
-    return Public;
-}]);
-
-endpoints.controller('endpointController', ['$scope', '$mdToast', 'EndpointManager', function ($scope, $mdToast, EndpointManager) {
-    $scope.endpointManager = EndpointManager;
-    
-    $scope.searching = false;
-    $scope.search_icon = 'search';
-    $scope.toggleSearch = function () {
-        $scope.searching = !$scope.searching;
-        if (!$scope.searching) {
-            $scope.searchText = null;
-            $scope.search_icon = 'search';
-        }
-        else {
-            $scope.search_icon = 'close';
-        }
-    };
-    $scope.selectedItem = null;
-
-    /**
-     * Search for endpoints.
-     */
-    $scope.querySearch = function(query) {
-      return query ? $scope.endpoints.filter(createFilterFor(query)) : $scope.endpoints;
-    };
-
-    /**
-     * Create filter function for a query string
-     */
-    function createFilterFor(query) {
-      var lowercaseQuery = angular.lowercase(query);
-
-      return function filterFn(endpoint) {
-        return (endpoint._lowername.indexOf(lowercaseQuery) === 0) ||
-            (endpoint._lowertype.indexOf(lowercaseQuery) === 0);
-      };
-
-    }
-    
-    $scope.loadEndpoints = function() {
+    Private.generateEndpoints = function() {
       return [
         {
           'name': 'Stepper',
@@ -119,7 +57,70 @@ endpoints.controller('endpointController', ['$scope', '$mdToast', 'EndpointManag
         return end;
       });
     };
-    $scope.endpoints = $scope.loadEndpoints();
+    
+    Public.active_endpoints = [];
+    
+    Public.available_endpoints = Private.generateEndpoints();
+    
+    Public.setupEndpoint = function () {
+        return $q(function (resolve, reject) {
+            Public.active_endpoints.push(Public.available_endpoints.pop());
+            resolve(Public.active_endpoints.length);
+        });
+    };
+    
+    Public.disconnectEndpoint = function (index) {
+        return $q(function (resolve, reject) {
+            resolve(Public.active_endpoints.splice(index, 1)[0]);
+        });
+    };
+    
+    Public.reconnectEndpoint = function(endpoint) {
+        return $q(function (resolve, reject) {
+            Public.active_endpoints.push(endpoint);
+            resolve(endpoint);
+        });
+    };
+        
+    return Public;
+}]);
+
+endpoints.controller('endpointController', ['$scope', '$mdToast', 'EndpointManager', function ($scope, $mdToast, EndpointManager) {
+    $scope.endpointManager = EndpointManager;
+    
+    $scope.searching = false;
+    $scope.search_icon = 'search';
+    $scope.toggleSearch = function () {
+        $scope.searching = !$scope.searching;
+        if (!$scope.searching) {
+            $scope.searchText = null;
+            $scope.search_icon = 'search';
+        }
+        else {
+            $scope.search_icon = 'close';
+        }
+    };
+    $scope.selectedItem = null;
+
+    /**
+     * Search for endpoints.
+     */
+    $scope.querySearch = function(query) {
+      return query ? $scope.endpointManager.active_endpoints.filter($scope.createFilterFor(query)) : $scope.endpoints;
+    };
+
+    /**
+     * Create filter function for a query string
+     */
+    $scope.createFilterFor = function(query) {
+      var lowercaseQuery = angular.lowercase(query);
+
+      return function filterFn(endpoint) {
+        return (endpoint._lowername.indexOf(lowercaseQuery) === 0) ||
+            (endpoint._lowertype.indexOf(lowercaseQuery) === 0);
+      };
+
+    };
     
     // Default to display endpoint cards
     $scope.displayCards = true;
@@ -142,13 +143,14 @@ endpoints.controller('endpointController', ['$scope', '$mdToast', 'EndpointManag
     
     // Disconnect endpoint when user asks
     $scope.disconnectEndpoint = function (index) {
-        $scope.endpointManager.disconnectEndpoint(index).then(function () {
-            
+        $scope.endpointManager.disconnectEndpoint(index).then(function (endpoint) {
             // Display toast alert notifying user of lost connection
             $mdToast.show($mdToast.simple()
-                .content('Disconnected ' + index + ' endpoint!')
+                .content('Disconnected ' + endpoint.name)
                 .action('Reconnect').highlightAction(true)
-                .position('bottom left').hideDelay(3000)).then($scope.reconnectEndpoint);
+                .position('bottom left').hideDelay(3000)).then(function () {
+                    $scope.reconnectEndpoint(endpoint);
+                });
         });        
     };
     

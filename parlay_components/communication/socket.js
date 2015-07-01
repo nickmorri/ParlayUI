@@ -171,7 +171,13 @@ socket.factory('ParlaySocket', ['ParlaySocketService', '$websocket', '$q', '$roo
             
             // If a module has already instantiated the singleton WebSocket instance grab it.
             // Otherwise setup a new WebSocket.
-            Private.socket = $websocket.$new(config);
+            Private.socket = $websocket.$new({
+                url: config,
+                protocol: [],
+                enqueue: true,
+                reconnect: false,
+                mock: false
+            });
         }
         else if (typeof config === 'object') {
             // Check to see if we have already registered a socket connection to the requested URL.
@@ -186,7 +192,7 @@ socket.factory('ParlaySocket', ['ParlaySocketService', '$websocket', '$q', '$roo
                 enqueue: true,
                 reconnect: false,
                 mock: config.mock === undefined ? false : config.mock
-            });    
+            });
         }
         else {
             throw function ParlaySocketSetupException(message) {

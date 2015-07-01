@@ -1,4 +1,4 @@
-var endpoints = angular.module('parlay.endpoints', ['ui.router', 'ngMaterial', 'ngMdIcons', 'parlay.socket', 'templates-main']);
+var endpoints = angular.module('parlay.endpoints', ['ui.router', 'ngMaterial', 'ngMdIcons', 'templates-main', 'promenade.broker']);
 
 /* istanbul ignore next */
 endpoints.config(function($stateProvider) {
@@ -17,70 +17,38 @@ endpoints.factory('parlayEndpoint', function () {
     return Public;
 });
 
-endpoints.factory('EndpointManager', ['$q', 'parlayEndpoint', 'ParlaySocket', function ($q, parlayEndpoint, ParlaySocket) {
-    var Public = {};
-    var Private = {
-        socket: ParlaySocket({
-            url: 'ws://' + location.hostname + ':8085'
-        })
+endpoints.factory('EndpointManager', ['$q', 'parlayEndpoint', 'PromenadeBroker', function ($q, parlayEndpoint, PromenadeBroker) {
+    
+    var Public = {
+        protocols: [],
+        endpoints: []
     };
-    
-    Private.generateEndpoints = function() {
-      return [
-        {
-          'name': 'Stepper',
-          'type': 'Motor'
-        },
-        {
-          'name': 'Universal',
-          'type': 'Motor'
-        },
-        {
-          'name': 'AC',
-          'type': 'Power Supply'
-        },
-        {
-          'name': 'DC',
-          'type': 'Power Supply'
-        },
-        {
-            'name': 'NAV',
-            'type': 'Avionics'
-        },
-        {
-            'name': 'Rotor',
-            'type': 'Medical'
-        }
-      ].map(function (end) {
-        end._lowername = end.name.toLowerCase();
-        end._lowertype = end.type.toLowerCase();
-        return end;
-      });
-    };
-    
-    Public.active_endpoints = [];
-    
-    Public.available_endpoints = Private.generateEndpoints();
     
     Public.setupEndpoint = function () {
         return $q(function (resolve, reject) {
-            Public.active_endpoints.push(Public.available_endpoints.pop());
-            resolve(Public.active_endpoints.length);
+            //
         });
     };
     
     Public.disconnectEndpoint = function (index) {
         return $q(function (resolve, reject) {
-            resolve(Public.active_endpoints.splice(index, 1)[0]);
+            //
         });
     };
     
     Public.reconnectEndpoint = function(endpoint) {
         return $q(function (resolve, reject) {
-            Public.active_endpoints.push(endpoint);
-            resolve(endpoint);
+            //
         });
     };
+        
+    Private = {
+        broker: PromenadeBroker
+    };
+    
+    Private.broker.requestProtocols().then(function (response) {
+        debugger;
+    });
         
     return Public;
 }]);

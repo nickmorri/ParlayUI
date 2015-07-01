@@ -1,0 +1,1 @@
+var sscom = angular.module('bit.sscom', ['ParlaySocket', 'ngMaterial']);

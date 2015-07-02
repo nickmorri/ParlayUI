@@ -297,7 +297,7 @@ socket.factory('ParlaySocket', ['ParlaySocketService', '$websocket', '$q', '$roo
             
             // Register response callback
             if (response_topics !== undefined || response_callback !== undefined) {
-                if (response_topics === undefined || response_callback === undefined) throw new TypError('If a response callback is desired both response topics and response callback must be defined.', 'socket.js');
+                if (response_topics === undefined || response_callback === undefined) throw new TypeError('If a response callback is desired both response topics and response callback must be defined.', 'socket.js');
                 else Private.registerListener(response_topics, response_callback, false);
             }
             
@@ -305,9 +305,9 @@ socket.factory('ParlaySocket', ['ParlaySocketService', '$websocket', '$q', '$roo
             if (typeof topics === 'object') {
                 if (typeof contents === 'object') return Private.send(topics, contents, response_callback);
                 else if (typeof contents === 'undefined') return Private.send(topics, {}, response_callback);
-                else throw new Error('Invalid type for contents, accepts Object or undefined.', 'socket.js');
+                else throw new TypeError('Invalid type for contents, accepts Object or undefined.', 'socket.js');
             }
-            else throw new Error('Invalid type for topics, accepts Object.', 'socket.js');
+            else throw new TypeError('Invalid type for topics, accepts Object.', 'socket.js');
         };
         
         /**

@@ -187,19 +187,19 @@
                 it('includes response topics but not response callback', function() {
                     expect(function () {
                         ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"}, {"type":"motor"});
-                    }).toThrowError(Error);
+                    }).toThrowError(TypeError);
                 });
                 
                 it('includes response callback but not response topics', function() {
                     expect(function () {
                         ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"}, undefined, function () {});
-                    }).toThrowError(Error);
+                    }).toThrowError(TypeError);
                 });
                 
                 it('invalid topics type', function () {
                     expect(function () {
                         ParlaySocket.sendMessage('test topics');
-                    }).toThrowError(Error);
+                    }).toThrowError(TypeError);
                 });
                 
             });

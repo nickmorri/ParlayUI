@@ -4,13 +4,7 @@
         <h2 class="capitalize">{{$state.$current.self.name}}</h2>
         <span flex></span>
         
-        <md-button aria-label="Open editing menu" ng-click="toggleConnection()">
-            <md-button class="md-icon-button" aria-label="Menu">
-                <md-icon>
-                    <ng-md-icon md-icon class="white" icon="{{connection_icon}}"></ng-md-icon>
-                </md-icon>
-            </md-button>
-        </md-button>
+        <parlay-connection-status></parlay-connection-status>
         
     </div>
 </md-toolbar>

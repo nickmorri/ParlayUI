@@ -18,6 +18,16 @@
     <span flex></span>
     <md-list>
         <md-list-item>
+            <a href ng-click="viewConnectedProtocols($event)">
+                <md-item-content md-ink-ripple layout="row" layout-align="start center">
+                    <md-icon><ng-md-icon icon="settings_ethernet"></ng-md-icon></md-icon>
+                    <div class="inset capitalize">Protocol Connections</div>
+                </md-item-content>
+            </a>
+        </md-list-item>
+    </md-list>
+    <md-list>
+        <md-list-item>
             <a ui-sref="help">
                 <md-item-content md-ink-ripple layout="row" layout-align="start center">
                     <md-icon><ng-md-icon icon="help"></ng-md-icon></md-icon>

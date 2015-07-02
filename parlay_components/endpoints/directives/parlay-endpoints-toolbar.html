@@ -1,36 +1,9 @@
 <md-toolbar class="md-hue-2">
     
-    <div class="md-toolbar-tools">
+    <div class="md-toolbar-tools" layout="row">
         
-        <md-switch ng-model="displayCards" aria-label="Switch 1">
-            <md-icon>
-                <ng-md-icon class="white" icon="{{display_icon}}"></ng-md-icon>
-            </md-icon>
-        </md-switch>
-        
-        <md-autocomplete flex ng-show="searching" md-selected-item="selectedItem" md-search-text="searchText" md-items="item in querySearch(searchText)" md-item-text="item.name" md-autoselect="true" md-menu-class="autocomplete-custom-template" md-min-length="0" placeholder="Search for a endpoint">
-            <md-item-template>
-                <span class="item-title">
-                    <md-icon><ng-md-icon icon="lock"></ng-md-icon></md-icon>
-                    <span> {{item.name}} </span>
-                </span>
-                <span class="item-metadata">
-                    <span class="item-metastat">
-                        <strong>{{item.type}}</strong>
-                    </span>
-                </span>
-                
-            </md-item-template>
-            <md-not-found>
-                No endpoints found for "{{searchText}}".
-            </md-not-found>
-        </md-autocomplete>
-         
-         <span flex ng-hide="searching"></span>
-         
-        <md-button class="md-icon-button" ng-click="toggleSearch()" aria-label="Toggles search bar">
-            <md-icon><ng-md-icon class="white" icon="{{search_icon}}"></ng-md-icon></md-icon>
-        </md-button>
+        <parlay-endpoint-display-switch displayCards="displayCards"></parlay-endpoint-display-switch>
+        <parlay-endpoint-search flex></parlay-endpoint-search>
         
     </div>
     

@@ -1,0 +1,30 @@
+<md-dialog aria-label="Protocol Connection">
+    <form>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Protocol Connections</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="hide()">
+                    <md-icon><ng-md-icon icon="close" aria-label="Close dialog"></ng-md-icon></md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-dialog-content>
+            <md-list ng-show="open_protocols.length">
+                <md-list-item ng-repeat="protocol in open_protocols">
+                    <p>{{protocol.name}}</p>
+                    <md-button class="md-icon-button" ng-click="closeProtocol(protocol)" ><md-icon class="md-warn" aria-label="Disconnect protocol"><ng-md-icon icon="close"></ng-md-icon></md-icon></md-button>
+                </md-list-item>
+            </md-list>
+            <p ng-hide="open_protocols.length">
+                No protocols connected
+            </p>
+        </md-dialog-content>
+        <div class="md-actions" layout="row">
+            <span flex></span>
+            <md-button ng-click="openConfiguration($event)" class="md-primary">
+                New Connection
+            </md-button>
+        </div>
+    </form>
+</md-dialog>

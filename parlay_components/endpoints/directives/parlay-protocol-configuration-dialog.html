@@ -2,41 +2,46 @@
     <form>
         <md-toolbar>
             <div class="md-toolbar-tools">
-                <h2>Protocol Configuration</h2>
+                <h2 ng-show="configuration.protocol === undefined">Protocol Configuration</h2>
+                <h2 ng-hide="configuration.protocol === undefined">{{configuration.protocol.name}}</h2>
                 <span flex></span>
-                <md-button class="md-icon-button" ng-click="hide()">
+                <md-button class="md-icon-button" ng-click="cancel()">
                     <md-icon><ng-md-icon icon="close" aria-label="Close dialog"></ng-md-icon></md-icon>
                 </md-button>
             </div>
         </md-toolbar>
         <md-dialog-content>
         
-            <md-menu>
-                <md-button aria-label="Open phone interactions menu" class="md-icon-button" ng-click="$mdOpenMenu()">
-                    <md-icon><ng-md-icon md-menu-origin icon="dns"></ng-md-icon></md-icon>
-                </md-button>
-                <md-menu-content width="4">
-                    <md-menu-item ng-repeat="protocol in protocols">
-                        <md-button ng-click="selectProtocol(protocol)">
-                            {{protocol.name}}
-                        </md-button>
-                    </md-menu-item>
-                </md-menu-content>
-            </md-menu>
+            <md-autocomplete
+            ng-show="configuration.protocol === undefined"
+            md-selected-item="selectedProtocol"
+
+            md-search-text="searchText"
+            md-selected-item-change="selectProtocol(protocol)"
+            md-items="protocol in querySearch(searchText)"
+            md-item-text="protocol.display"
+            md-min-length="1"
+            placeholder="Protocol">
+                <md-item-template>
+                    <span md-highlight-text="searchText" md-highlight-flags="^i">{{protocol.name}}</span>
+                </md-item-template>
+                <md-not-found>
+                    No matches found for {{searchText}}
+                </md-not-found>
+            </md-autocomplete>
         
-            <md-input-container flex>
-                <label>Port</label>
-                <input ng-model="user.postalCode">
-            </md-input-container>
-            
+            <md-input-container flex ng-repeat="(key, value) in configuration.protocol.parameters">
+                <label class="capitalize">{{key}}</label>
+                <input ng-model="value">
+            </md-input-container>            
             
         </md-dialog-content>
         <div class="md-actions" layout="row">
             <span flex></span>
-            <md-button ng-click="hide()" class="md-warn">
+            <md-button ng-click="cancel()" class="md-warn">
                 Close
             </md-button>
-            <md-button ng-click="answer()" class="md-primary">
+            <md-button ng-click="accept()" class="md-primary">
                 Connect
             </md-button>
         </div>

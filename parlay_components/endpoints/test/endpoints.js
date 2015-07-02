@@ -13,7 +13,25 @@
     			endpointController = $controller('endpointController', {$scope: scope});
     		}));
     
-    		describe('search state', function () {
+    		describe('display mode', function () {
+    
+    			it('initilization', function () {
+    				expect(scope.displayCards).toBeTruthy();
+    			});
+    
+    		});
+    
+    	});
+    	
+    	describe('endpointSearch', function () {
+        	var scope, endpointSearchController;
+        	
+        	beforeEach(inject(function ($rootScope, $controller) {
+            	scope = $rootScope.$new();
+            	endpointSearchController = $controller('ParlayEndpointSearchController', {$scope: scope});
+        	}));
+        	
+        	describe('search state', function () {
     
     			it('initilization', function () {
     				expect(scope.isSearching).toBeFalsy();
@@ -28,21 +46,7 @@
     			});
     
     		});
-    
-    		describe('display mode', function () {
-    
-    			it('initilization', function () {
-    				expect(scope.displayCards).toBeTruthy();
-    			});
-    
-    		});
-    
-    		describe('endpoint', function () {
-    
-    			
-    
-    		});
-    
+    		
     	});
         
     });

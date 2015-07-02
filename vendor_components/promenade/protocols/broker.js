@@ -44,7 +44,14 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', function (ParlaySocket,
         });
     };
     
-    Public.sendMessage = Private.socket.sendMessage;
+    Public.sendMessage = function (topics, contents, response_topics) {
+        return $q(function (resolve, reject) {
+            Private.socket.sendMessage(topics, contents, response_topics, function (response) {
+                resolve(response);
+            });
+        });
+    };
+    
     Public.onMessage = Private.socket.onMessage;
     Public.onOpen = Private.socket.onOpen;
     Public.onClose = Private.socket.onClose;

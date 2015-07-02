@@ -37,17 +37,74 @@
             		expect(scope.parlayNavToggleOpen).toBe(!$mdMedia('gt-md'));
         		}));
     		});
-    		
-    		describe('interacts with socket', function () {
-        		it('disconnects', function () {
-            		scope.disconnect();
-        		});
-        		
-        		it('opens', function () {
-            		scope.connect();
-        		});
-    		});
     
+    	});
+    	
+    	describe('parlayConnectionStatusController', function () {
+        	var scope, parlayConnectionStatusController, MockBroker;
+        	
+        	beforeEach(inject(function($rootScope, $controller) {
+            	scope = $rootScope.$new();
+            	
+            	MockBroker = {
+                	connected: false,
+                	isConnected: function () {
+                    	return this.connected;
+                	},
+                	connect: function () {
+                    	this.connected = true;
+                	},
+                	disconnect: function () {
+                    	this.connected = false;
+                	}
+                	
+            	};
+            	
+            	parlayConnectionStatusController = $controller('ParlayConnectionStatusController', {$scope: scope, PromenadeBroker: MockBroker});
+        	}));
+        	
+        	describe('tests broker interaction', function () {
+            	
+            	it('initializes', function () {
+                	expect(scope.broker.isConnected()).toBeFalsy();
+                	expect(scope.connection_icon).toEqual('cloud_off');
+            	});
+            	
+            	it('connects', function () {
+                	expect(scope.broker.isConnected()).toBeFalsy();
+                	scope.connect();
+                	expect(scope.broker.isConnected()).toBeTruthy();
+            	});
+            	
+            	it('disconnects', function () {
+                	scope.connect();
+                	expect(scope.broker.isConnected()).toBeTruthy();
+                	scope.disconnect();
+                	expect(scope.broker.isConnected()).toBeFalsy();
+            	});
+            	
+            	it('toggles connection', function () {
+                	expect(scope.broker.isConnected()).toBeFalsy();
+                	scope.toggleConnection();
+                	expect(scope.broker.isConnected()).toBeTruthy();
+                	scope.toggleConnection();
+                	expect(scope.broker.isConnected()).toBeFalsy();
+                	scope.toggleConnection();
+                	expect(scope.broker.isConnected()).toBeTruthy();
+            	});
+            	
+            	it('updates connection status icon', function () {
+                	expect(scope.connection_icon).toEqual('cloud_off');
+                	scope.toggleConnection();
+                	scope.$digest(); // Skeptical if calling digest is good idea as it may not mirror actual environment. 
+                    expect(scope.connection_icon).toEqual('cloud');
+                	scope.toggleConnection();
+                	scope.$digest(); // Skeptical if calling digest is good idea as it may not mirror actual environment.
+                	expect(scope.connection_icon).toEqual('cloud_off');
+            	});
+            	
+        	});
+        	
     	});
     	
     	describe('parlayNavController', function () {

@@ -1,8 +1,7 @@
-var endpoints = angular.module('parlay.endpoints', ['ui.router', 'ngMaterial', 'ngMdIcons', 'templates-main', 'promenade.broker']);
+var endpoints = angular.module('parlay.endpoints', ['ui.router', 'ngMaterial', 'ngMdIcons', 'templates-main', 'promenade.broker', 'bit.sscom']);
 
 /* istanbul ignore next */
 endpoints.config(function($stateProvider) {
-
     $stateProvider.state('endpoints', {
         url: '/endpoints',
         templateUrl: '../parlay_components/endpoints/views/base.html',
@@ -17,43 +16,43 @@ endpoints.factory('parlayEndpoint', function () {
     return Public;
 });
 
-endpoints.factory('EndpointManager', ['$q', 'parlayEndpoint', 'PromenadeBroker', function ($q, parlayEndpoint, PromenadeBroker) {
+endpoints.factory('EndpointManager', ['$injector', 'PromenadeBroker', function ($injector, PromenadeBroker) {
     
     var Public = {
         protocols: [],
         endpoints: []
     };
     
-    Public.setupEndpoint = function () {
-        return $q(function (resolve, reject) {
-            //
-        });
-    };
-    
-    Public.disconnectEndpoint = function (index) {
-        return $q(function (resolve, reject) {
-            //
-        });
-    };
-    
-    Public.reconnectEndpoint = function(endpoint) {
-        return $q(function (resolve, reject) {
-            //
-        });
-    };
-        
-    Private = {
+    var Private = {
         broker: PromenadeBroker
     };
     
+    Public.setupEndpoint = function (type) {
+        return $injector.get(type).setup();
+    };
+    
+    Public.disconnectEndpoint = function (index) {
+        endpoint.disconnect();
+    };
+    
+    Public.reconnectEndpoint = function(endpoint) {
+        endpoint.connect();
+    };
+    
     Private.broker.requestProtocols().then(function (response) {
-        debugger;
+        Public.protocols = Object.keys(response).map(function (protocol_name) {
+            var protocol = response[protocol_name];
+            
+            protocol.name = protocol_name;
+            
+            return protocol;
+        }, response);
     });
         
     return Public;
 }]);
 
-endpoints.controller('endpointController', ['$scope', '$mdToast', 'EndpointManager', function ($scope, $mdToast, EndpointManager) {
+endpoints.controller('endpointController', ['$scope', '$mdToast', '$mdDialog', 'EndpointManager', function ($scope, $mdToast, $mdDialog, EndpointManager) {
     $scope.endpointManager = EndpointManager;
     
     $scope.searching = false;
@@ -99,6 +98,15 @@ endpoints.controller('endpointController', ['$scope', '$mdToast', 'EndpointManag
         else $scope.display_icon = 'list';
     });
     
+    $scope.configureProtocol = function () {
+        $mdDialog.show({
+            controller: 'ProtocolConfigurationController',
+            templateUrl: '../parlay_components/endpoints/directives/parlay-protocol-configuration-dialog.html',
+        }).then(function (configuration) {
+            // Do setup
+        });
+    };
+    
     // Do endpoint setup
     $scope.setupEndpoint = function () {
         $scope.endpointManager.setupEndpoint();
@@ -120,6 +128,31 @@ endpoints.controller('endpointController', ['$scope', '$mdToast', 'EndpointManag
                     $scope.reconnectEndpoint(endpoint);
                 });
         });        
+    };
+    
+}]);
+
+endpoints.controller('ProtocolConfigurationController', ['$scope', '$mdDialog', 'EndpointManager', function ($scope, $mdDialog, EndpointManager) {
+    
+    $scope.protocols = angular.copy(EndpointManager.protocols);
+    
+    $scope.configuration = {};
+    
+    $scope.selectProtocol = function (protocol) {
+        $scope.configuration.protocol = protocol;
+        debugger;
+    };
+    
+    $scope.hide = function () {
+        $mdDialog.hide();
+    };
+    
+    $scope.cancel = function () {
+        $mdDialog.cancel();
+    };
+    
+    $scope.accept = function () {
+        $mdDialog.hide($scope.configuration);
     };
     
 }]);

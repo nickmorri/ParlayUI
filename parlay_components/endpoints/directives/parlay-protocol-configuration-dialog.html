@@ -1,0 +1,44 @@
+<md-dialog aria-label="Protocol Configuration">
+    <form>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Protocol Configuration</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="hide()">
+                    <md-icon><ng-md-icon icon="close" aria-label="Close dialog"></ng-md-icon></md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-dialog-content>
+        
+            <md-menu>
+                <md-button aria-label="Open phone interactions menu" class="md-icon-button" ng-click="$mdOpenMenu()">
+                    <md-icon><ng-md-icon md-menu-origin icon="dns"></ng-md-icon></md-icon>
+                </md-button>
+                <md-menu-content width="4">
+                    <md-menu-item ng-repeat="protocol in protocols">
+                        <md-button ng-click="selectProtocol(protocol)">
+                            {{protocol.name}}
+                        </md-button>
+                    </md-menu-item>
+                </md-menu-content>
+            </md-menu>
+        
+            <md-input-container flex>
+                <label>Port</label>
+                <input ng-model="user.postalCode">
+            </md-input-container>
+            
+            
+        </md-dialog-content>
+        <div class="md-actions" layout="row">
+            <span flex></span>
+            <md-button ng-click="hide()" class="md-warn">
+                Close
+            </md-button>
+            <md-button ng-click="answer()" class="md-primary">
+                Connect
+            </md-button>
+        </div>
+    </form>
+</md-dialog>

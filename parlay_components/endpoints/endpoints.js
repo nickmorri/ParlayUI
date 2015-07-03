@@ -1,4 +1,4 @@
-var endpoints = angular.module('parlay.endpoints', ['ui.router', 'ngMaterial', 'ngMdIcons', 'templates-main', 'promenade.broker', 'bit.sscom']);
+var endpoints = angular.module('parlay.endpoints', ['ui.router', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main', 'promenade.broker', 'bit.sscom']);
 
 /* istanbul ignore next */
 endpoints.config(function($stateProvider) {

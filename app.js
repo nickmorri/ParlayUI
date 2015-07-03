@@ -3,8 +3,8 @@ var parlay = angular.module('parlay.main', ['ui.router', 'parlay.socket', 'parla
 parlay.config(function ($stateProvider, $urlRouterProvider, $mdThemingProvider) {
     
     // Theme configuration
-    $mdThemingProvider.theme('default')
-        .accentPalette('red');
+    $mdThemingProvider.theme('default').accentPalette('red');
+    $mdThemingProvider.theme('docs-dark', 'default').primaryPalette('yellow').dark();
     
     // Default state for unmatched URLs
     $urlRouterProvider.otherwise('/endpoints');

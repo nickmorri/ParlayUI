@@ -11,7 +11,8 @@
     "ng-websocket": "~0.2.1",
     "angular-ui-ace": "angular-ui-ace#bower",
     "es6-shim": "~0.32.3",
-    "svg-morpheus": "~0.1.8"
+    "svg-morpheus": "~0.1.8",
+    "angular-messages": "~1.4.1"
   },
   "resolutions": {
     "angular": "1.4.1",

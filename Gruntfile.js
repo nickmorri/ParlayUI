@@ -14,6 +14,7 @@ module.exports = function (grunt) {
       'doc_destination': 'doc',
       'bowerComponents': [
         'bower_components/angular/angular.js',
+        'bower_components/angular-messages/angular-messages.js',
         'bower_components/angular-material/angular-material.js',
         'bower_components/angular-material/angular-material-mocks.js',
         'bower_components/angular-ui-router/release/angular-ui-router.js',

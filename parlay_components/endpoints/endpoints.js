@@ -62,8 +62,8 @@ endpoints.factory('EndpointManager', ['$injector', 'PromenadeBroker', function (
         });
     };
     
-    Private.broker.requestDiscovery().then(function (endpoints) {
-        debugger;
+    Private.broker.requestDiscoveryDemo().then(function (endpoints) {
+        Private.endpoints = endpoints;
     });
     
     Private.broker.requestProtocols().then(function (protocols) {

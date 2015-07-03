@@ -2,13 +2,45 @@
     <div class="inset">
         <md-card-content>
             <h2>{{endpoint.name}}</h2>
-
-            <md-slider flex class="md-primary" md-discrete ng-model="rating3" step="1" min="1" max="5" aria-label="rating"></md-slider>
-            <md-progress-linear md-mode="indeterminate"></md-progress-linear>
             
+            <md-tabs md-border-bottom>
+                <md-tab label="Commands">
+                    <md-content class="md-padding">
+                      <md-checkbox ng-model="endpoint.testing" aria-label="Endpoint mode" ng-true-value="'Production'" ng-false-value="'Testing'" class="md-warn">{{endpoint.testing}}</md-checkbox>
+                      <md-slider flex class="md-primary" md-discrete ng-model="rating3" step="1" min="1" max="5" aria-label="rating"></md-slider>
+                      <md-progress-linear md-mode="indeterminate"></md-progress-linear>
+                    </md-content>
+                </md-tab>
+                <md-tab label="Status">
+                    <md-content class="md-padding">
+                        <div layout="row">
+                            <md-input-container>
+                                <label>Instruct</label>
+                                <input ng-model="user.title">
+                            </md-input-container>
+                            <md-input-container>
+                                <label>Encode</label>
+                                <input ng-model="user.email" type="email">
+                            </md-input-container>
+                        </div>
+                        <md-input-container>
+                            <label>Frequency (Hz)</label>
+                            <input required type="number" step="any" name="rate" ng-model="endpoint.frequency" min="4000" max="50000">
+                            <div ng-messages="endpoint.error.$freq_error">
+                                <div ng-message="required">You've got to charge something! You can't just <b>give away</b> a Missile Defense System.</div>
+                                <div ng-message="min">You should charge at least $800 an hour. This job is a big deal... if you mess up, everyone dies!</div>
+                                <div ng-message="max">$5,000 an hour? That's a little ridiculous. I doubt event Bill Clinton could afford that.</div>
+                            </div>
+                        </md-input-container>
+                    </md-content>
+                </md-tab>
+            </md-tabs>            
         </md-card-content>
         <div class="md-actions" layout="row" layout-align="end center">
-            <md-button class="md-raised md-warn" ng-click="disconnectEndpoint($index)">Disconnect</md-button>
+            <md-button ng-show="$even" class="md-primary" ng-click="disconnectEndpoint($index)">Flash ROM</md-button>
+            <md-button ng-show="$odd" class="md-accent" ng-click="disconnectEndpoint($index)">Debug</md-button>
+            <md-button ng-show="$odd || $even" class="md-primary" ng-click="disconnectEndpoint($index)">Reload</md-button>
+            <md-button class="md-warn" ng-click="disconnectEndpoint($index)">Disconnect</md-button>
         </div>
     </div>
 </md-card>

@@ -19,13 +19,17 @@ endpoints.factory('parlayEndpoint', function () {
 endpoints.factory('EndpointManager', ['$injector', 'PromenadeBroker', function ($injector, PromenadeBroker) {
     
     var Public = {
-        open_protocols: [],
-        endpoints: []
+        open_protocols: []
     };
     
     var Private = {
+        endpoints: [],
         available_protocols: [],
         broker: PromenadeBroker
+    };
+    
+    Public.getEndpoints = function () {
+        return Private.endpoints;
     };
     
     Public.getAvailableProtocols = function () {
@@ -74,6 +78,10 @@ endpoints.controller('endpointController', ['$scope', '$mdToast', '$mdDialog', '
     
     // Default to display endpoint cards
     $scope.displayCards = true;
+    
+    $scope.filterEndpoints = function () {
+        return EndpointManager.getEndpoints();
+    };
     
     /**
      * Show protocol configuration dialog and have EndpointManager open a protocol.
@@ -240,7 +248,7 @@ endpoints.controller('ParlayEndpointSearchController', ['$scope', 'EndpointManag
      * @param {String} query - Name of endpoint to find.
      */
     $scope.querySearch = function(query) {
-      return query ? EndpointManager.active_endpoints.filter($scope.createFilterFor(query)) : $scope.endpoints;
+      return query ? EndpointManager.getEndpoints().filter($scope.createFilterFor(query)) : $scope.endpoints;
     };
 
     /**
@@ -251,8 +259,7 @@ endpoints.controller('ParlayEndpointSearchController', ['$scope', 'EndpointManag
       var lowercaseQuery = angular.lowercase(query);
 
       return function filterFn(endpoint) {
-        return (endpoint._lowername.indexOf(lowercaseQuery) === 0) ||
-            (endpoint._lowertype.indexOf(lowercaseQuery) === 0);
+        return endpoint.name.indexOf(lowercaseQuery) >= 0;
       };
 
     };

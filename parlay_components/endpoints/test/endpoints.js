@@ -12,15 +12,7 @@
     			scope = $rootScope.$new();
     			endpointController = $controller('endpointController', {$scope: scope});
     		}));
-    
-    		describe('display mode', function () {
-    
-    			it('initilization', function () {
-    				expect(scope.displayCards).toBeTruthy();
-    			});
-    
-    		});
-    
+        
     	});
     	
     	describe('endpointSearch', function () {

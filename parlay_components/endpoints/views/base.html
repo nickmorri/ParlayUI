@@ -4,7 +4,7 @@
     
     <md-content layout-margin layout-wrap layout="row" ng-switch="displayCards">
         
-        <parlay-endpoint-card-item ng-switch-when="true" ng-repeat="endpoint in filterEndpoints()"></parlay-endpoint-card-item>
+        <parlay-endpoint-card ng-switch-when="true" ng-repeat="endpoint in filterEndpoints()"></parlay-endpoint-card>
         
     </md-content>
     

@@ -160,9 +160,9 @@ endpoints.directive('parlayEndpointSearch', function () {
 });
 
 /* istanbul ignore next */
-endpoints.directive('parlayEndpointCardItem', function () {
+endpoints.directive('parlayEndpointCard', function () {
     return {
-        templateUrl: '../parlay_components/endpoints/directives/parlay-endpoint-card-item.html'
+        templateUrl: '../parlay_components/endpoints/directives/parlay-endpoint-card.html'
     };
 });
 

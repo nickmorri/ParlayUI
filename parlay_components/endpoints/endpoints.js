@@ -1,4 +1,4 @@
-var endpoints = angular.module('parlay.endpoints', ['ui.router', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main', 'promenade.broker', 'bit.sscom']);
+var endpoints = angular.module('parlay.endpoints', ['ui.router', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main', 'promenade.broker', 'parlay.protocols', 'bit.sscom']);
 
 /* istanbul ignore next */
 endpoints.config(function($stateProvider) {
@@ -18,24 +18,17 @@ endpoints.factory('parlayEndpoint', function () {
 
 endpoints.factory('EndpointManager', ['$injector', 'PromenadeBroker', function ($injector, PromenadeBroker) {
     
-    var Public = {
-        open_protocols: []
-    };
+    var Public = {};
     
     var Private = {
         endpoints: [],
-        available_protocols: [],
         broker: PromenadeBroker
     };
     
     Public.getEndpoints = function () {
         return Private.endpoints;
     };
-    
-    Public.getAvailableProtocols = function () {
-        return angular.copy(Private.available_protocols);
-    };
-    
+        
     Public.setupEndpoint = function (type) {
         return $injector.get(type).setup();
     };
@@ -48,36 +41,17 @@ endpoints.factory('EndpointManager', ['$injector', 'PromenadeBroker', function (
         endpoint.connect();
     };
     
-    Public.openProtocol = function (configuration) {
-        return Private.broker.openProtocol(configuration).then(function (response) {
-            return Public.open_protocols.push(configuration.protocol);
-        });
-    };
-    
-    Public.closeProtocol = function (protocol) {
-        return Private.broker.closeProtocol(protocol).then(function (response) {
-            return Public.open_protocols.splice(Public.open_protocols.findIndex(function (protocol) {
-                return protocol.name === this.name;
-            }, this), 1);
-        });
-    };
-    
-    Private.broker.requestDiscoveryDemo().then(function (endpoints) {
+    /*
+Private.broker.requestDiscoveryDemo().then(function (endpoints) {
         Private.endpoints = endpoints;
     });
-    
-    Private.broker.requestProtocols().then(function (protocols) {
-        Private.available_protocols = protocols;
-    });
+*/
         
     return Public;
 }]);
 
 endpoints.controller('endpointController', ['$scope', '$mdToast', '$mdDialog', 'EndpointManager', function ($scope, $mdToast, $mdDialog, EndpointManager) {
     $scope.endpointManager = EndpointManager;
-    
-    // Default to display endpoint cards
-    $scope.displayCards = true;
     
     $scope.filterEndpoints = function () {
         return EndpointManager.getEndpoints();
@@ -131,85 +105,6 @@ endpoints.controller('endpointController', ['$scope', '$mdToast', '$mdDialog', '
                     $scope.reconnectEndpoint(endpoint);
                 });
         });        
-    };
-    
-}]);
-
-endpoints.controller('ProtocolConnectionController', ['$scope', '$mdDialog', '$mdToast', 'EndpointManager', function ($scope, $mdDialog, $mdToast, EndpointManager) {
-    $scope.hide = $mdDialog.hide;
-    $scope.open_protocols = EndpointManager.open_protocols;
-    
-    /**
-     * Closes protocol then spawns toast notifying user.
-     * @param {Object} protocol - Protocol configuration object.
-     */
-    $scope.closeProtocol = function (protocol) {
-        EndpointManager.closeProtocol(protocol).then(function (result) {
-            $mdToast.show($mdToast.simple()
-                .content('Closed ' + protocol.name + "."));
-        }, function (result) {
-            
-        });
-    };
-    
-    /**
-     * Show protocol configuration dialog and have EndpointManager open a protocol.
-     * @param {Event} - Event generated when button is selected. Allows use to have origin for dialog display animation.
-     */
-    $scope.openConfiguration = function (event) {
-        $mdDialog.hide();
-        // Show a configuraton dialog allowing us to setup a protocol configuration.
-        $mdDialog.show({
-            targetEvent: event,
-            controller: 'ProtocolConfigurationController',
-            templateUrl: '../parlay_components/endpoints/directives/parlay-protocol-configuration-dialog.html',
-        }).then(function (configuration) {
-            // If configuration is undefined that means we hide the dialog without generating a configuration and should not attempt opening.
-            if (configuration !== undefined) return EndpointManager.openProtocol(configuration);
-            else return undefined;
-        }).then(function (response) {
-            // Don't display anything if we didn't open a protocol.
-            if (response === undefined) return;
-            $mdToast.show($mdToast.simple()
-                .content('Connected successfully to protocol.')
-                .position('bottom left').hideDelay(3000));
-        }, function (response) {
-            $mdToast.show($mdToast.simple()
-                .content('Failed to make protocol connection.')
-                .position('bottom left').hideDelay(3000));
-        });        
-    };
-    
-}]);
-
-endpoints.controller('ProtocolConfigurationController', ['$scope', '$mdDialog', 'EndpointManager', function ($scope, $mdDialog, EndpointManager) {
-    
-    $scope.searchText = "";
-    $scope.selectedItem = null;
-        
-    $scope.configuration = {};
-    
-    $scope.selectProtocol = function (protocol) {
-        $scope.configuration.protocol = protocol;
-    };
-    
-    $scope.querySearch = function (query) {
-        return query ? EndpointManager.getAvailableProtocols().filter(filterFunction(query)) : EndpointManager.getAvailableProtocols();
-    };
-    
-    function filterFunction(query) {
-        var lowercaseQuery = angular.lowercase(query);
-        return function filterFn(protocol) {
-            return angular.lowercase(protocol.name).indexOf(lowercaseQuery) >= 0;
-        };
-    }
-    
-    $scope.cancel = function () {
-        $mdDialog.hide();
-    };
-    
-    $scope.accept = function () {
-        $mdDialog.hide($scope.configuration);
     };
     
 }]);

@@ -35,7 +35,7 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', function (ParlaySocket,
      * Requests available protocols for connection from the Broker.
      * @returns {$q.defer.promise} Resolved with available protocols.
      */
-    Public.requestProtocols = function () {
+    Public.requestAvailableProtocols = function () {
         return Public.sendRequest('get_protocols', {}).then(function (response) {
             return Object.keys(response).map(function (protocol_name) {
                 
@@ -53,6 +53,17 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', function (ParlaySocket,
                     }, {})
                 };
             });
+        });
+    };
+    
+    /**
+     * Requests open protocols for connection from the Broker.
+     * @returns {$q.defer.promise} Resolved with open protocols.
+     */
+    Public.requestOpenProtocols = function () {
+        return Public.sendRequest('get_open_protocols', {}).then(function (response) {
+            if (response.status === 'ok') return response.protocols;
+            else Private.handleError(response);            
         });
     };
     
@@ -124,6 +135,14 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', function (ParlaySocket,
                 resolve(response);
             });
         });
+    };
+    
+    /**
+     * Handles directing error to correct place.
+     * @param {Object} Response contents from Broker.
+     */
+    Private.handleError = function () {
+        // Do something.
     };
     
     Public.onMessage = Private.socket.onMessage;

@@ -4,6 +4,10 @@
         <h2 class="capitalize">{{$state.$current.self.name}}</h2>
         <span flex></span>
         
+        <md-button class="md-icon-button" ng-click="viewConnectedProtocols($event)" aria-label="Protocol menu">
+            <md-icon><ng-md-icon icon="settings_ethernet"></ng-md-icon></md-icon>
+        </md-button>
+        
         <parlay-connection-status></parlay-connection-status>
         
     </div>

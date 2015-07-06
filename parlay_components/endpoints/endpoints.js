@@ -226,7 +226,9 @@ endpoints.controller('ProtocolConfigurationController', ['$scope', '$mdDialog', 
 endpoints.controller('ParlayEndpointSearchController', ['$scope', 'EndpointManager', function ($scope, EndpointManager) {
             
     $scope.searching = false;
+    $scope.search_text = null;
     $scope.search_icon = 'search';
+    $scope.selected_item = null;
     
     /**
      * Display search bar and cleans state of search on close.
@@ -234,21 +236,20 @@ endpoints.controller('ParlayEndpointSearchController', ['$scope', 'EndpointManag
     $scope.toggleSearch = function () {
         $scope.searching = !$scope.searching;
         if (!$scope.searching) {
-            $scope.searchText = null;
+            $scope.search_text = null;
             $scope.search_icon = 'search';
         }
         else {
             $scope.search_icon = 'close';
         }
     };
-    $scope.selectedItem = null;
 
     /**
      * Search for endpoints.
      * @param {String} query - Name of endpoint to find.
      */
     $scope.querySearch = function(query) {
-      return query ? EndpointManager.getEndpoints().filter($scope.createFilterFor(query)) : $scope.endpoints;
+      return query ? EndpointManager.getEndpoints().filter($scope.createFilterFor(query)) : EndpointManager.getEndpoints();
     };
 
     /**
@@ -256,12 +257,11 @@ endpoints.controller('ParlayEndpointSearchController', ['$scope', 'EndpointManag
      * @param {String} query - Name of endpoint to query by.
      */
     $scope.createFilterFor = function(query) {
-      var lowercaseQuery = angular.lowercase(query);
+        var lowercaseQuery = angular.lowercase(query);
 
-      return function filterFn(endpoint) {
-        return endpoint.name.indexOf(lowercaseQuery) >= 0;
-      };
-
+        return function filterFn(endpoint) {
+            return angular.lowercase(endpoint.name).indexOf(lowercaseQuery) >= 0;
+        };
     };
 }]);
 

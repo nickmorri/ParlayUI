@@ -1,9 +1,9 @@
 <div layout="row" layout-align="end center">
     <md-autocomplete flex
         ng-show="searching"
-        md-selected-item="selectedItem"
-        md-search-text="searchText"
-        md-items="item in querySearch(searchText)"
+        md-selected-item="selected_item"
+        md-search-text="search_text"
+        md-items="item in querySearch(search_text)"
         md-item-text="item.name"
         md-autoselect="true"
         md-menu-class="autocomplete-custom-template"
@@ -11,18 +11,11 @@
         placeholder="Search for a endpoint">
         <md-item-template>
             <span class="item-title">
-                <md-icon><ng-md-icon icon="lock"></ng-md-icon></md-icon>
-                <span> {{item.name}} </span>
+                <span md-highlight-text="search_text" mg-hightlight-flags="^i">{{item.name}}</span>
             </span>
-            <span class="item-metadata">
-                <span class="item-metastat">
-                    <strong>{{item.type}}</strong>
-                </span>
-            </span>
-            
         </md-item-template>
         <md-not-found>
-            No endpoints found for "{{searchText}}".
+            No endpoints found for "{{search_text}}".
         </md-not-found>
     </md-autocomplete>
      

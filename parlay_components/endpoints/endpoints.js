@@ -183,27 +183,18 @@ endpoints.controller('ProtocolConnectionController', ['$scope', '$mdDialog', '$m
 }]);
 
 endpoints.controller('ProtocolConfigurationController', ['$scope', '$mdDialog', 'EndpointManager', function ($scope, $mdDialog, EndpointManager) {
-    var protocols = EndpointManager.getAvailableProtocols().map(function (protocol) {
-        return {
-            name: protocol.name,
-            parameters: protocol.params.reduce(function (param_obj, current_param) {
-                param_obj[current_param] = protocol.defaults[current_param];
-                return param_obj;
-            }, {})
-        };
-    });
     
+    $scope.searchText = "";
+    $scope.selectedItem = null;
+        
     $scope.configuration = {};
     
     $scope.selectProtocol = function (protocol) {
         $scope.configuration.protocol = protocol;
     };
     
-    $scope.searchText = "";
-    $scope.selectedItem = null;
-    
     $scope.querySearch = function (query) {
-        return protocols.filter(filterFunction(query));
+        return query ? EndpointManager.getAvailableProtocols().filter(filterFunction(query)) : EndpointManager.getAvailableProtocols();
     };
     
     function filterFunction(query) {
@@ -249,7 +240,7 @@ endpoints.controller('ParlayEndpointSearchController', ['$scope', 'EndpointManag
      * @param {String} query - Name of endpoint to find.
      */
     $scope.querySearch = function(query) {
-      return query ? EndpointManager.getEndpoints().filter($scope.createFilterFor(query)) : EndpointManager.getEndpoints();
+        return query ? EndpointManager.getEndpoints().filter($scope.createFilterFor(query)) : EndpointManager.getEndpoints();
     };
 
     /**

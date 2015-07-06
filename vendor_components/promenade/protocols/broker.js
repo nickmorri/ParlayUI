@@ -36,15 +36,23 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', function (ParlaySocket,
      * @returns {$q.defer.promise} Resolved with available protocols.
      */
     Public.requestProtocols = function () {
-        
         return Public.sendRequest('get_protocols', {}).then(function (response) {
             return Object.keys(response).map(function (protocol_name) {
-                var protocol = response[protocol_name];
+                
+                var protocol = this[protocol_name];
                 
                 protocol.name = protocol_name;
                 
                 return protocol;
-            }, response);
+            }, response).map(function (protocol) {
+                return {
+                    name: protocol.name,
+                    parameters: protocol.params.reduce(function (param_obj, current_param) {
+                        param_obj[current_param] = protocol.defaults[current_param];
+                        return param_obj;
+                    }, {})
+                };
+            });
         });
     };
     

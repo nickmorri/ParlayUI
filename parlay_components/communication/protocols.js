@@ -55,7 +55,7 @@ protocols.controller('ProtocolConnectionController', ['$scope', '$mdDialog', '$m
         $mdDialog.show({
             targetEvent: event,
             controller: 'ProtocolConfigurationController',
-            templateUrl: '../parlay_components/endpoints/directives/parlay-protocol-configuration-dialog.html',
+            templateUrl: '../parlay_components/communication/directives/parlay-protocol-configuration-dialog.html',
         }).then(function (configuration) {
             // If configuration is undefined that means we hide the dialog without generating a configuration and should not attempt opening.
             if (configuration !== undefined) return ProtocolManager.openProtocol(configuration);

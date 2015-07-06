@@ -1,8 +1,8 @@
-var navigation = angular.module('parlay.navigation', ['ui.router', 'ngMaterial', 'ngMdIcons', 'promenade.broker', 'templates-main']);
+var navigation = angular.module('parlay.navigation', ['ui.router', 'ngMaterial', 'ngMdIcons', 'promenade.broker', 'parlay.protocols', 'templates-main']);
 
 navigation.value('parlayNavToggleOpen', true);
 
-navigation.controller('parlayToolbarController', ['$scope', '$mdSidenav', '$mdMedia', 'parlayNavToggleOpen', function ($scope, $mdSidenav, $mdMedia, parlayNavToggleOpen) {
+navigation.controller('parlayToolbarController', ['$scope', '$mdSidenav', '$mdMedia', 'ProtocolManager', 'parlayNavToggleOpen', function ($scope, $mdSidenav, $mdMedia, ProtocolManager, parlayNavToggleOpen) {
     
     // If we are on a screen size greater than the medium layout breakpoint we should open the navigation menu by default
     $scope.parlayNavToggleOpen = $mdMedia('gt-md');
@@ -12,13 +12,39 @@ navigation.controller('parlayToolbarController', ['$scope', '$mdSidenav', '$mdMe
         $scope.parlayNavToggleOpen = !$scope.parlayNavToggleOpen;
     };
     
+    /**
+     * Show protocol configuration dialog and have EndpointManager open a protocol.
+     * @param {Event} - Event generated when button is selected. Allows use to have origin for dialog display animation.
+     */
+    $scope.configureProtocol = function (event) {
+        // Show a configuraton dialog allowing us to setup a protocol configuration.
+        $mdDialog.show({
+            targetEvent: event,
+            controller: 'ProtocolConfigurationController',
+            templateUrl: '../parlay_components/communication/directives/parlay-protocol-configuration-dialog.html',
+        }).then(function (configuration) {
+            // If configuration is undefined that means we hide the dialog without generating a configuration and should not attempt opening.
+            if (configuration !== undefined) return ProtocolManager.openProtocol(configuration);
+            else return undefined;
+        }).then(function (response) {
+            // Don't display anything if we didn't open a protocol.
+            if (response === undefined) return;
+            $mdToast.show($mdToast.simple()
+                .content('Connected successfully to protocol.')
+                .position('bottom left').hideDelay(3000));
+        }, function (response) {
+            $mdToast.show($mdToast.simple()
+                .content('Failed to make protocol connection.')
+                .position('bottom left').hideDelay(3000));
+        });
+    };
+    
     // If the media query for greater than medium screen size breakpoint is false we should collapse the menu
     $scope.$watch(function () {
         return $mdMedia('gt-md');
     }, function (greater_than) {
         if (!greater_than && $mdSidenav('parlayNavMenu').isLockedOpen()) $scope.toggleMenu();
-    });
-    
+    });    
     
 }]);
 
@@ -60,7 +86,7 @@ navigation.controller('parlayNavController', ['$scope', '$state', '$rootScope', 
             targetEvent: event,
             clickOutsideToClose: true,
             controller: 'ProtocolConnectionController',
-            templateUrl: '../parlay_components/endpoints/directives/parlay-protocol-connection-dialog.html'
+            templateUrl: '../parlay_components/communication/directives/parlay-protocol-connection-dialog.html'
         });
     };
     

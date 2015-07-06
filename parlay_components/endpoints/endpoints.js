@@ -1,4 +1,4 @@
-var endpoints = angular.module('parlay.endpoints', ['ui.router', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main', 'promenade.broker', 'parlay.protocols', 'bit.sscom']);
+var endpoints = angular.module('parlay.endpoints', ['ui.router', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main', 'promenade.broker', 'bit.sscom']);
 
 /* istanbul ignore next */
 endpoints.config(function($stateProvider) {
@@ -55,33 +55,6 @@ endpoints.controller('endpointController', ['$scope', '$mdToast', '$mdDialog', '
     
     $scope.filterEndpoints = function () {
         return EndpointManager.getEndpoints();
-    };
-    
-    /**
-     * Show protocol configuration dialog and have EndpointManager open a protocol.
-     * @param {Event} - Event generated when button is selected. Allows use to have origin for dialog display animation.
-     */
-    $scope.configureProtocol = function (event) {
-        // Show a configuraton dialog allowing us to setup a protocol configuration.
-        $mdDialog.show({
-            targetEvent: event,
-            controller: 'ProtocolConfigurationController',
-            templateUrl: '../parlay_components/endpoints/directives/parlay-protocol-configuration-dialog.html',
-        }).then(function (configuration) {
-            // If configuration is undefined that means we hide the dialog without generating a configuration and should not attempt opening.
-            if (configuration !== undefined) return $scope.endpointManager.openProtocol(configuration);
-            else return undefined;
-        }).then(function (response) {
-            // Don't display anything if we didn't open a protocol.
-            if (response === undefined) return;
-            $mdToast.show($mdToast.simple()
-                .content('Connected successfully to protocol.')
-                .position('bottom left').hideDelay(3000));
-        }, function (response) {
-            $mdToast.show($mdToast.simple()
-                .content('Failed to make protocol connection.')
-                .position('bottom left').hideDelay(3000));
-        });
     };
     
     // Do endpoint setup

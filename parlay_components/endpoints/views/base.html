@@ -2,15 +2,8 @@
     
     <parlay-endpoints-toolbar></parlay-endpoints-toolbar>
     
-    <md-content layout-margin layout-wrap layout="row" ng-switch="displayCards">
-        
-        <parlay-endpoint-card ng-switch-when="true" ng-repeat="endpoint in filterEndpoints()"></parlay-endpoint-card>
-        
+    <md-content layout-margin layout-wrap layout="row">    
+        <parlay-endpoint-card ng-repeat="endpoint in filterEndpoints()"></parlay-endpoint-card>
     </md-content>
-    
-    <md-button class="md-fab md-fab-bottom-right" ng-click="configureProtocol($event)">
-        <md-icon style="line-height: 40px;"><ng-md-icon class="white" icon="add"></ng-md-icon></md-icon>
-        <md-tooltip>Configure Protocol</md-tooltip>
-    </md-button>
-    
+        
 </div>

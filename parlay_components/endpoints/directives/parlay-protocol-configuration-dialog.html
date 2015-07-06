@@ -14,19 +14,19 @@
         
             <md-autocomplete
             ng-show="configuration.protocol === undefined"
-            md-selected-item="selectedProtocol"
+            md-selected-item="selected_protocol"
 
-            md-search-text="searchText"
+            md-search-text="search_text"
             md-selected-item-change="selectProtocol(protocol)"
-            md-items="protocol in querySearch(searchText)"
+            md-items="protocol in querySearch(search_text)"
             md-item-text="protocol.display"
             md-min-length="1"
             placeholder="Protocol">
                 <md-item-template>
-                    <span md-highlight-text="searchText" md-highlight-flags="^i">{{protocol.name}}</span>
+                    <span md-highlight-text="search_text" md-highlight-flags="^i">{{protocol.name}}</span>
                 </md-item-template>
                 <md-not-found>
-                    No matches found for {{searchText}}
+                    No matches found for {{search_text}}
                 </md-not-found>
             </md-autocomplete>
         

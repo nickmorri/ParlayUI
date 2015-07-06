@@ -264,35 +264,10 @@ endpoints.directive('parlayEndpointSearch', function () {
     };
 });
 
-endpoints.directive('parlayEndpointDisplaySwitch', function () {
-    return {
-        scope: {
-            displayCards: "="
-        },
-        templateUrl: '../parlay_components/endpoints/directives/parlay-endpoint-display-switch.html',
-        link: function ($scope, element, attributes) {
-            
-            $scope.display_icon = 'now_widgets';
-            
-            $scope.$watch('displayCards', function (previous, current) {
-                if (previous) $scope.display_icon = 'now_widgets';
-                else $scope.display_icon = 'list';
-            });
-        }
-    };
-});
-
 /* istanbul ignore next */
 endpoints.directive('parlayEndpointCardItem', function () {
     return {
         templateUrl: '../parlay_components/endpoints/directives/parlay-endpoint-card-item.html'
-    };
-});
-
-/* istanbul ignore next */
-endpoints.directive('parlayEndpointListItem', function () {
-    return {
-        templateUrl: '../parlay_components/endpoints/directives/parlay-endpoint-list-item.html'
     };
 });
 

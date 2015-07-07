@@ -10,13 +10,13 @@
             </div>
         </md-toolbar>
         <md-dialog-content>
-            <md-list ng-show="open_protocols.length">
-                <md-list-item ng-repeat="protocol in cached_protocols">
+            <md-list ng-show="hasOpenProtocols()">
+                <md-list-item ng-repeat="protocol in getOpenProtocols()">
                     <p>{{protocol.name}}</p>
                     <md-button class="md-icon-button" ng-click="closeProtocol(protocol)" ><md-icon class="md-warn" aria-label="Disconnect protocol"><ng-md-icon icon="close"></ng-md-icon></md-icon></md-button>
                 </md-list-item>
             </md-list>
-            <p ng-hide="open_protocols.length">
+            <p ng-hide="hasOpenProtocols()">
                 No protocols connected
             </p>
         </md-dialog-content>

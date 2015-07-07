@@ -1,26 +1,21 @@
 var sscom = angular.module('bit.sscom', []);
 
-sscom.factory('SSCOM_Serial', function () {
+sscom.factory('Protocol', function () {
     var Private = {};
     
     return function (configuration) {
-        var Public = {
-            name: "SSCOM_Serial"
-        };
         
-        var Private = {
-            endpoints: []
+        var Public = {
+            name: configuration.name,
+            type: configuration.protocol_type
         };
         
         Public.addDiscovery = function (data) {
-            Private.endpoints = data.children.reduce(function (previous, current) {
-                return previous.concat(current);
-            });
-            debugger;
+            Private.endpoints = data.children;
         };
         
         Public.getEndpoints = function () {
-            return angular.copy(Private.endpoints);
+            return Private.endpoints;
         };
         
         return Public;        

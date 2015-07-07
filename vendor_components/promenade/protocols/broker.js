@@ -108,11 +108,12 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', function (ParlaySocket,
     
     /**
      * Request the Broker for a discovery.
+     * @param {Boolean} is_forced - Force cached invalidation.
      * @returns {$q.defer.promise} Resolve when response is recieved with available endpoints.
      */
-    Public.requestDiscovery = function () {        
-        return Public.sendRequest('get_discovery', {}).then(function (contents) {
-             return contents.discovery;
+    Public.requestDiscovery = function (is_forced) {
+        return Public.sendRequest('get_discovery', {'force': is_forced}).then(function (contents) {
+            return contents.discovery;
         });
     };
     

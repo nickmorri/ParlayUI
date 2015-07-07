@@ -1,9 +1,12 @@
 var protocols = angular.module('parlay.protocols', ['promenade.broker', 'bit.sscom', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main']);
 
-protocols.factory('ProtocolManager', ['$injector', 'PromenadeBroker', function ($injector, PromenadeBroker) {
+protocols.run(['ProtocolManager', function (ProtocolManager) {
+    ProtocolManager.requestOpenProtocols();  
+}]);
+
+protocols.factory('ProtocolManager', ['Protocol', '$timeout', 'PromenadeBroker', function (Protocol, $timeout, PromenadeBroker) {
     
     var Private = {
-        broker: PromenadeBroker,
         open: [],
         available: []
     };
@@ -11,33 +14,51 @@ protocols.factory('ProtocolManager', ['$injector', 'PromenadeBroker', function (
     var Public = {};
     
     Public.getOpenProtcols = function () {
-        return angular.copy(Private.open);
+        return Private.open;
     };
     
     Public.openProtocol = function (configuration) {
-        return Private.broker.openProtocol(configuration).then(function (response) {
-            
-            var protocolFactory = $injector.get(configuration.protocol.name);
-            
-            Private.open.push(protocolFactory(configuration.protocol));
+        return PromenadeBroker.openProtocol(configuration).then(function (response) {
+            PromenadeBroker.sendRequest('get_open_protocols', {});
+            return response;
         });
     };
     
     Public.closeProtocol = function (protocol) {
-        return Private.broker.closeProtocol(protocol);
+        return PromenadeBroker.closeProtocol(protocol);
     };
     
     Public.requestOpenProtocols = function () {
-        return Private.broker.requestOpenProtocols();
+        return PromenadeBroker.requestOpenProtocols();
     };
     
     Public.requestAvailableProtocols = function () {
-        return Private.broker.requestAvailableProtocols();
+        return PromenadeBroker.requestAvailableProtocols();
     };
     
-    Private.requestDiscovery = function () {
-        PromenadeBroker.requestDiscovery();
+    Public.requestDiscovery = function (is_forced) {
+        return PromenadeBroker.requestDiscovery(is_forced);
     };
+    
+    Private.hasOpenProtocol = function (name) {
+        return Private.getOpenProtocol(name) !== undefined;
+    };
+    
+    Private.getOpenProtocol = function () {
+        return Private.open.find(function (protocol) {
+            return name === protocol.name;
+        });
+    };
+    
+    Private.setOpenProtocol = function (protocol) {
+        if (!Private.hasOpenProtocol(protocol.name)) Private.open.push(Protocol(protocol));
+    };
+    
+    PromenadeBroker.onMessage({type: 'broker', response: 'get_open_protocols_response'}, function (response) {
+        response.protocols.forEach(function (protocol) {
+            Private.setOpenProtocol(protocol);
+        });
+    });
     
     PromenadeBroker.onDiscovery(function (response) {
         response.discovery.forEach(function (protocol) {
@@ -53,7 +74,13 @@ protocols.factory('ProtocolManager', ['$injector', 'PromenadeBroker', function (
 protocols.controller('ProtocolConnectionController', ['$scope', '$mdDialog', '$mdToast', 'ProtocolManager', function ($scope, $mdDialog, $mdToast, ProtocolManager) {
     $scope.hide = $mdDialog.hide;
     
-    $scope.cached_protocols = [];    
+    $scope.getOpenProtocols = function () {
+        return ProtocolManager.getOpenProtcols();
+    };
+    
+    $scope.hasOpenProtocols = function () {
+        return ProtocolManager.getOpenProtcols().length !== 0;
+    };
     
     /**
      * Closes protocol then spawns toast notifying user.
@@ -78,12 +105,11 @@ protocols.controller('ProtocolConnectionController', ['$scope', '$mdDialog', '$m
             controller: 'ProtocolConfigurationController',
             templateUrl: '../parlay_components/communication/directives/parlay-protocol-configuration-dialog.html',
         }).then(function (configuration) {
-            // If configuration is undefined that means we hide the dialog without generating a configuration and should not attempt opening.
-            if (configuration !== undefined) return ProtocolManager.openProtocol(configuration);
-            else return undefined;
+            return ProtocolManager.openProtocol(configuration);
+        }).catch(function () {
+            // Do nothing as the user has clicked outside of the dialog.
         }).then(function (response) {
             // Don't display anything if we didn't open a protocol.
-            if (response === undefined) return;
             $mdToast.show($mdToast.simple()
                 .content('Connected successfully to protocol.')
                 .position('bottom left').hideDelay(3000));
@@ -93,10 +119,6 @@ protocols.controller('ProtocolConnectionController', ['$scope', '$mdDialog', '$m
                 .position('bottom left').hideDelay(3000));
         });        
     };
-    
-    ProtocolManager.requestOpenProtocols().then(function (protocols) {
-        $scope.cached_protocols = protocols;
-    });
     
 }]);
 
@@ -125,7 +147,7 @@ protocols.controller('ProtocolConfigurationController', ['$scope', '$mdDialog', 
     }
     
     $scope.cancel = function () {
-        $mdDialog.hide();
+        $mdDialog.cancel();
     };
     
     $scope.accept = function () {

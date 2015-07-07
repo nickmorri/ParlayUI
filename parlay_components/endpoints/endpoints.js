@@ -25,13 +25,15 @@ endpoints.factory('EndpointManager', ['$injector', 'ProtocolManager', function (
     };
     
     Public.getEndpoints = function () {
-        return Private.protocolManager.getOpenProtcols().length > 0 ? Private.protocolManager.getOpenProtcols().reduce(function (previous, current) {
-            return previous.concat(protocol.getEndpoints());
-        }) : [];
+        var endpoints = [];
+        ProtocolManager.getOpenProtcols().forEach(function (protocol) {
+            Array.prototype.push.apply(endpoints, protocol.getEndpoints());
+        });
+        return endpoints;
     };
     
     Public.requestDiscovery = function () {
-        Private.protocolManager.requestDiscovery();
+        return Private.protocolManager.requestDiscovery(true);
     };
         
     return Public;
@@ -46,7 +48,13 @@ endpoints.controller('endpointController', ['$scope', '$mdToast', '$mdDialog', '
     };
     
     $scope.requestDiscovery = function () {
-        EndpointManager.requestDiscovery();
+        $scope.isDiscovering = true;
+        EndpointManager.requestDiscovery().then(function (result) {
+            $scope.isDiscovering = false;
+            $mdToast.show($mdToast.simple()
+                .content('Discovery successful.')
+                .position('bottom left').hideDelay(3000));
+        });
     };
     
 }]);

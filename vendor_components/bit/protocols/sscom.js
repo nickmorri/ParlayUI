@@ -11,7 +11,12 @@ sscom.factory('Protocol', function () {
         };
         
         Public.addDiscovery = function (data) {
-            Private.endpoints = data.children;
+            Private.endpoints = data.children.map(function (endpoint) {
+                
+                endpoint.type = endpoint.type.split("/");
+                
+                return endpoint;
+            });
         };
         
         Public.getEndpoints = function () {

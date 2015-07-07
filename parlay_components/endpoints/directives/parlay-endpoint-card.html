@@ -1,18 +1,47 @@
 <md-card class="md-whiteframe-z3" flex>
     <div class="inset">
         <md-card-content>
-            <h2 class="md-title">{{endpoint.name}}</h2>
-            <p>{{endpoint.type}}</p>
-<!--
-            <md-list>
-                <md-list-item class="md-1-line" ng-repeat="command in endpoint.commands">
-                    {{command.name}}
-                </md-list-item>
-            </md-list>
--->
+            <div layout>
+                <md-input-container flex="80">
+                    <label>Name</label>
+                    <input ng-model="endpoint.name" disabled>
+                </md-input-container>
+                <md-input-container flex="20">
+                    <label>ID</label>
+                    <input ng-model="endpoint.id" disabled>
+                </md-input-container>
+            </div>
+            
+            <md-content>
+                <h2 class="md-title">Type</h2>
+                <md-chips ng-model="endpoint.type" readonly="true"></md-chips>
+            </md-content>
         </md-card-content>
         <div class="md-actions" layout="row" layout-align="end center">
-            <md-button>Reload</md-button>
+
+            <form name="commandForm" layout="row">
+                
+                <md-input-container>
+                    <md-select name="command" placeholder="Command" ng-model="command" required>
+                        <md-option ng-value="command" ng-repeat="command in endpoint.commands">{{command.name}}</md-option>
+                    </md-select>
+                    <div class="errors" ng-messages="commandForm.command.$error" ng-if="commandForm.$dirty">
+                        <div ng-message="required">Required</div>
+                    </div>
+                </md-input-container>
+                
+                <md-input-container>
+                    <label>Value</label>
+                    <input required type="text" ng-model="command.user_value">
+                    <div ng-messages="commandForm.clientName.$error">
+                        <div ng-message="required">This is required.</div>
+                    </div>
+                </md-input-container>
+                
+                <md-button ng-click="doCommand(command)" ng-disabled="commandForm.$invalid" class="md-primary" layout layout-align="center end">Send</md-button>
+                
+            </form>
+            
         </div>
     </div>
 </md-card>

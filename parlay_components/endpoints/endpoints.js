@@ -9,7 +9,7 @@ endpoints.config(function($stateProvider) {
     });
 });
 
-endpoints.factory('parlayEndpoint', function () {
+endpoints.factory('ParlayEndpoint', function () {
     var Public = {};
     var Private = {};
     
@@ -55,6 +55,30 @@ endpoints.controller('endpointController', ['$scope', '$mdToast', '$mdDialog', '
                 .content('Discovery successful.')
                 .position('bottom left').hideDelay(3000));
         });
+    };
+    
+    $scope.doCommand = function (command) {
+        var message = {
+            'topics': {
+                'to_device': 0x84,
+                'from_device': 0x01,
+                'to_system': 0x00,
+                'from_system': 0xf0,
+                'to':0x0084,
+                'from': 0xf001,
+                'message_id': 200,
+                'message_type': 0
+            },
+            'contents': {
+                "command": 0x64, 
+                'message_info': 0,
+                "payload": {
+                    "type": 0,
+                    "data": []
+                }
+            }
+        };
+        debugger;
     };
     
 }]);

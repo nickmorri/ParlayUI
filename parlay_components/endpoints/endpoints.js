@@ -9,32 +9,79 @@ endpoints.config(function($stateProvider) {
     });
 });
 
-endpoints.factory('ParlayEndpoint', function () {
-    var Public = {};
-    var Private = {};
+endpoints.factory('ParlayDevice', function () {
     
-    return Public;
+    var Private = {};
+    var Public = {};
+        
+    Private.addDiscovery = function (data) {
+        Private.endpoints = data.map(function (endpoint) {
+            
+            endpoint.type = endpoint.type.split("/");
+            
+            return endpoint;
+        });
+    };
+        
+    Public.getEndpoints = function () {
+        return Private.endpoints;
+    };
+    
+    Public.generateCommandMessage = function () {
+        return {
+            'topics': {
+                'to_device': 0x84,
+                'from_device': 0x01,
+                'to_system': 0x00,
+                'from_system': 0xf0,
+                'to':0x0084,
+                'from': 0xf001,
+                'message_id': 200,
+                'message_type': 0
+            },
+            'contents': {
+                "command": 0x64, 
+                'message_info': 0,
+                "payload": {
+                    "type": 0,
+                    "data": []
+                }
+            }
+        };
+    };
+    
+    return function (data) {
+        Private.addDiscovery(data);
+        return Public;
+    };
+    
 });
 
-endpoints.factory('EndpointManager', ['$injector', 'ProtocolManager', function ($injector, ProtocolManager) {
+endpoints.factory('EndpointManager', ['PromenadeBroker', 'ParlayDevice', function (PromenadeBroker, ParlayDevice) {
     
     var Public = {};
     
     var Private = {
-        protocolManager: ProtocolManager
+        devices: []
     };
     
     Public.getEndpoints = function () {
         var endpoints = [];
-        ProtocolManager.getOpenProtcols().forEach(function (protocol) {
-            Array.prototype.push.apply(endpoints, protocol.getEndpoints());
+        Private.devices.forEach(function (device) {
+            Array.prototype.push.apply(endpoints, device.getEndpoints());
         });
         return endpoints;
     };
     
     Public.requestDiscovery = function () {
-        return Private.protocolManager.requestDiscovery(true);
+        return PromenadeBroker.requestDiscovery(true);
     };
+    
+    PromenadeBroker.onDiscovery(function (response) {
+        Private.devices = response.discovery.map(function (protocol) {
+            return new ParlayDevice(protocol.children);
+        });
+    });
         
     return Public;
 }]);
@@ -58,26 +105,6 @@ endpoints.controller('endpointController', ['$scope', '$mdToast', '$mdDialog', '
     };
     
     $scope.doCommand = function (command) {
-        var message = {
-            'topics': {
-                'to_device': 0x84,
-                'from_device': 0x01,
-                'to_system': 0x00,
-                'from_system': 0xf0,
-                'to':0x0084,
-                'from': 0xf001,
-                'message_id': 200,
-                'message_type': 0
-            },
-            'contents': {
-                "command": 0x64, 
-                'message_info': 0,
-                "payload": {
-                    "type": 0,
-                    "data": []
-                }
-            }
-        };
         debugger;
     };
     

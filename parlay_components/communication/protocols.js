@@ -1,10 +1,24 @@
-var protocols = angular.module('parlay.protocols', ['promenade.broker', 'bit.sscom', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main']);
+var protocols = angular.module('parlay.protocols', ['promenade.broker', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main']);
 
 protocols.run(['ProtocolManager', function (ProtocolManager) {
     ProtocolManager.requestOpenProtocols();  
 }]);
 
-protocols.factory('ProtocolManager', ['Protocol', '$timeout', 'PromenadeBroker', function (Protocol, $timeout, PromenadeBroker) {
+protocols.factory('Protocol', function () {
+    var Private = {};
+    
+    return function (configuration) {
+        
+        var Public = {
+            name: configuration.name,
+            type: configuration.protocol_type
+        };
+        
+        return Public;        
+    };
+});
+
+protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', function (Protocol, PromenadeBroker) {
     
     var Private = {
         open: [],
@@ -36,10 +50,6 @@ protocols.factory('ProtocolManager', ['Protocol', '$timeout', 'PromenadeBroker',
         return PromenadeBroker.requestAvailableProtocols();
     };
     
-    Public.requestDiscovery = function (is_forced) {
-        return PromenadeBroker.requestDiscovery(is_forced);
-    };
-    
     Private.hasOpenProtocol = function (name) {
         return Private.getOpenProtocol(name) !== undefined;
     };
@@ -57,14 +67,6 @@ protocols.factory('ProtocolManager', ['Protocol', '$timeout', 'PromenadeBroker',
     PromenadeBroker.onMessage({type: 'broker', response: 'get_open_protocols_response'}, function (response) {
         response.protocols.forEach(function (protocol) {
             Private.setOpenProtocol(protocol);
-        });
-    });
-    
-    PromenadeBroker.onDiscovery(function (response) {
-        response.discovery.forEach(function (protocol) {
-            Private.open.find(function (element) {
-                return element.name === protocol.name;
-            }).addDiscovery(protocol);
         });
     });
     
@@ -94,7 +96,7 @@ protocols.controller('ProtocolConnectionController', ['$scope', '$mdDialog', '$m
     };
     
     /**
-     * Show protocol configuration dialog and have EndpointManager open a protocol.
+     * Show protocol configuration dialog and have ProtocolManager open a protocol.
      * @param {Event} - Event generated when button is selected. Allows use to have origin for dialog display animation.
      */
     $scope.openConfiguration = function (event) {

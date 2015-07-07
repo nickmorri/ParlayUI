@@ -1,29 +1,28 @@
-var sscom = angular.module('bit.sscom', ['promenade.broker', 'ngMaterial']);
+var sscom = angular.module('bit.sscom', []);
 
-sscom.factory('BITServiceSSCOM', ['PromenadeBroker', function (PromenadeBroker) {
-    var Private = {
-        broker: PromenadeBroker
-    };
-    
-    var Public = {};
-    
-    Public.sendCommand = function (command) {
-        return Private.broker.sendMessage({'type': 'SSCOM'}, {'command': command}, {'response': command + "_reply"});
-    };
-    
-    return Public;
-}]);
-
-sscom.factory('SSCOMEndpoint', ['$q', 'BITServiceSSCOM', function ($q, BITServiceSSCOM) {
+sscom.factory('SSCOM_Serial', function () {
     var Private = {};
     
-    var Public = {};
-    
-    Public.setup = function () {
-        return $q(function (resolve, reject) {
-            resolve(Public);
-        });
+    return function (configuration) {
+        var Public = {
+            name: "SSCOM_Serial"
+        };
+        
+        var Private = {
+            endpoints: []
+        };
+        
+        Public.addDiscovery = function (data) {
+            Private.endpoints = data.children.reduce(function (previous, current) {
+                return previous.concat(current);
+            });
+            debugger;
+        };
+        
+        Public.getEndpoints = function () {
+            return angular.copy(Private.endpoints);
+        };
+        
+        return Public;        
     };
-    
-    return Public;
-}]);
+});

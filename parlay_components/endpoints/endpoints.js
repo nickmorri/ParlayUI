@@ -1,4 +1,4 @@
-var endpoints = angular.module('parlay.endpoints', ['ui.router', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main', 'promenade.broker', 'bit.sscom']);
+var endpoints = angular.module('parlay.endpoints', ['ui.router', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main', 'parlay.protocols']);
 
 /* istanbul ignore next */
 endpoints.config(function($stateProvider) {
@@ -16,17 +16,18 @@ endpoints.factory('parlayEndpoint', function () {
     return Public;
 });
 
-endpoints.factory('EndpointManager', ['$injector', 'PromenadeBroker', function ($injector, PromenadeBroker) {
+endpoints.factory('EndpointManager', ['$injector', 'ProtocolManager', function ($injector, ProtocolManager) {
     
     var Public = {};
     
     var Private = {
-        endpoints: [],
-        broker: PromenadeBroker
+        protocolManager: ProtocolManager
     };
     
     Public.getEndpoints = function () {
-        return Private.endpoints;
+        return Private.protocolManager.getOpenProtcols().reduce(function (previous, current) {
+            return previous.concat(protocol.getEndpoints());
+        });
     };
         
     Public.setupEndpoint = function (type) {
@@ -40,12 +41,6 @@ endpoints.factory('EndpointManager', ['$injector', 'PromenadeBroker', function (
     Public.reconnectEndpoint = function(endpoint) {
         endpoint.connect();
     };
-    
-    /*
-Private.broker.requestDiscoveryDemo().then(function (endpoints) {
-        Private.endpoints = endpoints;
-    });
-*/
         
     return Public;
 }]);

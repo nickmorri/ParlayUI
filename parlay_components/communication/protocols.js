@@ -1,6 +1,6 @@
 var protocols = angular.module('parlay.protocols', ['promenade.broker', 'bit.sscom', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main']);
 
-protocols.factory('ProtocolManager', ['PromenadeBroker', function (PromenadeBroker) {
+protocols.factory('ProtocolManager', ['$injector', 'PromenadeBroker', function ($injector, PromenadeBroker) {
     
     var Private = {
         broker: PromenadeBroker,
@@ -10,8 +10,18 @@ protocols.factory('ProtocolManager', ['PromenadeBroker', function (PromenadeBrok
     
     var Public = {};
     
+    Public.getOpenProtcols = function () {
+        return angular.copy(Private.open);
+    };
+    
     Public.openProtocol = function (configuration) {
-        return Private.broker.openProtocol(configuration);
+        return Private.broker.openProtocol(configuration).then(function (response) {
+            
+            var protocolFactory = $injector.get(configuration.protocol.name);
+            
+            Private.open.push(protocolFactory(configuration.protocol));
+            Private.requestDiscovery();
+        });
     };
     
     Public.closeProtocol = function (protocol) {
@@ -25,6 +35,18 @@ protocols.factory('ProtocolManager', ['PromenadeBroker', function (PromenadeBrok
     Public.requestAvailableProtocols = function () {
         return Private.broker.requestAvailableProtocols();
     };
+    
+    Private.requestDiscovery = function () {
+        PromenadeBroker.requestDiscovery();
+    };
+    
+    PromenadeBroker.onDiscovery(function (response) {
+        response.discovery.forEach(function (protocol) {
+            Private.open.find(function (element) {
+                return element.name === protocol.name;
+            }).addDiscovery(protocol);
+        });
+    });
     
     return Public;
 }]);

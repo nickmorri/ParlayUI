@@ -111,7 +111,16 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', function (ParlaySocket,
      * @returns {$q.defer.promise} Resolve when response is recieved with available endpoints.
      */
     Public.requestDiscovery = function () {        
-        return Public.sendRequest('get_discovery', {});
+        return Public.sendRequest('get_discovery', {}).then(function (contents) {
+             return contents.discovery;
+        });
+    };
+    
+    /**
+     * Registers a callback on discovery.
+     */
+    Public.onDiscovery = function (callbackFunc) {
+        return Private.onMessage({'response': 'get_discovery_response'}, callbackFunc);
     };
     
     /**
@@ -135,6 +144,12 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', function (ParlaySocket,
                 resolve(response);
             });
         });
+    };
+    
+    Private.onMessage = function (response_topics, response_callback) {
+        response_topics.type = 'broker';
+        
+        return Private.socket.onMessage(response_topics, response_callback);
     };
     
     /**

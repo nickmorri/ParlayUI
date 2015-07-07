@@ -25,54 +25,28 @@ endpoints.factory('EndpointManager', ['$injector', 'ProtocolManager', function (
     };
     
     Public.getEndpoints = function () {
-        return Private.protocolManager.getOpenProtcols().reduce(function (previous, current) {
+        return Private.protocolManager.getOpenProtcols().length > 0 ? Private.protocolManager.getOpenProtcols().reduce(function (previous, current) {
             return previous.concat(protocol.getEndpoints());
-        });
-    };
-        
-    Public.setupEndpoint = function (type) {
-        return $injector.get(type).setup();
+        }) : [];
     };
     
-    Public.disconnectEndpoint = function (index) {
-        endpoint.disconnect();
-    };
-    
-    Public.reconnectEndpoint = function(endpoint) {
-        endpoint.connect();
+    Public.requestDiscovery = function () {
+        Private.protocolManager.requestDiscovery();
     };
         
     return Public;
 }]);
 
 endpoints.controller('endpointController', ['$scope', '$mdToast', '$mdDialog', 'EndpointManager', function ($scope, $mdToast, $mdDialog, EndpointManager) {
-    $scope.endpointManager = EndpointManager;
+    
+    $scope.isDiscovering = false;
     
     $scope.filterEndpoints = function () {
         return EndpointManager.getEndpoints();
     };
     
-    // Do endpoint setup
-    $scope.setupEndpoint = function () {
-        $scope.endpointManager.setupEndpoint();
-    };
-    
-    // Reconnect endpoint if we become disconnected and user requests reconnection
-    $scope.reconnectEndpoint = function (index) {
-        $scope.endpointManager.reconnectEndpoint(index);
-    };
-    
-    // Disconnect endpoint when user asks
-    $scope.disconnectEndpoint = function (index) {
-        $scope.endpointManager.disconnectEndpoint(index).then(function (endpoint) {
-            // Display toast alert notifying user of lost connection
-            $mdToast.show($mdToast.simple()
-                .content('Disconnected ' + endpoint.name)
-                .action('Reconnect').highlightAction(true)
-                .position('bottom left').hideDelay(3000)).then(function () {
-                    $scope.reconnectEndpoint(endpoint);
-                });
-        });        
+    $scope.requestDiscovery = function () {
+        EndpointManager.requestDiscovery();
     };
     
 }]);

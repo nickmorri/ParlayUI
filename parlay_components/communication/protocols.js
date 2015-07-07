@@ -20,7 +20,6 @@ protocols.factory('ProtocolManager', ['$injector', 'PromenadeBroker', function (
             var protocolFactory = $injector.get(configuration.protocol.name);
             
             Private.open.push(protocolFactory(configuration.protocol));
-            Private.requestDiscovery();
         });
     };
     

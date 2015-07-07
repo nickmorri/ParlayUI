@@ -15,3 +15,7 @@
 .autocomplete-custom-template .item-title md-icon {
   height: 18px;
   width: 18px; }
+  
+.endpoints-progress .md-container {
+    top: 0 !important;
+} 

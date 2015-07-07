@@ -9,25 +9,12 @@ endpoints.config(function($stateProvider) {
     });
 });
 
-endpoints.factory('ParlayDevice', function () {
+endpoints.factory('CommandEndpoint', function () {
     
-    var Private = {};
     var Public = {};
-        
-    Private.addDiscovery = function (data) {
-        Private.endpoints = data.map(function (endpoint) {
-            
-            endpoint.type = endpoint.type.split("/");
-            
-            return endpoint;
-        });
-    };
-        
-    Public.getEndpoints = function () {
-        return Private.endpoints;
-    };
+    var Private = {};
     
-    Public.generateCommandMessage = function () {
+    Public.generateCommandMessage = function (command) {
         return {
             'topics': {
                 'to_device': 0x84,
@@ -50,12 +37,59 @@ endpoints.factory('ParlayDevice', function () {
         };
     };
     
+    return Public;
+});
+
+endpoints.factory('ParlayEndpoint', ['$injector', function ($injector) {
+    var Public = {};
+    var Private = {
+        type: null,
+        data: null,
+        vendor_interfaces: []
+    };
+    
+    Private.attachVendorInterfaces = function (types) {
+        types.forEach(function (type) {
+            try {
+                Private.vendor_interfaces.push($injector.get(type));
+            }
+            catch (e) {
+                // Do nothing if we couldn't find that interface.
+            }
+            
+        });
+    };
+    
+    return function (endpoint) {
+        Private.attachVendorInterfaces(endpoint.type.split("/"));
+        
+        // Returning endpoint for now so it doesn't break anything.
+        // return Public;
+        return endpoint;
+    };
+}]);
+
+endpoints.factory('ParlayDevice', ['ParlayEndpoint', function (ParlayEndpoint) {
+    
+    var Private = {};
+    var Public = {};
+        
+    Private.addDiscovery = function (data) {
+        Private.endpoints = data.map(function (endpoint) {
+            return ParlayEndpoint(endpoint);
+        });
+    };
+        
+    Public.getEndpoints = function () {
+        return Private.endpoints;
+    };
+        
     return function (data) {
         Private.addDiscovery(data);
         return Public;
     };
     
-});
+}]);
 
 endpoints.factory('EndpointManager', ['PromenadeBroker', 'ParlayDevice', function (PromenadeBroker, ParlayDevice) {
     
@@ -104,7 +138,7 @@ endpoints.controller('endpointController', ['$scope', '$mdToast', '$mdDialog', '
         });
     };
     
-    $scope.doCommand = function (command) {
+    $scope.doCommand = function (command, endpoint) {
         debugger;
     };
     

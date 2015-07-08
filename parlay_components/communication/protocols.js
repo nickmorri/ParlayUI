@@ -1,9 +1,5 @@
 var protocols = angular.module('parlay.protocols', ['promenade.broker', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main']);
 
-protocols.run(['ProtocolManager', function (ProtocolManager) {
-    ProtocolManager.requestOpenProtocols();  
-}]);
-
 protocols.factory('Protocol', function () {
     var Private = {};
     
@@ -27,26 +23,32 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', function (P
     
     var Public = {};
     
+    Public.getAvailableProtocols = function () {
+        return Private.available;
+    };
+    
     Public.getOpenProtcols = function () {
         return Private.open;
     };
     
     Public.openProtocol = function (configuration) {
-        return PromenadeBroker.openProtocol(configuration).then(function (response) {
-            PromenadeBroker.sendRequest('get_open_protocols', {});
-            return response;
-        });
+        return PromenadeBroker.openProtocol(configuration);
     };
     
     Public.closeProtocol = function (protocol) {
         return PromenadeBroker.closeProtocol(protocol);
     };
     
-    Public.requestOpenProtocols = function () {
+    Private.requestProtocols = function () {
+        Private.requestAvailableProtocols();
+        Private.requestOpenProtocols();
+    };
+    
+    Private.requestOpenProtocols = function () {
         return PromenadeBroker.requestOpenProtocols();
     };
     
-    Public.requestAvailableProtocols = function () {
+    Private.requestAvailableProtocols = function () {
         return PromenadeBroker.requestAvailableProtocols();
     };
     
@@ -54,20 +56,63 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', function (P
         return Private.getOpenProtocol(name) !== undefined;
     };
     
-    Private.getOpenProtocol = function () {
+    Private.hasAvailableProtocol = function (name) {
+        return Private.getAvailableProtocol(name) !== undefined;
+    };
+    
+    Private.getOpenProtocol = function (name) {
         return Private.open.find(function (protocol) {
             return name === protocol.name;
         });
     };
     
-    Private.setOpenProtocol = function (protocol) {
-        if (!Private.hasOpenProtocol(protocol.name)) Private.open.push(Protocol(protocol));
+    Private.getAvailableProtocol = function (name) {
+        return Private.available.find(function (protocol) {
+            return name === protocol.name;
+        });
     };
     
-    PromenadeBroker.onMessage({type: 'broker', response: 'get_open_protocols_response'}, function (response) {
-        response.protocols.forEach(function (protocol) {
-            Private.setOpenProtocol(protocol);
+    Private.setAvailableProtocols = function (protocols) {
+        Private.available = Object.keys(protocols).map(function (protocol_name) {
+            return {
+                name: protocol_name,
+                parameters: protocols[protocol_name].params.reduce(function (param_obj, current_param) {
+                    param_obj[current_param] = protocols[protocol_name].defaults[current_param];
+                    return param_obj;
+                }, {})
+            };
         });
+    };
+    
+    Private.setOpenProtocols = function (protocols) {
+        Private.open = protocols.map(function (protocol) {
+            return Protocol(protocol);
+        });        
+    };
+    
+    Private.clearProtocols = function () {
+        Private.open = [];
+        Private.available = [];
+    };
+    
+    PromenadeBroker.onOpen(Private.requestProtocols);
+    
+    PromenadeBroker.onClose(Private.clearProtocols);
+    
+    PromenadeBroker.onMessage({type: 'broker', response: 'open_protocol_response'}, function (response) {
+        PromenadeBroker.sendRequest('get_open_protocols', {});
+    });
+    
+    PromenadeBroker.onMessage({type: 'broker', response: 'close_protocol_response'}, function (response) {
+        PromenadeBroker.sendRequest('get_open_protocols', {});
+    });
+    
+    PromenadeBroker.onMessage({type: 'broker', response: 'get_protocols_response'}, function (response) {
+        Private.setAvailableProtocols(response);
+    });
+    
+    PromenadeBroker.onMessage({type: 'broker', response: 'get_open_protocols_response'}, function (response) {
+        Private.setOpenProtocols(response.protocols);
     });
     
     return Public;
@@ -136,9 +181,7 @@ protocols.controller('ProtocolConfigurationController', ['$scope', '$mdDialog', 
     };
     
     $scope.querySearch = function (query) {
-        return ProtocolManager.requestAvailableProtocols().then(function (protocols) {
-            return query ? protocols.filter(filterFunction(query)) : protocols;
-        });
+        return query ? ProtocolManager.getAvailableProtocols().filter(filterFunction(query)) : ProtocolManager.getAvailableProtocols();
     };
     
     function filterFunction(query) {

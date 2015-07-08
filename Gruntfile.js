@@ -7,7 +7,7 @@ module.exports = function (grunt) {
     'pkg': grunt.file.readJSON('package.json'),
 
     'meta': {
-      'source': ['app.js', 'parlay_components/**/*.js'],
+      'source': ['app.js', 'parlay_components/*/*.js'],
       'vendorCompontents': 'vendor_components/**/**/*.js',
       'dist_destination': 'dist',
       'dev_destination': 'dev',
@@ -30,7 +30,7 @@ module.exports = function (grunt) {
       'staticComponents': [
         'static_components/ng-websocket/ng-websocket.js'
       ],
-      'tests': 'parlay_components/**/test/*.js',
+      'tests': 'parlay_components/*/test/*.js',
       'compiledHtml': 'tmp/templates.js',
       'htmlDirectives': 'parlay_components/**/directives/*.html',
       'htmlViews': 'parlay_components/**/views/*.html',

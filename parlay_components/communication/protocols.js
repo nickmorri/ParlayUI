@@ -39,7 +39,7 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', funct
      * Returns cached open protocols.
      * @returns {Array} open protocols.
      */
-    Public.getOpenProtcols = function () {
+    Public.getOpenProtocols = function () {
         return Private.open;
     };
     
@@ -195,7 +195,7 @@ protocols.controller('ProtocolConnectionController', ['$scope', '$mdDialog', '$m
      * @returns {Array} open protocols
      */
     $scope.getOpenProtocols = function () {
-        return ProtocolManager.getOpenProtcols();
+        return ProtocolManager.getOpenProtocols();
     };
     
     /**
@@ -203,7 +203,7 @@ protocols.controller('ProtocolConnectionController', ['$scope', '$mdDialog', '$m
      * @returns {Boolean} true if open protocols exist, false otherwise.
      */
     $scope.hasOpenProtocols = function () {
-        return ProtocolManager.getOpenProtcols().length !== 0;
+        return ProtocolManager.getOpenProtocols().length !== 0;
     };
     
     /**

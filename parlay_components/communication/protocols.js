@@ -21,7 +21,9 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', funct
         available: []
     };
     
-    var Public = {};
+    var Public = {
+        _private: Private
+    };
     
     /**
      * Public Methods

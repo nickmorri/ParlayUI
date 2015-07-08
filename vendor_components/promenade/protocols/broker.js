@@ -55,8 +55,8 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', function (ParlaySocket,
      * @param {Object} configuration - Configuration object we should configure a new protocol connection with.
      * @returns {$q.defer.promise} Resolve when response is recieved with result of open request from Broker.
      */
-    Public.openProtocol = function (configuration) {        
-        return Public.sendRequest('open_protocol', {'protocol_name': configuration.protocol.name, 'params': configuration.protocol.parameters});
+    Public.openProtocol = function (configuration) {
+        return Public.sendRequest('open_protocol', {'protocol_name': configuration.name, 'params': configuration.parameters});
     };
     
     /**

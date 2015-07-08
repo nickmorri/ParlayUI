@@ -13,10 +13,9 @@
         <md-dialog-content>
         
             <md-autocomplete
-            ng-show="configuration.protocol === undefined"
+            ng-show="selected_protocol === null"
             md-selected-item="selected_protocol"
             md-search-text="search_text"
-            md-selected-item-change="selectProtocol(protocol)"
             md-items="protocol in querySearch(search_text)"
             md-item-text="protocol.display"
             md-min-length="0"
@@ -29,7 +28,7 @@
                 </md-not-found>
             </md-autocomplete>
         
-            <md-input-container flex ng-repeat="(key, value) in configuration.protocol.parameters">
+            <md-input-container flex ng-repeat="(key, value) in selected_protocol.parameters">
                 <label class="capitalize">{{key}}</label>
                 <input ng-model="value">
             </md-input-container>            

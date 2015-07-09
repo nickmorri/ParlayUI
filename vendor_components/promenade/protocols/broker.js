@@ -1,10 +1,16 @@
 var broker = angular.module('promenade.broker', ['parlay.socket']);
 
-broker.factory('PromenadeBroker', ['ParlaySocket', '$q', function (ParlaySocket, $q) {
+broker.value('BrokerAddress', 'ws://' + location.hostname + ':8085');
+
+broker.factory('PromenadeBroker', ['ParlaySocket', '$q', 'BrokerAddress', function (ParlaySocket, $q, BrokerAddress) {
     var Public = {};
     
     var Private = {
-        socket: ParlaySocket('ws://' + location.hostname + ':8085')
+        socket: ParlaySocket(BrokerAddress)
+    };
+    
+    Public.getBrokerAddress = function () {
+        return BrokerAddress;
     };
     
     /**

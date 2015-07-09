@@ -18,10 +18,15 @@ protocols.factory('Protocol', ['$injector', function ($injector) {
                 return protocol.protocol_type === info.protocol_type;
             });
             if (instance === undefined) {
-                instance = $injector.get(info.protocol_type);
-                Private.vendor_protocols.push(instance);
+                try {
+                    instance = $injector.get(info.protocol_type);
+                    Private.vendor_protocols.push(instance);    
+                } catch (error) {
+                    var pattern = new RegExp('([A-z]+) <-');
+                    console.warn('Configuration for ' + pattern.exec(error.message)[1] + ' was not found.');
+                }                
             }
-            instance.addDiscoveryInfo(info);
+            if (instance !== undefined) instance.addDiscoveryInfo(info);
         };
         
         return Public;        

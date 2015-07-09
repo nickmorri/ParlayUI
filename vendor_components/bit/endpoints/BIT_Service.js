@@ -114,7 +114,7 @@ bit_endpoints.factory('BIT_Service', ['SSCOM_Serial', function (SSCOM_Serial) {
                 },
                 'contents': {
                     "command": '0x' + parseInt(command.id), 
-                    'message_info': command.message_info !== undefined ? command.message_info : null,
+                    'message_info': command.message_info !== undefined ? command.message_info : 0,
                     "payload": {
                         "type": command.data_buffer_type[1],
                         "data": command.data_buffer !== undefined ? command.data_buffer : null

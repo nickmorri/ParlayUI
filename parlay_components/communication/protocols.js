@@ -257,9 +257,10 @@ protocols.controller('ProtocolConnectionController', ['$scope', '$mdDialog', '$m
             templateUrl: '../parlay_components/communication/directives/parlay-protocol-configuration-dialog.html',
         }).then(function (configuration) {
             return ProtocolManager.openProtocol(configuration);
-        }).catch(function () {
-            // Do nothing as the user has clicked outside of the dialog.
+        }).catch(function (result) {
+            return undefined;
         }).then(function (response) {
+            if (response === undefined) return response;
             // Don't display anything if we didn't open a protocol.
             $mdToast.show($mdToast.simple()
                 .content('Connected successfully to protocol.')

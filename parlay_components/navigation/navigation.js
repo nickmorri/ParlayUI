@@ -2,7 +2,10 @@ var navigation = angular.module('parlay.navigation', ['ui.router', 'ngMaterial',
 
 navigation.value('parlayNavToggleOpen', true);
 
-navigation.controller('parlayToolbarController', ['$scope', '$mdSidenav', '$mdMedia', 'parlayNavToggleOpen', function ($scope, $mdSidenav, $mdMedia, parlayNavToggleOpen) {
+navigation.controller('parlayToolbarController', ['$scope', '$state', '$mdSidenav', '$mdMedia', 'parlayNavToggleOpen', function ($scope, $state, $mdSidenav, $mdMedia, parlayNavToggleOpen) {
+    
+    // Allows view to access information from $state object. Using $current.self.name for display in toolbar
+    $scope.$state = $state;
     
     // If we are on a screen size greater than the medium layout breakpoint we should open the navigation menu by default
     $scope.parlayNavToggleOpen = $mdMedia('gt-md');
@@ -53,9 +56,6 @@ navigation.controller('parlayNavController', ['$scope', '$state', '$rootScope', 
             };
         });
     };
-    
-    // Allows view to access information from $state object. Using $current.self.name for display in toolbar
-    $scope.$state = $state;
     
     // Retrieve states so we can dynamically build navigation menu
     $scope.states = $scope.buildNavFromStates();

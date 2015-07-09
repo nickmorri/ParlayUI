@@ -72,25 +72,29 @@ navigation.controller('parlayNavController', ['$scope', '$state', '$rootScope', 
 }]);
 
 navigation.controller('ParlayConnectionListController', ['$scope', '$mdDialog', '$mdToast', 'ProtocolManager', 'PromenadeBroker', function ($scope, $mdDialog, $mdToast, ProtocolManager, PromenadeBroker) {
+    
     $scope.hide = $mdDialog.hide;
     $scope.connection_icon = 'cloud_off';
     
-    $scope.disconnectBroker = function () {
-        PromenadeBroker.disconnect();
-    };
-    
-    $scope.connectBroker = function () {
-        PromenadeBroker.connect();
-    };
-    
+    /**
+     * Returns Broker connection status.
+     * @returns {Boolean} Broker connection status
+     */
     $scope.isBrokerConnected = function () {
         return PromenadeBroker.isConnected();
     };
     
+    /**
+     * Returns Broker location.
+     * @returns {String} location of Broker where WebSocket is connected to.
+     */
     $scope.getBrokerAddress = function () {
         return PromenadeBroker.getBrokerAddress();  
     };
     
+    /**
+     * Switches Broker connected and disconnected.
+     */
     $scope.toggleBrokerConnection = function () {
         if (PromenadeBroker.isConnected()) PromenadeBroker.disconnect();
         else PromenadeBroker.connect();

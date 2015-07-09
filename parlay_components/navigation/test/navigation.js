@@ -66,46 +66,46 @@
         	describe('tests broker interaction', function () {
             	
             	it('initializes', function () {
-                	expect(scope.broker.isConnected()).toBeFalsy();
-                	expect(scope.connection_icon).toEqual('cloud_off');
-            	});
-            	
-            	it('connects', function () {
-                	expect(scope.broker.isConnected()).toBeFalsy();
-                	scope.connect();
-                	expect(scope.broker.isConnected()).toBeTruthy();
-            	});
-            	
-            	it('disconnects', function () {
-                	scope.connect();
-                	expect(scope.broker.isConnected()).toBeTruthy();
-                	scope.disconnect();
-                	expect(scope.broker.isConnected()).toBeFalsy();
-            	});
-            	
-            	it('toggles connection', function () {
-                	expect(scope.broker.isConnected()).toBeFalsy();
-                	scope.toggleConnection();
-                	expect(scope.broker.isConnected()).toBeTruthy();
-                	scope.toggleConnection();
-                	expect(scope.broker.isConnected()).toBeFalsy();
-                	scope.toggleConnection();
-                	expect(scope.broker.isConnected()).toBeTruthy();
-            	});
-            	
-            	it('updates connection status icon', function () {
-                	expect(scope.connection_icon).toEqual('cloud_off');
-                	scope.toggleConnection();
-                	scope.$digest(); // Skeptical if calling digest is good idea as it may not mirror actual environment. 
-                    expect(scope.connection_icon).toEqual('cloud');
-                	scope.toggleConnection();
-                	scope.$digest(); // Skeptical if calling digest is good idea as it may not mirror actual environment.
                 	expect(scope.connection_icon).toEqual('cloud_off');
             	});
             	
         	});
         	
     	});
+    	
+    	describe('ParlayConnectionListController', function () {
+        	var scope, ParlayConnectionListController;
+        	
+        	beforeEach(inject(function ($rootScope, $controller) {
+            	scope = $rootScope.$new();
+            	ParlayConnectionListController = $controller('ParlayConnectionListController', {$scope: scope});
+        	}));
+        	
+        	describe('protocol manager checks', function () {
+            	
+            	it('gets open protocols', function () {
+                	expect(scope.getOpenProtocols().length).toBe(0);
+            	});
+            	
+            	it('if there are open protocols', function () {
+                	expect(scope.hasOpenProtocols()).toBeFalsy();
+            	});
+            	
+        	});
+        	
+        	xdescribe('protocol manager interactions', function () {
+            	
+            	it('configures a protocol', function () {});
+            	
+            	it('closes a protocol', function () {
+                	expect(scope.hasOpenProtocols()).toBeTruthy();
+                	scope.closeProtocol();
+                	expect(scope.hasOpenProtocols()).toBeFalsy();
+            	});
+            	
+        	});
+        	
+        });
     	
     	describe('parlayNavController', function () {
     		var scope, parlayNavController;

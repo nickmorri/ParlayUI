@@ -98,40 +98,6 @@
         describe('Protocol Controllers', function () {
             
             beforeEach(module('mock.parlay.protocols'));
-            
-            describe('ProtocolConnectionController', function () {
-            	var scope, protocolConnectionController;
-            	
-            	beforeEach(inject(function ($rootScope, $controller) {
-                	scope = $rootScope.$new();
-                	protocolConnectionController = $controller('ProtocolConnectionController', {$scope: scope});
-            	}));
-            	
-            	describe('protocol manager checks', function () {
-                	
-                	it('gets open protocols', function () {
-                    	expect(scope.getOpenProtocols().length).toBe(1);
-                	});
-                	
-                	it('if there are open protocols', function () {
-                    	expect(scope.hasOpenProtocols()).toBeTruthy();
-                	});
-                	
-            	});
-            	
-            	xdescribe('protocol manager interactions', function () {
-                	
-                	it('configures a protocol', function () {});
-                	
-                	it('closes a protocol', function () {
-                    	expect(scope.hasOpenProtocols()).toBeTruthy();
-                    	scope.closeProtocol();
-                    	expect(scope.hasOpenProtocols()).toBeFalsy();
-                	});
-                	
-            	});
-            	
-            });
         
             describe('ProtocolConfigurationController', function () {
                 

@@ -3,7 +3,7 @@
     <parlay-endpoints-toolbar></parlay-endpoints-toolbar>
     
     <md-content layout-margin layout-wrap layout="row">    
-        <parlay-endpoint-card ng-repeat="endpoint in filterEndpoints()"></parlay-endpoint-card>
+        <parlay-endpoint-card ng-repeat="endpoint in filterEndpoints() track by $index"></parlay-endpoint-card>
     </md-content>
         
 </div>

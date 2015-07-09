@@ -1,18 +1,32 @@
-var protocols = angular.module('parlay.protocols', ['promenade.broker', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main']);
+var protocols = angular.module('parlay.protocols', ['promenade.broker', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main', 'bit.protocols']);
 
-protocols.factory('Protocol', function () {
-    var Private = {};
-    
-    return function (configuration) {
+protocols.factory('Protocol', ['$injector', function ($injector) {
+    return function protocol (configuration) {
+        
+        var Private = {
+            vendor_protocols: []
+        };
         
         var Public = {
             name: configuration.name,
             type: configuration.protocol_type
         };
         
+        Public.addDiscoveryInfo = function (info) {
+            var instance;
+            instance = Private.vendor_protocols.find(function (protocol) {
+                return protocol.protocol_type === info.protocol_type;
+            });
+            if (instance === undefined) {
+                instance = $injector.get(info.protocol_type);
+                Private.vendor_protocols.push(instance);
+            }
+            instance.addDiscoveryInfo(info);
+        };
+        
         return Public;        
     };
-});
+}]);
 
 protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', function (Protocol, PromenadeBroker, $q) {
     
@@ -149,7 +163,7 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', funct
      */
     Private.setOpenProtocols = function (protocols) {
         Private.open = protocols.map(function (protocol) {
-            return Protocol(protocol);
+            return new Protocol(protocol);
         });        
     };
     
@@ -161,6 +175,13 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', funct
         Private.available = [];
     };
     
+    /**
+     * Adds information from discovery to open Protocol instance.
+     * @param {Object} info - Discovery information which may be vendor specific.
+     */
+    Private.addDiscoveryInfoToOpenProtocol = function (info) {
+        Private.getOpenProtocol(info.name).addDiscoveryInfo(info);
+    };    
     
     /**
      * PromenadeBroker callback registrations.
@@ -184,6 +205,10 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', funct
     
     PromenadeBroker.onMessage({type: 'broker', response: 'get_open_protocols_response'}, function (response) {
         Private.setOpenProtocols(response.protocols);
+    });
+    
+    PromenadeBroker.onDiscovery(function (response) {
+        response.discovery.forEach(Private.addDiscoveryInfoToOpenProtocol);
     });
     
     return Public;

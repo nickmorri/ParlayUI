@@ -1,57 +1,10 @@
 <md-card class="md-whiteframe-z3" flex>
     <div class="inset">
         <md-card-content>
-            <div layout>
-                <md-input-container flex="80">
-                    <label>Name</label>
-                    <input ng-model="endpoint.name" disabled>
-                </md-input-container>
-                <md-input-container flex="20">
-                    <label>ID</label>
-                    <input ng-model="endpoint.id" disabled>
-                </md-input-container>
-            </div>
-            
-            <md-content>
-                <h2 class="md-title">Type</h2>
-                <md-chips ng-model="endpoint.type" readonly="true"></md-chips>
-            </md-content>
+            <!-- Vendor specific endpoint information directives are automatically inserted here -->
         </md-card-content>
         <div class="md-actions" layout="row" layout-align="end center">
-
-            <form name="commandForm" layout="row">
-                
-                <md-input-container>
-                    <md-select name="command" placeholder="Command" ng-model="command" required>
-                        <md-option ng-value="command" ng-repeat="command in endpoint.commands">{{command.name}}</md-option>
-                    </md-select>
-                    <div class="errors" ng-messages="commandForm.command.$error" ng-if="commandForm.$dirty">
-                        <div ng-message="required">Required</div>
-                    </div>
-                </md-input-container>
-                
-                <md-input-container>
-                    <md-select name="command.values.data_buffer_type" placeholder="Data buffer type" ng-model="command.values.data_buffer_type" required>
-                        <md-option value="1">One</md-option>
-                        <md-option value="2">Two</md-option>
-                    </md-select>
-                    <div class="errors" ng-messages="commandForm.data_buffer_type.$error" ng-if="myForm.$dirty">
-                        <div ng-message="required">Type is required</div>
-                    </div>
-                </md-input-container>
-                
-                <md-input-container>
-                    <label>Data Buffer</label>
-                    <input required type="text" ng-model="command.values.data_buffer">
-                    <div ng-messages="commandForm.data_buffer.$error">
-                        <div ng-message="required">Data is required.</div>
-                    </div>
-                </md-input-container>
-                
-                <md-button ng-click="doCommand(command, endpoint)" ng-disabled="commandForm.$invalid" class="md-primary" layout layout-align="center end">Send</md-button>
-                
-            </form>
-            
+            <!-- Vendor specific endpoint action directives are automatically inserted here -->
         </div>
     </div>
 </md-card>

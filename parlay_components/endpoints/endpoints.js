@@ -1,4 +1,4 @@
-var endpoints = angular.module('parlay.endpoints', ['ui.router', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main', 'parlay.protocols']);
+var endpoints = angular.module('parlay.endpoints', ['ui.router', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main', 'parlay.protocols', 'bit.endpoints']);
 
 /* istanbul ignore next */
 endpoints.config(function($stateProvider) {
@@ -9,89 +9,82 @@ endpoints.config(function($stateProvider) {
     });
 });
 
-endpoints.factory('CommandEndpoint', function () {
-    
-    var Public = {};
-    var Private = {};
-    
-    Public.generateCommandMessage = function (command) {
-        return {
-            'topics': {
-                'to_device': 0x84,
-                'from_device': 0x01,
-                'to_system': 0x00,
-                'from_system': 0xf0,
-                'to':0x0084,
-                'from': 0xf001,
-                'message_id': 200,
-                'message_type': 0
-            },
-            'contents': {
-                "command": 0x64, 
-                'message_info': 0,
-                "payload": {
-                    "type": 0,
-                    "data": []
-                }
-            }
-        };
-    };
-    
-    return Public;
-});
-
 endpoints.factory('ParlayEndpoint', ['$injector', function ($injector) {
-    var Public = {};
-    var Private = {
-        type: null,
-        data: null,
-        vendor_interfaces: []
-    };
-    
-    Private.attachVendorInterfaces = function (types) {
-        types.forEach(function (type) {
-            try {
-                Private.vendor_interfaces.push($injector.get(type));
-            }
-            catch (e) {
-                // Do nothing if we couldn't find that interface.
-            }
-            
-        });
-    };
-    
-    return function (endpoint) {
-        Private.attachVendorInterfaces(endpoint.type.split("/"));
+    return function ParlayEndpoint (endpoint) {
         
-        // Returning endpoint for now so it doesn't break anything.
-        // return Public;
-        return endpoint;
+        var Public = {};
+    
+        var Private = {
+            vendor_interfaces: []
+        };
+        
+        Private.attachVendorInterfaces = function (endpoint) {
+            endpoint.type.split("/").forEach(function (type) {
+                try {
+                    var instance = $injector.get(type);
+                    Private.vendor_interfaces.push(new instance(endpoint));
+                }
+                catch (e) {
+                    // Do nothing if we couldn't find that interface.
+                }                
+            });
+        };
+        
+        Public.getVendorInterface = function (type) {
+            return Private.vendor_interfaces.find(function (interface) {
+                return type === interface.getType();
+            });
+        };
+        
+        Public.getTypes = function () {
+            return Private.vendor_interfaces.map(function (endpoint) {
+                return endpoint.getType();
+            });
+        };
+        
+        Public.getDirectives = function () {
+            return Private.vendor_interfaces.map(function (endpoint) {
+                return endpoint.getDirectives();
+            }).filter(function (directive_set) {
+                return Object.keys(directive_set).length;
+            });
+        };
+        
+        Public.doCommand = function (interface, command) {
+            var test = interface.generateCommand(command);
+            debugger;
+        };
+        
+        Private.attachVendorInterfaces(endpoint);
+        
+        return Public;
     };
 }]);
 
 endpoints.factory('ParlayDevice', ['ParlayEndpoint', function (ParlayEndpoint) {
-    
-    var Private = {};
-    var Public = {};
+    return function ParlayDevice (protocol) {
+
+        var Private = {};
+
+        var Public = {};
+            
+        Private.addDiscovery = function (data) {
+            Private.endpoints = data.map(function (endpoint) {
+                return new ParlayEndpoint(endpoint);
+            });
+        };
+            
+        Public.getEndpoints = function () {
+            return Private.endpoints;
+        };
+
+        Private.addDiscovery(protocol.children);
         
-    Private.addDiscovery = function (data) {
-        Private.endpoints = data.map(function (endpoint) {
-            return ParlayEndpoint(endpoint);
-        });
-    };
-        
-    Public.getEndpoints = function () {
-        return Private.endpoints;
-    };
-        
-    return function (data) {
-        Private.addDiscovery(data);
         return Public;
-    };
-    
+    };    
 }]);
 
-endpoints.factory('EndpointManager', ['PromenadeBroker', 'ParlayDevice', function (PromenadeBroker, ParlayDevice) {
+endpoints.factory('EndpointManager', ['PromenadeBroker', 'ParlayDevice', 'ProtocolManager', function (PromenadeBroker, ParlayDevice, ProtocolManager) {
     
     var Public = {};
     
@@ -99,12 +92,14 @@ endpoints.factory('EndpointManager', ['PromenadeBroker', 'ParlayDevice', functio
         devices: []
     };
     
+    Private.clearDevices = function () {
+        Private.devices = [];
+    };
+    
     Public.getEndpoints = function () {
-        var endpoints = [];
-        Private.devices.forEach(function (device) {
-            Array.prototype.push.apply(endpoints, device.getEndpoints());
-        });
-        return endpoints;
+        return Private.devices.reduce(function (previous, current) {
+            return previous.concat(current.getEndpoints());
+        }, []);
     };
     
     Public.requestDiscovery = function () {
@@ -113,8 +108,12 @@ endpoints.factory('EndpointManager', ['PromenadeBroker', 'ParlayDevice', functio
     
     PromenadeBroker.onDiscovery(function (response) {
         Private.devices = response.discovery.map(function (protocol) {
-            return new ParlayDevice(protocol.children);
+            return new ParlayDevice(protocol);
         });
+    });
+    
+    PromenadeBroker.onClose(function () {
+        
     });
         
     return Public;
@@ -195,11 +194,46 @@ endpoints.directive('parlayEndpointSearch', function () {
 });
 
 /* istanbul ignore next */
-endpoints.directive('parlayEndpointCard', function () {
+endpoints.directive('parlayEndpointCard', ['$compile', function ($compile) {
     return {
-        templateUrl: '../parlay_components/endpoints/directives/parlay-endpoint-card.html'
+        templateUrl: '../parlay_components/endpoints/directives/parlay-endpoint-card.html',
+        link: function (scope, element, attributes) {
+            
+            var SNAKE_CASE_REGEXP = /[A-Z]/g;
+            function snake_case(name, separator) {
+              separator = separator || '_';
+              return name.replace(SNAKE_CASE_REGEXP, function(letter, pos) {
+                return (pos ? separator : '') + letter.toLowerCase();
+              });
+            }
+            
+            var content = element[0].querySelector('md-card-content');
+            var actions = element[0].querySelector('div.md-actions');
+            
+            var directives = scope.endpoint.getDirectives();
+            
+            var infoDirectives = directives.filter(function (directive) {
+                return directive.hasOwnProperty('info');
+            }).map(function (directive) {
+                return '<' + snake_case(directive.info, '-') + ' endpoint="endpoint"></' + snake_case(directive.info, '-') + '>';
+            });
+            
+            var actionDirectives = directives.filter(function (directive) {
+                return directive.hasOwnProperty('actions');
+            }).map(function (directive) {
+                return '<' + snake_case(directive.actions, '-') + ' endpoint="endpoint"></' + snake_case(directive.actions, '-') + '>';
+            });
+            
+            infoDirectives.forEach(function (directiveString) {
+                content.appendChild($compile(directiveString)(scope)[0]);
+            });
+            
+            actionDirectives.forEach(function (directiveString) {
+                actions.appendChild($compile(directiveString)(scope)[0]);
+            });
+        }
     };
-});
+}]);
 
 /* istanbul ignore next */
 endpoints.directive('parlayEndpointsToolbar', function () {

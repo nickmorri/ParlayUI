@@ -50,11 +50,6 @@ endpoints.factory('ParlayEndpoint', ['$injector', function ($injector) {
             });
         };
         
-        Public.doCommand = function (interface, command) {
-            var test = interface.generateCommand(command);
-            debugger;
-        };
-        
         Private.attachVendorInterfaces(endpoint);
         
         return Public;
@@ -138,7 +133,7 @@ endpoints.controller('endpointController', ['$scope', '$mdToast', '$mdDialog', '
     };
     
     $scope.doCommand = function (command, endpoint) {
-        debugger;
+        var test = interface.generateCommand(command);
     };
     
 }]);

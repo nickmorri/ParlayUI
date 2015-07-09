@@ -1,4 +1,4 @@
-var bit_endpoints = angular.module('bit.endpoints', []);
+var bit_endpoints = angular.module('bit.endpoints', ['bit.protocols']);
 
 bit_endpoints.factory('CommandEndpoint', function () {
     return function CommandEndpoint (data) {
@@ -28,7 +28,7 @@ bit_endpoints.factory('CommandEndpoint', function () {
     };
 });
 
-bit_endpoints.factory('BIT_Service', function () {
+bit_endpoints.factory('BIT_Service', ['SSCOM_Serial', function (SSCOM_Serial) {
     return function BIT_Service (data) {
         
         var Private = {
@@ -39,25 +39,49 @@ bit_endpoints.factory('BIT_Service', function () {
             type: 'BIT_Service',
             directives: {
                 'info': 'bitEndpointCardInfo',
-                'actions': 'bitEndpointCardActions'
+                'toolbar': 'bitEndpointToolbar'
             }
         };
         
         Private.addData = function (data) {
-            Private.commands = data.commands;
-            Private.id = data.id;
             Private.interfaces = data.interfaces;
+            Private.id = data.id;
             Private.name = data.name;
+            
+            Private.commands = Object.keys(data.commands).map(function (command_key) {
+                var command = data.commands[command_key];
+                command.id = command_key;
+                return command;
+            });
+            
         };
         
-        var Public = {};
+        var Public = {
+            sending: false
+        };
         
         Public.getCommands = function () {
             return Private.commands;
         };
         
+        Public.getMessageTypes = function () {
+            return SSCOM_Serial.getMessageTypes();
+        };
+        
+        Public.getDataTypes = function () {
+            return SSCOM_Serial.getDataTypes();
+        };
+        
         Public.getId = function () {
             return Private.id;
+        };
+        
+        Public.getSystemId = function () {
+            return Public.getId() >> 8;
+        };
+        
+        Public.getDeviceId = function () {
+            return Public.getId() & 0xff;
         };
         
         Public.getName = function () {
@@ -72,24 +96,28 @@ bit_endpoints.factory('BIT_Service', function () {
             return Private.directives;
         };
             
-        Public.generateCommand = function (command) {
+        Public.doCommand = function (command) {
+            Public.sending = true;
+            SSCOM_Serial.sendCommand(Private.generateCommand(command)).then(function (response) {
+                Public.sending = false;
+                debugger;
+            });
+        };    
+        
+        Private.generateCommand = function (command) {
             return {
                 'topics': {
-                    'to_device': 0x84,
-                    'from_device': 0x01,
-                    'to_system': 0x00,
-                    'from_system': 0xf0,
-                    'to':0x0084,
-                    'from': 0xf001,
-                    'message_id': 200,
-                    'message_type': 0
+                    'to_device': '0x' + Public.getDeviceId(),
+                    'to_system': '0x' + Public.getSystemId(),
+                    'to': '0x' + Public.getSystemId() + Public.getDeviceId(),
+                    'message_type': command.message_type[1]
                 },
                 'contents': {
-                    "command": 0x64, 
-                    'message_info': 0,
+                    "command": '0x' + parseInt(command.id), 
+                    'message_info': command.message_info !== undefined ? command.message_info : null,
                     "payload": {
-                        "type": 0,
-                        "data": []
+                        "type": command.data_buffer_type[1],
+                        "data": command.data_buffer !== undefined ? command.data_buffer : null
                     }
                 }
             };
@@ -99,6 +127,20 @@ bit_endpoints.factory('BIT_Service', function () {
             
         return Public;
     };    
+}]);
+
+function bitLinkFunction (scope, element, attributes) {
+    scope.interface = scope.endpoint.getVendorInterface('BIT_Service');
+}
+
+bit_endpoints.directive('bitEndpointToolbar', function () {
+    return {
+        scope: {
+            endpoint: "="
+        },
+        templateUrl: '../vendor_components/bit/endpoints/directives/bit-endpoint-toolbar.html',
+        link: bitLinkFunction
+    };
 });
 
 bit_endpoints.directive('bitEndpointCardInfo', function () {
@@ -107,20 +149,6 @@ bit_endpoints.directive('bitEndpointCardInfo', function () {
             endpoint: "="
         },
         templateUrl: '../vendor_components/bit/endpoints/directives/bit-endpoint-info.html',
-        link: function (scope, element, attributes) {
-            scope.interface = scope.endpoint.getVendorInterface('BIT_Service');
-        }
-    };
-});
-
-bit_endpoints.directive('bitEndpointCardActions', function () {
-    return {
-        scope: {
-            endpoint: "="
-        },
-        templateUrl: '../vendor_components/bit/endpoints/directives/bit-endpoint-actions.html',
-        link: function (scope, element, attributes) {
-            scope.interface = scope.endpoint.getVendorInterface('BIT_Service');
-        }
+        link: bitLinkFunction
     };
 });

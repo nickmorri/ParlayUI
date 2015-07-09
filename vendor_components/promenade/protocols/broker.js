@@ -73,28 +73,7 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', 'BrokerAddress', functi
     Public.closeProtocol = function (protocol) {
         return Public.sendRequest('close_protocol', {'protocol': protocol.name});
     };
-    
-    /**
-     * Returns demo endpoints.
-     * @returns {$q.defer.promise} Resolve with demo endpoints.
-     */
-     Public.requestDiscoveryDemo = function () {
-         return $q(function (resolve, reject) {
-             var names = ["Motor", "Wheel", "Stepper", "Navigation", "Engine", "Power Supply", "Serial Connection", "USB", "Bluetooth", "Ethernet", "COM", "DisplayPort", "Thunderbolt", "HDMI", "PCI", "SD Card"];
-             var endpoints = [];
-             
-             for (var i = 0; i < names.length; i++) {
-                 endpoints.push({
-                    frequency: i * 750,
-                    name: names[i],
-                    testing: true
-                 });
-             }
-             
-             resolve(endpoints);
-         });
-     };
-    
+        
     /**
      * Request the Broker for a discovery.
      * @param {Boolean} is_forced - Force cached invalidation.

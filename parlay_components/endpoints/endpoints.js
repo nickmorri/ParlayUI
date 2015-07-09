@@ -128,14 +128,10 @@ endpoints.controller('endpointController', ['$scope', '$mdToast', '$mdDialog', '
             $scope.isDiscovering = false;
             $mdToast.show($mdToast.simple()
                 .content('Discovery successful.')
-                .position('bottom left').hideDelay(3000));
+                .position('bottom left'));
         });
     };
-    
-    $scope.doCommand = function (command, endpoint) {
-        var test = interface.generateCommand(command);
-    };
-    
+        
 }]);
 
 endpoints.controller('ParlayEndpointSearchController', ['$scope', 'EndpointManager', function ($scope, EndpointManager) {
@@ -194,38 +190,37 @@ endpoints.directive('parlayEndpointCard', ['$compile', function ($compile) {
         templateUrl: '../parlay_components/endpoints/directives/parlay-endpoint-card.html',
         link: function (scope, element, attributes) {
             
-            var SNAKE_CASE_REGEXP = /[A-Z]/g;
-            function snake_case(name, separator) {
-              separator = separator || '_';
-              return name.replace(SNAKE_CASE_REGEXP, function(letter, pos) {
-                return (pos ? separator : '') + letter.toLowerCase();
-              });
+            // Converts directive names to snake-case which Angular requires during directive compilation.
+            function snake_case(name) {
+                return name.replace(/[A-Z]/g, function(letter, pos) {
+                    return (pos ? '-' : '') + letter.toLowerCase();
+                });
             }
             
-            var content = element[0].querySelector('md-card-content');
-            var actions = element[0].querySelector('div.md-actions');
+            // Locate locations where we are going to insert dynamic directives.
+            var toolbar = element[0].querySelector('div.md-toolbar-tools');
+            var tabs = element[0].querySelector('md-tabs');
             
             var directives = scope.endpoint.getDirectives();
             
-            var infoDirectives = directives.filter(function (directive) {
+            // Append toolbar directives.
+            directives.filter(function (directive) {
+                return directive.hasOwnProperty('toolbar');
+            }).map(function (directive) {
+                return '<' + snake_case(directive.toolbar, '-') + ' endpoint="endpoint" layout-fill layout="row" layout-align="space-between center"></' + snake_case(directive.toolbar, '-') + '>';
+            }).forEach(function (directiveString) {
+                toolbar.appendChild($compile(directiveString)(scope)[0]);
+            });
+            
+            // Append info directives.
+            directives.filter(function (directive) {
                 return directive.hasOwnProperty('info');
             }).map(function (directive) {
                 return '<' + snake_case(directive.info, '-') + ' endpoint="endpoint"></' + snake_case(directive.info, '-') + '>';
+            }).forEach(function (directiveString) {
+                tabs.appendChild($compile(directiveString)(scope)[0]);
             });
             
-            var actionDirectives = directives.filter(function (directive) {
-                return directive.hasOwnProperty('actions');
-            }).map(function (directive) {
-                return '<' + snake_case(directive.actions, '-') + ' endpoint="endpoint"></' + snake_case(directive.actions, '-') + '>';
-            });
-            
-            infoDirectives.forEach(function (directiveString) {
-                content.appendChild($compile(directiveString)(scope)[0]);
-            });
-            
-            actionDirectives.forEach(function (directiveString) {
-                actions.appendChild($compile(directiveString)(scope)[0]);
-            });
         }
     };
 }]);

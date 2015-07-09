@@ -1,0 +1,3 @@
+{
+	"protocols": "vendor_components/promenade/protocols/*.js"
+}

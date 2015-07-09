@@ -1,0 +1,5 @@
+{
+	"endpoints": "vendor_components/bit/endpoints/*.js",
+	"directives": "vendor_components/bit/endpoints/directives/*.html",
+	"protocols": "vendor_components/bit/protocols/*.js"
+}

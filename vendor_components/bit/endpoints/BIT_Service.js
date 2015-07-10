@@ -54,9 +54,7 @@ bit_endpoints.factory('BIT_Service', ['SSCOM_Serial', function (SSCOM_Serial) {
             
         };
         
-        var Public = {
-            sending: false
-        };
+        var Public = {};
         
         Public.getCommands = function () {
             return Private.commands;
@@ -95,27 +93,42 @@ bit_endpoints.factory('BIT_Service', ['SSCOM_Serial', function (SSCOM_Serial) {
         };
             
         Public.doCommand = function (command) {
-            Public.sending = true;
-            SSCOM_Serial.sendCommand(Private.generateCommand(command)).then(function (response) {
-                Public.sending = false;
-                debugger;
-            });
+            return SSCOM_Serial.sendCommand(Private.generateCommand(command));
         };    
         
         Private.generateCommand = function (command) {
+            
+            function messageTypeToCode (type_string) {
+                return Public.getMessageTypes().find(function (type) {
+                    return type_string === type[0];
+                })[1];
+            }
+            
+            function commandStringToCode (command_string) {
+                return parseInt(Public.getCommands().find(function (command) {
+                    return command_string === command.name;
+                }).id, 10);
+            }
+            
+            function dataBufferTypeStringToCode (type_string) {
+                return Public.getDataTypes().find(function (type) {
+                    return type_string === type[0];
+                })[1];
+            }
+            
             return {
                 'topics': {
                     'to_device': '0x' + Public.getDeviceId(),
                     'to_system': '0x' + Public.getSystemId(),
                     'to': '0x' + Public.getSystemId() + Public.getDeviceId(),
-                    'message_type': command.message_type[1]
+                    'message_type': messageTypeToCode (command.message_type)
                 },
                 'contents': {
-                    "command": '0x' + parseInt(command.id), 
-                    'message_info': command.message_info !== undefined ? command.message_info : 0,
+                    "command": '0x' + commandStringToCode(command.command),
+                    'message_info': command.message_info,
                     "payload": {
-                        "type": command.data_buffer_type[1],
-                        "data": command.data_buffer !== undefined ? command.data_buffer : null
+                        "type": dataBufferTypeStringToCode (command.data_buffer_type),
+                        "data": command.data_buffer
                     }
                 }
             };
@@ -125,6 +138,47 @@ bit_endpoints.factory('BIT_Service', ['SSCOM_Serial', function (SSCOM_Serial) {
             
         return Public;
     };    
+}]);
+
+bit_endpoints.controller('BitEndpointInfoController', ['$scope', function ($scope) {
+    
+    $scope.message_type = 'COMMAND';
+    $scope.message_info = null;
+    $scope.data_buffer_type = null;
+    $scope.data_buffer = null;
+    $scope.command = {};
+    
+    $scope.buffer_help = null;
+    $scope.info_help = null;
+
+    $scope.sending = false;
+    
+    $scope.selectMessageType = function (type) {
+        $scope.message_type = type;
+    };
+    
+    $scope.selectCommand = function (command) {
+        $scope.command = command.name;
+        $scope.data_buffer_type = command.data_type;
+        
+        $scope.buffer_help = command.buffer_help === '' ? null : command.buffer_help;
+        $scope.info_help = command.info_help === '' ? null : command.info_help;
+    };
+    
+    $scope.doCommand = function () {
+        $scope.sending = true;
+        $scope.interface.doCommand({
+            message_type: $scope.message_type,
+            command: $scope.command,
+            data_buffer_type: $scope.data_buffer_type,
+            message_info: $scope.message_info,
+            data_buffer: $scope.data_buffer
+        }).then(function (response) {
+            debugger;
+            $scope.sending = false;
+        });
+    };
+    
 }]);
 
 function bitLinkFunction (scope, element, attributes) {
@@ -147,6 +201,7 @@ bit_endpoints.directive('bitEndpointCardInfo', function () {
             endpoint: "="
         },
         templateUrl: '../vendor_components/bit/endpoints/directives/bit-endpoint-info.html',
-        link: bitLinkFunction
+        link: bitLinkFunction,
+        controller: 'BitEndpointInfoController'
     };
 });

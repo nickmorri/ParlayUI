@@ -3,15 +3,13 @@
     <div class="md-toolbar-tools" layout="row">
         
         <md-button ng-hide="isDiscovering" class="md-icon-button" ng-click="requestDiscovery()" aria-label="Request discovery">
-            <md-tooltip>
-                Request discovery
-            </md-tooltip>
+            <md-tooltip>Discovery</md-tooltip>
             <md-icon><ng-md-icon class="white" icon="autorenew"></ng-md-icon></md-icon>
         </md-button>
         
         <md-progress-linear layout-padding class="md-accent endpoints-progress" ng-show="isDiscovering" md-mode="indeterminate"></md-progress-linear>
                 
-        <parlay-endpoint-search flex></parlay-endpoint-search>
+        <parlay-endpoint-search flex ng-hide="isDiscovering"></parlay-endpoint-search>
         
     </div>
     

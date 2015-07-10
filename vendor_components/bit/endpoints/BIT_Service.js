@@ -174,7 +174,6 @@ bit_endpoints.controller('BitEndpointInfoController', ['$scope', function ($scop
             message_info: $scope.message_info,
             data_buffer: $scope.data_buffer
         }).then(function (response) {
-            debugger;
             $scope.sending = false;
         });
     };

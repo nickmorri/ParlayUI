@@ -10,9 +10,7 @@ bit_endpoints.factory('CommandEndpoint', function () {
         
         var Public = {};
         
-        Private.addData = function (data) {
-            
-        };
+        Private.addData = function (data) {};
         
         Public.getType = function () {
             return Private.type;

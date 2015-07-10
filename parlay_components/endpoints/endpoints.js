@@ -50,6 +50,20 @@ endpoints.factory('ParlayEndpoint', ['$injector', function ($injector) {
             });
         };
         
+        Public.matchesQuery = function (query) {
+            return Private.vendor_interfaces.filter(function (vend_inter) {
+                return vend_inter.hasOwnProperty('matchesQuery');
+            }).some(function (vend_inter) {
+                return vend_inter.matchesQuery(query);
+            });
+        };
+        
+        Public.getName = function () {
+            return Private.vendor_interfaces.find(function (vend_inter) {
+                return vend_inter.hasOwnProperty('getName');
+            }).getName();
+        };
+        
         Private.attachVendorInterfaces(endpoint);
         
         return Public;
@@ -141,6 +155,14 @@ endpoints.controller('ParlayEndpointSearchController', ['$scope', 'EndpointManag
     $scope.search_icon = 'search';
     $scope.selected_item = null;
     
+    $scope.selectEndpoint = function (endpoint) {
+        // Change is detected after we set endpoint to null.
+        if (endpoint === null) return;
+        EndpointManager.activateEndpoint(endpoint);
+        $scope.selected_item = null;
+        $scope.search_text = null;
+    };
+    
     /**
      * Display search bar and cleans state of search on close.
      */
@@ -160,7 +182,7 @@ endpoints.controller('ParlayEndpointSearchController', ['$scope', 'EndpointManag
      * @param {String} query - Name of endpoint to find.
      */
     $scope.querySearch = function(query) {
-        return query ? EndpointManager.getEndpoints().filter($scope.createFilterFor(query)) : EndpointManager.getEndpoints();
+        return query ? EndpointManager.getAvailableEndpoints().filter($scope.createFilterFor(query)) : EndpointManager.getAvailableEndpoints();
     };
 
     /**
@@ -171,7 +193,7 @@ endpoints.controller('ParlayEndpointSearchController', ['$scope', 'EndpointManag
         var lowercaseQuery = angular.lowercase(query);
 
         return function filterFn(endpoint) {
-            return angular.lowercase(endpoint.name).indexOf(lowercaseQuery) >= 0;
+            return endpoint.matchesQuery(lowercaseQuery);
         };
     };
 }]);

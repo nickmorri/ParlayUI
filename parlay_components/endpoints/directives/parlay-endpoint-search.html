@@ -2,20 +2,21 @@
     <md-autocomplete flex
         ng-show="searching"
         md-selected-item="selected_item"
+        md-selected-item-change="selectEndpoint(selected_item)"
         md-search-text="search_text"
         md-items="item in querySearch(search_text)"
-        md-item-text="item.name"
+        md-item-text="item.getName()"
         md-autoselect="true"
         md-menu-class="autocomplete-custom-template"
         md-min-length="0"
         placeholder="Search for a endpoint">
         <md-item-template>
             <span class="item-title">
-                <span md-highlight-text="search_text" mg-hightlight-flags="^i">{{item.name}}</span>
+                <span md-highlight-text="search_text" mg-hightlight-flags="^i">{{item.getName()}}</span>
             </span>
         </md-item-template>
         <md-not-found>
-            No endpoints found for "{{search_text}}".
+            No endpoints found for {{search_text}}.
         </md-not-found>
     </md-autocomplete>
      

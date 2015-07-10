@@ -94,7 +94,16 @@ bit_endpoints.factory('BIT_Service', ['SSCOM_Serial', function (SSCOM_Serial) {
             
         Public.doCommand = function (command) {
             return SSCOM_Serial.sendCommand(Private.generateCommand(command));
-        };    
+        };
+        
+        Public.matchesQuery = function (query) {
+            
+            var matches_type = angular.lowercase(Public.getType()).indexOf(query) > -1;
+            var matches_id = Public.getId() === query;
+            var matches_name = angular.lowercase(Public.getName()).indexOf(query) > -1;
+            
+            return matches_type || matches_id || matches_name;
+        };
         
         Private.generateCommand = function (command) {
             

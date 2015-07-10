@@ -121,7 +121,7 @@ module.exports = function (grunt) {
           'livereload': true
         },
         'files': ['<%= meta.source %>', '<%= meta.vendorCompontents %>'],
-        'tasks': ['jshint:dev', 'karma:dev', 'newer:copy:dev']
+        'tasks': ['newer:jshint:dev', 'karma:dev', 'newer:copy:dev']
       },
       'stylesheets': {
         'options': {
@@ -129,7 +129,7 @@ module.exports = function (grunt) {
           'livereload': true
         },
         'files': '<%= meta.stylesheets %>',
-        'tasks': ['csslint:dev', 'newer:copy']
+        'tasks': ['newer:csslint:dev', 'newer:copy']
       },
       'html': {
         'options': {
@@ -172,7 +172,7 @@ module.exports = function (grunt) {
             'dir': 'coverage'
           },
           'files': [
-			      '<%= meta.bowerComponents %>',
+            '<%= meta.bowerComponents %>',
             '<%= meta.staticComponents %>',
             '<%= meta.compiledHtml %>',
             '<%= meta.source %>',

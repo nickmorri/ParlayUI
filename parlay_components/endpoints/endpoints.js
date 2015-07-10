@@ -95,17 +95,18 @@ endpoints.factory('ParlayDevice', ['ParlayEndpoint', function (ParlayEndpoint) {
 
 endpoints.factory('EndpointManager', ['PromenadeBroker', 'ParlayDevice', 'ProtocolManager', function (PromenadeBroker, ParlayDevice, ProtocolManager) {
     
+    var Private = {
+        devices: [],
+        active_endpoints: []
+    };
+    
     var Public = {};
     
-    var Private = {
-        devices: []
+    Public.getActiveEndpoints = function () {
+        return Private.active_endpoints;
     };
     
-    Private.clearDevices = function () {
-        Private.devices = [];
-    };
-    
-    Public.getEndpoints = function () {
+    Public.getAvailableEndpoints = function () {
         return Private.devices.reduce(function (previous, current) {
             return previous.concat(current.getEndpoints());
         }, []);
@@ -115,15 +116,19 @@ endpoints.factory('EndpointManager', ['PromenadeBroker', 'ParlayDevice', 'Protoc
         return PromenadeBroker.requestDiscovery(true);
     };
     
+    Public.activateEndpoint = function (endpoint) {
+        Private.active_endpoints.push(endpoint);
+    };
+    
     PromenadeBroker.onDiscovery(function (response) {
         Private.devices = response.discovery.map(function (protocol) {
             return new ParlayDevice(protocol);
         });
     });
     
-    PromenadeBroker.onClose(function () {
-        
-    });
+    Private.clearDevices = function () {
+        Private.devices = [];
+    };
         
     return Public;
 }]);
@@ -133,7 +138,7 @@ endpoints.controller('endpointController', ['$scope', '$mdToast', '$mdDialog', '
     $scope.isDiscovering = false;
     
     $scope.filterEndpoints = function () {
-        return EndpointManager.getEndpoints();
+        return EndpointManager.getActiveEndpoints();
     };
     
     $scope.requestDiscovery = function () {

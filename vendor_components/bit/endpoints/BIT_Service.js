@@ -92,8 +92,8 @@ bit_endpoints.factory('BIT_Service', ['SSCOM_Serial', function (SSCOM_Serial) {
             return Private.directives;
         };
             
-        Public.doCommand = function (command) {
-            return SSCOM_Serial.sendCommand(Private.generateCommand(command));
+        Public.sendMessage = function (command) {
+            return SSCOM_Serial.sendCommand(Private.generateMessage(command));
         };
         
         Public.matchesQuery = function (query) {
@@ -105,13 +105,53 @@ bit_endpoints.factory('BIT_Service', ['SSCOM_Serial', function (SSCOM_Serial) {
             return matches_type || matches_id || matches_name;
         };
         
-        Private.generateCommand = function (command) {
+        Private.generateTopics = function (message_type) {
             
             function messageTypeToCode (type_string) {
                 return Public.getMessageTypes().find(function (type) {
                     return type_string === type[0];
                 })[1];
             }
+            
+            return {
+                'to_device': Public.getDeviceId(),
+                'to_system': Public.getSystemId(),
+                'to': Public.getId(),
+                'message_type': messageTypeToCode (message_type)
+            };
+        };
+        
+        Private.generateContents = function (message) {
+            if (message.message_type === 'COMMAND') return Private.generateCommand(message);
+            else if (message.message_type === 'COMMAND_RESPONSE') return Private.generateCommandResponse(message);
+            else if (message.message_type === 'SYSTEM_EVENT') return Private.generateSystemEvent(message);
+            else return Private.generateGenericMessage(message);
+        };
+        
+        Private.generateMessage = function (message) {
+            return {
+                'topics': Private.generateTopics(message.message_type),
+                'contents': Private.generateContents(message)
+            };
+        };
+        
+        Private.generateCommandResponse = function (command) {
+            return {
+                "status": command.status
+            };
+        };
+        
+        Private.generateSystemEvent = function (command) {
+            return {
+                "event": command.event
+            };
+        };
+        
+        Private.generateGenericMessage = function (command) {
+            return {};
+        };
+        
+        Private.generateCommand = function (command) {
             
             function commandStringToCode (command_string) {
                 return parseInt(Public.getCommands().find(function (command) {
@@ -126,19 +166,11 @@ bit_endpoints.factory('BIT_Service', ['SSCOM_Serial', function (SSCOM_Serial) {
             }
             
             return {
-                'topics': {
-                    'to_device': '0x' + Public.getDeviceId(),
-                    'to_system': '0x' + Public.getSystemId(),
-                    'to': '0x' + Public.getSystemId() + Public.getDeviceId(),
-                    'message_type': messageTypeToCode (command.message_type)
-                },
-                'contents': {
-                    "command": '0x' + commandStringToCode(command.command),
-                    'message_info': command.message_info,
-                    "payload": {
-                        "type": dataBufferTypeStringToCode (command.data_buffer_type),
-                        "data": command.data_buffer
-                    }
+                "command": commandStringToCode(command.command),
+                'message_info': command.message_info === null ? 0 : command.message_info,
+                "payload": {
+                    "type": dataBufferTypeStringToCode (command.data_buffer_type),
+                    "data": command.data_buffer === null ? [] : command.data_buffer
                 }
             };
         };
@@ -174,15 +206,47 @@ bit_endpoints.controller('BitEndpointInfoController', ['$scope', function ($scop
         $scope.info_help = command.info_help === '' ? null : command.info_help;
     };
     
-    $scope.doCommand = function () {
-        $scope.sending = true;
-        $scope.interface.doCommand({
+    function collectCommand () {
+        return {
             message_type: $scope.message_type,
             command: $scope.command,
             data_buffer_type: $scope.data_buffer_type,
             message_info: $scope.message_info,
             data_buffer: $scope.data_buffer
-        }).then(function (response) {
+        };
+    }
+    
+    function collectCommandResponse () {
+        return {
+            message_type: $scope.message_type,
+            status: $scope.status
+        };
+    }
+    
+    function collectSystemEvent () {
+        return {
+            message_type: $scope.message_type,
+            event: $scope.event
+        };
+    }
+    
+    function collectGenericMessage () {
+        return {
+            message_type: $scope.message_type
+        };
+    }
+    
+    $scope.send = function () {
+        $scope.sending = true;
+        
+        var message;
+        
+        if ($scope.message_type === 'COMMAND') message = collectCommand();
+        else if ($scope.message_type === 'COMMAND_RESPONSE') message = collectCommandResponse();
+        else if ($scope.message_type === 'SYSTEM_EVENT') message = collectSystemEvent();
+        else message = collectGenericMessage();
+        
+        $scope.interface.sendMessage(message).then(function (response) {
             $scope.sending = false;
         });
     };

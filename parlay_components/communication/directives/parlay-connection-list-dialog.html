@@ -11,18 +11,28 @@
         </md-toolbar>
         <md-dialog-content>
             <md-list>
-                <md-subheader class="md-no-sticky">Broker</md-subheader>
-                <md-list-item>
-                    <p>{{getBrokerAddress()}}</p>
+                
+                <md-list-item class="md-2-line">
+                    <md-icon><ng-md-icon icon="group_work"></ng-md-icon></md-icon>
+                    <div class="md-list-item-text">
+                        <h3>Broker</h3>
+                        <p>{{getBrokerAddress()}}</p>
+                    </div>
                     <md-button ng-class="isBrokerConnected() ? 'md-warn' : 'md-primary'" ng-click="toggleBrokerConnection()">
                         <span ng-show="isBrokerConnected()">Disconnect</span>
                         <span ng-hide="isBrokerConnected()">Connect</span>                        
                     </md-button>
                 </md-list-item>
                 <md-divider></md-divider>
+                
                 <md-subheader class="md-no-sticky">Protocols</md-subheader>
-                <md-list-item ng-repeat="protocol in getOpenProtocols()">
-                    <p>{{protocol.name}}</p>
+                
+                <md-list-item class="md-2-line" ng-repeat="protocol in getOpenProtocols()">
+                    <md-icon ng-if="$index === 0"><ng-md-icon icon="settings_ethernet"></ng-md-icon></md-icon>
+                    <div class="md-list-item-text" ng-class="{'md-offset': $index !== 0}">
+                        <h3>{{protocol.type}}</h3>
+                        <p>{{protocol.name}}</p>
+                    </div>
                     <md-button class="md-warn" ng-click="closeProtocol(protocol)">
                         Disconnect
                     </md-button>
@@ -30,6 +40,7 @@
                 <md-list-item ng-hide="hasOpenProtocols()">
                     No protocols connected
                 </md-list-item>
+                
             </md-list>
         </md-dialog-content>
         <div class="md-actions" layout="row">

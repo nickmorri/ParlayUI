@@ -42,6 +42,14 @@ socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', '$ro
     };
     
     /**
+     * Returns $websocket's config url, where it is connected to.
+     * @returns {String} hostname and port
+     */
+    Private.getAddress = function () {
+        return Private.socket.$$config.url;
+    };
+    
+    /**
      * Opens $websocket and returns Promise when complete.
      * @returns {$q.defer.promise} Resolved after $websocket.open()
      */
@@ -303,6 +311,14 @@ socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', '$ro
         Public.isConnected = function () {
             Public.connected = Private.socket.$status() === Private.socket.$OPEN;
             return Public.connected;
+        };
+        
+        /**
+         * Returns host location where socket is connected.
+         * @returns {String} hostname and port string
+         */
+        Public.getAddress = function () {
+            return Private.getAddress();
         };
         
         return Public;

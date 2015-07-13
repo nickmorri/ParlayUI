@@ -1,5 +1,5 @@
 <md-dialog aria-label="Protocol Connection" flex="40">
-    <form>
+
         <md-toolbar>
             <div class="md-toolbar-tools">
                 <h2>Connections</h2>
@@ -9,6 +9,7 @@
                 </md-button>
             </div>
         </md-toolbar>
+        
         <md-dialog-content>
             <md-list>
                 
@@ -23,11 +24,12 @@
                         <span ng-hide="isBrokerConnected()">Connect</span>                        
                     </md-button>
                 </md-list-item>
-                <md-divider></md-divider>
                 
-                <md-subheader class="md-no-sticky">Protocols</md-subheader>
+                <md-divider ng-if="isBrokerConnected()"></md-divider>
                 
-                <md-list-item class="md-2-line" ng-repeat="protocol in getOpenProtocols()">
+                <md-subheader ng-if="isBrokerConnected()" class="md-no-sticky">Protocols</md-subheader>
+                
+                <md-list-item ng-if="isBrokerConnected()" class="md-2-line" ng-repeat="protocol in getOpenProtocols()">
                     <md-icon ng-if="$index === 0"><ng-md-icon icon="settings_ethernet"></ng-md-icon></md-icon>
                     <div class="md-list-item-text" ng-class="{'md-offset': $index !== 0}">
                         <h3>{{protocol.type}}</h3>
@@ -37,17 +39,19 @@
                         Disconnect
                     </md-button>
                 </md-list-item>
-                <md-list-item ng-hide="hasOpenProtocols()">
+                
+                <md-list-item ng-if="isBrokerConnected() && !hasOpenProtocols()">
                     No protocols connected
                 </md-list-item>
                 
             </md-list>
         </md-dialog-content>
-        <div class="md-actions" layout="row">
+        
+        <div ng-if="isBrokerConnected()" class="md-actions" layout="row">
             <span flex></span>
             <md-button ng-click="openConfiguration($event)" class="md-primary">
                 Open protocol
             </md-button>
         </div>
-    </form>
+
 </md-dialog>

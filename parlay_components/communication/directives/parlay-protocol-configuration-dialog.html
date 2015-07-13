@@ -10,16 +10,18 @@
                 </md-button>
             </div>
         </md-toolbar>
-        <md-dialog-content>
+        <md-dialog-content layout="column">
         
             <md-autocomplete
-            ng-show="selected_protocol === null"
-            md-selected-item="selected_protocol"
-            md-search-text="search_text"
-            md-items="protocol in querySearch(search_text)"
-            md-item-text="protocol.display"
-            md-min-length="0"
-            placeholder="Protocol">
+                md-autoselect="true"
+                md-selected-item="selected_protocol"
+                md-selected-item-change="selectedItemChange(selected_protocol)"
+                md-search-text="search_text"
+                md-search-text-change="searchTextChange(search_text)"
+                md-items="protocol in querySearch(search_text)"
+                md-item-text="protocol.name"
+                md-min-length="0"
+                md-floating-label="Protocol">
                 <md-item-template>
                     <span md-highlight-text="search_text" md-highlight-flags="^i">{{protocol.name}}</span>
                 </md-item-template>
@@ -27,12 +29,18 @@
                     No matches found for {{search_text}}
                 </md-not-found>
             </md-autocomplete>
-        
-            <md-input-container flex ng-repeat="(key, value) in selected_protocol.parameters">
-                <label class="capitalize">{{key}}</label>
-                <input ng-model="value">
-            </md-input-container>            
+                
+            <div layout="row" flex ng-show="selected_protocol !== null && selectedProtocolHasParameters()" >
+                <md-input-container flex ng-repeat="(key, value) in selected_protocol.parameters">
+                    <label class="capitalize">{{key}}</label>
+                    <input ng-model="value">
+                </md-input-container>
+            </div>
             
+            <md-input-container flex ng-hide="selected_protocol === null || selectedProtocolHasParameters()">
+                Protocol hasn't provided configuration parameters.
+            </md-input-container>            
+                            
         </md-dialog-content>
         <div class="md-actions" layout="row">
             <span flex></span>

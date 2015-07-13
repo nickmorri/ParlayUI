@@ -249,6 +249,21 @@ protocols.controller('ProtocolConfigurationController', ['$scope', '$mdDialog', 
     }
     
     /**
+     * Returns the number of parameters that the selected protocol has.
+     * @returns {Number} number of parameters for selected_protocol
+     */
+    $scope.selectedProtocolNumberOfParameters = function () {
+        return Object.keys($scope.selected_protocol.parameters).length > 0;
+    };
+    
+    /**
+     * Checks if selected protocol has any configuration parameters.
+     * @returns {Boolean} True if it has any parameters, false otherwise
+     */
+    $scope.selectedProtocolHasParameters = function () {
+        return $scope.selectedProtocolNumberOfParameters() > 0;
+    };
+    /**
      * Rejects the $mdDialog promise.
      * @returns {$q.defer.promise} Rejects $mdDialog promise.
      */

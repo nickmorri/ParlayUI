@@ -94,15 +94,26 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', 'BrokerAddress', functi
     
     /**
      * Sends request message to Broker.
-     * @returns {$q.defer.promise} Resolve when response is recieved.
+     * @returns {$q.defer.promise} Resolve when response is received.
      */
     Public.sendRequest = function (request, contents) {
         return Private.sendMessage({request: request}, contents, {response: request + '_response'});
     };
     
     /**
+     * Sends subscribe message to Broker.
+     * @returns {$q.defer.promise} Resolve when response is received.
+     */
+    Public.sendSubscribe = function (request) {
+        // return Private.sendRequest();
+        return $q(function (resolve, reject) {
+            resolve('ok');
+        });
+    };
+    
+    /**
      * Sends message to the Broker.
-     * @returns {$q.defer.promise} Resolve when response is recieved.
+     * @returns {$q.defer.promise} Resolve when response is received.
      */
     Private.sendMessage = function (topics, contents, response_topics) {
         topics.type = 'broker';

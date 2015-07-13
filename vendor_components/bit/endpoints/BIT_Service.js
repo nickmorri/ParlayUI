@@ -29,31 +29,6 @@ bit_endpoints.factory('CommandEndpoint', function () {
 bit_endpoints.factory('BIT_Service', ['SSCOM_Serial', function (SSCOM_Serial) {
     return function BIT_Service (data) {
         
-        var Private = {
-            commands: null,
-            id: null,
-            interfaces: null,
-            name: null,
-            type: 'BIT_Service',
-            directives: {
-                'info': 'bitEndpointCardInfo',
-                'toolbar': 'bitEndpointToolbar'
-            }
-        };
-        
-        Private.addData = function (data) {
-            Private.interfaces = data.interfaces;
-            Private.id = data.id;
-            Private.name = data.name;
-            
-            Private.commands = Object.keys(data.commands).map(function (command_key) {
-                var command = data.commands[command_key];
-                command.id = command_key;
-                return command;
-            });
-            
-        };
-        
         var Public = {};
         
         Public.getCommands = function () {
@@ -92,17 +67,56 @@ bit_endpoints.factory('BIT_Service', ['SSCOM_Serial', function (SSCOM_Serial) {
             return Private.directives;
         };
             
+        Public.matchesQuery = function (query) {
+            return Private.matchesType(query) || Private.matchesId(query) || Private.matchesName(query);
+        };
+        
         Public.sendMessage = function (command) {
             return SSCOM_Serial.sendCommand(Private.generateMessage(command));
         };
         
-        Public.matchesQuery = function (query) {
+        var Private = {
+            commands: null,
+            id: null,
+            interfaces: null,
+            name: null,
+            type: 'BIT_Service',
+            directives: {
+                'info': 'bitEndpointCardInfo',
+                'toolbar': 'bitEndpointToolbar'
+            }
+        };
+        
+        Private.matchesType = function (query) {
+            return angular.lowercase(Public.getType()).indexOf(query) > -1;
+        };
+        
+        Private.matchesId = function (query) {
+            return Public.getId() === query;
+        };
+        
+        Private.matchesName = function (query) {
+            return angular.lowercase(Public.getName()).indexOf(query) > -1;
+        };
+        
+        Private.addData = function (data) {
+            Private.interfaces = data.interfaces;
+            Private.id = data.id;
+            Private.name = data.name;
             
-            var matches_type = angular.lowercase(Public.getType()).indexOf(query) > -1;
-            var matches_id = Public.getId() === query;
-            var matches_name = angular.lowercase(Public.getName()).indexOf(query) > -1;
+            Private.commands = Object.keys(data.commands).map(function (command_key) {
+                var command = data.commands[command_key];
+                command.id = command_key;
+                return command;
+            });
             
-            return matches_type || matches_id || matches_name;
+        };
+        
+        Private.generateMessage = function (message) {
+            return {
+                'topics': Private.generateTopics(message.message_type),
+                'contents': Private.generateContents(message)
+            };
         };
         
         Private.generateTopics = function (message_type) {
@@ -128,29 +142,6 @@ bit_endpoints.factory('BIT_Service', ['SSCOM_Serial', function (SSCOM_Serial) {
             else return Private.generateGenericMessage(message);
         };
         
-        Private.generateMessage = function (message) {
-            return {
-                'topics': Private.generateTopics(message.message_type),
-                'contents': Private.generateContents(message)
-            };
-        };
-        
-        Private.generateCommandResponse = function (command) {
-            return {
-                "status": command.status
-            };
-        };
-        
-        Private.generateSystemEvent = function (command) {
-            return {
-                "event": command.event
-            };
-        };
-        
-        Private.generateGenericMessage = function (command) {
-            return {};
-        };
-        
         Private.generateCommand = function (command) {
             
             function commandStringToCode (command_string) {
@@ -174,6 +165,22 @@ bit_endpoints.factory('BIT_Service', ['SSCOM_Serial', function (SSCOM_Serial) {
                 }
             };
         };
+        
+        Private.generateCommandResponse = function (command) {
+            return {
+                "status": command.status
+            };
+        };
+        
+        Private.generateSystemEvent = function (command) {
+            return {
+                "event": command.event
+            };
+        };
+        
+        Private.generateGenericMessage = function (command) {
+            return {};
+        };        
         
         Private.addData(data);
             

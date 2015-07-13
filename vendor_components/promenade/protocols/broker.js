@@ -98,12 +98,14 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', function (ParlaySocket,
     
     /**
      * Sends subscribe message to Broker.
+     * @param {Object} request - Contains subscribe request info.
      * @returns {$q.defer.promise} Resolve when response is received.
      */
     Public.sendSubscribe = function (request) {
-        // return Private.sendRequest();
         return $q(function (resolve, reject) {
-            resolve('ok');
+            ParlaySocket.sendMessage({'type': 'subscribe'}, request, {'type': 'subscribe_response'}, function (response) {
+                resolve(response);    
+            });
         });
     };
     

@@ -82,8 +82,8 @@ bit_endpoints.factory('BIT_Service', ['SSCOM_Serial', function (SSCOM_Serial) {
             name: null,
             type: 'BIT_Service',
             directives: {
-                'info': 'bitEndpointCardInfo',
-                'toolbar': 'bitEndpointToolbar'
+                'toolbar': ['bitEndpointToolbar'],
+                'tabs': ['bitEndpointCardCommands', 'bitEndpointCardLog']
             }
         };
         
@@ -188,7 +188,7 @@ bit_endpoints.factory('BIT_Service', ['SSCOM_Serial', function (SSCOM_Serial) {
     };    
 }]);
 
-bit_endpoints.controller('BitEndpointInfoController', ['$scope', function ($scope) {
+bit_endpoints.controller('BitEndpointCommandController', ['$scope', '$timeout', function ($scope, $timeout) {
     
     $scope.message_type = 'COMMAND';
     $scope.message_info = null;
@@ -200,6 +200,7 @@ bit_endpoints.controller('BitEndpointInfoController', ['$scope', function ($scop
     $scope.info_help = null;
 
     $scope.sending = false;
+    $scope.send_button_text = 'Send';
     
     $scope.selectMessageType = function (type) {
         $scope.message_type = type;
@@ -243,21 +244,32 @@ bit_endpoints.controller('BitEndpointInfoController', ['$scope', function ($scop
         };
     }
     
-    $scope.send = function () {
-        $scope.sending = true;
-        
+    function collectMessage () {
         var message;
         
         if ($scope.message_type === 'COMMAND') message = collectCommand();
         else if ($scope.message_type === 'COMMAND_RESPONSE') message = collectCommandResponse();
         else if ($scope.message_type === 'SYSTEM_EVENT') message = collectSystemEvent();
         else message = collectGenericMessage();
-        
-        $scope.interface.sendMessage(message).then(function (response) {
+        return message;
+    }
+    
+    $scope.send = function () {
+        $scope.interface.sendMessage(collectMessage()).then(function (response) {
+            $scope.send_button_text = 'Sent!';
+            $timeout(function () {
+                $scope.send_button_text = 'Send';
+            }, 1000);
             $scope.sending = false;
+        }).catch(function (response) {
+            debugger;
         });
     };
     
+}]);
+
+bit_endpoints.controller('BitEndpointLogController', ['$scope', function ($scope) {
+    debugger;
 }]);
 
 function bitLinkFunction (scope, element, attributes) {
@@ -274,13 +286,24 @@ bit_endpoints.directive('bitEndpointToolbar', function () {
     };
 });
 
-bit_endpoints.directive('bitEndpointCardInfo', function () {
+bit_endpoints.directive('bitEndpointCardCommands', function () {
     return {
         scope: {
             endpoint: "="
         },
-        templateUrl: '../vendor_components/bit/endpoints/directives/bit-endpoint-info.html',
+        templateUrl: '../vendor_components/bit/endpoints/directives/bit-endpoint-card-commands.html',
         link: bitLinkFunction,
-        controller: 'BitEndpointInfoController'
+        controller: 'BitEndpointCommandController'
+    };
+});
+
+bit_endpoints.directive('bitEndpointCardLog', function () {
+    return {
+        scope: {
+            endpoint: "="
+        },
+        templateUrl: '../vendor_components/bit/endpoints/directives/bit-endpoint-card-log.html',
+        link: bitLinkFunction,
+        controller: 'BitEndpointLogController'
     };
 });

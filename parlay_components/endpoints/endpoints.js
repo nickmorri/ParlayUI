@@ -228,24 +228,28 @@ endpoints.directive('parlayEndpointCard', ['$compile', function ($compile) {
             var toolbar = element[0].querySelector('div.md-toolbar-tools');
             var tabs = element[0].querySelector('md-tabs');
             
-            var directives = scope.endpoint.getDirectives();
+            var endpoints = scope.endpoint.getDirectives();
             
             // Append toolbar directives.
-            directives.filter(function (directive) {
-                return directive.hasOwnProperty('toolbar');
-            }).map(function (directive) {
-                return '<' + snake_case(directive.toolbar, '-') + ' endpoint="endpoint" layout-fill layout="row" layout-align="space-between center"></' + snake_case(directive.toolbar, '-') + '>';
-            }).forEach(function (directiveString) {
-                toolbar.appendChild($compile(directiveString)(scope)[0]);
+            endpoints.filter(function (endpoint) {
+                return endpoint.hasOwnProperty('toolbar');
+            }).reduce(function (previous, endpoint) {
+                return previous.concat(endpoint.toolbar.map(function (directive) {
+                    return '<' + snake_case(directive, '-') + ' endpoint="endpoint" layout-fill layout="row" layout-align="space-between center"></' + snake_case(directive, '-') + '>';    
+                }));
+            }, []).reverse().forEach(function (directive_string) {
+                toolbar.appendChild($compile(directive_string)(scope)[0]);
             });
             
-            // Append info directives.
-            directives.filter(function (directive) {
-                return directive.hasOwnProperty('info');
-            }).map(function (directive) {
-                return '<' + snake_case(directive.info, '-') + ' endpoint="endpoint"></' + snake_case(directive.info, '-') + '>';
-            }).forEach(function (directiveString) {
-                tabs.appendChild($compile(directiveString)(scope)[0]);
+            // Append tabs directives.
+            endpoints.filter(function (endpoint) {
+                return endpoint.hasOwnProperty('tabs');
+            }).reduce(function (previous, endpoint) {
+                return previous.concat(endpoint.tabs.map(function (directive) {
+                    return '<' + snake_case(directive, '-') + ' endpoint="endpoint"></' + snake_case(directive, '-') + '>';
+                }));
+            }, []).reverse().forEach(function (directive_string) {
+                tabs.appendChild($compile(directive_string)(scope)[0]);
             });
             
         }

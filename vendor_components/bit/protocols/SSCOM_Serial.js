@@ -40,8 +40,8 @@ bit_protocols.factory('SSCOM_Serial', ['ParlaySocket', 'PromenadeBroker', '$q', 
     Private.consumeMessageId = function () {
         return ++Private.current_message_id;
     };
-    
-    Private.buildMessage = function (message) {
+        
+    Private.buildMessageTopics = function (message) {
         message.topics.message_id = Private.consumeMessageId();
         message.topics.from_device = Private.from_device;
         message.topics.from_system = Private.from_system;
@@ -49,30 +49,46 @@ bit_protocols.factory('SSCOM_Serial', ['ParlaySocket', 'PromenadeBroker', '$q', 
         return message;
     };
     
-    Private.buildResponse = function (message) {
+    Private.buildResponseTopics = function (message) {
         return {
             from: message.topics.to,
+            from_system: message.topics.to_system,
+            message_type: 2,
+            message_type_name: 'COMMAND_RESPONSE',
             to: message.topics.from,
+            to_system: message.topics.from_system,
             message_id: message.topics.message_id
         };
     };
     
     Private.subscribe = function () {
-        PromenadeBroker.sendSubscribe({to: Private.from}).then(function (response) {
-            //debugger;
-        });
+        PromenadeBroker.sendSubscribe({topics: {to_system: Private.from_system}});
     };
     
     Public.sendCommand = function (message) {
         
-        message = Private.buildMessage(message);
+        message = Private.buildMessageTopics(message);
         
         return $q(function(resolve, reject) {
-            ParlaySocket.sendMessage(message.topics, message.contents, Private.buildResponse(message), function (response) {
-                resolve(response);
-            });
+            if (message.topics.message_type === 0) {
+                ParlaySocket.sendMessage(message.topics, message.contents, Private.buildResponseTopics(message), function (response) {
+                    if (response.status === 0) resolve(response);
+                    else reject(response);
+                });   
+            }
+            else {
+                ParlaySocket.sendMessage(message.topics, message.contents);                
+            }
         });
     };
+    
+    ParlaySocket.onMessage({
+        to: Private.from,
+        to_device: Private.from_device,
+        to_system: Private.from_system
+    }, function (response) {
+        debugger;
+    });
     
     Private.subscribe();
     

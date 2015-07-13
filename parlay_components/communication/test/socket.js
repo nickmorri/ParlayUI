@@ -5,46 +5,28 @@
     
         beforeEach(module('parlay.socket'));
         
-        describe('ParlaySocketService', function () {
+        describe('ParlaySocket', function () {
             var ParlaySocketService;
             
             beforeEach(inject(function(_ParlaySocketService_) {
                 ParlaySocketService = _ParlaySocketService_;
             }));
             
-            describe('initialization', function () {
-                
-                it('is empty', function () {
-                    expect(ParlaySocketService.registeredSocket).toBeUndefined();
-                });
-                
-            });
-            
             describe('retrieve a ParlaySocket instance', function () {
                 
                 it('returns undefined when socket has not been registered', function () {
-                    expect(ParlaySocketService.get()).toBeUndefined();
+                    expect(ParlaySocketService).not.toBeUndefined();
                 });
                 
-            });
-            
-            describe('registers a ParlaySocket instance', function () {
-                
-                it('adds one', function () {
-                    expect(ParlaySocketService.registeredSocket).toBeUndefined();
-                    ParlaySocketService.register({});
-                    expect(ParlaySocketService.registeredSocket).not.toBeUndefined();
-                });
-                                
             });
             
         });
         
-    	describe('ParlaySocket', function () {
-    		var ParlaySocket;
+    	describe('ParlaySocketService', function () {
+    		var ParlaySocketService;
     
-    		beforeEach(inject(function(_ParlaySocket_) {
-        		ParlaySocket = _ParlaySocket_({
+    		beforeEach(inject(function(_ParlaySocketService_) {
+        		ParlaySocketService = _ParlaySocketService_({
             		openTimeout: 1,
                     closeTimeout: 1,
                     messageInterval: 1
@@ -52,7 +34,7 @@
     		}));
     		
     		afterEach(function () {
-        		ParlaySocket.close();
+        		ParlaySocketService.close();
     		});
     		
     		xdescribe('throws exception on invalid configuration', function () {
@@ -62,31 +44,31 @@
     		describe('initialization', function () {
     
     			it('is mock', function () {
-        			expect(ParlaySocket.isMock()).toBeTruthy();
+        			expect(ParlaySocketService.isMock()).toBeTruthy();
                 });
                 
                 it('is open', function (done) {
-                    ParlaySocket.onOpen(function () {
-                        expect(ParlaySocket.isConnected()).toBeTruthy();
+                    ParlaySocketService.onOpen(function () {
+                        expect(ParlaySocketService.isConnected()).toBeTruthy();
                         done();
                     });                
                 });
         
             });
             
-            xdescribe('retrieve registered ParlaySocket', function () {
+            xdescribe('retrieve registered ParlaySocketService', function () {
                 
             });
             
             describe('destructs', function () {
                 
                 it('is closed', function (done) {
-                    ParlaySocket.onOpen(function () {
-                        ParlaySocket.onClose(function () {
-                            expect(ParlaySocket.isConnected()).toBeFalsy();
+                    ParlaySocketService.onOpen(function () {
+                        ParlaySocketService.onClose(function () {
+                            expect(ParlaySocketService.isConnected()).toBeFalsy();
                             done();
                         });
-                        ParlaySocket.close();
+                        ParlaySocketService.close();
                     });
                     
                 });
@@ -94,18 +76,18 @@
                 it('closes and reopens', function (done) {
                     var has_closed = false;
                     
-                    ParlaySocket.onOpen(function () {
+                    ParlaySocketService.onOpen(function () {
                         
-                        expect(ParlaySocket.isConnected()).toBeTruthy();
+                        expect(ParlaySocketService.isConnected()).toBeTruthy();
                         
                         if (has_closed) done();
                         
-                        ParlaySocket.onClose(function () {
+                        ParlaySocketService.onClose(function () {
                             has_closed = true;
-                            expect(ParlaySocket.isConnected()).toBeFalsy();
-                            ParlaySocket.open();
+                            expect(ParlaySocketService.isConnected()).toBeFalsy();
+                            ParlaySocketService.open();
                         });
-                        if (!has_closed) ParlaySocket.close();
+                        if (!has_closed) ParlaySocketService.close();
                         
                     });
                 });
@@ -115,7 +97,7 @@
             describe('sends', function () {
                 
                 it('a message', function (done) {
-                    ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"}, {"type":"motor"}, function (response) {
+                    ParlaySocketService.sendMessage({"type":"motor"}, {"data":"test"}, {"type":"motor"}, function (response) {
                         expect(response.data).toBe("test");
                         done();
                     });            
@@ -128,19 +110,19 @@
                         if (count >= 4) done();
                     }
                     
-                    ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"}, {"type":"motor"}, function (response) {
+                    ParlaySocketService.sendMessage({"type":"motor"}, {"data":"test"}, {"type":"motor"}, function (response) {
                         expect(response.data).toBe("test");
                         checkDone(done);
                     });
-                    ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"}, {"type":"motor"}, function (response) {
+                    ParlaySocketService.sendMessage({"type":"motor"}, {"data":"test"}, {"type":"motor"}, function (response) {
                         expect(response.data).toBe("test");
                         checkDone(done);
                     });
-                    ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"}, {"type":"motor"}, function (response) {
+                    ParlaySocketService.sendMessage({"type":"motor"}, {"data":"test"}, {"type":"motor"}, function (response) {
                         expect(response.data).toBe("test");
                         checkDone(done);
                     });
-                    ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"}, {"type":"motor"}, function (response) {
+                    ParlaySocketService.sendMessage({"type":"motor"}, {"data":"test"}, {"type":"motor"}, function (response) {
                         expect(response.data).toBe("test");
                         checkDone(done);
                     });
@@ -148,19 +130,19 @@
                 
                 it('includes response topics but not response callback', function() {
                     expect(function () {
-                        ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"}, {"type":"motor"});
+                        ParlaySocketService.sendMessage({"type":"motor"}, {"data":"test"}, {"type":"motor"});
                     }).toThrowError(TypeError);
                 });
                 
                 it('includes response callback but not response topics', function() {
                     expect(function () {
-                        ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"}, undefined, function () {});
+                        ParlaySocketService.sendMessage({"type":"motor"}, {"data":"test"}, undefined, function () {});
                     }).toThrowError(TypeError);
                 });
                 
                 it('invalid topics type', function () {
                     expect(function () {
-                        ParlaySocket.sendMessage('test topics');
+                        ParlaySocketService.sendMessage('test topics');
                     }).toThrowError(TypeError);
                 });
                 
@@ -169,27 +151,27 @@
             describe('listens for', function () {
                 
                 it('a message', function (done) {
-                    ParlaySocket.onMessage({"type":"motor"}, done);
-                    ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"});
+                    ParlaySocketService.onMessage({"type":"motor"}, done);
+                    ParlaySocketService.sendMessage({"type":"motor"}, {"data":"test"});
                 });
                 
                 it('multiple messages', function (done) {
                     var count = 0;
                     
-                    ParlaySocket.onMessage({"type":"motor"}, function () {
+                    ParlaySocketService.onMessage({"type":"motor"}, function () {
                         count++;
                         if (count === 4) done();
                     });
     
-                    ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"});
-                    ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"});
-                    ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"});
-                    ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"});
+                    ParlaySocketService.sendMessage({"type":"motor"}, {"data":"test"});
+                    ParlaySocketService.sendMessage({"type":"motor"}, {"data":"test"});
+                    ParlaySocketService.sendMessage({"type":"motor"}, {"data":"test"});
+                    ParlaySocketService.sendMessage({"type":"motor"}, {"data":"test"});
                 });
                 
                 it('invalid topics type', function () {
                     expect(function () {
-                        ParlaySocket.onMessage('test topics');
+                        ParlaySocketService.onMessage('test topics');
                     }).toThrowError(TypeError);
                 });
                 
@@ -198,8 +180,8 @@
             describe('queues', function () {
                 
                 it('a message', function (done) {
-                    ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"});
-                    ParlaySocket.onMessage({"type":"motor"}, function (response) {
+                    ParlaySocketService.sendMessage({"type":"motor"}, {"data":"test"});
+                    ParlaySocketService.onMessage({"type":"motor"}, function (response) {
                         expect(response.data).toBe("test");
                         done();
                     });
@@ -207,8 +189,8 @@
                 
                 it('multiple messages', function (done) {
                     var count = 0;
-                    for (var i = 0; i < 10; i++) ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"});
-                    ParlaySocket.onMessage({"type":"motor"}, function (response) {
+                    for (var i = 0; i < 10; i++) ParlaySocketService.sendMessage({"type":"motor"}, {"data":"test"});
+                    ParlaySocketService.onMessage({"type":"motor"}, function (response) {
                         count++;
                         if (count === 10) done();
                     }); 
@@ -222,11 +204,11 @@
                     
                     var update = false;
                     
-                    var registration = ParlaySocket.onMessage({"type":"motor"}, function () {
+                    var registration = ParlaySocketService.onMessage({"type":"motor"}, function () {
                         update = true;
                     });
                     
-                    ParlaySocket.sendMessage({"type":"motor"});
+                    ParlaySocketService.sendMessage({"type":"motor"});
                     
                     setTimeout(function () {
                         expect(update).toBeFalsy();
@@ -242,15 +224,15 @@
                     var registrations = [];
                     var update_count = 0;
                     
-                    registrations.push(ParlaySocket.onMessage({"type":"motor"}, function () {
+                    registrations.push(ParlaySocketService.onMessage({"type":"motor"}, function () {
                         update_count++;
                     }));
                     
-                    registrations.push(ParlaySocket.onMessage({"type":"motor"}, function () {
+                    registrations.push(ParlaySocketService.onMessage({"type":"motor"}, function () {
                         update_count++;
                     }));
                     
-                    ParlaySocket.sendMessage({"type":"motor"});
+                    ParlaySocketService.sendMessage({"type":"motor"});
                     
                     registrations.pop()();
                     
@@ -271,12 +253,12 @@
                     }
                     
                     for (var i = 0; i < 10; i++) {
-                        registrations.push(ParlaySocket.onMessage({"type":"motor"}, do_update));
+                        registrations.push(ParlaySocketService.onMessage({"type":"motor"}, do_update));
                     }
                     
                     while (registrations.length) registrations.pop()();
                                     
-                    ParlaySocket.sendMessage({"type":"motor"});
+                    ParlaySocketService.sendMessage({"type":"motor"});
                     
                     setTimeout(function () {
                         expect(update_count).toBe(0);
@@ -292,38 +274,38 @@
                 // NOTE: Encoding is done by sorting topics by comparison of keys in Unicode code point order.
                 
                 it('strings', function () {
-                    expect(ParlaySocket._private.encodeTopics({"type": "motor"})).toBe('{"type":"motor"}');
+                    expect(ParlaySocketService._private.encodeTopics({"type": "motor"})).toBe('{"type":"motor"}');
                 });
                 
                 it('numbers', function () {
-                    expect(ParlaySocket._private.encodeTopics({"to_device": 22})).toBe('{"to_device":22}');   
+                    expect(ParlaySocketService._private.encodeTopics({"to_device": 22})).toBe('{"to_device":22}');   
                 });
                 
                 it('arrays', function () {
-                    expect(ParlaySocket._private.encodeTopics({"params": []})).toBe('{"params":[]}');
-                    expect(ParlaySocket._private.encodeTopics({"params": [5, 10]})).toBe('{"params":[10,5]}');
-                    expect(ParlaySocket._private.encodeTopics({"params": [{"type":1}, 10]})).toBe('{"params":[10,{"type":1}]}');
+                    expect(ParlaySocketService._private.encodeTopics({"params": []})).toBe('{"params":[]}');
+                    expect(ParlaySocketService._private.encodeTopics({"params": [5, 10]})).toBe('{"params":[10,5]}');
+                    expect(ParlaySocketService._private.encodeTopics({"params": [{"type":1}, 10]})).toBe('{"params":[10,{"type":1}]}');
                 });
                 
                 it('multiple topics', function () {
-                    expect(ParlaySocket._private.encodeTopics({"type": "motor", "weight":"bold"})).toBe('{"type":"motor","weight":"bold"}');
+                    expect(ParlaySocketService._private.encodeTopics({"type": "motor", "weight":"bold"})).toBe('{"type":"motor","weight":"bold"}');
                 });
                 
                 it('mixed types', function () {
-                    expect(ParlaySocket._private.encodeTopics({"to_device": 22})).toBe('{"to_device":22}');
+                    expect(ParlaySocketService._private.encodeTopics({"to_device": 22})).toBe('{"to_device":22}');
                 });
                 
                 it('nested', function () {
-                    expect(ParlaySocket._private.encodeTopics({"params": {"port": 22, "socket":"localhost"}, "data": []})).toBe('{"data":[],"params":{"port":22,"socket":"localhost"}}');
+                    expect(ParlaySocketService._private.encodeTopics({"params": {"port": 22, "socket":"localhost"}, "data": []})).toBe('{"data":[],"params":{"port":22,"socket":"localhost"}}');
                 });
                 
                 it('orders topics consistently', function () {
-                    expect(ParlaySocket._private.encodeTopics({"aaa":0, "bbb":1})).toBe('{"aaa":0,"bbb":1}');
-                    expect(ParlaySocket._private.encodeTopics({"bbb":1, "aaa":0})).toBe('{"aaa":0,"bbb":1}');
+                    expect(ParlaySocketService._private.encodeTopics({"aaa":0, "bbb":1})).toBe('{"aaa":0,"bbb":1}');
+                    expect(ParlaySocketService._private.encodeTopics({"bbb":1, "aaa":0})).toBe('{"aaa":0,"bbb":1}');
                 });
                 
                 it('other type', function () {
-                    expect(ParlaySocket._private.encodeTopics(Boolean(true))).toBe('true');
+                    expect(ParlaySocketService._private.encodeTopics(Boolean(true))).toBe('true');
                 });
                 
             });

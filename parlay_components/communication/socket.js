@@ -2,42 +2,28 @@ var socket = angular.module('parlay.socket', ['ngWebsocket', 'ngMaterial']);
 
 socket.value('BrokerAddress', 'ws://' + location.hostname + ':8085');
 
-socket.factory('ParlaySocketService', function () {
-    var ParlaySocketService = {};
+socket.factory('ParlaySocket', ['ParlaySocketService', function (ParlaySocketService) {
+    var Private = {};
     
     // Stores registered socket.
-    ParlaySocketService.registeredSocket = undefined;
-    
-    /**
-     * Determine registration status of socket.
-     * @returns {Boolean} 
-     */
-    ParlaySocketService.has = function () {
-        return ParlaySocketService.get() !== undefined;
-    };
+    Private.registeredSocket = undefined;
     
     /**
      * Return registered ParlaySocket.
      * @returns {ParlaySocket} registered ParlaySocket instance or undefined.
      */
-    ParlaySocketService.get = function () {
-        if (ParlaySocketService.registeredSocket !== undefined) return ParlaySocketService.registeredSocket;
-        else return undefined;
+    Private.get = function () {
+        if (ParlaySocketService.registeredSocket === undefined) {
+            ParlaySocketService.registeredSocket = ParlaySocketService();
+        }
+        return ParlaySocketService.registeredSocket;
     };
     
-    /**
-     * Register a socket connectio.
-     * @params {ParlaySocket} ParlaySocket to register with service.
-     */
-    ParlaySocketService.register = function (socket) {
-        ParlaySocketService.registeredSocket = socket;  
-    };
+    return Private.get();
     
-    return ParlaySocketService;
-    
-});
+}]);
 
-socket.factory('ParlaySocket', ['ParlaySocketService', 'BrokerAddress', '$websocket', '$q', '$rootScope', '$mdToast', function (ParlaySocketService, BrokerAddress, $websocket, $q, $rootScope, $mdToast) {
+socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', '$rootScope', '$mdToast', function (BrokerAddress, $websocket, $q, $rootScope, $mdToast) {
     
     var Private = {
         rootScope: $rootScope,
@@ -164,12 +150,6 @@ socket.factory('ParlaySocket', ['ParlaySocketService', 'BrokerAddress', '$websoc
         var Public = {};
         
         if (mock === undefined || typeof mock === 'object') {            
-            // Check to see if we have already registered a socket connection.
-            if (ParlaySocketService.has()) return ParlaySocketService.get();
-            else ParlaySocketService.register(Public);
-            
-            // If a module has already instantiated the singleton WebSocket instance grab it.
-            // Otherwise setup a new WebSocket.
             Private.socket = $websocket.$new({
                 url: BrokerAddress,
                 protocol: [],

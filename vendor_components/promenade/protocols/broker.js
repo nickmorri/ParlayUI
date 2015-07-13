@@ -4,7 +4,7 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', function (ParlaySocket,
     var Public = {};
     
     var Private = {
-        socket: ParlaySocket()
+        socket: ParlaySocket
     };
     
     Public.getBrokerAddress = function () {
@@ -16,7 +16,7 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', function (ParlaySocket,
      * @returns {$q.defer.promise} Requests the ParlaySocket to open.
      */
     Public.connect = function () {
-        return Private.socket.open();
+        return ParlaySocket.open();
     };
     
     /**
@@ -24,7 +24,7 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', function (ParlaySocket,
      * @returns {$q.defer.promise} Requests the ParlaySocket to close.
      */
     Public.disconnect = function () {
-        return Private.socket.close();
+        return ParlaySocket.close();
     };
     
     /**
@@ -32,7 +32,7 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', function (ParlaySocket,
      * @returns {Boolean} Requests the ParlaySocket connection status.
      */
     Public.isConnected = function () {
-        return Private.socket.isConnected();
+        return ParlaySocket.isConnected();
     };
     
     /**
@@ -118,7 +118,7 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', function (ParlaySocket,
         response_topics.type = 'broker';
         
         return $q(function (resolve, reject) {
-            Private.socket.sendMessage(topics, contents, response_topics, function (response) {
+            ParlaySocket.sendMessage(topics, contents, response_topics, function (response) {
                 resolve(response);
             });
         });
@@ -127,7 +127,7 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', function (ParlaySocket,
     Private.onMessage = function (response_topics, response_callback) {
         response_topics.type = 'broker';
         
-        return Private.socket.onMessage(response_topics, response_callback);
+        return ParlaySocket.onMessage(response_topics, response_callback);
     };
     
     /**
@@ -138,10 +138,10 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', function (ParlaySocket,
         // Do something.
     };
     
-    Public.onMessage = Private.socket.onMessage;
-    Public.onOpen = Private.socket.onOpen;
-    Public.onClose = Private.socket.onClose;
-    Public.onError = Private.socket.onError;
+    Public.onMessage = ParlaySocket.onMessage;
+    Public.onOpen = ParlaySocket.onOpen;
+    Public.onClose = ParlaySocket.onClose;
+    Public.onError = ParlaySocket.onError;
     
     return Public;
 }]);

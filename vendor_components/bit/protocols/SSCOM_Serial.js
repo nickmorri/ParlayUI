@@ -10,8 +10,7 @@ bit_protocols.factory('SSCOM_Serial', ['ParlaySocket', 'PromenadeBroker', '$q', 
         current_message_id: 200,
         from_device: 0x01,
         from_system: 0xf2,
-        from: 0xf201,
-        socket: ParlaySocket()
+        from: 0xf201
     };
     
     var Public = {};
@@ -60,7 +59,7 @@ bit_protocols.factory('SSCOM_Serial', ['ParlaySocket', 'PromenadeBroker', '$q', 
     
     Private.subscribe = function () {
         PromenadeBroker.sendSubscribe({to: Private.from}).then(function (response) {
-            debugger;
+            //debugger;
         });
     };
     
@@ -69,7 +68,7 @@ bit_protocols.factory('SSCOM_Serial', ['ParlaySocket', 'PromenadeBroker', '$q', 
         message = Private.buildMessage(message);
         
         return $q(function(resolve, reject) {
-            Private.socket.sendMessage(message.topics, message.contents, Private.buildResponse(message), function (response) {
+            ParlaySocket.sendMessage(message.topics, message.contents, Private.buildResponse(message), function (response) {
                 resolve(response);
             });
         });

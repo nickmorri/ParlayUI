@@ -59,7 +59,7 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', 'BrokerAddress', functi
     /**
      * Opens protocol.
      * @param {Object} configuration - Configuration object we should configure a new protocol connection with.
-     * @returns {$q.defer.promise} Resolve when response is recieved with result of open request from Broker.
+     * @returns {$q.defer.promise} Resolve when response is received with result of open request from Broker.
      */
     Public.openProtocol = function (configuration) {
         return Public.sendRequest('open_protocol', {'protocol_name': configuration.name, 'params': configuration.parameters});
@@ -68,7 +68,7 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', 'BrokerAddress', functi
     /**
      * Closes protocol.
      * @param {Object} protocol - Configured open protocol object.
-     * @returns {$q.defer.promise} Resolve when response is recieved with result of close request from Broker.
+     * @returns {$q.defer.promise} Resolve when response is received with result of close request from Broker.
      */
     Public.closeProtocol = function (protocol) {
         return Public.sendRequest('close_protocol', {'protocol': protocol.name});
@@ -77,7 +77,7 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', 'BrokerAddress', functi
     /**
      * Request the Broker for a discovery.
      * @param {Boolean} is_forced - Force cached invalidation.
-     * @returns {$q.defer.promise} Resolve when response is recieved with available endpoints.
+     * @returns {$q.defer.promise} Resolve when response is received with available endpoints.
      */
     Public.requestDiscovery = function (is_forced) {
         return Public.sendRequest('get_discovery', {'force': is_forced}).then(function (contents) {

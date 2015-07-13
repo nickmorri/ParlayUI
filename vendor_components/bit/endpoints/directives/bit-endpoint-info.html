@@ -61,8 +61,10 @@
                 </md-input-container>
                 
             </div>
-
-            <md-button ng-click="send()" ng-disabled="commandForm.$invalid" class="md-icon-button md-primary" aria-label="Sends command to BIT Service object."><md-icon><ng-md-icon icon="send"></ng-md-icon></md-icon></md-button>
+            
+            <md-button flex class="md-primary" ng-click="send()" ng-disabled="commandForm.$invalid" aria-label="Sends command to BIT Service object.">
+                Send
+            </md-button>
             
         </form>
     </md-content>

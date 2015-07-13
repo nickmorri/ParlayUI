@@ -15,34 +15,15 @@
             describe('initialization', function () {
                 
                 it('is empty', function () {
-                    expect(Object.keys(ParlaySocketService.registeredSockets).length).toBe(0);
+                    expect(ParlaySocketService.registeredSocket).toBeUndefined();
                 });
                 
             });
             
             describe('retrieve a ParlaySocket instance', function () {
                 
-                it('returns undefined for url references that have not been registered', function () {
-                    expect(ParlaySocketService.get('ws://localhost:8085')).toBeUndefined();
-                });
-                
-                it('returns the same instance if the same url is requested', function () {
-                    var MockSocket = {};
-                    expect(ParlaySocketService.get('ws://localhost:8085')).toBeUndefined();
-                    ParlaySocketService.register('ws://localhost:8085', MockSocket);
-                    expect(ParlaySocketService.get('ws://localhost:8085')).toBe(MockSocket);
-                });
-                
-                it('returns a different instance if a different url is requested', function () {
-                    var MockSocket1 = {};
-                    var MockSocket2 = {};
-                    expect(ParlaySocketService.get('ws://localhost:8085')).toBeUndefined();
-                    expect(ParlaySocketService.get('ws://localhost:9000')).toBeUndefined();
-                    ParlaySocketService.register('ws://localhost:8085', MockSocket1);
-                    ParlaySocketService.register('ws://localhost:9000', MockSocket2);
-                    expect(ParlaySocketService.get('ws://localhost:8085')).toBe(MockSocket1);
-                    expect(ParlaySocketService.get('ws://localhost:9000')).toBe(MockSocket2);
-                    expect(ParlaySocketService.get('ws://localhost:9000')).not.toBe(MockSocket1);
+                it('returns undefined when socket has not been registered', function () {
+                    expect(ParlaySocketService.get()).toBeUndefined();
                 });
                 
             });
@@ -50,27 +31,11 @@
             describe('registers a ParlaySocket instance', function () {
                 
                 it('adds one', function () {
-                    expect(Object.keys(ParlaySocketService.registeredSockets).length).toBe(0);
-                    ParlaySocketService.register('ws://localhost:8085', {});
-                    expect(Object.keys(ParlaySocketService.registeredSockets).length).toBe(1);
+                    expect(ParlaySocketService.registeredSocket).toBeUndefined();
+                    ParlaySocketService.register({});
+                    expect(ParlaySocketService.registeredSocket).not.toBeUndefined();
                 });
-                
-                it('adds an equivalent one', function () {
-                    expect(Object.keys(ParlaySocketService.registeredSockets).length).toBe(0);
-                    ParlaySocketService.register('ws://localhost:8085', {});
-                    expect(Object.keys(ParlaySocketService.registeredSockets).length).toBe(1);
-                    ParlaySocketService.register('ws://localhost:8085', {});
-                    expect(Object.keys(ParlaySocketService.registeredSockets).length).toBe(1);
-                });
-                
-                it('adds a different one', function () {
-                    expect(Object.keys(ParlaySocketService.registeredSockets).length).toBe(0);
-                    ParlaySocketService.register('ws://localhost:8085', {});
-                    expect(Object.keys(ParlaySocketService.registeredSockets).length).toBe(1);
-                    ParlaySocketService.register('ws://localhost:9000', {});
-                    expect(Object.keys(ParlaySocketService.registeredSockets).length).toBe(2);
-                });
-                
+                                
             });
             
         });
@@ -80,12 +45,9 @@
     
     		beforeEach(inject(function(_ParlaySocket_) {
         		ParlaySocket = _ParlaySocket_({
-            		url: 'ws://' + location.hostname + ':8085',
-            		mock:{
-                		openTimeout: 1,
-                        closeTimeout: 1,
-                        messageInterval: 1
-                    }
+            		openTimeout: 1,
+                    closeTimeout: 1,
+                    messageInterval: 1
                 });
     		}));
     		

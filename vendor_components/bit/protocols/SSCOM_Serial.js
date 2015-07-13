@@ -1,6 +1,6 @@
 var bit_protocols = angular.module('bit.protocols', ['parlay.socket', 'promenade.broker']);
 
-bit_protocols.factory('SSCOM_Serial', ['ParlaySocket', 'PromenadeBroker', 'BrokerAddress', '$q', function (ParlaySocket, PromenadeBroker, BrokerAddress, $q) {
+bit_protocols.factory('SSCOM_Serial', ['ParlaySocket', 'PromenadeBroker', '$q', function (ParlaySocket, PromenadeBroker, $q) {
     
     var Private = {
         type: 'SSCOM_Serial',
@@ -11,7 +11,7 @@ bit_protocols.factory('SSCOM_Serial', ['ParlaySocket', 'PromenadeBroker', 'Broke
         from_device: 0x01,
         from_system: 0xf2,
         from: 0xf201,
-        socket: ParlaySocket(BrokerAddress)
+        socket: ParlaySocket()
     };
     
     var Public = {};

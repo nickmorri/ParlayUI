@@ -80,6 +80,59 @@ socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', '$ro
     };
     
     /**
+     * Returns the power set of the given topics.
+     * @params {Set} original_set - Set of key/value pairs.
+     * @returns {Array} power set of strings
+     */
+    Private.powerset = function (original_set) {
+        var sets = new Set();
+        
+        if (original_set.size < 1) {
+            sets.add(new Set());
+            return sets;
+        }
+        
+        var values = original_set.values();
+        var head = values.next().value;
+        var rest = new Set(values);
+        
+        Private.powerset(rest).forEach(function (set) {
+            var newSet = new Set();
+            newSet.add(head);
+            set.forEach(function (item) {
+                newSet.add(item);
+            });
+            sets.add(newSet);
+            sets.add(set); 
+        });
+        
+        return sets;
+    };
+    
+    /**
+     * Returns an array of a all possible encoded topic stings.
+     * @params {Object} topics - Map of key/value pairs.
+     * @returns {Array} all possible encoded topic stings
+     */
+    Private.combinationsOf = function (topics) {
+        var initial_set = new Set(Object.keys(topics).map(function (key) {
+            return key;
+        }));
+        
+        var combinations = [];
+        
+        Private.powerset(initial_set).forEach(function (set) {
+            var topics_combination = {};
+            set.forEach(function (key) {
+                topics_combination[key] = topics[key];
+            });
+            combinations.push(Private.encodeTopics(topics_combination));
+        });
+        
+        return combinations;        
+    };
+    
+    /**
      * Encodes topics by sorting topics by comparison of keys in Unicode code point order.
      * @param {Object} topics - Map of key/value pairs.
      * @returns {String} Translation of key, values to String.
@@ -144,13 +197,14 @@ socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', '$ro
      * @param {Object} contents - Map of key/value pairs.
      */
     Private.invokeCallbacks = function (response_topics, contents) {
-        var encoded_topics = Private.encodeTopics(response_topics);
-        var callbacks = Private.onMessageCallbacks.get(encoded_topics);
+        Private.combinationsOf(response_topics).forEach(function (encoded_topics) {
+            var callbacks = Private.onMessageCallbacks.get(encoded_topics);        
         
-        if (callbacks !== undefined) Private.onMessageCallbacks.set(encoded_topics, callbacks.filter(function (callback) {
-            callback.func(contents);
-            return callback.persist;
-        }));
+            if (callbacks !== undefined) Private.onMessageCallbacks.set(encoded_topics, callbacks.filter(function (callback) {
+                callback.func(contents);
+                return callback.persist;
+            })); 
+        });
     };
     
     return function (mock) {

@@ -61,8 +61,27 @@ bit_protocols.factory('SSCOM_Serial', ['ParlaySocket', 'PromenadeBroker', '$q', 
         };
     };
     
-    Private.subscribe = function () {
-        PromenadeBroker.sendSubscribe({topics: {to_system: Private.from_system}});
+    Public.afterClose = function () {
+        if (Private.subscription_listener_dereg !== null) {
+            Private.subscription_listener_dereg();
+            Private.subscription_listener_dereg = null;
+        }
+    };
+    
+    Public.hasSubscription = function() {
+        return Private.subscription_listener_dereg !== null;
+    };
+    
+    Public.subscribe = function () {
+        PromenadeBroker.sendSubscribe({topics: {to_system: Private.from_system}}).then(function (response) {
+            Private.subscription_listener_dereg = ParlaySocket.onMessage({to_system: Private.from_system}, Private.recordLog);
+        });
+    };
+    
+    Public.unsubscribe = function () {
+        PromenadeBroker.sendUnsubscribe({topics: {to_system: Private.from_system}}).then(function (response) {
+            Public.afterClose();
+        });
     };
     
     Public.sendCommand = function (message) {

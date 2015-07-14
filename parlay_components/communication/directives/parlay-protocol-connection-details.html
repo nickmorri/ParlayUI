@@ -1,0 +1,21 @@
+<md-dialog aria-label="Protocol Details" flex="40">
+
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>{{getProtocolName()}}</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="hide()"  aria-label="Close connection display dialog">
+                    <md-icon><ng-md-icon icon="close" aria-label="Close dialog"></ng-md-icon></md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+                
+        <div class="md-actions" layout="row">
+            <span flex></span>
+            <md-button ng-click="toggleSubscription(protocol)">
+                <span ng-hide="hasSubscription(protocol)">Subscribe</span>
+                <span ng-show="hasSubscription(protocol)">Unsubscribe</span>                        
+            </md-button>
+        </div>
+
+</md-dialog>

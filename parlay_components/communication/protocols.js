@@ -47,6 +47,31 @@ protocols.factory('Protocol', ['$injector', function ($injector) {
             else console.warn('Vendor protocol not defined for ' + info.name + ' of type ' + info.protocol_type + '.');
         };
         
+        Public.hasSubscription = function () {
+            return Private.vendor_protocols.some(function (protocol) {
+                return protocol.hasSubscription();
+            });
+        };
+        
+        Public.subscribe = function () {
+            Private.vendor_protocols.forEach(function (protocol) {
+                protocol.subscribe();
+            });
+        };
+        
+        Public.unsubscribe = function () {
+            Private.vendor_protocols.forEach(function (protocol) {
+                protocol.unsubscribe();
+            });
+        };
+        
+        Public.afterClose = function () {
+            Private.vendor_protocols.forEach(function (protocol) {
+                protocol.afterClose();
+            });
+            Private.vendor_protocols = null;
+        };
+        
         Private.registerVendorProtocol(configuration);
         
         return Public;        
@@ -93,12 +118,6 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', funct
         return PromenadeBroker.openProtocol(configuration);
     };
     
-    Public.fakeOpenProtocol = function (config) {
-        return $q(function (resolve, reject) {
-            reject({'status': 'Error while opening: SSCOM_Serial'});
-        });  
-    };
-    
     /**
      * Requests the Broker to close a protocol.
      * @param {Object} protocol - The protocol to be closed
@@ -107,7 +126,10 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', funct
     Public.closeProtocol = function (protocol) {
         return PromenadeBroker.closeProtocol(protocol).then(function (response) {
             if (response.status !== 'ok') return $q.reject(response);
-            else return response;
+            else {
+                Private.getOpenProtocol(protocol.name).afterClose();
+                return response;
+            }
         });
     };
     
@@ -205,6 +227,9 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', funct
      * Clears private attributes open and available.
      */
     Private.clearProtocols = function () {
+        Private.open.forEach(function (protocol) {
+            protocol.afterClose();
+        });
         Private.open = [];
         Private.available = [];
     };
@@ -375,17 +400,27 @@ protocols.controller('ParlayConnectionListController', ['$scope', '$mdDialog', '
         });
     };
     
+    $scope.viewProtocolConnectionDetails = function (event, protocol) {
+        $mdDialog.show({
+            targetEvent: event,
+            controller: 'ProtocolConnectionDetailController',
+            templateUrl: '../parlay_components/communication/directives/parlay-protocol-connection-details.html',
+            locals: {
+                protocol: protocol
+            }
+        });
+    };
+    
     /**
      * Show protocol configuration dialog and have ProtocolManager open a protocol.
      * @param {Event} - Event generated when button is selected. Allows use to have origin for dialog display animation.
      */
     $scope.openConfiguration = function (event) {
-        $mdDialog.hide();
         // Show a configuraton dialog allowing us to setup a protocol configuration.
         $mdDialog.show({
             targetEvent: event,
             controller: 'ProtocolConfigurationController',
-            templateUrl: '../parlay_components/communication/directives/parlay-protocol-configuration-dialog.html',
+            templateUrl: '../parlay_components/communication/directives/parlay-protocol-configuration-dialog.html'
         }).then(function (result) {
             if (result === undefined) return result;
             // Don't display anything if we didn't open a protocol.
@@ -418,4 +453,22 @@ protocols.controller('ParlayConnectionStatusController', ['$scope', '$mdDialog',
     }, function (connected) {
         $scope.connection_icon = connected ? 'cloud' : 'cloud_off';
     });
+}]);
+
+protocols.controller('ProtocolConnectionDetailController', ['$scope', '$mdDialog', 'protocol', function ($scope, $mdDialog, protocol) {
+    $scope.getProtocolName = function () {
+        return protocol.name;
+    };
+    
+    $scope.hasSubscription = function () {
+        return protocol.hasSubscription();
+    };
+    
+    $scope.toggleSubscription = function () {
+        if (protocol.hasSubscription()) protocol.unsubscribe();
+        else protocol.subscribe();
+    };
+    
+    $scope.hide = $mdDialog.hide;
+    
 }]);

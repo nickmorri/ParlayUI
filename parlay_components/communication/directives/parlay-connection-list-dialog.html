@@ -35,6 +35,9 @@
                         <h3>{{protocol.type}}</h3>
                         <p>{{protocol.name}}</p>
                     </div>
+                    <md-button class="md-primary"  ng-click="viewProtocolConnectionDetails($event, protocol)">
+                        Details
+                    </md-button>
                     <md-button class="md-warn" ng-click="closeProtocol(protocol)">
                         Disconnect
                     </md-button>

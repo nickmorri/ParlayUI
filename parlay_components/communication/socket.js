@@ -260,10 +260,9 @@ socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', '$ro
         
         // When the WebSocket receives a message invokeCallbacks.
         // If this is a mock socket we expect a slightly different message structuring.
-        Private.socket.$on('$message', function(messageString) {
-            if (Public.isMock()) Private.invokeCallbacks(messageString.data.topics, messageString.data.contents);
-            else if (messageString !== undefined) {
-                var message = JSON.parse(messageString);
+        Private.socket.$on('$message', function(message) {
+            if (Public.isMock()) Private.invokeCallbacks(message.data.topics, message.data.contents);
+            else if (message !== undefined) {
                 Private.invokeCallbacks(message.topics, message.contents);
             }                
         });

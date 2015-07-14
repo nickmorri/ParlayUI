@@ -251,11 +251,11 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', funct
     PromenadeBroker.onClose(Private.clearProtocols);
     
     PromenadeBroker.onMessage({type: 'broker', response: 'open_protocol_response'}, function (response) {
-        PromenadeBroker.sendRequest('get_open_protocols', {});
+        Private.requestOpenProtocols();
     });
     
     PromenadeBroker.onMessage({type: 'broker', response: 'close_protocol_response'}, function (response) {
-        PromenadeBroker.sendRequest('get_open_protocols', {});
+        Private.requestOpenProtocols();
     });
     
     PromenadeBroker.onMessage({type: 'broker', response: 'get_protocols_response'}, function (response) {

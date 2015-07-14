@@ -83,8 +83,6 @@ bit_protocols.factory('SSCOM_Serial', ['ParlaySocket', 'PromenadeBroker', '$q', 
     };
     
     ParlaySocket.onMessage({
-        to: Private.from,
-        to_device: Private.from_device,
         to_system: Private.from_system
     }, function (response) {
         debugger;

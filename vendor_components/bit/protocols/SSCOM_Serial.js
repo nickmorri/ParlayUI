@@ -10,7 +10,9 @@ bit_protocols.factory('SSCOM_Serial', ['ParlaySocket', 'PromenadeBroker', '$q', 
         current_message_id: 200,
         from_device: 0x01,
         from_system: 0xf2,
-        from: 0xf201
+        from: 0xf201,
+        log: [],
+        subscription_listener_dereg: null
     };
     
     var Public = {};
@@ -101,13 +103,13 @@ bit_protocols.factory('SSCOM_Serial', ['ParlaySocket', 'PromenadeBroker', '$q', 
         });
     };
     
-    ParlaySocket.onMessage({
-        to_system: Private.from_system
-    }, function (response) {
-        debugger;
-    });
+    Public.getLog = function () {
+        return Private.log;
+    };
     
-    Private.subscribe();
+    Private.recordLog = function (response) {
+        Private.log.push(response);
+    };
     
     return Public;
     

@@ -66,6 +66,10 @@ bit_endpoints.factory('BIT_Service', ['SSCOM_Serial', function (SSCOM_Serial) {
         Public.getDirectives = function () {
             return Private.directives;
         };
+        
+        Public.getFilteredLog = function () {
+            return SSCOM_Serial.getLog();
+        };
             
         Public.matchesQuery = function (query) {
             return Private.matchesType(query) || Private.matchesId(query) || Private.matchesName(query);
@@ -269,7 +273,11 @@ bit_endpoints.controller('BitEndpointCommandController', ['$scope', '$timeout', 
 }]);
 
 bit_endpoints.controller('BitEndpointLogController', ['$scope', function ($scope) {
-    debugger;
+    
+    $scope.getLog = function () {
+        return $scope.interface.getFilteredLog();
+    };
+    
 }]);
 
 function bitLinkFunction (scope, element, attributes) {

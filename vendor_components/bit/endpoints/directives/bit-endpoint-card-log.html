@@ -1,5 +1,9 @@
 <md-tab label="BIT Service Log">
-    <md-content class="md-padding">
-        
+    <md-content class="md-padding" style="max-height: 300px;">
+        <md-list>
+            <md-list-item class="md-2-line" ng-repeat="message in getLog()">
+                {{message}}
+            </md-list-item>
+        </md-list>
     </md-content>
 </md-tab>

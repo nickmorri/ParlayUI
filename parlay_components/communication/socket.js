@@ -165,14 +165,15 @@ socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', '$ro
      */
     Private.registerListener = function(response_topics, response_callback, persist) {
         var encoded_topic_string = Private.encodeTopics(response_topics);
-        var callbackFuncIndex = 0;
-        var callbacks = Private.onMessageCallbacks.has(encoded_topic_string) ? Private.onMessageCallbacks.get(encoded_topic_string) : [];
+
+        var callbacks = Private.onMessageCallbacks.get(encoded_topic_string);
+        if (callbacks === undefined) callbacks = [];
             
-        callbackFuncIndex = callbacks.push({func: response_callback, persist: persist}) - 1;
+        callbacks.push({func: response_callback, persist: persist});
         Private.onMessageCallbacks.set(encoded_topic_string, callbacks);
         
         return function deregisterListener() {
-            Private.deregisterListener(encoded_topic_string, callbackFuncIndex);
+            Private.deregisterListener(encoded_topic_string, response_callback);
         };        
     };
     
@@ -181,12 +182,19 @@ socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', '$ro
      * @param {Object} topics - Map of key/value pairs.
      * @param {Integer} callbackFuncIndex - Position of callback function within array of callbacks.
      */    
-    Private.deregisterListener = function (encoded_topic_string, callbackFuncIndex) {
-        var callbacks = Private.onMessageCallbacks.get(encoded_topic_string);
-        callbacks.splice(callbackFuncIndex, 1);
+    Private.deregisterListener = function (encoded_topics, callbackFuncReference) {
+        var callbacks = Private.onMessageCallbacks.get(encoded_topics);
         if (callbacks !== undefined) {
-            if (callbacks.length > 0) Private.onMessageCallbacks.set(encoded_topic_string, callbacks);
-            else Private.onMessageCallbacks.delete(encoded_topic_string);
+            
+            var index = callbacks.findIndex(function (funcObj) {
+                return callbackFuncReference === funcObj.func;
+            });
+            
+            // Remove callback from array.
+            if (index > -1) callbacks.splice(index, 1);
+            
+            if (callbacks.length > 0) Private.onMessageCallbacks.set(encoded_topics, callbacks);
+            else Private.onMessageCallbacks.delete(encoded_topics);
         }
     };
     
@@ -200,10 +208,17 @@ socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', '$ro
         Private.combinationsOf(response_topics).forEach(function (encoded_topics) {
             var callbacks = Private.onMessageCallbacks.get(encoded_topics);        
         
-            if (callbacks !== undefined) Private.onMessageCallbacks.set(encoded_topics, callbacks.filter(function (callback) {
-                callback.func(contents);
-                return callback.persist;
-            })); 
+            if (callbacks !== undefined) {
+                
+                var remaining_callbacks = callbacks.filter(function (callback) {
+                    callback.func(contents);
+                    return callback.persist;
+                });
+                
+                if (remaining_callbacks.length > 0) Private.onMessageCallbacks.set(encoded_topics, remaining_callbacks);
+                else Private.onMessageCallbacks.delete(encoded_topics);
+                
+            }
         });
     };
     

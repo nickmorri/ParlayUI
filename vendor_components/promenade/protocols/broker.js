@@ -110,6 +110,26 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', function (ParlaySocket,
     };
     
     /**
+     * CURRENTLY NOT IMPLEMENTED AT BROKER LEVEL
+     * Sends unsubscribe message to Broker.
+     * @param {Object} request - Contains unsubscribe request info.
+     * @returns {$q.defer.promise} Resolve when response is received.
+     */
+    Public.sendUnsubscribe = function (request) {
+        return $q(function (resolve, reject) {
+            resolve('ok');
+        });        
+        
+/*
+        return $q(function (resolve, reject) {
+            ParlaySocket.sendMessage({'type': 'unsubscribe'}, request, {'type': 'unsubscribe_response'}, function (response) {
+                resolve(response);
+            });
+        });
+*/
+    };
+    
+    /**
      * Sends message to the Broker.
      * @returns {$q.defer.promise} Resolve when response is received.
      */

@@ -111,6 +111,8 @@ bit_protocols.factory('SSCOM_Serial', ['ParlaySocket', 'PromenadeBroker', '$q', 
         Private.log.push(response);
     };
     
+    Public.subscribe();
+    
     return Public;
     
 }]);

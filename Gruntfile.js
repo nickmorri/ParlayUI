@@ -198,7 +198,8 @@ module.exports = function (grunt) {
     'jshint': {
       'dev': {
         'options': {
-          'debug': true,
+          'esnext': true,
+          'debug': true
         },
         'src': ['<%= meta.source %>', '<%= meta.vendorCompontents %>'],
         'gruntfile': 'Gruntfile.js'

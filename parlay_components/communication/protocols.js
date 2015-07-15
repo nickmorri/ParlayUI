@@ -457,7 +457,7 @@ protocols.controller('ParlayConnectionStatusController', ['$scope', '$mdDialog',
 
 protocols.controller('ProtocolConnectionDetailController', ['$scope', '$mdDialog', 'protocol', function ($scope, $mdDialog, protocol) {
     $scope.getProtocolName = function () {
-        return protocol.name;
+        return protocol.getName();
     };
     
     $scope.hasSubscription = function () {

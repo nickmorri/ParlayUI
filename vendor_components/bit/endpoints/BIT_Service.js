@@ -251,13 +251,10 @@ bit_endpoints.controller('BitEndpointCommandController', ['$scope', '$timeout', 
     }
     
     function collectMessage () {
-        var message;
-        
-        if ($scope.message_type === 'COMMAND') message = collectCommand();
-        else if ($scope.message_type === 'COMMAND_RESPONSE') message = collectCommandResponse();
-        else if ($scope.message_type === 'SYSTEM_EVENT') message = collectSystemEvent();
-        else message = collectGenericMessage();
-        return message;
+        if ($scope.message_type === 'COMMAND') return collectCommand();
+        else if ($scope.message_type === 'COMMAND_RESPONSE') return collectCommandResponse();
+        else if ($scope.message_type === 'SYSTEM_EVENT') return collectSystemEvent();
+        else return collectGenericMessage();
     }
     
     $scope.send = function () {

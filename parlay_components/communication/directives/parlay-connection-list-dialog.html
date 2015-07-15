@@ -32,8 +32,8 @@
                 <md-list-item ng-if="isBrokerConnected()" class="md-2-line" ng-repeat="protocol in getOpenProtocols()">
                     <md-icon ng-if="$index === 0"><ng-md-icon icon="settings_ethernet"></ng-md-icon></md-icon>
                     <div class="md-list-item-text" ng-class="{'md-offset': $index !== 0}">
-                        <h3>{{protocol.type}}</h3>
-                        <p>{{protocol.name}}</p>
+                        <h3>{{protocol.getType()}}</h3>
+                        <p>{{protocol.getName()}}</p>
                     </div>
                     <md-button class="md-primary"  ng-click="viewProtocolConnectionDetails($event, protocol)">
                         Details

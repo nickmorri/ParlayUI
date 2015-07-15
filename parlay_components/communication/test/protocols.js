@@ -71,8 +71,8 @@
             
             it('constructs', inject(function(_Protocol_) {
                 var protocol = _Protocol_({name: 'TestProtocol', protocol_type: 'TestProtocolType'});
-                expect(protocol.name).toBe('TestProtocol');
-                expect(protocol.type).toBe('TestProtocolType');
+                expect(protocol.getName()).toBe('TestProtocol');
+                expect(protocol.getType()).toBe('TestProtocolType');
             }));
 
         });

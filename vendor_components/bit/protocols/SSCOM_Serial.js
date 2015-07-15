@@ -12,6 +12,7 @@ bit_protocols.factory('SSCOM_Serial', ['ParlaySocket', 'PromenadeBroker', '$q', 
         from_system: 0xf2,
         from: 0xf201,
         log: [],
+        onMessageCallbacks: [],
         subscription_listener_dereg: null
     };
     
@@ -76,7 +77,7 @@ bit_protocols.factory('SSCOM_Serial', ['ParlaySocket', 'PromenadeBroker', '$q', 
     
     Public.subscribe = function () {
         PromenadeBroker.sendSubscribe({topics: {to_system: Private.from_system}}).then(function (response) {
-            Private.subscription_listener_dereg = ParlaySocket.onMessage({to_system: Private.from_system}, Private.recordLog);
+            Private.subscription_listener_dereg = ParlaySocket.onMessage({to_system: Private.from_system}, Private.invokeCallbacks, true);
         });
     };
     
@@ -108,8 +109,21 @@ bit_protocols.factory('SSCOM_Serial', ['ParlaySocket', 'PromenadeBroker', '$q', 
     };
     
     Private.recordLog = function (response) {
-        Private.log.push(response);
+        Private.log.push(response);        
     };
+    
+    Private.invokeCallbacks = function (response) {
+        Private.onMessageCallbacks = Private.onMessageCallbacks.filter(function (callback) {
+            callback(response);            
+            return true;
+        });
+    };
+    
+    Public.onMessage = function (callback) {
+        Private.onMessageCallbacks.push(callback);
+    };
+    
+    Public.onMessage(Private.recordLog);
     
     Public.subscribe();
     

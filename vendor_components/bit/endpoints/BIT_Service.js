@@ -26,8 +26,8 @@ bit_endpoints.factory('CommandEndpoint', function () {
     };
 });
 
-bit_endpoints.factory('BIT_Service', ['SSCOM_Serial', function (SSCOM_Serial) {
-    return function BIT_Service (data) {
+bit_endpoints.factory('BIT_Service', function () {
+    return function BIT_Service (data, protocol) {
         
         var Public = {};
         
@@ -36,11 +36,11 @@ bit_endpoints.factory('BIT_Service', ['SSCOM_Serial', function (SSCOM_Serial) {
         };
         
         Public.getMessageTypes = function () {
-            return SSCOM_Serial.getMessageTypes();
+            return protocol.getMessageTypes();
         };
         
         Public.getDataTypes = function () {
-            return SSCOM_Serial.getDataTypes();
+            return protocol.getDataTypes();
         };
         
         Public.getId = function () {
@@ -68,7 +68,7 @@ bit_endpoints.factory('BIT_Service', ['SSCOM_Serial', function (SSCOM_Serial) {
         };
         
         Public.getFilteredLog = function () {
-            return SSCOM_Serial.getLog().filter(function (message) {
+            return protocol.getLog().filter(function (message) {
                 return message.topics.from === Private.id;
             });
         };
@@ -78,10 +78,11 @@ bit_endpoints.factory('BIT_Service', ['SSCOM_Serial', function (SSCOM_Serial) {
         };
         
         Public.sendMessage = function (command) {
-            return SSCOM_Serial.sendCommand(Private.generateMessage(command));
+            return protocol.sendCommand(Private.generateMessage(command));
         };
         
         var Private = {
+            protocol: protocol,
             commands: null,
             id: null,
             interfaces: null,
@@ -192,7 +193,7 @@ bit_endpoints.factory('BIT_Service', ['SSCOM_Serial', function (SSCOM_Serial) {
             
         return Public;
     };    
-}]);
+});
 
 bit_endpoints.controller('BitEndpointCommandController', ['$scope', '$timeout', function ($scope, $timeout) {
     

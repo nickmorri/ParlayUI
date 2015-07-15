@@ -27,6 +27,36 @@ protocols.factory('Protocol', ['$injector', function ($injector) {
          * All of the following public methods are expected to be implemented by the underlying vendor protocol.
          * If they are not we are going to fail gracefully but make a note in the console.
          */
+         
+         /**
+         * Returns the available endpoints controlled by the protocol.
+         * @param {Array} - endpoints
+         */
+        Public.getAvailableEndpoints = function () {
+            var protocol = Private.getVendorProtocol();
+            if (protocol.hasOwnProperty('getAvailableEndpoints')) return protocol.getAvailableEndpoints();
+            else Private.handleNotImplementedMethod('getAvailableEndpoints');
+        };
+        
+        /**
+         * Returns the active endpoints controlled by the protocol.
+         * @param {Array} - endpoints
+         */
+        Public.getActiveEndpoints = function () {
+            var protocol = Private.getVendorProtocol();
+            if (protocol.hasOwnProperty('getActiveEndpoints')) return protocol.getActiveEndpoints();
+            else Private.handleNotImplementedMethod('getActiveEndpoints');
+        };
+        
+        /**
+         * Activates the requested endpoint.
+         * @param {Object} endpoint - endpoint to be activated.
+         */
+        Public.activateEndpoint = function (endpoint) {
+            var protocol = Private.getVendorProtocol();
+            if (protocol.hasOwnProperty('activateEndpoint')) return protocol.activateEndpoint(endpoint);
+            else Private.handleNotImplementedMethod('activateEndpoint');
+        };
         
         /**
          * Adds discovery information to applicable vendor protocol.
@@ -188,7 +218,14 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', funct
         return PromenadeBroker.closeProtocol(protocol.getName()).then(function (response) {
             if (response.status !== 'ok') return $q.reject(response);
             else {
-                Private.getOpenProtocol(protocol.getName()).afterClose();
+                var index = Private.open_protocols.findIndex(function (suspect) {
+                    return protocol.getName() === suspect.getName();
+                });
+                
+                Private.getOpenProtocol(protocol.getName()).onClose();                
+                
+                if (index > -1) Private.open_protocols.splice(index, 1);
+                
                 return response;
             }
         });

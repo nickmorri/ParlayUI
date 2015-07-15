@@ -1,10 +1,12 @@
 var bit_protocols = angular.module('bit.protocols', ['parlay.socket', 'promenade.broker']);
 
-bit_protocols.factory('SSCOM_Serial', ['ParlaySocket', 'PromenadeBroker', '$q', function (ParlaySocket, PromenadeBroker, $q) {
+bit_protocols.factory('SSCOM_Serial', ['ParlaySocket', 'ParlayEndpoint', 'PromenadeBroker', '$q', function (ParlaySocket, ParlayEndpoint, PromenadeBroker, $q) {
     return function SSCOM_Serial () {
     
         var Private = {
             type: 'SSCOM_Serial',
+            available_endpoints: [],
+            active_endpoints: [],
             common_status: null,
             message_types: null,
             data_types: null,
@@ -19,10 +21,33 @@ bit_protocols.factory('SSCOM_Serial', ['ParlaySocket', 'PromenadeBroker', '$q', 
         
         var Public = {};
         
+        Public.getAvailableEndpoints = function () {
+            return Private.available_endpoints;
+        };
+        
+        Public.getActiveEndpoints = function () {
+            return Private.active_endpoints;
+        };
+        
         Public.addDiscoveryInfo = function (info) {
             Private.common_status = info.common_status;
             Private.message_types = info.message_types;
             Private.data_types = info.data_types;
+            
+            Private.available_endpoints = info.children.map(function (endpoint) {
+                return new ParlayEndpoint(endpoint, Public);
+            });
+            
+        };
+        
+        Public.activateEndpoint = function (endpoint) {
+            var index = Private.available_endpoints.findIndex(function (suspect) {
+                return endpoint === suspect;
+            });
+            
+            if (index > -1) Private.available_endpoints.splice(index, 1);
+            
+            Private.active_endpoints.push(endpoint);
         };
         
         Public.getType = function () {
@@ -39,6 +64,8 @@ bit_protocols.factory('SSCOM_Serial', ['ParlaySocket', 'PromenadeBroker', '$q', 
                 Private.subscription_listener_dereg();
                 Private.subscription_listener_dereg = null;
             }
+            Private.available_endpoints = [];
+            Private.active_endpoints = [];
         };
         
         Public.hasSubscription = function() {

@@ -5,16 +5,17 @@ endpoints.config(function($stateProvider) {
     $stateProvider.state('endpoints', {
         url: '/endpoints',
         templateUrl: '../parlay_components/endpoints/views/base.html',
-        controller: 'endpointController'
+        controller: 'EndpointController'
     });
 });
 
 endpoints.factory('ParlayEndpoint', ['$injector', function ($injector) {
-    return function ParlayEndpoint (endpoint) {
+    return function ParlayEndpoint (endpoint, protocol) {
         
         var Public = {};
     
         var Private = {
+            protocol: protocol,
             vendor_interfaces: []
         };
         
@@ -22,7 +23,7 @@ endpoints.factory('ParlayEndpoint', ['$injector', function ($injector) {
             endpoint.type.split("/").forEach(function (type) {
                 try {
                     var instance = $injector.get(type);
-                    Private.vendor_interfaces.push(new instance(endpoint));
+                    Private.vendor_interfaces.push(new instance(endpoint, protocol));
                 }
                 catch (e) {
                     console.warn('Could not find ' + type + ' endpoint instance.');
@@ -64,51 +65,31 @@ endpoints.factory('ParlayEndpoint', ['$injector', function ($injector) {
             }).getName();
         };
         
+        Public.activate = function () {
+            protocol.activateEndpoint(Public);
+        };
+        
         Private.attachVendorInterfaces(endpoint);
         
         return Public;
     };
 }]);
 
-endpoints.factory('ParlayDevice', ['ParlayEndpoint', function (ParlayEndpoint) {
-    return function ParlayDevice (protocol) {
-
-        var Private = {};
-
-        var Public = {};
-            
-        Private.addDiscovery = function (data) {
-            Private.endpoints = data.map(function (endpoint) {
-                return new ParlayEndpoint(endpoint);
-            });
-        };
-            
-        Public.getEndpoints = function () {
-            return Private.endpoints;
-        };
-
-        Private.addDiscovery(protocol.children);
-        
-        return Public;
-    };    
-}]);
-
-endpoints.factory('EndpointManager', ['PromenadeBroker', 'ParlayDevice', 'ProtocolManager', function (PromenadeBroker, ParlayDevice, ProtocolManager) {
+endpoints.factory('EndpointManager', ['PromenadeBroker', 'ProtocolManager', function (PromenadeBroker, ProtocolManager) {
     
-    var Private = {
-        devices: [],
-        active_endpoints: []
-    };
+    var Private = {};
     
     var Public = {};
     
     Public.getActiveEndpoints = function () {
-        return Private.active_endpoints;
+        return ProtocolManager.getOpenProtocols().reduce(function (previous, current) {
+            return previous.concat(current.getActiveEndpoints());
+        }, []);
     };
     
     Public.getAvailableEndpoints = function () {
-        return Private.devices.reduce(function (previous, current) {
-            return previous.concat(current.getEndpoints());
+        return ProtocolManager.getOpenProtocols().reduce(function (previous, current) {
+            return previous.concat(current.getAvailableEndpoints());
         }, []);
     };
     
@@ -117,23 +98,13 @@ endpoints.factory('EndpointManager', ['PromenadeBroker', 'ParlayDevice', 'Protoc
     };
     
     Public.activateEndpoint = function (endpoint) {
-        Private.active_endpoints.push(endpoint);
-    };
-    
-    PromenadeBroker.onDiscovery(function (response) {
-        Private.devices = response.discovery.map(function (protocol) {
-            return new ParlayDevice(protocol);
-        });
-    });
-    
-    Private.clearDevices = function () {
-        Private.devices = [];
+        endpoint.activate();
     };
         
     return Public;
 }]);
 
-endpoints.controller('endpointController', ['$scope', '$mdToast', '$mdDialog', 'EndpointManager', function ($scope, $mdToast, $mdDialog, EndpointManager) {
+endpoints.controller('EndpointController', ['$scope', '$mdToast', '$mdDialog', 'EndpointManager', function ($scope, $mdToast, $mdDialog, EndpointManager) {
     
     $scope.isDiscovering = false;
     

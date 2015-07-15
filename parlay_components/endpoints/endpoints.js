@@ -25,7 +25,7 @@ endpoints.factory('ParlayEndpoint', ['$injector', function ($injector) {
                     Private.vendor_interfaces.push(new instance(endpoint));
                 }
                 catch (e) {
-                    // Do nothing if we couldn't find that interface.
+                    console.warn('Could not find ' + type + ' endpoint instance.');
                 }                
             });
         };

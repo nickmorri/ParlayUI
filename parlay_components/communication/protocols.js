@@ -58,6 +58,10 @@ protocols.factory('Protocol', ['$injector', function ($injector) {
             }
         };
         
+        Public.getLog = function () {
+            return Private.getVendorProtocol().getLog();
+        };
+        
         Public.hasSubscription = function () {
             return Private.vendor_protocol.hasSubscription();
         };
@@ -462,6 +466,10 @@ protocols.controller('ParlayConnectionStatusController', ['$scope', '$mdDialog',
 protocols.controller('ProtocolConnectionDetailController', ['$scope', '$mdDialog', 'protocol', function ($scope, $mdDialog, protocol) {
     $scope.getProtocolName = function () {
         return protocol.getName();
+    };
+    
+    $scope.getLog = function () {
+        return protocol.getLog();
     };
     
     $scope.hasSubscription = function () {

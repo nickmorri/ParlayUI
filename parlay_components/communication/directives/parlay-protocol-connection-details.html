@@ -9,12 +9,26 @@
                 </md-button>
             </div>
         </md-toolbar>
-                
+        
+        <md-dialog-content>
+        
+            <p ng-hide="getLog().length">
+                Nothing has been logged<span ng-show="hasSubscription()"> although we currently have a subscription.</span>
+                <span ng-hide="hasSubscription()"> maybe because we're not subscribed?</span>
+            </p>
+            
+            <md-list ng-show="getLog().length">
+                <md-list-item ng-repeat="message in getLog()">
+                    {{message}}
+                </md-list-item>
+            </md-list>
+        </md-dialog-content>
+        
         <div class="md-actions" layout="row">
             <span flex></span>
-            <md-button ng-click="toggleSubscription(protocol)">
-                <span ng-hide="hasSubscription(protocol)">Subscribe</span>
-                <span ng-show="hasSubscription(protocol)">Unsubscribe</span>                        
+            <md-button ng-click="toggleSubscription()">
+                <span ng-hide="hasSubscription()">Subscribe</span>
+                <span ng-show="hasSubscription()">Unsubscribe</span>                        
             </md-button>
         </div>
 

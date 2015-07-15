@@ -162,14 +162,15 @@ socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', '$ro
      * @param {Object} response_topics - Map of key/value pairs.
      * @param {Function} response_callback - Callback function which will be invoked when a messaged is received that topic signature.
      * @param {Bool} persist - If false callback function will be removed after a invocation, if true it will persist.
+     * @param {Boolean} verbose - If true we should invoke callback with full message. If false or undefined invoke with only contents for simplicity.
      */
-    Private.registerListener = function(response_topics, response_callback, persist) {
+    Private.registerListener = function(response_topics, response_callback, persist, verbose) {
         var encoded_topic_string = Private.encodeTopics(response_topics);
 
         var callbacks = Private.onMessageCallbacks.get(encoded_topic_string);
         if (callbacks === undefined) callbacks = [];
             
-        callbacks.push({func: response_callback, persist: persist});
+        callbacks.push({func: response_callback, persist: persist, verbose: verbose});
         Private.onMessageCallbacks.set(encoded_topic_string, callbacks);
         
         return function deregisterListener() {
@@ -211,7 +212,8 @@ socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', '$ro
             if (callbacks !== undefined) {
                 
                 var remaining_callbacks = callbacks.filter(function (callback) {
-                    callback.func(contents);
+                    if (callback.verbose) callback.func({topics: response_topics, contents: contents});
+                    else callback.func(contents);
                     return callback.persist;
                 });
                 
@@ -317,10 +319,13 @@ socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', '$ro
          * Registers a callback to be associated with topics. Callback is invoked when message is received over WebSocket from Broker with matching signature.
          * @param {Object} response_topics - Map of key/value pairs.
          * @param {Function} response_callback - Callback to invoke upon receipt of message matching response topics.
+         * @param {Boolean} verbose - If true we should invoke callback with full message. If false or undefined invoke with only contents for simplicity.
          * @returns {Function} Deregistration function for this message listener.
          */
-        Public.onMessage = function (response_topics, response_callback) {
-            if (typeof response_topics === 'object') return Private.registerListener(response_topics, response_callback, true);
+        Public.onMessage = function (response_topics, response_callback, verbose) {
+            // If verbose is not passed default to false.
+            var verbosity = verbose !== undefined && verbose === true ? true : false;
+            if (typeof response_topics === 'object') return Private.registerListener(response_topics, response_callback, true, verbosity);
             else throw new TypeError('Invalid type for topics, accepts Map.', 'socket.js');
         };
         

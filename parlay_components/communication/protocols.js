@@ -71,7 +71,7 @@ protocols.factory('Protocol', ['$injector', function ($injector) {
         };
         
         Public.afterClose = function () {
-            Private.vendor_protocols.afterClose();
+            Private.getVendorProtocol().afterClose();
             Private.vendor_protocol = null;
         };
         
@@ -130,7 +130,7 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', funct
         return PromenadeBroker.closeProtocol(protocol).then(function (response) {
             if (response.status !== 'ok') return $q.reject(response);
             else {
-                Private.getOpenProtocol(protocol.name).afterClose();
+                Private.getOpenProtocol(protocol.getName()).afterClose();
                 return response;
             }
         });
@@ -186,7 +186,7 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', funct
      */
     Private.getOpenProtocol = function (name) {
         return Private.open.find(function (protocol) {
-            return name === protocol.name;
+            return name === protocol.getName();
         });
     };
     
@@ -196,7 +196,7 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', funct
      */
     Private.getAvailableProtocol = function (name) {
         return Private.available.find(function (protocol) {
-            return name === protocol.name;
+            return name === protocol.getName();
         });
     };
     
@@ -396,7 +396,7 @@ protocols.controller('ParlayConnectionListController', ['$scope', '$mdDialog', '
     $scope.closeProtocol = function (protocol) {
         ProtocolManager.closeProtocol(protocol).then(function (result) {
             $mdToast.show($mdToast.simple()
-                .content('Closed ' + protocol.name + '.'));
+                .content('Closed ' + protocol.getName() + '.'));
         }).catch(function (result) {
             $mdToast.show($mdToast.simple()
                 .content(result.status));  
@@ -406,6 +406,7 @@ protocols.controller('ParlayConnectionListController', ['$scope', '$mdDialog', '
     $scope.viewProtocolConnectionDetails = function (event, protocol) {
         $mdDialog.show({
             targetEvent: event,
+            clickOutsideToClose: true,
             controller: 'ProtocolConnectionDetailController',
             templateUrl: '../parlay_components/communication/directives/parlay-protocol-connection-details.html',
             locals: {

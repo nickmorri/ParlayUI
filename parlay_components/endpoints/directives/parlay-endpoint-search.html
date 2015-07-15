@@ -1,6 +1,7 @@
 <div layout="row" layout-align="end center">
     <md-autocomplete flex
         ng-show="searching"
+        md-no-cache="true"
         md-selected-item="selected_item"
         md-selected-item-change="selectEndpoint(selected_item)"
         md-search-text="search_text"

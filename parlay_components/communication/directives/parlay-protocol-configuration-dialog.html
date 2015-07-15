@@ -16,6 +16,7 @@
     
         <md-autocomplete
             md-autoselect="true"
+            md-no-cache="true"
             md-selected-item="selected_protocol"
             md-selected-item-change="selectedItemChange(selected_protocol)"
             md-search-text="search_text"
@@ -41,7 +42,9 @@
                         <input ng-model="parameter.value" type="text">
                     </md-input-container>
                     
-                    <md-autocomplete ng-hide="parameter.defaults === null || !parameter.defaults.length"
+                    <md-autocomplete
+                        ng-hide="parameter.defaults === null || !parameter.defaults.length"
+                        md-no-cache="true"
                         md-autoselect="true"
                         md-search-text="parameter.search_text"
                         md-selected-item="parameter.value"

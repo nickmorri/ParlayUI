@@ -347,7 +347,7 @@ protocols.controller('ProtocolConfigurationController', ['$scope', '$mdDialog', 
      * Resolves the $mdDialog promise with the a configured $scope.selected_protocol.
      * @returns {$q.defer.promise} Resolves the $mdDialog promise with the a configured $scope.selected_protocol.
      */
-    $scope.accept = function () {
+    $scope.connect = function () {
         
         $scope.connecting = true;
         
@@ -448,6 +448,7 @@ protocols.controller('ParlayConnectionListController', ['$scope', '$mdDialog', '
         // Show a configuraton dialog allowing us to setup a protocol configuration.
         $mdDialog.show({
             targetEvent: event,
+            clickOutsideToClose: true,
             controller: 'ProtocolConfigurationController',
             templateUrl: '../parlay_components/communication/directives/parlay-protocol-configuration-dialog.html'
         }).then(function (result) {
@@ -456,11 +457,7 @@ protocols.controller('ParlayConnectionListController', ['$scope', '$mdDialog', '
             $mdToast.show($mdToast.simple()
                 .content('Connected successfully to protocol.')
                 .position('bottom left').hideDelay(3000));
-        }).catch(function (result) {
-            $mdToast.show($mdToast.simple()
-                .content('Failed to make protocol connection.')
-                .position('bottom left').hideDelay(3000));
-        });       
+        });
     };
     
 }]);

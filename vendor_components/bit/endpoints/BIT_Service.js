@@ -68,7 +68,9 @@ bit_endpoints.factory('BIT_Service', ['SSCOM_Serial', function (SSCOM_Serial) {
         };
         
         Public.getFilteredLog = function () {
-            return SSCOM_Serial.getLog();
+            return SSCOM_Serial.getLog().filter(function (message) {
+                return message.topics.from === Private.id;
+            });
         };
             
         Public.matchesQuery = function (query) {

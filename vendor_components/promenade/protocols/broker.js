@@ -63,11 +63,11 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', function (ParlaySocket,
     
     /**
      * Closes protocol.
-     * @param {Object} protocol - Configured open protocol object.
+     * @param {String} protocol_name - Name of an open protocol.
      * @returns {$q.defer.promise} Resolve when response is received with result of close request from Broker.
      */
-    Public.closeProtocol = function (protocol) {
-        return Public.sendRequest('close_protocol', {'protocol': protocol.name});
+    Public.closeProtocol = function (protocol_name) {
+        return Public.sendRequest('close_protocol', {'protocol': protocol_name});
     };
         
     /**

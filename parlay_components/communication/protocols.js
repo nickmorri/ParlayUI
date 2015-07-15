@@ -4,23 +4,20 @@ protocols.factory('Protocol', ['$injector', function ($injector) {
     return function protocol (configuration) {
         
         var Private = {
-            vendor_protocols: []
+            name: configuration.name,
+            type: configuration.protocol_type,
+            vendor_protocol: null
         };
         
-        var Public = {
-            name: configuration.name,
-            type: configuration.protocol_type
-        };
+        var Public = {};
         
         /**
-         * Returns vendor protocol that matches the type requested.
-         * @param {String} type - protocol type
+         * Returns vendor protocol .
          * @returns {Object} vendor protocol
          */
         Private.getVendorProtocol = function (type) {
-            return Private.vendor_protocols.find(function (protocol) {
-                return protocol.getType() === type;
-            });
+            if (type !== undefined) console.warn('Deprecated behavior');
+            return Private.vendor_protocol;
         };
         
         /**
@@ -28,13 +25,24 @@ protocols.factory('Protocol', ['$injector', function ($injector) {
          * @param {Object} configuration - Configuration details for a vendor protocol.
          */
         Private.registerVendorProtocol = function (configuration) {
-            if (Private.getVendorProtocol(configuration.protocol_type) === undefined) {
+            if (Private.getVendorProtocol() === null) {
                 try {
-                    Private.vendor_protocols.push($injector.get(configuration.protocol_type));
+                    Private.vendor_protocol = $injector.get(configuration.protocol_type);
                 } catch (e) {
                     console.warn('Configuration for ' + RegExp('([A-z]+) <-').exec(e.message)[1] + ' was not found.');                     
                 }                
-            }            
+            }
+            else {
+                console.warn('Attmepted to register ' + configuration.protocol_type + ' but ' + Public.getType() + ' already registered ');
+            }
+        };
+        
+        Public.getName = function () {
+            return Private.name;
+        };
+        
+        Public.getType = function () {
+            return Private.type;
         };
         
         /**
@@ -42,34 +50,29 @@ protocols.factory('Protocol', ['$injector', function ($injector) {
          * @param {Object} info - Discovery information
          */
         Public.addDiscoveryInfo = function (info) {
-            var instance = Private.getVendorProtocol(info.protocol_type);
-            if (instance !== undefined) instance.addDiscoveryInfo(info);                   
-            else console.warn('Vendor protocol not defined for ' + info.name + ' of type ' + info.protocol_type + '.');
+            try {
+                Private.getVendorProtocol().addDiscoveryInfo(info);    
+            }
+            catch (error) {
+                console.warn('Vendor protocol not defined for ' + info.name + ' of type ' + info.protocol_type + '.');    
+            }
         };
         
         Public.hasSubscription = function () {
-            return Private.vendor_protocols.some(function (protocol) {
-                return protocol.hasSubscription();
-            });
+            return Private.vendor_protocol.hasSubscription();
         };
         
         Public.subscribe = function () {
-            Private.vendor_protocols.forEach(function (protocol) {
-                protocol.subscribe();
-            });
+            Private.vendor_protocol.subscribe();
         };
         
         Public.unsubscribe = function () {
-            Private.vendor_protocols.forEach(function (protocol) {
-                protocol.unsubscribe();
-            });
+            Private.vendor_protocol.unsubscribe();
         };
         
         Public.afterClose = function () {
-            Private.vendor_protocols.forEach(function (protocol) {
-                protocol.afterClose();
-            });
-            Private.vendor_protocols = null;
+            Private.vendor_protocols.afterClose();
+            Private.vendor_protocol = null;
         };
         
         Private.registerVendorProtocol(configuration);

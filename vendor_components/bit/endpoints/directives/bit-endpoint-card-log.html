@@ -2,7 +2,16 @@
     <md-content class="md-padding" style="max-height: 300px;">
         <md-list>
             <md-list-item class="md-2-line" ng-repeat="message in getLog()">
-                {{message}}
+                <div class="md-list-item-text">
+                    <h4>Type: {{message.topics.message_type_name}}</h4>
+                    <h4>Status: {{message.contents.status_name}}</h4>
+                    <h4>MessageID: {{message.topics.message_id}}</h4>
+                    <p>
+                        Message Info: {{message.contents.message_info}}
+                        Payload: {{message.contents.payload}}
+                        Data Type: {{message.contents.data_type_name}}
+                    </p>
+                </div>
             </md-list-item>
         </md-list>
     </md-content>

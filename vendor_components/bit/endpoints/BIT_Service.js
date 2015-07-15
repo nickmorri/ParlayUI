@@ -268,7 +268,7 @@ bit_endpoints.controller('BitEndpointCommandController', ['$scope', '$timeout', 
             }, 1000);
             $scope.sending = false;
         }).catch(function (response) {
-            debugger;
+            console.warn(response);
         });
     };
     

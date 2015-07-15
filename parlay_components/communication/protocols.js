@@ -213,7 +213,10 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', funct
             return {
                 name: protocol_name,
                 parameters: protocols[protocol_name].params.reduce(function (param_obj, current_param) {
-                    param_obj[current_param] = protocols[protocol_name].defaults[current_param];
+                    param_obj[current_param] = {
+                        value: null,
+                        defaults: protocols[protocol_name].defaults[current_param]
+                    };
                     return param_obj;
                 }, {})
             };
@@ -226,7 +229,9 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', funct
      */
     Private.setOpenProtocols = function (protocols) {
         Private.open = protocols.map(function (protocol) {
-            return new Protocol(protocol);
+            var instance = new Protocol(protocol);
+            instance.onOpen();
+            return instance;
         });        
     };
     
@@ -235,7 +240,7 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', funct
      */
     Private.clearProtocols = function () {
         Private.open.forEach(function (protocol) {
-            protocol.afterClose();
+            protocol.onClose();
         });
         Private.open = [];
         Private.available = [];
@@ -322,6 +327,14 @@ protocols.controller('ProtocolConfigurationController', ['$scope', '$mdDialog', 
     $scope.selectedProtocolHasParameters = function () {
         return $scope.selectedProtocolNumberOfParameters() > 0;
     };
+    
+    $scope.filterDefaults = function (defaults, query) {
+        var lowercaseQuery = angular.lowercase(query);
+        return query ? defaults.filter(function(default_string) {
+            return angular.lowercase(default_string).indexOf(lowercaseQuery) > -1;
+        }) : defaults;
+    };
+    
     /**
      * Rejects the $mdDialog promise.
      * @returns {$q.defer.promise} Rejects $mdDialog promise.
@@ -335,8 +348,16 @@ protocols.controller('ProtocolConfigurationController', ['$scope', '$mdDialog', 
      * @returns {$q.defer.promise} Resolves the $mdDialog promise with the a configured $scope.selected_protocol.
      */
     $scope.accept = function () {
+        
         $scope.connecting = true;
-        ProtocolManager.openProtocol($scope.selected_protocol).then(function (response) {
+        
+        ProtocolManager.openProtocol({
+            name: $scope.selected_protocol.name,
+            parameters: Object.keys($scope.selected_protocol.parameters).reduce(function (param_obj, key) {
+                            param_obj[key] = $scope.selected_protocol.parameters[key].value;
+                            return param_obj;
+                        }, {})
+        }).then(function (response) {
             $mdDialog.hide(response);
             $scope.connecting = false;
         }).catch(function (response) {

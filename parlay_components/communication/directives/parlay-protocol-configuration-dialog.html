@@ -33,10 +33,32 @@
         </md-autocomplete>
             
         <div layout="row" flex ng-show="selected_protocol !== null && selectedProtocolHasParameters()" >
-            <md-input-container flex ng-repeat="(key, value) in selected_protocol.parameters">
-                <label class="capitalize">{{key}}</label>
-                <input ng-model="value">
-            </md-input-container>
+
+                <span flex ng-repeat="(parameter_name, parameter) in selected_protocol.parameters">
+                    
+                    <md-input-container ng-show="parameter.defaults === null || !parameter.defaults.length">
+                        <label>{{parameter_name}} (Defaults not available)</label>
+                        <input ng-model="parameter.value" type="text">
+                    </md-input-container>
+                    
+                    <md-autocomplete ng-hide="parameter.defaults === null || !parameter.defaults.length"
+                        md-autoselect="true"
+                        md-search-text="parameter.search_text"
+                        md-selected-item="parameter.value"
+                        md-items="default in filterDefaults(parameter.defaults, parameter.search_text)"
+                        md-item-text="default"
+                        md-min-length="0"
+                        md-floating-label="{{parameter_name}}">
+                        <md-item-template>
+                            <span md-highlight-text="parameter.search_text" md-highlight-flags="^i">{{default}}</span>
+                        </md-item-template>
+                        <md-not-found>
+                            No matches found for {{parameter.search_text}}
+                        </md-not-found>
+                    </md-autocomplete>
+                    
+                </span>
+                
         </div>
         
         <md-input-container flex ng-hide="selected_protocol === null || selectedProtocolHasParameters()">

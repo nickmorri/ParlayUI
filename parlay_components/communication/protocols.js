@@ -12,31 +12,9 @@ protocols.factory('Protocol', ['$injector', function ($injector) {
         var Public = {};
         
         /**
-         * Returns vendor protocol .
-         * @returns {Object} vendor protocol
+         * Public Methods
          */
-        Private.getVendorProtocol = function (type) {
-            if (type !== undefined) console.warn('Deprecated behavior');
-            return Private.vendor_protocol;
-        };
-        
-        /**
-         * Register vendor protocol.
-         * @param {Object} configuration - Configuration details for a vendor protocol.
-         */
-        Private.registerVendorProtocol = function (configuration) {
-            if (Private.getVendorProtocol() === null) {
-                try {
-                    Private.vendor_protocol = $injector.get(configuration.protocol_type);
-                } catch (e) {
-                    console.warn('Configuration for ' + RegExp('([A-z]+) <-').exec(e.message)[1] + ' was not found.');                     
-                }                
-            }
-            else {
-                console.warn('Attmepted to register ' + configuration.protocol_type + ' but ' + Public.getType() + ' already registered ');
-            }
-        };
-        
+         
         Public.getName = function () {
             return Private.name;
         };
@@ -46,40 +24,118 @@ protocols.factory('Protocol', ['$injector', function ($injector) {
         };
         
         /**
+         * All of the following public methods are expected to be implemented by the underlying vendor protocol.
+         * If they are not we are going to fail gracefully but make a note in the console.
+         */
+        
+        /**
          * Adds discovery information to applicable vendor protocol.
          * @param {Object} info - Discovery information
          */
         Public.addDiscoveryInfo = function (info) {
-            try {
-                Private.getVendorProtocol().addDiscoveryInfo(info);    
-            }
-            catch (error) {
-                console.warn('Vendor protocol not defined for ' + info.name + ' of type ' + info.protocol_type + '.');    
-            }
+            var protocol = Private.getVendorProtocol();
+            if (protocol.hasOwnProperty('addDiscoveryInfo')) protocol.addDiscoveryInfo(info);
+            else Private.handleNotImplementedMethod('addDiscoveryInfo');
         };
         
+        /**
+         * Returns log collected by the protocol implementation.
+         @returns {Array} array of collected messages
+         */ 
         Public.getLog = function () {
-            return Private.getVendorProtocol().getLog();
+            var protocol = Private.getVendorProtocol();
+            if (protocol.hasOwnProperty('getLog')) return protocol.getLog();
+            else Private.handleNotImplementedMethod('getLog');
+            
         };
         
+        /**
+         * Check if we have an active subscription.
+         * @returns {Boolean} True if subscription is active, false otherwise.
+         */
         Public.hasSubscription = function () {
-            return Private.vendor_protocol.hasSubscription();
+            var protocol = Private.getVendorProtocol();
+            if (protocol.hasOwnProperty('hasSubscription')) return protocol.hasSubscription();
+            else Private.handleNotImplementedMethod('hasSubscription');
         };
         
+        /**
+         * Request to be subscribed.
+         */
         Public.subscribe = function () {
-            Private.vendor_protocol.subscribe();
+            var protocol = Private.getVendorProtocol();
+            if (protocol.hasOwnProperty('subscribe')) protocol.subscribe();
+            else Private.handleNotImplementedMethod('subscribe');
         };
         
+        /**
+         * Request to be unsubscribed.
+         */
         Public.unsubscribe = function () {
-            Private.vendor_protocol.unsubscribe();
+            var protocol = Private.getVendorProtocol();
+            if (protocol.hasOwnProperty('unsubscribe')) protocol.unsubscribe();
+            else Private.handleNotImplementedMethod('unsubscribe');
         };
         
-        Public.afterClose = function () {
-            Private.getVendorProtocol().afterClose();
+        /**
+         * Called when protocol is opened to ensure proper setup.
+         */
+        Public.onOpen = function () {
+            Private.registerVendorProtocol(configuration);
+            var protocol = Private.getVendorProtocol();
+            if (protocol.hasOwnProperty('onOpen')) protocol.onOpen();
+            else Private.handleNotImplementedMethod('onOpen'); 
+        };
+        
+        /**
+         * Called when protocol is closed to ensure proper teardown.
+         */
+        Public.onClose = function () {
+            var protocol = Private.getVendorProtocol();
+            if (protocol.hasOwnProperty('onClose')) protocol.onClose();
+            else Private.handleNotImplementedMethod('onClose');
             Private.vendor_protocol = null;
         };
         
-        Private.registerVendorProtocol(configuration);
+        /**
+         * Private Methods
+         */
+        
+        /**
+         * Leaves a warning in the console.
+         * @param {String} methodName - Name of method that wasn't implemented.
+         */ 
+        Private.handleNotImplementedMethod = function (methodName) {
+            console.warn(methodName + ' is not implemented for ' + Public.getName());
+        };
+        
+        /**
+         * Returns vendor protocol .
+         * @returns {Object} vendor protocol
+         */
+        Private.getVendorProtocol = function (type) {
+            if (type !== undefined) console.warn('Deprecated behavior');
+            if (Private.vendor_protocol === null) console.warn('Vendor protocol not defined for protocol type ' + Private.type + '.');
+            return Private.vendor_protocol;
+        };
+        
+        /**
+         * Register vendor protocol.
+         * @param {Object} configuration - Configuration details for a vendor protocol.
+         */
+        Private.registerVendorProtocol = function (configuration) {
+            if (Private.vendor_protocol === null) {
+                try {
+                    var instance = $injector.get(configuration.protocol_type);
+                    Private.vendor_protocol = new instance();
+                } catch (e) {
+                    console.warn('Configuration for ' + RegExp('([A-z]+) <-').exec(e.message)[1] + ' was not found.');                     
+                }                
+            }
+            else {
+                console.warn('Attmepted to register ' + configuration.protocol_type + ' but ' + Public.getType() + ' already registered ');
+            }
+        };
         
         return Public;        
     };
@@ -88,13 +144,11 @@ protocols.factory('Protocol', ['$injector', function ($injector) {
 protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', function (Protocol, PromenadeBroker, $q) {
     
     var Private = {
-        open: [],
+        open_protocols: [],
         available: []
     };
     
-    var Public = {
-        _private: Private
-    };
+    var Public = {};
     
     /**
      * Public Methods
@@ -105,7 +159,7 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', funct
      * @returns {Array} available protocols.
      */
     Public.getAvailableProtocols = function () {
-        return Private.available;
+        return Private.available_protocols;
     };
     
     /**
@@ -113,7 +167,7 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', funct
      * @returns {Array} open protocols.
      */
     Public.getOpenProtocols = function () {
-        return Private.open;
+        return Private.open_protocols;
     };
     
     /**
@@ -131,7 +185,7 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', funct
      * @returns {$q.defer.promise} Resolved when the Broker responds with the close result.
      */
     Public.closeProtocol = function (protocol) {
-        return PromenadeBroker.closeProtocol(protocol).then(function (response) {
+        return PromenadeBroker.closeProtocol(protocol.getName()).then(function (response) {
             if (response.status !== 'ok') return $q.reject(response);
             else {
                 Private.getOpenProtocol(protocol.getName()).afterClose();
@@ -189,7 +243,7 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', funct
      * @returns {Object} Returns Protocol object.
      */
     Private.getOpenProtocol = function (name) {
-        return Private.open.find(function (protocol) {
+        return Private.open_protocols.find(function (protocol) {
             return name === protocol.getName();
         });
     };
@@ -199,7 +253,7 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', funct
      * @returns {Object} Returns protocol configuration object.
      */
     Private.getAvailableProtocol = function (name) {
-        return Private.available.find(function (protocol) {
+        return Private.available_protocols.find(function (protocol) {
             return name === protocol.getName();
         });
     };
@@ -209,7 +263,7 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', funct
      * @param {Object} Map of protocol names : protocol details.
      */
     Private.setAvailableProtocols = function (protocols) {
-        Private.available = Object.keys(protocols).map(function (protocol_name) {
+        Private.available_protocols = Object.keys(protocols).map(function (protocol_name) {
             return {
                 name: protocol_name,
                 parameters: protocols[protocol_name].params.reduce(function (param_obj, current_param) {
@@ -228,7 +282,7 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', funct
      * @param {Array} Array of open protocols.
      */
     Private.setOpenProtocols = function (protocols) {
-        Private.open = protocols.map(function (protocol) {
+        Private.open_protocols = protocols.map(function (protocol) {
             var instance = new Protocol(protocol);
             instance.onOpen();
             return instance;
@@ -239,11 +293,11 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', funct
      * Clears private attributes open and available.
      */
     Private.clearProtocols = function () {
-        Private.open.forEach(function (protocol) {
+        Private.open_protocols.forEach(function (protocol) {
             protocol.onClose();
         });
         Private.open = [];
-        Private.available = [];
+        Private.available_protocols = [];
     };
     
     /**
@@ -258,9 +312,13 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', funct
      * PromenadeBroker callback registrations.
      */
     
-    PromenadeBroker.onOpen(Private.requestProtocols);
+    PromenadeBroker.onOpen(function () {
+        Private.requestProtocols();
+    });
     
-    PromenadeBroker.onClose(Private.clearProtocols);
+    PromenadeBroker.onClose(function () {
+        Private.clearProtocols();
+    });
     
     PromenadeBroker.onMessage({type: 'broker', response: 'open_protocol_response'}, function (response) {
         Private.requestOpenProtocols();
@@ -452,8 +510,6 @@ protocols.controller('ParlayConnectionListController', ['$scope', '$mdDialog', '
             controller: 'ProtocolConfigurationController',
             templateUrl: '../parlay_components/communication/directives/parlay-protocol-configuration-dialog.html'
         }).then(function (result) {
-            if (result === undefined) return result;
-            // Don't display anything if we didn't open a protocol.
             $mdToast.show($mdToast.simple()
                 .content('Connected successfully to protocol.')
                 .position('bottom left').hideDelay(3000));

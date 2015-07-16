@@ -28,8 +28,7 @@ socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', func
     var Private = {
         onMessageCallbacks: new Map(),
         onOpenCallbacks: [],
-        onCloseCallbacks: [],
-        onErrorCallbacks: []
+        onCloseCallbacks: []
     };
     
     /**
@@ -237,10 +236,7 @@ socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', func
             });
         }
         else {
-            throw function ParlaySocketSetupException(message) {
-                this.message = message + " is not a valid configuration for ParlaySocket.";
-                this.name = "ParlaySocketSetupException";
-            }(typeof config);
+            throw new TypeError('Invalid type for config, accepts mock configuration Object or undefined.', 'socket.js');
         }
         
         Private.public = Public;
@@ -268,16 +264,7 @@ socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', func
         // If this is a mock socket we expect a slightly different message structuring.
         Private.socket.$on('$message', function(message) {
             if (Public.isMock()) Private.invokeCallbacks(message.data.topics, message.data.contents);
-            else if (message !== undefined) {
-                Private.invokeCallbacks(message.topics, message.contents);
-            }                
-        });
-        
-        // When the WebSocket encounters an error execute onError callbacks.
-        Private.socket.$on('$error', function (event) {
-            Private.onErrorCallbacks.forEach(function(callback) {
-                callback();
-            });
+            else Private.invokeCallbacks(message.topics, message.contents);
         });
         
         /**
@@ -297,14 +284,6 @@ socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', func
         };
         
         /**
-         * Registers a callback which will be invoked on socket error.
-         * @param {Function} callbackFunc - Callback function which will be invoked on socket error.
-         */
-        Public.onError = function (callbackFunc) {
-            Private.onErrorCallbacks.push(callbackFunc);  
-        };
-        
-        /**
          * Registers a callback to be associated with topics. Callback is invoked when message is received over WebSocket from Broker with matching signature.
          * @param {Object} response_topics - Map of key/value pairs.
          * @param {Function} response_callback - Callback to invoke upon receipt of message matching response topics.
@@ -313,7 +292,7 @@ socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', func
          */
         Public.onMessage = function (response_topics, response_callback, verbose) {
             // If verbose is not passed default to false.
-            var verbosity = verbose !== undefined && verbose === true ? true : false;
+            var verbosity = verbose ? true : false;
             if (typeof response_topics === 'object') return Private.registerListener(response_topics, response_callback, true, verbosity);
             else throw new TypeError('Invalid type for topics, accepts Map.', 'socket.js');
         };
@@ -338,7 +317,7 @@ socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', func
             // Push message down to Private.socket.send()
             if (typeof topics === 'object') {
                 if (typeof contents === 'object') return Private.send(topics, contents, response_callback);
-                else if (typeof contents === 'undefined') return Private.send(topics, {}, response_callback);
+                else if (contents === undefined) return Private.send(topics, {}, response_callback);
                 else throw new TypeError('Invalid type for contents, accepts Object or undefined.', 'socket.js');
             }
             else throw new TypeError('Invalid type for topics, accepts Object.', 'socket.js');

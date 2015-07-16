@@ -6,16 +6,17 @@
         beforeEach(module('parlay.socket'));
         
         describe('ParlaySocket', function () {
-            var ParlaySocketService;
+            var ParlaySocket;
             
-            beforeEach(inject(function(_ParlaySocketService_) {
-                ParlaySocketService = _ParlaySocketService_;
+            beforeEach(inject(function(_ParlaySocket_) {
+                ParlaySocket = _ParlaySocket_;
             }));
             
             describe('retrieve a ParlaySocket instance', function () {
                 
-                it('returns undefined when socket has not been registered', function () {
-                    expect(ParlaySocketService).not.toBeUndefined();
+                it('returns socket', function () {
+                    expect(ParlaySocket).not.toBeUndefined();
+                    expect(ParlaySocket).toEqual(ParlaySocket);
                 });
                 
             });

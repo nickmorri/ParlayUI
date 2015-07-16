@@ -111,7 +111,7 @@ protocols.factory('Protocol', ['$injector', function ($injector) {
          * Called when protocol is opened to ensure proper setup.
          */
         Public.onOpen = function () {
-            Private.registerVendorProtocol(configuration);
+            Private.registerVendorProtocol();
             var protocol = Private.getVendorProtocol();
             if (protocol.hasOwnProperty('onOpen')) protocol.onOpen();
             else Private.handleNotImplementedMethod('onOpen'); 
@@ -140,7 +140,7 @@ protocols.factory('Protocol', ['$injector', function ($injector) {
         };
         
         /**
-         * Returns vendor protocol .
+         * Returns vendor protocol.
          * @returns {Object} vendor protocol
          */
         Private.getVendorProtocol = function (type) {
@@ -153,17 +153,17 @@ protocols.factory('Protocol', ['$injector', function ($injector) {
          * Register vendor protocol.
          * @param {Object} configuration - Configuration details for a vendor protocol.
          */
-        Private.registerVendorProtocol = function (configuration) {
+        Private.registerVendorProtocol = function () {
             if (Private.vendor_protocol === null) {
                 try {
-                    var instance = $injector.get(configuration.protocol_type);
+                    var instance = $injector.get(Private.type);
                     Private.vendor_protocol = new instance();
                 } catch (e) {
                     console.warn('Configuration for ' + RegExp('([A-z]+) <-').exec(e.message)[1] + ' was not found.');                     
                 }                
             }
             else {
-                console.warn('Attmepted to register ' + configuration.protocol_type + ' but ' + Public.getType() + ' already registered ');
+                console.warn('Attmepted to register ' + Private.type + ' but ' + Public.getType() + ' already registered ');
             }
         };
         

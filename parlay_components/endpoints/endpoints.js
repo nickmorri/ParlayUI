@@ -116,8 +116,20 @@ endpoints.controller('EndpointController', ['$scope', '$mdToast', '$mdDialog', '
         $scope.isDiscovering = true;
         EndpointManager.requestDiscovery().then(function (result) {
             $scope.isDiscovering = false;
+            
+            var content_string;
+            if (result.length === 0) {
+                content_string = 'Successfully discovered 0 devices. Check protocol connections?';
+            }
+            else if (result.length === 1) {
+                content_string = 'Successfully discovered ' + result[0].name + '.';
+            }
+            else {
+                content_string = 'Successfully discovered ' + result.length + ' devices.';
+            }
+            
             $mdToast.show($mdToast.simple()
-                .content('Discovery successful.')
+                .content(content_string)
                 .position('bottom left'));
         });
     };

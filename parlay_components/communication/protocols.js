@@ -380,7 +380,7 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', funct
     return Public;
 }]);
 
-protocols.controller('ProtocolConfigurationController', ['$scope', '$mdDialog', 'ProtocolManager', function ($scope, $mdDialog, ProtocolManager) {
+protocols.controller('ProtocolConfigurationController', ['$scope', '$mdDialog', '$mdToast', 'ProtocolManager', function ($scope, $mdDialog, $mdToast, ProtocolManager) {
     
     $scope.selected_protocol = null;
     $scope.connecting = false;
@@ -441,8 +441,7 @@ protocols.controller('ProtocolConfigurationController', ['$scope', '$mdDialog', 
      * Resolves the $mdDialog promise with the a configured $scope.selected_protocol.
      * @returns {$q.defer.promise} Resolves the $mdDialog promise with the a configured $scope.selected_protocol.
      */
-    $scope.connect = function () {
-        
+    $scope.connect = function () {        
         $scope.connecting = true;
         
         ProtocolManager.openProtocol({
@@ -452,8 +451,10 @@ protocols.controller('ProtocolConfigurationController', ['$scope', '$mdDialog', 
                             return param_obj;
                         }, {})
         }).then(function (response) {
+            $mdToast.show($mdToast.simple()
+                .content('Connected successfully to ' + response.name + '.')
+                .position('bottom left').hideDelay(3000));
             $mdDialog.hide(response);
-            $scope.connecting = false;
         }).catch(function (response) {
             $scope.connecting = false;
             $scope.error = true;
@@ -515,7 +516,7 @@ protocols.controller('ParlayConnectionListController', ['$scope', '$mdDialog', '
     $scope.closeProtocol = function (protocol) {
         ProtocolManager.closeProtocol(protocol).then(function (result) {
             $mdToast.show($mdToast.simple()
-                .content('Closed ' + protocol.getName() + '.'));
+                .content('Successfully closed ' + protocol.getName() + '.'));
         }).catch(function (result) {
             $mdToast.show($mdToast.simple()
                 .content(result.status));  
@@ -545,10 +546,6 @@ protocols.controller('ParlayConnectionListController', ['$scope', '$mdDialog', '
             clickOutsideToClose: true,
             controller: 'ProtocolConfigurationController',
             templateUrl: '../parlay_components/communication/directives/parlay-protocol-configuration-dialog.html'
-        }).then(function (result) {
-            $mdToast.show($mdToast.simple()
-                .content('Connected successfully to protocol.')
-                .position('bottom left').hideDelay(3000));
         });
     };
     

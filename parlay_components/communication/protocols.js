@@ -382,7 +382,6 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', funct
 
 protocols.controller('ProtocolConfigurationController', ['$scope', '$mdDialog', 'ProtocolManager', function ($scope, $mdDialog, ProtocolManager) {
     
-    $scope.search_text = "";
     $scope.selected_protocol = null;
     $scope.connecting = false;
     

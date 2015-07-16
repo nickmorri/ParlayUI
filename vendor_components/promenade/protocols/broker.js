@@ -3,7 +3,9 @@ var broker = angular.module('promenade.broker', ['parlay.socket', 'ngMaterial'])
 broker.factory('PromenadeBroker', ['ParlaySocket', '$q', '$mdToast', function (ParlaySocket, $q, $mdToast) {
     var Public = {};
     
-    var Private = {};
+    var Private = {
+        connected_previously: false
+    };
     
     Public.getBrokerAddress = function () {
         return ParlaySocket.getAddress();
@@ -158,23 +160,43 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', '$mdToast', function (P
         // Do something.
     };
     
+    Private.hasConnectedPreviously = function () {
+        return Private.connected_previously;
+    };
+    
     Public.onMessage = ParlaySocket.onMessage;
     Public.onOpen = ParlaySocket.onOpen;
     Public.onClose = ParlaySocket.onClose;
     Public.onError = ParlaySocket.onError;
     
     Public.onOpen(function () {
+        Private.connected_previously = true;
         // When socket is opened we should show a toast alert to notify the user.
         $mdToast.show($mdToast.simple()
             .content('Connected to Parlay Broker!'));
     });
     
     Public.onClose(function () {
-        // When socket is closed we should show a toast alert giving the user the option to reconnect.
-        $mdToast.show($mdToast.simple()
-            .content('Disconnected from Parlay Broker!')
-            .action('Reconnect').highlightAction(true)
-            .position('bottom left').hideDelay(3000)).then(Public.connect);
+        if (Private.hasConnectedPreviously()) {
+            // When socket is closed we should show a toast alert giving the user the option to reconnect.
+            $mdToast.show($mdToast.simple()
+                .content('Disconnected from Parlay Broker!')
+                .action('Reconnect').highlightAction(true)
+                .position('bottom left').hideDelay(3000)).then(function (result) {
+                    // Result will be resolved with 'ok' if the action is performed and true if the toast has hidden.
+                    if (result === 'ok') Public.connect();
+                });   
+        }
+        else {
+            // If socket failed to open we should show a toast alert giving the user the option to connect.
+            $mdToast.show($mdToast.simple()
+                .content('Failed to connect to Parlay Broker!')
+                .action('Connect').highlightAction(true)
+                .position('bottom left').hideDelay(3000)).then(function (result) {
+                    // Result will be resolved with 'ok' if the action is performed and true if the toast has hidden.
+                    if (result === 'ok') Public.connect();
+                });            
+        }
     });
     
     return Public;

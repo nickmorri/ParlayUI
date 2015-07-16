@@ -28,9 +28,6 @@
             <md-item-template>
                 <span md-highlight-text="search_text" md-highlight-flags="^i">{{protocol.name}}</span>
             </md-item-template>
-            <md-not-found>
-                No matches found for {{search_text}}
-            </md-not-found>
         </md-autocomplete>
             
         <div layout="row" flex ng-show="selected_protocol !== null && selectedProtocolHasParameters()" >
@@ -55,9 +52,6 @@
                         <md-item-template>
                             <span md-highlight-text="parameter.search_text" md-highlight-flags="^i">{{default}}</span>
                         </md-item-template>
-                        <md-not-found>
-                            No matches found for {{parameter.search_text}}
-                        </md-not-found>
                     </md-autocomplete>
                     
                 </span>

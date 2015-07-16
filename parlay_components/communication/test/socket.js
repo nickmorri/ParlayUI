@@ -22,6 +22,17 @@
             
         });
         
+        describe('construction', function () {
+    	    var ParlaySocketService;
+    	    
+    	    it('throws exception on invalid configuration', inject(function (_ParlaySocketService_) {
+        	    expect(function () {
+            	    ParlaySocketService = _ParlaySocketService_(0);
+        	    }).toThrowError(TypeError);
+    	    }));
+    	    
+		});
+        
     	describe('ParlaySocketService', function () {
     		var ParlaySocketService;
     
@@ -37,11 +48,11 @@
         		ParlaySocketService.close();
     		});
     		
-    		xdescribe('throws exception on invalid configuration', function () {
-        		
-    		});
-    		
     		describe('initialization', function () {
+        		
+        		it('has correct default address', function () {
+            		expect(ParlaySocketService.getAddress()).toBe('ws://' + location.hostname + ':8085');
+        		});
     
     			it('is mock', function () {
         			expect(ParlaySocketService.isMock()).toBeTruthy();
@@ -55,11 +66,7 @@
                 });
         
             });
-            
-            xdescribe('retrieve registered ParlaySocketService', function () {
-                
-            });
-            
+                        
             describe('destructs', function () {
                 
                 it('is closed', function (done) {
@@ -101,6 +108,13 @@
                         expect(response.data).toBe("test");
                         done();
                     });            
+                });
+                
+                it('a message with topics but without contents', function (done) {
+                    ParlaySocketService.sendMessage({"type":"motor"}, undefined, {"type":"motor"}, function (response) {
+                        expect(response).toEqual({});
+                        done();    
+                    });
                 });
                 
                 it('multiple messages', function (done) {
@@ -146,12 +160,21 @@
                     }).toThrowError(TypeError);
                 });
                 
+                it('invalid contents type', function () {
+                    expect(function () {
+                        ParlaySocketService.sendMessage({"type":"motor"}, 0, {"type":"motor"}, function (response) {});
+                    }).toThrowError(TypeError);
+                });
+                
             });
             
             describe('listens for', function () {
                 
                 it('a message', function (done) {
-                    ParlaySocketService.onMessage({"type":"motor"}, done);
+                    ParlaySocketService.onMessage({"type":"motor"}, function (response) {
+                        expect(response.data).toBe("test");
+                        done();
+                    });
                     ParlaySocketService.sendMessage({"type":"motor"}, {"data":"test"});
                 });
                 
@@ -173,6 +196,23 @@
                     expect(function () {
                         ParlaySocketService.onMessage('test topics');
                     }).toThrowError(TypeError);
+                });
+                
+                it('verbose message', function (done) {
+                    ParlaySocketService.onMessage({"type":"motor"}, function (response) {
+                        expect(response.topics).toEqual({"type":"motor"});
+                        expect(response.contents).toEqual({"data":"test"});
+                        done();
+                    }, true);
+                    ParlaySocketService.sendMessage({"type":"motor"}, {"data":"test"});
+                });
+                
+                it('subset of a message', function (done) {
+                    ParlaySocketService.onMessage({"subtype":"stepper"}, function (response) {
+                        expect(response.data).toBe(10);
+                        done();
+                    });
+                    ParlaySocketService.sendMessage({"type":"motor","subtype":"stepper","from_device":1,"from_system":10}, {"data": 10});
                 });
                 
             });

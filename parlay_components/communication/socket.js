@@ -1,4 +1,4 @@
-var socket = angular.module('parlay.socket', ['ngWebsocket', 'ngMaterial']);
+var socket = angular.module('parlay.socket', ['ngWebsocket']);
 
 socket.value('BrokerAddress', 'ws://' + location.hostname + ':8085');
 
@@ -23,7 +23,7 @@ socket.factory('ParlaySocket', ['ParlaySocketService', function (ParlaySocketSer
     
 }]);
 
-socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', '$rootScope', '$mdToast', function (BrokerAddress, $websocket, $q, $rootScope, $mdToast) {
+socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', '$rootScope', function (BrokerAddress, $websocket, $q, $rootScope) {
     
     var Private = {
         rootScope: $rootScope,
@@ -263,12 +263,6 @@ socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', '$ro
             Private.rootScope.$applyAsync(function () {
                 Private.public.connected = Private.socket.$STATUS;
             });
-            
-            // When socket is closed we should show a toast alert giving the user the option to reconnect.
-            $mdToast.show($mdToast.simple()
-                .content('Disconnected from Parlay Broker!')
-                .action('Reconnect').highlightAction(true)
-                .position('bottom left').hideDelay(3000)).then(Private.open);
             
             Private.onCloseCallbacks.forEach(function(callback) {
                 callback();

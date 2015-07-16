@@ -1,6 +1,6 @@
-var broker = angular.module('promenade.broker', ['parlay.socket']);
+var broker = angular.module('promenade.broker', ['parlay.socket', 'ngMaterial']);
 
-broker.factory('PromenadeBroker', ['ParlaySocket', '$q', function (ParlaySocket, $q) {
+broker.factory('PromenadeBroker', ['ParlaySocket', '$q', '$mdToast', function (ParlaySocket, $q, $mdToast) {
     var Public = {};
     
     var Private = {};
@@ -162,6 +162,14 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', function (ParlaySocket,
     Public.onOpen = ParlaySocket.onOpen;
     Public.onClose = ParlaySocket.onClose;
     Public.onError = ParlaySocket.onError;
+    
+    Public.onClose(function () {
+        // When socket is closed we should show a toast alert giving the user the option to reconnect.
+        $mdToast.show($mdToast.simple()
+            .content('Disconnected from Parlay Broker!')
+            .action('Reconnect').highlightAction(true)
+            .position('bottom left').hideDelay(3000)).then(Public.connect);
+    });
     
     return Public;
 }]);

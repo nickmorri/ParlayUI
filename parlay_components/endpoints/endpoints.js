@@ -127,7 +127,6 @@ endpoints.controller('EndpointController', ['$scope', '$mdToast', '$mdDialog', '
 endpoints.controller('ParlayEndpointSearchController', ['$scope', 'EndpointManager', function ($scope, EndpointManager) {
             
     $scope.searching = false;
-    $scope.search_text = null;
     $scope.search_icon = 'search';
     $scope.selected_item = null;
     

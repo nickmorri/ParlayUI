@@ -163,6 +163,12 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', '$mdToast', function (P
     Public.onClose = ParlaySocket.onClose;
     Public.onError = ParlaySocket.onError;
     
+    Public.onOpen(function () {
+        // When socket is opened we should show a toast alert to notify the user.
+        $mdToast.show($mdToast.simple()
+            .content('Connected to Parlay Broker!'));
+    });
+    
     Public.onClose(function () {
         // When socket is closed we should show a toast alert giving the user the option to reconnect.
         $mdToast.show($mdToast.simple()

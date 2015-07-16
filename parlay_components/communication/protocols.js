@@ -175,7 +175,7 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', funct
     
     var Private = {
         open_protocols: [],
-        available: []
+        available_protocols: []
     };
     
     var Public = {};
@@ -333,7 +333,7 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', funct
         Private.open_protocols.forEach(function (protocol) {
             protocol.onClose();
         });
-        Private.open = [];
+        Private.open_protocols = [];
         Private.available_protocols = [];
     };
     

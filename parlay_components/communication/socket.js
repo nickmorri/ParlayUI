@@ -23,10 +23,9 @@ socket.factory('ParlaySocket', ['ParlaySocketService', function (ParlaySocketSer
     
 }]);
 
-socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', '$rootScope', function (BrokerAddress, $websocket, $q, $rootScope) {
+socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', function (BrokerAddress, $websocket, $q) {
     
     var Private = {
-        rootScope: $rootScope,
         onMessageCallbacks: new Map(),
         onOpenCallbacks: [],
         onCloseCallbacks: [],
@@ -249,9 +248,7 @@ socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', '$ro
         
         // When the WebSocket opens set the connected status and execute onOpen callbacks.
         Private.socket.$on('$open', function (event) {
-            Private.rootScope.$applyAsync(function () {
-                Private.public.connected = Private.socket.$STATUS;
-            });
+            Private.public.connected = Private.socket.$STATUS;
             
             Private.onOpenCallbacks.forEach(function(callback) {
                 callback();
@@ -260,9 +257,7 @@ socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', '$ro
         
         // When the WebSocket closes set the connected status and execute onClose callbacks.
         Private.socket.$on('$close', function (event) {
-            Private.rootScope.$applyAsync(function () {
-                Private.public.connected = Private.socket.$STATUS;
-            });
+            Private.public.connected = Private.socket.$STATUS;
             
             Private.onCloseCallbacks.forEach(function(callback) {
                 callback();

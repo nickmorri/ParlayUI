@@ -1,5 +1,9 @@
 var bit_protocols = angular.module('bit.protocols', ['parlay.socket', 'promenade.broker']);
 
+bit_protocols.factory('SSComServiceProtocol', ['SSCOM_Serial', function (SSCOM_Serial) {
+    return SSCOM_Serial;    
+}]);
+
 bit_protocols.factory('SSCOM_Serial', ['ParlaySocket', 'ParlayEndpoint', 'PromenadeBroker', '$q', function (ParlaySocket, ParlayEndpoint, PromenadeBroker, $q) {
     return function SSCOM_Serial () {
     

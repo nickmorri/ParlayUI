@@ -1,177 +1,115 @@
 var protocols = angular.module('parlay.protocols', ['promenade.broker', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main', 'bit.protocols']);
 
-protocols.factory('Protocol', ['$injector', function ($injector) {
-    return function protocol (configuration) {
+protocols.factory('Protocol', ['ParlaySocket', 'ParlayEndpoint', 'PromenadeBroker', '$q', function (ParlaySocket, ParlayEndpoint, PromenadeBroker, $q) {
+    function Protocol() {
         
-        var Private = {
-            name: configuration.name,
-            type: configuration.protocol_type,
-            vendor_protocol: null
-        };
+        function NotImplementedError(method) {
+            console.warn(method + ' is not implemented for ' + this.getName());
+        }
         
-        var Public = {};
+        this.available_endpoints = [];
+        this.active_endpoints = [];
+        this.log = [];        
+        this.subscription_listener_dereg = null;        
+        this.on_message_callbacks = [];
+    }
+    
+    Protocol.prototype.activateEndpoint = function (endpoint) {
+        var index = this.available_endpoints.findIndex(function (suspect) {
+            return endpoint === suspect;
+        });
         
-        /**
-         * Public Methods
-         */
-         
-        Public.getName = function () {
-            return Private.name;
-        };
+        if (index > -1) this.available_endpoints.splice(index, 1);
         
-        Public.getType = function () {
-            return Private.type;
-        };
-        
-        /**
-         * All of the following public methods are expected to be implemented by the underlying vendor protocol.
-         * If they are not we are going to fail gracefully but make a note in the console.
-         */
-         
-         /**
-         * Returns the available endpoints controlled by the protocol.
-         * @param {Array} - endpoints
-         */
-        Public.getAvailableEndpoints = function () {
-            var protocol = Private.getVendorProtocol();
-            if (protocol.hasOwnProperty('getAvailableEndpoints')) return protocol.getAvailableEndpoints();
-            else Private.handleNotImplementedMethod('getAvailableEndpoints');
-        };
-        
-        /**
-         * Returns the active endpoints controlled by the protocol.
-         * @param {Array} - endpoints
-         */
-        Public.getActiveEndpoints = function () {
-            var protocol = Private.getVendorProtocol();
-            if (protocol.hasOwnProperty('getActiveEndpoints')) return protocol.getActiveEndpoints();
-            else Private.handleNotImplementedMethod('getActiveEndpoints');
-        };
-        
-        /**
-         * Activates the requested endpoint.
-         * @param {Object} endpoint - endpoint to be activated.
-         */
-        Public.activateEndpoint = function (endpoint) {
-            var protocol = Private.getVendorProtocol();
-            if (protocol.hasOwnProperty('activateEndpoint')) return protocol.activateEndpoint(endpoint);
-            else Private.handleNotImplementedMethod('activateEndpoint');
-        };
-        
-        /**
-         * Adds discovery information to applicable vendor protocol.
-         * @param {Object} info - Discovery information
-         */
-        Public.addDiscoveryInfo = function (info) {
-            var protocol = Private.getVendorProtocol();
-            if (protocol.hasOwnProperty('addDiscoveryInfo')) protocol.addDiscoveryInfo(info);
-            else Private.handleNotImplementedMethod('addDiscoveryInfo');
-        };
-        
-        /**
-         * Returns log collected by the protocol implementation.
-         @returns {Array} array of collected messages
-         */ 
-        Public.getLog = function () {
-            var protocol = Private.getVendorProtocol();
-            if (protocol.hasOwnProperty('getLog')) return protocol.getLog();
-            else Private.handleNotImplementedMethod('getLog');
-            
-        };
-        
-        /**
-         * Check if we have an active subscription.
-         * @returns {Boolean} True if subscription is active, false otherwise.
-         */
-        Public.hasSubscription = function () {
-            var protocol = Private.getVendorProtocol();
-            if (protocol.hasOwnProperty('hasSubscription')) return protocol.hasSubscription();
-            else Private.handleNotImplementedMethod('hasSubscription');
-        };
-        
-        /**
-         * Request to be subscribed.
-         */
-        Public.subscribe = function () {
-            var protocol = Private.getVendorProtocol();
-            if (protocol.hasOwnProperty('subscribe')) protocol.subscribe();
-            else Private.handleNotImplementedMethod('subscribe');
-        };
-        
-        /**
-         * Request to be unsubscribed.
-         */
-        Public.unsubscribe = function () {
-            var protocol = Private.getVendorProtocol();
-            if (protocol.hasOwnProperty('unsubscribe')) protocol.unsubscribe();
-            else Private.handleNotImplementedMethod('unsubscribe');
-        };
-        
-        /**
-         * Called when protocol is opened to ensure proper setup.
-         */
-        Public.onOpen = function () {
-            Private.registerVendorProtocol();
-            var protocol = Private.getVendorProtocol();
-            if (protocol.hasOwnProperty('onOpen')) protocol.onOpen();
-            else Private.handleNotImplementedMethod('onOpen'); 
-        };
-        
-        /**
-         * Called when protocol is closed to ensure proper teardown.
-         */
-        Public.onClose = function () {
-            var protocol = Private.getVendorProtocol();
-            if (protocol.hasOwnProperty('onClose')) protocol.onClose();
-            else Private.handleNotImplementedMethod('onClose');
-            Private.vendor_protocol = null;
-        };
-        
-        /**
-         * Private Methods
-         */
-        
-        /**
-         * Leaves a warning in the console.
-         * @param {String} methodName - Name of method that wasn't implemented.
-         */ 
-        Private.handleNotImplementedMethod = function (methodName) {
-            console.warn(methodName + ' is not implemented for ' + Public.getName());
-        };
-        
-        /**
-         * Returns vendor protocol.
-         * @returns {Object} vendor protocol
-         */
-        Private.getVendorProtocol = function (type) {
-            if (type !== undefined) console.warn('Deprecated behavior');
-            if (Private.vendor_protocol === null) console.warn('Vendor protocol not defined for protocol type ' + Private.type + '.');
-            return Private.vendor_protocol;
-        };
-        
-        /**
-         * Register vendor protocol.
-         * @param {Object} configuration - Configuration details for a vendor protocol.
-         */
-        Private.registerVendorProtocol = function () {
-            if (Private.vendor_protocol === null) {
-                try {
-                    var instance = $injector.get(Private.type);
-                    Private.vendor_protocol = new instance();
-                } catch (e) {
-                    console.warn('Configuration for ' + RegExp('([A-z]+) <-').exec(e.message)[1] + ' was not found.');                     
-                }                
-            }
-            else {
-                console.warn('Attmepted to register ' + Private.type + ' but ' + Public.getType() + ' already registered ');
-            }
-        };
-        
-        return Public;        
+        this.active_endpoints.push(endpoint);
     };
+    
+    Protocol.prototype.getAvailableEndpoints = function () {
+        return this.available_endpoints;
+    };
+    
+    Protocol.prototype.getActiveEndpoints = function () {
+        return this.active_endpoints;
+    };
+    
+    Protocol.prototype.getLog = function () {
+        return this.log;
+    };        
+    
+    Protocol.prototype.onMessage = function (callback) {
+        this.on_message_callbacks.push(callback);    
+    };
+    
+    Protocol.prototype.invokeCallbacks = function (response) {
+        this.on_message_callbacks = this.on_message_callbacks.filter(function (callback) {
+            callback(response);            
+            return true;
+        });
+    };
+    
+    Protocol.prototype.getType = function () {
+        return this.type;
+    };
+    
+    Protocol.prototype.subscribe = function () {
+        var self = this;
+        PromenadeBroker.sendSubscribe(this.buildSubscriptionTopics()).then(function (response) {
+            self.subscription_listener_dereg = ParlaySocket.onMessage(self.buildSubscriptionTopics().topics, self.invokeCallbacks, true);
+        });
+    };
+    
+    Protocol.prototype.unsubscribe = function () {
+        PromenadeBroker.sendUnsubscribe(this.buildSubscriptionTopics()).then(function (response) {
+            this.afterClose();
+        });
+    };
+    
+    Protocol.prototype.hasSubscription = function() {
+        return this.subscription_listener_dereg !== null;
+    };
+    
+    Protocol.prototype.recordLog = function (reponse) {
+        this.log.push(response);
+    };
+    
+    Protocol.prototype.sendCommand = function (message) {            
+        throw NotImplementedError('onOpen');
+    };
+    
+    Protocol.prototype.onOpen = function () {
+        throw NotImplementedError('onOpen');
+    };
+    
+    Protocol.prototype.onClose = function () {
+        if (this.hasSubscription()) {
+            this.subscription_listener_dereg();
+            this.subscription_listener_dereg = null;
+        }
+        this.available_endpoints = [];
+        this.active_endpoints = [];
+    };
+    
+    Protocol.prototype.addDiscoveryInfo = function () {
+        throw NotImplementedError('addDiscoveryInfo');
+    };
+    
+    Protocol.prototype.buildSubscriptionTopics = function () {
+        throw NotImplementedError('buildSubscriptionTopics');  
+    };
+    
+    Protocol.prototype.buildMessageTopics = function () {
+        throw NotImplementedError('buildMessageTopics');
+    };
+    
+    Protocol.prototype.buildResponseTopics = function () {
+        throw NotImplementedError('buildResponseTopics');
+    };
+        
+    
+    return Protocol;
 }]);
 
-protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', function (Protocol, PromenadeBroker, $q) {
+protocols.factory('ProtocolManager', ['$injector', 'PromenadeBroker', '$q', function ($injector, PromenadeBroker, $q) {
     
     var Private = {
         open_protocols: [],
@@ -319,8 +257,9 @@ protocols.factory('ProtocolManager', ['Protocol', 'PromenadeBroker', '$q', funct
      * @param {Array} Array of open protocols.
      */
     Private.setOpenProtocols = function (protocols) {
-        Private.open_protocols = protocols.map(function (protocol) {
-            var instance = new Protocol(protocol);
+        Private.open_protocols = protocols.map(function (configuration) {
+            var protocol = $injector.get(configuration.protocol_type);
+            var instance = new protocol(configuration);
             instance.onOpen();
             return instance;
         });        

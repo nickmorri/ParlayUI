@@ -130,14 +130,9 @@
             }
 
             me.$$ws.onmessage = function (message) {
-                try {
-                    var decoded = JSON.parse(message.data);
-                    me.$$fireEvent(decoded.event, decoded.data);
-                    me.$$fireEvent('$message', decoded);
-                }
-                catch (err) {
-                    me.$$fireEvent('$message', message.data);
-                }
+                var decoded = JSON.parse(message.data);
+                me.$$fireEvent(decoded.event, decoded.data);
+                me.$$fireEvent('$message', decoded);
             };
 
             me.$$ws.onerror = function (error) {

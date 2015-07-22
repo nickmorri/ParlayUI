@@ -37,7 +37,7 @@ module.exports = function (grunt) {
       ],
       'tests': 'parlay_components/*/test/*.js',
       'compiledHtml': 'tmp/templates.js',
-      'htmlDirectives': ['parlay_components/**/directives/*.html', '<%= vendor.bit.directives %>'],
+      'htmlDirectives': ['parlay_components/**/directives/*.html', '<%= vendor.bit.directives %>', '<%= vendor.promenade.directives %>'],
       'htmlViews': 'parlay_components/**/views/*.html',
       'commonFiles': ['bower_components/angular-material/angular-material.css', 'bower_components/ace-builds/src/mode-python.js', 'static_components/ng-websocket/ng-websocket.js'],
       'stylesheets': 'css/*.css'

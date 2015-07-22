@@ -1,4 +1,4 @@
-var bit_endpoints = angular.module('bit.endpoints', ['parlay.endpoints.directmessage']);
+var bit_endpoints = angular.module('bit.endpoints', ['promenade.endpoints.directmessage']);
 
 bit_endpoints.factory('CommandEndpoint', ['ParlayEndpoint', function (ParlayEndpoint) {
     function CommandEndpoint(data) {
@@ -20,12 +20,14 @@ bit_endpoints.factory('CommandEndpoint', ['ParlayEndpoint', function (ParlayEndp
     
 }]);
 
-bit_endpoints.factory('BIT_ServiceEndpoint', ['ParlayDirectMessageEndpoint', function (ParlayDirectMessageEndpoint) {
+bit_endpoints.factory('BIT_ServiceEndpoint', ['PromenadeDirectMessageEndpoint', function (PromenadeDirectMessageEndpoint) {
     
     function BIT_ServiceEndpoint(data, protocol) {
-        ParlayDirectMessageEndpoint.call(this, data, protocol);
+        PromenadeDirectMessageEndpoint.call(this, data, protocol);
 
         this.type = 'BIT_ServiceEndpoint';
+        
+        this.directives.tabs.push('bitEndpointCardCommands');
         
         this.commands = Object.keys(data.commands).map(function (command_key) {
             var command = data.commands[command_key];
@@ -35,7 +37,7 @@ bit_endpoints.factory('BIT_ServiceEndpoint', ['ParlayDirectMessageEndpoint', fun
         
     }
     
-    BIT_ServiceEndpoint.prototype = Object.create(ParlayDirectMessageEndpoint.prototype);
+    BIT_ServiceEndpoint.prototype = Object.create(PromenadeDirectMessageEndpoint.prototype);
     
     BIT_ServiceEndpoint.prototype.getMessageTypes = function () {
         return this.protocol.getMessageTypes();
@@ -185,23 +187,6 @@ bit_endpoints.controller('BitEndpointCommandController', ['$scope', '$timeout', 
     
 }]);
 
-bit_endpoints.controller('BitEndpointLogController', ['$scope', function ($scope) {
-    
-    $scope.getLog = function () {
-        return $scope.endpoint.getFilteredLog();
-    };
-    
-}]);
-
-bit_endpoints.directive('bitEndpointToolbar', function () {
-    return {
-        scope: {
-            endpoint: "="
-        },
-        templateUrl: '../vendor_components/bit/endpoints/directives/bit-endpoint-toolbar.html'
-    };
-});
-
 bit_endpoints.directive('bitEndpointCardCommands', function () {
     return {
         scope: {
@@ -209,15 +194,5 @@ bit_endpoints.directive('bitEndpointCardCommands', function () {
         },
         templateUrl: '../vendor_components/bit/endpoints/directives/bit-endpoint-card-commands.html',
         controller: 'BitEndpointCommandController'
-    };
-});
-
-bit_endpoints.directive('bitEndpointCardLog', function () {
-    return {
-        scope: {
-            endpoint: "="
-        },
-        templateUrl: '../vendor_components/bit/endpoints/directives/bit-endpoint-card-log.html',
-        controller: 'BitEndpointLogController'
     };
 });

@@ -1,66 +1,91 @@
-var direct_message = angular.module('parlay.endpoints.directmessage', ['parlay.endpoints']);
+var direct_message_endpoints = angular.module('promenade.endpoints.directmessage', ['parlay.endpoints']);
 
-direct_message.factory('ParlayDirectMessageEndpoint', ['ParlayEndpoint', function (ParlayEndpoint) {
+direct_message_endpoints.factory('PromenadeDirectMessageEndpoint', ['ParlayEndpoint', function (ParlayEndpoint) {
     
-    function ParlayDirectMessageEndpoint(data, protocol) {
+    function PromenadeDirectMessageEndpoint(data, protocol) {
         ParlayEndpoint.call(this, data, protocol);
         
         this.type = 'DirectMessageEndpoint';
         this.commands = data.commands;
         this.id = data.id;
         
-        this.directives = {
-            'toolbar': ['bitEndpointToolbar'],
-            'tabs': ['bitEndpointCardCommands', 'bitEndpointCardLog']
-        };
+        this.directives.toolbar.push('promenadeDirectMessageEndpointCardToolbar');
+        this.directives.tabs.push('promenadeDirectMessageEndpointCardCommands', 'promenadeDirectMessageEndpointCardLog');
         
         this.commands = [];        
     }
     
-    ParlayDirectMessageEndpoint.prototype = Object.create(ParlayEndpoint.prototype);
+    PromenadeDirectMessageEndpoint.prototype = Object.create(ParlayEndpoint.prototype);
     
-    ParlayDirectMessageEndpoint.prototype.getCommands = function () {
+    PromenadeDirectMessageEndpoint.prototype.getCommands = function () {
         return this.commands;
     };
     
-    ParlayDirectMessageEndpoint.prototype.getId = function () {
+    PromenadeDirectMessageEndpoint.prototype.getId = function () {
         return this.id;
     };
     
-    ParlayDirectMessageEndpoint.prototype.getSystemId = function () {
+    PromenadeDirectMessageEndpoint.prototype.getSystemId = function () {
         return this.getId() >> 8;
     };
     
-    ParlayDirectMessageEndpoint.prototype.getDeviceId = function () {
+    PromenadeDirectMessageEndpoint.prototype.getDeviceId = function () {
         return this.getId() & 0xff;
     };
     
-    ParlayDirectMessageEndpoint.prototype.matchesType = function (query) {
+    PromenadeDirectMessageEndpoint.prototype.matchesType = function (query) {
         return angular.lowercase(this.getType()).indexOf(query) > -1;
     };
     
-    ParlayDirectMessageEndpoint.prototype.matchesId = function (query) {
+    PromenadeDirectMessageEndpoint.prototype.matchesId = function (query) {
         return this.getId() === query;
     };
     
-    ParlayDirectMessageEndpoint.prototype.matchesQuery = function (query) {
+    PromenadeDirectMessageEndpoint.prototype.matchesQuery = function (query) {
         return this.matchesType(query) || this.matchesId(query) || this.matchesName(query);
     };
     
-    ParlayDirectMessageEndpoint.prototype.matchesName = function (query) {
+    PromenadeDirectMessageEndpoint.prototype.matchesName = function (query) {
         return angular.lowercase(this.getName()).indexOf(query) > -1;
     };
     
-    ParlayDirectMessageEndpoint.prototype.getMessageId = function () {
+    PromenadeDirectMessageEndpoint.prototype.getMessageId = function () {
         return this.protocol.getMessageId();
     };
     
-    ParlayDirectMessageEndpoint.prototype.getFilteredLog = function () {
+    PromenadeDirectMessageEndpoint.prototype.getFilteredLog = function () {
         return this.protocol.getLog().filter(function (message) {
             return message.topics.from === this.getId();
         }, this);
     };
 
-    return ParlayDirectMessageEndpoint;
+    return PromenadeDirectMessageEndpoint;
         
 }]);
+
+direct_message_endpoints.controller('PromenadeDirectMessageEndpointCardLogController', ['$scope', function ($scope) {
+    
+    $scope.getLog = function () {
+        return $scope.endpoint.getFilteredLog();
+    };
+    
+}]);
+
+direct_message_endpoints.directive('promenadeDirectMessageEndpointCardToolbar', function () {
+    return {
+        scope: {
+            endpoint: "="
+        },
+        templateUrl: '../vendor_components/promenade/endpoints/directives/promenade-direct-message-endpoint-card-toolbar.html'
+    };
+});
+
+direct_message_endpoints.directive('promenadeDirectMessageEndpointCardLog', function () {
+    return {
+        scope: {
+            endpoint: "="
+        },
+        templateUrl: '../vendor_components/promenade/endpoints/directives/promenade-direct-message-endpoint-card-log.html',
+        controller: 'PromenadeDirectMessageEndpointCardLogController'
+    };
+});

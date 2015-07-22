@@ -1,8 +1,8 @@
-var direct_message = angular.module('parlay.protocols.directmessage', ['parlay.protocols']);
+var direct_message = angular.module('promenade.protocols.directmessage', ['parlay.protocols']);
 
-direct_message.factory('ParlayDirectMessageProtocol', ['ParlayProtocol', 'ParlayDirectMessageEndpoint', function (ParlayProtocol, ParlayDirectMessageEndpoint) {
+direct_message.factory('PromenadeDirectMessageProtocol', ['ParlayProtocol', 'PromenadeDirectMessageEndpoint', function (ParlayProtocol, PromenadeDirectMessageEndpoint) {
     
-    function ParlayDirectMessageProtocol(configuration) {
+    function PromenadeDirectMessageProtocol(configuration) {
         'use strict';
         ParlayProtocol.call(this, configuration);
         this.current_message_id = 200;
@@ -11,18 +11,22 @@ direct_message.factory('ParlayDirectMessageProtocol', ['ParlayProtocol', 'Parlay
         this.from = 0xf201;
     }
     
-    ParlayDirectMessageProtocol.prototype = Object.create(ParlayProtocol.prototype);
+    PromenadeDirectMessageProtocol.prototype = Object.create(ParlayProtocol.prototype);
     
-    ParlayDirectMessageProtocol.prototype.onOpen = function () {
+    PromenadeDirectMessageProtocol.prototype.onOpen = function () {
         this.onMessage(this.recordLog);
         this.subscribe();
     };
     
-    ParlayDirectMessageProtocol.prototype.consumeMessageId = function () {
+    PromenadeDirectMessageProtocol.prototype.consumeMessageId = function () {
         return ++this.current_message_id;
     };
     
-    ParlayDirectMessageProtocol.prototype.buildSubscriptionTopics = function () {
+    PromenadeDirectMessageProtocol.prototype.getMessageId = function () {
+        return this.current_message_id;
+    };
+    
+    PromenadeDirectMessageProtocol.prototype.buildSubscriptionTopics = function () {
         return {
             topics: {
                 to_system: this.from_system
@@ -30,30 +34,30 @@ direct_message.factory('ParlayDirectMessageProtocol', ['ParlayProtocol', 'Parlay
         };
     };
     
-    ParlayDirectMessageProtocol.prototype.buildSubscriptionListenerTopics = function () {
+    PromenadeDirectMessageProtocol.prototype.buildSubscriptionListenerTopics = function () {
         return this.buildSubscriptionTopics().topics;
     };
     
-    ParlayDirectMessageProtocol.prototype.sendCommand = function (message) {
+    PromenadeDirectMessageProtocol.prototype.sendCommand = function (message) {
         var new_message = this.buildMessageTopics(message);
         var response_topics = this.buildResponseTopics(new_message);
         return this.sendMessage(new_message.topics, new_message.contents, response_topics);
     };
     
-    ParlayDirectMessageProtocol.prototype.addDiscoveryInfo = function (info) {
+    PromenadeDirectMessageProtocol.prototype.addDiscoveryInfo = function (info) {
         this.available_endpoints = info.children.map(function (endpoint) {
-            return new ParlayDirectMessageEndpoint(endpoint, this);
+            return new PromenadeDirectMessageEndpoint(endpoint, this);
         }, this);        
     };
     
-    ParlayDirectMessageProtocol.prototype.buildMessageTopics = function () {
+    PromenadeDirectMessageProtocol.prototype.buildMessageTopics = function () {
         throw NotImplementedError('buildMessageTopics');
     };
     
-    ParlayDirectMessageProtocol.prototype.buildResponseTopics = function () {
+    PromenadeDirectMessageProtocol.prototype.buildResponseTopics = function () {
         throw NotImplementedError('buildResponseTopics');
     };
     
-    return ParlayDirectMessageProtocol;
+    return PromenadeDirectMessageProtocol;
     
 }]);

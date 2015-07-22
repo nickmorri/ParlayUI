@@ -19,7 +19,10 @@ endpoints.factory('ParlayEndpoint', function () {
         this.endpoint_name = data.name;
         this.type = 'ParlayEndpoint';
         this.protocol = protocol;
-        this.directives = {};
+        this.directives = {
+            toolbar: [],
+            tabs: []
+        };
         this.interfaces = data.interfaces;
     }
     
@@ -191,7 +194,7 @@ endpoints.directive('parlayEndpointCard', ['$compile', function ($compile) {
                 return previous.concat(endpoint.toolbar.map(function (directive) {
                     return '<' + snake_case(directive, '-') + ' endpoint="endpoint" layout-fill layout="row" layout-align="space-between center"></' + snake_case(directive, '-') + '>';    
                 }));
-            }, []).reverse().forEach(function (directive_string) {
+            }, []).forEach(function (directive_string) {
                 toolbar.appendChild($compile(directive_string)(scope)[0]);
             });
             
@@ -202,7 +205,7 @@ endpoints.directive('parlayEndpointCard', ['$compile', function ($compile) {
                 return previous.concat(endpoint.tabs.map(function (directive) {
                     return '<' + snake_case(directive, '-') + ' endpoint="endpoint"></' + snake_case(directive, '-') + '>';
                 }));
-            }, []).reverse().forEach(function (directive_string) {
+            }, []).forEach(function (directive_string) {
                 tabs.appendChild($compile(directive_string)(scope)[0]);
             });
             

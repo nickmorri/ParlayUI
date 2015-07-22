@@ -1,4 +1,4 @@
-var bit_protocols = angular.module('bit.protocols', ['parlay.protocols.directmessage', 'bit.endpoints']);
+var bit_protocols = angular.module('bit.protocols', ['promenade.protocols.directmessage', 'bit.endpoints']);
 
 bit_protocols.factory('SSComServiceProtocol', ['SSCOM_Serial', function (SSCOM_Serial) {
     
@@ -11,18 +11,18 @@ bit_protocols.factory('SSComServiceProtocol', ['SSCOM_Serial', function (SSCOM_S
     return SSComServiceProtocol;
 }]);
 
-bit_protocols.factory('SSCOM_Serial', ['ParlayDirectMessageProtocol', 'BIT_ServiceEndpoint', function (ParlayDirectMessageProtocol, BIT_ServiceEndpoint) {
+bit_protocols.factory('SSCOM_Serial', ['PromenadeDirectMessageProtocol', 'BIT_ServiceEndpoint', function (PromenadeDirectMessageProtocol, BIT_ServiceEndpoint) {
     
     function SSCOM_Serial(configuration) {
         'use strict';
-        ParlayDirectMessageProtocol.call(this, configuration);
+        PromenadeDirectMessageProtocol.call(this, configuration);
         
         this.common_status = null;
         this.message_types = null;
         this.data_types = null;
     }
     
-    SSCOM_Serial.prototype = Object.create(ParlayDirectMessageProtocol.prototype);
+    SSCOM_Serial.prototype = Object.create(PromenadeDirectMessageProtocol.prototype);
         
     SSCOM_Serial.prototype.addDiscoveryInfo = function (info) {
         this.common_status = info.common_status;

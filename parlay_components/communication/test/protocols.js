@@ -62,7 +62,7 @@
         return Public;
     }]);
     
-    describe('parlay.protocols', function() {
+    xdescribe('parlay.protocols', function() {
     
         beforeEach(module('parlay.protocols'));
         beforeEach(module('mock.promenade.broker'));

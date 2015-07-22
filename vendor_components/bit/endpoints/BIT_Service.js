@@ -1,199 +1,162 @@
-var bit_endpoints = angular.module('bit.endpoints', ['bit.protocols']);
+var bit_endpoints = angular.module('bit.endpoints', ['parlay.endpoints']);
 
-bit_endpoints.factory('CommandEndpoint', function () {
-    return function CommandEndpoint (data) {
-
-        var Private = {
-            type: 'CommandEndpoint',
-            directives: {}
-        };
-        
-        var Public = {};
-        
-        Private.addData = function (data) {};
-        
-        Public.getType = function () {
-            return Private.type;
-        };
-        
-        Public.getDirectives = function () {
-            return Private.directives;
-        };
-        
-        Private.addData(data);
-            
-        return Public;
+bit_endpoints.factory('CommandEndpoint', ['ParlayEndpoint', function (ParlayEndpoint) {
+    function CommandEndpoint(data) {
+        this.type = 'CommandEndpoint';
+        this.directives = {};        
+    }
+    
+    CommandEndpoint.prototype = Object.create(ParlayEndpoint);
+    
+    CommandEndpoint.prototype.getType = function () {
+        return this.type;
     };
-});
+    
+    CommandEndpoint.prototype.getDirectives = function () {
+        return this.directives;
+    };
+    
+    return CommandEndpoint;
+    
+}]);
 
-bit_endpoints.factory('BIT_Service', function () {
-    return function BIT_Service (data, protocol) {
+bit_endpoints.factory('BIT_ServiceEndpoint', ['ParlayEndpoint', function (ParlayEndpoint) {
+    
+    function BIT_ServiceEndpoint(data, protocol) {
+        ParlayEndpoint.call(this, data, protocol);
+
+        this.commands = data.commands;
+        this.id = data.id;
+        this.interfaces = data.interfaces;
+        this.type = 'BIT_ServiceEndpoint';
         
-        var Public = {};
-        
-        Public.getCommands = function () {
-            return Private.commands;
+        this.directives = {
+            'toolbar': ['bitEndpointToolbar'],
+            'tabs': ['bitEndpointCardCommands', 'bitEndpointCardLog']
         };
         
-        Public.getMessageTypes = function () {
-            return protocol.getMessageTypes();
-        };
+        this.commands = Object.keys(data.commands).map(function (command_key) {
+            var command = data.commands[command_key];
+            command.id = command_key;
+            return command;
+        });
         
-        Public.getDataTypes = function () {
-            return protocol.getDataTypes();
-        };
+    }
+    
+    BIT_ServiceEndpoint.prototype = Object.create(ParlayEndpoint.prototype);
+    
+    BIT_ServiceEndpoint.prototype.getCommands = function () {
+        return this.commands;
+    };
+    
+    BIT_ServiceEndpoint.prototype.getMessageTypes = function () {
+        return this.protocol.getMessageTypes();
+    };
+    
+    BIT_ServiceEndpoint.prototype.getDataTypes = function () {
+        return this.protocol.getDataTypes();
+    };
+    
+    BIT_ServiceEndpoint.prototype.getId = function () {
+        return this.id;
+    };
+    
+    BIT_ServiceEndpoint.prototype.getSystemId = function () {
+        return this.getId() >> 8;
+    };
+    
+    BIT_ServiceEndpoint.prototype.getDeviceId = function () {
+        return this.getId() & 0xff;
+    };
+    
+    BIT_ServiceEndpoint.prototype.getType = function () {
+        return this.type;
+    };
+    
+    BIT_ServiceEndpoint.prototype.getFilteredLog = function () {
+        return this.protocol.getLog().filter(function (message) {
+            return message.topics.from === this.getId();
+        }, this);
+    };
         
-        Public.getId = function () {
-            return Private.id;
+    BIT_ServiceEndpoint.prototype.matchesQuery = function (query) {
+        return this.matchesType(query) || this.matchesId(query) || this.matchesName(query);
+    };
+    
+    BIT_ServiceEndpoint.prototype.sendMessage = function (command) {
+        return this.protocol.sendCommand(this.generateMessage(command));
+    };
+    
+    BIT_ServiceEndpoint.prototype.matchesType = function (query) {
+        return angular.lowercase(this.getType()).indexOf(query) > -1;
+    };
+    
+    BIT_ServiceEndpoint.prototype.matchesId = function (query) {
+        return this.getId() === query;
+    };
+    
+    BIT_ServiceEndpoint.prototype.matchesName = function (query) {
+        return angular.lowercase(this.getName()).indexOf(query) > -1;
+    };
+    
+    BIT_ServiceEndpoint.prototype.generateMessage = function (message) {
+        return {
+            'topics': this.generateTopics(message.message_type),
+            'contents': this.generateContents(message)
         };
-        
-        Public.getSystemId = function () {
-            return Public.getId() >> 8;
+    };
+    
+    BIT_ServiceEndpoint.prototype.generateTopics = function (message_type) {
+        return {
+            'to_device': this.getDeviceId(),
+            'to_system': this.getSystemId(),
+            'to': this.getId(),
+            'message_type': this.getMessageTypes().find(function (type) {
+                return message_type === type[0];
+            })[1]
         };
-        
-        Public.getDeviceId = function () {
-            return Public.getId() & 0xff;
-        };
-        
-        Public.getName = function () {
-            return Private.name;
-        };
-        
-        Public.getType = function () {
-            return Private.type;
-        };
-        
-        Public.getDirectives = function () {
-            return Private.directives;
-        };
-        
-        Public.getFilteredLog = function () {
-            return protocol.getLog().filter(function (message) {
-                return message.topics.from === Private.id;
-            });
-        };
-            
-        Public.matchesQuery = function (query) {
-            return Private.matchesType(query) || Private.matchesId(query) || Private.matchesName(query);
-        };
-        
-        Public.sendMessage = function (command) {
-            return protocol.sendCommand(Private.generateMessage(command));
-        };
-        
-        var Private = {
-            protocol: protocol,
-            commands: null,
-            id: null,
-            interfaces: null,
-            name: null,
-            type: 'BIT_Service',
-            directives: {
-                'toolbar': ['bitEndpointToolbar'],
-                'tabs': ['bitEndpointCardCommands', 'bitEndpointCardLog']
+    };
+    
+    BIT_ServiceEndpoint.prototype.generateContents = function (message) {
+        if (message.message_type === 'COMMAND') return this.generateCommand(message);
+        else if (message.message_type === 'COMMAND_RESPONSE') return this.generateCommandResponse(message);
+        else if (message.message_type === 'SYSTEM_EVENT') return this.generateSystemEvent(message);
+        else return this.generateGenericMessage(message);
+    };
+    
+    BIT_ServiceEndpoint.prototype.generateCommand = function (command) {
+        return {
+            "command": parseInt(this.getCommands().find(function (item) {
+                            return item.command === command.name;
+                        }).id, 10),
+            'message_info': command.message_info === null ? 0 : command.message_info,
+            "payload": {
+                "type": this.getDataTypes().find(function (type) {
+                            return command.data_buffer_type === type[0];
+                        })[1],
+                "data": command.data_buffer === null ? [] : command.data_buffer
             }
         };
-        
-        Private.matchesType = function (query) {
-            return angular.lowercase(Public.getType()).indexOf(query) > -1;
+    };
+    
+    BIT_ServiceEndpoint.prototype.generateCommandResponse = function (command) {
+        return {
+            "status": command.status
         };
-        
-        Private.matchesId = function (query) {
-            return Public.getId() === query;
+    };
+    
+    BIT_ServiceEndpoint.prototype.generateSystemEvent = function (command) {
+        return {
+            "event": command.event
         };
-        
-        Private.matchesName = function (query) {
-            return angular.lowercase(Public.getName()).indexOf(query) > -1;
-        };
-        
-        Private.addData = function (data) {
-            Private.interfaces = data.interfaces;
-            Private.id = data.id;
-            Private.name = data.name;
-            
-            Private.commands = Object.keys(data.commands).map(function (command_key) {
-                var command = data.commands[command_key];
-                command.id = command_key;
-                return command;
-            });
-            
-        };
-        
-        Private.generateMessage = function (message) {
-            return {
-                'topics': Private.generateTopics(message.message_type),
-                'contents': Private.generateContents(message)
-            };
-        };
-        
-        Private.generateTopics = function (message_type) {
-            
-            function messageTypeToCode (type_string) {
-                return Public.getMessageTypes().find(function (type) {
-                    return type_string === type[0];
-                })[1];
-            }
-            
-            return {
-                'to_device': Public.getDeviceId(),
-                'to_system': Public.getSystemId(),
-                'to': Public.getId(),
-                'message_type': messageTypeToCode (message_type)
-            };
-        };
-        
-        Private.generateContents = function (message) {
-            if (message.message_type === 'COMMAND') return Private.generateCommand(message);
-            else if (message.message_type === 'COMMAND_RESPONSE') return Private.generateCommandResponse(message);
-            else if (message.message_type === 'SYSTEM_EVENT') return Private.generateSystemEvent(message);
-            else return Private.generateGenericMessage(message);
-        };
-        
-        Private.generateCommand = function (command) {
-            
-            function commandStringToCode (command_string) {
-                return parseInt(Public.getCommands().find(function (command) {
-                    return command_string === command.name;
-                }).id, 10);
-            }
-            
-            function dataBufferTypeStringToCode (type_string) {
-                return Public.getDataTypes().find(function (type) {
-                    return type_string === type[0];
-                })[1];
-            }
-            
-            return {
-                "command": commandStringToCode(command.command),
-                'message_info': command.message_info === null ? 0 : command.message_info,
-                "payload": {
-                    "type": dataBufferTypeStringToCode (command.data_buffer_type),
-                    "data": command.data_buffer === null ? [] : command.data_buffer
-                }
-            };
-        };
-        
-        Private.generateCommandResponse = function (command) {
-            return {
-                "status": command.status
-            };
-        };
-        
-        Private.generateSystemEvent = function (command) {
-            return {
-                "event": command.event
-            };
-        };
-        
-        Private.generateGenericMessage = function (command) {
-            return {};
-        };        
-        
-        Private.addData(data);
-            
-        return Public;
-    };    
-});
+    };
+    
+    BIT_ServiceEndpoint.prototype.generateGenericMessage = function (command) {
+        return {};
+    };
+    
+    return BIT_ServiceEndpoint;
+}]);
 
 bit_endpoints.controller('BitEndpointCommandController', ['$scope', '$timeout', function ($scope, $timeout) {
     
@@ -259,7 +222,7 @@ bit_endpoints.controller('BitEndpointCommandController', ['$scope', '$timeout', 
     }
     
     $scope.send = function () {
-        $scope.interface.sendMessage(collectMessage()).then(function (response) {
+        $scope.endpoint.sendMessage(collectMessage()).then(function (response) {
             $scope.send_button_text = 'Sent!';
             $timeout(function () {
                 $scope.send_button_text = 'Send';
@@ -275,22 +238,17 @@ bit_endpoints.controller('BitEndpointCommandController', ['$scope', '$timeout', 
 bit_endpoints.controller('BitEndpointLogController', ['$scope', function ($scope) {
     
     $scope.getLog = function () {
-        return $scope.interface.getFilteredLog();
+        return $scope.endpoint.getFilteredLog();
     };
     
 }]);
-
-function bitLinkFunction (scope, element, attributes) {
-    scope.interface = scope.endpoint.getVendorInterface('BIT_Service');
-}
 
 bit_endpoints.directive('bitEndpointToolbar', function () {
     return {
         scope: {
             endpoint: "="
         },
-        templateUrl: '../vendor_components/bit/endpoints/directives/bit-endpoint-toolbar.html',
-        link: bitLinkFunction
+        templateUrl: '../vendor_components/bit/endpoints/directives/bit-endpoint-toolbar.html'
     };
 });
 
@@ -300,7 +258,6 @@ bit_endpoints.directive('bitEndpointCardCommands', function () {
             endpoint: "="
         },
         templateUrl: '../vendor_components/bit/endpoints/directives/bit-endpoint-card-commands.html',
-        link: bitLinkFunction,
         controller: 'BitEndpointCommandController'
     };
 });
@@ -311,7 +268,6 @@ bit_endpoints.directive('bitEndpointCardLog', function () {
             endpoint: "="
         },
         templateUrl: '../vendor_components/bit/endpoints/directives/bit-endpoint-card-log.html',
-        link: bitLinkFunction,
         controller: 'BitEndpointLogController'
     };
 });

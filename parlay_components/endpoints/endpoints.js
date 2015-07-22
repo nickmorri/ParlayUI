@@ -1,4 +1,4 @@
-var endpoints = angular.module('parlay.endpoints', ['ui.router', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main', 'parlay.protocols', 'promenade.broker', 'bit.endpoints']);
+var endpoints = angular.module('parlay.endpoints', ['ui.router', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main', 'parlay.protocols', 'promenade.broker']);
 
 /* istanbul ignore next */
 endpoints.config(function($stateProvider) {
@@ -9,71 +9,37 @@ endpoints.config(function($stateProvider) {
     });
 });
 
-endpoints.factory('ParlayEndpoint', ['$injector', function ($injector) {
-    return function ParlayEndpoint (endpoint, protocol) {
-        
-        var Public = {};
+endpoints.factory('ParlayEndpoint', function () {
     
-        var Private = {
-            protocol: protocol,
-            vendor_interfaces: []
-        };
-        
-        Private.attachVendorInterfaces = function (endpoint) {
-            endpoint.type.split("/").forEach(function (type) {
-                try {
-                    var instance = $injector.get(type);
-                    Private.vendor_interfaces.push(new instance(endpoint, protocol));
-                }
-                catch (e) {
-                    console.warn('Could not find ' + type + ' endpoint instance.');
-                }                
-            });
-        };
-        
-        Public.getVendorInterface = function (type) {
-            return Private.vendor_interfaces.find(function (interface) {
-                return type === interface.getType();
-            });
-        };
-        
-        Public.getTypes = function () {
-            return Private.vendor_interfaces.map(function (endpoint) {
-                return endpoint.getType();
-            });
-        };
-        
-        Public.getDirectives = function () {
-            return Private.vendor_interfaces.map(function (endpoint) {
-                return endpoint.getDirectives();
-            }).filter(function (directive_set) {
-                return Object.keys(directive_set).length;
-            });
-        };
-        
-        Public.matchesQuery = function (query) {
-            return Private.vendor_interfaces.filter(function (vend_inter) {
-                return vend_inter.hasOwnProperty('matchesQuery');
-            }).some(function (vend_inter) {
-                return vend_inter.matchesQuery(query);
-            });
-        };
-        
-        Public.getName = function () {
-            return Private.vendor_interfaces.find(function (vend_inter) {
-                return vend_inter.hasOwnProperty('getName');
-            }).getName();
-        };
-        
-        Public.activate = function () {
-            protocol.activateEndpoint(Public);
-        };
-        
-        Private.attachVendorInterfaces(endpoint);
-        
-        return Public;
+    function NotImplementedError(method) {
+        console.warn(method + ' is not implemented for ' + this.getName());
+    }
+    
+    function ParlayEndpoint(endpoint, protocol) {
+        this.endpoint_name = endpoint.name;
+        this.protocol = protocol;
+        this.directives = [];
+    }
+    
+    ParlayEndpoint.prototype.getName = function () {
+        return this.endpoint_name;
     };
-}]);
+    
+    ParlayEndpoint.prototype.getDirectives = function () {
+        return [this.directives];
+    };
+    
+    ParlayEndpoint.prototype.activate = function () {
+        this.protocol.activateEndpoint(this);
+    };
+    
+    ParlayEndpoint.prototype.matchesQuery = function (query) {
+        NotImplementedError('matchesQuery');
+    };
+    
+    return ParlayEndpoint;
+    
+});
 
 endpoints.factory('EndpointManager', ['PromenadeBroker', 'ProtocolManager', function (PromenadeBroker, ProtocolManager) {
     

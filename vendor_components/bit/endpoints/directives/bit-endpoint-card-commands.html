@@ -6,7 +6,7 @@
                 
                 <md-input-container flex>
                     <md-select name="message_type" placeholder="Message type" ng-model="message_type" md-on-close="selectMessageType(message_type)" required>
-                        <md-option ng-value="type[0]" ng-repeat="type in interface.getMessageTypes()">{{type[0]}}</md-option>
+                            <md-option ng-value="type[0]" ng-repeat="type in endpoint.getMessageTypes()">{{type[0]}}</md-option>
                     </md-select>
                     <div class="errors" ng-messages="commandForm.message__type.$error" ng-if="commandForm.$dirty">
                         <div ng-message="required">Message type is required</div>
@@ -15,7 +15,7 @@
                                 
                 <md-input-container ng-show="message_type === 'COMMAND'" flex>
                     <md-select name="command" placeholder="Command" ng-model="command" md-on-close="selectCommand(command)" required>
-                        <md-option ng-value="command" ng-repeat="command in interface.getCommands()">{{command.name}}</md-option>
+                        <md-option ng-value="command" ng-repeat="command in endpoint.getCommands()">{{command.name}}</md-option>
                     </md-select>
                     <div class="errors" ng-messages="commandForm.command.$error" ng-if="commandForm.$dirty">
                         <div ng-message="required">Required</div>
@@ -24,7 +24,7 @@
                 
                 <md-input-container ng-show="message_type === 'COMMAND'" flex>
                     <md-select name="data_buffer_type" placeholder="Buffer type" ng-model="data_buffer_type" required>
-                        <md-option ng-value="type[0]" ng-repeat="type in interface.getDataTypes()">{{type[0]}}</md-option>
+                        <md-option ng-value="type[0]" ng-repeat="type in endpoint.getDataTypes()">{{type[0]}}</md-option>
                     </md-select>
                     <div class="errors" ng-messages="commandForm.data_buffer_type.$error" ng-if="commandForm.$dirty">
                         <div ng-message="required">Data type is required</div>

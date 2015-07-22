@@ -1,4 +1,4 @@
-var bit_protocols = angular.module('bit.protocols', ['parlay.socket', 'promenade.broker', 'parlay.endpoints']);
+var bit_protocols = angular.module('bit.protocols', ['parlay.socket', 'promenade.broker', 'bit.endpoints']);
 
 bit_protocols.factory('SSComServiceProtocol', ['SSCOM_Serial', function (SSCOM_Serial) {
  
@@ -12,11 +12,10 @@ bit_protocols.factory('SSComServiceProtocol', ['SSCOM_Serial', function (SSCOM_S
     return SSComServiceProtocol;
 }]);
 
-bit_protocols.factory('SSCOM_Serial', ['Protocol', 'ParlayEndpoint', function (Protocol, ParlayEndpoint) {
+bit_protocols.factory('SSCOM_Serial', ['ParlayProtocol', 'BIT_ServiceEndpoint', function (ParlayProtocol, BIT_ServiceEndpoint) {
     
     function SSCOM_Serial(configuration) {
-        this.name = configuration.name;
-        this.type = configuration.protocol_type;
+        ParlayProtocol.call(this, configuration);
         
         this.common_status = null;
         this.message_types = null;
@@ -27,7 +26,7 @@ bit_protocols.factory('SSCOM_Serial', ['Protocol', 'ParlayEndpoint', function (P
         this.from = 0xf201;
     }
     
-    SSCOM_Serial.prototype = new Protocol();
+    SSCOM_Serial.prototype = Object.create(ParlayProtocol.prototype);
         
     SSCOM_Serial.prototype.addDiscoveryInfo = function (info) {
         this.common_status = info.common_status;
@@ -35,7 +34,7 @@ bit_protocols.factory('SSCOM_Serial', ['Protocol', 'ParlayEndpoint', function (P
         this.data_types = info.data_types;
         
         this.available_endpoints = info.children.map(function (endpoint) {
-            return new ParlayEndpoint(endpoint, this);
+            return new BIT_ServiceEndpoint(endpoint, this);
         }, this);
         
     };
@@ -101,21 +100,6 @@ bit_protocols.factory('SSCOM_Serial', ['Protocol', 'ParlayEndpoint', function (P
             to_system: message.topics.from_system,
             message_id: message.topics.message_id
         };
-    };
-    
-    SSCOM_Serial.prototype.sendCommand = function () {
-        return $q(function(resolve, reject) {
-            message = this.buildMessageTopics(message);
-            if (message.topics.message_type === 0) {
-                ParlaySocket.sendMessage(message.topics, message.contents, this.buildResponseTopics(message), function (response) {
-                    if (response.status === 0) resolve(response);
-                    else reject(response);
-                });   
-            }
-            else {
-                ParlaySocket.sendMessage(message.topics, message.contents);                
-            }
-        });
     };
     
     return SSCOM_Serial;

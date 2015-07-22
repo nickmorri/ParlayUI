@@ -1,11 +1,14 @@
 var protocols = angular.module('parlay.protocols', ['promenade.broker', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main', 'bit.protocols']);
 
-protocols.factory('Protocol', ['ParlaySocket', 'ParlayEndpoint', 'PromenadeBroker', '$q', function (ParlaySocket, ParlayEndpoint, PromenadeBroker, $q) {
-    function Protocol() {
-        
-        function NotImplementedError(method) {
-            console.warn(method + ' is not implemented for ' + this.getName());
-        }
+protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'PromenadeBroker', '$q', function (ParlaySocket, ParlayEndpoint, PromenadeBroker, $q) {
+
+    function NotImplementedError(method) {
+        console.warn(method + ' is not implemented for ' + this.getName());
+    }
+    
+    function ParlayProtocol(configuration) {
+        this.name = configuration.name;
+        this.type = configuration.protocol_type;
         
         this.available_endpoints = [];
         this.active_endpoints = [];
@@ -14,7 +17,7 @@ protocols.factory('Protocol', ['ParlaySocket', 'ParlayEndpoint', 'PromenadeBroke
         this.on_message_callbacks = [];
     }
     
-    Protocol.prototype.activateEndpoint = function (endpoint) {
+    ParlayProtocol.prototype.activateEndpoint = function (endpoint) {
         var index = this.available_endpoints.findIndex(function (suspect) {
             return endpoint === suspect;
         });
@@ -24,63 +27,73 @@ protocols.factory('Protocol', ['ParlaySocket', 'ParlayEndpoint', 'PromenadeBroke
         this.active_endpoints.push(endpoint);
     };
     
-    Protocol.prototype.getAvailableEndpoints = function () {
+    ParlayProtocol.prototype.getAvailableEndpoints = function () {
         return this.available_endpoints;
     };
     
-    Protocol.prototype.getActiveEndpoints = function () {
+    ParlayProtocol.prototype.getActiveEndpoints = function () {
         return this.active_endpoints;
     };
     
-    Protocol.prototype.getLog = function () {
+    ParlayProtocol.prototype.getLog = function () {
         return this.log;
     };        
     
-    Protocol.prototype.onMessage = function (callback) {
-        this.on_message_callbacks.push(callback);    
+    ParlayProtocol.prototype.onMessage = function (callback) {
+        this.on_message_callbacks.push(callback.bind(this));    
     };
     
-    Protocol.prototype.invokeCallbacks = function (response) {
+    ParlayProtocol.prototype.invokeCallbacks = function (response) {
         this.on_message_callbacks = this.on_message_callbacks.filter(function (callback) {
             callback(response);            
             return true;
         });
     };
     
-    Protocol.prototype.getType = function () {
+    ParlayProtocol.prototype.getType = function () {
         return this.type;
     };
     
-    Protocol.prototype.subscribe = function () {
-        var self = this;
+    ParlayProtocol.prototype.subscribe = function () {
         PromenadeBroker.sendSubscribe(this.buildSubscriptionTopics()).then(function (response) {
-            self.subscription_listener_dereg = ParlaySocket.onMessage(self.buildSubscriptionTopics().topics, self.invokeCallbacks, true);
-        });
+            this.subscription_listener_dereg = ParlaySocket.onMessage(this.buildSubscriptionTopics().topics, this.invokeCallbacks.bind(this), true);
+        }.bind(this));
     };
     
-    Protocol.prototype.unsubscribe = function () {
+    ParlayProtocol.prototype.unsubscribe = function () {
         PromenadeBroker.sendUnsubscribe(this.buildSubscriptionTopics()).then(function (response) {
             this.afterClose();
         });
     };
     
-    Protocol.prototype.hasSubscription = function() {
+    ParlayProtocol.prototype.hasSubscription = function() {
         return this.subscription_listener_dereg !== null;
     };
     
-    Protocol.prototype.recordLog = function (reponse) {
+    ParlayProtocol.prototype.recordLog = function(response) {
         this.log.push(response);
     };
     
-    Protocol.prototype.sendCommand = function (message) {            
+    ParlayProtocol.prototype.sendCommand = function (message) {
+        return $q(function(resolve, reject) {
+            message = this.buildMessageTopics(message);
+            if (message.topics.message_type === 0) {
+                ParlaySocket.sendMessage(message.topics, message.contents, this.buildResponseTopics(message), function (response) {
+                    if (response.status === 0) resolve(response);
+                    else reject(response);
+                });
+            }
+            else {
+                ParlaySocket.sendMessage(message.topics, message.contents);                
+            }
+        }.bind(this));
+    };
+    
+    ParlayProtocol.prototype.onOpen = function () {
         throw NotImplementedError('onOpen');
     };
     
-    Protocol.prototype.onOpen = function () {
-        throw NotImplementedError('onOpen');
-    };
-    
-    Protocol.prototype.onClose = function () {
+    ParlayProtocol.prototype.onClose = function () {
         if (this.hasSubscription()) {
             this.subscription_listener_dereg();
             this.subscription_listener_dereg = null;
@@ -89,24 +102,24 @@ protocols.factory('Protocol', ['ParlaySocket', 'ParlayEndpoint', 'PromenadeBroke
         this.active_endpoints = [];
     };
     
-    Protocol.prototype.addDiscoveryInfo = function () {
+    ParlayProtocol.prototype.addDiscoveryInfo = function () {
         throw NotImplementedError('addDiscoveryInfo');
     };
     
-    Protocol.prototype.buildSubscriptionTopics = function () {
+    ParlayProtocol.prototype.buildSubscriptionTopics = function () {
         throw NotImplementedError('buildSubscriptionTopics');  
     };
     
-    Protocol.prototype.buildMessageTopics = function () {
+    ParlayProtocol.prototype.buildMessageTopics = function () {
         throw NotImplementedError('buildMessageTopics');
     };
     
-    Protocol.prototype.buildResponseTopics = function () {
+    ParlayProtocol.prototype.buildResponseTopics = function () {
         throw NotImplementedError('buildResponseTopics');
     };
         
     
-    return Protocol;
+    return ParlayProtocol;
 }]);
 
 protocols.factory('ProtocolManager', ['$injector', 'PromenadeBroker', '$q', function ($injector, PromenadeBroker, $q) {

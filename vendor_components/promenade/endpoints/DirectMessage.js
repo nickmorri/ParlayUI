@@ -51,6 +51,10 @@ direct_message.factory('ParlayDirectMessageEndpoint', ['ParlayEndpoint', functio
         return angular.lowercase(this.getName()).indexOf(query) > -1;
     };
     
+    ParlayDirectMessageEndpoint.prototype.getMessageId = function () {
+        return this.protocol.getMessageId();
+    };
+    
     ParlayDirectMessageEndpoint.prototype.getFilteredLog = function () {
         return this.protocol.getLog().filter(function (message) {
             return message.topics.from === this.getId();

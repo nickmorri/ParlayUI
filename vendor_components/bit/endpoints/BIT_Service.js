@@ -173,7 +173,7 @@ bit_endpoints.controller('BitEndpointCommandController', ['$scope', '$timeout', 
     
     $scope.send = function () {
         $scope.endpoint.sendMessage(collectMessage()).then(function (response) {
-            $scope.send_button_text = 'Sent!';
+            $scope.send_button_text = 'Sent! [' + $scope.endpoint.getMessageId() + ']';
             $timeout(function () {
                 $scope.send_button_text = 'Send';
             }, 1000);

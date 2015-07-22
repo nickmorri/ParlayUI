@@ -7,6 +7,7 @@ protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'Promenad
     }
     
     function ParlayProtocol(configuration) {
+        'use strict';
         this.name = configuration.name;
         this.type = configuration.protocol_type;
         

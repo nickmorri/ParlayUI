@@ -1,20 +1,13 @@
 var bit_protocols = angular.module('bit.protocols', ['parlay.socket', 'promenade.broker', 'bit.endpoints']);
 
 bit_protocols.factory('SSComServiceProtocol', ['SSCOM_Serial', function (SSCOM_Serial) {
- 
-    function SSComServiceProtocol(configuration) {
-        SSCOM_Serial.call(this, configuration);
-    }
-    
-    SSComServiceProtocol.prototype = Object.create(SSCOM_Serial.prototype);
-    SSComServiceProtocol.prototype.constructor = SSComServiceProtocol;
-    
-    return SSComServiceProtocol;
+    return SSCOM_Serial;
 }]);
 
 bit_protocols.factory('SSCOM_Serial', ['ParlayProtocol', 'BIT_ServiceEndpoint', function (ParlayProtocol, BIT_ServiceEndpoint) {
     
     function SSCOM_Serial(configuration) {
+        'use strict';
         ParlayProtocol.call(this, configuration);
         
         this.common_status = null;
@@ -35,8 +28,7 @@ bit_protocols.factory('SSCOM_Serial', ['ParlayProtocol', 'BIT_ServiceEndpoint', 
         
         this.available_endpoints = info.children.map(function (endpoint) {
             return new BIT_ServiceEndpoint(endpoint, this);
-        }, this);
-        
+        }, this);        
     };
     
     SSCOM_Serial.prototype.buildSubscriptionTopics = function () {

@@ -1,4 +1,4 @@
-var bit_endpoints = angular.module('bit.endpoints', ['parlay.endpoints']);
+var bit_endpoints = angular.module('bit.endpoints', ['parlay.endpoints.directmessage']);
 
 bit_endpoints.factory('CommandEndpoint', ['ParlayEndpoint', function (ParlayEndpoint) {
     function CommandEndpoint(data) {
@@ -20,20 +20,12 @@ bit_endpoints.factory('CommandEndpoint', ['ParlayEndpoint', function (ParlayEndp
     
 }]);
 
-bit_endpoints.factory('BIT_ServiceEndpoint', ['ParlayEndpoint', function (ParlayEndpoint) {
+bit_endpoints.factory('BIT_ServiceEndpoint', ['ParlayDirectMessageEndpoint', function (ParlayDirectMessageEndpoint) {
     
     function BIT_ServiceEndpoint(data, protocol) {
-        ParlayEndpoint.call(this, data, protocol);
+        ParlayDirectMessageEndpoint.call(this, data, protocol);
 
-        this.commands = data.commands;
-        this.id = data.id;
-        this.interfaces = data.interfaces;
         this.type = 'BIT_ServiceEndpoint';
-        
-        this.directives = {
-            'toolbar': ['bitEndpointToolbar'],
-            'tabs': ['bitEndpointCardCommands', 'bitEndpointCardLog']
-        };
         
         this.commands = Object.keys(data.commands).map(function (command_key) {
             var command = data.commands[command_key];
@@ -43,11 +35,7 @@ bit_endpoints.factory('BIT_ServiceEndpoint', ['ParlayEndpoint', function (Parlay
         
     }
     
-    BIT_ServiceEndpoint.prototype = Object.create(ParlayEndpoint.prototype);
-    
-    BIT_ServiceEndpoint.prototype.getCommands = function () {
-        return this.commands;
-    };
+    BIT_ServiceEndpoint.prototype = Object.create(ParlayDirectMessageEndpoint.prototype);
     
     BIT_ServiceEndpoint.prototype.getMessageTypes = function () {
         return this.protocol.getMessageTypes();
@@ -57,46 +45,8 @@ bit_endpoints.factory('BIT_ServiceEndpoint', ['ParlayEndpoint', function (Parlay
         return this.protocol.getDataTypes();
     };
     
-    BIT_ServiceEndpoint.prototype.getId = function () {
-        return this.id;
-    };
-    
-    BIT_ServiceEndpoint.prototype.getSystemId = function () {
-        return this.getId() >> 8;
-    };
-    
-    BIT_ServiceEndpoint.prototype.getDeviceId = function () {
-        return this.getId() & 0xff;
-    };
-    
-    BIT_ServiceEndpoint.prototype.getType = function () {
-        return this.type;
-    };
-    
-    BIT_ServiceEndpoint.prototype.getFilteredLog = function () {
-        return this.protocol.getLog().filter(function (message) {
-            return message.topics.from === this.getId();
-        }, this);
-    };
-        
-    BIT_ServiceEndpoint.prototype.matchesQuery = function (query) {
-        return this.matchesType(query) || this.matchesId(query) || this.matchesName(query);
-    };
-    
     BIT_ServiceEndpoint.prototype.sendMessage = function (command) {
         return this.protocol.sendCommand(this.generateMessage(command));
-    };
-    
-    BIT_ServiceEndpoint.prototype.matchesType = function (query) {
-        return angular.lowercase(this.getType()).indexOf(query) > -1;
-    };
-    
-    BIT_ServiceEndpoint.prototype.matchesId = function (query) {
-        return this.getId() === query;
-    };
-    
-    BIT_ServiceEndpoint.prototype.matchesName = function (query) {
-        return angular.lowercase(this.getName()).indexOf(query) > -1;
     };
     
     BIT_ServiceEndpoint.prototype.generateMessage = function (message) {

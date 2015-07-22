@@ -1,25 +1,28 @@
-var bit_protocols = angular.module('bit.protocols', ['parlay.socket', 'promenade.broker', 'bit.endpoints']);
+var bit_protocols = angular.module('bit.protocols', ['parlay.protocols.directmessage', 'bit.endpoints']);
 
 bit_protocols.factory('SSComServiceProtocol', ['SSCOM_Serial', function (SSCOM_Serial) {
-    return SSCOM_Serial;
+    
+    function SSComServiceProtocol(configuration) {
+        SSCOM_Serial.call(this, configuration);
+    }
+    
+    SSComServiceProtocol.prototype = Object.create(SSCOM_Serial.prototype);
+    
+    return SSComServiceProtocol;
 }]);
 
-bit_protocols.factory('SSCOM_Serial', ['ParlayProtocol', 'BIT_ServiceEndpoint', function (ParlayProtocol, BIT_ServiceEndpoint) {
+bit_protocols.factory('SSCOM_Serial', ['ParlayDirectMessageProtocol', 'BIT_ServiceEndpoint', function (ParlayDirectMessageProtocol, BIT_ServiceEndpoint) {
     
     function SSCOM_Serial(configuration) {
         'use strict';
-        ParlayProtocol.call(this, configuration);
+        ParlayDirectMessageProtocol.call(this, configuration);
         
         this.common_status = null;
         this.message_types = null;
         this.data_types = null;
-        this.current_message_id = 200;
-        this.from_device = 0x01;
-        this.from_system = 0xf2;
-        this.from = 0xf201;
     }
     
-    SSCOM_Serial.prototype = Object.create(ParlayProtocol.prototype);
+    SSCOM_Serial.prototype = Object.create(ParlayDirectMessageProtocol.prototype);
         
     SSCOM_Serial.prototype.addDiscoveryInfo = function (info) {
         this.common_status = info.common_status;
@@ -29,33 +32,6 @@ bit_protocols.factory('SSCOM_Serial', ['ParlayProtocol', 'BIT_ServiceEndpoint', 
         this.available_endpoints = info.children.map(function (endpoint) {
             return new BIT_ServiceEndpoint(endpoint, this);
         }, this);        
-    };
-    
-    SSCOM_Serial.prototype.buildSubscriptionTopics = function () {
-        return {
-            topics: {
-                to_system: this.from_system
-            }
-        };
-    };
-    
-    SSCOM_Serial.prototype.buildSubscriptionListenerTopics = function () {
-        return {
-            to_system: this.from_system
-        };
-    };
-    
-    SSCOM_Serial.prototype.getName = function () {
-        return this.name;
-    };
-    
-    SSCOM_Serial.prototype.onOpen = function () {
-        this.onMessage(this.recordLog);
-        this.subscribe();
-    };
-            
-    SSCOM_Serial.prototype.onClose = function () {
-        Protocol.prototype.onClose.call(this);
     };
     
     SSCOM_Serial.prototype.getCommonStatus = function () {
@@ -69,17 +45,14 @@ bit_protocols.factory('SSCOM_Serial', ['ParlayProtocol', 'BIT_ServiceEndpoint', 
     SSCOM_Serial.prototype.getDataTypes = function () {
         return this.data_types;
     };
-    
-    SSCOM_Serial.prototype.consumeMessageId = function () {
-        return ++this.current_message_id;
-    };
         
     SSCOM_Serial.prototype.buildMessageTopics = function (message) {
-        message.topics.message_id = this.consumeMessageId();
-        message.topics.from_device = this.from_device;
-        message.topics.from_system = this.from_system;
-        message.topics.from = this.from;
-        return message;
+        var new_message = angular.copy(message);
+        new_message.topics.message_id = this.consumeMessageId();
+        new_message.topics.from_device = this.from_device;
+        new_message.topics.from_system = this.from_system;
+        new_message.topics.from = this.from;
+        return new_message;
     };
     
     SSCOM_Serial.prototype.buildResponseTopics = function (message) {

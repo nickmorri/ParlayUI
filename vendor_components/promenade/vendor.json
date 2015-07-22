@@ -1,3 +1,4 @@
 {
-	"protocols": "vendor_components/promenade/protocols/*.js"
+	"protocols": "vendor_components/promenade/protocols/*.js",
+	"endpoints": "vendor_components/promenade/endpoints/*.js"
 }

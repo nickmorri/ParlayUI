@@ -8,7 +8,7 @@ protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'Promenad
     
     function ParlayProtocol(configuration) {
         'use strict';
-        this.name = configuration.name;
+        this.protocol_name = configuration.name;
         this.type = configuration.protocol_type;
         
         this.available_endpoints = [];
@@ -17,6 +17,14 @@ protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'Promenad
         this.subscription_listener_dereg = null;        
         this.on_message_callbacks = [];
     }
+    
+    ParlayProtocol.prototype.getName = function () {
+        return this.protocol_name;
+    };
+    
+    ParlayProtocol.prototype.getType = function () {
+        return this.type;
+    };
     
     ParlayProtocol.prototype.activateEndpoint = function (endpoint) {
         var index = this.available_endpoints.findIndex(function (suspect) {
@@ -75,18 +83,12 @@ protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'Promenad
         this.log.push(response);
     };
     
-    ParlayProtocol.prototype.sendCommand = function (message) {
+    ParlayProtocol.prototype.sendMessage = function (topics, contents, response_topics) {
         return $q(function(resolve, reject) {
-            message = this.buildMessageTopics(message);
-            if (message.topics.message_type === 0) {
-                ParlaySocket.sendMessage(message.topics, message.contents, this.buildResponseTopics(message), function (response) {
-                    if (response.status === 0) resolve(response);
-                    else reject(response);
-                });
-            }
-            else {
-                ParlaySocket.sendMessage(message.topics, message.contents);                
-            }
+            ParlaySocket.sendMessage(topics, contents, response_topics, function (response) {
+                if (response.status === 0) resolve(response);
+                else reject(response);
+            });
         }.bind(this));
     };
     
@@ -109,16 +111,7 @@ protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'Promenad
     
     ParlayProtocol.prototype.buildSubscriptionTopics = function () {
         throw NotImplementedError('buildSubscriptionTopics');  
-    };
-    
-    ParlayProtocol.prototype.buildMessageTopics = function () {
-        throw NotImplementedError('buildMessageTopics');
-    };
-    
-    ParlayProtocol.prototype.buildResponseTopics = function () {
-        throw NotImplementedError('buildResponseTopics');
-    };
-        
+    };  
     
     return ParlayProtocol;
 }]);

@@ -15,14 +15,20 @@ endpoints.factory('ParlayEndpoint', function () {
         console.warn(method + ' is not implemented for ' + this.getName());
     }
     
-    function ParlayEndpoint(endpoint, protocol) {
-        this.endpoint_name = endpoint.name;
+    function ParlayEndpoint(data, protocol) {
+        this.endpoint_name = data.name;
+        this.type = 'ParlayEndpoint';
         this.protocol = protocol;
-        this.directives = [];
+        this.directives = {};
+        this.interfaces = data.interfaces;
     }
     
     ParlayEndpoint.prototype.getName = function () {
         return this.endpoint_name;
+    };
+    
+    ParlayEndpoint.prototype.getType = function () {
+        return this.type;
     };
     
     ParlayEndpoint.prototype.getDirectives = function () {

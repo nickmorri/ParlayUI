@@ -13,7 +13,7 @@ module.exports = function (grunt) {
 
     'meta': {
       'source': ['app.js', 'parlay_components/*/*.js'],
-      'vendorCompontents': ['<%= vendor.promenade.protocols %>', '<%= vendor.bit.endpoints %>', '<%= vendor.bit.protocols %>'],
+      'vendorCompontents': ['<%= vendor.promenade.protocols %>', '<%= vendor.promenade.endpoints %>', '<%= vendor.bit.endpoints %>', '<%= vendor.bit.protocols %>'],
       'dist_destination': 'dist',
       'dev_destination': 'dev',
       'doc_destination': 'doc',

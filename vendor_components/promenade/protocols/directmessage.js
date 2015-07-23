@@ -1,4 +1,4 @@
-var direct_message = angular.module('promenade.protocols.directmessage', ['parlay.protocols']);
+var direct_message = angular.module('promenade.protocols.directmessage', ['parlay.protocols', 'promenade.endpoints.directmessage']);
 
 direct_message.factory('PromenadeDirectMessageProtocol', ['ParlayProtocol', 'PromenadeDirectMessageEndpoint', function (ParlayProtocol, PromenadeDirectMessageEndpoint) {
     
@@ -26,6 +26,27 @@ direct_message.factory('PromenadeDirectMessageProtocol', ['ParlayProtocol', 'Pro
         return this.current_message_id;
     };
     
+    PromenadeDirectMessageProtocol.prototype.buildMessageTopics = function (message) {
+        var new_message = angular.copy(message);
+        new_message.topics.message_id = this.consumeMessageId();
+        new_message.topics.from_device = this.from_device;
+        new_message.topics.from_system = this.from_system;
+        new_message.topics.from = this.from;
+        return new_message;
+    };
+    
+    PromenadeDirectMessageProtocol.prototype.buildResponseTopics = function (message) {
+        return {
+            from: message.topics.to,
+            from_system: message.topics.to_system,
+            message_type: 2,
+            message_type_name: 'COMMAND_RESPONSE',
+            to: message.topics.from,
+            to_system: message.topics.from_system,
+            message_id: message.topics.message_id
+        };
+    };
+    
     PromenadeDirectMessageProtocol.prototype.buildSubscriptionTopics = function () {
         return {
             topics: {
@@ -45,17 +66,11 @@ direct_message.factory('PromenadeDirectMessageProtocol', ['ParlayProtocol', 'Pro
     };
     
     PromenadeDirectMessageProtocol.prototype.addDiscoveryInfo = function (info) {
+        ParlayProtocol.prototype.addDiscoveryInfo.call(this, info);
+        
         this.available_endpoints = info.children.map(function (endpoint) {
             return new PromenadeDirectMessageEndpoint(endpoint, this);
-        }, this);        
-    };
-    
-    PromenadeDirectMessageProtocol.prototype.buildMessageTopics = function () {
-        throw NotImplementedError('buildMessageTopics');
-    };
-    
-    PromenadeDirectMessageProtocol.prototype.buildResponseTopics = function () {
-        throw NotImplementedError('buildResponseTopics');
+        }, this);
     };
     
     return PromenadeDirectMessageProtocol;

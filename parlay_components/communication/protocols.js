@@ -1,4 +1,4 @@
-var protocols = angular.module('parlay.protocols', ['promenade.broker', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main', 'bit.protocols']);
+var protocols = angular.module('parlay.protocols', ['promenade.broker', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main', 'promenade.protocols.directmessage']);
 
 protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'PromenadeBroker', '$q', function (ParlaySocket, ParlayEndpoint, PromenadeBroker, $q) {
 
@@ -16,6 +16,8 @@ protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'Promenad
         this.log = [];        
         this.subscription_listener_dereg = null;        
         this.on_message_callbacks = [];
+        
+        this.fields = {};
     }
     
     ParlayProtocol.prototype.getName = function () {
@@ -57,10 +59,6 @@ protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'Promenad
             callback(response);            
             return true;
         });
-    };
-    
-    ParlayProtocol.prototype.getType = function () {
-        return this.type;
     };
     
     ParlayProtocol.prototype.subscribe = function () {
@@ -105,8 +103,38 @@ protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'Promenad
         this.active_endpoints = [];
     };
     
-    ParlayProtocol.prototype.addDiscoveryInfo = function () {
-        throw NotImplementedError('addDiscoveryInfo');
+    ParlayProtocol.prototype.buildFieldMethods = function (keys) {
+        keys.forEach(function (key) {
+            if (!this[key]) {
+                Object.defineProperty(Object.getPrototypeOf(this), key, {
+                    get: function() {
+                        return this.fields[key];
+                    },
+                    set: function(value) {
+                        this.fields[key] = value;
+                    }
+                });    
+            }            
+        }, this);
+    };
+    
+    ParlayProtocol.prototype.buildFields = function (info) {
+        this.fields = Object.keys(info).filter(function (key) {
+            // We should do some sort of filtering here.
+            return true;
+        }, this).reduce(function (accumulator, key) {
+            accumulator[key] = info[key];
+            return accumulator;
+        }, {});
+    };
+    
+    ParlayProtocol.prototype.getDynamicFieldKeys = function () {
+        return Object.keys(this.fields);
+    };
+    
+    ParlayProtocol.prototype.addDiscoveryInfo = function (info) {
+        this.buildFields(info);
+        this.buildFieldMethods(Object.keys(info));
     };
     
     ParlayProtocol.prototype.buildSubscriptionTopics = function () {
@@ -265,7 +293,7 @@ protocols.factory('ProtocolManager', ['$injector', 'PromenadeBroker', '$q', func
      */
     Private.setOpenProtocols = function (protocols) {
         Private.open_protocols = protocols.map(function (configuration) {
-            var protocol = $injector.get(configuration.protocol_type);
+            var protocol = $injector.has(configuration.protocol_type) ? $injector.get(configuration.protocol_type) : $injector.get('PromenadeDirectMessageProtocol');
             var instance = new protocol(configuration);
             instance.onOpen();
             return instance;

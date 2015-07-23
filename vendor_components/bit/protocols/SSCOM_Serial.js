@@ -34,38 +34,7 @@ bit_protocols.factory('SSCOM_Serial', ['PromenadeDirectMessageProtocol', 'BIT_Se
         }, this);        
     };
     
-    SSCOM_Serial.prototype.getCommonStatus = function () {
-        return this.common_status;  
-    };
     
-    SSCOM_Serial.prototype.getMessageTypes = function () {
-        return this.message_types;
-    };
-    
-    SSCOM_Serial.prototype.getDataTypes = function () {
-        return this.data_types;
-    };
-        
-    SSCOM_Serial.prototype.buildMessageTopics = function (message) {
-        var new_message = angular.copy(message);
-        new_message.topics.message_id = this.consumeMessageId();
-        new_message.topics.from_device = this.from_device;
-        new_message.topics.from_system = this.from_system;
-        new_message.topics.from = this.from;
-        return new_message;
-    };
-    
-    SSCOM_Serial.prototype.buildResponseTopics = function (message) {
-        return {
-            from: message.topics.to,
-            from_system: message.topics.to_system,
-            message_type: 2,
-            message_type_name: 'COMMAND_RESPONSE',
-            to: message.topics.from,
-            to_system: message.topics.from_system,
-            message_id: message.topics.message_id
-        };
-    };
     
     return SSCOM_Serial;
     

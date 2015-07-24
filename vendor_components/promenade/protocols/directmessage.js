@@ -68,7 +68,7 @@ direct_message.factory('PromenadeDirectMessageProtocol', ['ParlayProtocol', 'Pro
     PromenadeDirectMessageProtocol.prototype.addDiscoveryInfo = function (info) {
         ParlayProtocol.prototype.addDiscoveryInfo.call(this, info);
         
-        this.available_endpoints = info.children.map(function (endpoint) {
+        this.available_endpoints = info.CHILDREN.map(function (endpoint) {
             return new PromenadeDirectMessageEndpoint(endpoint, this);
         }, this);
     };

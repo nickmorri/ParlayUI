@@ -316,7 +316,7 @@ protocols.factory('ProtocolManager', ['$injector', 'PromenadeBroker', '$q', func
      * @param {Object} info - Discovery information which may be vendor specific.
      */
     Private.addDiscoveryInfoToOpenProtocol = function (info) {
-        Private.getOpenProtocol(info.name).addDiscoveryInfo(info);
+        Private.getOpenProtocol(info.NAME).addDiscoveryInfo(info);
     };    
     
     /**

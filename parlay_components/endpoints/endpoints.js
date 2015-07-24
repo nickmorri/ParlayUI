@@ -16,19 +16,31 @@ endpoints.factory('ParlayEndpoint', function () {
     }
     
     function ParlayEndpoint(data, protocol) {
-        this.endpoint_name = data.name;
+        
+        Object.defineProperty(this, 'name', {
+            value: data.NAME,
+            enumerable: true,
+            writeable: false,
+            configurable: false
+        });
+        
+        Object.defineProperty(this, 'protocol', {
+            value: protocol,
+            writeable: false,
+            enumerable: false,
+            configurable: false
+        });
+        
         this.type = 'ParlayEndpoint';
-        this.protocol = protocol;
+        
+        this.interfaces = data.INTERFACES;
+        
         this.directives = {
             toolbar: [],
             tabs: []
         };
-        this.interfaces = data.interfaces;
+        
     }
-    
-    ParlayEndpoint.prototype.getName = function () {
-        return this.endpoint_name;
-    };
     
     ParlayEndpoint.prototype.getType = function () {
         return this.type;

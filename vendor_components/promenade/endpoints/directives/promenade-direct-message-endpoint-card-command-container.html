@@ -1,0 +1,30 @@
+<span ng-repeat="field in fields">
+
+    <md-input-container>
+                     
+        <label>{{field.label}}</label>
+                        
+        <md-select ng-if="field.input === 'DROPDOWN'" name="{{field.msg_key}}" ng-model="message[field.msg_key]" required>
+            <span ng-if="!field.options.length">
+                <md-option ng-repeat="(key, option) in field.options" ng-value="option">{{key}}</md-option>
+            </span>
+            <span ng-if="field.options.length">
+                <md-option ng-repeat="option in field.options" ng-value="$index">{{option}}</md-option>
+            </span>            
+        </md-select>
+        
+        <input ng-if="field.input === 'NUMBER'" name="{{field.msg_key}}" ng-model="message[field.msg_key]" type="number" required>
+        
+        <input ng-if="field.input === 'STRING'" name="{{field.msg_key}}" ng-model="message[field.msg_key]" required>
+        
+        <textarea ng-if="field.input === 'STRINGS'" name="{{field.msg_key}}" ng-model="message[field.msg_key]" columns="1" required></textarea>
+        
+        <div class="errors" ng-messages="commandForm.field.msg_key.$error" ng-if="commandForm.$dirty">
+            <div ng-message="required">{{field.msg_key}} is required</div>
+        </div>
+        
+    </md-input-container>
+    
+    <promenade-direct-message-endpoint-card-command-container ng-if="message[field.msg_key].sub_fields" message="message" fields="message[field.msg_key].sub_fields" flex></promenade-direct-message-endpoint-card-command-container>
+
+</span>

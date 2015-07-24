@@ -1,65 +1,9 @@
 <md-tab label="DirectMessage Commands">
     <md-content class="md-padding">
+    
         <form name="commandForm" layout="column">
-                
             <div layout="row">
-                
-                <md-input-container flex>
-                    <md-select name="message_type" placeholder="Message type" ng-model="message_type" md-on-close="selectMessageType(message_type)" required>
-                            <md-option ng-value="type[0]" ng-repeat="type in endpoint.message_types">{{type[0]}}</md-option>
-                    </md-select>
-                    <div class="errors" ng-messages="commandForm.message__type.$error" ng-if="commandForm.$dirty">
-                        <div ng-message="required">Message type is required</div>
-                    </div>
-                </md-input-container>
-                                
-                <md-input-container ng-show="message_type === 'COMMAND'" flex>
-                    <md-select name="command" placeholder="Command" ng-model="command_name" md-on-close="selectCommand(command_name)" required>
-                        <md-option ng-value="command.name" ng-repeat="command in endpoint.commands">{{command.name}}</md-option>
-                    </md-select>
-                    <div class="errors" ng-messages="commandForm.command.$error" ng-if="commandForm.$dirty">
-                        <div ng-message="required">Required</div>
-                    </div>
-                </md-input-container>
-                
-                <md-input-container ng-show="message_type === 'COMMAND'" flex>
-                    <md-select name="data_buffer_type" placeholder="Buffer type" ng-model="data_buffer_type" required>
-                        <md-option ng-value="type[0]" ng-repeat="type in endpoint.data_types">{{type[0]}}</md-option>
-                    </md-select>
-                    <div class="errors" ng-messages="commandForm.data_buffer_type.$error" ng-if="commandForm.$dirty">
-                        <div ng-message="required">Data type is required</div>
-                    </div>
-                </md-input-container>
-                
-                <md-input-container ng-show="message_type === 'COMMAND_RESPONSE'" flex>
-                    <label>Status</label>
-                    <input type="number" ng-model="status">
-                </md-input-container>
-                
-                <md-input-container ng-show="message_type === 'SYSTEM_EVENT'" flex>
-                    <label>Event</label>
-                    <input type="number" ng-model="event">
-                </md-input-container>
-                
-            </div>            
-            
-            <div layout="row" ng-show="message_type === 'COMMAND'">
-                
-                <md-input-container flex="15">
-                    <label ng-show="info_help === null">Message Info</label>
-                    <label ng-hide="info_help === null">{{info_help}}</label>
-                    <input type="number" ng-model="message_info">
-                </md-input-container>
-                
-                <md-input-container flex="70">
-                    <label ng-show="buffer_help === null">Buffer</label>
-                    <label ng-hide="buffer_help === null">{{buffer_help}}</label>
-                    <textarea type="text" ng-model="data_buffer"></textarea>
-                    <div ng-messages="commandForm.data_buffer.$error">
-                        <div ng-message="required">Buffer is required.</div>
-                    </div>
-                </md-input-container>
-                
+                <promenade-direct-message-endpoint-card-command-container message="message" fields="endpoint.content_fields" flex></promenade-direct-message-endpoint-card-command-container>
             </div>
             
             <md-button flex class="md-primary" ng-click="send()" ng-disabled="commandForm.$invalid" aria-label="Sends command to BIT Service object.">
@@ -67,5 +11,6 @@
             </md-button>
             
         </form>
+    
     </md-content>
 </md-tab>

@@ -1,29 +1,77 @@
-var direct_message_endpoints = angular.module('promenade.endpoints.directmessage', ['parlay.endpoints']);
+var direct_message_endpoints = angular.module('promenade.endpoints.directmessage', ['parlay.endpoints', 'RecursionHelper']);
 
 direct_message_endpoints.factory('PromenadeDirectMessageEndpoint', ['ParlayEndpoint', function (ParlayEndpoint) {
     
     function PromenadeDirectMessageEndpoint(data, protocol) {
         ParlayEndpoint.call(this, data, protocol);
         
+        Object.defineProperty(this, 'id', {
+            value: data.ID,
+            configurable: false,
+            writeable: false,
+            enumerable: true
+        });
+        
         this.type = 'DirectMessageEndpoint';
-        this.commands = data.commands;
-        this.id = data.id;
         
         this.directives.toolbar.push('promenadeDirectMessageEndpointCardToolbar');
         this.directives.tabs.push('promenadeDirectMessageEndpointCardLog', 'promenadeDirectMessageEndpointCardCommands');
+          
+        if (data.CONTENT_FIELDS) {
         
-        this.commands = Object.keys(data.commands).map(function (command_key) {
-            var command = data.commands[command_key];
-            command.id = parseInt(command_key, 10);
-            return command;
-        });
+            var parseField = (function parseField(field) {
+                var fieldObject = {
+                    msg_key: field.MSG_KEY,
+                    input: field.INPUT,
+                    label: field.LABEL !== undefined ? field.LABEL : field.MSG_KEY
+                };
+                
+                if (field.DROPDOWN_OPTIONS !== undefined) {
+                    
+                    if (typeof field.DROPDOWN_OPTIONS[0] === 'string') {
+                        fieldObject.options = field.DROPDOWN_OPTIONS;
+                    }
+                    
+                    else if (Array.isArray(field.DROPDOWN_OPTIONS[0])) {
+                        fieldObject.options = field.DROPDOWN_OPTIONS.reduce(function (accumulator, enumeration, index) {                        
+                            accumulator[enumeration[0]] = {
+                                value: enumeration[1],
+                                sub_fields: field.DROPDOWN_SUB_FIELDS !== undefined ? field.DROPDOWN_SUB_FIELDS[index].map(parseField) : undefined
+                            };                            
+                            return accumulator;
+                        }, {});    
+                    }
+                    
+                }
+                
+                return fieldObject;
+            });
+            
+            Object.defineProperty(this, 'content_fields', {
+                value: data.CONTENT_FIELDS.reduce(function (accumulator, field) {
+                    var parsed_field = parseField(field);
+                    accumulator[parsed_field.label] = parsed_field;
+                    return accumulator;
+                }, {}),
+                configurable: false,
+                enumerable: false
+            });
+            
+        }
+        
     }
     
     PromenadeDirectMessageEndpoint.prototype = Object.create(ParlayEndpoint.prototype);
     
+    Object.defineProperty(PromenadeDirectMessageEndpoint.prototype, 'commands', {
+        get: function () {
+            return this.content_fields.command;
+        }
+    });
+    
     Object.defineProperty(PromenadeDirectMessageEndpoint.prototype, 'message_types', {
         get: function () {
-            return this.protocol.message_types;    
+            return this.content_fields.message_type;
         }
     });
     
@@ -53,12 +101,16 @@ direct_message_endpoints.factory('PromenadeDirectMessageEndpoint', ['ParlayEndpo
        } 
     });
     
+    PromenadeDirectMessageEndpoint.prototype.matchesId = function (query) {
+        return this.id === query;
+    };
+    
     PromenadeDirectMessageEndpoint.prototype.matchesType = function (query) {
         return angular.lowercase(this.getType()).indexOf(query) > -1;
     };
     
     PromenadeDirectMessageEndpoint.prototype.matchesName = function (query) {
-        return angular.lowercase(this.getName()).indexOf(query) > -1;
+        return angular.lowercase(this.name).indexOf(query) > -1;
     };
     
     PromenadeDirectMessageEndpoint.prototype.matchesQuery = function (query) {
@@ -69,64 +121,27 @@ direct_message_endpoints.factory('PromenadeDirectMessageEndpoint', ['ParlayEndpo
         return this.protocol.getMessageId();
     };
     
-    PromenadeDirectMessageEndpoint.prototype.generateTopics = function (message_type) {
+    PromenadeDirectMessageEndpoint.prototype.generateTopics = function () {
         return {
             'to_device': this.device_id,
             'to_system': this.system_id,
-            'to': this.id,
-            'message_type': this.message_types.find(function (type) {
-                return message_type === type[0];
-            })[1]
+            'to': this.id
         };
-    };
-    
-    PromenadeDirectMessageEndpoint.prototype.generateCommand = function (command) {
-        return {
-            "command": parseInt(this.commands.find(function (item) {
-                            return item.command === command.name;
-                        }).id, 10),
-            'message_info': command.message_info === null ? 0 : command.message_info,
-            "payload": {
-                "type": this.data_types.find(function (type) {
-                            return command.data_buffer_type === type[0];
-                        })[1],
-                "data": command.data_buffer === null ? [] : command.data_buffer
-            }
-        };
-    };
-    
-    PromenadeDirectMessageEndpoint.prototype.generateCommandResponse = function (command) {
-        return {
-            "status": command.status
-        };
-    };
-    
-    PromenadeDirectMessageEndpoint.prototype.generateSystemEvent = function (command) {
-        return {
-            "event": command.event
-        };
-    };
-    
-    PromenadeDirectMessageEndpoint.prototype.generateGenericMessage = function (command) {
-        return {};
     };
     
     PromenadeDirectMessageEndpoint.prototype.generateContents = function (message) {
-        if (message.message_type === 'COMMAND') return this.generateCommand(message);
-        else if (message.message_type === 'COMMAND_RESPONSE') return this.generateCommandResponse(message);
-        else if (message.message_type === 'SYSTEM_EVENT') return this.generateSystemEvent(message);
-        else return this.generateGenericMessage(message);
+        return undefined;
     };
     
     PromenadeDirectMessageEndpoint.prototype.generateMessage = function (message) {
         return {
-            'topics': this.generateTopics(message.message_type),
+            'topics': this.generateTopics(),
             'contents': this.generateContents(message)
         };
     };
     
-    PromenadeDirectMessageEndpoint.prototype.sendMessage = function (command) {
-        return this.protocol.sendCommand(this.generateMessage(command));
+    PromenadeDirectMessageEndpoint.prototype.sendMessage = function (message) {
+        return this.protocol.sendCommand(this.generateMessage(message));
     };
 
     return PromenadeDirectMessageEndpoint;
@@ -143,70 +158,22 @@ direct_message_endpoints.controller('PromenadeDirectMessageEndpointCardLogContro
 
 direct_message_endpoints.controller('PromenadeDirectMessageEndpointCommandController', ['$scope', '$timeout', function ($scope, $timeout) {
     
-    $scope.message_type = 'COMMAND';
-    $scope.message_info = null;
-    $scope.data_buffer_type = null;
-    $scope.data_buffer = null;
-    $scope.command_name = null;
+    $scope.message = {};
     
-    $scope.buffer_help = null;
-    $scope.info_help = null;
-
     $scope.sending = false;
-    $scope.send_button_text = 'Send';
-    
-    $scope.selectMessageType = function (type) {
-        $scope.message_type = type;
-    };
-    
-    $scope.selectCommand = function (command_name) {
-        $scope.command_name = command_name;
-        
-        var command = $scope.endpoint.commands.find(function (command) {
-            return command.name === command_name;
-        });
-        
-        $scope.data_buffer_type = command.data_type;
-        
-        $scope.buffer_help = command.buffer_help === undefined || command.buffer_help === '' ? null : command.buffer_help;
-        $scope.info_help = command.info_help === undefined || command.info_help === '' ? null : command.info_help;
-    };
-    
-    function collectCommand () {
-        return {
-            message_type: $scope.message_type,
-            command: $scope.command,
-            data_buffer_type: $scope.data_buffer_type,
-            message_info: $scope.message_info,
-            data_buffer: $scope.data_buffer
-        };
-    }
-    
-    function collectCommandResponse () {
-        return {
-            message_type: $scope.message_type,
-            status: $scope.status
-        };
-    }
-    
-    function collectSystemEvent () {
-        return {
-            message_type: $scope.message_type,
-            event: $scope.event
-        };
-    }
-    
-    function collectGenericMessage () {
-        return {
-            message_type: $scope.message_type
-        };
-    }
+    $scope.send_button_text = 'Send';    
     
     function collectMessage () {
-        if ($scope.message_type === 'COMMAND') return collectCommand();
-        else if ($scope.message_type === 'COMMAND_RESPONSE') return collectCommandResponse();
-        else if ($scope.message_type === 'SYSTEM_EVENT') return collectSystemEvent();
-        else return collectGenericMessage();
+        
+        var extracted_message = {};
+        
+        for (var field in $scope.message) {
+            if (angular.isObject($scope.message[field])) extracted_message[field] = $scope.message[field].value;
+            else extracted_message[field] = $scope.message[field];
+        }
+        
+        return extracted_message;
+        
     }
     
     $scope.send = function () {
@@ -251,3 +218,16 @@ direct_message_endpoints.directive('promenadeDirectMessageEndpointCardLog', func
         controller: 'PromenadeDirectMessageEndpointCardLogController'
     };
 });
+
+direct_message_endpoints.directive('promenadeDirectMessageEndpointCardCommandContainer', ['RecursionHelper', function (RecursionHelper) {
+    return {
+        scope: {
+            message: "=",
+            fields: "="
+        },
+        templateUrl: '../vendor_components/promenade/endpoints/directives/promenade-direct-message-endpoint-card-command-container.html',
+        compile: function (element) {
+            return RecursionHelper.compile(element);
+        }
+    };
+}]);

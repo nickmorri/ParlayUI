@@ -4,7 +4,7 @@
                      
         <label>{{field.label}}</label>
                         
-        <md-select ng-if="field.input === 'DROPDOWN'" name="{{field.msg_key}}" ng-model="message[field.msg_key]" required>
+        <md-select ng-if="field.input === 'DROPDOWN'" name="{{field.msg_key}}" ng-model="message[field.msg_key]">
             <span ng-if="!field.options.length">
                 <md-option ng-repeat="(key, option) in field.options" ng-value="option">{{key}}</md-option>
             </span>
@@ -13,11 +13,11 @@
             </span>            
         </md-select>
         
-        <input ng-if="field.input === 'NUMBER'" name="{{field.msg_key}}" ng-model="message[field.msg_key]" type="number" required>
+        <input ng-if="field.input === 'NUMBER'" name="{{field.msg_key}}" ng-model="message[field.msg_key]" type="number">
         
-        <input ng-if="field.input === 'STRING'" name="{{field.msg_key}}" ng-model="message[field.msg_key]" required>
+        <input ng-if="field.input === 'STRING'" name="{{field.msg_key}}" ng-model="message[field.msg_key]">
         
-        <textarea ng-if="field.input === 'STRINGS'" name="{{field.msg_key}}" ng-model="message[field.msg_key]" columns="1" required></textarea>
+        <textarea ng-if="field.input === 'NUMBERS' || field.input === 'STRINGS'" name="{{field.msg_key}}" ng-model="message[field.msg_key]" columns="1"></textarea>
         
         <div class="errors" ng-messages="commandForm.field.msg_key.$error" ng-if="commandForm.$dirty">
             <div ng-message="required">{{field.msg_key}} is required</div>

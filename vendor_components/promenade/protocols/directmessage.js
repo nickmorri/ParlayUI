@@ -1,13 +1,11 @@
-var direct_message = angular.module('promenade.protocols.directmessage', ['parlay.protocols', 'promenade.endpoints.directmessage']);
+var direct_message = angular.module('promenade.protocols.directmessage', ['parlay.protocols', 'promenade.endpoints.standardendpoint']);
 
-direct_message.factory('PromenadeDirectMessageProtocol', ['ParlayProtocol', 'PromenadeDirectMessageEndpoint', function (ParlayProtocol, PromenadeDirectMessageEndpoint) {
+direct_message.factory('PromenadeDirectMessageProtocol', ['ParlayProtocol', 'PromenadeStandardEndpoint', function (ParlayProtocol, PromenadeStandardEndpoint) {
     
     function PromenadeDirectMessageProtocol(configuration) {
         'use strict';
         ParlayProtocol.call(this, configuration);
         this.current_message_id = 200;
-        this.from_device = 0x01;
-        this.from_system = 0xf2;
         this.from = 0xf201;
     }
     
@@ -28,29 +26,23 @@ direct_message.factory('PromenadeDirectMessageProtocol', ['ParlayProtocol', 'Pro
     
     PromenadeDirectMessageProtocol.prototype.buildMessageTopics = function (message) {
         var new_message = angular.copy(message);
-        new_message.topics.message_id = this.consumeMessageId();
-        new_message.topics.from_device = this.from_device;
-        new_message.topics.from_system = this.from_system;
-        new_message.topics.from = this.from;
+        new_message.topics.MSG_ID = this.consumeMessageId();
+        new_message.topics.FROM = this.from;
         return new_message;
     };
     
     PromenadeDirectMessageProtocol.prototype.buildResponseTopics = function (message) {
         return {
-            from: message.topics.to,
-            from_system: message.topics.to_system,
-            message_type: 2,
-            message_type_name: 'COMMAND_RESPONSE',
-            to: message.topics.from,
-            to_system: message.topics.from_system,
-            message_id: message.topics.message_id
+            FROM: message.topics.TO,
+            TO: message.topics.FROM,
+            MSG_ID: message.topics.MSG_ID
         };
     };
     
     PromenadeDirectMessageProtocol.prototype.buildSubscriptionTopics = function () {
         return {
             topics: {
-                to_system: this.from_system
+                TO: this.from
             }
         };
     };
@@ -69,7 +61,7 @@ direct_message.factory('PromenadeDirectMessageProtocol', ['ParlayProtocol', 'Pro
         ParlayProtocol.prototype.addDiscoveryInfo.call(this, info);
         
         this.available_endpoints = info.CHILDREN.map(function (endpoint) {
-            return new PromenadeDirectMessageEndpoint(endpoint, this);
+            return new PromenadeStandardEndpoint(endpoint, this);
         }, this);
     };
     

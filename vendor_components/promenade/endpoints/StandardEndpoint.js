@@ -1,8 +1,8 @@
-var direct_message_endpoints = angular.module('promenade.endpoints.directmessage', ['parlay.endpoints', 'RecursionHelper']);
+var standard_endpoint = angular.module('promenade.endpoints.standardendpoint', ['parlay.endpoints', 'RecursionHelper']);
 
-direct_message_endpoints.factory('PromenadeDirectMessageEndpoint', ['ParlayEndpoint', function (ParlayEndpoint) {
+standard_endpoint.factory('PromenadeStandardEndpoint', ['ParlayEndpoint', function (ParlayEndpoint) {
     
-    function PromenadeDirectMessageEndpoint(data, protocol) {
+    function PromenadeStandardEndpoint(data, protocol) {
         ParlayEndpoint.call(this, data, protocol);
         
         Object.defineProperty(this, 'id', {
@@ -12,10 +12,10 @@ direct_message_endpoints.factory('PromenadeDirectMessageEndpoint', ['ParlayEndpo
             enumerable: true
         });
         
-        this.type = 'DirectMessageEndpoint';
+        this.type = 'StandardEndpoint';
         
-        this.directives.toolbar.push('promenadeDirectMessageEndpointCardToolbar');
-        this.directives.tabs.push('promenadeDirectMessageEndpointCardLog', 'promenadeDirectMessageEndpointCardCommands');
+        this.directives.toolbar.push('promenadeStandardEndpointCardToolbar');
+        this.directives.tabs.push('promenadeStandardEndpointCardLog', 'promenadeStandardEndpointCardCommands');
           
         if (data.CONTENT_FIELDS) {
         
@@ -61,27 +61,27 @@ direct_message_endpoints.factory('PromenadeDirectMessageEndpoint', ['ParlayEndpo
         
     }
     
-    PromenadeDirectMessageEndpoint.prototype = Object.create(ParlayEndpoint.prototype);
+    PromenadeStandardEndpoint.prototype = Object.create(ParlayEndpoint.prototype);
     
-    Object.defineProperty(PromenadeDirectMessageEndpoint.prototype, 'commands', {
+    Object.defineProperty(PromenadeStandardEndpoint.prototype, 'commands', {
         get: function () {
             return this.content_fields.command;
         }
     });
     
-    Object.defineProperty(PromenadeDirectMessageEndpoint.prototype, 'message_types', {
+    Object.defineProperty(PromenadeStandardEndpoint.prototype, 'message_types', {
         get: function () {
             return this.content_fields.message_type;
         }
     });
     
-    Object.defineProperty(PromenadeDirectMessageEndpoint.prototype, 'data_types', {
+    Object.defineProperty(PromenadeStandardEndpoint.prototype, 'data_types', {
         get: function () {
             return this.protocol.data_types;
         }
     });
     
-    Object.defineProperty(PromenadeDirectMessageEndpoint.prototype, 'log', {
+    Object.defineProperty(PromenadeStandardEndpoint.prototype, 'log', {
        get: function () {
            return this.protocol.getLog().filter(function (message) {
                 return message.topics.FROM === this.id;
@@ -89,34 +89,34 @@ direct_message_endpoints.factory('PromenadeDirectMessageEndpoint', ['ParlayEndpo
        } 
     });
     
-    PromenadeDirectMessageEndpoint.prototype.matchesId = function (query) {
+    PromenadeStandardEndpoint.prototype.matchesId = function (query) {
         return this.id === query;
     };
     
-    PromenadeDirectMessageEndpoint.prototype.matchesType = function (query) {
+    PromenadeStandardEndpoint.prototype.matchesType = function (query) {
         return angular.lowercase(this.getType()).indexOf(query) > -1;
     };
     
-    PromenadeDirectMessageEndpoint.prototype.matchesName = function (query) {
+    PromenadeStandardEndpoint.prototype.matchesName = function (query) {
         return angular.lowercase(this.name).indexOf(query) > -1;
     };
     
-    PromenadeDirectMessageEndpoint.prototype.matchesQuery = function (query) {
+    PromenadeStandardEndpoint.prototype.matchesQuery = function (query) {
         return this.matchesType(query) || this.matchesId(query) || this.matchesName(query);
     };
     
-    PromenadeDirectMessageEndpoint.prototype.getMessageId = function () {
+    PromenadeStandardEndpoint.prototype.getMessageId = function () {
         return this.protocol.getMessageId();
     };
     
-    PromenadeDirectMessageEndpoint.prototype.generateTopics = function () {
+    PromenadeStandardEndpoint.prototype.generateTopics = function () {
         return {
             'TO': this.id,
             'MSG_TYPE': 'COMMAND'
         };
     };
     
-    PromenadeDirectMessageEndpoint.prototype.generateContents = function (message) {
+    PromenadeStandardEndpoint.prototype.generateContents = function (message) {
         
         var contents = {
             COMMAND: message.command
@@ -131,22 +131,22 @@ direct_message_endpoints.factory('PromenadeDirectMessageEndpoint', ['ParlayEndpo
         return contents;
     };
     
-    PromenadeDirectMessageEndpoint.prototype.generateMessage = function (message) {
+    PromenadeStandardEndpoint.prototype.generateMessage = function (message) {
         return {
             'topics': this.generateTopics(),
             'contents': this.generateContents(message)
         };
     };
     
-    PromenadeDirectMessageEndpoint.prototype.sendMessage = function (message) {
+    PromenadeStandardEndpoint.prototype.sendMessage = function (message) {
         return this.protocol.sendCommand(this.generateMessage(message));
     };
 
-    return PromenadeDirectMessageEndpoint;
+    return PromenadeStandardEndpoint;
         
 }]);
 
-direct_message_endpoints.controller('PromenadeDirectMessageEndpointCardLogController', ['$scope', function ($scope) {
+standard_endpoint.controller('PromenadeStandardEndpointCardLogController', ['$scope', function ($scope) {
     
     $scope.getLog = function () {
         return $scope.endpoint.log;
@@ -154,7 +154,7 @@ direct_message_endpoints.controller('PromenadeDirectMessageEndpointCardLogContro
     
 }]);
 
-direct_message_endpoints.controller('PromenadeDirectMessageEndpointCommandController', ['$scope', '$timeout', function ($scope, $timeout) {
+standard_endpoint.controller('PromenadeStandardEndpointCommandController', ['$scope', '$timeout', function ($scope, $timeout) {
     
     $scope.sending = false;
     $scope.message = {};
@@ -185,42 +185,42 @@ direct_message_endpoints.controller('PromenadeDirectMessageEndpointCommandContro
     
 }]);
 
-direct_message_endpoints.directive('promenadeDirectMessageEndpointCardCommands', function () {
+standard_endpoint.directive('promenadeStandardEndpointCardCommands', function () {
     return {
         scope: {
             endpoint: "="
         },
-        templateUrl: '../vendor_components/promenade/endpoints/directives/promenade-direct-message-endpoint-card-commands.html',
-        controller: 'PromenadeDirectMessageEndpointCommandController'
+        templateUrl: '../vendor_components/promenade/endpoints/directives/promenade-standard-endpoint-card-commands.html',
+        controller: 'PromenadeStandardEndpointCommandController'
     };
 });
 
-direct_message_endpoints.directive('promenadeDirectMessageEndpointCardToolbar', function () {
+standard_endpoint.directive('promenadeStandardEndpointCardToolbar', function () {
     return {
         scope: {
             endpoint: "="
         },
-        templateUrl: '../vendor_components/promenade/endpoints/directives/promenade-direct-message-endpoint-card-toolbar.html'
+        templateUrl: '../vendor_components/promenade/endpoints/directives/promenade-standard-endpoint-card-toolbar.html'
     };
 });
 
-direct_message_endpoints.directive('promenadeDirectMessageEndpointCardLog', function () {
+standard_endpoint.directive('promenadeStandardEndpointCardLog', function () {
     return {
         scope: {
             endpoint: "="
         },
-        templateUrl: '../vendor_components/promenade/endpoints/directives/promenade-direct-message-endpoint-card-log.html',
-        controller: 'PromenadeDirectMessageEndpointCardLogController'
+        templateUrl: '../vendor_components/promenade/endpoints/directives/promenade-standard-endpoint-card-log.html',
+        controller: 'PromenadeStandardEndpointCardLogController'
     };
 });
 
-direct_message_endpoints.directive('promenadeDirectMessageEndpointCardCommandContainer', ['RecursionHelper', function (RecursionHelper) {
+standard_endpoint.directive('promenadeStandardEndpointCardCommandContainer', ['RecursionHelper', function (RecursionHelper) {
     return {
         scope: {
             message: "=",
             fields: "="
         },
-        templateUrl: '../vendor_components/promenade/endpoints/directives/promenade-direct-message-endpoint-card-command-container.html',
+        templateUrl: '../vendor_components/promenade/endpoints/directives/promenade-standard-endpoint-card-command-container.html',
         compile: function (element) {
             return RecursionHelper.compile(element);
         }

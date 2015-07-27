@@ -23,7 +23,10 @@ standard_endpoint.factory('PromenadeStandardEndpoint', ['ParlayEndpoint', functi
                 var fieldObject = {
                     msg_key: field.MSG_KEY,
                     input: field.INPUT,
-                    label: field.LABEL !== undefined ? field.LABEL : field.MSG_KEY
+                    label: field.LABEL !== undefined ? field.LABEL : field.MSG_KEY,
+                    required: field.REQUIRED !== undefined ? field.REQUIRED : false,
+                    default: field.DEFAULT !== undefined ? field.DEFAULT : undefined,
+                    hidden: field.HIDDEN !== undefined ? field.HIDDEN : false
                 };
                 
                 if (field.DROPDOWN_OPTIONS !== undefined) {
@@ -223,6 +226,13 @@ standard_endpoint.directive('promenadeStandardEndpointCardCommandContainer', ['R
         templateUrl: '../vendor_components/promenade/endpoints/directives/promenade-standard-endpoint-card-command-container.html',
         compile: function (element) {
             return RecursionHelper.compile(element);
+        },
+        controller: function ($scope) {
+            $scope.$watchCollection('fields', function (newV, oldV, $scope) {
+                for (var field in newV) {
+                    $scope.message[newV[field].msg_key] = newV[field].default;
+                }                 
+            });
         }
     };
 }]);

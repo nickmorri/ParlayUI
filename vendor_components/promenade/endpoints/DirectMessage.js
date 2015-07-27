@@ -81,22 +81,10 @@ direct_message_endpoints.factory('PromenadeDirectMessageEndpoint', ['ParlayEndpo
         }
     });
     
-    Object.defineProperty(PromenadeDirectMessageEndpoint.prototype, 'system_id', {
-        get: function () {
-            return this.id >> 8;    
-        }
-    });
-    
-    Object.defineProperty(PromenadeDirectMessageEndpoint.prototype, 'device_id', {
-        get: function () {
-            return this.id & 0xff;
-        }
-    });
-    
     Object.defineProperty(PromenadeDirectMessageEndpoint.prototype, 'log', {
        get: function () {
            return this.protocol.getLog().filter(function (message) {
-                return message.topics.from === this.id;
+                return message.topics.FROM === this.id;
             }, this);
        } 
     });
@@ -123,14 +111,24 @@ direct_message_endpoints.factory('PromenadeDirectMessageEndpoint', ['ParlayEndpo
     
     PromenadeDirectMessageEndpoint.prototype.generateTopics = function () {
         return {
-            'to_device': this.device_id,
-            'to_system': this.system_id,
-            'to': this.id
+            'TO': this.id,
+            'MSG_TYPE': 'COMMAND'
         };
     };
     
     PromenadeDirectMessageEndpoint.prototype.generateContents = function (message) {
-        return undefined;
+        
+        var contents = {
+            COMMAND: message.command
+        };
+        
+        Object.keys(message).forEach(function (key) {
+            if (!contents.hasOwnProperty(key.toUpperCase())) {
+                contents[key] = message[key];
+            }
+        });
+        
+        return contents;
     };
     
     PromenadeDirectMessageEndpoint.prototype.generateMessage = function (message) {

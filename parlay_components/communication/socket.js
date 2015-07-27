@@ -152,6 +152,7 @@ socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', func
             
             return currentString + '"' + current + '":' + Private.encodeTopics(topics[current]);
         }, "{") + "}";
+        else if (topics === undefined) return null;
         else return topics.toString();
     };
     

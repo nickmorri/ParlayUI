@@ -104,19 +104,24 @@ endpoints.controller('EndpointController', ['$scope', '$mdToast', '$mdDialog', '
         EndpointManager.requestDiscovery().then(function (result) {
             $scope.isDiscovering = false;
             
-            var content_string;
-            if (result.length === 0) {
-                content_string = 'Successfully discovered 0 devices. Check protocol connections?';
-            }
-            else if (result.length === 1) {
-                content_string = 'Successfully discovered ' + result[0].name + '.';
-            }
-            else {
-                content_string = 'Successfully discovered ' + result.length + ' devices.';
+            function buildToastMessage(result) {
+                var content_string = 'Successfully discovered ';
+                        
+                if (result.length === 1) {
+                    content_string += result[0].NAME + '.';
+                }
+                else {
+                    content_string += result.length + ' devices.';
+                }
+                
+                if (result.length === 0) {
+                    content_string += ' Check protocol connections?';
+                }
+                return content_string;
             }
             
             $mdToast.show($mdToast.simple()
-                .content(content_string)
+                .content(buildToastMessage(result))
                 .position('bottom left'));
         });
     };

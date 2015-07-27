@@ -158,10 +158,8 @@ direct_message_endpoints.controller('PromenadeDirectMessageEndpointCardLogContro
 
 direct_message_endpoints.controller('PromenadeDirectMessageEndpointCommandController', ['$scope', '$timeout', function ($scope, $timeout) {
     
-    $scope.message = {};
-    
     $scope.sending = false;
-    $scope.send_button_text = 'Send';    
+    $scope.message = {};
     
     function collectMessage () {
         
@@ -177,12 +175,11 @@ direct_message_endpoints.controller('PromenadeDirectMessageEndpointCommandContro
     }
     
     $scope.send = function () {
+        $scope.sending = true;
         $scope.endpoint.sendMessage(collectMessage()).then(function (response) {
-            $scope.send_button_text = 'Sent! [' + $scope.endpoint.getMessageId() + ']';
             $timeout(function () {
-                $scope.send_button_text = 'Send';
-            }, 1000);
-            $scope.sending = false;
+                $scope.sending = false;
+            }, 500);            
         }).catch(function (response) {
             console.warn(response);
         });

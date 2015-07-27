@@ -93,37 +93,12 @@ endpoints.factory('EndpointManager', ['PromenadeBroker', 'ProtocolManager', func
 
 endpoints.controller('EndpointController', ['$scope', '$mdToast', '$mdDialog', 'EndpointManager', function ($scope, $mdToast, $mdDialog, EndpointManager) {
     
-    $scope.isDiscovering = false;
-    
     $scope.filterEndpoints = function () {
         return EndpointManager.getActiveEndpoints();
     };
     
     $scope.requestDiscovery = function () {
-        $scope.isDiscovering = true;
-        EndpointManager.requestDiscovery().then(function (result) {
-            $scope.isDiscovering = false;
-            
-            function buildToastMessage(result) {
-                var content_string = 'Successfully discovered ';
-                        
-                if (result.length === 1) {
-                    content_string += result[0].NAME + '.';
-                }
-                else {
-                    content_string += result.length + ' devices.';
-                }
-                
-                if (result.length === 0) {
-                    content_string += ' Check protocol connections?';
-                }
-                return content_string;
-            }
-            
-            $mdToast.show($mdToast.simple()
-                .content(buildToastMessage(result))
-                .position('bottom left'));
-        });
+        EndpointManager.requestDiscovery();
     };
         
 }]);

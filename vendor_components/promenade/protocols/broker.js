@@ -1,6 +1,6 @@
 var broker = angular.module('promenade.broker', ['parlay.socket', 'ngMaterial']);
 
-broker.factory('PromenadeBroker', ['ParlaySocket', '$q', '$mdToast', function (ParlaySocket, $q, $mdToast) {
+broker.factory('PromenadeBroker', ['ParlaySocket', '$q', '$mdToast', '$timeout', function (ParlaySocket, $q, $mdToast, $timeout) {
     var Public = {};
     
     var Private = {
@@ -78,9 +78,46 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', '$mdToast', function (P
      * @returns {$q.defer.promise} Resolve when response is received with available endpoints.
      */
     Public.requestDiscovery = function (is_forced) {
+        
+        // Launches $mdToast discovery progress after 100 ms
+        var toast_progress = $timeout(function () {
+            $mdToast.show({
+                templateUrl: '../vendor_components/promenade/protocols/directives/promenade-broker-toast-progress.html',
+                hideDelay: false
+            });
+        }, 100);
+        
         return Public.sendRequest('get_discovery', {'force': is_forced}).then(function (contents) {
+            
+            // Cancels $timeout callback execution. Better UX for immediate responses from Broker.
+            // If $timeout has already executed we should hide the $mdToast now.
+            if (!$timeout.cancel(toast_progress)) {
+                $mdToast.hide();    
+            }
+            
+            function buildToastMessage(result) {
+                var content_string = 'Discovered ';
+                        
+                if (result.length === 1) {
+                    content_string += result[0].NAME + '.';
+                }
+                else {
+                    content_string += result.length + ' devices.';
+                }
+                
+                if (result.length === 0) {
+                    content_string += ' Verify connections.';
+                }
+                return content_string;
+            }
+            
+            $mdToast.show($mdToast.simple()
+                .content(buildToastMessage(contents.discovery))
+                .position('bottom left'));
+                
             return contents.discovery;
         });
+        
     };
     
     /**

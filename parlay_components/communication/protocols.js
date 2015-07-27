@@ -217,6 +217,13 @@ protocols.factory('ProtocolManager', ['$injector', 'PromenadeBroker', '$q', func
     };
     
     /**
+     * 
+     */
+    Public.requestDiscovery = function () {
+        return PromenadeBroker.requestDiscovery(true);
+    };
+    
+    /**
      * Requests available protocols.
      * @returns {$q.defer.promise} Resolved when request response is recieved.
      */
@@ -426,8 +433,11 @@ protocols.controller('ProtocolConfigurationController', ['$scope', '$mdDialog', 
                         }, {})
         }).then(function (response) {
             $mdToast.show($mdToast.simple()
-                .content('Connected successfully to ' + response.name + '.')
-                .position('bottom left').hideDelay(3000));
+                .content('Connected to ' + response.name + '.')
+                .action('Discover')
+                .position('bottom left').hideDelay(3000)).then(function (result) {
+                    if (result === 'ok') ProtocolManager.requestDiscovery(true);
+                });
             $mdDialog.hide(response);
         }).catch(function (response) {
             $scope.connecting = false;
@@ -490,7 +500,7 @@ protocols.controller('ParlayConnectionListController', ['$scope', '$mdDialog', '
     $scope.closeProtocol = function (protocol) {
         ProtocolManager.closeProtocol(protocol).then(function (result) {
             $mdToast.show($mdToast.simple()
-                .content('Successfully closed ' + protocol.getName() + '.'));
+                .content('Closed ' + protocol.getName() + '.'));
         }).catch(function (result) {
             $mdToast.show($mdToast.simple()
                 .content(result.status));  

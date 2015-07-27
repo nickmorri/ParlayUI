@@ -1,5 +1,5 @@
 {
 	"protocols": "vendor_components/promenade/protocols/*.js",
-	"directives": "vendor_components/promenade/endpoints/directives/*.html",
+	"directives": "vendor_components/promenade/**/directives/*.html",
 	"endpoints": "vendor_components/promenade/endpoints/*.js"
 }

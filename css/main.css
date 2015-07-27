@@ -14,3 +14,7 @@ md-list-item > a {
 .capitalize {
     text-transform: capitalize;
 }
+
+.discovery-progress .md-container {
+    top: 0 !important;
+} 

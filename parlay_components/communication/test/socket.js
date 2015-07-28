@@ -1,5 +1,5 @@
 (function () {
-    "use strict";
+    'use strict';
     
     describe('parlay.socket', function() {
     
@@ -44,10 +44,6 @@
                     messageInterval: 1
                 });
     		}));
-    		
-    		afterEach(function () {
-        		ParlaySocketService.close();
-    		});
     		
     		describe('initialization', function () {
         		
@@ -349,8 +345,7 @@
                     expect(ParlaySocketService._private.encodeTopics(Boolean(true))).toBe('true');
                 });
                 
-            });
-            
+            });            
             
         		
         });

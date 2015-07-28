@@ -1,10 +1,10 @@
 <span ng-repeat="field in fields">
 
-    <md-input-container>
+    <md-input-container md-is-error="commandForm.field.msg_key.$invalid">
                      
         <label>{{field.label}}</label>
                         
-        <md-select ng-if="field.input === 'DROPDOWN'" name="{{field.msg_key}}" ng-model="message[field.msg_key]">
+        <md-select ng-if="field.input === 'DROPDOWN'" name="{{field.msg_key}}" ng-model="message[field.msg_key]" ng-required="field.required">
             <span ng-if="!field.options.length">
                 <md-option ng-repeat="(key, option) in field.options" ng-value="option">{{key}}</md-option>
             </span>
@@ -13,11 +13,11 @@
             </span>            
         </md-select>
         
-        <input ng-if="field.input === 'NUMBER'" name="{{field.msg_key}}" ng-model="message[field.msg_key]" type="number">
+        <input ng-if="field.input === 'NUMBER'" name="{{field.msg_key}}" ng-model="message[field.msg_key]" type="number" ng-required="field.required">
         
         <input ng-if="field.input === 'STRING'" name="{{field.msg_key}}" ng-model="message[field.msg_key]">
         
-        <textarea ng-if="field.input === 'NUMBERS' || field.input === 'STRINGS'" name="{{field.msg_key}}" ng-model="message[field.msg_key]" columns="1"></textarea>
+        <textarea ng-if="field.input === 'NUMBERS' || field.input === 'STRINGS'" name="{{field.msg_key}}" ng-model="message[field.msg_key]" columns="1" ng-required="field.required"></textarea>
         
         <div class="errors" ng-messages="commandForm.field.msg_key.$error" ng-if="commandForm.$dirty">
             <div ng-message="required">{{field.msg_key}} is required</div>
@@ -25,6 +25,6 @@
         
     </md-input-container>
     
-    <promenade-standard-endpoint-card-command-container ng-if="message[field.msg_key].sub_fields" message="message" fields="message[field.msg_key].sub_fields" flex></promenade-standard-endpoint-card-command-container>
+    <promenade-standard-endpoint-card-command-container ng-if="message[field.msg_key].sub_fields" commandForm="commandForm" message="message" fields="message[field.msg_key].sub_fields" flex></promenade-standard-endpoint-card-command-container>
 
 </span>

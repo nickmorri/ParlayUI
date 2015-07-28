@@ -221,7 +221,8 @@ standard_endpoint.directive('promenadeStandardEndpointCardCommandContainer', ['R
     return {
         scope: {
             message: "=",
-            fields: "="
+            fields: "=",
+            commandForm: "="
         },
         templateUrl: '../vendor_components/promenade/endpoints/directives/promenade-standard-endpoint-card-command-container.html',
         compile: function (element) {

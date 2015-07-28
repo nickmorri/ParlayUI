@@ -35,9 +35,8 @@ protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'Promenad
             return endpoint === suspect;
         });
         
-        if (index > -1) this.available_endpoints.splice(index, 1);
-        
-        this.active_endpoints.push(endpoint);
+        if (index > -1) this.active_endpoints.push(this.available_endpoints.splice(index, 1)[0]);
+        else throw endpoint.name + ' does not belong to ' + this.getName();
     };
     
     ParlayProtocol.prototype.getAvailableEndpoints = function () {
@@ -107,13 +106,11 @@ protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'Promenad
     
     ParlayProtocol.prototype.buildFieldMethods = function (keys) {
         keys.forEach(function (key) {
+            /* istanbul ignore else  */
             if (!this[key]) {
                 Object.defineProperty(Object.getPrototypeOf(this), key, {
                     get: function() {
                         return this.fields[key];
-                    },
-                    set: function(value) {
-                        this.fields[key] = value;
                     }
                 });    
             }            

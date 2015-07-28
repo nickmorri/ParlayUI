@@ -253,8 +253,38 @@
                     expect(protocol.getAvailableEndpoints().length).toBe(0);
                     expect(protocol.getDynamicFieldKeys().length).toBe(0);
                     protocol.addDiscoveryInfo(sample_discovery);
+                    expect(protocol.NAME).toBe(sample_discovery.NAME);
                     expect(protocol.getAvailableEndpoints().length).toBe(50);
                     expect(protocol.getDynamicFieldKeys().length).toBe(3);
+                });
+                
+                it('endpoint activation', function () {
+                    protocol.addDiscoveryInfo(sample_discovery);
+                    expect(protocol.getActiveEndpoints().length).toBe(0);
+                    var num_available_endpoints = protocol.getAvailableEndpoints().length;
+                    
+                    var test_endpoint = protocol.getAvailableEndpoints()[1];
+                    
+                    protocol.activateEndpoint(test_endpoint);
+                    expect(protocol.getActiveEndpoints().length).toBe(1);
+                    expect(protocol.getActiveEndpoints()[0]).toEqual(test_endpoint);
+                    expect(protocol.getAvailableEndpoints().length).toBe(num_available_endpoints - 1);
+                });
+                
+                it('endpoint activation attempt', function () {
+                    protocol.addDiscoveryInfo(sample_discovery);
+                    expect(protocol.getActiveEndpoints().length).toBe(0);
+                    var num_available_endpoints = protocol.getAvailableEndpoints().length;
+                    
+                    var test_endpoint = sample_discovery.CHILDREN[1];
+                    
+                    expect(function () {
+                        protocol.activateEndpoint(test_endpoint);
+                    }).toThrow();
+                    
+                    expect(protocol.getActiveEndpoints().length).toBe(0);
+                    expect(protocol.getActiveEndpoints()[0]).not.toEqual(test_endpoint);
+                    expect(protocol.getAvailableEndpoints().length).toBe(num_available_endpoints);
                 });
                 
             });

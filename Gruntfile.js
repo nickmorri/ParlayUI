@@ -154,8 +154,9 @@ module.exports = function (grunt) {
       },
       'coverage': {
         'path': function () {
-          var reports = grunt.file.expand('<%= meta.coverage_destination %>/PhantomJS*/index.html');
-          return reports[reports.length - 1].toString();
+          	var reports = grunt.file.expand('coverage/PhantomJS*/index.html');
+          	console.log(reports);
+          	return reports[reports.length - 1].toString();
         }
       }
     },

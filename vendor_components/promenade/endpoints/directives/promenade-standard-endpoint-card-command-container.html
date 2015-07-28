@@ -1,6 +1,6 @@
 <span ng-repeat="field in fields">
 
-    <md-input-container md-is-error="commandForm.field.msg_key.$invalid">
+    <md-input-container md-is-error="commandform[field.msg_key].$invalid">
                      
         <label>{{field.label}}</label>
                         
@@ -19,12 +19,12 @@
         
         <textarea ng-if="field.input === 'NUMBERS' || field.input === 'STRINGS'" name="{{field.msg_key}}" ng-model="message[field.msg_key]" columns="1" ng-required="field.required"></textarea>
         
-        <div class="errors" ng-messages="commandForm.field.msg_key.$error" ng-if="commandForm.$dirty">
+        <div class="errors" ng-messages="commandform[field.msg_key].$error" ng-if="commandform[field.msg_key]">
             <div ng-message="required">{{field.msg_key}} is required</div>
         </div>
         
     </md-input-container>
     
-    <promenade-standard-endpoint-card-command-container ng-if="message[field.msg_key].sub_fields" commandForm="commandForm" message="message" fields="message[field.msg_key].sub_fields" flex></promenade-standard-endpoint-card-command-container>
+    <promenade-standard-endpoint-card-command-container ng-if="message[field.msg_key].sub_fields" commandform="commandform" message="message" fields="message[field.msg_key].sub_fields" flex></promenade-standard-endpoint-card-command-container>
 
 </span>

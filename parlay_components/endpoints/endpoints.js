@@ -106,12 +106,11 @@ endpoints.controller('EndpointController', ['$scope', '$mdToast', '$mdDialog', '
 endpoints.controller('ParlayEndpointSearchController', ['$scope', 'EndpointManager', function ($scope, EndpointManager) {
             
     $scope.searching = false;
-    $scope.search_icon = 'search';
     $scope.selected_item = null;
     
     $scope.selectEndpoint = function (endpoint) {
         // Change is detected after we set endpoint to null.
-        if (endpoint === null) return;
+        if (endpoint === null || endpoint === undefined) return;
         EndpointManager.activateEndpoint(endpoint);
         $scope.selected_item = null;
         $scope.search_text = null;
@@ -122,13 +121,7 @@ endpoints.controller('ParlayEndpointSearchController', ['$scope', 'EndpointManag
      */
     $scope.toggleSearch = function () {
         $scope.searching = !$scope.searching;
-        if (!$scope.searching) {
-            $scope.search_text = null;
-            $scope.search_icon = 'search';
-        }
-        else {
-            $scope.search_icon = 'close';
-        }
+        if (!$scope.searching) $scope.search_text = null;
     };
 
     /**
@@ -156,7 +149,12 @@ endpoints.directive('parlayEndpointSearch', function () {
     return {
         scope: {},
         templateUrl: '../parlay_components/endpoints/directives/parlay-endpoint-search.html',
-        controller: 'ParlayEndpointSearchController'
+        controller: 'ParlayEndpointSearchController',
+        link: function ($scope, element, attributes) {
+            $scope.$watch('searching', function (newValue, oldValue, $scope) {
+                $scope.search_icon = $scope.searching ? 'close' : 'search'; 
+            });
+        }
     };
 });
 

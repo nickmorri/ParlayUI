@@ -2,8 +2,8 @@ var protocols = angular.module('parlay.protocols', ['promenade.broker', 'ngMater
 
 protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'PromenadeBroker', '$q', function (ParlaySocket, ParlayEndpoint, PromenadeBroker, $q) {
 
-    function NotImplementedError(method) {
-        console.warn(method + ' is not implemented for ' + this.getName());
+    function NotImplementedError(method, name) {
+        console.warn(method + ' is not implemented for ' + name);
     }
     
     function ParlayProtocol(configuration) {
@@ -16,6 +16,8 @@ protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'Promenad
         this.log = [];        
         this.subscription_listener_dereg = null;        
         this.on_message_callbacks = [];
+        
+        this.endpoint_factory = ParlayEndpoint;
         
         this.fields = {};
     }
@@ -69,8 +71,8 @@ protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'Promenad
     
     ParlayProtocol.prototype.unsubscribe = function () {
         PromenadeBroker.sendUnsubscribe(this.buildSubscriptionTopics()).then(function (response) {
-            this.afterClose();
-        });
+            this.onClose();
+        }.bind(this));
     };
     
     ParlayProtocol.prototype.hasSubscription = function() {
@@ -91,7 +93,7 @@ protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'Promenad
     };
     
     ParlayProtocol.prototype.onOpen = function () {
-        throw NotImplementedError('onOpen');
+        NotImplementedError('onOpen', this.getName());
     };
     
     ParlayProtocol.prototype.onClose = function () {
@@ -132,13 +134,20 @@ protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'Promenad
         return Object.keys(this.fields);
     };
     
+    ParlayProtocol.prototype.addEndpoints = function (endpoints) {
+        this.available_endpoints = endpoints.map(function (endpoint) {
+            return new this.endpoint_factory(endpoint, this);
+        }, this);
+    };
+    
     ParlayProtocol.prototype.addDiscoveryInfo = function (info) {
         this.buildFields(info);
         this.buildFieldMethods(Object.keys(info));
+        this.addEndpoints(info.CHILDREN);
     };
     
     ParlayProtocol.prototype.buildSubscriptionTopics = function () {
-        throw NotImplementedError('buildSubscriptionTopics');  
+        NotImplementedError('buildSubscriptionTopics', this.getName());
     };  
     
     return ParlayProtocol;

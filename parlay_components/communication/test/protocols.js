@@ -1,5 +1,5 @@
 (function () {
-    "use strict";
+    'use strict';
 
     angular.module('mock.promenade.broker', [])
         .factory('PromenadeBroker', ['$q', function($q) {
@@ -35,6 +35,18 @@
                 return [];
             };
             
+            Public.sendSubscribe = function () {
+                return $q(function (resolve, reject) {
+                    resolve(true);
+                });
+            };
+            
+            Public.sendUnsubscribe = function () {
+                return $q(function (resolve, reject) {
+                    resolve(true);
+                });
+            };
+            
             return Public;
         }]);
         
@@ -62,18 +74,206 @@
         return Public;
     }]);
     
-    xdescribe('parlay.protocols', function() {
+    angular.module('mock.parlay.socket', []).factory('ParlaySocket', [function () {
+        var Public = {};
+        
+        Public.onMessage = function () {
+            return function () {};
+        };
+        
+        Public.sendMessage = function (topics, contents, response_topics, response_callback) {
+            if (contents === null) {
+                response_callback({status: -1});
+            }
+            else {
+                contents.status = 0;
+                response_callback(contents);
+            }
+        };
+        
+        return Public;
+    }]);
+    
+    describe('parlay.protocols', function() {
     
         beforeEach(module('parlay.protocols'));
         beforeEach(module('mock.promenade.broker'));
+        beforeEach(module('mock.parlay.socket'));
         
-        describe('Protocol', function () {
+        describe('ParlayProtocol', function () {
+            var rootScope, protocol;
             
-            it('constructs', inject(function(_Protocol_) {
-                var protocol = _Protocol_({name: 'TestProtocol', protocol_type: 'TestProtocolType'});
+            beforeEach(inject(function($rootScope, _ParlayProtocol_) {
+                /*jshint newcap: false */
+                rootScope = $rootScope;
+                protocol = new _ParlayProtocol_({name: 'TestProtocol', protocol_type: 'TestProtocolType'});
+            }));
+            
+            it('constructs', inject(function(_ParlayProtocol_) {
                 expect(protocol.getName()).toBe('TestProtocol');
                 expect(protocol.getType()).toBe('TestProtocolType');
             }));
+            
+            it('accesses attributes', function () {
+                expect(protocol.getAvailableEndpoints()).toEqual([]);
+                expect(protocol.getActiveEndpoints()).toEqual([]);
+                expect(protocol.getLog()).toEqual([]);
+            });
+            
+            it('records message', function () {
+                expect(protocol.getLog()).toEqual([]);
+                protocol.recordLog({type: 'test'});
+                expect(protocol.getLog()).toEqual([{type: 'test'}]);
+            });
+            
+            it('invokes onMessage callback', function () {
+                var testMsg = 'hey';
+                protocol.onMessage(function (testResp) {
+                    expect(testResp).toEqual(testMsg);
+                });
+                protocol.invokeCallbacks(testMsg);
+            });
+            
+            describe('performs operations onClose', function () {
+                
+                it('does not have subscription', function () {
+                    protocol.onClose();
+                    expect(protocol.getAvailableEndpoints()).toEqual([]);
+                    expect(protocol.getActiveEndpoints()).toEqual([]);
+                });
+                
+                it('has subscription', function () {
+                    protocol.buildSubscriptionTopics = function () {
+                        return {
+                            topics: {}
+                        };
+                    };
+                    protocol.subscribe();
+                    rootScope.$apply();
+                    expect(protocol.hasSubscription()).toBeTruthy();
+                    protocol.onClose();
+                    expect(protocol.hasSubscription()).toBeFalsy();
+                    expect(protocol.getAvailableEndpoints()).toEqual([]);
+                    expect(protocol.getActiveEndpoints()).toEqual([]);
+                });
+                
+            });
+            
+            describe('subscription', function () {
+                
+                beforeEach(function () {
+                    protocol.buildSubscriptionTopics = function () {
+                        return {
+                            topics: {}
+                        };
+                    };
+                });
+                
+                it('checks subscription', function () {
+                    expect(protocol.hasSubscription()).toBeFalsy();
+                });
+                
+                it('subscribes', function () {                    
+                    expect(protocol.hasSubscription()).toBeFalsy();
+                    protocol.subscribe();
+                    rootScope.$apply();
+                    expect(protocol.hasSubscription()).toBeTruthy();
+                });
+                
+                it('unsubscribes', function () {
+                    protocol.subscribe();
+                    rootScope.$apply();
+                    expect(protocol.hasSubscription()).toBeTruthy();
+                    protocol.unsubscribe();
+                    rootScope.$apply();
+                    expect(protocol.hasSubscription()).toBeFalsy();
+                });
+                
+            });
+            
+            describe('sends a message', function () {
+                
+                it('resolves', function (done) {
+                    protocol.sendMessage({type: 'test'}, {data:[]}, {type: 'test'}).then(function (response) {
+                        expect(response).toEqual({status: 0, data:[]});
+                        done();
+                    });
+                    rootScope.$apply();                    
+                });
+                
+                it('rejects', function(done) {
+                    protocol.sendMessage({type: 'test'}, null, {type: 'test'}).catch(function (response) {
+                        expect(response).toEqual({status: -1});
+                        done();
+                    });
+                    rootScope.$apply();
+                });
+            });
+            
+            describe('adding discovery information', function () {
+                
+                var sample_endpoints = function () {
+                    var endpoints = [];
+                    
+                    for (var i = 0; i < 50; i++) {
+                        endpoints.push({
+                            ID: 100 + i,
+                            INTERFACES: [],
+                            NAME: 'TEST' + i,
+                            TEMPLATE: 'STD_ENDPOINT'
+                        });
+                    }
+                    
+                    return endpoints;
+                }();
+                
+                var sample_discovery = {
+                    CHILDREN: sample_endpoints,
+                    NAME: 'TEST_PROTOCOL',
+                    TEMPLATE: 'Protocol'
+                };
+                
+                it('adds endpoints', function () {
+                    expect(protocol.getAvailableEndpoints().length).toBe(0);
+                    protocol.addEndpoints(sample_discovery.CHILDREN);
+                    expect(protocol.getAvailableEndpoints().length).toBe(50);
+                });
+                
+                it('gets field keys', function () {
+                    expect(protocol.getDynamicFieldKeys().length).toBe(0);
+                });
+                
+                it('buildsFields', function () {
+                    expect(protocol.getDynamicFieldKeys().length).toBe(0);
+                    protocol.buildFields(sample_discovery);
+                    expect(protocol.getDynamicFieldKeys().length).toBe(3);
+                });
+                
+                it('does full discovery process', function () {
+                    expect(protocol.getAvailableEndpoints().length).toBe(0);
+                    expect(protocol.getDynamicFieldKeys().length).toBe(0);
+                    protocol.addDiscoveryInfo(sample_discovery);
+                    expect(protocol.getAvailableEndpoints().length).toBe(50);
+                    expect(protocol.getDynamicFieldKeys().length).toBe(3);
+                });
+                
+            });
+            
+            describe('methods to be described by prototypical inheritors', function () {
+                
+                it('raises NotImplementedError on onOpen', function () {
+                    spyOn(console, 'warn');
+            		protocol.onOpen();
+                    expect(console.warn).toHaveBeenCalledWith('onOpen is not implemented for TestProtocol');
+                });
+                
+                it('raises NotImplementedError on buildSubscriptionTopics', function () {
+                    spyOn(console, 'warn');
+            		protocol.buildSubscriptionTopics();
+                    expect(console.warn).toHaveBeenCalledWith('buildSubscriptionTopics is not implemented for TestProtocol');
+                });
+                
+            });
 
         });
         

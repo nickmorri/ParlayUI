@@ -7,6 +7,8 @@ direct_message.factory('PromenadeDirectMessageProtocol', ['ParlayProtocol', 'Pro
         ParlayProtocol.call(this, configuration);
         this.current_message_id = 200;
         this.from = 0xf201;
+        
+        this.endpoint_factory = PromenadeStandardEndpoint;        
     }
     
     PromenadeDirectMessageProtocol.prototype = Object.create(ParlayProtocol.prototype);
@@ -56,15 +58,7 @@ direct_message.factory('PromenadeDirectMessageProtocol', ['ParlayProtocol', 'Pro
         var response_topics = this.buildResponseTopics(new_message);
         return this.sendMessage(new_message.topics, new_message.contents, response_topics);
     };
-    
-    PromenadeDirectMessageProtocol.prototype.addDiscoveryInfo = function (info) {
-        ParlayProtocol.prototype.addDiscoveryInfo.call(this, info);
         
-        this.available_endpoints = info.CHILDREN.map(function (endpoint) {
-            return new PromenadeStandardEndpoint(endpoint, this);
-        }, this);
-    };
-    
     return PromenadeDirectMessageProtocol;
     
 }]);

@@ -202,7 +202,7 @@ module.exports = function (grunt) {
           'esnext': true,
           'debug': true
         },
-        'src': ['<%= meta.source %>', '<%= meta.vendorCompontents %>'],
+        'src': ['<%= meta.source %>', '<%= meta.vendorCompontents %>', '<%= meta.tests %>'],
         'gruntfile': 'Gruntfile.js'
       },
       'dist': {

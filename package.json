@@ -34,7 +34,7 @@
     "grunt-processhtml": "^0.3.8",
     "grunt-wiredep": "^2.0.0",
     "jasmine-core": "latest",
-    "karma": "^0.12.37",
+    "karma": "^0.13.3",
     "karma-coverage": "^0.4.2",
     "karma-jasmine": "latest",
     "karma-phantomjs-launcher": "latest",

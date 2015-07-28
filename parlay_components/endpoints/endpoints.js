@@ -12,7 +12,7 @@ endpoints.config(function($stateProvider) {
 endpoints.factory('ParlayEndpoint', function () {
     
     function NotImplementedError(method) {
-        console.warn(method + ' is not implemented for ' + this.getName());
+        console.warn(method + ' is not implemented for ' + this.name);
     }
     
     function ParlayEndpoint(data, protocol) {
@@ -145,6 +145,7 @@ endpoints.controller('ParlayEndpointSearchController', ['$scope', 'EndpointManag
     };
 }]);
 
+/* istanbul ignore next */
 endpoints.directive('parlayEndpointSearch', function () {
     return {
         scope: {},

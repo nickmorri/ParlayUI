@@ -17,6 +17,8 @@ module.exports = function (grunt) {
       'dist_destination': 'dist',
       'dev_destination': 'dev',
       'doc_destination': 'doc',
+      'tmp_destination': 'tmp',
+      'coverage_destination': 'coverage',
       'bowerComponents': [
         'bower_components/angular/angular.js',
         'bower_components/angular-messages/angular-messages.js',
@@ -37,7 +39,7 @@ module.exports = function (grunt) {
         'static_components/ng-websocket/ng-websocket.js'
       ],
       'tests': 'parlay_components/*/test/*.js',
-      'compiledHtml': 'tmp/templates.js',
+      'compiledHtml': '<%= meta.tmp_destination %>/templates.js',
       'htmlDirectives': ['parlay_components/**/directives/*.html', '<%= vendor.bit.directives %>', '<%= vendor.promenade.directives %>'],
       'htmlViews': 'parlay_components/**/views/*.html',
       'commonFiles': ['bower_components/angular-material/angular-material.css', 'bower_components/ace-builds/src/mode-python.js', 'static_components/ng-websocket/ng-websocket.js'],
@@ -152,7 +154,7 @@ module.exports = function (grunt) {
       },
       'coverage': {
         'path': function () {
-          var reports = grunt.file.expand('coverage/PhantomJS*/index.html');
+          var reports = grunt.file.expand('<%= meta.coverage_destination %>/PhantomJS*/index.html');
           return reports[reports.length - 1].toString();
         }
       }
@@ -170,7 +172,7 @@ module.exports = function (grunt) {
           },
           'coverageReporter': {
             'type': 'html',
-            'dir': 'coverage'
+            'dir': '<%= meta.coverage_destination %>'
           },
           'files': [
             '<%= meta.bowerComponents %>',
@@ -230,7 +232,9 @@ module.exports = function (grunt) {
     'clean': {
       'dist': '<%= meta.dist_destination %>',
       'dev': '<%= meta.dev_destination %>',
-      'doc': '<%= meta.doc_destination %>'
+      'doc': '<%= meta.doc_destination %>',
+      'tmp': '<%= meta.tmp_destination %>',
+      'coverage': '<%= meta.coverage_destination %>'
     },
 
     'copy': {

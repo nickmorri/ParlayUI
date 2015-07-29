@@ -94,7 +94,7 @@
                 });
                 
                 it('gets data types from protocol', function () {
-                    expect(endpoint.data_types).toEqual(['int', 'float'])
+                    expect(endpoint.data_types).toEqual(['int', 'float']);
                 });
                 
             });

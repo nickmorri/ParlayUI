@@ -29,8 +29,10 @@ standard_endpoint.factory('PromenadeStandardEndpoint', ['ParlayEndpoint', functi
                     hidden: field.HIDDEN !== undefined ? field.HIDDEN : false
                 };
                 
+                /* istanbul ignore else */
                 if (field.DROPDOWN_OPTIONS !== undefined) {
                     
+                    /* istanbul ignore else */
                     if (typeof field.DROPDOWN_OPTIONS[0] === 'string') {
                         fieldObject.options = field.DROPDOWN_OPTIONS;
                     }

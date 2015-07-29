@@ -105,7 +105,8 @@ standard_endpoint.factory('PromenadeStandardEndpoint', ['ParlayEndpoint', functi
     };
     
     PromenadeStandardEndpoint.prototype.matchesQuery = function (query) {
-        return this.matchesType(query) || this.matchesId(query) || this.matchesName(query);
+        var lowercase_query = angular.lowercase(query);
+        return this.matchesType(lowercase_query) || this.matchesId(lowercase_query) || this.matchesName(lowercase_query);
     };
     
     PromenadeStandardEndpoint.prototype.getMessageId = function () {
@@ -114,8 +115,8 @@ standard_endpoint.factory('PromenadeStandardEndpoint', ['ParlayEndpoint', functi
     
     PromenadeStandardEndpoint.prototype.generateTopics = function () {
         return {
-            'TO': this.id,
-            'MSG_TYPE': 'COMMAND'
+            TO: this.id,
+            MSG_TYPE: 'COMMAND'
         };
     };
     

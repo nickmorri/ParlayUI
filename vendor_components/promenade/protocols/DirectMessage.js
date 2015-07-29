@@ -6,7 +6,7 @@ direct_message.factory('PromenadeDirectMessageProtocol', ['ParlayProtocol', 'Pro
         'use strict';
         ParlayProtocol.call(this, configuration);
         this.current_message_id = 200;
-        this.from = 0xf201;
+        this.id = 0xf201;
         
         this.endpoint_factory = PromenadeStandardEndpoint;        
     }
@@ -29,7 +29,7 @@ direct_message.factory('PromenadeDirectMessageProtocol', ['ParlayProtocol', 'Pro
     PromenadeDirectMessageProtocol.prototype.buildMessageTopics = function (message) {
         var new_message = angular.copy(message);
         new_message.topics.MSG_ID = this.consumeMessageId();
-        new_message.topics.FROM = this.from;
+        new_message.topics.FROM = this.id;
         return new_message;
     };
     
@@ -44,7 +44,7 @@ direct_message.factory('PromenadeDirectMessageProtocol', ['ParlayProtocol', 'Pro
     PromenadeDirectMessageProtocol.prototype.buildSubscriptionTopics = function () {
         return {
             topics: {
-                TO: this.from
+                TO: this.id
             }
         };
     };

@@ -6,26 +6,11 @@
         beforeEach(module('parlay.navigation'), module('ngMaterial'));
         
         describe('parlayConnectionStatusController', function () {
-        	var scope, parlayConnectionStatusController, MockBroker;
+        	var scope, parlayConnectionStatusController;
         	
         	beforeEach(inject(function($rootScope, $controller) {
-            	scope = $rootScope.$new();
-            	
-            	MockBroker = {
-                	connected: false,
-                	isConnected: function () {
-                    	return this.connected;
-                	},
-                	connect: function () {
-                    	this.connected = true;
-                	},
-                	disconnect: function () {
-                    	this.connected = false;
-                	}
-                	
-            	};
-            	
-            	parlayConnectionStatusController = $controller('ParlayConnectionStatusController', {$scope: scope, PromenadeBroker: MockBroker});
+            	scope = $rootScope.$new();            	
+            	parlayConnectionStatusController = $controller('ParlayConnectionStatusController', {$scope: scope});
         	}));
         	
         	describe('tests broker interaction', function () {
@@ -53,18 +38,6 @@
             	});
             	
             	it('if there are open protocols', function () {
-                	expect(scope.hasOpenProtocols()).toBeFalsy();
-            	});
-            	
-        	});
-        	
-        	xdescribe('protocol manager interactions', function () {
-            	
-            	it('configures a protocol', function () {});
-            	
-            	it('closes a protocol', function () {
-                	expect(scope.hasOpenProtocols()).toBeTruthy();
-                	scope.closeProtocol();
                 	expect(scope.hasOpenProtocols()).toBeFalsy();
             	});
             	

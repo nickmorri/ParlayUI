@@ -7,13 +7,12 @@ module.exports = function (grunt) {
     'pkg': grunt.file.readJSON('package.json'),
 
     'vendor': {
-      'promenade': grunt.file.readJSON('vendor_components/promenade/vendor.json'),
-      'bit': grunt.file.readJSON('vendor_components/bit/vendor.json')
+      'promenade': grunt.file.readJSON('vendor_components/promenade/vendor.json')
     },
 
     'meta': {
       'source': ['app.js', 'parlay_components/*/*.js'],
-      'vendorCompontents': ['<%= vendor.promenade.protocols %>', '<%= vendor.promenade.endpoints %>', '<%= vendor.bit.endpoints %>', '<%= vendor.bit.protocols %>'],
+      'vendorCompontents': ['<%= vendor.promenade.protocols %>', '<%= vendor.promenade.endpoints %>'],
       'dist_destination': 'dist',
       'dev_destination': 'dev',
       'doc_destination': 'doc',
@@ -40,7 +39,7 @@ module.exports = function (grunt) {
       ],
       'tests': 'parlay_components/*/test/*.js',
       'compiledHtml': '<%= meta.tmp_destination %>/templates.js',
-      'htmlDirectives': ['parlay_components/**/directives/*.html', '<%= vendor.bit.directives %>', '<%= vendor.promenade.directives %>'],
+      'htmlDirectives': ['parlay_components/**/directives/*.html', '<%= vendor.promenade.directives %>'],
       'htmlViews': 'parlay_components/**/views/*.html',
       'commonFiles': ['bower_components/angular-material/angular-material.css', 'bower_components/ace-builds/src/mode-python.js', 'static_components/ng-websocket/ng-websocket.js'],
       'stylesheets': 'css/*.css'

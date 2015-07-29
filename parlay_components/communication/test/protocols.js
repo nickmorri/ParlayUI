@@ -1,57 +1,114 @@
 (function () {
     'use strict';
 
+    var sample_endpoints = function () {
+        var endpoints = [];
+        
+        for (var i = 0; i < 50; i++) {
+            endpoints.push({
+                ID: 100 + i,
+                INTERFACES: [],
+                NAME: 'TEST' + i,
+                TEMPLATE: 'STD_ENDPOINT'
+            });
+        }
+        
+        return endpoints;
+    }();
+    
+    var sample_discovery = {
+        CHILDREN: sample_endpoints,
+        NAME: 'TestProtocol',
+        TEMPLATE: 'Protocol'
+    };
+
     angular.module('mock.promenade.broker', [])
         .factory('PromenadeBroker', ['$q', function($q) {
-            var Public = {
-                    connected: false
+            var PromenadeBroker = {
+                connected: false,
+                onDiscoveryCallbacks: [],
+                onOpenCallbacks: [],
+                onCloseCallbacks: []
             };
             
-            var Private = {
-                onOpen: []
+            PromenadeBroker.requestAvailableProtocols = function () {
+                return $q(function (resolve, reject) {
+                    resolve([]);
+                });
             };
             
-            Public.onOpen = function (callback) {
-                callback();
+            PromenadeBroker.requestOpenProtocols = function () {
+                return $q(function (resolve, reject) {
+                    resolve([]);
+                });
             };
             
-            Public.onClose = function (callback) {
-                callback();
-            };
-            
-            Public.onMessage = function () {
-                
-            };
-            
-            Public.onOpenSize = function () {
-                return Private.onOpen.length;
-            };
-            
-            Public.requestAvailableProtocols = function () {
-                return [];
-            };
-            
-            Public.requestOpenProtocols = function () {
-                return [];
-            };
-            
-            Public.sendSubscribe = function () {
+            PromenadeBroker.sendSubscribe = function () {
                 return $q(function (resolve, reject) {
                     resolve(true);
                 });
             };
             
-            Public.sendUnsubscribe = function () {
+            PromenadeBroker.sendUnsubscribe = function () {
                 return $q(function (resolve, reject) {
                     resolve(true);
                 });
             };
             
-            return Public;
+            PromenadeBroker.requestDiscovery = function () {
+                PromenadeBroker.onDiscoveryCallbacks.forEach(function (callback) {
+                    callback({discovery: [sample_discovery]});
+                });
+            };
+            
+            PromenadeBroker.onDiscovery = function (callback) {
+                PromenadeBroker.onDiscoveryCallbacks.push(callback);
+            };
+            
+            PromenadeBroker.onOpen = function (callback) {
+                PromenadeBroker.onOpenCallbacks.push(callback);
+            };
+            
+            PromenadeBroker.onClose = function (callback) {
+                PromenadeBroker.onCloseCallbacks.push(callback);
+            };
+            
+            PromenadeBroker.onMessage = function (response_topics, response_callback) {
+                if (response_topics.response === 'get_protocols_response') response_callback({
+                    TestProtocol: {
+                        params: ['port', 'timing'],
+                        defaults: {
+                            port: 10,
+                            timing: 50
+                        }
+                    }
+                });
+                else if (response_topics.response === 'get_open_protocols_response') response_callback({protocols: [
+                    {
+                        name: 'TestProtocol',
+                        protocol_type: 'PromenadeDirectMessageProtocol'
+                    }
+                ]});
+                else response_callback(response_topics);
+            };
+            
+            PromenadeBroker.triggerOnClose = function () {
+                PromenadeBroker.onCloseCallbacks.forEach(function (callback) {
+                    callback();
+                });
+            };
+            
+            PromenadeBroker.triggerOnOpen = function () {
+                PromenadeBroker.onOpenCallbacks.forEach(function (callback) {
+                    callback();
+                });
+            };
+            
+            return PromenadeBroker;
         }]);
         
     angular.module('mock.parlay.protocols', []).factory('ProtocolManager', ['$q', function ($q) {
-        var Public = {
+        var PromenadeBroker = {
             open: [{}]
         };
                     
@@ -212,27 +269,6 @@
             
             describe('adding discovery information', function () {
                 
-                var sample_endpoints = function () {
-                    var endpoints = [];
-                    
-                    for (var i = 0; i < 50; i++) {
-                        endpoints.push({
-                            ID: 100 + i,
-                            INTERFACES: [],
-                            NAME: 'TEST' + i,
-                            TEMPLATE: 'STD_ENDPOINT'
-                        });
-                    }
-                    
-                    return endpoints;
-                }();
-                
-                var sample_discovery = {
-                    CHILDREN: sample_endpoints,
-                    NAME: 'TEST_PROTOCOL',
-                    TEMPLATE: 'Protocol'
-                };
-                
                 it('adds endpoints', function () {
                     expect(protocol.getAvailableEndpoints().length).toBe(0);
                     protocol.addEndpoints(sample_discovery.CHILDREN);
@@ -308,17 +344,42 @@
         });
         
         describe('ProtocolManager', function () {
-            var ProtocolManager;
+            var ProtocolManager, PromenadeBroker;
             
-            beforeEach(inject(function(_ProtocolManager_) {
+            beforeEach(inject(function(_ProtocolManager_, _PromenadeBroker_) {
                 ProtocolManager = _ProtocolManager_;
+                PromenadeBroker = _PromenadeBroker_;
             }));
-            
-            xdescribe('initialization', function () {
-                spyOn(ProtocolManager._private, 'clearProtocols');
+                        
+            describe('PromenadeBroker interactions', function () {
                 
-                it('registers a onClose with PromenadeBroker', function () {
-                    expect(ProtocolManager._private.clearProtocols).toHaveBeenCalled();
+                it('requests discovery', function () {
+                    ProtocolManager.requestDiscovery();
+                });
+                
+            });
+            
+            describe('events', function () {
+                
+                it('onClose', function () {
+                    expect(ProtocolManager.getAvailableProtocols().length).toBe(1);
+                    ProtocolManager.requestDiscovery();
+                    expect(ProtocolManager.getOpenProtocols().length).toBe(1);
+                    
+                    PromenadeBroker.triggerOnClose();
+                    
+                    expect(ProtocolManager.getAvailableProtocols().length).toBe(0);
+                    expect(ProtocolManager.getOpenProtocols().length).toBe(0);
+                });
+                
+                it('onOpen', function () {
+                    spyOn(PromenadeBroker, 'requestAvailableProtocols')
+                    spyOn(PromenadeBroker, 'requestOpenProtocols');
+                    
+                    PromenadeBroker.triggerOnOpen();
+                    
+                    expect(PromenadeBroker.requestAvailableProtocols).toHaveBeenCalled();
+                    expect(PromenadeBroker.requestOpenProtocols).toHaveBeenCalled();
                 });
                 
             });

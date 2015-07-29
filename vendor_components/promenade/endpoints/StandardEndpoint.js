@@ -72,12 +72,6 @@ standard_endpoint.factory('PromenadeStandardEndpoint', ['ParlayEndpoint', functi
         }
     });
     
-    Object.defineProperty(PromenadeStandardEndpoint.prototype, 'message_types', {
-        get: function () {
-            return this.content_fields.message_type;
-        }
-    });
-    
     Object.defineProperty(PromenadeStandardEndpoint.prototype, 'data_types', {
         get: function () {
             return this.protocol.data_types;

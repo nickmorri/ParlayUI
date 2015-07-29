@@ -373,7 +373,7 @@
                 });
                 
                 it('onOpen', function () {
-                    spyOn(PromenadeBroker, 'requestAvailableProtocols')
+                    spyOn(PromenadeBroker, 'requestAvailableProtocols');
                     spyOn(PromenadeBroker, 'requestOpenProtocols');
                     
                     PromenadeBroker.triggerOnOpen();

@@ -189,14 +189,6 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', '$mdToast', '$timeout',
         return ParlaySocket.onMessage(response_topics, response_callback);
     };
     
-    /**
-     * Handles directing error to correct place.
-     * @param {Object} Response contents from Broker.
-     */
-    Private.handleError = function () {
-        // Do something.
-    };
-    
     Private.hasConnectedPreviously = function () {
         return Private.connected_previously;
     };
@@ -204,7 +196,6 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', '$mdToast', '$timeout',
     Public.onMessage = ParlaySocket.onMessage;
     Public.onOpen = ParlaySocket.onOpen;
     Public.onClose = ParlaySocket.onClose;
-    Public.onError = ParlaySocket.onError;
     
     Public.onOpen(function () {
         Private.connected_previously = true;

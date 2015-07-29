@@ -37,7 +37,7 @@ module.exports = function (grunt) {
       'staticComponents': [
         'static_components/ng-websocket/ng-websocket.js'
       ],
-      'tests': 'parlay_components/*/test/*.js',
+      'tests': ['parlay_components/*/test/*.js', '<%= vendor.promenade.tests %>'],
       'compiledHtml': '<%= meta.tmp_destination %>/templates.js',
       'htmlDirectives': ['parlay_components/**/directives/*.html', '<%= vendor.promenade.directives %>'],
       'htmlViews': 'parlay_components/**/views/*.html',

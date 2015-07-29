@@ -1,35 +1,32 @@
 (function () {
     "use strict";
     
-    xdescribe('promenade.broker', function() {
+    describe('promenade.broker', function() {
         
         beforeEach(module('promenade.broker'));
         
         beforeEach(function () {
-            function mockParlaySocket () {
-                
-                var Public = {
-                    connected: false
-                };
-                
-                Public.open = function () {
-                    Public.connected = true;
-                };
-                
-                Public.close = function () {
-                    Public.connected = false;
-                };
-                
-                Public.isConnected = function () {
-                    return Public.connected;
-                };
-                
-                Public.sendMessage = function () {
+            
+            var mockParlaySocket = {
+                connected: false,
+                open: function () {
+                    this.connected = true;
+                },
+                close: function () {
+                    this.connected = false;
+                },
+                isConnected: function () {
+                    return this.connected;
+                },
+                sendMessage: function () {
                     //
-                };
-                
-                return Public;
-            }
+                },
+                onOpen: function () {},
+                onClose: function () {},
+                getAddress: function () {
+                    return 'ws://localhost:8080';
+                }
+            };
             
             module(function ($provide) {
                 $provide.value('ParlaySocket', mockParlaySocket);
@@ -51,6 +48,14 @@
                 
             });
             
+            describe('accessors', function () {
+                
+                it('gets broker address from ParlaySocket', function () {
+                    expect(PromenadeBroker.getBrokerAddress()).toBe('ws://localhost:8080');
+                });
+                
+            });
+            
             describe('connection', function () {
                 
                 it('connects', function () {
@@ -67,28 +72,7 @@
                     expect(PromenadeBroker.isConnected()).toBeFalsy();
                 });
                 
-            });
-            
-            xdescribe('transaction', function () {
-                
-                it('requests discovery', function () {
-                    
-                });
-                
-                it('requests protocols', function () {
-                    
-                });
-                
-                it('opens a protocol', function () {
-                    
-                });
-                
-                it('closes a protocol', function () {
-                    
-                });
-                
-            });
-                
+            });                
         });
 
     });

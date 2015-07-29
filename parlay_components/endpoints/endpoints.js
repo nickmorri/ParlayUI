@@ -159,7 +159,6 @@ endpoints.directive('parlayEndpointSearch', function () {
     };
 });
 
-/* istanbul ignore next */
 endpoints.directive('parlayEndpointCard', ['$compile', function ($compile) {
     return {
         templateUrl: '../parlay_components/endpoints/directives/parlay-endpoint-card.html',

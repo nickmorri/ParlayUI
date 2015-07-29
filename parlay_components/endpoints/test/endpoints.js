@@ -276,6 +276,37 @@
     		});
     		
     	});
+    	
+    	describe('<parlay-endpoint-card>', function () {
+        	var element, mockEndpoint, scope;
+        	
+        	mockEndpoint = {
+            	directives: {
+                	toolbar: ['promenadeStandardEndpointCardToolbar'],
+                	tabs: ['promenadeStandardEndpointCardLog', 'promenadeStandardEndpointCardCommands']
+            	},
+            	getDirectives: function () {
+                	return [this.directives];
+            	}
+        	};
+        	
+        	beforeEach(inject(function($compile, $rootScope) {
+            	scope = $rootScope.$new();            	
+            	$rootScope.endpoint = mockEndpoint;
+            	element = $compile('<parlay-endpoint-card></parlay-endpoint-card')(scope);
+                $rootScope.$digest();
+        	}));
+        	
+        	it('inserts toolbar', function () {
+            	expect(element.find('promenade-standard-endpoint-card-toolbar').length).toBe(1);
+        	});
+        	
+        	it('inserts tabs', function () {
+            	expect(element.find('promenade-standard-endpoint-card-log').length).toBe(1);
+            	expect(element.find('promenade-standard-endpoint-card-commands').length).toBe(1);
+        	});
+        	
+    	});
         
     });
 }());

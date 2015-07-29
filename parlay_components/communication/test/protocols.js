@@ -179,10 +179,10 @@
                 protocol = new _ParlayProtocol_({name: 'TestProtocol', protocol_type: 'TestProtocolType'});
             }));
             
-            it('constructs', inject(function(_ParlayProtocol_) {
+            it('constructs', function() {
                 expect(protocol.getName()).toBe('TestProtocol');
                 expect(protocol.getType()).toBe('TestProtocolType');
-            }));
+            });
             
             it('accesses attributes', function () {
                 expect(protocol.getAvailableEndpoints()).toEqual([]);

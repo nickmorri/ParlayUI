@@ -1,7 +1,7 @@
 (function () {
     "use strict";
     
-    describe('promenade.broker', function() {
+    xdescribe('promenade.broker', function() {
         
         beforeEach(module('promenade.broker'));
         

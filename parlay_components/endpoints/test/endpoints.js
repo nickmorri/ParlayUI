@@ -182,8 +182,7 @@
             		scope.requestDiscovery();
             		expect(EndpointManager.requestDiscovery).toHaveBeenCalled();
         		});
-    		});
-    		
+    		});    		
         
     	});
     	

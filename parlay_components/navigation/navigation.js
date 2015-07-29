@@ -7,15 +7,6 @@ navigation.controller('parlayToolbarController', ['$scope', '$state', '$mdSidena
 }]);
 
 /* istanbul ignore next */
-navigation.directive('parlayConnectionStatus', function (PromenadeBroker) {
-    return {
-        scope: {},
-        templateUrl: '../parlay_components/navigation/directives/parlay-connection-status.html',
-        controller: 'ParlayConnectionStatusController'
-    };
-});
-
-/* istanbul ignore next */
 navigation.directive('parlayToolbar', function () {
     return {
         templateUrl: '../parlay_components/navigation/directives/parlay-toolbar.html',

@@ -21,7 +21,7 @@
             md-selected-item-change="selectedItemChange(selected_protocol)"
             md-search-text="search_text"
             md-search-text-change="searchTextChange(search_text)"
-            md-items="protocol in querySearch(search_text)"
+            md-items="protocol in filterProtocols(search_text)"
             md-item-text="protocol.name"
             md-min-length="0"
             md-floating-label="Protocol">

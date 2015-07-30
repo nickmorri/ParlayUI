@@ -1,18 +1,34 @@
 module.exports = function (grunt) {
 
+  function getVendors () {
+        return grunt.file.expand('vendor_components/**/vendor.json').map(function (vendor) {
+            return grunt.file.readJSON(vendor);
+        }).reduce(function (accumulator, vendor) {
+            accumulator[vendor.name] = vendor.source;
+            return accumulator;
+        }, {});
+  } 
+
   grunt.loadNpmTasks('main-bower-files');
   require('load-grunt-tasks')(grunt);
 
   grunt.initConfig({
     'pkg': grunt.file.readJSON('package.json'),
 
-    'vendor': {
-      'promenade': grunt.file.readJSON('vendor_components/promenade/vendor.json')
-    },
+    'vendor': getVendors(),
 
     'meta': {
       'source': ['app.js', 'parlay_components/*/*.js'],
-      'vendorCompontents': ['<%= vendor.promenade.protocols %>', '<%= vendor.promenade.endpoints %>'],
+      'vendorComponents': (function () {
+            var vendors = getVendors();
+            return Object.keys(vendors).reduce(function (accumulator, vendor) {
+                return accumulator.concat(Object.keys(vendors[vendor]).filter(function (key) {
+                    return key.indexOf('protocols') > -1 || key.indexOf('endpoints') > -1;
+                }).map(function (key) {
+                    return '<%= vendor.' + vendor + '.' + key + '%>';
+                }));
+            }, []);
+      }()),
       'dist_destination': 'dist',
       'dev_destination': 'dev',
       'doc_destination': 'doc',
@@ -38,9 +54,27 @@ module.exports = function (grunt) {
       'staticComponents': [
         'static_components/ng-websocket/ng-websocket.js'
       ],
-      'tests': ['parlay_components/*/test/*.js', '<%= vendor.promenade.tests %>'],
+      'tests': (function () {
+            var vendors = getVendors();
+            return ['parlay_components/*/test/*.js'].concat(Object.keys(vendors).reduce(function (accumulator, vendor) {
+                return accumulator.concat(Object.keys(vendors[vendor]).filter(function (key) {
+                    return key.indexOf('tests') > -1;
+                }).map(function (key) {
+                    return '<%= vendor.' + vendor + '.' + key + '%>';
+                }));
+            }, []));
+      }()),
       'compiledHtml': '<%= meta.tmp_destination %>/templates.js',
-      'htmlDirectives': ['parlay_components/**/directives/*.html', '<%= vendor.promenade.directives %>'],
+      'htmlDirectives': (function () {
+          var vendors = getVendors();
+            return ['parlay_components/**/directives/*.html', '<%= vendor.promenade.directives %>'].concat(Object.keys(vendors).reduce(function (accumulator, vendor) {
+                return accumulator.concat(Object.keys(vendors[vendor]).filter(function (key) {
+                    return key.indexOf('directives') > -1;
+                }).map(function (key) {
+                    return '<%= vendor.' + vendor + '.' + key + '%>';
+                }));
+            }, []));          
+      }()),
       'htmlViews': 'parlay_components/**/views/*.html',
       'commonFiles': ['bower_components/angular-material/angular-material.css', 'bower_components/ace-builds/src/mode-python.js', 'static_components/ng-websocket/ng-websocket.js'],
       'stylesheets': 'css/*.css'
@@ -123,7 +157,7 @@ module.exports = function (grunt) {
         'options': {
           'livereload': true
         },
-        'files': ['<%= meta.source %>', '<%= meta.vendorCompontents %>'],
+        'files': ['<%= meta.source %>', '<%= meta.vendorComponents %>'],
         'tasks': ['newer:jshint:dev', 'karma:dev', 'newer:copy:dev']
       },
       'stylesheets': {
@@ -180,7 +214,7 @@ module.exports = function (grunt) {
             '<%= meta.staticComponents %>',
             '<%= meta.compiledHtml %>',
             '<%= meta.source %>',
-            '<%= meta.vendorCompontents %>',
+            '<%= meta.vendorComponents %>',
             '<%= meta.tests %>'
           ],
         }
@@ -205,11 +239,11 @@ module.exports = function (grunt) {
           'esnext': true,
           'debug': true
         },
-        'src': ['<%= meta.source %>', '<%= meta.vendorCompontents %>', '<%= meta.tests %>'],
+        'src': ['<%= meta.source %>', '<%= meta.vendorComponents %>', '<%= meta.tests %>'],
         'gruntfile': 'Gruntfile.js'
       },
       'dist': {
-        'src': ['<%= meta.source %>', '<%= meta.vendorCompontents %>']
+        'src': ['<%= meta.source %>', '<%= meta.vendorComponents %>']
       }
     },
 
@@ -246,7 +280,7 @@ module.exports = function (grunt) {
       },
       'dev': {
         'files': [
-          {'expand': true, 'src': ['<%= meta.source %>', '<%= meta.vendorCompontents %>', '<%= meta.compiledHtml %>', '<%= meta.stylesheets %>'], 'dest': '<%= meta.dev_destination %>'},
+          {'expand': true, 'src': ['<%= meta.source %>', '<%= meta.vendorComponents %>', '<%= meta.compiledHtml %>', '<%= meta.stylesheets %>'], 'dest': '<%= meta.dev_destination %>'},
           {'expand': true, 'src': '<%= meta.commonFiles %>', 'dest': '<%= meta.dev_destination %>'}
         ]
       }
@@ -270,7 +304,7 @@ module.exports = function (grunt) {
       },
       'dist': {
         'files': {
-          '<%= meta.dist_destination %>/<%= pkg.namelower %>.min.js': ['<%= meta.source %>', '<%= meta.vendorCompontents %>', '<%= meta.compiledHtml %>']
+          '<%= meta.dist_destination %>/<%= pkg.namelower %>.min.js': ['<%= meta.source %>', '<%= meta.vendorComponents %>', '<%= meta.compiledHtml %>']
         }
       }
     },

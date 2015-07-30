@@ -1,13 +1,9 @@
 (function () {
-    "use strict";
+    'use strict';
     
-    describe('promenade.broker', function() {
-        
-        beforeEach(module('promenade.broker'));
-        
-        beforeEach(function () {
-            
-            var mockParlaySocket = {
+    angular.module('mock.parlay.socket2', [])
+        .factory('ParlaySocket', ['$q', function($q) {
+            return {
                 connected: false,
                 open: function () {
                     this.connected = true;
@@ -18,8 +14,8 @@
                 isConnected: function () {
                     return this.connected;
                 },
-                sendMessage: function () {
-                    //
+                sendMessage: function (topics, contents, response_topics, response_callback) {
+                    response_callback(contents);
                 },
                 onOpen: function () {},
                 onClose: function () {},
@@ -27,17 +23,19 @@
                     return 'ws://localhost:8080';
                 }
             };
-            
-            module(function ($provide) {
-                $provide.value('ParlaySocket', mockParlaySocket);
-            });
-        });
+        }]);
+    
+    describe('promenade.broker', function() {        
+        
+        beforeEach(module('promenade.broker'));        
+        beforeEach(module('mock.parlay.socket2'));
         
         describe('PromenadeBroker', function () {
-            var PromenadeBroker;
+            var PromenadeBroker, ParlaySocket;
             
-            beforeEach(inject(function(_PromenadeBroker_) {
+            beforeEach(inject(function(_PromenadeBroker_, _ParlaySocket_) {
                 PromenadeBroker = _PromenadeBroker_;
+                ParlaySocket = _ParlaySocket_;
             }));
             
             describe('initialization', function () {
@@ -72,7 +70,62 @@
                     expect(PromenadeBroker.isConnected()).toBeFalsy();
                 });
                 
-            });                
+                it('does on open logic', function () {});
+                
+                it('does on close logic', function () {});
+                
+            });
+            
+            describe('requests over socket', function () {
+                
+                it('available protocols', function () {
+                    spyOn(ParlaySocket, 'sendMessage');
+                    
+                    PromenadeBroker.requestAvailableProtocols();
+                    
+                    expect(ParlaySocket.sendMessage).toHaveBeenCalled();
+                });
+                
+                it('open protocols', function () {
+                    spyOn(ParlaySocket, 'sendMessage');
+                    
+                    PromenadeBroker.requestOpenProtocols();
+                    
+                    expect(ParlaySocket.sendMessage).toHaveBeenCalled();
+                });
+                
+                it('open protocol', function () {
+                    spyOn(ParlaySocket, 'sendMessage');
+                    
+                    PromenadeBroker.openProtocol({});
+                    
+                    expect(ParlaySocket.sendMessage).toHaveBeenCalled();
+                });
+                
+                it('close protocol', function () {
+                    spyOn(ParlaySocket, 'sendMessage');
+                    
+                    PromenadeBroker.closeProtocol({});
+                    
+                    expect(ParlaySocket.sendMessage).toHaveBeenCalled();
+                });
+                
+                it('discovers', function () {
+                    spyOn(ParlaySocket, 'sendMessage');
+                    
+                    PromenadeBroker.requestDiscovery(true);
+                    
+                    expect(ParlaySocket.sendMessage).toHaveBeenCalled();
+                });
+                
+                it('sends request', function () {});
+                
+                it('subscribes', function () {});
+                
+                it('unsubscribes', function () {});
+                
+            });
+            
         });
 
     });

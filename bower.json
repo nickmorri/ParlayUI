@@ -12,7 +12,8 @@
     "es6-shim": "~0.32.3",
     "svg-morpheus": "~0.1.8",
     "angular-messages": "~1.4.1",
-    "angular-recursion": "~1.0.5"
+    "angular-recursion": "~1.0.5",
+    "angular-notification": "~1.1.1"
   },
   "resolutions": {
     "angular": "1.4.1",

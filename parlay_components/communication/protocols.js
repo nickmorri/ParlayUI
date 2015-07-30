@@ -1,4 +1,4 @@
-var protocols = angular.module('parlay.protocols', ['promenade.broker', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main', 'promenade.protocols.directmessage']);
+var protocols = angular.module('parlay.protocols', ['promenade.broker', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main', 'promenade.protocols.directmessage', 'parlay.notifiction']);
 
 protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'PromenadeBroker', '$q', function (ParlaySocket, ParlayEndpoint, PromenadeBroker, $q) {
 
@@ -343,7 +343,7 @@ protocols.factory('ProtocolManager', ['$injector', 'PromenadeBroker', '$q', func
     return Public;
 }]);
 
-protocols.controller('ProtocolConfigurationController', ['$scope', '$mdDialog', '$mdToast', 'ProtocolManager', function ($scope, $mdDialog, $mdToast, ProtocolManager) {
+protocols.controller('ProtocolConfigurationController', ['$scope', '$mdDialog', 'ProtocolManager', 'ParlayNotification', function ($scope, $mdDialog, ProtocolManager, ParlayNotification) {
     
     $scope.selected_protocol = null;
     $scope.connecting = false;
@@ -403,10 +403,10 @@ protocols.controller('ProtocolConfigurationController', ['$scope', '$mdDialog', 
                         }, {})
         }).then(function (response) {
             /* istanbul ignore next */
-            $mdToast.show($mdToast.simple()
-                .content('Connected to ' + response.name + '.')
-                .action('Discover')
-                .position('bottom left').hideDelay(3000)).then(function (result) {
+            ParlayNotification.show({
+                content: 'Connected to ' + response.name + '.',
+                action: 'Discover'
+            }).then(function (result) {
                     if (result === 'ok') ProtocolManager.requestDiscovery(true);
                 });
             $mdDialog.hide(response);
@@ -420,7 +420,7 @@ protocols.controller('ProtocolConfigurationController', ['$scope', '$mdDialog', 
     
 }]);
 
-protocols.controller('ParlayConnectionListController', ['$scope', '$mdDialog', '$mdToast', 'ProtocolManager', 'PromenadeBroker', function ($scope, $mdDialog, $mdToast, ProtocolManager, PromenadeBroker) {
+protocols.controller('ParlayConnectionListController', ['$scope', '$mdDialog', 'ParlayNotification', 'ProtocolManager', 'PromenadeBroker', function ($scope, $mdDialog, ParlayNotification, ProtocolManager, PromenadeBroker) {
     
     $scope.hide = $mdDialog.hide;
     
@@ -471,11 +471,13 @@ protocols.controller('ParlayConnectionListController', ['$scope', '$mdDialog', '
     /* istanbul ignore next */
     $scope.closeProtocol = function (protocol) {
         ProtocolManager.closeProtocol(protocol).then(function (result) {
-            $mdToast.show($mdToast.simple()
-                .content('Closed ' + protocol.getName() + '.'));
+            ParlayNotification.show({
+                content: 'Closed ' + protocol.getName() + '.'
+            }); 
         }).catch(function (result) {
-            $mdToast.show($mdToast.simple()
-                .content(result.status));  
+            ParlayNotification.show({
+                content: result.status
+            });
         });
     };
     

@@ -91,7 +91,7 @@ endpoints.factory('EndpointManager', ['PromenadeBroker', 'ProtocolManager', func
     return Public;
 }]);
 
-endpoints.controller('EndpointController', ['$scope', '$mdToast', '$mdDialog', 'EndpointManager', function ($scope, $mdToast, $mdDialog, EndpointManager) {
+endpoints.controller('EndpointController', ['$scope', 'EndpointManager', function ($scope, EndpointManager) {
     
     $scope.filterEndpoints = function () {
         return EndpointManager.getActiveEndpoints();

@@ -1,6 +1,6 @@
-var broker = angular.module('promenade.broker', ['parlay.socket', 'ngMaterial']);
+var broker = angular.module('promenade.broker', ['parlay.socket', 'parlay.notifiction', 'ngMaterial']);
 
-broker.factory('PromenadeBroker', ['ParlaySocket', '$q', '$mdToast', '$timeout', function (ParlaySocket, $q, $mdToast, $timeout) {
+broker.factory('PromenadeBroker', ['ParlaySocket', '$q', 'ParlayNotification', '$timeout', function (ParlaySocket, $q, ParlayNotification, $timeout) {
     var Public = {};
     
     var Private = {
@@ -79,22 +79,15 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', '$mdToast', '$timeout',
      */
     Public.requestDiscovery = function (is_forced) {
         
-        // Launches $mdToast discovery progress after 100 ms
-        var toast_progress = $timeout(function () {
-            $mdToast.show({
-                templateUrl: '../vendor_components/promenade/protocols/directives/promenade-broker-toast-progress.html',
-                hideDelay: false
-            });
-        }, 100);
+        // Launches ParlayNotification discovery progress after 100 ms
+        var progress = $timeout(ParlayNotification.showProgress, 100);
         
         return Public.sendRequest('get_discovery', {'force': is_forced}).then(function (contents) {
             
             // Cancels $timeout callback execution. Better UX for immediate responses from Broker.
-            // If $timeout has already executed we should hide the $mdToast now.
-            if (!$timeout.cancel(toast_progress)) {
-                $mdToast.hide();    
-            }
-            
+            // If $timeout has already executed we should hide the ParlayNotification now.
+            if (!$timeout.cancel(progress)) ParlayNotification.hideProgress();
+                        
             function buildToastMessage(result) {
                 var content_string = 'Discovered ';
                         
@@ -111,9 +104,9 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', '$mdToast', '$timeout',
                 return content_string;
             }
             
-            $mdToast.show($mdToast.simple()
-                .content(buildToastMessage(contents.discovery))
-                .position('bottom left'));
+            ParlayNotification.show({
+                content: buildToastMessage(contents.discovery)
+            });
                 
             return contents.discovery;
         });
@@ -200,30 +193,33 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', '$mdToast', '$timeout',
     Public.onOpen(function () {
         Private.connected_previously = true;
         // When socket is opened we should show a toast alert to notify the user.
-        $mdToast.show($mdToast.simple()
-            .content('Connected to Parlay Broker!'));
+        ParlayNotification.show({
+            content: 'Connected to Parlay Broker!'
+        });
     });
     
     Public.onClose(function () {
         if (Private.hasConnectedPreviously()) {
-            // When socket is closed we should show a toast alert giving the user the option to reconnect.
-            $mdToast.show($mdToast.simple()
-                .content('Disconnected from Parlay Broker!')
-                .action('Reconnect').highlightAction(true)
-                .position('bottom left').hideDelay(3000)).then(function (result) {
-                    // Result will be resolved with 'ok' if the action is performed and true if the toast has hidden.
-                    if (result === 'ok') Public.connect();
-                });   
+            // When socket is closed we should show a notification giving the user the option to reconnect.
+            
+            ParlayNotification.show({
+                content: 'Disconnected from Parlay Broker!',
+                action: 'Reconnect'
+            }).then(function (result) {
+                // Result will be resolved with 'ok' if the action is performed and true if the toast has hidden.
+                if (result === 'ok') Public.connect();
+            });
+            
         }
         else {
-            // If socket failed to open we should show a toast alert giving the user the option to connect.
-            $mdToast.show($mdToast.simple()
-                .content('Failed to connect to Parlay Broker!')
-                .action('Connect').highlightAction(true)
-                .position('bottom left').hideDelay(3000)).then(function (result) {
-                    // Result will be resolved with 'ok' if the action is performed and true if the toast has hidden.
-                    if (result === 'ok') Public.connect();
-                });            
+            // If socket failed to open we should show a notification giving the user the option to connect.           
+            ParlayNotification.show({
+                content: 'Failed to connect to Parlay Broker!',
+                action: 'Connect'
+            }).then(function (result) {
+                // Result will be resolved with 'ok' if the action is performed and true if the toast has hidden.
+                if (result === 'ok') Public.connect();
+            });
         }
     });
     

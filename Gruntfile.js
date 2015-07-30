@@ -32,7 +32,8 @@ module.exports = function (grunt) {
         'bower_components/angular-ui-ace/ui-ace.js',
         'bower_components/angular-mocks/angular-mocks.js',
         'bower_components/es6-shim/es6-shim.js',
-        'bower_components/angular-recursion/angular-recursion.js'
+        'bower_components/angular-recursion/angular-recursion.js',
+        'bower_components/angular-notification/angular-notification.js'
       ],
       'staticComponents': [
         'static_components/ng-websocket/ng-websocket.js'

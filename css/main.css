@@ -15,6 +15,6 @@ md-list-item > a {
     text-transform: capitalize;
 }
 
-.discovery-progress .md-container {
+.notification-progress .md-container {
     top: 0 !important;
 } 

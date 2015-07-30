@@ -1,11 +1,11 @@
-var notifications = angular.module('parlay.notifiction', ['ngMaterial', 'ngMdIcons', 'notification', 'templates-main']);
+var notifications = angular.module('parlay.notifiction', ['ngMaterial', 'notification', 'templates-main']);
 
 notifications.run(['$notification', function ($notification) {
     // Request permissions as soon as possible.
     $notification.requestPermission();
 }]);
 
-notifications.factory('ParlayNotification', ['$mdToast', '$notification', function ($mdToast, $notification) {
+notifications.factory('ParlayNotification', ['$mdToast', '$q', '$notification', function ($mdToast, $q, $notification) {
     
     function pageVisibile() {
         return document.hidden;
@@ -27,7 +27,7 @@ notifications.factory('ParlayNotification', ['$mdToast', '$notification', functi
         var toast = $mdToast.simple().content(configuration.content);
         
         if (configuration.action) {
-            toast.action(configuration.action).highlightAction(true);
+            toast.action(configuration.action.text).highlightAction(true);
         }
         
         if (Private.hidden) {
@@ -36,12 +36,15 @@ notifications.factory('ParlayNotification', ['$mdToast', '$notification', functi
             }));
         }
         
-        return $mdToast.show(toast);
+        $mdToast.show(toast).then(function (result) {
+            // Result will be resolved with 'ok' if the action is performed and true if the $mdToast has hidden.
+            if (result === 'ok' && configuration.action) configuration.action.callback();
+        });
     };
     
     Public.showProgress = function (configuration) {
         $mdToast.show({
-            templateUrl: '../parlay_components/notifications/directives/promenade-progress-notification.html',
+            template: '<md-toast><md-progress-linear flex class="notification-progress" md-mode="indeterminate"></md-progress-linear></md-toast>',
             hideDelay: false    
         });        
     };

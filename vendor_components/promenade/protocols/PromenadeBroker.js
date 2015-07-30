@@ -88,7 +88,7 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', 'ParlayNotification', '
             // If $timeout has already executed we should hide the ParlayNotification now.
             if (!$timeout.cancel(progress)) ParlayNotification.hideProgress();
                         
-            function buildToastMessage(result) {
+            function buildNotificationMessage(result) {
                 var content_string = 'Discovered ';
                         
                 if (result.length === 1) {
@@ -105,7 +105,7 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', 'ParlayNotification', '
             }
             
             ParlayNotification.show({
-                content: buildToastMessage(contents.discovery)
+                content: buildNotificationMessage(contents.discovery)
             });
                 
             return contents.discovery;
@@ -192,7 +192,7 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', 'ParlayNotification', '
     
     Public.onOpen(function () {
         Private.connected_previously = true;
-        // When socket is opened we should show a toast alert to notify the user.
+        // When socket is opened we should show a ParlayNotification to notify the user.
         ParlayNotification.show({
             content: 'Connected to Parlay Broker!'
         });
@@ -201,13 +201,12 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', 'ParlayNotification', '
     Public.onClose(function () {
         if (Private.hasConnectedPreviously()) {
             // When socket is closed we should show a notification giving the user the option to reconnect.
-            
             ParlayNotification.show({
                 content: 'Disconnected from Parlay Broker!',
-                action: 'Reconnect'
-            }).then(function (result) {
-                // Result will be resolved with 'ok' if the action is performed and true if the toast has hidden.
-                if (result === 'ok') Public.connect();
+                action: {
+                    text: 'Reconnect',
+                    callback: Public.connect
+                }
             });
             
         }
@@ -215,10 +214,10 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', 'ParlayNotification', '
             // If socket failed to open we should show a notification giving the user the option to connect.           
             ParlayNotification.show({
                 content: 'Failed to connect to Parlay Broker!',
-                action: 'Connect'
-            }).then(function (result) {
-                // Result will be resolved with 'ok' if the action is performed and true if the toast has hidden.
-                if (result === 'ok') Public.connect();
+                action: {
+                    text: 'Connect',
+                    callback: Public.connect
+                }
             });
         }
     });

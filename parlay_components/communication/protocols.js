@@ -405,10 +405,13 @@ protocols.controller('ProtocolConfigurationController', ['$scope', '$mdDialog', 
             /* istanbul ignore next */
             ParlayNotification.show({
                 content: 'Connected to ' + response.name + '.',
-                action: 'Discover'
-            }).then(function (result) {
-                    if (result === 'ok') ProtocolManager.requestDiscovery(true);
-                });
+                action: {
+                    text: 'Discover',
+                    callback: function () {
+                        ProtocolManager.requestDiscovery(true);
+                    }
+                }
+            });
             $mdDialog.hide(response);
         }).catch(function (response) {
             $scope.connecting = false;

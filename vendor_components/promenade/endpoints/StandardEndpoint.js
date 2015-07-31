@@ -164,10 +164,21 @@ standard_endpoint.controller('PromenadeStandardEndpointCommandController', ['$sc
         var extracted_message = {};
         
         for (var field in $scope.message) {
-            var split_field = field.split('_');
-            if (angular.isArray($scope.message[field])) extracted_message[split_field[0]] = split_field[1] === 'NUMBERS' ? $scope.message[field].map(parseFloat) : $scope.message[field];
-            else if (angular.isObject($scope.message[field])) extracted_message[split_field[0]] = $scope.message[field].value;
-            else extracted_message[split_field[0]] = $scope.message[field];
+            var param_name, field_type ;
+            if (field.indexOf('_') > -1) {
+                var split_field = field.split('_');
+
+                field_type = split_field[split_field.length - 1];
+
+                param_name = split_field.slice(0, split_field.length - 1).join('_');
+            }
+            else {
+                param_name = field;
+            }
+
+            if (angular.isArray($scope.message[field])) extracted_message[param_name] = field_type === 'NUMBERS' ? $scope.message[field].map(parseFloat) : $scope.message[field];
+            else if (angular.isObject($scope.message[field])) extracted_message[param_name] = $scope.message[field].value;
+            else extracted_message[param_name] = $scope.message[field];
         }
         
         return extracted_message;

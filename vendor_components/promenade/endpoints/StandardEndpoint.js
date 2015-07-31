@@ -164,8 +164,10 @@ standard_endpoint.controller('PromenadeStandardEndpointCommandController', ['$sc
         var extracted_message = {};
         
         for (var field in $scope.message) {
-            if (angular.isObject($scope.message[field])) extracted_message[field] = $scope.message[field].value;
-            else extracted_message[field] = $scope.message[field];
+            var split_field = field.split('_');
+            if (angular.isArray($scope.message[field])) extracted_message[split_field[0]] = split_field[1] === 'NUMBERS' ? $scope.message[field].map(parseFloat) : $scope.message[field];
+            else if (angular.isObject($scope.message[field])) extracted_message[split_field[0]] = $scope.message[field].value;
+            else extracted_message[split_field[0]] = $scope.message[field];
         }
         
         return extracted_message;
@@ -228,7 +230,10 @@ standard_endpoint.directive('promenadeStandardEndpointCardCommandContainer', ['R
         controller: function ($scope) {
             $scope.$watchCollection('fields', function (newV, oldV, $scope) {
                 for (var field in newV) {
-                    $scope.message[newV[field].msg_key] = newV[field].default;
+                    $scope.message[newV[field].msg_key + '_' + newV[field].input] = newV[field].default;
+                    if (!$scope.message[newV[field].msg_key + '_' + newV[field].input] && (newV[field].input === 'NUMBERS' || newV[field].input === 'STRINGS')) {
+                        $scope.message[newV[field].msg_key + '_' + newV[field].input] = [];
+                    }
                 }                 
             });
         }

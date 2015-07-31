@@ -4,7 +4,7 @@
                      
         <label>{{field.label}}</label>
                         
-        <md-select ng-if="field.input === 'DROPDOWN'" name="{{field.msg_key}}" ng-model="message[field.msg_key]" ng-required="field.required">
+        <md-select ng-if="field.input === 'DROPDOWN'" name="{{field.msg_key}}" ng-model="message[field.msg_key + '_' + field.input]" ng-required="field.required">
             <span ng-if="!field.options.length">
                 <md-option ng-repeat="(key, option) in field.options" ng-value="option">{{key}}</md-option>
             </span>
@@ -13,18 +13,18 @@
             </span>            
         </md-select>
         
-        <input ng-if="field.input === 'NUMBER'" name="{{field.msg_key}}" ng-model="message[field.msg_key]" type="number" ng-required="field.required">
+        <input ng-if="field.input === 'NUMBER'" name="{{field.msg_key}}" ng-model="message[field.msg_key + '_' + field.input]" type="number" ng-required="field.required">
         
-        <input ng-if="field.input === 'STRING'" name="{{field.msg_key}}" ng-model="message[field.msg_key]">
+        <input ng-if="field.input === 'STRING'" name="{{field.msg_key}}" ng-model="message[field.msg_key + '_' + field.input]">
         
-        <textarea ng-if="field.input === 'NUMBERS' || field.input === 'STRINGS'" name="{{field.msg_key}}" ng-model="message[field.msg_key]" columns="1" ng-required="field.required"></textarea>
+        <md-chips name="{{field.msg_key}}" ng-model="message[field.msg_key + '_' + field.input]" ng-if="field.input === 'NUMBERS' || field.input === 'STRINGS'" ng-required="field.required"></md-chips>
         
-        <div class="errors" ng-messages="commandform[field.msg_key].$error" ng-if="commandform[field.msg_key]">
+        <div class="errors" ng-messages="commandform[field.msg_key].$error" ng-if="commandform[field.msg_key + '_' + field.input]">
             <div ng-message="required">{{field.msg_key}} is required</div>
         </div>
         
     </md-input-container>
     
-    <promenade-standard-endpoint-card-command-container ng-if="message[field.msg_key].sub_fields" commandform="commandform" message="message" fields="message[field.msg_key].sub_fields" flex></promenade-standard-endpoint-card-command-container>
+    <promenade-standard-endpoint-card-command-container ng-if="message[field.msg_key + '_' + field.input].sub_fields" commandform="commandform" message="message" fields="message[field.msg_key + '_' + field.input].sub_fields" flex></promenade-standard-endpoint-card-command-container>
 
 </span>

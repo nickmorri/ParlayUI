@@ -73,8 +73,8 @@ socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', func
      * Passes message down to $websocket.send()
      */
     Private.send = function (topics, contents) {
-        if (Private.isMock()) return Private.socket.$emit(Private.encodeTopics(topics), {topics: topics, contents: contents});
-        else return Private.socket.$$send({topics: topics, contents: contents});
+        if (Private.isMock()) return Private.socket.$emit(Private.encodeTopics(topics), {TOPICS: topics, CONTENTS: contents});
+        else return Private.socket.$$send({TOPICS: topics, CONTENTS: contents});
     };
     
     /**
@@ -211,7 +211,7 @@ socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', func
             if (callbacks !== undefined) {
                 
                 var remaining_callbacks = callbacks.filter(function (callback) {
-                    if (callback.verbose) callback.func({topics: response_topics, contents: contents});
+                    if (callback.verbose) callback.func({TOPICS: response_topics, CONTENTS: contents});
                     else callback.func(contents);
                     return callback.persist;
                 });
@@ -264,8 +264,8 @@ socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', func
         // When the WebSocket receives a message invokeCallbacks.
         // If this is a mock socket we expect a slightly different message structuring.
         Private.socket.$on('$message', function(message) {
-            if (Public.isMock()) Private.invokeCallbacks(message.data.topics, message.data.contents);
-            else Private.invokeCallbacks(message.topics, message.contents);
+            if (Public.isMock()) Private.invokeCallbacks(message.data.TOPICS, message.data.CONTENTS);
+            else Private.invokeCallbacks(message.TOPICS, message.CONTENTS);
         });
         
         /**

@@ -3,8 +3,8 @@
         <md-list>
             <md-list-item class="md-2-line" ng-repeat="message in getLog()">
                 <div class="md-list-item-text">
-                    <p>topics:{<span ng-repeat="(key, value) in message.topics">{{key}}:{{value}}<span ng-if="!$last">,</span></span>}</p>
-                    <p>contents:{<span ng-repeat="(key, value) in message.contents">{{key}}:{{value}}<span ng-if="!$last">,</span></span>}</p>
+                    <p>topics:{<span ng-repeat="(key, value) in message.TOPICS">{{key}}:{{value}}<span ng-if="!$last">,</span></span>}</p>
+                    <p>contents:{<span ng-repeat="(key, value) in message.CONTENTS">{{key}}:{{value}}<span ng-if="!$last">,</span></span>}</p>
                 </div>
             </md-list-item>
         </md-list>

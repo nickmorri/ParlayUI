@@ -22,14 +22,26 @@ protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'Promenad
         this.fields = {};
     }
     
+    /**
+	 * Returns name of protocol.
+	 * @returns {String} protocol name
+	 */
     ParlayProtocol.prototype.getName = function () {
         return this.protocol_name;
     };
     
+    /**
+	 * Returns type of protocol.
+	 * @returns {String} protocol type
+	 */
     ParlayProtocol.prototype.getType = function () {
         return this.type;
     };
     
+    /**
+	 * Moves endpoint from collection of available endpoints to active endpoints.
+	 * @param {ParlayEndpoint} target endpoint
+	 */
     ParlayProtocol.prototype.activateEndpoint = function (endpoint) {
         var index = this.available_endpoints.findIndex(function (suspect) {
             return endpoint === suspect;
@@ -39,22 +51,42 @@ protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'Promenad
         else throw endpoint.name + ' does not belong to ' + this.getName();
     };
     
+    /**
+	 * Returns available endpoints in protocol.
+	 * @returns {Array} available endpoints
+	 */
     ParlayProtocol.prototype.getAvailableEndpoints = function () {
         return this.available_endpoints;
     };
     
+    /**
+	 * Returns active endpoints in protocol.
+	 * @returns {Array} active endpoints
+	 */
     ParlayProtocol.prototype.getActiveEndpoints = function () {
         return this.active_endpoints;
     };
     
+    /**
+	 * Returns all messages that have been collected by the protocol.
+	 * @returns {Array} message log
+	 */
     ParlayProtocol.prototype.getLog = function () {
         return this.log;
     };        
     
+    /**
+	 * Registers a callback to be invoked when a message is received.
+	 * @param {Function} callback function
+	 */
     ParlayProtocol.prototype.onMessage = function (callback) {
         this.on_message_callbacks.push(callback.bind(this));    
     };
     
+    /**
+	 * Invokes all callbacks that have been registered with onMessage.
+	 * @param {Object} message object to be passed to registered callbacks
+	 */
     ParlayProtocol.prototype.invokeCallbacks = function (response) {
         this.on_message_callbacks = this.on_message_callbacks.filter(function (callback) {
             callback(response);            
@@ -62,22 +94,36 @@ protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'Promenad
         });
     };
     
+    /**
+	 * Request a subscription from the Broker for this protocol.
+	 */
     ParlayProtocol.prototype.subscribe = function () {
         PromenadeBroker.sendSubscribe(this.buildSubscriptionTopics()).then(function (response) {
             this.subscription_listener_dereg = ParlaySocket.onMessage(this.buildSubscriptionTopics().topics, this.invokeCallbacks.bind(this), true);
         }.bind(this));
     };
     
+    /**
+	 * Request the Broker to be unsubscribed for this protocol.
+	 */
     ParlayProtocol.prototype.unsubscribe = function () {
         PromenadeBroker.sendUnsubscribe(this.buildSubscriptionTopics()).then(function (response) {
             this.onClose();
         }.bind(this));
     };
     
+    /**
+	 * Checks if we have a subscription listener active.
+	 * @returns {Boolean} status of registration listener
+	 */
     ParlayProtocol.prototype.hasSubscription = function() {
         return this.subscription_listener_dereg !== null;
     };
     
+    /**
+	 * Records a message into the message log.
+	 * @param {Object} message object
+	 */
     ParlayProtocol.prototype.recordLog = function(response) {
         this.log.push(response);
     };

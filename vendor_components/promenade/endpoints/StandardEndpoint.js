@@ -83,7 +83,7 @@ standard_endpoint.factory('PromenadeStandardEndpoint', ['ParlayEndpoint', functi
     Object.defineProperty(PromenadeStandardEndpoint.prototype, 'log', {
        get: function () {
            return this.protocol.getLog().filter(function (message) {
-                return message.topics.FROM === this.id;
+                return message.TOPICS.FROM === this.id;
             }, this);
        } 
     });
@@ -133,8 +133,8 @@ standard_endpoint.factory('PromenadeStandardEndpoint', ['ParlayEndpoint', functi
     
     PromenadeStandardEndpoint.prototype.generateMessage = function (message) {
         return {
-            'topics': this.generateTopics(),
-            'contents': this.generateContents(message)
+            'TOPICS': this.generateTopics(),
+            'CONTENTS': this.generateContents(message)
         };
     };
     

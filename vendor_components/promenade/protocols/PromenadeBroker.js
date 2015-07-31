@@ -196,6 +196,15 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', 'ParlayNotification', '
         ParlayNotification.show({
             content: 'Connected to Parlay Broker!'
         });
+        
+        // Wait for Broker's discovery request.
+        Public.onMessage({type: 'broker', command: 'get_discovery'}, function(response) {
+	        // Respond with a empty discovery message.
+	        ParlaySocket.sendMessage({type: 'broker', response:'get_discovery_response'}, {
+		         discovery: []
+	        });
+        });
+        
     });
     
     Public.onClose(function () {

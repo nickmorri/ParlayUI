@@ -23,12 +23,12 @@
                     getLog: function () {
                         return [
                             {
-                                topics: {
+                                TOPICS: {
                                     FROM: 100
                                 }
                             },
                             {
-                                topics: {
+                                TOPICS: {
                                     FROM: 200
                                 }
                             }
@@ -68,7 +68,7 @@
             describe('accessors', function () {
                 
                 it('gets log from protocol', function () {
-                    expect(endpoint.log).toEqual([{topics:{FROM:100}}]);
+                    expect(endpoint.log).toEqual([{TOPICS:{FROM:100}}]);
                 });
                 
                 it('query matching', function () {
@@ -123,11 +123,11 @@
                         command: 'FOO',
                         type: 'int'
                     })).toEqual({
-                        topics: {
+                        TOPICS: {
                             TO: 100,
                             MSG_TYPE: 'COMMAND'
                         },
-                        contents: {
+                        CONTENTS: {
                             COMMAND: 'FOO',
                             type: 'int'
                         }
@@ -146,11 +146,11 @@
                 });
                 
                 expect(MockProtocol.sendCommand).toHaveBeenCalledWith({
-                    topics: {
+                    TOPICS: {
                         TO: 100,
                         MSG_TYPE: 'COMMAND'
                     },
-                    contents: {
+                    CONTENTS: {
                         COMMAND: 'FOO',
                         type: 'int'
                     }

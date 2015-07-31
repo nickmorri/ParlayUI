@@ -32,8 +32,8 @@
             
             it('builds message topics', function () {
                 var previous_message_id = protocol.getMessageId();
-                expect(protocol.buildMessageTopics({topics:{}})).toEqual({
-                    topics: {
+                expect(protocol.buildMessageTopics({TOPICS:{}})).toEqual({
+                    TOPICS: {
                         MSG_ID: previous_message_id + 1,
                         FROM: 0xf201
                     }
@@ -42,7 +42,7 @@
             
             it('builds response topics', function () {
                 var previous_message_id = protocol.getMessageId();
-                expect(protocol.buildResponseTopics({topics: {
+                expect(protocol.buildResponseTopics({TOPICS: {
                     TO: 100,
                     FROM: 0xf201,
                     MSG_ID: protocol.consumeMessageId()
@@ -54,7 +54,7 @@
             });
 
             it('builds subscription topics', function () {
-                expect(protocol.buildSubscriptionTopics()).toEqual({topics:{
+                expect(protocol.buildSubscriptionTopics()).toEqual({TOPICS:{
                     TO: 0xf201
                 }});
             });
@@ -70,10 +70,10 @@
                 spyOn(protocol, 'sendMessage');
                 
                 protocol.sendCommand({
-                    topics: {
+                    TOPICS: {
                         TO: 100
                     },
-                    contents: {}
+                    CONTENTS: {}
                 });
                 expect(protocol.sendMessage).toHaveBeenCalledWith({
                         TO: 100,

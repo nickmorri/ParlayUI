@@ -401,9 +401,11 @@ protocols.controller('ProtocolConfigurationController', ['$scope', '$mdDialog', 
      */
     $scope.filterProtocols = function (query) {
         var lowercaseQuery = angular.lowercase(query);
-        return query ? ProtocolManager.getAvailableProtocols().filter(function(protocol) {
+        var protocols = angular.copy(ProtocolManager.getAvailableProtocols());
+        
+        return query ? protocols.filter(function(protocol) {
             return angular.lowercase(protocol.name).indexOf(lowercaseQuery) > -1;
-        }) : ProtocolManager.getAvailableProtocols();
+        }) : protocols;
     };
     
     /**

@@ -240,11 +240,11 @@ protocols.factory('ProtocolManager', ['$injector', 'PromenadeBroker', '$q', func
      * @returns {$q.defer.promise} Resolved when the Broker responds with the close result.
      */
     Public.closeProtocol = function (protocol) {
-        return PromenadeBroker.closeProtocol(protocol.getName()).then(function (response) {
+        return PromenadeBroker.closeProtocol(protocol.NAME).then(function (response) {
             if (response.STATUS === 'ok') {
                 // Search for open protocol requested to be closed.
                 var index = Private.open_protocols.findIndex(function (suspect) {
-                    return protocol.getName() === suspect.getName();
+                    return protocol.NAME === suspect.NAME;
                 });
                 
                 // Remove if we find the protocol, then call it's onClose method.
@@ -523,7 +523,7 @@ protocols.controller('ParlayConnectionListController', ['$scope', '$mdDialog', '
     $scope.closeProtocol = function (protocol) {
         ProtocolManager.closeProtocol(protocol).then(function (result) {
             ParlayNotification.show({
-                content: 'Closed ' + protocol.getName() + '.'
+                content: 'Closed ' + protocol.NAME + '.'
             }); 
         }).catch(function (result) {
             ParlayNotification.show({

@@ -99,7 +99,7 @@ protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'Promenad
 	 */
     ParlayProtocol.prototype.subscribe = function () {
         PromenadeBroker.sendSubscribe(this.buildSubscriptionTopics()).then(function (response) {
-            this.subscription_listener_dereg = ParlaySocket.onMessage(this.buildSubscriptionTopics().topics, this.invokeCallbacks.bind(this), true);
+            this.subscription_listener_dereg = ParlaySocket.onMessage(this.buildSubscriptionTopics().TOPICS, this.invokeCallbacks.bind(this), true);
         }.bind(this));
     };
     

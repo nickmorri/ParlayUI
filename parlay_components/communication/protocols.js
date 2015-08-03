@@ -555,6 +555,9 @@ protocols.controller('ParlayConnectionListController', ['$scope', '$mdDialog', '
         $mdDialog.show({
             targetEvent: event,
             clickOutsideToClose: true,
+            onComplete: function (scope, element, options) {
+	            element.find('input').focus();
+            },
             controller: 'ProtocolConfigurationController',
             templateUrl: '../parlay_components/communication/directives/parlay-protocol-configuration-dialog.html'
         });

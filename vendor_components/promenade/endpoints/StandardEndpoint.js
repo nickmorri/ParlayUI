@@ -159,6 +159,8 @@ standard_endpoint.controller('PromenadeStandardEndpointCommandController', ['$sc
     $scope.sending = false;
     $scope.message = {};
     
+    var sending_timeout = null;
+    
     function collectMessage () {
         
         var extracted_message = {};
@@ -188,9 +190,11 @@ standard_endpoint.controller('PromenadeStandardEndpointCommandController', ['$sc
     $scope.send = function () {
         $scope.sending = true;
         $scope.endpoint.sendMessage(collectMessage()).then(function (response) {
-            $timeout(function () {
+            if (sending_timeout !== null) $timeout.cancel(sending_timeout);
+        	sending_timeout = $timeout(function () {
+	        	sending_timeout = null;
                 $scope.sending = false;
-            }, 500);            
+            }, 500);
         }).catch(function (response) {
             console.warn(response);
         });

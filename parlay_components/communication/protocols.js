@@ -425,7 +425,7 @@ protocols.controller('ProtocolConfigurationController', ['$scope', '$mdDialog', 
      * @returns {Boolean} True if it has any parameters, false otherwise
      */
     $scope.selectedProtocolHasParameters = function () {
-        return Object.keys($scope.selected_protocol.parameters).length > 0;
+        return $scope.selected_protocol !== null && Object.keys($scope.selected_protocol.parameters).length > 0;
     };
     
     /**

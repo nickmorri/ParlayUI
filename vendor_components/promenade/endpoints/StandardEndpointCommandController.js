@@ -7,6 +7,15 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
     
     var sending_timeout = null;
     
+    function pushChipBuffer (chipElements) {
+	    for (var i = 0; i < chipElements.length; i++) {
+		    var ctrl = angular.element(chipElements[i].querySelector('input')).scope().$mdChipsCtrl;
+		    var buffer = ctrl.getChipBuffer();
+		    if (buffer.length) ctrl.appendChip(buffer);
+		    ctrl.resetChipBuffer();
+	    }
+    }
+    
     function collectMessage () {
         
         var extracted_message = {};
@@ -33,7 +42,10 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
         
     }
     
-    $scope.send = function () {
+    $scope.send = function (event) {
+	    
+	    if (event) pushChipBuffer(event.target.querySelectorAll('md-chips'));
+	    
         $scope.sending = true;
         $scope.endpoint.sendMessage(collectMessage()).then(function (response) {
             if (sending_timeout !== null) $timeout.cancel(sending_timeout);
@@ -54,7 +66,10 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommands', fu
             endpoint: "="
         },
         templateUrl: '../vendor_components/promenade/endpoints/directives/promenade-standard-endpoint-card-commands.html',
-        controller: 'PromenadeStandardEndpointCommandController'
+        controller: 'PromenadeStandardEndpointCommandController',
+        link: function (scope, element, attributes) {
+	        scope.element = element;
+        }
     };
 });
 

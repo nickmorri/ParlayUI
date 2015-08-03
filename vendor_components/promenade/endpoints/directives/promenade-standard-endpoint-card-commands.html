@@ -6,13 +6,16 @@
                 <promenade-standard-endpoint-card-command-container commandform="commandform" message="message" fields="endpoint.content_fields" flex></promenade-standard-endpoint-card-command-container>
             </div>
             
-            <md-button flex type="submit" class="md-primary" ng-disabled="commandform.$invalid" aria-label="Sends command to BIT Service object.">
+            <md-button flex type="submit" ng-class="error ? 'md-warn' : 'md-primary'" ng-disabled="commandform.$invalid" aria-label="Sends command to BIT Service object.">
                 <span ng-show="sending">
                     Sent [{{endpoint.getMessageId()}}]
                 </span>
-                <span ng-hide="sending">
+                <span ng-hide="sending || error">
                     Send
                 </span>
+				<span ng-show="error">
+					Error [{{error_message}}]. Check log.
+				</span>
             </md-button>
             
         </form>

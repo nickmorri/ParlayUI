@@ -2,6 +2,7 @@ var standard_endpoint_commands = angular.module('promenade.endpoints.standardend
 
 standard_endpoint_commands.controller('PromenadeStandardEndpointCommandController', ['$scope', '$timeout', function ($scope, $timeout) {
     
+    $scope.error = false;
     $scope.sending = false;
     $scope.message = {};
     
@@ -43,7 +44,7 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
     }
     
     $scope.send = function (event) {
-	    
+	    $scope.error = false;
 	    if (event) pushChipBuffer(event.target.querySelectorAll('md-chips'));
 	    
         $scope.sending = true;
@@ -54,7 +55,9 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
                 $scope.sending = false;
             }, 500);
         }).catch(function (response) {
-            console.warn(response);
+	        $scope.sending = false;
+	        $scope.error = true;
+	        $scope.error_message = response.STATUS_NAME;
         });
     };
     

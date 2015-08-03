@@ -95,7 +95,7 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', 'ParlayNotification', '
                     content_string += result[0].NAME + '.';
                 }
                 else {
-                    content_string += result.length + ' devices.';
+                    content_string += result.length + ' protocols.';
                 }
                 
                 if (result.length === 0) {

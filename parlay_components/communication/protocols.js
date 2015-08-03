@@ -131,7 +131,7 @@ protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'Promenad
     ParlayProtocol.prototype.sendMessage = function (topics, contents, response_topics) {
         return $q(function(resolve, reject) {
             ParlaySocket.sendMessage(topics, contents, response_topics, function (response) {
-                if (response.status === 0) resolve(response);
+                if (response.STATUS === 0) resolve(response);
                 else reject(response);
             });
         }.bind(this));
@@ -241,7 +241,7 @@ protocols.factory('ProtocolManager', ['$injector', 'PromenadeBroker', '$q', func
      */
     Public.closeProtocol = function (protocol) {
         return PromenadeBroker.closeProtocol(protocol.getName()).then(function (response) {
-            if (response.status === 'ok') {
+            if (response.STATUS === 'ok') {
                 // Search for open protocol requested to be closed.
                 var index = Private.open_protocols.findIndex(function (suspect) {
                     return protocol.getName() === suspect.getName();
@@ -464,7 +464,7 @@ protocols.controller('ProtocolConfigurationController', ['$scope', '$mdDialog', 
         }).catch(function (response) {
             $scope.connecting = false;
             $scope.error = true;
-            $scope.error_message = response.status;
+            $scope.error_message = response.STATUS;
             return response;
         });
     };
@@ -527,7 +527,7 @@ protocols.controller('ParlayConnectionListController', ['$scope', '$mdDialog', '
             }); 
         }).catch(function (result) {
             ParlayNotification.show({
-                content: result.status
+                content: result.STATUS
             });
         });
     };

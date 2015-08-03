@@ -112,8 +112,8 @@
             
             PromenadeBroker.closeProtocol = function (protocol) {
                 return $q(function (resolve, reject) {
-                    if (protocol === 'TestProtocol') resolve({status: 'ok'});
-                    else resolve({status: 'error'});
+                    if (protocol === 'TestProtocol') resolve({STATUS: 'ok'});
+                    else resolve({STATUS: 'error'});
                 });
             };
             
@@ -153,10 +153,10 @@
         
         Public.sendMessage = function (topics, contents, response_topics, response_callback) {
             if (contents === null) {
-                response_callback({status: -1});
+                response_callback({STATUS: -1});
             }
             else {
-                contents.status = 0;
+                contents.STATUS = 0;
                 response_callback(contents);
             }
         };
@@ -265,7 +265,7 @@
                 
                 it('resolves', function (done) {
                     protocol.sendMessage({type: 'test'}, {data:[]}, {type: 'test'}).then(function (response) {
-                        expect(response).toEqual({status: 0, data:[]});
+                        expect(response).toEqual({STATUS: 0, data:[]});
                         done();
                     });
                     rootScope.$apply();                    
@@ -273,7 +273,7 @@
                 
                 it('rejects', function(done) {
                     protocol.sendMessage({type: 'test'}, null, {type: 'test'}).catch(function (response) {
-                        expect(response).toEqual({status: -1});
+                        expect(response).toEqual({STATUS: -1});
                         done();
                     });
                     rootScope.$apply();
@@ -388,7 +388,7 @@
                             return 'TestProtocol';
                         }
                     }).then(function (response) {
-                        expect(response.status).toBe('ok');
+                        expect(response.STATUS).toBe('ok');
                     });
                     
                     $rootScope.$apply();
@@ -406,7 +406,7 @@
                             return 'failure';
                         }
                     }).catch(function (response) {
-                        expect(response.status).not.toBe('ok');
+                        expect(response.STATUS).not.toBe('ok');
                     });
                     
                     $rootScope.$apply();
@@ -464,8 +464,8 @@
                         },
                         openProtocol: function (configuration) {
                             return $q(function(resolve, reject) {
-                                if (configuration.name === 'SuccessfulProtocol') resolve({status:'ok'});
-                                else reject({status:'error'});
+                                if (configuration.name === 'SuccessfulProtocol') resolve({STATUS:'ok'});
+                                else reject({STATUS:'error'});
                             });
                         }
                     };
@@ -554,8 +554,8 @@
                         },
                         openProtocol: function (configuration) {
                             return $q(function(resolve, reject) {
-                                if (configuration.name === 'SuccessfulProtocol') resolve({status:'ok'});
-                                else reject({status:'error'});
+                                if (configuration.name === 'SuccessfulProtocol') resolve({STATUS:'ok'});
+                                else reject({STATUS:'error'});
                             });
                         }
                     };

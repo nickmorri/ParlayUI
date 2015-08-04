@@ -17,6 +17,8 @@ endpoints.factory('ParlayEndpoint', function () {
     
     function ParlayEndpoint(data, protocol) {
         
+        var workspaceHashes = {};
+        
         Object.defineProperty(this, 'name', {
             value: data.NAME,
             enumerable: true,
@@ -29,6 +31,13 @@ endpoints.factory('ParlayEndpoint', function () {
             writeable: false,
             enumerable: false,
             configurable: false
+        });
+        
+        Object.defineProperty(this, 'workspaceHashes', {
+	       	value: {},
+	       	writeable: true,
+	       	enumerable: false,
+	       	configurable: false
         });
         
         this.type = 'ParlayEndpoint';
@@ -53,6 +62,26 @@ endpoints.factory('ParlayEndpoint', function () {
     ParlayEndpoint.prototype.activate = function () {
         this.protocol.activateEndpoint(this);
     };
+    
+    ParlayEndpoint.prototype.deactivate = function () {
+	    this.protocol.deactivateEndpoint(this);
+    };
+    
+    ParlayEndpoint.prototype.reorder = function (index, distance) {
+	    this.protocol.reorderEndpoint(this, index, distance);
+    };
+    
+    ParlayEndpoint.prototype.getTrackById = function (index) {
+	    if (!this.workspaceHashes[index]) this.workspaceHashes[index] = Math.floor(Math.random() * 10000);
+	    return this.workspaceHashes[index];
+    };
+    
+    ParlayEndpoint.prototype.adjustWorkSpaceHashes = function (index, distance) {
+	    var temp = this.workspaceHashes[index + distance];
+	    this.workspaceHashes[index + distance] = this.workspaceHashes[index];
+	    if (temp) this.workspaceHashes[index] = temp;
+	    else delete this.workspaceHashes[index];
+	};
     
     ParlayEndpoint.prototype.matchesQuery = function (query) {
         NotImplementedError('matchesQuery');
@@ -87,6 +116,10 @@ endpoints.factory('EndpointManager', ['PromenadeBroker', 'ProtocolManager', func
     Public.activateEndpoint = function (endpoint) {
         endpoint.activate();
     };
+    
+    Public.deactivateEndpoint = function (endpoint) {
+	    endpoint.deactivate();
+    };
         
     return Public;
 }]);
@@ -100,7 +133,11 @@ endpoints.controller('EndpointController', ['$scope', 'EndpointManager', functio
     $scope.requestDiscovery = function () {
         EndpointManager.requestDiscovery();
     };
-        
+    
+    $scope.trackingFunction = function (endpoint, index) {
+	    return endpoint.getTrackById(index);
+    };
+    
 }]);
 
 endpoints.controller('ParlayEndpointSearchController', ['$scope', 'EndpointManager', function ($scope, EndpointManager) {
@@ -185,7 +222,7 @@ endpoints.directive('parlayEndpointCard', ['$compile', function ($compile) {
                     return '<' + snake_case(directive, '-') + ' endpoint="endpoint" layout-fill layout="row" layout-align="space-between center"></' + snake_case(directive, '-') + '>';    
                 }));
             }, []).forEach(function (directive_string) {
-                toolbar.appendChild($compile(directive_string)(scope)[0]);
+	            toolbar.insertBefore($compile(directive_string)(scope)[0], toolbar.firstChild);
             });
             
             // Append tabs directives.

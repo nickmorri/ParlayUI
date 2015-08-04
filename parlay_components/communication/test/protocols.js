@@ -317,7 +317,7 @@
                     protocol.activateEndpoint(test_endpoint);
                     expect(protocol.getActiveEndpoints().length).toBe(1);
                     expect(protocol.getActiveEndpoints()[0]).toEqual(test_endpoint);
-                    expect(protocol.getAvailableEndpoints().length).toBe(num_available_endpoints - 1);
+                    expect(protocol.getAvailableEndpoints().length).toBe(num_available_endpoints);
                 });
                 
                 it('endpoint activation attempt', function () {
@@ -334,6 +334,14 @@
                     expect(protocol.getActiveEndpoints().length).toBe(0);
                     expect(protocol.getActiveEndpoints()[0]).not.toEqual(test_endpoint);
                     expect(protocol.getAvailableEndpoints().length).toBe(num_available_endpoints);
+                });
+                
+                it('endpoint deactivation', function () {
+	                
+                });
+                
+                it('endpoint deactivation attempt', function () {
+	                
                 });
                 
             });

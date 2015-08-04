@@ -2,15 +2,15 @@
     <md-toolbar class="md-primary">
         <div class="md-toolbar-tools">
             <!-- Vendor specific endpoint toolbar-tools directives are automatically inserted here -->
-            <md-button class="md-icon-button" aria-label="Move left" ng-click="endpoint.reorder($index, -1)" ng-hide="$first">
+            <md-button class="md-icon-button" aria-label="Move left" ng-click="reorder(key, -1)" ng-hide="$first">
 				<md-icon><ng-md-icon icon="arrow_back"></ng-md-icon></md-icon>
 	            <md-tooltip>Move left</md-tooltip>
             </md-button>
-            <md-button class="md-icon-button" aria-label="Move right" ng-click="endpoint.reorder($index, 1)" ng-hide="$last">
+            <md-button class="md-icon-button" aria-label="Move right" ng-click="reorder(key, 1)" ng-hide="$last">
 				<md-icon><ng-md-icon icon="arrow_forward"></ng-md-icon></md-icon>
 	            <md-tooltip>Move right</md-tooltip>
             </md-button>            
-            <md-button class="md-icon-button" aria-label="Deactivate" ng-click="endpoint.deactivate($index)">
+            <md-button class="md-icon-button" aria-label="Deactivate" ng-click="deactivate(key)">
 				<md-icon><ng-md-icon icon="close"></ng-md-icon></md-icon>            	
 	            <md-tooltip>Deactivate</md-tooltip>
             </md-button>

@@ -39,65 +39,11 @@ protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'Promenad
     };
     
     /**
-	 * Copies endpoint from collection of available endpoints to active endpoints.
-	 * @param {ParlayEndpoint} target endpoint
-	 */
-    ParlayProtocol.prototype.activateEndpoint = function (endpoint) {
-	    var index = this.available_endpoints.findIndex(function (suspect) {
-            return endpoint === suspect;
-        });
-        
-        if (index > -1) this.active_endpoints.push(this.available_endpoints[index]);
-        else throw endpoint.name + ' does not belong to ' + this.getName();
-    };
-    
-    /**
-	 * Removes endpoint from collection of active endpoints.
-	 * @param {ParlayEndpoint} target endpoint
-	 */
-	ParlayProtocol.prototype.deactivateEndpoint = function (endpoint) {
-		var index = this.active_endpoints.findIndex(function (suspect) {
-            return endpoint === suspect;
-        });
-        
-        if (index > -1) this.active_endpoints.splice(index, 1);
-        else throw endpoint.name + ' does not belong to ' + this.getName();
-	};
-	
-	/**
-	 * Reorder endpoint by the distance specified.
-	 * @param {ParlayEndpoint} endpoint - target endpoint
-	 * @param {Integer} distance - distance to move endpoint
-	 * @returns {Integer} - new index of endpoint in active endpoint collection
-	 */
-	ParlayProtocol.prototype.reorderEndpoint = function (endpoint, index, distance) {
-        if (index === 0 && distance <= 0) {
-	        // Do nothing we can't move any further left.
-        }
-        else if (index == this.active_endpoints.length - 1 && distance >= 1) {
-	        // Do nothing we can't move any further right.
-        }
-        else {
-	        this.active_endpoints[index].adjustWorkSpaceHashes(index, distance);
-	        this.active_endpoints[index + distance] = this.active_endpoints.splice(index, 1, this.active_endpoints[index + distance])[0];			
-			this.active_endpoints[index].adjustWorkSpaceHashes(index + distance, distance * -1);
-	    }
-	};
-    
-    /**
 	 * Returns available endpoints in protocol.
 	 * @returns {Array} available endpoints
 	 */
     ParlayProtocol.prototype.getAvailableEndpoints = function () {
         return this.available_endpoints;
-    };
-    
-    /**
-	 * Returns active endpoints in protocol.
-	 * @returns {Array} active endpoints
-	 */
-    ParlayProtocol.prototype.getActiveEndpoints = function () {
-        return this.active_endpoints;
     };
     
     /**

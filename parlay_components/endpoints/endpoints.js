@@ -59,30 +59,6 @@ endpoints.factory('ParlayEndpoint', function () {
         return [this.directives];
     };
     
-    ParlayEndpoint.prototype.activate = function () {
-        this.protocol.activateEndpoint(this);
-    };
-    
-    ParlayEndpoint.prototype.deactivate = function () {
-	    this.protocol.deactivateEndpoint(this);
-    };
-    
-    ParlayEndpoint.prototype.reorder = function (index, distance) {
-	    this.protocol.reorderEndpoint(this, index, distance);
-    };
-    
-    ParlayEndpoint.prototype.getTrackById = function (index) {
-	    if (!this.workspaceHashes[index]) this.workspaceHashes[index] = Math.floor(Math.random() * 10000);
-	    return this.workspaceHashes[index];
-    };
-    
-    ParlayEndpoint.prototype.adjustWorkSpaceHashes = function (index, distance) {
-	    var temp = this.workspaceHashes[index + distance];
-	    this.workspaceHashes[index + distance] = this.workspaceHashes[index];
-	    if (temp) this.workspaceHashes[index] = temp;
-	    else delete this.workspaceHashes[index];
-	};
-    
     ParlayEndpoint.prototype.matchesQuery = function (query) {
         NotImplementedError('matchesQuery');
     };
@@ -93,14 +69,14 @@ endpoints.factory('ParlayEndpoint', function () {
 
 endpoints.factory('EndpointManager', ['PromenadeBroker', 'ProtocolManager', function (PromenadeBroker, ProtocolManager) {
     
-    var Private = {};
+    var Private = {
+	    active_endpoints: {}
+    };
     
     var Public = {};
     
     Public.getActiveEndpoints = function () {
-        return ProtocolManager.getOpenProtocols().reduce(function (previous, current) {
-            return previous.concat(current.getActiveEndpoints());
-        }, []);
+        return Private.active_endpoints;
     };
     
     Public.getAvailableEndpoints = function () {
@@ -113,12 +89,30 @@ endpoints.factory('EndpointManager', ['PromenadeBroker', 'ProtocolManager', func
         return PromenadeBroker.requestDiscovery(true);
     };
     
-    Public.activateEndpoint = function (endpoint) {
-        endpoint.activate();
+    Public.reorder = function (index, distance) {
+	    var temp = Private.active_endpoints[index + distance];
+	    Private.active_endpoints[index + distance] = Private.active_endpoints[index];
+	    Private.active_endpoints[index] = temp;
     };
     
-    Public.deactivateEndpoint = function (endpoint) {
-	    endpoint.deactivate();
+    Public.activateEndpoint = function (endpoint) {
+	    var count = 0;
+	    while (Private.active_endpoints.hasOwnProperty(count)) count++;
+	    Private.active_endpoints[count] = {
+		    ref: endpoint,
+		    uid: Math.floor(Math.random() * 1500)
+	    };
+    };
+    
+    Public.deactivateEndpoint = function (index) {
+	    delete Private.active_endpoints[index];
+	    var keys = Object.keys(Private.active_endpoints);
+	    for (var i = 0; i < keys.length; i++) {
+		    Private.active_endpoints[i] = Private.active_endpoints[keys[i]];
+	    }
+	    for (var i = keys.length; i < Object.keys(Private.active_endpoints).length; i++) {
+		    delete Private.active_endpoints[i];
+	    }
     };
         
     return Public;
@@ -134,8 +128,12 @@ endpoints.controller('EndpointController', ['$scope', 'EndpointManager', functio
         EndpointManager.requestDiscovery();
     };
     
-    $scope.trackingFunction = function (endpoint, index) {
-	    return endpoint.getTrackById(index);
+    $scope.reorder = function (index, distance) {
+	    EndpointManager.reorder(parseInt(index, 10), distance);
+    };
+    
+    $scope.deactivate = function (index) {
+	    EndpointManager.deactivateEndpoint(parseInt(index, 10));
     };
     
 }]);
@@ -200,6 +198,8 @@ endpoints.directive('parlayEndpointCard', ['$compile', function ($compile) {
     return {
         templateUrl: '../parlay_components/endpoints/directives/parlay-endpoint-card.html',
         link: function (scope, element, attributes) {
+            
+            scope.endpoint = scope.container.ref;
             
             // Converts directive names to snake-case which Angular requires during directive compilation.
             function snake_case(name) {

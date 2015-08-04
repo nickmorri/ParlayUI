@@ -3,7 +3,7 @@
     <parlay-endpoints-toolbar flex></parlay-endpoints-toolbar>
     
     <md-content flex layout-wrap  layout-align="space-around start" layout="row">
-        <parlay-endpoint-card flex-sm="100" flex="33" ng-repeat="endpoint in filterEndpoints() track by trackingFunction(endpoint, $index)"></parlay-endpoint-card>
+        <parlay-endpoint-card flex-sm="100" flex="33" ng-repeat="(key, container) in filterEndpoints() track by container.uid"></parlay-endpoint-card>
     </md-content>
                 
 </md-content>

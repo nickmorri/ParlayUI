@@ -186,7 +186,6 @@
             
             it('accesses attributes', function () {
                 expect(protocol.getAvailableEndpoints()).toEqual([]);
-                expect(protocol.getActiveEndpoints()).toEqual([]);
                 expect(protocol.getLog()).toEqual([]);
             });
             
@@ -209,7 +208,6 @@
                 it('does not have subscription', function () {
                     protocol.onClose();
                     expect(protocol.getAvailableEndpoints()).toEqual([]);
-                    expect(protocol.getActiveEndpoints()).toEqual([]);
                 });
                 
                 it('has subscription', function () {
@@ -224,7 +222,6 @@
                     protocol.onClose();
                     expect(protocol.hasSubscription()).toBeFalsy();
                     expect(protocol.getAvailableEndpoints()).toEqual([]);
-                    expect(protocol.getActiveEndpoints()).toEqual([]);
                 });
                 
             });
@@ -305,43 +302,6 @@
                     expect(protocol.NAME).toBe(sample_discovery.NAME);
                     expect(protocol.getAvailableEndpoints().length).toBe(50);
                     expect(protocol.getDynamicFieldKeys().length).toBe(3);
-                });
-                
-                it('endpoint activation', function () {
-                    protocol.addDiscoveryInfo(sample_discovery);
-                    expect(protocol.getActiveEndpoints().length).toBe(0);
-                    var num_available_endpoints = protocol.getAvailableEndpoints().length;
-                    
-                    var test_endpoint = protocol.getAvailableEndpoints()[1];
-                    
-                    protocol.activateEndpoint(test_endpoint);
-                    expect(protocol.getActiveEndpoints().length).toBe(1);
-                    expect(protocol.getActiveEndpoints()[0]).toEqual(test_endpoint);
-                    expect(protocol.getAvailableEndpoints().length).toBe(num_available_endpoints);
-                });
-                
-                it('endpoint activation attempt', function () {
-                    protocol.addDiscoveryInfo(sample_discovery);
-                    expect(protocol.getActiveEndpoints().length).toBe(0);
-                    var num_available_endpoints = protocol.getAvailableEndpoints().length;
-                    
-                    var test_endpoint = sample_discovery.CHILDREN[1];
-                    
-                    expect(function () {
-                        protocol.activateEndpoint(test_endpoint);
-                    }).toThrow();
-                    
-                    expect(protocol.getActiveEndpoints().length).toBe(0);
-                    expect(protocol.getActiveEndpoints()[0]).not.toEqual(test_endpoint);
-                    expect(protocol.getAvailableEndpoints().length).toBe(num_available_endpoints);
-                });
-                
-                it('endpoint deactivation', function () {
-	                
-                });
-                
-                it('endpoint deactivation attempt', function () {
-	                
                 });
                 
             });

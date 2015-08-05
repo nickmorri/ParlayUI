@@ -1,6 +1,6 @@
 <span ng-repeat="field in fields">
 
-    <md-input-container md-is-error="commandform[field.msg_key].$invalid">
+    <md-input-container md-is-error="commandform[field.msg_key].$invalid" ng-hide="field.hidden">
                      
         <label>{{field.label}}</label>
                         

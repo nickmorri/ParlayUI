@@ -21,7 +21,6 @@ module.exports = function (grunt) {
             return '<%= vendor.' + vendor + '.' + key + ' %>';
         }));
     }, []));
-    console.log(extracted);
     return extracted;
   }
 

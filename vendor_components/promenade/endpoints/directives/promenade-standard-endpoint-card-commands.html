@@ -8,13 +8,13 @@
             
             <md-button flex type="submit" ng-class="error ? 'md-warn' : 'md-primary'" ng-disabled="commandform.$invalid" aria-label="Sends command to BIT Service object.">
                 <span ng-show="sending">
-                    Sent [{{endpoint.getMessageId()}}]
+                    Sent ({{status_message}}) [{{endpoint.getMessageId()}}]
                 </span>
                 <span ng-hide="sending || error">
                     Send
                 </span>
 				<span ng-show="error">
-					Error [{{error_message}}]. Check log.
+					Error check log. ({{status_message}}) [{{endpoint.getMessageId()}}]
 				</span>
             </md-button>
             

@@ -4,6 +4,8 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
     
     $scope.error = false;
     $scope.sending = false;
+    $scope.status_message = null;
+    
     $scope.message = {};
     
     var sending_timeout = null;
@@ -49,6 +51,7 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
 	    
         $scope.sending = true;
         $scope.endpoint.sendMessage(collectMessage()).then(function (response) {
+	        $scope.status_message = response.STATUS_NAME;
             if (sending_timeout !== null) $timeout.cancel(sending_timeout);
         	sending_timeout = $timeout(function () {
 	        	sending_timeout = null;
@@ -57,7 +60,7 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
         }).catch(function (response) {
 	        $scope.sending = false;
 	        $scope.error = true;
-	        $scope.error_message = response.STATUS_NAME;
+	        $scope.status_message = response.STATUS_NAME;
         });
     };
     

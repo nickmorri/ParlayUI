@@ -110,7 +110,7 @@ endpoints.factory('EndpointManager', ['PromenadeBroker', 'ProtocolManager', func
 	    for (var i = 0; i < keys.length; i++) {
 		    Private.active_endpoints[i] = Private.active_endpoints[keys[i]];
 	    }
-	    for (var i = keys.length; i < Object.keys(Private.active_endpoints).length; i++) {
+	    for (i = keys.length; i < Object.keys(Private.active_endpoints).length; i++) {
 		    delete Private.active_endpoints[i];
 	    }
     };

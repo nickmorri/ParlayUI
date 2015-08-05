@@ -104,8 +104,7 @@ endpoints.factory('EndpointManager', ['PromenadeBroker', 'ProtocolManager', func
 	    };
     };
     
-    Public.deactivateEndpoint = function (index) {
-	    delete Private.active_endpoints[index];
+    Private.compactActiveEndpoints = function () {
 	    var keys = Object.keys(Private.active_endpoints);
 	    for (var i = 0; i < keys.length; i++) {
 		    Private.active_endpoints[i] = Private.active_endpoints[keys[i]];
@@ -113,6 +112,11 @@ endpoints.factory('EndpointManager', ['PromenadeBroker', 'ProtocolManager', func
 	    for (i = keys.length; i < Object.keys(Private.active_endpoints).length; i++) {
 		    delete Private.active_endpoints[i];
 	    }
+    };
+    
+    Public.deactivateEndpoint = function (index) {
+	    delete Private.active_endpoints[index];
+	    Private.compactActiveEndpoints();	    
     };
         
     return Public;

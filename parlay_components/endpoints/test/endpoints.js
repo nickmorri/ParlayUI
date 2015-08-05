@@ -43,8 +43,8 @@
     		
         });
         
-        describe('EndpointManager', function () {
-            var scope, EndpointManager, PromenadeBroker;
+        describe('ParlayEndpointManager', function () {
+            var scope, ParlayEndpointManager, PromenadeBroker;
             
             beforeEach(function () {
                 function PromenadeBroker() {
@@ -85,19 +85,19 @@
                 
             });
             
-            beforeEach(inject(function (_EndpointManager_, _PromenadeBroker_) {
+            beforeEach(inject(function (_ParlayEndpointManager_, _PromenadeBroker_) {
                 PromenadeBroker = _PromenadeBroker_;
-                EndpointManager = _EndpointManager_;
+                ParlayEndpointManager = _ParlayEndpointManager_;
             }));
             
             describe('accessors', function () {
                 
                 xit('getActiveEndpoints', function () {
-                    expect(EndpointManager.getActiveEndpoints()).toEqual([1,2]);
+                    expect(ParlayEndpointManager.getActiveEndpoints()).toEqual([1,2]);
                 });
             
                 it('getAvailableEndpoints', function () {
-                    expect(EndpointManager.getAvailableEndpoints()).toEqual([3,4]);
+                    expect(ParlayEndpointManager.getAvailableEndpoints()).toEqual([3,4]);
                 });
                     
             });
@@ -106,7 +106,7 @@
 
                 it('requestDiscovery', function () {
                     spyOn(PromenadeBroker, 'requestDiscovery');
-                    EndpointManager.requestDiscovery();
+                    ParlayEndpointManager.requestDiscovery();
                     expect(PromenadeBroker.requestDiscovery).toHaveBeenCalledWith(true);
                 });
                 
@@ -121,7 +121,7 @@
                     
                     spyOn(endpoint, 'activate');
                     
-                    EndpointManager.activateEndpoint(endpoint);
+                    ParlayEndpointManager.activateEndpoint(endpoint);
                     
                     expect(endpoint.activate).toHaveBeenCalled();
                     
@@ -131,41 +131,41 @@
                         
         });
         
-    	describe('endpointController', function () {
-    		var scope, EndpointController, EndpointManager;
+    	describe('ParlayEndpointController', function () {
+    		var scope, ParlayEndpointController, ParlayEndpointManager;
     
     		beforeEach(inject(function($rootScope, $controller) {
-        		EndpointManager = {
+        		ParlayEndpointManager = {
         			getActiveEndpoints: function () {
             			return [];
         			},
         			requestDiscovery: function () {}
     			};
     			scope = $rootScope.$new();
-    			EndpointController = $controller('EndpointController', {$scope: scope, EndpointManager: EndpointManager});
+    			ParlayEndpointController = $controller('ParlayEndpointController', {$scope: scope, ParlayEndpointManager: ParlayEndpointManager});
     		}));
     		
     		describe('endpoint filtering', function () {
-        		it('calls EndpointManager', function () {
+        		it('calls ParlayEndpointManager', function () {
                     expect(scope.filterEndpoints()).toEqual([]);
         		});
     		});
     		
     		describe('discovery request', function () {
-        		it('calls EndpointManager', function () {
-            		spyOn(EndpointManager, 'requestDiscovery');
+        		it('calls ParlayEndpointManager', function () {
+            		spyOn(ParlayEndpointManager, 'requestDiscovery');
             		scope.requestDiscovery();
-            		expect(EndpointManager.requestDiscovery).toHaveBeenCalled();
+            		expect(ParlayEndpointManager.requestDiscovery).toHaveBeenCalled();
         		});
     		});    		
         
     	});
     	
     	describe('endpointSearch', function () {
-        	var scope, endpointSearchController, EndpointManager;
+        	var scope, ParlayEndpointSearchController, ParlayEndpointManager;
         	
         	beforeEach(inject(function ($rootScope, $controller) {
-            	EndpointManager = {
+            	ParlayEndpointManager = {
                 	activateEndpoint: function(endpoint) {},
                 	getAvailableEndpoints: function(query) {
                     	return [
@@ -188,7 +188,7 @@
                 	}
             	};
             	scope = $rootScope.$new();
-            	endpointSearchController = $controller('ParlayEndpointSearchController', {$scope: scope, EndpointManager: EndpointManager});
+            	ParlayEndpointSearchController = $controller('ParlayEndpointSearchController', {$scope: scope, ParlayEndpointManager: ParlayEndpointManager});
         	}));
         	
         	describe('search state', function () {
@@ -207,7 +207,7 @@
     			
     			it('selects endpoint', function () {
         			
-        			spyOn(EndpointManager, 'activateEndpoint');
+        			spyOn(ParlayEndpointManager, 'activateEndpoint');
         			
         			var endpoint = {
             			name: 'test'
@@ -219,12 +219,12 @@
         			
         			expect(scope.selected_item).toBe(null);
         			expect(scope.search_text).toBe(null);
-        			expect(EndpointManager.activateEndpoint).toHaveBeenCalledWith(endpoint);
+        			expect(ParlayEndpointManager.activateEndpoint).toHaveBeenCalledWith(endpoint);
         			
     			});
     			
     			it('handles undefined endpoint selection', function () {
-        			spyOn(EndpointManager, 'activateEndpoint');
+        			spyOn(ParlayEndpointManager, 'activateEndpoint');
         			
         			scope.search_text = 'still here';
         			

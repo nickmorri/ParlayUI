@@ -198,13 +198,11 @@
         		});
         		
         		it('unsuccessfully', function () {
-            		spyOn(console, 'warn');
-            		
             		scope.message = {command: 'fail'};
                     scope.send();
                     rootScope.$apply();            		
         		    
-        		    expect(console.warn).toHaveBeenCalled();
+        		    expect(scope.error).toBeTruthy();
         		});
             		
             });    		

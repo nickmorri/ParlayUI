@@ -39,32 +39,11 @@ protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'Promenad
     };
     
     /**
-	 * Moves endpoint from collection of available endpoints to active endpoints.
-	 * @param {ParlayEndpoint} target endpoint
-	 */
-    ParlayProtocol.prototype.activateEndpoint = function (endpoint) {
-        var index = this.available_endpoints.findIndex(function (suspect) {
-            return endpoint === suspect;
-        });
-        
-        if (index > -1) this.active_endpoints.push(this.available_endpoints.splice(index, 1)[0]);
-        else throw endpoint.name + ' does not belong to ' + this.getName();
-    };
-    
-    /**
 	 * Returns available endpoints in protocol.
 	 * @returns {Array} available endpoints
 	 */
     ParlayProtocol.prototype.getAvailableEndpoints = function () {
         return this.available_endpoints;
-    };
-    
-    /**
-	 * Returns active endpoints in protocol.
-	 * @returns {Array} active endpoints
-	 */
-    ParlayProtocol.prototype.getActiveEndpoints = function () {
-        return this.active_endpoints;
     };
     
     /**
@@ -131,7 +110,7 @@ protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'Promenad
     ParlayProtocol.prototype.sendMessage = function (topics, contents, response_topics) {
         return $q(function(resolve, reject) {
             ParlaySocket.sendMessage(topics, contents, response_topics, function (response) {
-                if (response.status === 0) resolve(response);
+                if (response.STATUS === 0) resolve(response);
                 else reject(response);
             });
         }.bind(this));
@@ -241,7 +220,7 @@ protocols.factory('ProtocolManager', ['$injector', 'PromenadeBroker', '$q', func
      */
     Public.closeProtocol = function (protocol) {
         return PromenadeBroker.closeProtocol(protocol.getName()).then(function (response) {
-            if (response.status === 'ok') {
+            if (response.STATUS === 'ok') {
                 // Search for open protocol requested to be closed.
                 var index = Private.open_protocols.findIndex(function (suspect) {
                     return protocol.getName() === suspect.getName();
@@ -401,9 +380,11 @@ protocols.controller('ProtocolConfigurationController', ['$scope', '$mdDialog', 
      */
     $scope.filterProtocols = function (query) {
         var lowercaseQuery = angular.lowercase(query);
-        return query ? ProtocolManager.getAvailableProtocols().filter(function(protocol) {
+        var protocols = angular.copy(ProtocolManager.getAvailableProtocols());
+        
+        return query ? protocols.filter(function(protocol) {
             return angular.lowercase(protocol.name).indexOf(lowercaseQuery) > -1;
-        }) : ProtocolManager.getAvailableProtocols();
+        }) : protocols;
     };
     
     /**
@@ -423,7 +404,7 @@ protocols.controller('ProtocolConfigurationController', ['$scope', '$mdDialog', 
      * @returns {Boolean} True if it has any parameters, false otherwise
      */
     $scope.selectedProtocolHasParameters = function () {
-        return Object.keys($scope.selected_protocol.parameters).length > 0;
+        return $scope.selected_protocol !== null && $scope.selected_protocol !== undefined && Object.keys($scope.selected_protocol.parameters).length > 0;
     };
     
     /**
@@ -462,7 +443,7 @@ protocols.controller('ProtocolConfigurationController', ['$scope', '$mdDialog', 
         }).catch(function (response) {
             $scope.connecting = false;
             $scope.error = true;
-            $scope.error_message = response.status;
+            $scope.error_message = response.STATUS;
             return response;
         });
     };
@@ -525,7 +506,7 @@ protocols.controller('ParlayConnectionListController', ['$scope', '$mdDialog', '
             }); 
         }).catch(function (result) {
             ParlayNotification.show({
-                content: result.status
+                content: result.STATUS
             });
         });
     };
@@ -553,6 +534,9 @@ protocols.controller('ParlayConnectionListController', ['$scope', '$mdDialog', '
         $mdDialog.show({
             targetEvent: event,
             clickOutsideToClose: true,
+            onComplete: function (scope, element, options) {
+	            element.find('input').focus();
+            },
             controller: 'ProtocolConfigurationController',
             templateUrl: '../parlay_components/communication/directives/parlay-protocol-configuration-dialog.html'
         });

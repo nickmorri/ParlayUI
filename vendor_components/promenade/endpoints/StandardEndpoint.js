@@ -1,4 +1,4 @@
-var standard_endpoint = angular.module('promenade.endpoints.standardendpoint', ['parlay.endpoints', 'RecursionHelper']);
+var standard_endpoint = angular.module('promenade.endpoints.standardendpoint', ['parlay.endpoints', 'promenade.endpoints.standardendpoint.commands', 'promenade.endpoints.standardendpoint.log']);
 
 standard_endpoint.factory('PromenadeStandardEndpoint', ['ParlayEndpoint', function (ParlayEndpoint) {
     
@@ -146,68 +146,6 @@ standard_endpoint.factory('PromenadeStandardEndpoint', ['ParlayEndpoint', functi
         
 }]);
 
-standard_endpoint.controller('PromenadeStandardEndpointCardLogController', ['$scope', function ($scope) {
-    
-    $scope.getLog = function () {
-        return $scope.endpoint.log;
-    };
-    
-}]);
-
-standard_endpoint.controller('PromenadeStandardEndpointCommandController', ['$scope', '$timeout', function ($scope, $timeout) {
-    
-    $scope.sending = false;
-    $scope.message = {};
-    
-    function collectMessage () {
-        
-        var extracted_message = {};
-        
-        for (var field in $scope.message) {
-            var param_name, field_type ;
-            if (field.indexOf('_') > -1) {
-                var split_field = field.split('_');
-
-                field_type = split_field[split_field.length - 1];
-
-                param_name = split_field.slice(0, split_field.length - 1).join('_');
-            }
-            else {
-                param_name = field;
-            }
-
-            if (angular.isArray($scope.message[field])) extracted_message[param_name] = field_type === 'NUMBERS' ? $scope.message[field].map(parseFloat) : $scope.message[field];
-            else if (angular.isObject($scope.message[field])) extracted_message[param_name] = $scope.message[field].value;
-            else extracted_message[param_name] = $scope.message[field];
-        }
-        
-        return extracted_message;
-        
-    }
-    
-    $scope.send = function () {
-        $scope.sending = true;
-        $scope.endpoint.sendMessage(collectMessage()).then(function (response) {
-            $timeout(function () {
-                $scope.sending = false;
-            }, 500);            
-        }).catch(function (response) {
-            console.warn(response);
-        });
-    };
-    
-}]);
-
-standard_endpoint.directive('promenadeStandardEndpointCardCommands', function () {
-    return {
-        scope: {
-            endpoint: "="
-        },
-        templateUrl: '../vendor_components/promenade/endpoints/directives/promenade-standard-endpoint-card-commands.html',
-        controller: 'PromenadeStandardEndpointCommandController'
-    };
-});
-
 standard_endpoint.directive('promenadeStandardEndpointCardToolbar', function () {
     return {
         scope: {
@@ -216,37 +154,3 @@ standard_endpoint.directive('promenadeStandardEndpointCardToolbar', function () 
         templateUrl: '../vendor_components/promenade/endpoints/directives/promenade-standard-endpoint-card-toolbar.html'
     };
 });
-
-standard_endpoint.directive('promenadeStandardEndpointCardLog', function () {
-    return {
-        scope: {
-            endpoint: "="
-        },
-        templateUrl: '../vendor_components/promenade/endpoints/directives/promenade-standard-endpoint-card-log.html',
-        controller: 'PromenadeStandardEndpointCardLogController'
-    };
-});
-
-standard_endpoint.directive('promenadeStandardEndpointCardCommandContainer', ['RecursionHelper', function (RecursionHelper) {
-    return {
-        scope: {
-            message: "=",
-            fields: "=",
-            commandform: "="
-        },
-        templateUrl: '../vendor_components/promenade/endpoints/directives/promenade-standard-endpoint-card-command-container.html',
-        compile: function (element) {
-            return RecursionHelper.compile(element);
-        },
-        controller: function ($scope) {
-            $scope.$watchCollection('fields', function (newV, oldV, $scope) {
-                for (var field in newV) {
-                    $scope.message[newV[field].msg_key + '_' + newV[field].input] = newV[field].default;
-                    if (!$scope.message[newV[field].msg_key + '_' + newV[field].input] && (newV[field].input === 'NUMBERS' || newV[field].input === 'STRINGS')) {
-                        $scope.message[newV[field].msg_key + '_' + newV[field].input] = [];
-                    }
-                }                 
-            });
-        }
-    };
-}]);

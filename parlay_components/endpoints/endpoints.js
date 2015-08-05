@@ -17,6 +17,8 @@ endpoints.factory('ParlayEndpoint', function () {
     
     function ParlayEndpoint(data, protocol) {
         
+        var workspaceHashes = {};
+        
         Object.defineProperty(this, 'name', {
             value: data.NAME,
             enumerable: true,
@@ -29,6 +31,13 @@ endpoints.factory('ParlayEndpoint', function () {
             writeable: false,
             enumerable: false,
             configurable: false
+        });
+        
+        Object.defineProperty(this, 'workspaceHashes', {
+	       	value: {},
+	       	writeable: true,
+	       	enumerable: false,
+	       	configurable: false
         });
         
         this.type = 'ParlayEndpoint';
@@ -50,10 +59,6 @@ endpoints.factory('ParlayEndpoint', function () {
         return [this.directives];
     };
     
-    ParlayEndpoint.prototype.activate = function () {
-        this.protocol.activateEndpoint(this);
-    };
-    
     ParlayEndpoint.prototype.matchesQuery = function (query) {
         NotImplementedError('matchesQuery');
     };
@@ -64,14 +69,14 @@ endpoints.factory('ParlayEndpoint', function () {
 
 endpoints.factory('EndpointManager', ['PromenadeBroker', 'ProtocolManager', function (PromenadeBroker, ProtocolManager) {
     
-    var Private = {};
+    var Private = {
+	    active_endpoints: {}
+    };
     
     var Public = {};
     
     Public.getActiveEndpoints = function () {
-        return ProtocolManager.getOpenProtocols().reduce(function (previous, current) {
-            return previous.concat(current.getActiveEndpoints());
-        }, []);
+        return Private.active_endpoints;
     };
     
     Public.getAvailableEndpoints = function () {
@@ -84,8 +89,30 @@ endpoints.factory('EndpointManager', ['PromenadeBroker', 'ProtocolManager', func
         return PromenadeBroker.requestDiscovery(true);
     };
     
+    Public.reorder = function (index, distance) {
+	    var temp = Private.active_endpoints[index + distance];
+	    Private.active_endpoints[index + distance] = Private.active_endpoints[index];
+	    Private.active_endpoints[index] = temp;
+    };
+    
     Public.activateEndpoint = function (endpoint) {
-        endpoint.activate();
+	    var count = 0;
+	    while (Private.active_endpoints.hasOwnProperty(count)) count++;
+	    Private.active_endpoints[count] = {
+		    ref: endpoint,
+		    uid: Math.floor(Math.random() * 1500)
+	    };
+    };
+    
+    Public.deactivateEndpoint = function (index) {
+	    delete Private.active_endpoints[index];
+	    var keys = Object.keys(Private.active_endpoints);
+	    for (var i = 0; i < keys.length; i++) {
+		    Private.active_endpoints[i] = Private.active_endpoints[keys[i]];
+	    }
+	    for (var i = keys.length; i < Object.keys(Private.active_endpoints).length; i++) {
+		    delete Private.active_endpoints[i];
+	    }
     };
         
     return Public;
@@ -100,7 +127,15 @@ endpoints.controller('EndpointController', ['$scope', 'EndpointManager', functio
     $scope.requestDiscovery = function () {
         EndpointManager.requestDiscovery();
     };
-        
+    
+    $scope.reorder = function (index, distance) {
+	    EndpointManager.reorder(parseInt(index, 10), distance);
+    };
+    
+    $scope.deactivate = function (index) {
+	    EndpointManager.deactivateEndpoint(parseInt(index, 10));
+    };
+    
 }]);
 
 endpoints.controller('ParlayEndpointSearchController', ['$scope', 'EndpointManager', function ($scope, EndpointManager) {
@@ -164,6 +199,8 @@ endpoints.directive('parlayEndpointCard', ['$compile', function ($compile) {
         templateUrl: '../parlay_components/endpoints/directives/parlay-endpoint-card.html',
         link: function (scope, element, attributes) {
             
+            scope.endpoint = scope.container.ref;
+            
             // Converts directive names to snake-case which Angular requires during directive compilation.
             function snake_case(name) {
                 return name.replace(/[A-Z]/g, function(letter, pos) {
@@ -185,7 +222,7 @@ endpoints.directive('parlayEndpointCard', ['$compile', function ($compile) {
                     return '<' + snake_case(directive, '-') + ' endpoint="endpoint" layout-fill layout="row" layout-align="space-between center"></' + snake_case(directive, '-') + '>';    
                 }));
             }, []).forEach(function (directive_string) {
-                toolbar.appendChild($compile(directive_string)(scope)[0]);
+	            toolbar.insertBefore($compile(directive_string)(scope)[0], toolbar.firstChild);
             });
             
             // Append tabs directives.

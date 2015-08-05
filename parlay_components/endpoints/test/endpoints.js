@@ -41,31 +41,6 @@
                 
     		});
     		
-    		describe('prototype methods', function () {
-        		
-        		it('accessors', function () {
-            		expect(ParlayEndpoint.getType()).toBe('ParlayEndpoint');
-            		expect(ParlayEndpoint.getDirectives()).toEqual([{
-                        toolbar: [],
-                        tabs: []
-                    }]);
-        		});
-        		
-        		xit('endpoint activation', function () {
-            		// Do something with spy
-            		spyOn(protocol, 'activateEndpoint');
-            		ParlayEndpoint.activate();
-            		expect(protocol.activateEndpoint).toHaveBeenCalledWith(ParlayEndpoint);
-        		});
-        		
-        		it('throws NotImplementedError', function () {
-            		spyOn(console, 'warn');
-            		ParlayEndpoint.matchesQuery('test');
-                    expect(console.warn).toHaveBeenCalledWith('matchesQuery is not implemented for context');
-        		});
-        		
-    		});
-    		
         });
         
         describe('EndpointManager', function () {
@@ -290,8 +265,10 @@
         	};
         	
         	beforeEach(inject(function($compile, $rootScope) {
-            	scope = $rootScope.$new();            	
-            	$rootScope.endpoint = mockEndpoint;
+            	scope = $rootScope.$new();
+            	$rootScope.container = {
+	            	ref: mockEndpoint
+	            };
             	element = $compile('<parlay-endpoint-card></parlay-endpoint-card')(scope);
                 $rootScope.$digest();
         	}));

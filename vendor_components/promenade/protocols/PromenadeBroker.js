@@ -1,6 +1,7 @@
 var broker = angular.module('promenade.broker', ['parlay.socket', 'parlay.notifiction', 'ngMaterial']);
 
 broker.factory('PromenadeBroker', ['ParlaySocket', '$q', 'ParlayNotification', '$timeout', function (ParlaySocket, $q, ParlayNotification, $timeout) {
+	
     var Public = {};
     
     var Private = {
@@ -129,39 +130,6 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', 'ParlayNotification', '
     };
     
     /**
-     * Sends subscribe message to Broker.
-     * @param {Object} request - Contains subscribe request info.
-     * @returns {$q.defer.promise} Resolve when response is received.
-     */
-    Public.sendSubscribe = function (request) {
-        return $q(function (resolve, reject) {
-            ParlaySocket.sendMessage({'type': 'subscribe'}, request, {'type': 'subscribe_response'}, function (response) {
-                resolve(response);    
-            });
-        });
-    };
-    
-    /**
-     * CURRENTLY NOT IMPLEMENTED AT BROKER LEVEL
-     * Sends unsubscribe message to Broker.
-     * @param {Object} request - Contains unsubscribe request info.
-     * @returns {$q.defer.promise} Resolve when response is received.
-     */
-    Public.sendUnsubscribe = function (request) {
-        return $q(function (resolve, reject) {
-            resolve('ok');
-        });        
-        
-/*
-        return $q(function (resolve, reject) {
-            ParlaySocket.sendMessage({'type': 'unsubscribe'}, request, {'type': 'unsubscribe_response'}, function (response) {
-                resolve(response);
-            });
-        });
-*/
-    };
-    
-    /**
      * Sends message to the Broker.
      * @returns {$q.defer.promise} Resolve when response is received.
      */
@@ -186,11 +154,23 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', 'ParlayNotification', '
         return Private.connected_previously;
     };
     
+    Private.subscribe = function () {
+	    ParlaySocket.sendMessage({'type': 'subscribe'}, {
+		    "TOPICS": {
+			    "TO": 61953
+		    }
+	    });
+    };
+    
     Public.onMessage = ParlaySocket.onMessage;
     Public.onOpen = ParlaySocket.onOpen;
     Public.onClose = ParlaySocket.onClose;
     
-    Public.onOpen(function () {
+    ParlaySocket.onOpen(function () {
+	    
+	    // Request a subscription from the Broker for this protocol.	    
+        Private.subscribe();
+	    
         Private.connected_previously = true;
         // When socket is opened we should show a ParlayNotification to notify the user.
         ParlayNotification.show({

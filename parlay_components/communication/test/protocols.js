@@ -205,55 +205,11 @@
             
             describe('performs operations onClose', function () {
                 
-                it('does not have subscription', function () {
+                it('has listener', function () {
+	                protocol.onOpen();
+                    expect(protocol.hasListener()).toBeTruthy();
                     protocol.onClose();
-                    expect(protocol.getAvailableEndpoints()).toEqual([]);
-                });
-                
-                it('has subscription', function () {
-                    protocol.buildSubscriptionTopics = function () {
-                        return {
-                            topics: {}
-                        };
-                    };
-                    protocol.subscribe();
-                    rootScope.$apply();
-                    expect(protocol.hasSubscription()).toBeTruthy();
-                    protocol.onClose();
-                    expect(protocol.hasSubscription()).toBeFalsy();
-                    expect(protocol.getAvailableEndpoints()).toEqual([]);
-                });
-                
-            });
-            
-            describe('subscription', function () {
-                
-                beforeEach(function () {
-                    protocol.buildSubscriptionTopics = function () {
-                        return {
-                            topics: {}
-                        };
-                    };
-                });
-                
-                it('checks subscription', function () {
-                    expect(protocol.hasSubscription()).toBeFalsy();
-                });
-                
-                it('subscribes', function () {                    
-                    expect(protocol.hasSubscription()).toBeFalsy();
-                    protocol.subscribe();
-                    rootScope.$apply();
-                    expect(protocol.hasSubscription()).toBeTruthy();
-                });
-                
-                it('unsubscribes', function () {
-                    protocol.subscribe();
-                    rootScope.$apply();
-                    expect(protocol.hasSubscription()).toBeTruthy();
-                    protocol.unsubscribe();
-                    rootScope.$apply();
-                    expect(protocol.hasSubscription()).toBeFalsy();
+                    expect(protocol.hasListener()).toBeFalsy();
                 });
                 
             });
@@ -302,22 +258,6 @@
                     expect(protocol.NAME).toBe(sample_discovery.NAME);
                     expect(protocol.getAvailableEndpoints().length).toBe(50);
                     expect(protocol.getDynamicFieldKeys().length).toBe(3);
-                });
-                
-            });
-            
-            describe('methods to be described by prototypical inheritors', function () {
-                
-                it('raises NotImplementedError on onOpen', function () {
-                    spyOn(console, 'warn');
-            		protocol.onOpen();
-                    expect(console.warn).toHaveBeenCalledWith('onOpen is not implemented for TestProtocol');
-                });
-                
-                it('raises NotImplementedError on buildSubscriptionTopics', function () {
-                    spyOn(console, 'warn');
-            		protocol.buildSubscriptionTopics();
-                    expect(console.warn).toHaveBeenCalledWith('buildSubscriptionTopics is not implemented for TestProtocol');
                 });
                 
             });
@@ -578,7 +518,7 @@
                         getLog: function () {
                             return [];
                         },
-                        hasSubscription: function () {
+                        hasListener: function () {
                             return this.has_subscription;
                         },
                         subscribe: function () {
@@ -600,18 +540,6 @@
                     
                     it('gets log', function () {
                         expect(scope.getLog()).toEqual([]);
-                    });
-                    
-                    it('has subscription', function () {
-                        expect(scope.hasSubscription()).toBeFalsy();
-                    });
-                    
-                    it('toggles subscription', function () {
-                        expect(scope.hasSubscription()).toBeFalsy();
-                        scope.toggleSubscription();
-                        expect(scope.hasSubscription()).toBeTruthy();
-                        scope.toggleSubscription();
-                        expect(scope.hasSubscription()).toBeFalsy();
                     });
                     
                 });

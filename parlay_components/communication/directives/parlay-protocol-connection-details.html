@@ -13,8 +13,8 @@
         <md-dialog-content>
         
             <p ng-hide="getLog().length">
-                Nothing has been logged<span ng-show="hasSubscription()"> although we currently have a subscription.</span>
-                <span ng-hide="hasSubscription()"> maybe because we're not subscribed?</span>
+                Nothing has been logged<span ng-show="hasListener()"> although we currently have a listener.</span>
+                <span ng-hide="hasListener()"> maybe because we're not listening?</span>
             </p>
             
             <md-list ng-show="getLog().length">
@@ -22,14 +22,6 @@
                     {{message}}
                 </md-list-item>
             </md-list>
-        </md-dialog-content>
+        </md-dialog-content>        
         
-        <div class="md-actions" layout="row">
-            <span flex></span>
-            <md-button ng-click="toggleSubscription()">
-                <span ng-hide="hasSubscription()">Subscribe</span>
-                <span ng-show="hasSubscription()">Unsubscribe</span>                        
-            </md-button>
-        </div>
-
 </md-dialog>

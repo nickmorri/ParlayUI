@@ -4,19 +4,18 @@ direct_message.factory('PromenadeDirectMessageProtocol', ['ParlayProtocol', 'Pro
     
     function PromenadeDirectMessageProtocol(configuration) {
         'use strict';
+        // Call the constructor of the prototype we inherit from.
         ParlayProtocol.call(this, configuration);
-        this.current_message_id = 200;
-        this.id = 0xf201;
         
-        this.endpoint_factory = PromenadeStandardEndpoint;        
+        // Set our own endpoint_factory.
+        this.endpoint_factory = PromenadeStandardEndpoint;
+        
+        // Defining custom attributes.
+        this.current_message_id = 200;
     }
     
+    // Create a Object that inherits from the prototype of ParlayProtocol.
     PromenadeDirectMessageProtocol.prototype = Object.create(ParlayProtocol.prototype);
-    
-    PromenadeDirectMessageProtocol.prototype.onOpen = function () {
-        this.onMessage(this.recordLog);
-        this.subscribe();
-    };
     
     PromenadeDirectMessageProtocol.prototype.consumeMessageId = function () {
         return ++this.current_message_id;
@@ -41,24 +40,11 @@ direct_message.factory('PromenadeDirectMessageProtocol', ['ParlayProtocol', 'Pro
         };
     };
     
-    PromenadeDirectMessageProtocol.prototype.buildSubscriptionTopics = function () {
-        return {
-            TOPICS: {
-                TO: this.id
-            }
-        };
-    };
-    
-    PromenadeDirectMessageProtocol.prototype.buildSubscriptionListenerTopics = function () {
-        return this.buildSubscriptionTopics().TOPICS;
-    };
-    
     PromenadeDirectMessageProtocol.prototype.sendCommand = function (message) {
         var new_message = this.buildMessageTopics(message);
         var response_topics = this.buildResponseTopics(new_message);
         return this.sendMessage(new_message.TOPICS, new_message.CONTENTS, response_topics);
     };
         
-    return PromenadeDirectMessageProtocol;
-    
+    return PromenadeDirectMessageProtocol;    
 }]);

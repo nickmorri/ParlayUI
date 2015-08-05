@@ -1,6 +1,6 @@
 var protocols = angular.module('parlay.protocols', ['promenade.broker', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main', 'promenade.protocols.directmessage', 'parlay.notifiction']);
 
-protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'PromenadeBroker', '$q', function (ParlaySocket, ParlayEndpoint, PromenadeBroker, $q) {
+protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', '$q', function (ParlaySocket, ParlayEndpoint, $q) {
 
     function NotImplementedError(method, name) {
         console.warn(method + ' is not implemented for ' + name);
@@ -8,18 +8,18 @@ protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'Promenad
     
     function ParlayProtocol(configuration) {
         'use strict';
+        this.id = 0xf201;
         this.protocol_name = configuration.name;
         this.type = configuration.protocol_type;
-        
         this.available_endpoints = [];
         this.active_endpoints = [];
         this.log = [];        
-        this.subscription_listener_dereg = null;        
+        this.listener_dereg = null;        
         this.on_message_callbacks = [];
-        
-        this.endpoint_factory = ParlayEndpoint;
-        
         this.fields = {};
+        
+        // Objects that inherit from this ParlayProtocol's prototype can set their own endpoint_factory.
+        this.endpoint_factory = ParlayEndpoint;
     }
     
     /**
@@ -55,14 +55,6 @@ protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'Promenad
     };        
     
     /**
-	 * Registers a callback to be invoked when a message is received.
-	 * @param {Function} callback function
-	 */
-    ParlayProtocol.prototype.onMessage = function (callback) {
-        this.on_message_callbacks.push(callback.bind(this));    
-    };
-    
-    /**
 	 * Invokes all callbacks that have been registered with onMessage.
 	 * @param {Object} message object to be passed to registered callbacks
 	 */
@@ -73,30 +65,28 @@ protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'Promenad
         });
     };
     
-    /**
-	 * Request a subscription from the Broker for this protocol.
-	 */
-    ParlayProtocol.prototype.subscribe = function () {
-        PromenadeBroker.sendSubscribe(this.buildSubscriptionTopics()).then(function (response) {
-            this.subscription_listener_dereg = ParlaySocket.onMessage(this.buildSubscriptionTopics().TOPICS, this.invokeCallbacks.bind(this), true);
-        }.bind(this));
+    ParlayProtocol.prototype.buildSubscriptionTopics = function () {
+        return {
+            TOPICS: {
+                TO: this.id
+            }
+        };
     };
     
-    /**
-	 * Request the Broker to be unsubscribed for this protocol.
-	 */
-    ParlayProtocol.prototype.unsubscribe = function () {
-        PromenadeBroker.sendUnsubscribe(this.buildSubscriptionTopics()).then(function (response) {
-            this.onClose();
-        }.bind(this));
+    ParlayProtocol.prototype.buildSubscriptionListenerTopics = function () {
+        return this.buildSubscriptionTopics().TOPICS;
+    };
+    
+    ParlayProtocol.prototype.registerListener = function (topics) {
+	    this.listener_dereg = ParlaySocket.onMessage(this.buildSubscriptionListenerTopics(), this.invokeCallbacks.bind(this), true);     
     };
     
     /**
 	 * Checks if we have a subscription listener active.
 	 * @returns {Boolean} status of registration listener
 	 */
-    ParlayProtocol.prototype.hasSubscription = function() {
-        return this.subscription_listener_dereg !== null;
+    ParlayProtocol.prototype.hasListener = function() {
+        return this.listener_dereg !== null;
     };
     
     /**
@@ -107,6 +97,21 @@ protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'Promenad
         this.log.push(response);
     };
     
+    /**
+	 * Registers a callback to be invoked when a message is received.
+	 * @param {Function} callback function
+	 */
+    ParlayProtocol.prototype.onMessage = function (callback) {
+        this.on_message_callbacks.push(callback.bind(this));    
+    };
+    
+    /**
+	 * Sends message to ParlaySocket.
+	 * @param {Object} topics - 
+	 * @param {Object} contents - 
+	 * @param {Object} response_topics - 
+	 * @returns {$q.defer.promise} resolved when we recieve a response
+	 */
     ParlayProtocol.prototype.sendMessage = function (topics, contents, response_topics) {
         return $q(function(resolve, reject) {
             ParlaySocket.sendMessage(topics, contents, response_topics, function (response) {
@@ -117,13 +122,16 @@ protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'Promenad
     };
     
     ParlayProtocol.prototype.onOpen = function () {
-        NotImplementedError('onOpen', this.getName());
+	    // Ensure than the protocol is listening for messages addressed to the UI.
+        this.registerListener();
+        // Ensure that we record all messages address to the UI.
+        this.onMessage(this.recordLog);
     };
     
     ParlayProtocol.prototype.onClose = function () {
-        if (this.hasSubscription()) {
-            this.subscription_listener_dereg();
-            this.subscription_listener_dereg = null;
+        if (this.hasListener()) {
+            this.listener_dereg();
+            this.listener_dereg = null;
         }
         this.available_endpoints = [];
         this.active_endpoints = [];
@@ -167,10 +175,6 @@ protocols.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', 'Promenad
         this.buildFieldMethods(Object.keys(info));
         this.addEndpoints(info.CHILDREN);
     };
-    
-    ParlayProtocol.prototype.buildSubscriptionTopics = function () {
-        NotImplementedError('buildSubscriptionTopics', this.getName());
-    };  
     
     return ParlayProtocol;
 }]);
@@ -551,15 +555,6 @@ protocols.controller('ProtocolConnectionDetailController', ['$scope', '$mdDialog
     
     $scope.getLog = function () {
         return protocol.getLog();
-    };
-    
-    $scope.hasSubscription = function () {
-        return protocol.hasSubscription();
-    };
-    
-    $scope.toggleSubscription = function () {
-        if (protocol.hasSubscription()) protocol.unsubscribe();
-        else protocol.subscribe();
     };
     
     $scope.hide = $mdDialog.hide;

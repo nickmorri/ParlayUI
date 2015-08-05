@@ -1,12 +1,12 @@
 <md-tab label="DirectMessage Log">
-    <md-content class="md-padding" style="max-height: 300px;">
-    	<md-input-container>
-    		<label>Filter</label>
-    		<input ng-model="filter_text" type="text">
-    	</md-input-container>
+	<md-input-container layout-margin>
+		<label>Filter</label>
+		<input ng-model="filter_text" type="text">
+	</md-input-container>
+    <md-content class="md-padding" style="max-height: 300px;">    	
         <md-list>
             <md-list-item class="md-2-line" ng-repeat="message in getFilteredLog(filter_text)">
-                <div class="md-list-item-text">
+                <div class="md-list-item-text message-text">
                     <p>topics:{<span ng-repeat="(key, value) in message.TOPICS">{{key}}:{{value}}<span ng-if="!$last">,</span></span>}</p>
                     <p>contents:{<span ng-repeat="(key, value) in message.CONTENTS">{{key}}:{{value}}<span ng-if="!$last">,</span></span>}</p>
                 </div>

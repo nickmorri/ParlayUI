@@ -82,6 +82,19 @@ protocols.controller('ProtocolConfigurationController', ['$scope', '$mdDialog', 
     
 }]);
 
+protocols.controller('ProtocolConnectionDetailController', ['$scope', '$mdDialog', 'protocol', function ($scope, $mdDialog, protocol) {
+    $scope.getProtocolName = function () {
+        return protocol.getName();
+    };
+    
+    $scope.getLog = function () {
+        return protocol.getLog();
+    };
+    
+    $scope.hide = $mdDialog.hide;
+    
+}]);
+
 protocols.controller('ParlayConnectionListController', ['$scope', '$mdDialog', 'ParlayNotification', 'ProtocolManager', 'PromenadeBroker', function ($scope, $mdDialog, ParlayNotification, ProtocolManager, PromenadeBroker) {
     
     $scope.hide = $mdDialog.hide;
@@ -176,20 +189,7 @@ protocols.controller('ParlayConnectionListController', ['$scope', '$mdDialog', '
     
 }]);
 
-protocols.controller('ProtocolConnectionDetailController', ['$scope', '$mdDialog', 'protocol', function ($scope, $mdDialog, protocol) {
-    $scope.getProtocolName = function () {
-        return protocol.getName();
-    };
-    
-    $scope.getLog = function () {
-        return protocol.getLog();
-    };
-    
-    $scope.hide = $mdDialog.hide;
-    
-}]);
-
-protocols.controller('ParlayConnectionStatusController', ['$scope', '$mdDialog', 'PromenadeBroker', function ($scope, $mdDialog, PromenadeBroker) {
+protocols.controller('ParlayConnectionStatusController', ['$scope', '$mdDialog', function ($scope, $mdDialog) {
     $scope.connection_icon = 'cloud_off';
     
     /* istanbul ignore next */

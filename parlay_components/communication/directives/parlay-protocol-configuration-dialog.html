@@ -30,29 +30,29 @@
             
         <div layout="row" flex ng-show="selectedProtocolHasParameters()" >
 
-                <span flex ng-repeat="(parameter_name, parameter) in selected_protocol.parameters">
-                    
-                    <md-input-container ng-show="parameter.defaults === null || !parameter.defaults.length">
-                        <label>{{parameter_name}} (Defaults not available)</label>
-                        <input ng-model="parameter.value" type="text">
-                    </md-input-container>
-                    
-                    <md-autocomplete
-                        ng-hide="parameter.defaults === null || !parameter.defaults.length"
-                        md-no-cache="true"
-                        md-autoselect="true"
-                        md-search-text="parameter.search_text"
-                        md-selected-item="parameter.value"
-                        md-items="default in filterDefaults(parameter.defaults, parameter.search_text)"
-                        md-item-text="default"
-                        md-min-length="0"
-                        md-floating-label="{{parameter_name}}">
-                        <md-item-template>
-                            <span md-highlight-text="parameter.search_text" md-highlight-flags="^i">{{default}}</span>
-                        </md-item-template>
-                    </md-autocomplete>
-                    
-                </span>
+            <span flex ng-repeat="(parameter_name, parameter) in selected_protocol.parameters">
+                
+                <md-input-container ng-show="parameter.defaults === null || !parameter.defaults.length">
+                    <label>{{parameter_name}} (Defaults not available)</label>
+                    <input ng-model="parameter.value" type="text">
+                </md-input-container>
+                
+                <md-autocomplete
+                    ng-hide="parameter.defaults === null || !parameter.defaults.length"
+                    md-no-cache="true"
+                    md-autoselect="true"
+                    md-search-text="parameter.search_text"
+                    md-selected-item="parameter.value"
+                    md-items="default in filterDefaults(parameter.defaults, parameter.search_text)"
+                    md-item-text="default"
+                    md-min-length="0"
+                    md-floating-label="{{parameter_name}}">
+                    <md-item-template>
+                        <span md-highlight-text="parameter.search_text" md-highlight-flags="^i">{{default}}</span>
+                    </md-item-template>
+                </md-autocomplete>
+                
+            </span>
                 
         </div>
         

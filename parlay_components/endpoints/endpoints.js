@@ -185,18 +185,21 @@ endpoints.controller('ParlayEndpointSearchController', ['$scope', 'EndpointManag
 }]);
 
 /* istanbul ignore next */
-endpoints.directive('parlayEndpointSearch', function () {
+endpoints.directive('parlayEndpointSearch', ['$timeout', function ($timeout) {
     return {
         scope: {},
         templateUrl: '../parlay_components/endpoints/directives/parlay-endpoint-search.html',
         controller: 'ParlayEndpointSearchController',
         link: function ($scope, element, attributes) {
             $scope.$watch('searching', function (newValue, oldValue, $scope) {
-                $scope.search_icon = $scope.searching ? 'close' : 'search'; 
+                $scope.search_icon = $scope.searching ? 'close' : 'search';
+                if ($scope.searching) $timeout(function () {
+	                element.find('input').focus();
+                });	                
             });
         }
     };
-});
+}]);
 
 endpoints.directive('parlayEndpointCard', ['$compile', function ($compile) {
     return {

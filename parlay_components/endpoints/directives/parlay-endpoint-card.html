@@ -9,7 +9,11 @@
             <md-button class="md-icon-button" aria-label="Move right" ng-click="reorder(key, 1)" ng-hide="$last">
 				<md-icon><ng-md-icon icon="arrow_forward"></ng-md-icon></md-icon>
 	            <md-tooltip>Move right</md-tooltip>
-            </md-button>            
+            </md-button>
+            <md-button class="md-icon-button" aria-label="Duplicate" ng-click="duplicate(key)">
+				<md-icon><ng-md-icon icon="content_copy"></ng-md-icon></md-icon>            	
+	            <md-tooltip>Duplicate</md-tooltip>
+            </md-button>     
             <md-button class="md-icon-button" aria-label="Deactivate" ng-click="deactivate(key)">
 				<md-icon><ng-md-icon icon="close"></ng-md-icon></md-icon>            	
 	            <md-tooltip>Deactivate</md-tooltip>

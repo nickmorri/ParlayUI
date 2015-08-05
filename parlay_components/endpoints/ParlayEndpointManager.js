@@ -47,6 +47,10 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ProtocolM
 	    }
     };
     
+    Public.duplicateEndpoint = function (index) {
+	    Public.activateEndpoint(Private.active_endpoints[index].ref);
+    };
+    
     Public.deactivateEndpoint = function (index) {
 	    delete Private.active_endpoints[index];
 	    Private.compactActiveEndpoints();	    

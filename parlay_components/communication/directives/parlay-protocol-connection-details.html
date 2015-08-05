@@ -18,7 +18,7 @@
             </p>
             
             <md-list ng-show="getLog().length">
-                <md-list-item ng-repeat="message in getLog()">
+                <md-list-item class="message-text" ng-repeat="message in getLog()">
                     {{message}}
                 </md-list-item>
             </md-list>

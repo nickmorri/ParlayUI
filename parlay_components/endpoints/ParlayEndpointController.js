@@ -14,6 +14,10 @@ endpoint_controller.controller('ParlayEndpointController', ['$scope', 'ParlayEnd
 	    ParlayEndpointManager.reorder(parseInt(index, 10), distance);
     };
     
+    $scope.duplicate = function (index) {
+	    ParlayEndpointManager.duplicateEndpoint(parseInt(index, 10));
+    };
+    
     $scope.deactivate = function (index) {
 	    ParlayEndpointManager.deactivateEndpoint(parseInt(index, 10));
     };

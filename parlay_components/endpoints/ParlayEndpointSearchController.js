@@ -55,6 +55,13 @@ endpoint_search.directive('parlayEndpointSearch', ['$timeout', function ($timeou
 	                element.find('input').focus();
                 });	                
             });
+			
+			// Prevents random endpoints being added since the autofocus element is still focused.            
+            $scope.$watch('selected_item', function (newValue, oldValue, $scope) {
+	            // We just added a new endpoint to the workspace. So we should blur the input.
+	        	if (newValue === null && oldValue !== null) element.find('input').blur();
+	        });
+            
         }
     };
 }]);

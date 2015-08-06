@@ -1,4 +1,4 @@
-var parlay_endpoint = angular.module('parlay.endpoints.endpoint', ['ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main']);
+var parlay_endpoint = angular.module('parlay.endpoints.endpoint', ['ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main', 'parlay.store']);
 
 parlay_endpoint.factory('ParlayEndpoint', function () {
     
@@ -61,9 +61,24 @@ parlay_endpoint.directive('parlayEndpointCard', ['$compile', function ($compile)
     return {
         templateUrl: '../parlay_components/endpoints/directives/parlay-endpoint-card.html',
         controller: ['$scope', 'ParlayLocalStore', function ($scope, ParlayLocalStore) {
-	        $scope.$watch('active_tab_index', ParlayLocalStore.watch('parlayEndpointCard.' + $scope.container.ref.name));
-	        $scope.$watch('$index', ParlayLocalStore.watch('parlayEndpointCard.' + $scope.container.ref.name));
-	        $scope.$on('$destroy', ParlayLocalStore.destroy('parlayEndpointCard.' + $scope.container.ref.name));
+	        
+	        function setAttr(directive) {
+		        return function () {
+			    	ParlayLocalStore.set(directive.replace(' ', '_'), this.exp, this.last);    
+		        };		        
+	        }
+	        
+	        function removeItem(directive) {
+				return function () {
+					ParlayLocalStore.remove(directive.replace(' ', '_'));
+				};
+			}
+	        
+	        var key = 'parlayEndpointCard.' + $scope.container.ref.name + '_' + $scope.container.uid;
+	        
+	        $scope.$watch('active_tab_index', setAttr(key));
+	        $scope.$watch('$index', setAttr(key));
+	        $scope.$on('$destroy', removeItem(key));
         }],
         link: function (scope, element, attributes) {
             

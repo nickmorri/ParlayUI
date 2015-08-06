@@ -1,6 +1,6 @@
-var standard_endpoint_commands = angular.module('promenade.endpoints.standardendpoint.commands', ['RecursionHelper']);
+var standard_endpoint_commands = angular.module('promenade.endpoints.standardendpoint.commands', ['RecursionHelper', 'parlay.store']);
 
-standard_endpoint_commands.controller('PromenadeStandardEndpointCommandController', ['$scope', '$timeout', function ($scope, $timeout) {
+standard_endpoint_commands.controller('PromenadeStandardEndpointCommandController', ['$scope', '$timeout', 'ParlayLocalStore', function ($scope, $timeout, ParlayLocalStore) {
     
     $scope.error = false;
     $scope.sending = false;
@@ -64,6 +64,39 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
         });
     };
     
+    $scope.formWatchers = {};
+    
+    $scope.$watchCollection('commandform', function (newValue, oldValue) {
+	    
+	    function watchValue(input_name) {
+		    return function(newValue, oldValue) {
+			    var value = newValue === undefined ? null : typeof newValue === 'string' || typeof newValue === 'number' ? newValue : newValue.value !== undefined ? newValue.value : null;
+				var container = $scope.$parent.container;
+			    var key = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
+			    ParlayLocalStore.set(key, input_name, value);
+		    };
+	    }
+	    
+	    function registerWatch(input) {
+		    if ($scope.formWatchers[input.$name]) $scope.formWatchers[input.$name]();
+		    $scope.formWatchers[input.$name] = $scope.$watch(function () {
+			    return input.$modelValue;
+		    }, watchValue(input.$name));
+	    }
+	    
+	    function setupWatchers(form) {
+		    for (var field in form) 
+			    if (field.indexOf('$') === -1) registerWatch(form[field]);
+	    }
+	    
+	    function clearWatchers() {
+		    for (var watcher in $scope.formWatches) $scope.formWatches[watcher]();
+	    }
+	    
+	    clearWatchers();
+	    setupWatchers(newValue);
+    });
+    
 }]);
 
 standard_endpoint_commands.directive('promenadeStandardEndpointCardCommands', function () {
@@ -98,7 +131,7 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContai
                     if (!$scope.message[newV[field].msg_key + '_' + newV[field].input] && (newV[field].input === 'NUMBERS' || newV[field].input === 'STRINGS')) {
                         $scope.message[newV[field].msg_key + '_' + newV[field].input] = [];
                     }
-                }                 
+                }
             });
         }
     };

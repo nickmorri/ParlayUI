@@ -38,18 +38,6 @@ parlay_store.factory('ParlayLocalStore', function () {
 		return localStorage.length;
 	};
 	
-	Public.watch = function (sourceDirective) {
-		return function () {
-			Public.set(sourceDirective.replace(' ', '_'), this.exp, this.last);
-		};
-	};
-	
-	Public.destroy = function (sourceDirective) {
-		return function () {
-			Public.remove(sourceDirective.replace(' ', '_'));
-		};	
-	};
-	
 	Private.getDirectiveContainer = function (directive) {
 		var localStorageString = localStorage.getItem(directive);
 		return localStorageString !== null ? JSON.parse(localStorageString) : {};

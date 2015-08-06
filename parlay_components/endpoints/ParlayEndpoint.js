@@ -61,8 +61,9 @@ parlay_endpoint.directive('parlayEndpointCard', ['$compile', function ($compile)
     return {
         templateUrl: '../parlay_components/endpoints/directives/parlay-endpoint-card.html',
         controller: ['$scope', 'ParlayLocalStore', function ($scope, ParlayLocalStore) {
-	        $scope.$watch('active_tab_index', ParlayLocalStore.watch('parlayEndpointCard'));
-	        $scope.$watch('$index', ParlayLocalStore.watch('parlayEndpointCard.'));
+	        $scope.$watch('active_tab_index', ParlayLocalStore.watch('parlayEndpointCard.' + $scope.container.ref.name));
+	        $scope.$watch('$index', ParlayLocalStore.watch('parlayEndpointCard.' + $scope.container.ref.name));
+	        $scope.$on('$destroy', ParlayLocalStore.destroy('parlayEndpointCard.' + $scope.container.ref.name));
         }],
         link: function (scope, element, attributes) {
             

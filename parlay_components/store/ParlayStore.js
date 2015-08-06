@@ -6,14 +6,22 @@ parlay_store.factory('ParlayLocalStore', function () {
 	
 	var Public = {};
 	
-	Public.get = function (key) {};
-	
-	Public.set = function (key, value) {
-		localStorage.setItem(key, value);
+	Public.has = function (directive, attribute) {
+		return Public.get(directive) !== undefined && Public.get(directive)[attribute] !== undefined;
 	};
 	
-	Public.remove = function (key) {
-		localStorage.removeItem(key);
+	Public.get = function (directive, attribute) {
+		return JSON.parse(localStorage.getItem(directive))[attribute];
+	};
+	
+	Public.set = function (directive, attribute, value) {
+		var directiveContainer = Private.getDirectiveContainer(directive);
+		directiveContainer[attribute] = value;
+		Private.setDirectiveContainer(directive, directiveContainer);
+	};
+	
+	Public.remove = function (directive) {
+		localStorage.removeItem(directive);
 	};
 	
 	Public.clear = function () {
@@ -32,8 +40,23 @@ parlay_store.factory('ParlayLocalStore', function () {
 	
 	Public.watch = function (sourceDirective) {
 		return function () {
-			Public.set(sourceDirective + '.' + this.exp, this.last);
+			Public.set(sourceDirective.replace(' ', '_'), this.exp, this.last);
 		};
+	};
+	
+	Public.destroy = function (sourceDirective) {
+		return function () {
+			Public.remove(sourceDirective.replace(' ', '_'));
+		};	
+	};
+	
+	Private.getDirectiveContainer = function (directive) {
+		var localStorageString = localStorage.getItem(directive);
+		return localStorageString !== null ? JSON.parse(localStorageString) : {};
+	};
+	
+	Private.setDirectiveContainer = function (directive, container) {
+		localStorage.setItem(directive, JSON.stringify(container));
 	};
 	
 	return Public;

@@ -8,8 +8,6 @@ parlay_endpoint.factory('ParlayEndpoint', function () {
     
     function ParlayEndpoint(data, protocol) {
         
-        var workspaceHashes = {};
-        
         Object.defineProperty(this, 'name', {
             value: data.NAME,
             enumerable: true,
@@ -24,13 +22,6 @@ parlay_endpoint.factory('ParlayEndpoint', function () {
             configurable: false
         });
         
-        Object.defineProperty(this, 'workspaceHashes', {
-	       	value: {},
-	       	writeable: true,
-	       	enumerable: false,
-	       	configurable: false
-        });
-        
         this.type = 'ParlayEndpoint';
         
         this.interfaces = data.INTERFACES;
@@ -41,6 +32,10 @@ parlay_endpoint.factory('ParlayEndpoint', function () {
         };
         
     }
+    
+    ParlayEndpoint.prototype.setUiState = function (key, value) {
+	    this.uiStateStore[key] = value;
+    };
     
     ParlayEndpoint.prototype.getType = function () {
         return this.type;
@@ -54,6 +49,10 @@ parlay_endpoint.factory('ParlayEndpoint', function () {
         NotImplementedError('matchesQuery');
     };
     
+    ParlayEndpoint.prototype.storeState = function () {
+	    ParlayLocalStore.set(this.name, this);
+    };
+    
     return ParlayEndpoint;
     
 });
@@ -61,6 +60,10 @@ parlay_endpoint.factory('ParlayEndpoint', function () {
 parlay_endpoint.directive('parlayEndpointCard', ['$compile', function ($compile) {
     return {
         templateUrl: '../parlay_components/endpoints/directives/parlay-endpoint-card.html',
+        controller: ['$scope', 'ParlayLocalStore', function ($scope, ParlayLocalStore) {
+	        $scope.$watch('active_tab_index', ParlayLocalStore.watch('parlayEndpointCard'));
+	        $scope.$watch('$index', ParlayLocalStore.watch('parlayEndpointCard.'));
+        }],
         link: function (scope, element, attributes) {
             
             scope.endpoint = scope.container.ref;

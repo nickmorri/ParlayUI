@@ -1,4 +1,4 @@
-var endpoint_controller = angular.module('parlay.endpoints.controller', ['parlay.endpoints.manager']);
+var endpoint_controller = angular.module('parlay.endpoints.controller', ['parlay.endpoints.manager', 'parlay.store']);
 
 endpoint_controller.controller('ParlayEndpointController', ['$scope', 'ParlayEndpointManager', function ($scope, ParlayEndpointManager) {
 	    

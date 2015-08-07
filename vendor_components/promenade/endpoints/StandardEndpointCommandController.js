@@ -169,7 +169,7 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContai
 		        return $scope.message[field.msg_key + '_' + field.input].sub_fields;
 	        };
 	        
-            $scope.$watchCollection('fields', function (newV, oldV, scope) {
+            var one_time_watch = $scope.$watchCollection('fields', function (newV, oldV, scope) {
 	            for (var field in newV) {
                     // If we have not restored a value from a previous workspace session we should set it to the default value.
                     if ($scope.message[newV[field].msg_key + '_' + newV[field].input] === undefined) {
@@ -179,11 +179,10 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContai
                         $scope.message[newV[field].msg_key + '_' + newV[field].input] = [];
                     }
                 }
+                one_time_watch();
+                restoreFormState();
             });
             
-            
-            
-            restoreFormState();
         }
     };
 }]);

@@ -64,19 +64,20 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
         });
     };
     
-    $scope.messageWatchers = {};
+    var messageWatchers = {};
     
     $scope.$watchCollection('message', function (newValue, oldValue) {
 	    
 	    function setAttribute(directive, attribute, value) {
 		    var form_container = ParlayLocalStore.get(directive, 'commandform');
+		    if (form_container === undefined) form_container = {};
 		    form_container[attribute] = value;
 		    ParlayLocalStore.set(directive, 'commandform', form_container);
 	    }
 	    
 	    function watchValue(input_name) {
 		    return function(newValue, oldValue) {
-			    var value = newValue !== null && newValue.value !== undefined ? {
+			    var value = newValue !== null && newValue !== undefined && newValue.value !== undefined ? {
 				    value: newValue.value
 			    } : newValue;
 				var container = $scope.$parent.container;
@@ -86,8 +87,8 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
 	    }
 	    
 	    function registerWatch(name, field) {
-		    if ($scope.messageWatchers[name]) $scope.messageWatchers[name]();
-		    $scope.messageWatchers[name] = Array.isArray(field) ? $scope.$watchCollection(function () {
+		    if (messageWatchers[name]) messageWatchers[name]();
+		    messageWatchers[name] = Array.isArray(field) ? $scope.$watchCollection(function () {
 			    return field;
 		    }, watchValue(name)) : $scope.$watch(function () {
 			    return field;
@@ -99,7 +100,7 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
 	    }
 	    
 	    function clearWatchers() {
-		    for (var watcher in $scope.formWatches) $scope.formWatches[watcher]();
+		    for (var watcher in messageWatchers) messageWatchers[watcher]();
 	    }
 	    
 	    clearWatchers();

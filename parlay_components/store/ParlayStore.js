@@ -1,6 +1,6 @@
 var parlay_store = angular.module('parlay.store', []);
 
-parlay_store.factory('ParlayLocalStore', function () {
+parlay_store.factory('ParlayLocalStore', ['$window', function ($window) {
 	
 	var Private = {};
 	
@@ -11,13 +11,13 @@ parlay_store.factory('ParlayLocalStore', function () {
 	};
 	
 	Public.get = function (directive, attribute) {
-		return JSON.parse(localStorage.getItem(directive))[attribute];
+		return JSON.parse(Public.getDirectiveContainer(directive))[attribute];
 	};
 	
 	Public.set = function (directive, attribute, value) {
-		var directiveContainer = Private.getDirectiveContainer(directive);
+		var directiveContainer = Public.getDirectiveContainer(directive);
 		directiveContainer[attribute] = value;
-		Private.setDirectiveContainer(directive, directiveContainer);
+		Public.setDirectiveContainer(directive, directiveContainer);
 	};
 	
 	Public.remove = function (directive) {
@@ -38,14 +38,21 @@ parlay_store.factory('ParlayLocalStore', function () {
 		return localStorage.length;
 	};
 	
-	Private.getDirectiveContainer = function (directive) {
+	Public.values = function () {
+		return Public.keys().reduce(function (accumulator, key) {
+			accumulator[key] = JSON.parse(localStorage.getItem(key));
+			return accumulator;
+		}, {});
+	};
+	
+	Public.getDirectiveContainer = function (directive) {
 		var localStorageString = localStorage.getItem(directive);
 		return localStorageString !== null ? JSON.parse(localStorageString) : {};
 	};
 	
-	Private.setDirectiveContainer = function (directive, container) {
+	Public.setDirectiveContainer = function (directive, container) {
 		localStorage.setItem(directive, JSON.stringify(container));
 	};
 	
-	return Public;
-});
+	return Public;	
+}]);

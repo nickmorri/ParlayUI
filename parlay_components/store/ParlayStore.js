@@ -11,7 +11,7 @@ parlay_store.factory('ParlayLocalStore', ['$window', function ($window) {
 	};
 	
 	Public.get = function (directive, attribute) {
-		return JSON.parse(Public.getDirectiveContainer(directive))[attribute];
+		return Public.getDirectiveContainer(directive)[attribute];
 	};
 	
 	Public.set = function (directive, attribute, value) {

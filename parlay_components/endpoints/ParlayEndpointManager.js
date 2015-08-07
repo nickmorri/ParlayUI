@@ -1,6 +1,6 @@
-var endpoint_manager = angular.module('parlay.endpoints.manager', ['parlay.protocols', 'promenade.broker']);
+var endpoint_manager = angular.module('parlay.endpoints.manager', ['parlay.protocols', 'promenade.broker', 'parlay.store']);
 
-endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ProtocolManager', function (PromenadeBroker, ProtocolManager) {
+endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ProtocolManager', 'ParlayLocalStore', function (PromenadeBroker, ProtocolManager, ParlayLocalStore) {
     
     var Private = {
 	    active_endpoints: {}
@@ -28,12 +28,12 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ProtocolM
 	    Private.active_endpoints[index] = temp;
     };
     
-    Public.activateEndpoint = function (endpoint) {
+    Public.activateEndpoint = function (endpoint, uid) {
 	    var count = 0;
 	    while (Private.active_endpoints.hasOwnProperty(count)) count++;
 	    Private.active_endpoints[count] = {
 		    ref: endpoint,
-		    uid: Math.floor(Math.random() * 1500)
+		    uid: uid !== undefined ? uid : Math.floor(Math.random() * 1500)
 	    };
     };
     
@@ -55,6 +55,29 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ProtocolM
 	    delete Private.active_endpoints[index];
 	    Private.compactActiveEndpoints();	    
     };
-        
-    return Public;
+    
+	Public.loadPreviousWorkspace = function () {
+		var config = ParlayLocalStore.values();
+		var keys = Object.keys(config).reduce(function (accumulator, key) {
+			var split_name = key.split('.')[1].split('_');
+			var uid = parseInt(split_name.splice(split_name.length - 1, 1)[0], 10);
+			var endpoint_name = split_name.join(' ');			
+			accumulator[endpoint_name] =  {
+				name: endpoint_name,
+				uid: uid
+			};
+			return accumulator;
+		}, {});
+		
+		Public.getAvailableEndpoints().filter(function (endpoint) {
+			return keys.hasOwnProperty(endpoint.name);
+		}).forEach(function (endpoint) {
+			Public.activateEndpoint(endpoint, keys[endpoint.name].uid);
+		});
+		
+	};
+	
+	PromenadeBroker.onDiscovery(Public.loadPreviousWorkspace);
+	
+	return Public;
 }]);

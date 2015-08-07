@@ -57,7 +57,7 @@ parlay_endpoint.factory('ParlayEndpoint', function () {
     
 });
 
-parlay_endpoint.directive('parlayEndpointCard', ['$compile', function ($compile) {
+parlay_endpoint.directive('parlayEndpointCard', ['$compile', 'ParlayLocalStore', function ($compile, ParlayLocalStore) {
     return {
         templateUrl: '../parlay_components/endpoints/directives/parlay-endpoint-card.html',
         controller: ['$scope', 'ParlayLocalStore', function ($scope, ParlayLocalStore) {
@@ -118,6 +118,13 @@ parlay_endpoint.directive('parlayEndpointCard', ['$compile', function ($compile)
             }, []).forEach(function (directive_string) {
                 tabs.appendChild($compile(directive_string)(scope)[0]);
             });
+            
+            try {
+	        	var saved_state = ParlayLocalStore.getDirectiveContainer('parlayEndpointCard.' + scope.endpoint.name.replace(' ', '_') + '_' + scope.container.uid);
+	            if (saved_state) scope.active_tab_index = container.active_tab_index;
+            } catch(error) {
+	            // Maybe we should do something about a cache miss but for now during DEVELOPMENT do nothing.
+            }
             
         }
     };

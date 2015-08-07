@@ -64,29 +64,35 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
         });
     };
     
-    $scope.formWatchers = {};
+    $scope.messageWatchers = {};
     
-    $scope.$watchCollection('commandform', function (newValue, oldValue) {
+    $scope.$watchCollection('message', function (newValue, oldValue) {
+	    function setAttribute(directive, attribute, value) {
+		    var form_container = ParlayLocalStore.get(directive, 'commandform');
+		    form_container[attribute] = value;
+		    ParlayLocalStore.set(directive, 'commandform', form_container);
+	    }
 	    
 	    function watchValue(input_name) {
 		    return function(newValue, oldValue) {
-			    var value = newValue === undefined ? null : typeof newValue === 'string' || typeof newValue === 'number' ? newValue : newValue.value !== undefined ? newValue.value : null;
+			    var value = newValue !== null && newValue.value !== undefined ? {
+				    value: newValue.value
+			    } : newValue;
 				var container = $scope.$parent.container;
 			    var key = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
-			    ParlayLocalStore.set(key, input_name, value);
+			    setAttribute(key, input_name, value);
 		    };
 	    }
 	    
-	    function registerWatch(input) {
-		    if ($scope.formWatchers[input.$name]) $scope.formWatchers[input.$name]();
-		    $scope.formWatchers[input.$name] = $scope.$watch(function () {
-			    return input.$modelValue;
-		    }, watchValue(input.$name));
+	    function registerWatch(name, field) {
+		    if ($scope.messageWatchers[name]) $scope.messageWatchers[name]();
+		    $scope.messageWatchers[name] = $scope.$watch(function () {
+			    return field;
+		    }, watchValue(name));
 	    }
 	    
-	    function setupWatchers(form) {
-		    for (var field in form) 
-			    if (field.indexOf('$') === -1) registerWatch(form[field]);
+	    function setupWatchers(message) {
+		    for (var field in message) registerWatch(field, message[field]);
 	    }
 	    
 	    function clearWatchers() {
@@ -105,14 +111,12 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommands', fu
             endpoint: "="
         },
         templateUrl: '../vendor_components/promenade/endpoints/directives/promenade-standard-endpoint-card-commands.html',
-        controller: 'PromenadeStandardEndpointCommandController',
-        link: function (scope, element, attributes) {
-        }
+        controller: 'PromenadeStandardEndpointCommandController'
     };
 });
 
 
-standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContainer', ['RecursionHelper', function (RecursionHelper) {
+standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContainer', ['RecursionHelper', 'ParlayLocalStore', function (RecursionHelper, ParlayLocalStore) {
     return {
         scope: {
             message: "=",
@@ -125,9 +129,40 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContai
         },
         controller: function ($scope) {
 	        
+	        function relevantScope(currentScope, attribute) {
+		        return currentScope.hasOwnProperty(attribute) ? currentScope : relevantScope(currentScope.$parent, attribute);
+	        }
+	        
+	        function getSavedValue(field_name) {
+		        var container = relevantScope($scope, 'container').container;
+		        return ParlayLocalStore.get('parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid, 'commandform')[field_name];
+	        }
+	        
+	        function restoreFieldState(field) {
+		        var saved = getSavedValue(field.msg_key + '_' + field.input);		        
+		        if (saved === undefined) return;
+		        
+		        var messageScope = relevantScope($scope, 'message');
+		        var fieldScope = relevantScope($scope, 'fields');
+		        
+		        if (saved !== undefined && saved !== null && saved.value !== undefined) {
+			    	messageScope.message[field.msg_key + '_' + field.input] = fieldScope.fields[field.msg_key].options[Object.keys(fieldScope.fields[field.msg_key].options).find(function (option) {
+				    	return fieldScope.fields[field.msg_key].options[option].value === saved.value;
+			    	})];
+		    	}
+		    	else messageScope.message[field.msg_key + '_' + field.input] = saved;
+	        }
+	        
+	        function restoreFormState() {
+		        if (Array.isArray($scope.fields)) $scope.fields.forEach(restoreFieldState);
+		        else Object.keys($scope.fields).map(function (field_name) {
+					return $scope.fields[field_name];
+		        }).forEach(restoreFieldState);
+	        }
+	        
 	        $scope.hasSubFields = function (field) {
 		        var message_field = $scope.message[field.msg_key + '_' + field.input];
-		        return message_field !== undefined && message_field.sub_fields !== undefined;
+		        return message_field !== undefined && message_field !== null && message_field.sub_fields !== undefined;
 	        };
 	        
 	        $scope.getSubFields = function (field) {
@@ -136,12 +171,19 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContai
 	        
             $scope.$watchCollection('fields', function (newV, oldV, scope) {
 	            for (var field in newV) {
-                    $scope.message[newV[field].msg_key + '_' + newV[field].input] = newV[field].default;
+                    // If we have not restored a value from a previous workspace session we should set it to the default value.
+                    if ($scope.message[newV[field].msg_key + '_' + newV[field].input] === undefined) {
+	                	$scope.message[newV[field].msg_key + '_' + newV[field].input] = newV[field].default;    
+                    }                    
                     if (!$scope.message[newV[field].msg_key + '_' + newV[field].input] && (newV[field].input === 'NUMBERS' || newV[field].input === 'STRINGS')) {
                         $scope.message[newV[field].msg_key + '_' + newV[field].input] = [];
                     }
                 }
             });
+            
+            
+            
+            restoreFormState();
         }
     };
 }]);

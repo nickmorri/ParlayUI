@@ -49,7 +49,10 @@
             beforeEach(function () {
                 function PromenadeBroker() {
                     return {
-                        requestDiscovery: function () {}
+                        requestDiscovery: function () {},
+                        onDiscovery: function (callback) {
+	                        callback();
+                        }
                     };                    
                 }
                 

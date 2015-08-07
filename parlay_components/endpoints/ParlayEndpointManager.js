@@ -1,6 +1,6 @@
 var endpoint_manager = angular.module('parlay.endpoints.manager', ['parlay.protocols', 'promenade.broker', 'parlay.store']);
 
-endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ProtocolManager', 'ParlayLocalStore', function (PromenadeBroker, ProtocolManager, ParlayLocalStore) {
+endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ProtocolManager', 'ParlayLocalStore', 'ParlayNotification', function (PromenadeBroker, ProtocolManager, ParlayLocalStore, ParlayNotification) {
     
     var Private = {
 	    active_endpoints: {}
@@ -57,6 +57,8 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ProtocolM
     };
     
 	Public.loadPreviousWorkspace = function () {
+		var loaded_endpoints = false;
+		
 		var config = ParlayLocalStore.values();
 		var keys = Object.keys(config).reduce(function (accumulator, key) {
 			var split_name = key.split('.')[1].split('_');
@@ -72,7 +74,12 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ProtocolM
 		Public.getAvailableEndpoints().filter(function (endpoint) {
 			return keys.hasOwnProperty(endpoint.name);
 		}).forEach(function (endpoint) {
+			loaded_endpoints = true;
 			Public.activateEndpoint(endpoint, keys[endpoint.name].uid);
+		});
+		
+		if (loaded_endpoints) ParlayNotification.show({
+			content: 'Restored workspace from previous session.'
 		});
 		
 	};

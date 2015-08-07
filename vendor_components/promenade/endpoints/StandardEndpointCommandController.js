@@ -107,7 +107,6 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommands', fu
         templateUrl: '../vendor_components/promenade/endpoints/directives/promenade-standard-endpoint-card-commands.html',
         controller: 'PromenadeStandardEndpointCommandController',
         link: function (scope, element, attributes) {
-	        scope.element = element;
         }
     };
 });
@@ -125,8 +124,18 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContai
             return RecursionHelper.compile(element);
         },
         controller: function ($scope) {
-            $scope.$watchCollection('fields', function (newV, oldV, $scope) {
-                for (var field in newV) {
+	        
+	        $scope.hasSubFields = function (field) {
+		        var message_field = $scope.message[field.msg_key + '_' + field.input];
+		        return message_field !== undefined && message_field.sub_fields !== undefined;
+	        };
+	        
+	        $scope.getSubFields = function (field) {
+		        return $scope.message[field.msg_key + '_' + field.input].sub_fields;
+	        };
+	        
+            $scope.$watchCollection('fields', function (newV, oldV, scope) {
+	            for (var field in newV) {
                     $scope.message[newV[field].msg_key + '_' + newV[field].input] = newV[field].default;
                     if (!$scope.message[newV[field].msg_key + '_' + newV[field].input] && (newV[field].input === 'NUMBERS' || newV[field].input === 'STRINGS')) {
                         $scope.message[newV[field].msg_key + '_' + newV[field].input] = [];

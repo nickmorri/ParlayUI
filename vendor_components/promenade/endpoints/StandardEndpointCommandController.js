@@ -67,6 +67,7 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
     $scope.messageWatchers = {};
     
     $scope.$watchCollection('message', function (newValue, oldValue) {
+	    
 	    function setAttribute(directive, attribute, value) {
 		    var form_container = ParlayLocalStore.get(directive, 'commandform');
 		    form_container[attribute] = value;
@@ -86,7 +87,9 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
 	    
 	    function registerWatch(name, field) {
 		    if ($scope.messageWatchers[name]) $scope.messageWatchers[name]();
-		    $scope.messageWatchers[name] = $scope.$watch(function () {
+		    $scope.messageWatchers[name] = Array.isArray(field) ? $scope.$watchCollection(function () {
+			    return field;
+		    }, watchValue(name)) : $scope.$watch(function () {
 			    return field;
 		    }, watchValue(name));
 	    }

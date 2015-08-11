@@ -134,10 +134,3 @@ parlay_endpoint.directive('parlayEndpointCard', ['$compile', 'ParlayLocalStore',
         }
     };
 }]);
-
-/* istanbul ignore next */
-parlay_endpoint.directive('parlayEndpointsToolbar', function () {
-    return {
-        templateUrl: '../parlay_components/endpoints/directives/parlay-endpoints-toolbar.html'
-    };
-});

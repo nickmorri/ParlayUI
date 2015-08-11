@@ -2,9 +2,10 @@
     
     <div class="md-toolbar-tools" layout="row">
         
-        <md-button ng-hide="isDiscovering" class="md-icon-button" ng-click="requestDiscovery()" aria-label="Request discovery">
-            <md-tooltip>Discovery</md-tooltip>
-            <md-icon><ng-md-icon class="white" icon="autorenew"></ng-md-icon></md-icon>
+        <md-button ng-hide="isDiscovering" ng-class="large_screen ? '' : 'md-icon-button'" ng-click="requestDiscovery()" aria-label="Request discovery">
+            <md-tooltip>Request discovery</md-tooltip>
+		    <span ng-if="large_screen">Discovery</span>
+		    <md-icon ng-if="!large_screen"><ng-md-icon md-icon class="white" icon="autorenew"></ng-md-icon></md-icon>
         </md-button>
                 
         <parlay-endpoint-search flex ng-hide="isDiscovering"></parlay-endpoint-search>

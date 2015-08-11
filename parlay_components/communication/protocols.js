@@ -188,34 +188,3 @@ protocols.controller('ParlayConnectionListController', ['$scope', '$mdDialog', '
     };
     
 }]);
-
-protocols.controller('ParlayConnectionStatusController', ['$scope', '$mdDialog', function ($scope, $mdDialog) {
-    $scope.connection_icon = 'cloud_off';
-    
-    /* istanbul ignore next */
-    $scope.viewConnections = function (event) {
-        $mdDialog.show({
-            targetEvent: event,
-            clickOutsideToClose: true,
-            controller: 'ParlayConnectionListController',
-            templateUrl: '../parlay_components/communication/directives/parlay-connection-list-dialog.html'
-        });
-    };    
-    
-}]);
-
-/* istanbul ignore next */
-protocols.directive('parlayConnectionStatus', ['PromenadeBroker', function (PromenadeBroker) {
-    return {
-        scope: {},
-        templateUrl: '../parlay_components/navigation/directives/parlay-connection-status.html',
-        controller: 'ParlayConnectionStatusController',
-        link: function ($scope, element, attributes) {
-            $scope.$watch(function () {
-                return PromenadeBroker.isConnected();
-            }, function (connected) {
-                $scope.connection_icon = connected ? 'cloud' : 'cloud_off';
-            });
-        }
-    };
-}]);

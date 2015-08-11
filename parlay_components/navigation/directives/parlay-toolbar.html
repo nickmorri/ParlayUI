@@ -1,7 +1,8 @@
 <md-toolbar>
     <div class="md-toolbar-tools">
         
-        <h2 class="capitalize">{{$state.$current.self.name}}</h2>
+        <h2 class="capitalize">{{getStateName()}}</h2>
+        
         <span flex></span>
         
         <parlay-connection-status></parlay-connection-status>

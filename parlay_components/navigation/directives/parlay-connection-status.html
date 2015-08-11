@@ -1,4 +1,5 @@
-<md-button class="md-icon-button" ng-click="viewConnections($event)" aria-label="Connections menu">
+<md-button ng-class="large_screen ? '' : 'md-icon-button'" ng-click="viewConnections($event)" aria-label="Connections menu">
     <md-tooltip>View connections</md-tooltip>
-    <md-icon><ng-md-icon md-icon class="white" icon="{{connection_icon}}"></ng-md-icon></md-icon>
+    <span ng-if="large_screen">Connections</span>
+    <md-icon ng-if="!large_screen"><ng-md-icon md-icon class="white" icon="{{connection_icon}}"></ng-md-icon></md-icon>
 </md-button>

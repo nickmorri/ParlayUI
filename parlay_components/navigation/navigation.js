@@ -1,7 +1,7 @@
 var navigation = angular.module('parlay.navigation', ['ui.router', 'ngMaterial', 'ngMdIcons', 'promenade.broker', 'parlay.protocols', 'templates-main']);
 
 /* istanbul ignore next */
-navigation.controller('parlayToolbarController', ['$scope', '$state', '$mdSidenav', '$mdMedia', function ($scope, $state, $mdSidenav, $mdMedia) {
+navigation.controller('parlayToolbarController', ['$scope', '$state', function ($scope, $state) {
     
     /**
 	 * Returns the name of the current state from UI.Router.
@@ -10,6 +10,7 @@ navigation.controller('parlayToolbarController', ['$scope', '$state', '$mdSidena
     $scope.getStateName = function () {
 	    return $state.$current.self.name;
     };
+    
 }]);
 
 navigation.controller('ParlayConnectionStatusController', ['$scope', '$mdDialog', function ($scope, $mdDialog) {
@@ -43,7 +44,7 @@ navigation.directive('parlayConnectionStatus', ['PromenadeBroker', '$mdMedia', f
             
             // Watch the size of the screen, if we are on a screen size that's greater than a small screen we should always display labels.
             $scope.$watch(function () {
-	            return $mdMedia('gt-sm')
+	            return $mdMedia('gt-sm');
             }, function (large_screen) {
 	            $scope.large_screen = large_screen;
             });

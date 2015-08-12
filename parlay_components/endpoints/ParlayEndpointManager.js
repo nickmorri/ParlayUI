@@ -56,27 +56,30 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ProtocolM
 	    Private.compactActiveEndpoints();	    
     };
     
-	Public.loadPreviousWorkspace = function () {
-		var loaded_endpoints = false;
-		
-		var config = ParlayLocalStore.values();
-		var keys = Object.keys(config).reduce(function (accumulator, key) {
+	Private.loadPreviousWorkspace = function () {
+		var containers = Object.keys(ParlayLocalStore.values()).map(function (key) {
 			var split_name = key.split('.')[1].split('_');
 			var uid = parseInt(split_name.splice(split_name.length - 1, 1)[0], 10);
 			var endpoint_name = split_name.join(' ');			
-			accumulator[endpoint_name] =  {
+			return {
 				name: endpoint_name,
 				uid: uid
 			};
-			return accumulator;
-		}, {});
-		
-		Public.getAvailableEndpoints().filter(function (endpoint) {
-			return keys.hasOwnProperty(endpoint.name);
-		}).forEach(function (endpoint) {
-			loaded_endpoints = true;
-			Public.activateEndpoint(endpoint, keys[endpoint.name].uid);
 		});
+		
+		var loaded_endpoints = false;
+		
+		containers.forEach(function (container) {
+			var endpoint = Public.getAvailableEndpoints().find(function (endpoint) {
+				return container.name === endpoint.name;
+			});
+			if (endpoint !== undefined) {
+				loaded_endpoints = true;
+				Public.activateEndpoint(endpoint, container.uid);
+				return true;
+			}
+			else return false;
+		})
 		
 		if (loaded_endpoints) ParlayNotification.show({
 			content: 'Restored workspace from previous session.'
@@ -84,7 +87,7 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ProtocolM
 		
 	};
 	
-	PromenadeBroker.onDiscovery(Public.loadPreviousWorkspace);
+	PromenadeBroker.onDiscovery(Private.loadPreviousWorkspace);
 	
 	return Public;
 }]);

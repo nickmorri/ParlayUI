@@ -13,14 +13,6 @@
             	parlayConnectionStatusController = $controller('ParlayConnectionStatusController', {$scope: scope});
         	}));
         	
-        	describe('tests broker interaction', function () {
-            	
-            	it('initializes', function () {
-                	expect(scope.connection_icon).toEqual('cloud_off');
-            	});
-            	
-        	});
-        	
     	});
     	
     	describe('ParlayConnectionListController', function () {

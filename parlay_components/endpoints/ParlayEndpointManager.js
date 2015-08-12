@@ -61,7 +61,7 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ProtocolM
 		var config = ParlayLocalStore.values();
 		
 		// Sort by the $index recorded from the previous session. This corresponds with the order that the cards will be loaded into the workspace.
-		var sorted_containers = Object.keys(config).sort(function (a, b) {
+		var containers = Object.keys(config).sort(function (a, b) {
 			return config[a].$index > config[b].$index;
 		}).map(function (key) {
 			var split_name = key.split('.')[1].split('_');

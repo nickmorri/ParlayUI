@@ -134,7 +134,7 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContai
         controller: function ($scope) {
 	        
 	        function relevantScope(currentScope, attribute) {
-		        return currentScope.hasOwnProperty(attribute) ? currentScope : relevantScope(currentScope.$parent, attribute);
+		        return currentScope.hasOwnProperty(attribute) ? currentScope : currentScope.hasOwnProperty('$parent') ? relevantScope(currentScope.$parent, attribute) : undefined;
 	        }
 	        
 	        function getSavedValue(field_name) {
@@ -145,17 +145,19 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContai
 	        
 	        function restoreFieldState(field) {
 		        var saved = getSavedValue(field.msg_key + '_' + field.input);		        
-		        if (saved === undefined) return;
+		        if (saved === undefined || saved === null) return;
 		        
 		        var messageScope = relevantScope($scope, 'message');
 		        var fieldScope = relevantScope($scope, 'fields');
 		        
-		        if (saved !== undefined && saved !== null && saved.value !== undefined) {
-			    	messageScope.message[field.msg_key + '_' + field.input] = fieldScope.fields[field.msg_key].options[Object.keys(fieldScope.fields[field.msg_key].options).find(function (option) {
+		        if (saved.value !== undefined) {
+			        var target_field = Object.keys(fieldScope.fields[field.msg_key].options).find(function (option) {
 				    	return fieldScope.fields[field.msg_key].options[option].value === saved.value;
-			    	})];
+			    	});
+			    	messageScope.message[field.msg_key + '_' + field.input] = fieldScope.fields[field.msg_key].options[target_field];
 		    	}
 		    	else messageScope.message[field.msg_key + '_' + field.input] = saved;
+		    	
 	        }
 	        
 	        function restoreFormState() {

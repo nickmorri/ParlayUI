@@ -60,11 +60,10 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ProtocolM
 		
 		var config = ParlayLocalStore.values();
 		
-		var sorted_cards = Object.keys(config).sort(function (a, b) {
+		// Sort by the $index recorded from the previous session. This corresponds with the order that the cards will be loaded into the workspace.
+		var sorted_containers = Object.keys(config).sort(function (a, b) {
 			return config[a].$index > config[b].$index;
-		});
-		
-		var containers = sorted_cards.map(function (key) {
+		}).map(function (key) {
 			var split_name = key.split('.')[1].split('_');
 			var uid = parseInt(split_name.splice(split_name.length - 1, 1)[0], 10);
 			var endpoint_name = split_name.join(' ');			
@@ -76,6 +75,7 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ProtocolM
 		
 		var loaded_endpoints = false;
 		
+		// Add each saved card to the workspace if their exists a valid available endpoint.
 		containers.forEach(function (container) {
 			var endpoint = Public.getAvailableEndpoints().find(function (endpoint) {
 				return container.name === endpoint.name;

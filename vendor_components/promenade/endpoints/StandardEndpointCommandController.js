@@ -139,7 +139,8 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContai
 	        
 	        function getSavedValue(field_name) {
 		        var container = relevantScope($scope, 'container').container;
-		        return ParlayLocalStore.get('parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid, 'commandform')[field_name];
+		        var saved_endpoint = ParlayLocalStore.get('parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid, 'commandform');
+		        return saved_endpoint !== undefined && saved_endpoint.hasOwnProperty(field_name) ? saved_endpoint[field_name] : undefined;
 	        }
 	        
 	        function restoreFieldState(field) {

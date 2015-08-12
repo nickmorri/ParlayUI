@@ -33,10 +33,6 @@ parlay_endpoint.factory('ParlayEndpoint', function () {
         
     }
     
-    ParlayEndpoint.prototype.setUiState = function (key, value) {
-	    this.uiStateStore[key] = value;
-    };
-    
     ParlayEndpoint.prototype.getType = function () {
         return this.type;
     };
@@ -47,10 +43,6 @@ parlay_endpoint.factory('ParlayEndpoint', function () {
     
     ParlayEndpoint.prototype.matchesQuery = function (query) {
         NotImplementedError('matchesQuery');
-    };
-    
-    ParlayEndpoint.prototype.storeState = function () {
-	    ParlayLocalStore.set(this.name, this);
     };
     
     return ParlayEndpoint;

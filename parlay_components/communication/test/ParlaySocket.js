@@ -46,10 +46,6 @@
     		}));
     		
     		describe('initialization', function () {
-        		
-        		it('has correct default address', function () {
-            		expect(ParlaySocketService.getAddress()).toBe('ws://' + location.hostname + ':8085');
-        		});
     
     			it('is mock', function () {
         			expect(ParlaySocketService.isMock()).toBeTruthy();

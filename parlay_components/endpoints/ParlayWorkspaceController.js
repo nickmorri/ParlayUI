@@ -12,7 +12,7 @@ workspace_controller.controller('WorkspaceManagementController', ['$scope', '$md
 			workspace.endpoint_count = Object.keys(workspace.data).length;
 			return workspace;
 		});
-	};
+	}
 	
 	var saved_workspaces = getSavedWorkspaces();
 	
@@ -21,7 +21,12 @@ workspace_controller.controller('WorkspaceManagementController', ['$scope', '$md
 	};
 	
 	$scope.saveCurrentWorkspace = function () {
-		
+		$mdDialog.show({
+			controller: 'WorkspaceSaveAsDialogController',
+			templateUrl: '../parlay_components/endpoints/directives/parlay-workspace-save-as-dialog.html',
+		}).then(function (name) {
+			$scope.saveWorkspace({name: name});
+		}, function (error) {});
 	};
 	
 	$scope.clearCurrentWorkspace = function () {
@@ -40,10 +45,29 @@ workspace_controller.controller('WorkspaceManagementController', ['$scope', '$md
 		$scope.hide();
 	};
 	
+	$scope.deleteWorkspace = function (workspace) {
+		ParlayLocalStore('packed').remove('endpoints[' + workspace.name + ']');
+		saved_workspaces = getSavedWorkspaces();
+	};
+	
 	$scope.currentWorkspaceEndpointCount = function () {
 		return ParlayLocalStore('endpoints').keys().filter(function (key) {
 			return key.startsWith('endpoints-');
 		}).length;
+	};
+	
+}]);
+
+workspace_controller.controller('WorkspaceSaveAsDialogController', ['$scope', '$mdDialog', function ($scope, $mdDialog) {
+	
+	$scope.name = null;
+	
+	$scope.accept = function () {
+		$mdDialog.hide($scope.name);
+	};
+	
+	$scope.hide = function () {
+		$mdDialog.cancel();
 	};
 	
 }]);

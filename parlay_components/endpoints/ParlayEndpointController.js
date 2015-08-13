@@ -1,9 +1,13 @@
-var endpoint_controller = angular.module('parlay.endpoints.controller', ['parlay.endpoints.manager']);
+var endpoint_controller = angular.module('parlay.endpoints.controller', ['parlay.endpoints.manager', 'parlay.endpoints.workspaces']);
 
-endpoint_controller.controller('ParlayEndpointController', ['$scope', 'ParlayEndpointManager', function ($scope, ParlayEndpointManager) {
+endpoint_controller.controller('ParlayEndpointController', ['$scope', '$mdDialog', 'ParlayEndpointManager', 'ParlayLocalStore', function ($scope, $mdDialog, ParlayEndpointManager, ParlayLocalStore) {
 	    
     $scope.filterEndpoints = function () {
         return ParlayEndpointManager.getActiveEndpoints();
+    };
+    
+    $scope.hasEndpoints = function () {
+	    return ParlayEndpoint.hasActiveEndpoints();
     };
     
     $scope.requestDiscovery = function () {
@@ -20,6 +24,19 @@ endpoint_controller.controller('ParlayEndpointController', ['$scope', 'ParlayEnd
     
     $scope.deactivate = function (index) {
 	    ParlayEndpointManager.deactivateEndpoint(parseInt(index, 10));
+    };
+    
+    $scope.saveWorkspace = function () {
+	    ParlayLocalStore('endpoints').packagePrefix('test');
+    };
+    
+    $scope.openWorkspaceManagementDialog = function (event) {
+	    $mdDialog.show({
+		    controller: 'WorkspaceManagementController',
+		    templateUrl: '../parlay_components/endpoints/directives/parlay-workspace-management-dialog.html',
+		    targetEvent: event,
+		    clickOutsideToClose: true
+	    });
     };
 	    
 }]);

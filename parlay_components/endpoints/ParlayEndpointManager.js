@@ -1,4 +1,4 @@
-var endpoint_manager = angular.module('parlay.endpoints.manager', ['parlay.protocols', 'promenade.broker', 'parlay.store']);
+var endpoint_manager = angular.module('parlay.endpoints.manager', ['parlay.protocols', 'promenade.broker', 'parlay.store', 'parlay.endpoints.workspaces']);
 
 endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ProtocolManager', 'ParlayLocalStore', 'ParlayNotification', function (PromenadeBroker, ProtocolManager, ParlayLocalStore, ParlayNotification) {
     
@@ -10,6 +10,14 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ProtocolM
     
     Public.getActiveEndpoints = function () {
         return Private.active_endpoints;
+    };
+    
+    Public.hasActiveEndpoints = function () {
+	    return Object.keys(Public.getActiveEndpoints()).length > 0;
+    };
+    
+    Public.clearActiveEndpoints = function () {
+	    Private.active_endpoints = {};
     };
     
     Public.getAvailableEndpoints = function () {
@@ -56,13 +64,13 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ProtocolM
 	    Private.compactActiveEndpoints();	    
     };
     
-	Private.loadPreviousWorkspace = function () {
+	Public.loadWorkspace = function (workspace) {
 		
-		var config = ParlayLocalStore.values();
+		Public.clearActiveEndpoints();
 		
 		// Sort by the $index recorded from the previous session. This corresponds with the order that the cards will be loaded into the workspace.
-		var containers = Object.keys(config).sort(function (a, b) {
-			return config[a].$index > config[b].$index;
+		var containers = Object.keys(workspace.data).sort(function (a, b) {
+			return workspace.data[a].$index > workspace.data[b].$index;
 		}).map(function (key) {
 			var split_name = key.split('.')[1].split('_');
 			var uid = parseInt(split_name.splice(split_name.length - 1, 1)[0], 10);
@@ -83,18 +91,14 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ProtocolM
 			if (endpoint !== undefined) {
 				loaded_endpoints = true;
 				Public.activateEndpoint(endpoint, container.uid);
-				return true;
 			}
-			else return false;
 		});
 		
 		if (loaded_endpoints) ParlayNotification.show({
-			content: 'Restored workspace from previous session.'
+			content: 'Restored workspace from ' + workspace.name + '.'
 		});
 		
 	};
-	
-	PromenadeBroker.onDiscovery(Private.loadPreviousWorkspace);
 	
 	return Public;
 }]);

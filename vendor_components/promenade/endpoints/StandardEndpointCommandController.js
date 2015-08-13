@@ -65,10 +65,10 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
     $scope.$watchCollection('message', function (newValue, oldValue) {
 	    
 	    function setAttribute(directive, attribute, value) {
-		    var form_container = ParlayLocalStore.get(directive, 'commandform');
+		    var form_container = ParlayLocalStore('endpoints').get(directive, 'commandform');
 		    if (form_container === undefined) form_container = {};
 		    form_container[attribute] = value;
-		    ParlayLocalStore.set(directive, 'commandform', form_container);
+		    ParlayLocalStore('endpoints').set(directive, 'commandform', form_container);
 	    }
 	    
 	    function watchValue(input_name) {
@@ -135,7 +135,7 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContai
 	        
 	        function getSavedValue(field_name) {
 		        var container = relevantScope($scope, 'container').container;
-		        var saved_endpoint = ParlayLocalStore.get('parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid, 'commandform');
+		        var saved_endpoint = ParlayLocalStore('endpoints').get('parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid, 'commandform');
 		        return saved_endpoint !== undefined && saved_endpoint.hasOwnProperty(field_name) ? saved_endpoint[field_name] : undefined;
 	        }
 	        

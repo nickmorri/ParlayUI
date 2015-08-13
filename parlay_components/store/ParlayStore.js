@@ -1,58 +1,98 @@
 var parlay_store = angular.module('parlay.store', []);
 
-parlay_store.factory('ParlayLocalStore', ['$window', function ($window) {
+parlay_store.factory('ParlayLocalStore', ['ParlayLocalStoreService', '$window', function (ParlayLocalStoreService, $window) {
 	
-	var Private = {};
+	var active_instances = {};
 	
-	var Public = {};
+	function getInstance(prefix) {
+		if (active_instances.hasOwnProperty(prefix)) return active_instances[prefix];
+		else return new ParlayLocalStoreService(prefix);
+	}
 	
-	Public.has = function (directive, attribute) {
-		return Public.get(directive) !== undefined && Public.get(directive)[attribute] !== undefined;
+	$window.onbeforeunload = function () {
+		var test = getInstance('endpoints');
 	};
 	
-	Public.get = function (directive, attribute) {
-		return Public.getDirectiveContainer(directive)[attribute];
+	return function (prefix) {
+		return getInstance(prefix);
 	};
 	
-	Public.set = function (directive, attribute, value) {
-		var directiveContainer = Public.getDirectiveContainer(directive);
+}]);
+
+parlay_store.factory('ParlayLocalStoreService', function () {
+	
+	function ParlayLocalStore(prefix) {
+		this.prefix = prefix;
+	}
+	
+	ParlayLocalStore.prototype.has = function (directive, attribute) {
+		return this.get(directive) !== undefined && this.get(directive)[attribute] !== undefined;
+	};
+	
+	ParlayLocalStore.prototype.get = function (directive, attribute) {
+		return this.getDirectiveContainer(directive)[attribute];
+	};
+	
+	ParlayLocalStore.prototype.set = function (directive, attribute, value) {
+		var directiveContainer = this.getDirectiveContainer(directive);
 		directiveContainer[attribute] = value;
-		Public.setDirectiveContainer(directive, directiveContainer);
+		this.setDirectiveContainer(directive, directiveContainer);
 	};
 	
-	Public.remove = function (directive) {
-		localStorage.removeItem(directive);
+	ParlayLocalStore.prototype.remove = function (directive) {
+		localStorage.removeItem(this.prefix + '-' + directive);
 	};
 	
-	Public.clear = function () {
+	ParlayLocalStore.prototype.clear = function () {
 		localStorage.clear();
 	};
 	
-	Public.keys = function () {
+	ParlayLocalStore.prototype.keys = function () {
 		var values = [];
-		for (var i = 0; i < Public.length(); i++) values.push(localStorage.key(i));
+		for (var i = 0; i < this.length(); i++) {
+			var key = localStorage.key(i);
+			if (key.startsWith(this.prefix)) values.push(key);
+		}
 		return values;
 	};
 	
-	Public.length = function () {
+	ParlayLocalStore.prototype.length = function () {
 		return localStorage.length;
 	};
 	
-	Public.values = function () {
-		return Public.keys().reduce(function (accumulator, key) {
+	ParlayLocalStore.prototype.values = function () {
+		return this.keys().reduce(function (accumulator, key) {
 			accumulator[key] = JSON.parse(localStorage.getItem(key));
 			return accumulator;
 		}, {});
 	};
 	
-	Public.getDirectiveContainer = function (directive) {
-		var localStorageString = localStorage.getItem(directive);
+	ParlayLocalStore.prototype.getDirectiveContainer = function (directive) {
+		var localStorageString = localStorage.getItem(this.prefix + '-' + directive);
 		return localStorageString !== null ? JSON.parse(localStorageString) : {};
 	};
 	
-	Public.setDirectiveContainer = function (directive, container) {
-		localStorage.setItem(directive, JSON.stringify(container));
+	ParlayLocalStore.prototype.setDirectiveContainer = function (directive, container) {
+		localStorage.setItem(this.prefix + '-' + directive, JSON.stringify(container));
 	};
 	
-	return Public;	
-}]);
+	ParlayLocalStore.prototype.pack = function (name, autosave) {
+		if (!autosave) autosave = false;
+		localStorage.setItem('packed-' + this.prefix + '[' + name + ']', JSON.stringify({
+			name: name,
+			timestamp: Date.now(),
+			data: this.values(),
+			autosave: autosave
+		}));
+	};
+	
+	ParlayLocalStore.prototype.unpack = function (name) {
+		var unpacked = JSON.parse(localStorage.getItem('packed-' + this.prefix + '[' + name + ']'));
+		Object.keys(unpacked.data).forEach(function (key) {
+			localStorage.setItem(key, JSON.stringify(unpacked.data[key]));
+		});
+	};
+	
+	return ParlayLocalStore;
+	
+});

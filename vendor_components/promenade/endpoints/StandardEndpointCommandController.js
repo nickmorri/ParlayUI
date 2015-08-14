@@ -157,10 +157,12 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContai
 	        }
 	        
 	        function restoreFormState() {
-		        if (Array.isArray($scope.fields)) $scope.fields.forEach(restoreFieldState);
-		        else Object.keys($scope.fields).map(function (field_name) {
-					return $scope.fields[field_name];
-		        }).forEach(restoreFieldState);
+				if ($scope.fields) {
+					if (Array.isArray($scope.fields)) $scope.fields.forEach(restoreFieldState);
+			        else Object.keys($scope.fields).map(function (field_name) {
+						return $scope.fields[field_name];
+			        }).forEach(restoreFieldState);	
+				}
 	        }
 	        
 	        $scope.hasSubFields = function (field) {

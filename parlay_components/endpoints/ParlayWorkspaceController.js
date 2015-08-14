@@ -2,7 +2,6 @@ var workspace_controller = angular.module('parlay.endpoints.workspaces', ['parla
 
 workspace_controller.controller('WorkspaceManagementController', ['$scope', '$mdDialog', 'ParlayLocalStore', 'ParlayEndpointManager', function ($scope, $mdDialog, ParlayLocalStore, ParlayEndpointManager) {
 	$scope.hide = $mdDialog.hide;
-	$scope.cancel = $mdDialog.cancel;
 	
 	function getSavedWorkspaces() {
 		return ParlayLocalStore('packed').packedValues().map(function (workspace) {

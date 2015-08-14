@@ -11,7 +11,7 @@ parlay_store.factory('ParlayLocalStore', ['ParlayLocalStoreService', '$window', 
 	
 	$window.onbeforeunload = function () {
 		var store = getInstance('endpoints');
-		if (store.length()) store.packItem('auto', true);
+		if (store.length()) store.packItem('AutoSave', true);
 	};
 	
 	return function (prefix) {

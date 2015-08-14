@@ -19,7 +19,7 @@
             	
             	<div class="md-list-item-text">
                     <h3>Current Workspace</h3>
-                    <h4>{{currentWorkspaceEndpointCount()}} endpoint<span ng-show="currentWorkspaceEndpointCount() > 1">s</span></h4>
+                    <h4>{{currentWorkspaceEndpointCount()}} endpoint<span ng-hide="currentWorkspaceEndpointCount() === 1">s</span></h4>
                 </div>
                 
                 <md-button class="md-primary" ng-click="saveCurrentWorkspace()" aria-label="Save workspace">
@@ -41,7 +41,7 @@
                 
                 <div class="md-list-item-text" ng-class="{'md-offset': $index !== 0}">
                     <h3>{{workspace.name}}</h3>
-                    <h4>{{workspace.endpoint_count}} endpoint<span ng-show="workspace.endpoint_count > 1">s</span></h4>
+                    <h4>{{workspace.endpoint_count}} endpoint<span ng-hide="workspace.endpoint_count === 1">s</span></h4>
 					<p>Saved <span am-time-ago="workspace.timestamp"></span></p>
                 </div>
                 

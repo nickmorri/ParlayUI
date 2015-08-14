@@ -13,7 +13,11 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ProtocolM
     };
     
     Public.hasActiveEndpoints = function () {
-	    return Object.keys(Public.getActiveEndpoints()).length > 0;
+	    return Public.getActiveEndpointCount() > 0;
+    };
+    
+    Public.getActiveEndpointCount = function () {
+	    return Object.keys(Public.getActiveEndpoints()).length;
     };
     
     Public.clearActiveEndpoints = function () {
@@ -66,8 +70,6 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ProtocolM
     
 	Public.loadWorkspace = function (workspace) {
 		
-		Public.clearActiveEndpoints();
-		
 		// Sort by the $index recorded from the previous session. This corresponds with the order that the cards will be loaded into the workspace.
 		var containers = Object.keys(workspace.data).sort(function (a, b) {
 			return workspace.data[a].$index > workspace.data[b].$index;
@@ -96,6 +98,9 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ProtocolM
 		
 		if (loaded_endpoints) ParlayNotification.show({
 			content: 'Restored workspace from ' + workspace.name + '.'
+		});
+		else ParlayNotification.show({
+			content: 'Unable to restore workspace from ' + workspace.name + '. Ensure endpoints have been discovered.'
 		});
 		
 	};

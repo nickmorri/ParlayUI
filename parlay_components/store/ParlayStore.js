@@ -10,7 +10,8 @@ parlay_store.factory('ParlayLocalStore', ['ParlayLocalStoreService', '$window', 
 	}
 	
 	$window.onbeforeunload = function () {
-		var test = getInstance('endpoints');
+		var store = getInstance('endpoints');
+		if (store.length()) store.packItem('auto', true);
 	};
 	
 	return function (prefix) {
@@ -40,43 +41,52 @@ parlay_store.factory('ParlayLocalStoreService', function () {
 	};
 	
 	ParlayLocalStore.prototype.remove = function (directive) {
-		localStorage.removeItem(this.prefix + '-' + directive);
+		sessionStorage.removeItem(this.prefix + '-' + directive);
 	};
 	
 	ParlayLocalStore.prototype.clear = function () {
-		localStorage.clear();
+		sessionStorage.clear();
 	};
 	
 	ParlayLocalStore.prototype.keys = function () {
 		var values = [];
 		for (var i = 0; i < this.length(); i++) {
-			var key = localStorage.key(i);
+			var key = sessionStorage.key(i);
 			if (key.startsWith(this.prefix)) values.push(key);
 		}
 		return values;
 	};
 	
 	ParlayLocalStore.prototype.length = function () {
-		return localStorage.length;
+		return sessionStorage.length;
 	};
 	
 	ParlayLocalStore.prototype.values = function () {
 		return this.keys().reduce(function (accumulator, key) {
-			accumulator[key] = JSON.parse(localStorage.getItem(key));
+			accumulator[key] = JSON.parse(sessionStorage.getItem(key));
 			return accumulator;
 		}, {});
 	};
 	
 	ParlayLocalStore.prototype.getDirectiveContainer = function (directive) {
-		var localStorageString = localStorage.getItem(this.prefix + '-' + directive);
-		return localStorageString !== null ? JSON.parse(localStorageString) : {};
+		var sessionStorageString = sessionStorage.getItem(this.prefix + '-' + directive);
+		return sessionStorageString !== null ? JSON.parse(sessionStorageString) : {};
 	};
 	
 	ParlayLocalStore.prototype.setDirectiveContainer = function (directive, container) {
-		localStorage.setItem(this.prefix + '-' + directive, JSON.stringify(container));
+		sessionStorage.setItem(this.prefix + '-' + directive, JSON.stringify(container));
 	};
 	
-	ParlayLocalStore.prototype.pack = function (name, autosave) {
+	ParlayLocalStore.prototype.packedValues = function () {
+		var values = [];
+		for (var i = 0; i < localStorage.length; i++) {
+			var key = localStorage.key(i);
+			if (key.startsWith('packed-')) values.push(JSON.parse(localStorage.getItem(key)));
+		}
+		return values;
+	};
+	
+	ParlayLocalStore.prototype.packItem = function (name, autosave) {
 		if (!autosave) autosave = false;
 		localStorage.setItem('packed-' + this.prefix + '[' + name + ']', JSON.stringify({
 			name: name,
@@ -86,11 +96,15 @@ parlay_store.factory('ParlayLocalStoreService', function () {
 		}));
 	};
 	
-	ParlayLocalStore.prototype.unpack = function (name) {
+	ParlayLocalStore.prototype.unpackItem = function (name) {
 		var unpacked = JSON.parse(localStorage.getItem('packed-' + this.prefix + '[' + name + ']'));
 		Object.keys(unpacked.data).forEach(function (key) {
-			localStorage.setItem(key, JSON.stringify(unpacked.data[key]));
+			sessionStorage.setItem(key, JSON.stringify(unpacked.data[key]));
 		});
+	};
+	
+	ParlayLocalStore.prototype.removePackedItem = function (name) {
+		localStorage.removeItem('packed-' + this.prefix + '[' + name + ']');
 	};
 	
 	return ParlayLocalStore;

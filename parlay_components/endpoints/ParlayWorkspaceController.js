@@ -5,9 +5,7 @@ workspace_controller.controller('WorkspaceManagementController', ['$scope', '$md
 	$scope.cancel = $mdDialog.cancel;
 	
 	function getSavedWorkspaces() {
-		var workspaces = ParlayLocalStore('packed').values();
-		return Object.keys(workspaces).map(function (key) {
-			var workspace = workspaces[key];
+		return ParlayLocalStore('packed').packedValues().map(function (workspace) {
 			workspace.timestamp = new Date(workspace.timestamp);
 			workspace.endpoint_count = Object.keys(workspace.data).length;
 			return workspace;
@@ -31,29 +29,27 @@ workspace_controller.controller('WorkspaceManagementController', ['$scope', '$md
 	
 	$scope.clearCurrentWorkspace = function () {
 		ParlayEndpointManager.clearActiveEndpoints();
+		ParlayLocalStore('endpoints').clear();
 	};
 	
 	$scope.saveWorkspace = function (workspace) {
-		ParlayLocalStore('endpoints').pack(workspace.name);
+		ParlayLocalStore('endpoints').packItem(workspace.name);
 		saved_workspaces = getSavedWorkspaces();
 	};
 	
 	$scope.loadWorkspace = function (workspace) {
 		$scope.clearCurrentWorkspace();
-		ParlayLocalStore('endpoints').unpack(workspace.name);
+		ParlayLocalStore('endpoints').unpackItem(workspace.name);
 		ParlayEndpointManager.loadWorkspace(workspace);
-		$scope.hide();
 	};
 	
 	$scope.deleteWorkspace = function (workspace) {
-		ParlayLocalStore('packed').remove('endpoints[' + workspace.name + ']');
+		ParlayLocalStore('endpoints').removePackedItem(workspace.name);
 		saved_workspaces = getSavedWorkspaces();
 	};
 	
 	$scope.currentWorkspaceEndpointCount = function () {
-		return ParlayLocalStore('endpoints').keys().filter(function (key) {
-			return key.startsWith('endpoints-');
-		}).length;
+		return ParlayEndpointManager.getActiveEndpointCount();
 	};
 	
 }]);

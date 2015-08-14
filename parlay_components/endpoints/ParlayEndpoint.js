@@ -53,41 +53,42 @@ parlay_endpoint.directive('parlayEndpointCard', ['$compile', 'ParlayLocalStore',
     return {
         templateUrl: '../parlay_components/endpoints/directives/parlay-endpoint-card.html',
         link: function (scope, element, attributes) {
+	        
+            scope.endpoint = scope.container.ref;
             
             var key = 'parlayEndpointCard.' + scope.container.ref.name.replace(' ', '_') + '_' + scope.container.uid;
             
-            function compileDirectives() {
-	        	scope.endpoint = scope.container.ref;
+            // Converts directive names to snake-case which Angular requires during directive compilation.
+            function snake_case(name) {
+                return name.replace(/[A-Z]/g, function(letter, pos) {
+                    return (pos ? '-' : '') + letter.toLowerCase();
+                });
+            }
             
-	            // Converts directive names to snake-case which Angular requires during directive compilation.
-	            function snake_case(name) {
-	                return name.replace(/[A-Z]/g, function(letter, pos) {
-	                    return (pos ? '-' : '') + letter.toLowerCase();
-	                });
-	            }
-	            
-	            // Locate locations where we are going to insert dynamic directives.
+            function compileToolbar() {
+	            // Locate toolbar where we are going to insert dynamic directives.
 	            var toolbar = element[0].querySelector('div.md-toolbar-tools');
-	            var tabs = element[0].querySelector('md-tabs');
 	            
-	            var endpoints = scope.endpoint.getDirectives();
-	            
-	            // Append toolbar directives.
-	            endpoints.filter(function (endpoint) {
+	            scope.endpoint.getDirectives().filter(function (endpoint) {
 	                return endpoint.hasOwnProperty('toolbar');
 	            }).reduce(function (previous, endpoint) {
 	                return previous.concat(endpoint.toolbar.map(function (directive) {
 	                    return '<' + snake_case(directive, '-') + ' endpoint="endpoint" layout-fill layout="row" layout-align="space-between center"></' + snake_case(directive, '-') + '>';    
 	                }));
 	            }, []).forEach(function (directive_string) {
-		            toolbar.insertBefore($compile(directive_string)(scope)[0], toolbar.firstChild);
+					toolbar.insertBefore($compile(directive_string)(scope)[0], toolbar.firstChild);
 	            });
+            }
+            
+            function compileTabs() {
+	            // Locate tabs where we are going to insert dynamic directives.
+	            var tabs = element[0].querySelector('md-tabs');
 	            
 	            // Append tabs directives.
-	            endpoints.filter(function (endpoint) {
+	            scope.endpoint.getDirectives().filter(function (endpoint) {
 	                return endpoint.hasOwnProperty('tabs');
 	            }).reduce(function (previous, endpoint) {
-	                return previous.concat(endpoint.tabs.map(function (directive) {
+		            return previous.concat(endpoint.tabs.map(function (directive) {
 	                    return '<' + snake_case(directive, '-') + ' endpoint="endpoint"></' + snake_case(directive, '-') + '>';
 	                }));
 	            }, []).forEach(function (directive_string) {
@@ -96,13 +97,8 @@ parlay_endpoint.directive('parlayEndpointCard', ['$compile', 'ParlayLocalStore',
             }
             
             function setActiveTab(newValue, oldValue) {
-	            try {
-		        	var saved_state = ParlayLocalStore('endpoints').getDirectiveContainer('parlayEndpointCard.' + scope.endpoint.name.replace(' ', '_') + '_' + scope.container.uid);
-		            if (saved_state) scope.active_tab_index = saved_state.active_tab_index;
-	            } catch(error) {
-		            throw error;
-		            // Maybe we should do something about a cache miss but for now during DEVELOPMENT do nothing.
-	            }
+	            var saved_state = ParlayLocalStore('endpoints').getDirectiveContainer('parlayEndpointCard.' + scope.endpoint.name.replace(' ', '_') + '_' + scope.container.uid);
+		        if (saved_state) scope.active_tab_index = saved_state.active_tab_index;
 	            scope.$watch('active_tab_index', setAttr(key));
             }
             
@@ -118,7 +114,8 @@ parlay_endpoint.directive('parlayEndpointCard', ['$compile', 'ParlayLocalStore',
 				};
 			}
 	        
-	        compileDirectives();
+	        compileToolbar();
+	        compileTabs();
             setActiveTab();
             
             scope.$watch('$index', setAttr(key));

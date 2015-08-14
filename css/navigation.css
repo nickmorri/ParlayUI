@@ -1,0 +1,15 @@
+.console_transform {
+    -webkit-transition: height 200ms linear;
+    -moz-transition: height 200ms linear;
+    -o-transition: height 200ms linear;
+    -ms-transition: height 200ms linear;
+    transition: height 200ms linear;
+
+}
+
+.console_expanded {
+    height: 250px;
+}
+.console_hidden {
+    height: 30px;
+}

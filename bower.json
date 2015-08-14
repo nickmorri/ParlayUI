@@ -3,6 +3,7 @@
   "private": true,
   "dependencies": {
     "angular": "~1.4.1",
+      "angular-animate": "angular-animate#master",
     "angular-mocks": "angular-mocks#1.4.1",
     "angular-material": "angular-material#master",
     "angular-material-icons": "angular-material-icons#0.4.0",

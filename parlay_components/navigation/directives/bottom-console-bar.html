@@ -1,0 +1,23 @@
+<div layout="column" class="console_transform" ng-class="consoleClass">
+<md-toolbar md-scroll-shrink style="max-height:30px; min-height:25px;">
+    <div class="md-toolbar-tools" style="max-height:30px; min-height:25px;">
+      <h5>
+        <span>Console</span>
+      </h5>
+       <span flex></span>
+        <md-icon ><ng-md-icon md-icon class="white" icon="{{consoleGetExpandIcon()}}" size="20" ng-click="consoleToggleConsole()"></ng-md-icon></md-icon>
+
+    </div>
+</md-toolbar>
+
+<md-content layout-padding >
+  <pre>{{consoleLog}}</pre> <!--TODO: would this be faster as an array and dynamic loading? ask nick -->
+</md-content>
+
+</div>
+
+<md-input-container ng-hide="consoleClass == 'console_hidden'">
+    <label>Command</label>
+    <input ng-model="consoleCommand" ng-keyup="$event.keyCode == 13 && consoleSendCommand()">
+
+</md-input-container>

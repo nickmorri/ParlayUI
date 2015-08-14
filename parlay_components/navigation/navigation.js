@@ -62,11 +62,11 @@ navigation.directive('parlayConnectionStatus', ['PromenadeBroker', '$mdMedia', f
         templateUrl: '../parlay_components/navigation/directives/parlay-connection-status.html',
         controller: 'ParlayConnectionStatusController',
         link: function ($scope, element, attributes) {
-	        
 	        // Watch our connection status to Broker and update the icon if connectivity changes.
 	        $scope.$watch(function () {
                 return PromenadeBroker.isConnected();
             }, function (connected) {
+	            $scope.connected = connected;
                 $scope.connection_icon = connected ? 'cloud' : 'cloud_off';
             });
             

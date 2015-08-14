@@ -255,22 +255,20 @@
     	});
     	
     	describe('<parlay-endpoint-card>', function () {
-        	var element, mockEndpoint, scope;
-        	
-        	mockEndpoint = {
-            	directives: {
-                	toolbar: ['promenadeStandardEndpointCardToolbar'],
-                	tabs: ['promenadeStandardEndpointCardLog', 'promenadeStandardEndpointCardCommands']
-            	},
-            	getDirectives: function () {
-                	return [this.directives];
-            	}
-        	};
+        	var element, scope;
         	
         	beforeEach(inject(function($compile, $rootScope) {
             	scope = $rootScope.$new();
-            	$rootScope.container = {
-	            	ref: mockEndpoint
+            	scope.container = {
+	            	ref: {
+		            	name: 'mockEndpoint',
+			            getDirectives: function () {
+			                return [{
+					            toolbar: ['promenadeStandardEndpointCardToolbar'],
+				                tabs: ['promenadeStandardEndpointCardLog', 'promenadeStandardEndpointCardCommands']
+				            }];
+			            }
+			        }
 	            };
             	element = $compile('<parlay-endpoint-card></parlay-endpoint-card')(scope);
                 $rootScope.$digest();

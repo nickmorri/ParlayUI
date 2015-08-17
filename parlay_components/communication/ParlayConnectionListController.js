@@ -1,6 +1,6 @@
 var list_controller = angular.module('parlay.protocols.list_controller', ['parlay.protocols.configuration_controller', 'parlay.protocols.manager', 'promenade.broker', 'parlay.notification', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main']);
 
-list_controller.controller('ParlayConnectionListController', ['$scope', '$mdDialog', 'ParlayNotification', 'ProtocolManager', 'PromenadeBroker', function ($scope, $mdDialog, ParlayNotification, ProtocolManager, PromenadeBroker) {
+list_controller.controller('ParlayConnectionListController', ['$scope', '$mdDialog', 'ParlayNotification', 'ParlayProtocolManager', 'PromenadeBroker', function ($scope, $mdDialog, ParlayNotification, ParlayProtocolManager, PromenadeBroker) {
     
     $scope.hide = $mdDialog.hide;
     
@@ -29,19 +29,19 @@ list_controller.controller('ParlayConnectionListController', ['$scope', '$mdDial
     };
     
     /**
-     * Returns open protocols from ProtocolManager.
+     * Returns open protocols from ParlayProtocolManager.
      * @returns {Array} open protocols
      */
     $scope.getOpenProtocols = function () {
-        return ProtocolManager.getOpenProtocols();
+        return ParlayProtocolManager.getOpenProtocols();
     };
     
     /**
-     * Check if ProtocolManager has open protocols.
+     * Check if ParlayProtocolManager has open protocols.
      * @returns {Boolean} true if open protocols exist, false otherwise.
      */
     $scope.hasOpenProtocols = function () {
-        return ProtocolManager.getOpenProtocols().length !== 0;
+        return ParlayProtocolManager.getOpenProtocols().length !== 0;
     };
     
     /**
@@ -50,7 +50,7 @@ list_controller.controller('ParlayConnectionListController', ['$scope', '$mdDial
      */
     /* istanbul ignore next */
     $scope.closeProtocol = function (protocol) {
-        ProtocolManager.closeProtocol(protocol).then(function (result) {
+        ParlayProtocolManager.closeProtocol(protocol).then(function (result) {
             ParlayNotification.show({
                 content: 'Closed ' + protocol.getName() + '.'
             }); 
@@ -75,7 +75,7 @@ list_controller.controller('ParlayConnectionListController', ['$scope', '$mdDial
     };
     
     /**
-     * Show protocol configuration dialog and have ProtocolManager open a protocol.
+     * Show protocol configuration dialog and have ParlayProtocolManager open a protocol.
      * @param {Event} - Event generated when button is selected. Allows use to have origin for dialog display animation.
      */
     /* istanbul ignore next */

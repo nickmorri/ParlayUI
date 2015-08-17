@@ -1,6 +1,6 @@
 var endpoint_manager = angular.module('parlay.endpoints.manager', ['parlay.protocols.manager', 'promenade.broker', 'parlay.store', 'parlay.endpoints.workspaces']);
 
-endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ProtocolManager', 'ParlayNotification', function (PromenadeBroker, ProtocolManager, ParlayNotification) {
+endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ParlayProtocolManager', 'ParlayNotification', function (PromenadeBroker, ParlayProtocolManager, ParlayNotification) {
     
     var Private = {
 	    active_endpoints: {}
@@ -25,7 +25,7 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ProtocolM
     };
     
     Public.getAvailableEndpoints = function () {
-        return ProtocolManager.getOpenProtocols().reduce(function (previous, current) {
+        return ParlayProtocolManager.getOpenProtocols().reduce(function (previous, current) {
             return previous.concat(current.getAvailableEndpoints());
         }, []);
     };

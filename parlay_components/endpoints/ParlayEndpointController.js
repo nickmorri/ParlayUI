@@ -28,7 +28,7 @@ endpoint_controller.controller('ParlayEndpointController', ['$scope', '$mdDialog
     
     $scope.openWorkspaceManagementDialog = function (event) {
 	    $mdDialog.show({
-		    controller: 'WorkspaceManagementController',
+		    controller: 'ParlayWorkspaceManagementController',
 		    templateUrl: '../parlay_components/endpoints/directives/parlay-workspace-management-dialog.html',
 		    targetEvent: event,
 		    clickOutsideToClose: true

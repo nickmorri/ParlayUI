@@ -1,6 +1,6 @@
 var endpoint_controller = angular.module('parlay.endpoints.controller', ['parlay.endpoints.manager', 'parlay.endpoints.workspaces']);
 
-endpoint_controller.controller('ParlayEndpointController', ['$scope', '$mdDialog', 'ParlayEndpointManager', 'ParlayLocalStore', function ($scope, $mdDialog, ParlayEndpointManager, ParlayLocalStore) {
+endpoint_controller.controller('ParlayEndpointController', ['$scope', '$mdDialog', 'ParlayEndpointManager', function ($scope, $mdDialog, ParlayEndpointManager) {
 	    
     $scope.filterEndpoints = function () {
         return ParlayEndpointManager.getActiveEndpoints();
@@ -24,10 +24,6 @@ endpoint_controller.controller('ParlayEndpointController', ['$scope', '$mdDialog
     
     $scope.deactivate = function (index) {
 	    ParlayEndpointManager.deactivateEndpoint(parseInt(index, 10));
-    };
-    
-    $scope.saveWorkspace = function () {
-	    ParlayLocalStore('endpoints').packagePrefix('test');
     };
     
     $scope.openWorkspaceManagementDialog = function (event) {

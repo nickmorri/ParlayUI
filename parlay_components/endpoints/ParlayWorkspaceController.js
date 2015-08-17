@@ -1,10 +1,10 @@
 var workspace_controller = angular.module('parlay.endpoints.workspaces', ['parlay.store', 'parlay.endpoints.manager', 'angularMoment']);
 
-workspace_controller.controller('WorkspaceManagementController', ['$scope', '$mdDialog', 'ParlayLocalStore', 'ParlayEndpointManager', function ($scope, $mdDialog, ParlayLocalStore, ParlayEndpointManager) {
+workspace_controller.controller('WorkspaceManagementController', ['$scope', '$mdDialog', 'ParlayStore', 'ParlayEndpointManager', function ($scope, $mdDialog, ParlayStore, ParlayEndpointManager) {
 	$scope.hide = $mdDialog.hide;
 	
 	function getSavedWorkspaces() {
-		return ParlayLocalStore('packed').packedValues().map(function (workspace) {
+		return ParlayStore('packed').packedValues().map(function (workspace) {
 			workspace.timestamp = new Date(workspace.timestamp);
 			workspace.endpoint_count = Object.keys(workspace.data).length;
 			return workspace;
@@ -28,22 +28,22 @@ workspace_controller.controller('WorkspaceManagementController', ['$scope', '$md
 	
 	$scope.clearCurrentWorkspace = function () {
 		ParlayEndpointManager.clearActiveEndpoints();
-		ParlayLocalStore('endpoints').clear();
+		ParlayStore('endpoints').clear();
 	};
 	
 	$scope.saveWorkspace = function (workspace) {
-		ParlayLocalStore('endpoints').packItem(workspace.name);
+		ParlayStore('endpoints').packItem(workspace.name);
 		saved_workspaces = getSavedWorkspaces();
 	};
 	
 	$scope.loadWorkspace = function (workspace) {
 		$scope.clearCurrentWorkspace();
-		ParlayLocalStore('endpoints').unpackItem(workspace.name);
+		ParlayStore('endpoints').unpackItem(workspace.name);
 		ParlayEndpointManager.loadWorkspace(workspace);
 	};
 	
 	$scope.deleteWorkspace = function (workspace) {
-		ParlayLocalStore('endpoints').removePackedItem(workspace.name);
+		ParlayStore('endpoints').removePackedItem(workspace.name);
 		saved_workspaces = getSavedWorkspaces();
 	};
 	

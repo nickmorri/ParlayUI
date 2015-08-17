@@ -49,7 +49,7 @@ parlay_endpoint.factory('ParlayEndpoint', function () {
     
 });
 
-parlay_endpoint.directive('parlayEndpointCard', ['$compile', 'ParlayLocalStore', function ($compile, ParlayLocalStore) {
+parlay_endpoint.directive('parlayEndpointCard', ['$compile', 'ParlayStore', function ($compile, ParlayStore) {
     return {
         templateUrl: '../parlay_components/endpoints/directives/parlay-endpoint-card.html',
         link: function (scope, element, attributes) {
@@ -97,20 +97,20 @@ parlay_endpoint.directive('parlayEndpointCard', ['$compile', 'ParlayLocalStore',
             }
             
             function setActiveTab(newValue, oldValue) {
-	            var saved_state = ParlayLocalStore('endpoints').getDirectiveContainer('parlayEndpointCard.' + scope.endpoint.name.replace(' ', '_') + '_' + scope.container.uid);
+	            var saved_state = ParlayStore('endpoints').getDirectiveContainer('parlayEndpointCard.' + scope.endpoint.name.replace(' ', '_') + '_' + scope.container.uid);
 		        if (saved_state) scope.active_tab_index = saved_state.active_tab_index;
 	            scope.$watch('active_tab_index', setAttr(key));
             }
             
             function setAttr(directive) {
 		        return function () {
-			    	ParlayLocalStore('endpoints').set(directive.replace(' ', '_'), this.exp, this.last);    
+			    	ParlayStore('endpoints').set(directive.replace(' ', '_'), this.exp, this.last);    
 		        };		        
 	        }
 	        
 	        function removeItem(directive) {
 				return function () {
-					ParlayLocalStore('endpoints').remove(directive.replace(' ', '_'));
+					ParlayStore('endpoints').remove(directive.replace(' ', '_'));
 				};
 			}
 	        

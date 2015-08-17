@@ -4,7 +4,7 @@ function relevantScope(currentScope, attribute) {
 
 var standard_endpoint_commands = angular.module('promenade.endpoints.standardendpoint.commands', ['RecursionHelper', 'parlay.store']);
 
-standard_endpoint_commands.controller('PromenadeStandardEndpointCommandController', ['$scope', '$timeout', 'ParlayLocalStore', function ($scope, $timeout, ParlayLocalStore) {
+standard_endpoint_commands.controller('PromenadeStandardEndpointCommandController', ['$scope', '$timeout', 'ParlayStore', function ($scope, $timeout, ParlayStore) {
     
     $scope.error = false;
     $scope.sending = false;
@@ -69,10 +69,10 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
     $scope.$watchCollection('message', function (newValue, oldValue) {
 	    
 	    function setAttribute(directive, attribute, value) {
-		    var form_container = ParlayLocalStore('endpoints').get(directive, 'commandform');
+		    var form_container = ParlayStore('endpoints').get(directive, 'commandform');
 		    if (form_container === undefined) form_container = {};
 		    form_container[attribute] = value;
-		    ParlayLocalStore('endpoints').set(directive, 'commandform', form_container);
+		    ParlayStore('endpoints').set(directive, 'commandform', form_container);
 	    }
 	    
 	    function watchValue(input_name) {
@@ -120,7 +120,7 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommands', fu
 });
 
 
-standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContainer', ['RecursionHelper', 'ParlayLocalStore', function (RecursionHelper, ParlayLocalStore) {
+standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContainer', ['RecursionHelper', 'ParlayStore', function (RecursionHelper, ParlayStore) {
     return {
         scope: {
             message: "=",
@@ -135,7 +135,7 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContai
 	        
 	        function getSavedValue(field_name) {
 		        var container = relevantScope($scope, 'container').container;
-		        var saved_endpoint = ParlayLocalStore('endpoints').get('parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid, 'commandform');
+		        var saved_endpoint = ParlayStore('endpoints').get('parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid, 'commandform');
 		        return saved_endpoint !== undefined && saved_endpoint.hasOwnProperty(field_name) ? saved_endpoint[field_name] : undefined;
 	        }
 	        

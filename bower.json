@@ -3,9 +3,8 @@
   "private": true,
   "dependencies": {
     "angular": "~1.4.1",
-      "angular-animate": "angular-animate#master",
-    "angular-mocks": "angular-mocks#1.4.1",
-    "angular-material": "angular-material#master",
+    "angular-mocks": "~1.4.1",
+    "angular-material": "angular-material#0.10.1",
     "angular-material-icons": "angular-material-icons#0.4.0",
     "angular-ui-router": "angular-ui-router#master",
     "ace-builds": "ace-builds#master",
@@ -14,10 +13,11 @@
     "svg-morpheus": "~0.1.8",
     "angular-messages": "~1.4.1",
     "angular-recursion": "~1.0.5",
-    "angular-notification": "~1.1.1"
+    "angular-notification": "~1.1.1",
+    "angular-animate": "~1.4.4"
   },
   "resolutions": {
-    "angular": "1.4.1",
+    "angular": "1.4.4",
     "ace-builds": "^1"
   },
   "overrides": {

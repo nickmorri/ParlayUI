@@ -1,4 +1,4 @@
-var endpoint_manager = angular.module('parlay.endpoints.manager', ['parlay.protocols', 'promenade.broker', 'parlay.store', 'parlay.endpoints.workspaces']);
+var endpoint_manager = angular.module('parlay.endpoints.manager', ['parlay.protocols.manager', 'promenade.broker', 'parlay.store', 'parlay.endpoints.workspaces']);
 
 endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ProtocolManager', 'ParlayNotification', function (PromenadeBroker, ProtocolManager, ParlayNotification) {
     

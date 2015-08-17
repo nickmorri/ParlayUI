@@ -1,34 +1,10 @@
 (function () {
     'use strict';
     
-    angular.module('mock.parlay.socket2', [])
-        .factory('ParlaySocket', ['$q', function($q) {
-            return {
-                connected: false,
-                open: function () {
-                    this.connected = true;
-                },
-                close: function () {
-                    this.connected = false;
-                },
-                isConnected: function () {
-                    return this.connected;
-                },
-                sendMessage: function (topics, contents, response_topics, response_callback) {
-                    response_callback(contents);
-                },
-                onOpen: function () {},
-                onClose: function () {},
-                getAddress: function () {
-                    return 'ws://localhost:8080';
-                }
-            };
-        }]);
-    
     describe('promenade.broker', function() {        
         
         beforeEach(module('promenade.broker'));        
-        beforeEach(module('mock.parlay.socket2'));
+        beforeEach(module('mock.parlay.socket'));
         
         describe('PromenadeBroker', function () {
             var PromenadeBroker, ParlaySocket;

@@ -60,6 +60,7 @@ module.exports = function (grunt) {
         'bower_components/angular-moment/angular-moment.js'
       ],
       'staticComponents': ['static_components/ng-websocket/ng-websocket.js'],
+      'mocks': getVendorItems (['mocks'], ['parlay_components/*/mocks/*.js']),
       'tests': getVendorItems(['tests'], ['parlay_components/*/test/*.js']),
       'compiledHtml': '<%= meta.tmp_destination %>/templates.js',
       'htmlDirectives': getVendorItems(['directives'], ['parlay_components/**/directives/*.html']),
@@ -201,6 +202,7 @@ module.exports = function (grunt) {
             '<%= meta.staticComponents %>',
             '<%= meta.compiledHtml %>',
             '<%= meta.source %>',
+            '<%= meta.mocks %>',
             '<%= meta.vendorComponents %>',
             '<%= meta.tests %>'
           ],
@@ -214,6 +216,7 @@ module.exports = function (grunt) {
             '<%= meta.bowerComponents %>',
             '<%= meta.staticComponents %>',
             '<%= meta.dist_destination %>/<%= pkg.namelower %>.min.js',
+            '<%= meta.mocks %>',
             '<%= meta.tests %>'
           ],
         }

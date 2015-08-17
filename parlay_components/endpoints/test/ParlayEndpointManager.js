@@ -4,51 +4,11 @@
     describe('parlay.endpoints.manager', function() {
         
         beforeEach(module('parlay.endpoints.manager'));
+        beforeEach(module('mock.promenade.broker'));
+        beforeEach(module('mock.parlay.protocols.manager'));
         
         describe('ParlayEndpointManager', function () {
             var scope, ParlayEndpointManager, PromenadeBroker;
-            
-            beforeEach(function () {
-                function PromenadeBroker() {
-                    return {
-                        requestDiscovery: function () {},
-                        onDiscovery: function (callback) {
-	                        callback();
-                        }
-                    };                    
-                }
-                
-                function ProtocolManager() {
-                    return {
-                        getOpenProtocols: function () {
-                            return [
-                                {
-                                    getActiveEndpoints: function () {
-                                        return [1];
-                                    },
-                                    getAvailableEndpoints: function () {
-                                        return [3];
-                                    }
-                                },
-                                {
-                                    getActiveEndpoints: function () {
-                                        return [2];
-                                    },
-                                    getAvailableEndpoints: function () {
-                                        return [4];
-                                    }
-                                }
-                            ];
-                        }
-                    };
-                }
-                
-                module(function ($provide) {
-                    $provide.service('PromenadeBroker', PromenadeBroker);
-                    $provide.service('ProtocolManager', ProtocolManager);
-                });
-                
-            });
             
             beforeEach(inject(function (_ParlayEndpointManager_, _PromenadeBroker_) {
                 PromenadeBroker = _PromenadeBroker_;
@@ -57,12 +17,12 @@
             
             describe('accessors', function () {
                 
-                xit('getActiveEndpoints', function () {
-                    expect(ParlayEndpointManager.getActiveEndpoints()).toEqual([1,2]);
+                it('getActiveEndpoints', function () {
+                    expect(ParlayEndpointManager.getActiveEndpoints()).toEqual({});
                 });
             
                 it('getAvailableEndpoints', function () {
-                    expect(ParlayEndpointManager.getAvailableEndpoints()).toEqual([3,4]);
+                    expect(ParlayEndpointManager.getAvailableEndpoints().length).toBe(2);
                 });
                     
             });
@@ -77,7 +37,7 @@
                 
             });
             
-            describe('ProtocolManager interactions', function () {
+            describe('ParlayProtocolManager interactions', function () {
                 
                xit('activateEndpoint', function () {
                     var endpoint = {

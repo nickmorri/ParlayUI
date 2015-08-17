@@ -4,19 +4,15 @@
     describe('parlay.endpoints.controller', function() {
         
         beforeEach(module('parlay.endpoints.controller'));
+        beforeEach(module('mock.parlay.endpoints.manager'));
         
     	describe('ParlayEndpointController', function () {
     		var scope, ParlayEndpointController, ParlayEndpointManager;
     
-    		beforeEach(inject(function($rootScope, $controller) {
-        		ParlayEndpointManager = {
-        			getActiveEndpoints: function () {
-            			return [];
-        			},
-        			requestDiscovery: function () {}
-    			};
+    		beforeEach(inject(function($rootScope, $controller, _ParlayEndpointManager_) {
+	    		ParlayEndpointManager = _ParlayEndpointManager_;
     			scope = $rootScope.$new();
-    			ParlayEndpointController = $controller('ParlayEndpointController', {$scope: scope, ParlayEndpointManager: ParlayEndpointManager});
+    			ParlayEndpointController = $controller('ParlayEndpointController', {$scope: scope});
     		}));
     		
     		describe('endpoint filtering', function () {

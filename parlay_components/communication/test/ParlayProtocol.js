@@ -1,47 +1,27 @@
 (function () {
     'use strict';
 
-    var sample_endpoints = function () {
-        var endpoints = [];
-        
-        for (var i = 0; i < 50; i++) {
-            endpoints.push({
-                ID: 100 + i,
-                INTERFACES: [],
-                NAME: 'TEST' + i,
-                TEMPLATE: 'STD_ENDPOINT'
-            });
-        }
-        
-        return endpoints;
-    }();
-    
-    var sample_discovery = {
-        CHILDREN: sample_endpoints,
-        NAME: 'TestProtocol',
-        TEMPLATE: 'Protocol'
-    };
-    
-    angular.module('mock.parlay.socket', []).factory('ParlaySocket', [function () {
-        var Public = {};
-        
-        Public.onMessage = function () {
-            return function () {};
-        };
-        
-        Public.sendMessage = function (topics, contents, response_topics, response_callback) {
-            if (contents === null) {
-                response_callback({STATUS: -1});
-            }
-            else {
-                contents.STATUS = 0;
-                response_callback(contents);
-            }
-        };
-        
-        return Public;
-    }]);
-    
+	var sample_endpoints = function () {
+	    var endpoints = [];
+	    
+	    for (var i = 0; i < 50; i++) {
+	        endpoints.push({
+	            ID: 100 + i,
+	            INTERFACES: [],
+	            NAME: 'TEST' + i,
+	            TEMPLATE: 'STD_ENDPOINT'
+	        });
+	    }
+	    
+	    return endpoints;
+	}();
+	
+	var sample_discovery = {
+	    CHILDREN: sample_endpoints,
+	    NAME: 'TestProtocol',
+	    TEMPLATE: 'Protocol'
+	};
+
     describe('parlay.protocols.protocol', function() {
     
         beforeEach(module('parlay.protocols.protocol'));

@@ -4,35 +4,15 @@
     describe('parlay.endpoints.search', function() {
         
         beforeEach(module('parlay.endpoints.search'));
+        beforeEach(module('mock.parlay.endpoints.manager'));
     	
     	describe('ParlayEndpointSearchController', function () {
         	var scope, ParlayEndpointSearchController, ParlayEndpointManager;
         	
-        	beforeEach(inject(function ($rootScope, $controller) {
-            	ParlayEndpointManager = {
-                	activateEndpoint: function(endpoint) {},
-                	getAvailableEndpoints: function(query) {
-                    	return [
-                        	{
-                            	matchesQuery: function () {
-                                	return true;
-                            	}
-                        	},
-                        	{
-                            	matchesQuery: function () {
-                                	return true;
-                            	}
-                        	},
-                        	{
-                            	matchesQuery: function () {
-                                	return false;
-                            	}
-                        	}
-                    	];
-                	}
-            	};
+        	beforeEach(inject(function ($rootScope, $controller, _ParlayEndpointManager_) {
+	        	ParlayEndpointManager = _ParlayEndpointManager_;
             	scope = $rootScope.$new();
-            	ParlayEndpointSearchController = $controller('ParlayEndpointSearchController', {$scope: scope, ParlayEndpointManager: ParlayEndpointManager});
+            	ParlayEndpointSearchController = $controller('ParlayEndpointSearchController', {$scope: scope});
         	}));
         	
         	describe('search state', function () {

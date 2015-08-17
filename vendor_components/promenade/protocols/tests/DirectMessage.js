@@ -3,8 +3,7 @@
 
     describe('promenade.protocols.directmessage', function() {
     
-        beforeEach(module('parlay.protocols'));
-        beforeEach(module('promenade.endpoints.standardendpoint'));
+        beforeEach(module('promenade.protocols.directmessage'));
         
         describe('PromenadeDirectMessageProtocol', function() {
             var rootScope, protocol;

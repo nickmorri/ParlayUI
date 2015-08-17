@@ -1,4 +1,4 @@
-var broker = angular.module('promenade.broker', ['parlay.socket', 'parlay.notifiction', 'ngMaterial']);
+var broker = angular.module('promenade.broker', ['parlay.socket', 'parlay.notification', 'ngMaterial']);
 
 broker.factory('PromenadeBroker', ['ParlaySocket', '$q', 'ParlayNotification', '$timeout', function (ParlaySocket, $q, ParlayNotification, $timeout) {
 	

@@ -1,6 +1,6 @@
-var standard_endpoint_commands = angular.module('promenade.endpoints.standardendpoint.commands', ['RecursionHelper']);
+var standard_endpoint_commands = angular.module('promenade.endpoints.standardendpoint.commands', ['RecursionHelper','parlay.navigation']);
 
-standard_endpoint_commands.controller('PromenadeStandardEndpointCommandController', ['$scope', '$timeout', function ($scope, $timeout) {
+standard_endpoint_commands.controller('PromenadeStandardEndpointCommandController', ['$scope', '$timeout', 'ScriptLogger', function ($scope, $timeout, ScriptLogger) {
     
     $scope.error = false;
     $scope.sending = false;
@@ -62,6 +62,17 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
 	        $scope.error = true;
 	        $scope.status_message = response.STATUS_NAME;
         });
+
+        //put the python equivilent command in the log
+        //build the key/value list
+        var msg = collectMessage();
+        var args = []
+        for(k in msg) {
+            if(typeof msg[k] == 'number') { args.push(k+"="+msg[k]); }
+            else {args.push(k+"='"+msg[k]+"'"); }
+        }
+        ScriptLogger.logCommand("SendCommand(" +args.join(",")+")");
+
     };
     
 }]);

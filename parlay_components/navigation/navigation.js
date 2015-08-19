@@ -13,8 +13,17 @@ navigation.controller('parlayToolbarController', ['$scope', '$state', function (
     
 }]);
 
+navigation.factory('ScriptLogger',  function () {
+
+    return {
+        logCommand :  function(s) {alert('UNDEFINED');},
+        logResponse: function(s) {alert('UNDEFINED');}
+    };
+});
+
+
 /* istanbul ignore next */
-navigation.controller('consoleBarController', ['$scope', '$state', 'PromenadeBroker', function ($scope, $state, PromenadeBroker) {
+navigation.controller('consoleBarController', ['$scope', '$state', 'PromenadeBroker','ScriptLogger', function ($scope, $state, PromenadeBroker,ScriptLogger) {
 
     $scope.consoleClass = 'console_hidden';
     $scope.consoleLog = "COMMAND LOG / CONSOLE\n";
@@ -37,9 +46,12 @@ navigation.controller('consoleBarController', ['$scope', '$state', 'PromenadeBro
         $scope.consoleCommand = "";
     };
 
-
-
+    //set up the script logger for other controllers to use
+    ScriptLogger.logCommand = $scope.consoleAddToLog;
+    ScriptLogger.logResponse = $scope.consoleAddresponseToLog;
 }]);
+
+
 
 navigation.controller('ParlayConnectionStatusController', ['$scope', '$mdDialog', function ($scope, $mdDialog) {
     

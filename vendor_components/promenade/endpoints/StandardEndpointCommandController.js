@@ -35,8 +35,17 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
             else {
                 param_name = field;
             }
-
-            if (angular.isArray($scope.message[field])) extracted_message[param_name] = field_type === 'NUMBERS' ? $scope.message[field].map(parseFloat) : $scope.message[field];
+            // if type is OBJECT or ARRAY then turn the JSON string into an actual object
+            if(field_type === 'OBJECT' || field_type === 'ARRAY') {
+                try {
+                    extracted_message[param_name] = JSON.parse($scope.message[field]);
+                }
+                catch(e)
+                {
+                    alert(param_name + " Is not valid JSON");  //TODO: Have Nick show me how to make this check a pretty form validation error
+                }
+            }
+            else if (angular.isArray($scope.message[field])) extracted_message[param_name] = field_type === 'NUMBERS' ? $scope.message[field].map(parseFloat) : $scope.message[field];
             else if (angular.isObject($scope.message[field])) extracted_message[param_name] = $scope.message[field].value;
             else extracted_message[param_name] = $scope.message[field];
         }
@@ -66,8 +75,8 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
         //put the python equivilent command in the log
         //build the key/value list
         var msg = collectMessage();
-        var args = []
-        for(k in msg) {
+        var args = [];
+        for(var k in msg) {
             if(typeof msg[k] == 'number') { args.push(k+"="+msg[k]); }
             else {args.push(k+"='"+msg[k]+"'"); }
         }

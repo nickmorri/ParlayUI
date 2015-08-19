@@ -34,8 +34,8 @@ navigation.controller('consoleBarController', ['$scope', '$state', 'PromenadeBro
             else $scope.consoleClass = 'console_expanded';
         };
     //call this to add strings to the log
-    $scope.consoleAddToLog = function (s) {$scope.consoleLog += ">>" + s + "\n";};
-    $scope.consoleAddResponseToLog = function (s) {$scope.consoleLog += s + "\n";};
+    $scope.consoleAddToLog = function (s) {$scope.consoleLog +=  s + "\n";};
+    $scope.consoleAddResponseToLog = function (s) {$scope.consoleLog += ">>" + s + "\n";};
 
     $scope.consoleSendCommand = function() {
         $scope.consoleAddToLog($scope.consoleCommand);

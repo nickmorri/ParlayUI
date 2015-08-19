@@ -40,6 +40,7 @@ workspace_controller.controller('ParlayWorkspaceManagementController', ['$scope'
 		$scope.clearCurrentWorkspace();
 		ParlayStore('endpoints').unpackItem(workspace.name);
 		ParlayEndpointManager.loadWorkspace(workspace);
+		$mdDialog.hide();
 	};
 	
 	$scope.deleteWorkspace = function (workspace) {

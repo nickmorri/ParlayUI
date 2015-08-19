@@ -27,7 +27,7 @@ parlay_store.factory('ParlayStoreService', function () {
 	}
 	
 	ParlayStore.prototype.has = function (directive, attribute) {
-		return this.get(directive) !== undefined && this.get(directive)[attribute] !== undefined;
+		return this.getDirectiveContainer(directive) !== undefined && this.get(directive, attribute) !== undefined;
 	};
 	
 	ParlayStore.prototype.get = function (directive, attribute) {

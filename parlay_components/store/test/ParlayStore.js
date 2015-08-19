@@ -16,10 +16,12 @@
             describe('constructs or retrieves', function () {
                 
                 it('constructs new object for distinct prefix', function () {
+	                /*jshint newcap: false */
 	                expect(ParlayStore('test1')).not().toBe(ParlayStore('test2'));
                 });
                 
                 it('retrieves the same instance for same prefix', function () {
+	                /*jshint newcap: false */
 	                expect(ParlayStore('test1')).toBe(ParlayStore('test1'));
                 });
                 
@@ -34,6 +36,7 @@
 		        // Clear localStorage and sessionStorage in case anything persisted from previous test cases.
 		        localStorage.clear();
 		        sessionStorage.clear();
+		        /*jshint newcap: false */
 		        ParlayStoreService = new _ParlayStoreService_('test');
 	        }));
 	        
@@ -134,7 +137,7 @@
 			        ParlayStoreService.packItem('packed-endpoints', false);
 			        
 					ParlayStoreService.clear();
-					expect(ParlayStoreService.has('card1', 'speed')).toBeFalsy()
+					expect(ParlayStoreService.has('card1', 'speed')).toBeFalsy();
 					expect(ParlayStoreService.length()).toBe(0);
 					
 					ParlayStoreService.unpackItem('packed-endpoints');

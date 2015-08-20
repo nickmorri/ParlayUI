@@ -1,4 +1,4 @@
-var list_controller = angular.module('parlay.protocols.list_controller', ['parlay.protocols.configuration_controller', 'parlay.protocols.manager', 'promenade.broker', 'parlay.notification', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main']);
+var list_controller = angular.module('parlay.protocols.list_controller', ['parlay.protocols.configuration_controller', 'parlay.protocols.detail_controller', 'parlay.protocols.manager', 'promenade.broker', 'parlay.notification', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main']);
 
 list_controller.controller('ParlayConnectionListController', ['$scope', '$mdDialog', 'ParlayNotification', 'ParlayProtocolManager', 'PromenadeBroker', function ($scope, $mdDialog, ParlayNotification, ParlayProtocolManager, PromenadeBroker) {
     
@@ -66,7 +66,7 @@ list_controller.controller('ParlayConnectionListController', ['$scope', '$mdDial
         $mdDialog.show({
             targetEvent: event,
             clickOutsideToClose: true,
-            controller: 'ProtocolConnectionDetailController',
+            controller: 'ParlayProtocolConnectionDetailController',
             templateUrl: '../parlay_components/communication/directives/parlay-protocol-connection-details.html',
             locals: {
                 protocol: protocol

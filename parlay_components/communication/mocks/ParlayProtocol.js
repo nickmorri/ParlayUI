@@ -15,6 +15,11 @@ angular.module('mock.parlay.protocols.protocol', []).factory('ParlayProtocol', [
         },
         unsubscribe: function () {
             this.has_subscription = false;
+        },
+        getAvailableEndpoints: function () {
+	        var endpoints = [];
+	        for (var i = 0; i < 5; i++) endpoints.push({name:'Endpoint' + i});
+	        return endpoints;
         }
     };
 }]);

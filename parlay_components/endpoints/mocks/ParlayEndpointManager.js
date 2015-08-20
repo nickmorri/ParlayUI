@@ -5,6 +5,9 @@ angular.module('mock.parlay.endpoints.manager', []).factory('ParlayEndpointManag
 		},
 		requestDiscovery: function () {},
 		activateEndpoint: function(endpoint) {},
+		hasActiveEndpoints: function () {
+			return false;
+		},
 		getAvailableEndpoints: function(query) {
 			return [
 		    	{
@@ -23,6 +26,15 @@ angular.module('mock.parlay.endpoints.manager', []).factory('ParlayEndpointManag
 		        	}
 		    	}
 			];
+		},
+		reorder: function(index, distance) {
+			//
+		},
+		duplicateEndpoint: function (index) {
+			//
+		},
+		deactivateEndpoint: function (index) {
+			//
 		}
 	};
 }]);

@@ -1,4 +1,4 @@
-var notifications = angular.module('parlay.notifiction', ['ngMaterial', 'notification', 'templates-main']);
+var notifications = angular.module('parlay.notification', ['ngMaterial', 'notification', 'templates-main']);
 
 notifications.run(['$notification', function ($notification) {
     // Request permissions as soon as possible.

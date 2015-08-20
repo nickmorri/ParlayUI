@@ -1,0 +1,25 @@
+<md-dialog aria-label="Workspaces" flex="30">
+
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+			<h2>Save As</h2>
+			<span flex></span>
+			<md-button class="md-icon-button" ng-click="hide()" aria-label="Hide dialog">
+				<md-icon><ng-md-icon icon="close" aria-label="Close dialog"></ng-md-icon></md-icon>
+			</md-button>
+		</div>
+	</md-toolbar>
+	
+	<md-dialog-content>
+		<md-input-container>
+			<label>Name</label>
+			<input ng-model="name" type="text">
+		</md-input-container>
+	</md-dialog-content>
+	
+	<div class="md-actions" layout="row">
+		<md-button class="md-warn" ng-click="hide()">Cancel</md-button>
+		<md-button class="md-primary" ng-click="accept()">Save As</md-button>
+	</div>
+
+</md-dialog>

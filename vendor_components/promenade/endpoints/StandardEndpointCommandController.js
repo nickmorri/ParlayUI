@@ -1,7 +1,12 @@
-var standard_endpoint_commands = angular.module('promenade.endpoints.standardendpoint.commands', ['RecursionHelper','parlay.navigation']);
 
-standard_endpoint_commands.controller('PromenadeStandardEndpointCommandController', ['$scope', '$timeout', 'ScriptLogger', function ($scope, $timeout, ScriptLogger) {
-    
+function relevantScope(currentScope, attribute) {
+    return currentScope.hasOwnProperty(attribute) ? currentScope : currentScope.hasOwnProperty('$parent') && currentScope.$parent !== null ? relevantScope(currentScope.$parent, attribute) : undefined;
+}
+
+var standard_endpoint_commands = angular.module('promenade.endpoints.standardendpoint.commands', ['RecursionHelper', 'parlay.store', 'parlay.navigation']);
+
+standard_endpoint_commands.controller('PromenadeStandardEndpointCommandController', ['$scope', '$timeout', 'ParlayStore','ScriptLogger', function ($scope, $timeout, ParlayStore,ScriptLogger) {
+
     $scope.error = false;
     $scope.sending = false;
     $scope.status_message = null;
@@ -20,38 +25,35 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
     }
     
     function collectMessage () {
-        
-        var extracted_message = {};
-        
-        for (var field in $scope.message) {
-            var param_name, field_type ;
-            if (field.indexOf('_') > -1) {
-                var split_field = field.split('_');
+        return Object.keys($scope.message).reduce(function (accumulator, field) {
+	        var param_name, field_type;
+	        if (field.indexOf('_') > -1) {
+		        var split_field = field.split('_');
 
                 field_type = split_field[split_field.length - 1];
 
                 param_name = split_field.slice(0, split_field.length - 1).join('_');
-            }
-            else {
-                param_name = field;
-            }
-            // if type is OBJECT or ARRAY then turn the JSON string into an actual object
+		    }
+		    else {
+			    param_name = field;
+		    }
+		    // if type is OBJECT or ARRAY then turn the JSON string into an actual object
             if(field_type === 'OBJECT' || field_type === 'ARRAY') {
                 try {
-                    extracted_message[param_name] = JSON.parse($scope.message[field]);
+                    accumulator[param_name] = JSON.parse($scope.message[field]);
                 }
                 catch(e)
                 {
                     alert(param_name + " Is not valid JSON");  //TODO: Have Nick show me how to make this check a pretty form validation error
                 }
             }
-            else if (angular.isArray($scope.message[field])) extracted_message[param_name] = field_type === 'NUMBERS' ? $scope.message[field].map(parseFloat) : $scope.message[field];
-            else if (angular.isObject($scope.message[field])) extracted_message[param_name] = $scope.message[field].value;
-            else extracted_message[param_name] = $scope.message[field];
-        }
-        
-        return extracted_message;
-        
+		    else if (angular.isArray($scope.message[field])) accumulator[param_name] = field_type === 'NUMBERS' ? $scope.message[field].map(parseFloat) : $scope.message[field];
+		    else if (angular.isObject($scope.message[field])) accumulator[param_name] = $scope.message[field].value;
+            else accumulator[param_name] = $scope.message[field];
+            
+	        return accumulator;
+        }, {});
+
     }
     
     $scope.send = function (event) {
@@ -84,6 +86,49 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
 
     };
     
+    var messageWatchers = {};
+    
+    $scope.$watchCollection('message', function (newValue, oldValue) {
+	    
+	    function setAttribute(directive, attribute, value) {
+		    var form_container = ParlayStore('endpoints').get(directive, 'commandform');
+		    if (form_container === undefined) form_container = {};
+		    form_container[attribute] = value;
+		    ParlayStore('endpoints').set(directive, 'commandform', form_container);
+	    }
+	    
+	    function watchValue(input_name) {
+		    return function(newValue, oldValue) {
+			    var value = newValue !== null && newValue !== undefined && newValue.value !== undefined ? {
+				    value: newValue.value
+			    } : newValue;
+				var container = relevantScope($scope, 'container').container;
+			    var key = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
+			    setAttribute(key, input_name, value);
+		    };
+	    }
+	    
+	    function registerWatch(name, field) {
+		    if (messageWatchers[name]) messageWatchers[name]();
+		    messageWatchers[name] = Array.isArray(field) ? $scope.$watchCollection(function () {
+			    return field;
+		    }, watchValue(name)) : $scope.$watch(function () {
+			    return field;
+		    }, watchValue(name));
+	    }
+	    
+	    function setupWatchers(message) {
+		    for (var field in message) registerWatch(field, message[field]);
+	    }
+	    
+	    function clearWatchers() {
+		    for (var watcher in messageWatchers) messageWatchers[watcher]();
+	    }
+	    
+	    clearWatchers();
+	    setupWatchers(newValue);
+    });
+    
 }]);
 
 standard_endpoint_commands.directive('promenadeStandardEndpointCardCommands', function () {
@@ -92,15 +137,12 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommands', fu
             endpoint: "="
         },
         templateUrl: '../vendor_components/promenade/endpoints/directives/promenade-standard-endpoint-card-commands.html',
-        controller: 'PromenadeStandardEndpointCommandController',
-        link: function (scope, element, attributes) {
-	        scope.element = element;
-        }
+        controller: 'PromenadeStandardEndpointCommandController'
     };
 });
 
 
-standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContainer', ['RecursionHelper', function (RecursionHelper) {
+standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContainer', ['RecursionHelper', 'ParlayStore', function (RecursionHelper, ParlayStore) {
     return {
         scope: {
             message: "=",
@@ -112,14 +154,62 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContai
             return RecursionHelper.compile(element);
         },
         controller: function ($scope) {
-            $scope.$watchCollection('fields', function (newV, oldV, $scope) {
-                for (var field in newV) {
-                    $scope.message[newV[field].msg_key + '_' + newV[field].input] = newV[field].default;
+	        
+	        function getSavedValue(field_name) {
+		        var container = relevantScope($scope, 'container').container;
+		        var saved_endpoint = ParlayStore('endpoints').get('parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid, 'commandform');
+		        return saved_endpoint !== undefined && saved_endpoint.hasOwnProperty(field_name) ? saved_endpoint[field_name] : undefined;
+	        }
+	        
+	        function restoreFieldState(field) {
+		        var saved = getSavedValue(field.msg_key + '_' + field.input);		        
+		        if (saved === undefined || saved === null) return;
+		        
+		        var messageScope = relevantScope($scope, 'message');
+		        var fieldScope = relevantScope($scope, 'fields');
+		        
+		        if (saved.value !== undefined) {
+			        var target_field = Object.keys(fieldScope.fields[field.msg_key].options).find(function (option) {
+				    	return fieldScope.fields[field.msg_key].options[option].value === saved.value;
+			    	});
+			    	messageScope.message[field.msg_key + '_' + field.input] = fieldScope.fields[field.msg_key].options[target_field];
+		    	}
+		    	else messageScope.message[field.msg_key + '_' + field.input] = saved;
+		    	
+	        }
+	        
+	        function restoreFormState() {
+				if ($scope.fields) {
+					if (Array.isArray($scope.fields)) $scope.fields.forEach(restoreFieldState);
+			        else Object.keys($scope.fields).map(function (field_name) {
+						return $scope.fields[field_name];
+			        }).forEach(restoreFieldState);	
+				}
+	        }
+	        
+	        $scope.hasSubFields = function (field) {
+		        var message_field = $scope.message[field.msg_key + '_' + field.input];
+		        return message_field !== undefined && message_field !== null && message_field.sub_fields !== undefined;
+	        };
+	        
+	        $scope.getSubFields = function (field) {
+		        return $scope.message[field.msg_key + '_' + field.input].sub_fields;
+	        };
+	        
+            var one_time_watch = $scope.$watchCollection('fields', function (newV, oldV, scope) {
+	            for (var field in newV) {
+                    // If we have not restored a value from a previous workspace session we should set it to the default value.
+                    if ($scope.message[newV[field].msg_key + '_' + newV[field].input] === undefined) {
+	                	$scope.message[newV[field].msg_key + '_' + newV[field].input] = newV[field].default;    
+                    }                    
                     if (!$scope.message[newV[field].msg_key + '_' + newV[field].input] && (newV[field].input === 'NUMBERS' || newV[field].input === 'STRINGS')) {
                         $scope.message[newV[field].msg_key + '_' + newV[field].input] = [];
                     }
-                }                 
+                }
+                one_time_watch();
+                restoreFormState();
             });
+            
         }
     };
 }]);

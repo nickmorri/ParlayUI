@@ -25,6 +25,6 @@
         
     </md-input-container>
     
-    <promenade-standard-endpoint-card-command-container ng-if="message[field.msg_key + '_' + field.input].sub_fields" commandform="commandform" message="message" fields="message[field.msg_key + '_' + field.input].sub_fields" flex></promenade-standard-endpoint-card-command-container>
+    <promenade-standard-endpoint-card-command-container ng-if="hasSubFields(field)" commandform="commandform" message="message" fields="getSubFields(field)" flex></promenade-standard-endpoint-card-command-container>
 
 </span>

@@ -1,0 +1,65 @@
+<md-dialog aria-label="Workspaces" flex="60">
+
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+			<h2>Workspaces</h2>
+			<span flex></span>
+			<md-button class="md-icon-button" ng-click="hide()" aria-label="Hide dialog">
+				<md-icon><ng-md-icon icon="close" aria-label="Close dialog"></ng-md-icon></md-icon>
+			</md-button>
+		</div>
+	</md-toolbar>
+	
+	<md-dialog-content>
+		<md-list>
+		
+			<md-list-item class="md-2-line" layout-gt-md="row" layout="column">
+            
+            	<md-icon hide-sm hide-md><ng-md-icon icon="home"></ng-md-icon></md-icon>
+            	
+            	<div class="md-list-item-text">
+                    <h3>Current Workspace</h3>
+                    <h4>{{currentWorkspaceEndpointCount()}} endpoint<span ng-hide="currentWorkspaceEndpointCount() === 1">s</span></h4>
+                </div>
+                
+                <md-button class="md-primary" ng-click="saveCurrentWorkspace()" aria-label="Save workspace">
+		            Save As
+		        </md-button>
+		        
+		        <md-button class="md-warn" ng-click="clearCurrentWorkspace()" aria-label="Clear workspace">
+		            Clear
+		        </md-button>
+            
+            </md-list-item>
+		
+			<md-divider></md-divider>
+			<md-subheader class="md-no-sticky">Saved workspaces</md-subheader>
+			
+			<md-list-item class="md-3-line" layout-gt-md="row" layout="column" ng-repeat="workspace in getSavedWorkspaces() | orderBy:'-timestamp'">
+                
+                <md-icon hide-sm hide-md ng-if="$index === 0"><ng-md-icon icon="dashboard"></ng-md-icon></md-icon>
+                
+                <div class="md-list-item-text" ng-class="{'md-offset': $index !== 0}">
+                    <h3>{{workspace.name}}</h3>
+                    <h4>{{workspace.endpoint_count}} endpoint<span ng-hide="workspace.endpoint_count === 1">s</span></h4>
+					<p>Saved <span am-time-ago="workspace.timestamp"></span></p>
+                </div>
+                
+                <md-button class="md-primary" ng-click="loadWorkspace(workspace)" aria-label="Load workspace">
+		            Load
+		        </md-button>
+                
+                <md-button class="md-primary" ng-click="saveWorkspace(workspace)" aria-label="Save workspace">
+		            Save
+		        </md-button>
+		        
+		        <md-button class="md-warn" ng-click="deleteWorkspace(workspace)" aria-label="Delete workspace">
+		            Delete
+		        </md-button>
+		        
+            </md-list-item>
+			
+		</md-list>
+	</md-dialog-content>
+
+</md-dialog>

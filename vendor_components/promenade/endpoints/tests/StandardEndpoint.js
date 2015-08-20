@@ -169,6 +169,7 @@
     			timeout = $timeout;
     			
     			scope.endpoint = {
+                    name: 'mockEndpoint',
                     sendMessage: function (message) {
                         return $q(function (resolve, reject) {
                             if (message.command === 'send') resolve('ok');
@@ -176,6 +177,8 @@
                         });
                     }
                 };
+                
+                scope.container = {ref: scope.endpoint, uid: 1000};
                 
     			PromenadeStandardEndpointCommandController = $controller('PromenadeStandardEndpointCommandController', {$scope: scope});
     		}));

@@ -1,0 +1,33 @@
+(function () {
+    'use strict';
+    
+    describe('parlay.protocols.detail_controller', function() {
+    
+		beforeEach(module('parlay.protocols.detail_controller'));
+		beforeEach(module('mock.parlay.protocols.protocol'));
+        
+        describe('ParlayProtocolConnectionDetailController', function () {
+                var scope, ParlayProtocolConnectionDetailController;
+                
+                beforeEach(inject(function ($rootScope, $controller, ParlayProtocol) {
+                    scope = $rootScope.$new();
+                    ParlayProtocolConnectionDetailController = $controller('ParlayProtocolConnectionDetailController', {$scope: scope, protocol: ParlayProtocol});
+                }));
+                
+                describe('protocol interactions', function () {
+                    
+                    it('gets protocols name', function () {
+                        expect(scope.getProtocolName()).toBe('foo');
+                    });
+                    
+                    it('gets log', function () {
+                        expect(scope.getLog()).toEqual([]);
+                    });
+                    
+                });
+                
+            });
+        
+    });
+    
+}());

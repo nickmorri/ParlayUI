@@ -5,6 +5,7 @@
     	"directives": "vendor_components/promenade/**/directives/*.html",
     	"endpoints": "vendor_components/promenade/endpoints/*.js",
     	"tests": "vendor_components/promenade/**/tests/*.js",
+    	"mocks": "vendor_components/promenade/**/mocks/*.js",
     	"stylesheets": "vendor_components/promenade/css/*.css"
     }	
 }

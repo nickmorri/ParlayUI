@@ -7,7 +7,7 @@ endpoint_controller.controller('ParlayEndpointController', ['$scope', '$mdDialog
     };
     
     $scope.hasEndpoints = function () {
-	    return ParlayEndpoint.hasActiveEndpoints();
+	    return ParlayEndpointManager.hasActiveEndpoints();
     };
     
     $scope.requestDiscovery = function () {
@@ -27,6 +27,7 @@ endpoint_controller.controller('ParlayEndpointController', ['$scope', '$mdDialog
     };
     
     $scope.openWorkspaceManagementDialog = function (event) {
+	    /* istanbul ignore next */
 	    $mdDialog.show({
 		    controller: 'ParlayWorkspaceManagementController',
 		    templateUrl: '../parlay_components/endpoints/directives/parlay-workspace-management-dialog.html',

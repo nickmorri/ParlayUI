@@ -1,13 +1,11 @@
-angular.module('mock.parlay.protocols.manager', []).factory('ParlayProtocolManager', ['$q', function ($q) {
+angular.module('mock.parlay.protocols.manager', ['mock.parlay.protocols.protocol']).factory('ParlayProtocolManager', ['$q', 'ParlayProtocol', function ($q, ParlayProtocol) {
 
 	var Public = {};
      
     Public.getOpenProtocols = function () {
-        return [{
-	        getAvailableEndpoints: function () {return [1];}
-        }, {
-	        getAvailableEndpoints: function () {return [2];}
-        }];
+	    var protocols = [];
+	    for (var i = 0; i < 5; i++) protocols.push(ParlayProtocol);
+        return protocols;
     };
     
     Public.openProtocol = function () {

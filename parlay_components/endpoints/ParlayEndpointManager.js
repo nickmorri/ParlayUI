@@ -8,38 +8,71 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ParlayPro
     
     var Public = {};
     
+    /**
+	 * Returns Object of active endpoint containers
+	 * @returns {Object} key: order, value: active endpoint containers
+	 */
     Public.getActiveEndpoints = function () {
         return Private.active_endpoints;
     };
     
+    /**
+	 * Checks if we currently have active endpoints.
+	 * @returns {Boolean} true if we have endpoints, false otherwise.
+	 */
     Public.hasActiveEndpoints = function () {
 	    return Public.getActiveEndpointCount() > 0;
     };
     
+    /**
+	 * Returns the number of endpoints currently active.
+	 * @returns {Number} endpoint count
+	 */
     Public.getActiveEndpointCount = function () {
 	    return Object.keys(Public.getActiveEndpoints()).length;
     };
     
+    /**
+	 * Clears reference to active endpoint object.
+	 */
     Public.clearActiveEndpoints = function () {
 	    Private.active_endpoints = {};
     };
     
+    /**
+	 * Returns the available endpoints from all connected protocols.
+	 * @returns {Array} endpoints available on all protocols
+	 */
     Public.getAvailableEndpoints = function () {
         return ParlayProtocolManager.getOpenProtocols().reduce(function (previous, current) {
             return previous.concat(current.getAvailableEndpoints());
         }, []);
     };
     
+    /**
+	 * Requests discovery from PromenadeBroker.
+	 * @returns {$q.defer.promise} Resolved when a response is received from the Broker.
+	 */
     Public.requestDiscovery = function () {
         return PromenadeBroker.requestDiscovery(true);
     };
     
+    /**
+	 * Swaps the endpoint at the specified index with the endpoint at index + distance.
+	 * @param {Number} index - position of endpoint to swap.
+	 * @param {Number} distance - how far to move target endpoint.
+	 */
     Public.reorder = function (index, distance) {
 	    var temp = Private.active_endpoints[index + distance];
 	    Private.active_endpoints[index + distance] = Private.active_endpoints[index];
 	    Private.active_endpoints[index] = temp;
     };
     
+    /**
+	 * Activates endpoint. 
+	 * @param {ParlayEndpoint} endpoint - reference to the endpoint object we want to activate.
+	 * @param {Number} uid[optional] - If given a uid we will use the provided one. Otherwise we will randomly generate one.
+	 */
     Public.activateEndpoint = function (endpoint, uid) {
 	    var count = 0;
 	    while (Private.active_endpoints.hasOwnProperty(count)) count++;
@@ -49,25 +82,37 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ParlayPro
 	    };
     };
     
-    Private.compactActiveEndpoints = function () {
-	    var keys = Object.keys(Private.active_endpoints);
-	    for (var i = 0; i < keys.length; i++) {
-		    Private.active_endpoints[i] = Private.active_endpoints[keys[i]];
-	    }
-	    for (i = keys.length; i < Object.keys(Private.active_endpoints).length; i++) {
-		    delete Private.active_endpoints[i];
-	    }
-    };
-    
+    /**
+	 * Creates a duplicate endpoint container that references the same endpoint available at the given index.
+	 * @param {Number} index - position of the endpoint we want to duplicate.
+	 */
     Public.duplicateEndpoint = function (index) {
 	    Public.activateEndpoint(Private.active_endpoints[index].ref);
     };
     
+    /**
+	 * Deactivates an endoint that is currently active.
+	 * @param {Number} index - position of endpoint to be deactivated.
+	 */
     Public.deactivateEndpoint = function (index) {
 	    delete Private.active_endpoints[index];
 	    Private.compactActiveEndpoints();	    
     };
     
+    /**
+	 * Compacts the maximum count key of the active endpoints container.
+	 */
+    Private.compactActiveEndpoints = function () {
+	    var keys = Object.keys(Private.active_endpoints);
+	    var i = 0;
+	    for (; i < keys.length; i++) Private.active_endpoints[i] = Private.active_endpoints[keys[i]];
+	    for (i = keys.length; i < Object.keys(Private.active_endpoints).length; i++) delete Private.active_endpoints[i];
+    };
+    
+    /**
+	 * Loads endpoints from the specified workspace.
+	 * @param {Workspace} workspace - saved workspace to be loaded.
+	 */
 	Public.loadWorkspace = function (workspace) {
 		
 		// Sort by the $index recorded from the previous session. This corresponds with the order that the cards will be loaded into the workspace.
@@ -88,6 +133,8 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ParlayPro
 		// Add each saved card to the workspace if their exists a valid available endpoint.
 		containers.forEach(function (container) {
 			var endpoint = Public.getAvailableEndpoints().find(function (endpoint) {
+				console.log(container.name);
+				console.log(endpoint.name);
 				return container.name === endpoint.name;
 			});
 			if (endpoint !== undefined) {
@@ -96,12 +143,9 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ParlayPro
 			}
 		});
 		
-		if (loaded_endpoints) ParlayNotification.show({
-			content: 'Restored workspace from ' + workspace.name + '.'
-		});
-		else ParlayNotification.show({
-			content: 'Unable to restore workspace from ' + workspace.name + '. Ensure endpoints have been discovered.'
-		});
+		ParlayNotification.show({content: loaded_endpoints ? 
+			'Restored workspace from ' + workspace.name + '.' : 
+			'Unable to restore workspace from ' + workspace.name + '. Ensure endpoints have been discovered.'});
 		
 	};
 	

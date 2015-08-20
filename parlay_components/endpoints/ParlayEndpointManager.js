@@ -133,8 +133,6 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ParlayPro
 		// Add each saved card to the workspace if their exists a valid available endpoint.
 		containers.forEach(function (container) {
 			var endpoint = Public.getAvailableEndpoints().find(function (endpoint) {
-				console.log(container.name);
-				console.log(endpoint.name);
 				return container.name === endpoint.name;
 			});
 			if (endpoint !== undefined) {

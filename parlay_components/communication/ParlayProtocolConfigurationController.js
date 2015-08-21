@@ -1,6 +1,6 @@
 var configuration_controller = angular.module('parlay.protocols.configuration_controller', ['parlay.protocols.manager', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main', 'parlay.notification']);
 
-configuration_controller.controller('ParlayProtocolConfigurationController', ['$scope', '$mdDialog', 'ParlayProtocolManager', 'ParlayNotification', function ($scope, $mdDialog, ProtocolManager, ParlayNotification) {
+configuration_controller.controller('ParlayProtocolConfigurationController', ['$scope', '$mdDialog', 'ProtocolManager', 'ParlayNotification', function ($scope, $mdDialog, ProtocolManager, ParlayNotification) {
     
     $scope.selected_protocol = null;
     $scope.connecting = false;

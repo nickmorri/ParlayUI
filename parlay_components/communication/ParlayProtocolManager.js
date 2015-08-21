@@ -1,6 +1,6 @@
 var protocol_manager = angular.module('parlay.protocols.manager', ['promenade.broker', 'promenade.protocols.directmessage']);
 
-protocol_manager.factory('ParlayProtocolManager', ['$injector', 'PromenadeBroker', '$q', function ($injector, PromenadeBroker, $q) {
+protocol_manager.factory('ProtocolManager', ['$injector', 'PromenadeBroker', '$q', function ($injector, PromenadeBroker, $q) {
     
     var Private = {
         open_protocols: [],

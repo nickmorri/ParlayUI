@@ -174,7 +174,7 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContai
 					     message[field.msg_key + '_' + field.input] = saved;   
 			        }
 			        // If the field is a dropdown and has options present we should use the saved value as a key to access the option saved.
-			        else if (fields[field.msg_key].hasOwnProperty('options') && fields[field.msg_key].options.hasOwnProperty(saved)) {
+			        else if (!Array.isArray(fields) && fields[field.msg_key].hasOwnProperty('options') && fields[field.msg_key].options.hasOwnProperty(saved)) {
 				        message[field.msg_key + '_' + field.input] = fields[field.msg_key].options[saved];
 			        }
 			        // Otherwise just set the value to the saved value.

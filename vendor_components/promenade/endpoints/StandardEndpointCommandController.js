@@ -158,6 +158,7 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContai
 	        /**
 		     * Sets the given field back to the state retrieved from the previous session.
 		     * @param {String} field - name of the field to restore.
+		     * @returns {Boolean} - if we successfully restored the value we return true, false otherwise.
 		     */
 	        function restoreFieldState(field) {
 		        // Retrieve the value from the previous session, if it is undefined or null then return instead of attempting to restore. 
@@ -180,41 +181,45 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContai
 			        else {
 				        message[field.msg_key + '_' + field.input] = saved;
 			        }
-			    	   
+			        return true;
 		        }
-		        
+		        else return false;
 	        }
 	        
-	        function restoreFormState() {
-				if ($scope.fields) {
-					if (Array.isArray($scope.fields)) $scope.fields.forEach(restoreFieldState);
-			        else Object.keys($scope.fields).map(function (field_name) {
-						return $scope.fields[field_name];
-			        }).forEach(restoreFieldState);	
-				}
-	        }
-	        
+	        /**
+		     * Checks if the given field has sub fields available.
+		     * @param {Object} field - the field we are interested in.
+		     * @returns {Boolean} - true if the target field has sub fields available, false otherwise.
+		     */
 	        $scope.hasSubFields = function (field) {
 		        var message_field = $scope.message[field.msg_key + '_' + field.input];
 		        return message_field !== undefined && message_field !== null && message_field.sub_fields !== undefined;
 	        };
 	        
+	        /**
+		     * Returns a given field's sub fields.
+		     * @param {Object} field - the field we are interested in.
+		     * @returns {Object|Array} - the fields sub fields, may be Object or Array.
+		     */
 	        $scope.getSubFields = function (field) {
 		        return $scope.message[field.msg_key + '_' + field.input].sub_fields;
 	        };
 	        
-            var one_time_watch = $scope.$watchCollection('fields', function (newV, oldV, scope) {
-	            for (var field in newV) {
-                    // If we have not restored a value from a previous workspace session we should set it to the default value.
-                    if ($scope.message[newV[field].msg_key + '_' + newV[field].input] === undefined) {
-	                	$scope.message[newV[field].msg_key + '_' + newV[field].input] = newV[field].default;    
-                    }                    
-                    if (!$scope.message[newV[field].msg_key + '_' + newV[field].input] && (newV[field].input === 'NUMBERS' || newV[field].input === 'STRINGS' || newV[field].input === 'ARRAY')) {
-                        $scope.message[newV[field].msg_key + '_' + newV[field].input] = [];
+	        // When fields is created we should first attempt to restore the previous values, if we are unable we will populate with the available default.
+	        // After this is done we will deregister this watchCollection as we don't need it anymore.
+			var one_time_watch = $scope.$watchCollection('fields', function (fields) {
+	            for (var field in fields) {
+		            if(!restoreFieldState($scope.fields[field])) {
+			            if (fields[field].default) {
+				        	$scope.message[fields[field].msg_key + '_' + fields[field].input] = fields[field].default;    
+			            }
+			            
+			            else if ($scope.message[fields[field].msg_key + '_' + fields[field].input] === undefined && ['NUMBERS', 'STRINGS', 'ARRAY'].indexOf(fields[field].input) > -1) {
+	                        $scope.message[fields[field].msg_key + '_' + fields[field].input] = [];
+	                    }    
                     }
                 }
                 one_time_watch();
-                restoreFormState();
             });
             
         }

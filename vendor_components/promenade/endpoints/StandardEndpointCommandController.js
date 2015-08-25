@@ -64,10 +64,12 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
         });
     };
     
+    // Contains $scope.$watch registrations.
     var messageWatchers = {};
     
     $scope.$watchCollection('message', function (newValue, oldValue) {
 	    
+	    // Records the directive's attribute to the ParlayStore.
 	    function setAttribute(directive, attribute, value) {
 		    var form_container = ParlayStore('endpoints').get(directive, 'commandform');
 		    if (form_container === undefined) form_container = {};
@@ -75,6 +77,7 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
 		    ParlayStore('endpoints').set(directive, 'commandform', form_container);
 	    }
 	    
+	    // Returns a function that will automatically update the attribute being watched.
 	    function watchValue(input_name) {
 		    return function(newValue, oldValue) {
 			    var value = newValue !== null && newValue !== undefined && newValue.value !== undefined ? {
@@ -86,6 +89,7 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
 		    };
 	    }
 	    
+	    // Registers a watch for the specified field.
 	    function registerWatch(name, field) {
 		    if (messageWatchers[name]) messageWatchers[name]();
 		    messageWatchers[name] = Array.isArray(field) ? $scope.$watchCollection(function () {
@@ -95,14 +99,17 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
 		    }, watchValue(name));
 	    }
 	    
+	    // Creates watch registration for each field available in the message.
 	    function setupWatchers(message) {
 		    for (var field in message) registerWatch(field, message[field]);
 	    }
 	    
+	    // Calls watch deregistration function for each watcher that we previously registered.
 	    function clearWatchers() {
 		    for (var watcher in messageWatchers) messageWatchers[watcher]();
 	    }
 	    
+	    // When $scope.message is changed we will clear all watchers and then setup new watchers on the newValue.
 	    clearWatchers();
 	    setupWatchers(newValue);
     });

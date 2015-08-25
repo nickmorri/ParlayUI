@@ -1,6 +1,6 @@
 var configuration_controller = angular.module('parlay.protocols.configuration_controller', ['parlay.protocols.manager', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main', 'parlay.notification']);
 
-configuration_controller.controller('ParlayProtocolConfigurationController', ['$scope', '$mdDialog', 'ProtocolManager', 'ParlayNotification', function ($scope, $mdDialog, ProtocolManager, ParlayNotification) {
+configuration_controller.controller('ParlayProtocolConfigurationController', ['$scope', '$mdDialog', 'ParlayProtocolManager', 'ParlayNotification', function ($scope, $mdDialog, ParlayProtocolManager, ParlayNotification) {
     
     $scope.selected_protocol = null;
     $scope.connecting = false;
@@ -12,7 +12,7 @@ configuration_controller.controller('ParlayProtocolConfigurationController', ['$
      */
     $scope.filterProtocols = function (query) {
         var lowercaseQuery = angular.lowercase(query);
-        var protocols = angular.copy(ProtocolManager.getAvailableProtocols());
+        var protocols = angular.copy(ParlayProtocolManager.getAvailableProtocols());
         
         return query ? protocols.filter(function(protocol) {
             return angular.lowercase(protocol.name).indexOf(lowercaseQuery) > -1;
@@ -54,7 +54,7 @@ configuration_controller.controller('ParlayProtocolConfigurationController', ['$
     $scope.connect = function () {        
         $scope.connecting = true;
         
-        ProtocolManager.openProtocol({
+        ParlayProtocolManager.openProtocol({
             name: $scope.selected_protocol.name,
             parameters: Object.keys($scope.selected_protocol.parameters).reduce(function (param_obj, key) {
                             param_obj[key] = $scope.selected_protocol.parameters[key].value;
@@ -67,7 +67,7 @@ configuration_controller.controller('ParlayProtocolConfigurationController', ['$
                 action: {
                     text: 'Discover',
                     callback: function () {
-                        ProtocolManager.requestDiscovery(true);
+                        ParlayProtocolManager.requestDiscovery(true);
                     }
                 }
             });

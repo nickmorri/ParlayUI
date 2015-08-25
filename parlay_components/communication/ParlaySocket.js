@@ -1,6 +1,7 @@
 var socket = angular.module('parlay.socket', ['ngWebsocket']);
 
 socket.value('BrokerAddress', 'ws://' + location.hostname + ':8085');
+socket.value('BrokerAddress', 'ws://172.16.146.132:8085');
 
 socket.factory('ParlaySocket', ['ParlaySocketService', function (ParlaySocketService) {
     var Private = {};

@@ -141,27 +141,48 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContai
         },
         controller: function ($scope) {
 	        
+	        /**
+		     * Retrieves the value that was saved from a previous session for a endpoint's commandform attribute.
+		     * @param {String} field_name - Name of the field we are looking to restore from the previous commandform.
+		     * @returns {Array|Object|Number|String} - previously saved value.
+		     */
 	        function getSavedValue(field_name) {
+		        // Locate the container property on this scope or from it's parent scopes.
 		        var container = relevantScope($scope, 'container').container;
+		        // Retrieve the previously saved commandform for this endpoint from the 'endpoints' ParlayStore.
 		        var saved_endpoint = ParlayStore('endpoints').get('parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid, 'commandform');
+		        // If we have found the saved endpoint and the requested property we can return it, otherwise return undefined.
 		        return saved_endpoint !== undefined && saved_endpoint.hasOwnProperty(field_name) ? saved_endpoint[field_name] : undefined;
 	        }
 	        
+	        /**
+		     * Sets the given field back to the state retrieved from the previous session.
+		     * @param {String} field - name of the field to restore.
+		     */
 	        function restoreFieldState(field) {
-		        var saved = getSavedValue(field.msg_key + '_' + field.input);		        
-		        if (saved === undefined || saved === null) return;
+		        // Retrieve the value from the previous session, if it is undefined or null then return instead of attempting to restore. 
+		        var saved = getSavedValue(field.msg_key + '_' + field.input);
 		        
-		        var messageScope = relevantScope($scope, 'message');
-		        var fieldScope = relevantScope($scope, 'fields');
+		        if (saved !== undefined) {
+			     	// Locate the message and fields properties on this scope or from it's parent scopes.
+			        var message = relevantScope($scope, 'message').message;
+			        var fields = relevantScope($scope, 'fields').fields;
+			        
+			        // If the saved value is an Array we should set the value.
+			        if (Array.isArray(saved)) {
+					     message[field.msg_key + '_' + field.input] = saved;   
+			        }
+			        // If the field is a dropdown and has options present we should use the saved value as a key to access the option saved.
+			        else if (fields[field.msg_key].hasOwnProperty('options') && fields[field.msg_key].options.hasOwnProperty(saved)) {
+				        message[field.msg_key + '_' + field.input] = fields[field.msg_key].options[saved];
+			        }
+			        // Otherwise just set the value to the saved value.
+			        else {
+				        message[field.msg_key + '_' + field.input] = saved;
+			        }
+			    	   
+		        }
 		        
-		        if (saved.value !== undefined) {
-			        var target_field = Object.keys(fieldScope.fields[field.msg_key].options).find(function (option) {
-				    	return fieldScope.fields[field.msg_key].options[option].value === saved.value;
-			    	});
-			    	messageScope.message[field.msg_key + '_' + field.input] = fieldScope.fields[field.msg_key].options[target_field];
-		    	}
-		    	else messageScope.message[field.msg_key + '_' + field.input] = saved;
-		    	
 	        }
 	        
 	        function restoreFormState() {

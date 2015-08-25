@@ -187,7 +187,7 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContai
                     if ($scope.message[newV[field].msg_key + '_' + newV[field].input] === undefined) {
 	                	$scope.message[newV[field].msg_key + '_' + newV[field].input] = newV[field].default;    
                     }                    
-                    if (!$scope.message[newV[field].msg_key + '_' + newV[field].input] && (newV[field].input === 'NUMBERS' || newV[field].input === 'STRINGS')) {
+                    if (!$scope.message[newV[field].msg_key + '_' + newV[field].input] && (newV[field].input === 'NUMBERS' || newV[field].input === 'STRINGS' || newV[field].input === 'ARRAY')) {
                         $scope.message[newV[field].msg_key + '_' + newV[field].input] = [];
                     }
                 }

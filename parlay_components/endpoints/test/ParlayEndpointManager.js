@@ -18,7 +18,7 @@
             describe('accessors', function () {
                 
                 it('get active endpoints', function () {
-                    expect(ParlayEndpointManager.getActiveEndpoints()).toEqual({});
+                    expect(ParlayEndpointManager.getActiveEndpoints()).toEqual([]);
                 });
                 
                 it('has active endpoints', function () {

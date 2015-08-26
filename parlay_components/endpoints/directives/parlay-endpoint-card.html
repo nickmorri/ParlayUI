@@ -2,19 +2,19 @@
     <md-toolbar class="md-primary">
         <div class="md-toolbar-tools">
             <!-- Vendor specific endpoint toolbar-tools directives are automatically inserted here -->
-            <md-button class="md-icon-button" aria-label="Move left" ng-click="reorder(key, -1)" ng-hide="$first">
+            <md-button class="md-icon-button" aria-label="Move left" ng-click="reorder($index, -1)" ng-hide="$first">
 				<md-icon><ng-md-icon icon="arrow_back"></ng-md-icon></md-icon>
 	            <md-tooltip>Move left</md-tooltip>
             </md-button>
-            <md-button class="md-icon-button" aria-label="Move right" ng-click="reorder(key, 1)" ng-hide="$last">
+	            <md-button class="md-icon-button" aria-label="Move right" ng-click="reorder($index, 1)" ng-hide="$last">
 				<md-icon><ng-md-icon icon="arrow_forward"></ng-md-icon></md-icon>
 	            <md-tooltip>Move right</md-tooltip>
             </md-button>
-            <md-button class="md-icon-button" aria-label="Duplicate" ng-click="duplicate(key)">
+            <md-button class="md-icon-button" aria-label="Duplicate" ng-click="duplicate($index)">
 				<md-icon><ng-md-icon icon="content_copy"></ng-md-icon></md-icon>            	
 	            <md-tooltip>Duplicate</md-tooltip>
             </md-button>     
-            <md-button class="md-icon-button" aria-label="Deactivate" ng-click="deactivate(key)">
+            <md-button class="md-icon-button" aria-label="Deactivate" ng-click="deactivate($index)">
 				<md-icon><ng-md-icon icon="close"></ng-md-icon></md-icon>            	
 	            <md-tooltip>Deactivate</md-tooltip>
             </md-button>

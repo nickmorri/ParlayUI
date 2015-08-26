@@ -1,4 +1,4 @@
-angular.module('mock.parlay.protocols.manager', ['mock.parlay.protocols.protocol']).factory('ProtocolManager', ['$q', 'ParlayProtocol', function ($q, ParlayProtocol) {
+angular.module('mock.parlay.protocols.manager', ['mock.parlay.protocols.protocol']).factory('ParlayProtocolManager', ['$q', 'ParlayProtocol', function ($q, ParlayProtocol) {
 
 	var Public = {};
      

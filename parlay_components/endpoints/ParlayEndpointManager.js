@@ -44,7 +44,7 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ParlayPro
 	 * @returns {Array} endpoints available on all protocols
 	 */
     Public.getAvailableEndpoints = function () {
-        return ProtocolManager.getOpenProtocols().reduce(function (previous, current) {
+        return ParlayProtocolManager.getOpenProtocols().reduce(function (previous, current) {
             return previous.concat(current.getAvailableEndpoints());
         }, []);
     };

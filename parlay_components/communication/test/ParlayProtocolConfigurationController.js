@@ -7,7 +7,7 @@
     	beforeEach(module('mock.parlay.protocols.manager'));
         
         describe('ProtocolConfigurationController', function () {
-                var rootScope, scope, ParlayProtocolConfigurationController, MockProtocolManager;                
+                var rootScope, scope, ParlayProtocolConfigurationController;                
                 
                 beforeEach(inject(function ($rootScope, $controller, $q) {
                     rootScope = $rootScope;

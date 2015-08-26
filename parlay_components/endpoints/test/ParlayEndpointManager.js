@@ -18,7 +18,7 @@
             describe('accessors', function () {
                 
                 it('get active endpoints', function () {
-                    expect(ParlayEndpointManager.getActiveEndpoints()).toEqual({});
+                    expect(ParlayEndpointManager.getActiveEndpoints()).toEqual([]);
                 });
                 
                 it('has active endpoints', function () {
@@ -58,7 +58,7 @@
 	            
 	            it('duplicates endpoint', function () {
 		            expect(ParlayEndpointManager.hasActiveEndpoints()).toBeFalsy();
-		            ParlayEndpointManager.activateEndpoint({});
+		            ParlayEndpointManager.activateEndpoint({name: 'test'});
 		            expect(ParlayEndpointManager.hasActiveEndpoints()).toBeTruthy();
 		            ParlayEndpointManager.duplicateEndpoint(0);
 		            expect(ParlayEndpointManager.getActiveEndpointCount()).toBe(2);

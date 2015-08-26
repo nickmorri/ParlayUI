@@ -14,18 +14,6 @@ endpoint_controller.controller('ParlayEndpointController', ['$scope', '$mdDialog
         ParlayEndpointManager.requestDiscovery();
     };
     
-    $scope.reorder = function (index, distance) {
-	    ParlayEndpointManager.reorder(parseInt(index, 10), distance);
-    };
-    
-    $scope.duplicate = function (index) {
-	    ParlayEndpointManager.duplicateEndpoint(parseInt(index, 10));
-    };
-    
-    $scope.deactivate = function (index) {
-	    ParlayEndpointManager.deactivateEndpoint(parseInt(index, 10));
-    };
-    
     $scope.openWorkspaceManagementDialog = function (event) {
 	    /* istanbul ignore next */
 	    $mdDialog.show({
@@ -34,6 +22,18 @@ endpoint_controller.controller('ParlayEndpointController', ['$scope', '$mdDialog
 		    targetEvent: event,
 		    clickOutsideToClose: true
 	    });
+    };
+    
+    $scope.reorder = function (index, distance) {
+	    ParlayEndpointManager.reorder(parseInt(index, 10), distance);
+    };
+    
+    $scope.duplicate = function (index, uid) {
+	    ParlayEndpointManager.duplicateEndpoint(parseInt(index, 10), uid);
+    };
+    
+    $scope.deactivate = function (index) {
+	    ParlayEndpointManager.deactivateEndpoint(parseInt(index, 10));
     };
 	    
 }]);

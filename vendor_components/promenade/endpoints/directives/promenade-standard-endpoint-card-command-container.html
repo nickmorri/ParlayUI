@@ -2,7 +2,7 @@
 
     <md-input-container md-is-error="commandform[field.msg_key].$invalid" ng-hide="field.hidden">
                      
-        <label>{{field.label}}</label>
+        <label ng-hide="field.input === 'NUMBERS' || field.input === 'STRINGS' || field.input === 'ARRAY'">{{field.label}}</label>
                         
         <md-select ng-if="field.input === 'DROPDOWN'" name="{{field.msg_key}}" ng-model="message[field.msg_key + '_' + field.input]" ng-required="field.required">
             <span ng-if="!field.options.length">
@@ -17,7 +17,7 @@
         
         <input ng-if="field.input === 'STRING' || field.input === 'ARRAY' || field.input === 'OBJECT' " name="{{field.msg_key}}" ng-model="message[field.msg_key + '_' + field.input]">
         
-        <md-chips name="{{field.msg_key}}" ng-model="message[field.msg_key + '_' + field.input]" ng-if="field.input === 'NUMBERS' || field.input === 'STRINGS'" ng-required="field.required"></md-chips>
+        <md-chips name="{{field.msg_key}}" ng-model="message[field.msg_key + '_' + field.input]" ng-if="field.input === 'NUMBERS' || field.input === 'STRINGS' || field.input === 'ARRAY'" ng-required="field.required" placeholder="{{field.label}}" secondary-placeholder="{{field.label}}"></md-chips>
         
         <div class="errors" ng-messages="commandform[field.msg_key].$error" ng-if="commandform[field.msg_key + '_' + field.input]">
             <div ng-message="required">{{field.msg_key}} is required</div>

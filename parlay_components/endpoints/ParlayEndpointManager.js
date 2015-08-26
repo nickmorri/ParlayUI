@@ -1,9 +1,9 @@
 var endpoint_manager = angular.module('parlay.endpoints.manager', ['parlay.protocols.manager', 'promenade.broker', 'parlay.store', 'parlay.endpoints.workspaces']);
 
-endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ProtocolManager', 'ParlayNotification', function (PromenadeBroker, ProtocolManager, ParlayNotification) {
+endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ParlayProtocolManager', 'ParlayNotification', 'ParlayStore', function (PromenadeBroker, ParlayProtocolManager, ParlayNotification, ParlayStore) {
     
     var Private = {
-	    active_endpoints: {}
+	    active_endpoints: []
     };
     
     var Public = {};
@@ -29,14 +29,14 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ProtocolM
 	 * @returns {Number} endpoint count
 	 */
     Public.getActiveEndpointCount = function () {
-	    return Object.keys(Public.getActiveEndpoints()).length;
+	    return Public.getActiveEndpoints().length;
     };
     
     /**
 	 * Clears reference to active endpoint object.
 	 */
     Public.clearActiveEndpoints = function () {
-	    Private.active_endpoints = {};
+	    Private.active_endpoints = [];
     };
     
     /**
@@ -74,20 +74,21 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ProtocolM
 	 * @param {Number} uid[optional] - If given a uid we will use the provided one. Otherwise we will randomly generate one.
 	 */
     Public.activateEndpoint = function (endpoint, uid) {
-	    var count = 0;
-	    while (Private.active_endpoints.hasOwnProperty(count)) count++;
-	    Private.active_endpoints[count] = {
+	    Private.active_endpoints.push({
 		    ref: endpoint,
 		    uid: uid !== undefined ? uid : Math.floor(Math.random() * 1500)
-	    };
+	    });
     };
     
     /**
 	 * Creates a duplicate endpoint container that references the same endpoint available at the given index.
 	 * @param {Number} index - position of the endpoint we want to duplicate.
 	 */
-    Public.duplicateEndpoint = function (index) {
-	    Public.activateEndpoint(Private.active_endpoints[index].ref);
+    Public.duplicateEndpoint = function (index, uid) {
+	    var container = Private.active_endpoints[index];
+	    var newUid = uid + Math.floor(Math.random() * 1500);
+	    ParlayStore('endpoints').duplicate('parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid, newUid);
+	    Public.activateEndpoint(container.ref, newUid);
     };
     
     /**
@@ -95,18 +96,7 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ProtocolM
 	 * @param {Number} index - position of endpoint to be deactivated.
 	 */
     Public.deactivateEndpoint = function (index) {
-	    delete Private.active_endpoints[index];
-	    Private.compactActiveEndpoints();	    
-    };
-    
-    /**
-	 * Compacts the maximum count key of the active endpoints container.
-	 */
-    Private.compactActiveEndpoints = function () {
-	    var keys = Object.keys(Private.active_endpoints);
-	    var i = 0;
-	    for (; i < keys.length; i++) Private.active_endpoints[i] = Private.active_endpoints[keys[i]];
-	    for (i = keys.length; i < Object.keys(Private.active_endpoints).length; i++) delete Private.active_endpoints[i];
+	    Private.active_endpoints.splice(index, 1);
     };
     
     /**

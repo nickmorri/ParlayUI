@@ -21,6 +21,9 @@ workspace_controller.controller('ParlayWorkspaceManagementController', ['$scope'
 		$mdDialog.show({
 			controller: 'ParlayWorkspaceSaveAsDialogController',
 			templateUrl: '../parlay_components/endpoints/directives/parlay-workspace-save-as-dialog.html',
+			onComplete: function (scope, element, options) {
+	            element.find('input').focus();
+            }
 		}).then(function (name) {
 			$scope.saveWorkspace({name: name});
 		}, function (error) {});

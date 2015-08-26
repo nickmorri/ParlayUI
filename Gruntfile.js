@@ -168,6 +168,10 @@ module.exports = function (grunt) {
       'tests': {
         'files': '<%= meta.tests %>',
         'tasks': 'karma:dev'
+      },
+      'mocks': {
+	      'files': '<%= meta.mocks %>',
+	      'tasks': 'karma:dev'
       }
     },
 

@@ -1,6 +1,6 @@
 var endpoint_manager = angular.module('parlay.endpoints.manager', ['parlay.protocols.manager', 'promenade.broker', 'parlay.store', 'parlay.endpoints.workspaces']);
 
-endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ParlayProtocolManager', 'ParlayNotification', function (PromenadeBroker, ParlayProtocolManager, ParlayNotification) {
+endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ParlayProtocolManager', 'ParlayNotification', 'ParlayStore', function (PromenadeBroker, ParlayProtocolManager, ParlayNotification, ParlayStore) {
     
     var Private = {
 	    active_endpoints: []
@@ -84,8 +84,11 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ParlayPro
 	 * Creates a duplicate endpoint container that references the same endpoint available at the given index.
 	 * @param {Number} index - position of the endpoint we want to duplicate.
 	 */
-    Public.duplicateEndpoint = function (index) {
-	    Public.activateEndpoint(Private.active_endpoints[index].ref);
+    Public.duplicateEndpoint = function (index, uid) {
+	    var container = Private.active_endpoints[index];
+	    var newUid = uid + Math.floor(Math.random() * 1500);
+	    ParlayStore('endpoints').duplicate('parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid, newUid);
+	    Public.activateEndpoint(container.ref, newUid);
     };
     
     /**

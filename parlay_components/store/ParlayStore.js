@@ -44,6 +44,10 @@ parlay_store.factory('ParlayStoreService', function () {
 		sessionStorage.removeItem(this.prefix + '-' + directive);
 	};
 	
+	ParlayStore.prototype.duplicate = function (directive, newUid) {
+		this.setDirectiveContainer(directive.split('_')[0] + '_' + newUid, this.getDirectiveContainer(directive));
+	};
+	
 	ParlayStore.prototype.clear = function () {
 		sessionStorage.clear();
 	};

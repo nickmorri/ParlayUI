@@ -7,7 +7,7 @@
 		    	Console
 		    </h2>
 			<span flex></span>
-			<md-button class="md-icon-button"><md-icon><ng-md-icon class="white" icon="{{console_icon}}"></ng-md-icon></md-icon></md-button>
+			<md-button class="md-icon-button" aria-label="Toggle console"><md-icon><ng-md-icon class="white" icon="{{console_icon}}"></ng-md-icon></md-icon></md-button>
 		</div>
 	</md-toolbar>
 
@@ -42,8 +42,8 @@
 		    <label class="parlay-python-statement-label">Python Statement</label>
 			<input ng-model="console_command" ng-keyup="$event.keyCode == 13 && consoleSendCommand()">
 		</md-input-container>
-		<md-button class="md-icon-button" ng-click="toggleConsoleLogFilter()"><md-icon><ng-md-icon icon="filter_list"></ng-md-icon></md-icon></md-button>
-		<md-button class="md-icon-button md-warn" ng-click="clearConsoleLog()" ng-disabled="!hasConsoleLog()"><md-icon><ng-md-icon icon="delete"></ng-md-icon></md-icon></md-button>
+		<md-button class="md-icon-button" ng-click="toggleConsoleLogFilter()" aria-label="Toggle console filter"><md-icon><ng-md-icon icon="filter_list"></ng-md-icon></md-icon></md-button>
+		<md-button class="md-icon-button md-warn" ng-click="clearConsoleLog()" ng-disabled="!hasConsoleLog()" aria-label="Clear console log"><md-icon><ng-md-icon icon="delete"></ng-md-icon></md-icon></md-button>
 	</div>
 	
 </div>

@@ -11,8 +11,6 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
     $scope.sending = false;
     $scope.status_message = null;
     
-    $scope.message = {};
-    
     var sending_timeout = null;
     
     function pushChipBuffer (chipElements) {
@@ -84,57 +82,6 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
 
     };
     
-    // Contains $scope.$watch registrations.
-    var messageWatchers = {};
-    
-     // Records the directive's attribute to the ParlayStore.
-    function setAttribute(directive, attribute, value) {
-	    var form_container = ParlayStore('endpoints').get(directive, 'commandform');
-	    if (form_container === undefined) form_container = {};
-	    form_container[attribute] = value;
-	    ParlayStore('endpoints').set(directive, 'commandform', form_container);
-    }
-    
-    // Returns a function that will automatically update the attribute being watched.
-    function watchValue(input_name) {
-	    return function(newValue, oldValue) {
-		    
-		    var value = newValue !== null && newValue !== undefined && newValue.value !== undefined ? newValue.value : newValue;
-		    
-			var container = relevantScope($scope, 'container').container;
-		    var key = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
-		    setAttribute(key, input_name, value);
-	    };
-    }
-    
-    // Registers a watch for the specified field.
-    function registerWatch(name, field) {
-	    if (messageWatchers[name]) messageWatchers[name]();
-	    messageWatchers[name] = Array.isArray(field) ? $scope.$watchCollection(function () {
-		    return field;
-	    }, watchValue(name)) : $scope.$watch(function () {
-		    return field;
-	    }, watchValue(name));
-    }
-    
-    // Creates watch registration for each field available in the message.
-    function setupWatchers(message) {
-	    for (var field in message) registerWatch(field, message[field]);
-    }
-    
-    // Calls watch deregistration function for each watcher that we previously registered.
-    function clearWatchers() {
-	    for (var watcher in messageWatchers) messageWatchers[watcher]();
-    }
-    
-    $scope.$watchCollection('message', function (newValue, oldValue) {
-	   	// When $scope.message is changed we will clear all watchers and then setup new watchers on the newValue.
-	    clearWatchers();
-	    setupWatchers(newValue);
-    });
-    
-    $scope.$on('$destroy', clearWatchers);
-    
 }]);
 
 standard_endpoint_commands.directive('promenadeStandardEndpointCardCommands', function () {
@@ -160,6 +107,60 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContai
             return RecursionHelper.compile(element);
         },
         controller: function ($scope) {
+	        
+	        // If message doesn't exist yet, we're the top level PromenadeStandardEndpointCardCommandContainer which means we should instantiate it.
+	        if (!$scope.message) $scope.message = {};
+    
+		    // Contains $scope.$watch registrations.
+		    var messageWatchers = {};
+		    
+		     // Records the directive's attribute to the ParlayStore.
+		    function setAttribute(directive, attribute, value) {
+			    var form_container = ParlayStore('endpoints').get(directive, 'commandform');
+			    if (form_container === undefined) form_container = {};
+			    form_container[attribute] = value;
+			    ParlayStore('endpoints').set(directive, 'commandform', form_container);
+		    }
+		    
+		    // Returns a function that will automatically update the attribute being watched.
+		    function watchValue(input_name) {
+			    return function(newValue, oldValue) {
+				    
+				    var value = newValue !== null && newValue !== undefined && newValue.value !== undefined ? newValue.value : newValue;
+				    
+					var container = relevantScope($scope, 'container').container;
+				    var key = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
+				    setAttribute(key, input_name, value);
+			    };
+		    }
+		    
+		    // Registers a watch for the specified field.
+		    function registerWatch(name, field) {
+			    if (messageWatchers[name]) messageWatchers[name]();
+			    messageWatchers[name] = Array.isArray(field) ? $scope.$watchCollection(function () {
+				    return field;
+			    }, watchValue(name)) : $scope.$watch(function () {
+				    return field;
+			    }, watchValue(name));
+		    }
+		    
+		    // Creates watch registration for each field available in the message.
+		    function setupWatchers(message) {
+			    for (var field in message) registerWatch(field, message[field]);
+		    }
+		    
+		    // Calls watch deregistration function for each watcher that we previously registered.
+		    function clearWatchers() {
+			    for (var watcher in messageWatchers) messageWatchers[watcher]();
+		    }
+		    
+		    $scope.$watchCollection('message', function (newValue, oldValue) {
+			   	// When $scope.message is changed we will clear all watchers and then setup new watchers on the newValue.
+			    clearWatchers();
+			    setupWatchers(newValue);
+		    });
+		    
+		    $scope.$on('$destroy', clearWatchers);
 	        
 	        /**
 		     * Retrieves the value that was saved from a previous session for a endpoint's commandform attribute.

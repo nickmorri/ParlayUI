@@ -12,12 +12,13 @@ bottom_bar.factory('ScriptLogger',  function () {
 });
 
 /* istanbul ignore next */
-bottom_bar.controller('ParlayConsoleBarController', ['$scope', 'PromenadeBroker', 'ScriptLogger', function ($scope, PromenadeBroker, ScriptLogger) {
+bottom_bar.controller('ParlayConsoleBarController', ['$scope', '$timeout', 'PromenadeBroker', 'ScriptLogger', function ($scope, $timeout, PromenadeBroker, ScriptLogger) {
 
     $scope.console_hidden = true;
     $scope.console_log = [];
     $scope.console_command = undefined;
     $scope.console_icon = 'unfold_more';
+    $scope.received_message_status_icon = 'radio_button_off';
     
     $scope.consoleToggleConsole = function() {
 		$scope.console_hidden = !$scope.console_hidden;
@@ -31,6 +32,10 @@ bottom_bar.controller('ParlayConsoleBarController', ['$scope', 'PromenadeBroker'
     $scope.consoleSendCommand = function() {
         $scope.consoleAddToLog($scope.console_command, true);
         PromenadeBroker.sendRequest('eval_statement', {'statement': $scope.console_command}).then(function (contents) {
+	        $scope.received_message_status_icon = 'radio_button_on';
+			$timeout(function () {
+				$scope.received_message_status_icon = 'radio_button_off';
+			}, 250);
             $scope.consoleAddToLog(contents.result, false);
         });
         // Clear out the command input

@@ -1,4 +1,3 @@
-
 function relevantScope(currentScope, attribute) {
     return currentScope.hasOwnProperty(attribute) ? currentScope : currentScope.hasOwnProperty('$parent') && currentScope.$parent !== null ? relevantScope(currentScope.$parent, attribute) : undefined;
 }
@@ -108,6 +107,8 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContai
         },
         controller: function ($scope) {
 	        
+	        var storeID = "commandform";
+	        
 	        // If message doesn't exist yet, we're the top level PromenadeStandardEndpointCardCommandContainer which means we should instantiate it.
 	        if (!$scope.message) $scope.message = {};
     
@@ -116,10 +117,10 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContai
 		    
 		     // Records the directive's attribute to the ParlayStore.
 		    function setAttribute(directive, attribute, value) {
-			    var form_container = ParlayStore('endpoints').get(directive, 'commandform');
+			    var form_container = ParlayStore('endpoints').get(directive, storeID);
 			    if (form_container === undefined) form_container = {};
 			    form_container[attribute] = value;
-			    ParlayStore('endpoints').set(directive, 'commandform', form_container);
+			    ParlayStore('endpoints').set(directive, storeID, form_container);
 		    }
 		    
 		    // Returns a function that will automatically update the attribute being watched.
@@ -171,7 +172,7 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContai
 		        // Locate the container property on this scope or from it's parent scopes.
 		        var container = relevantScope($scope, 'container').container;
 		        // Retrieve the previously saved commandform for this endpoint from the 'endpoints' ParlayStore.
-		        var saved_endpoint = ParlayStore('endpoints').get('parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid, 'commandform');
+		        var saved_endpoint = ParlayStore('endpoints').get('parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid, storeID);
 		        // If we have found the saved endpoint and the requested property we can return it, otherwise return undefined.
 		        return saved_endpoint !== undefined && saved_endpoint.hasOwnProperty(field_name) ? saved_endpoint[field_name] : undefined;
 	        }

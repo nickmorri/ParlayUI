@@ -18,7 +18,7 @@
 		</md-input-container>
 	</div>
 
-	<md-content scroll-glue>
+	<md-content scroll-glue ng-hide="isConsoleHidden()">
 	
 		<md-list class="parlay-console-list">
 			<md-list-item class="md-2-line parlay-console-list-item" ng-repeat="message in getConsoleLog() | filter: {statement: console_filter}">
@@ -37,8 +37,8 @@
 	
 	<span flex></span>
 	
-	<div layout="row" class="md-whiteframe-z5">
-		<md-input-container flex ng-hide="isConsoleHidden()" class="parlay-python-statement-input-container">
+	<div layout="row" class="md-whiteframe-z5" ng-hide="isConsoleHidden()">
+		<md-input-container flex class="parlay-python-statement-input-container">
 		    <label class="parlay-python-statement-label">Python Statement</label>
 			<input ng-model="console_command" ng-keyup="$event.keyCode == 13 && consoleSendCommand()">
 		</md-input-container>

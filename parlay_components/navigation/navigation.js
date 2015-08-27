@@ -1,4 +1,4 @@
-var navigation = angular.module('parlay.navigation', ['ui.router', 'ngMaterial', 'ngMdIcons', 'promenade.broker', 'parlay.protocols.list_controller', 'templates-main']);
+var navigation = angular.module('parlay.navigation', ['ngAnimate', 'ui.router', 'ngMaterial', 'ngMdIcons', 'promenade.broker', 'parlay.protocols.list_controller', 'templates-main']);
 
 /* istanbul ignore next */
 navigation.controller('parlayToolbarController', ['$scope', '$state', function ($scope, $state) {

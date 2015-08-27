@@ -12,9 +12,9 @@
 	</md-toolbar>
 
 	<div layout="row" ng-hide="console_hidden">
-		<md-input-container flex class="parlay-python-console-log-filter">
+		<md-input-container flex class="parlay-python-console-log-filter" ng-show="hasFilter()">
 		    <label>Filter log</label>
-			<input ng-model="console_filter" ng-disabled="!hasConsoleLog()">
+			<input ng-model="console_filter">
 		</md-input-container>
 	</div>
 
@@ -36,7 +36,8 @@
 		    <label>Python Statement</label>
 			<input ng-model="console_command" ng-keyup="$event.keyCode == 13 && consoleSendCommand()">
 		</md-input-container>
-		<md-button class="md-warn" ng-click="clearLog()" ng-disabled="!hasConsoleLog()">Clear</md-button>
+		<md-button class="md-icon-button" ng-click="toggleConsoleLogFilter()"><md-icon><ng-md-icon icon="filter_list"></ng-md-icon></md-icon></md-button>
+		<md-button class="md-icon-button md-warn" ng-click="clearConsoleLog()" ng-disabled="!hasConsoleLog()"><md-icon><ng-md-icon icon="delete"></ng-md-icon></md-icon></md-button>
 	</div>
 	
 </div>

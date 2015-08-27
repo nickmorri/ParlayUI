@@ -19,6 +19,7 @@ bottom_bar.controller('ParlayConsoleBarController', ['$scope', '$timeout', 'Prom
     $scope.console_command = undefined;
     $scope.console_icon = 'unfold_more';
     $scope.received_message_status_icon = 'radio_button_off';
+    $scope.filtering = false;
     
     $scope.consoleToggleConsole = function() {
 		$scope.console_hidden = !$scope.console_hidden;
@@ -50,8 +51,16 @@ bottom_bar.controller('ParlayConsoleBarController', ['$scope', '$timeout', 'Prom
 	    return $scope.getConsoleLog().length > 0;
     };
     
-    $scope.clearLog = function (event) {
+    $scope.clearConsoleLog = function (event) {
 	    $scope.console_log = [];
+    };
+    
+    $scope.toggleConsoleLogFilter = function () {
+	    $scope.filtering = !$scope.filtering;
+    };
+    
+    $scope.hasFilter = function () {
+	    return $scope.filtering;
     };
     
     $scope.$watch('console_hidden', function (newValue) {

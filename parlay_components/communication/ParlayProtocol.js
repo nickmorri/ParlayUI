@@ -8,7 +8,7 @@ parlay_protocol.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', '$q
     
     function ParlayProtocol(configuration) {
         'use strict';
-        this.id = 0xf201;
+        this.id = "UI";
         this.protocol_name = configuration.name;
         this.type = configuration.protocol_type;
         this.available_endpoints = [];

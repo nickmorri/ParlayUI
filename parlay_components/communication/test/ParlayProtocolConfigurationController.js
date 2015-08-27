@@ -4,32 +4,15 @@
     describe('parlay.protocols.configuration_controller', function() {
     
     	beforeEach(module('parlay.protocols.configuration_controller'));
+    	beforeEach(module('mock.parlay.protocols.manager'));
         
         describe('ProtocolConfigurationController', function () {
-                var rootScope, scope, ParlayProtocolConfigurationController, MockProtocolManager;                
+                var rootScope, scope, ParlayProtocolConfigurationController;                
                 
                 beforeEach(inject(function ($rootScope, $controller, $q) {
-                    MockProtocolManager = {
-                        getAvailableProtocols: function () {
-                            return [
-                                {
-                                    name: 'BarProtocol'
-                                },
-                                {
-                                    name: 'FooProtocol'
-                                }
-                            ];
-                        },
-                        openProtocol: function (configuration) {
-                            return $q(function(resolve, reject) {
-                                if (configuration.name === 'SuccessfulProtocol') resolve({STATUS:'ok'});
-                                else reject({STATUS:'error'});
-                            });
-                        }
-                    };
                     rootScope = $rootScope;
                     scope = $rootScope.$new();
-                    ParlayProtocolConfigurationController = $controller('ParlayProtocolConfigurationController', {$scope: scope, ProtocolManager: MockProtocolManager});
+                    ParlayProtocolConfigurationController = $controller('ParlayProtocolConfigurationController', {$scope: scope});
                 }));
                 
                 it('initial state', function () {

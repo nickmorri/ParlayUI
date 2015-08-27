@@ -33,8 +33,8 @@
 	    		
 	    		it('duplicates endpoints', function () {
 		    		spyOn(ParlayEndpointManager, 'duplicateEndpoint');
-		    		scope.duplicate(1);
-		    		expect(ParlayEndpointManager.duplicateEndpoint).toHaveBeenCalledWith(1);
+		    		scope.duplicate(1, 100);
+		    		expect(ParlayEndpointManager.duplicateEndpoint).toHaveBeenCalledWith(1, 100);
 	    		});
 	    		
 	    		it('deactivates endpoints', function () {

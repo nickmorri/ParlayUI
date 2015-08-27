@@ -6,27 +6,9 @@
         beforeEach(module('parlay.protocols.list_controller'));
         
         describe('ParlayConnectionListController', function () {
-            var rootScope, scope, ParlayConnectionListController, MockProtocolManager, MockPromenadeBroker;                
+            var rootScope, scope, ParlayConnectionListController, MockPromenadeBroker;                
             
             beforeEach(inject(function ($rootScope, $controller, $q) {
-                MockProtocolManager = {
-                    getAvailableProtocols: function () {
-                        return [
-                            {
-                                name: 'BarProtocol'
-                            },
-                            {
-                                name: 'FooProtocol'
-                            }
-                        ];
-                    },
-                    openProtocol: function (configuration) {
-                        return $q(function(resolve, reject) {
-                            if (configuration.name === 'SuccessfulProtocol') resolve({STATUS:'ok'});
-                            else reject({STATUS:'error'});
-                        });
-                    }
-                };
                 
                 MockPromenadeBroker = {
                     connected: false,
@@ -46,7 +28,7 @@
                 
                 rootScope = $rootScope;
                 scope = $rootScope.$new();
-                ParlayConnectionListController = $controller('ParlayConnectionListController', {$scope: scope, ProtocolManager: MockProtocolManager, PromenadeBroker: MockPromenadeBroker});
+                ParlayConnectionListController = $controller('ParlayConnectionListController', {$scope: scope, PromenadeBroker: MockPromenadeBroker});
             }));
             
             describe('PromenadeBroker interactions', function () {

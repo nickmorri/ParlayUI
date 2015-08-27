@@ -16,7 +16,7 @@
             
             it('constructs', function() {
                 expect(protocol.current_message_id).toBe(200);
-                expect(protocol.id).toBe(0xf201);
+                expect(protocol.id).toBe('UI');
             });
             
             it('gets message id', function () {
@@ -34,7 +34,7 @@
                 expect(protocol.buildMessageTopics({TOPICS:{}})).toEqual({
                     TOPICS: {
                         MSG_ID: previous_message_id + 1,
-                        FROM: 0xf201
+                        FROM: 'UI'
                     }
                 });
             });
@@ -43,24 +43,24 @@
                 var previous_message_id = protocol.getMessageId();
                 expect(protocol.buildResponseTopics({TOPICS: {
                     TO: 100,
-                    FROM: 0xf201,
+                    FROM: 'UI',
                     MSG_ID: protocol.consumeMessageId()
                 }})).toEqual({
                     FROM: 100,
-                    TO: 0xf201,
+                    TO: 'UI',
                     MSG_ID: previous_message_id + 1
                 });
             });
 
             it('builds subscription topics', function () {
                 expect(protocol.buildSubscriptionTopics()).toEqual({TOPICS:{
-                    TO: 0xf201
+                    TO: 'UI'
                 }});
             });
             
             it('builds subscription listener topics', function () {
                 expect(protocol.buildSubscriptionListenerTopics()).toEqual({
-                    TO: 0xf201
+                    TO: 'UI'
                 });
             });
             
@@ -77,11 +77,11 @@
                 expect(protocol.sendMessage).toHaveBeenCalledWith({
                         TO: 100,
                         MSG_ID: protocol.getMessageId(),
-                        FROM: 0xf201                        
+                        FROM: 'UI'
                     }, {}, {
                         FROM: 100,
                         MSG_ID: protocol.getMessageId(),
-                        TO: 0xf201                        
+                        TO: 'UI'
                     });
                 
             });

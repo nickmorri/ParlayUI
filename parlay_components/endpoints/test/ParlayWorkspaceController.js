@@ -6,13 +6,15 @@
         beforeEach(module('parlay.endpoints.workspaces'));
         
         describe('ParlayWorkspaceManagementController', function () {
-    		var scope, ParlayWorkspaceManagementController;
+    		var scope, ParlayWorkspaceManagementController, ParlayStore, ParlayEndpointManager;
     
-    		beforeEach(inject(function($rootScope, $controller, $q) {
+    		beforeEach(inject(function($rootScope, $controller, $q, _ParlayStore_, _ParlayEndpointManager_) {
+	    		ParlayEndpointManager = _ParlayEndpointManager_;
+	    		ParlayStore = _ParlayStore_;
     			scope = $rootScope.$new();
     			sessionStorage.clear();
     			localStorage.clear();
-    			ParlayWorkspaceManagementController = $controller('ParlayWorkspaceManagementController', {$scope: scope, $mdDialog: {show: function () {
+    			ParlayWorkspaceManagementController = $controller('ParlayWorkspaceManagementController', {$scope: scope, ParlayStore: ParlayStore, ParlayEndpointManager: ParlayEndpointManager, $mdDialog: {show: function () {
 			    		return $q(function (resolve, reject) {
 				    		resolve('test');
 			    		});
@@ -39,26 +41,30 @@
 		    		expect(scope.getSavedWorkspaces().length).toBe(1);
 	    		});
 	    		
-	    		it('loads a workspace', function () {
-		    		
+	    		xit('loads a workspace', function () {
+		    		scope.saveWorkspace({name:'test'});
+		    		scope.loadWorkspace({name:'test'});
 	    		});
 	    		
 	    		it('deletes a workspace', function () {
-		    		
+		    		expect(scope.getSavedWorkspaces().length).toBe(0);
+		    		scope.saveWorkspace({name:'test'});
+		    		expect(scope.getSavedWorkspaces().length).toBe(1);
+		    		scope.deleteWorkspace({name:'test'});
+		    		expect(scope.getSavedWorkspaces().length).toBe(0);
 	    		});
 	    		
     		});
     		
-    		xdescribe('current workspace operations', function () {
-	    		
-	    		it('saves current workspace', function () {
-		    		expect(scope.getSavedWorkspaces().length).toBe(0);
-		    		scope.saveCurrentWorkspace();
-		    		expect(scope.getSavedWorkspaces().length).toBe(1);
-	    		});
+    		describe('current workspace operations', function () {
 	    		
 	    		it('clears current workspace', function () {
-
+		    		/*jshint newcap: false */
+					spyOn(ParlayEndpointManager, 'clearActiveEndpoints');
+					// spyOn(ParlayStore('endpoints'), 'clear');
+					scope.clearCurrentWorkspace();
+					expect(ParlayEndpointManager.clearActiveEndpoints).toHaveBeenCalled();
+					// expect(ParlayStore('endpoints').clear).toHaveBeenCalled();
 	    		});
 	    		
     		});

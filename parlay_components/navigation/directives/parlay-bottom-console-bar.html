@@ -8,13 +8,22 @@
 		</div>
 	</md-toolbar>
 
+	<div layout="row" ng-hide="console_hidden">
+		<md-input-container flex class="parlay-python-console-log-filter">
+		    <label>Filter log</label>
+			<input ng-model="console_filter"  ng-disabled="!hasConsoleLog()">
+		</md-input-container>
+	</div>
+
 	<md-content>
+	
 		<md-list>
-			<md-list-item class="parlay-console-list-item" ng-repeat="message in getConsoleLog()">
+			<md-list-item class="parlay-console-list-item" ng-repeat="message in getConsoleLog() | filter: {statement: console_filter}">
 				<span ng-show="message.user">>> </span>
 				{{message.statement}}
 			</md-list-item>
 		</md-list>
+		
 	</md-content>
 	
 	<span flex></span>

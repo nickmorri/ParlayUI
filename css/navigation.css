@@ -40,3 +40,7 @@ md-toolbar:focus {
 	max-height: 30px;
 	min-height: 30px;
 }
+
+.parlay-python-console-log-filter {
+	padding-bottom: 0;
+}

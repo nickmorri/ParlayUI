@@ -1,4 +1,4 @@
-var bottom_bar = angular.module('parlay.navigation.bottombar', ['ngMaterial', 'ngMdIcons', 'promenade.broker', 'templates-main', 'angularMoment']);
+var bottom_bar = angular.module('parlay.navigation.bottombar', ['ngMaterial', 'ngMdIcons', 'promenade.broker', 'templates-main', 'angularMoment', 'luegg.directives']);
 
 bottom_bar.factory('ScriptLogger',  function () {
     return {

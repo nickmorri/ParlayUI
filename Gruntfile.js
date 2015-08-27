@@ -57,7 +57,8 @@ module.exports = function (grunt) {
         'bower_components/angular-recursion/angular-recursion.js',
         'bower_components/angular-notification/angular-notification.js',
         'bower_components/moment/moment.js',
-        'bower_components/angular-moment/angular-moment.js'
+        'bower_components/angular-moment/angular-moment.js',
+        'bower_components/angular-scroll-glue/src/scrollglue.js'
       ],
       'staticComponents': ['static_components/ng-websocket/ng-websocket.js'],
       'mocks': getVendorItems (['mocks'], ['parlay_components/*/mocks/*.js']),

@@ -18,7 +18,7 @@
 		</md-input-container>
 	</div>
 
-	<md-content>
+	<md-content scroll-glue>
 	
 		<md-list class="parlay-console-list">
 			<md-list-item class="md-2-line parlay-console-list-item" ng-repeat="message in getConsoleLog() | filter: {statement: console_filter}">

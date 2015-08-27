@@ -1,6 +1,6 @@
-<div layout="column" layout-align="space-between" class="console_transform" ng-class="console_hidden ? 'console_hidden' : 'console_expanded'">
+<div layout="column" layout-align="space-between" class="console_transform" ng-class="isConsoleHidden() ? 'console_hidden' : 'console_expanded'">
 	
-	<md-toolbar ng-click="consoleToggleConsole()" class="parlay-bottom-bar">
+	<md-toolbar ng-click="toggleConsole()" class="parlay-bottom-bar">
     	<div class="md-toolbar-tools">
 	    	<h2>
 		    	<md-icon class="white"><ng-md-icon icon="{{received_message_status_icon}}"></ng-md-icon></md-icon>
@@ -11,8 +11,8 @@
 		</div>
 	</md-toolbar>
 
-	<div layout="row" ng-hide="console_hidden">
-		<md-input-container flex class="parlay-python-console-log-filter" ng-show="hasFilter()">
+	<div layout="row" ng-hide="isConsoleHidden()">
+		<md-input-container flex class="parlay-python-console-log-filter" ng-show="hasConsoleLogFilter()">
 		    <label>Filter log</label>
 			<input ng-model="console_filter">
 		</md-input-container>
@@ -38,7 +38,7 @@
 	<span flex></span>
 	
 	<div layout="row" class="md-whiteframe-z5">
-		<md-input-container flex ng-hide="console_hidden" class="parlay-python-statement-input-container">
+		<md-input-container flex ng-hide="isConsoleHidden()" class="parlay-python-statement-input-container">
 		    <label class="parlay-python-statement-label">Python Statement</label>
 			<input ng-model="console_command" ng-keyup="$event.keyCode == 13 && consoleSendCommand()">
 		</md-input-container>

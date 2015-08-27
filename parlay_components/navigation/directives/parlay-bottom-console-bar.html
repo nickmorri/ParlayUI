@@ -20,10 +20,16 @@
 
 	<md-content>
 	
-		<md-list>
-			<md-list-item class="parlay-console-list-item" ng-repeat="message in getConsoleLog() | filter: {statement: console_filter}">
-				<span ng-show="message.user">>> </span>
-				{{message.statement}}
+		<md-list class="parlay-console-list">
+			<md-list-item class="md-2-line parlay-console-list-item" ng-repeat="message in getConsoleLog() | filter: {statement: console_filter}">
+				<md-icon ng-switch="message.user">
+					<ng-md-icon ng-switch-when="true" icon="label"></ng-md-icon>
+					<ng-md-icon ng-switch-when="false" icon="label_outline"></ng-md-icon>
+				</md-icon>
+				<div class="md-list-item-text parlay-console-list-item-text">
+					<h3>{{message.statement}}</h3>
+					<p am-time-ago="message.timeStamp"></p>
+				</div>				
 			</md-list-item>
 		</md-list>
 		
@@ -33,7 +39,7 @@
 	
 	<div layout="row" class="md-whiteframe-z5">
 		<md-input-container flex ng-hide="console_hidden" class="parlay-python-statement-input-container">
-		    <label>Python Statement</label>
+		    <label class="parlay-python-statement-label">Python Statement</label>
 			<input ng-model="console_command" ng-keyup="$event.keyCode == 13 && consoleSendCommand()">
 		</md-input-container>
 		<md-button class="md-icon-button" ng-click="toggleConsoleLogFilter()"><md-icon><ng-md-icon icon="filter_list"></ng-md-icon></md-icon></md-button>

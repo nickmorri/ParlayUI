@@ -1,4 +1,4 @@
-var bottom_bar = angular.module('parlay.navigation.bottombar', ['ngMaterial', 'ngMdIcons', 'promenade.broker', 'templates-main']);
+var bottom_bar = angular.module('parlay.navigation.bottombar', ['ngMaterial', 'ngMdIcons', 'promenade.broker', 'templates-main', 'angularMoment']);
 
 bottom_bar.factory('ScriptLogger',  function () {
     return {
@@ -28,7 +28,11 @@ bottom_bar.controller('ParlayConsoleBarController', ['$scope', '$timeout', 'Prom
     
     // Call this to add strings to the log
     $scope.consoleAddToLog = function (statement, user) {
-	    $scope.console_log.push({statement: statement, user: user});
+	    $scope.console_log.push({
+		    timeStamp: Date.now(),
+		    statement: statement,
+		    user: user
+		});
 	};
 
     $scope.consoleSendCommand = function() {

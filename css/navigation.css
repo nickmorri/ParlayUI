@@ -44,3 +44,21 @@ md-toolbar:focus {
 .parlay-python-console-log-filter {
 	padding-bottom: 0;
 }
+
+.parlay-python-statement-label {
+	top: -12px;	
+}
+
+.parlay-console-list {
+	padding-top: 10px;
+}
+
+.parlay-console-list-item-text {
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
+}
+
+.parlay-console-list-item > md-icon:first-child {
+	margin-bottom: 0 !important;
+	margin-top: -4px !important;
+}

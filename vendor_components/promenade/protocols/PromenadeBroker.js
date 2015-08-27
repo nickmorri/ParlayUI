@@ -160,6 +160,11 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', 'ParlayNotification', '
 			    "TO": 61953
 		    }
 	    });
+        ParlaySocket.sendMessage({'type': 'subscribe'}, {
+		    "TOPICS": {
+			    "TO": "UI"
+		    }
+	    });
     };
     
     Public.onMessage = ParlaySocket.onMessage;

@@ -1,0 +1,24 @@
+<div layout="column" class="console_transform" ng-class="console_hidden ? 'console_hidden' : 'console_expanded'">
+	
+	<md-toolbar ng-click="consoleToggleConsole()" style="max-height:30px; min-height:30px; cursor: pointer;">
+    	<div class="md-toolbar-tools" style="max-height:30px; min-height:30px;">
+			<h2>Console</h2>
+			<span flex></span>
+			<md-button class="md-icon-button"><md-icon><ng-md-icon class="white" icon="{{console_icon}}"></ng-md-icon></md-icon></md-button>
+		</div>
+	</md-toolbar>
+
+	<md-content>
+		<md-list>
+			<md-list-item class="parlay-console-list-item" ng-repeat="message in getConsoleLog() track by $index">{{message}}</md-list-item>
+		</md-list>
+	</md-content>
+	
+	<span flex></span>
+	
+	<md-input-container ng-hide="console_hidden" class="parlay-python-statement-input-container md-whiteframe-z5">
+	    <label>Python Statement</label>
+		<input ng-model="console_command" ng-keyup="$event.keyCode == 13 && consoleSendCommand()">
+	</md-input-container>
+	
+</div>

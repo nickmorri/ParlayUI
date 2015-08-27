@@ -4,12 +4,17 @@
     -o-transition: height 200ms linear;
     -ms-transition: height 200ms linear;
     transition: height 200ms linear;
-
 }
-
 .console_expanded {
     height: 250px;
 }
 .console_hidden {
     height: 30px;
+}
+.parlay-python-statement-input-container {
+	padding-bottom: 0px;
+}
+
+.parlay-console-list-item {
+	min-height: 24px;
 }

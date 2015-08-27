@@ -3,9 +3,9 @@ function relevantScope(currentScope, attribute) {
     return currentScope.hasOwnProperty(attribute) ? currentScope : currentScope.hasOwnProperty('$parent') && currentScope.$parent !== null ? relevantScope(currentScope.$parent, attribute) : undefined;
 }
 
-var standard_endpoint_commands = angular.module('promenade.endpoints.standardendpoint.commands', ['RecursionHelper', 'parlay.store', 'parlay.navigation']);
+var standard_endpoint_commands = angular.module('promenade.endpoints.standardendpoint.commands', ['RecursionHelper', 'parlay.store', 'parlay.navigation.bottombar']);
 
-standard_endpoint_commands.controller('PromenadeStandardEndpointCommandController', ['$scope', '$timeout', 'ParlayStore','ScriptLogger', function ($scope, $timeout, ParlayStore,ScriptLogger) {
+standard_endpoint_commands.controller('PromenadeStandardEndpointCommandController', ['$scope', '$timeout', 'ParlayStore', 'ScriptLogger', function ($scope, $timeout, ParlayStore, ScriptLogger) {
 
     $scope.error = false;
     $scope.sending = false;
@@ -61,7 +61,10 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
 	    if (event) pushChipBuffer(event.target.querySelectorAll('md-chips'));
 	    
         $scope.sending = true;
-        $scope.endpoint.sendMessage(collectMessage()).then(function (response) {
+        
+        var message = collectMessage();
+        
+        $scope.endpoint.sendMessage(message).then(function (response) {
 	        $scope.status_message = response.STATUS_NAME;
             if (sending_timeout !== null) $timeout.cancel(sending_timeout);
         	sending_timeout = $timeout(function () {
@@ -74,15 +77,10 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
 	        $scope.status_message = response.STATUS_NAME;
         });
 
-        //put the python equivilent command in the log
-        //build the key/value list
-        var msg = collectMessage();
-        var args = [];
-        for(var k in msg) {
-            if(typeof msg[k] == 'number') { args.push(k+"="+msg[k]); }
-            else {args.push(k+"='"+msg[k]+"'"); }
-        }
-        ScriptLogger.logCommand("SendCommand(" +args.join(",")+")");
+        // Put the Python equivalent command in the log.
+        ScriptLogger.logCommand("SendCommand(" + Object.keys(message).map(function (key) {
+	        return typeof message[key] === 'number' ? key + "=" + message[key] : key + "='" + message[key] + "'";
+        }).join(",") + ")");
 
     };
     

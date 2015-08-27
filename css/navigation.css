@@ -5,16 +5,38 @@
     -ms-transition: height 200ms linear;
     transition: height 200ms linear;
 }
+
 .console_expanded {
     height: 250px;
 }
+
 .console_hidden {
     height: 30px;
 }
+
 .parlay-python-statement-input-container {
 	padding-bottom: 0;
 }
 
 .parlay-console-list-item {
 	min-height: 24px;
+}
+
+md-toolbar:focus {
+    outline: none;
+}
+
+.parlay-bottom-bar {
+	max-height: 30px;
+	min-height: 30px;
+	cursor: pointer;
+}
+
+.parlay-bottom-bar:focus {
+	outline: none;
+}
+
+.parlay-bottom-bar > .md-toolbar-tools {
+	max-height: 30px;
+	min-height: 30px;
 }

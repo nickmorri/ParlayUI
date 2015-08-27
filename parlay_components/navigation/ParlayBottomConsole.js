@@ -24,14 +24,14 @@ bottom_bar.controller('ParlayConsoleBarController', ['$scope', 'PromenadeBroker'
     };
     
     // Call this to add strings to the log
-    $scope.consoleAddToLog = function (s) {
-	    $scope.console_log.push(s);
+    $scope.consoleAddToLog = function (statement, user) {
+	    $scope.console_log.push({statement: statement, user: user});
 	};
 
     $scope.consoleSendCommand = function() {
-        $scope.consoleAddToLog('>>' + $scope.console_command);
+        $scope.consoleAddToLog($scope.console_command, true);
         PromenadeBroker.sendRequest('eval_statement', {'statement': $scope.console_command}).then(function (contents) {
-            $scope.consoleAddToLog(contents.result);
+            $scope.consoleAddToLog(contents.result, false);
         });
         // Clear out the command input
         $scope.console_command = undefined;
@@ -39,6 +39,14 @@ bottom_bar.controller('ParlayConsoleBarController', ['$scope', 'PromenadeBroker'
     
     $scope.getConsoleLog = function () {
 	    return $scope.console_log;
+    };
+    
+    $scope.hasConsoleLog = function () {
+	    return $scope.getConsoleLog().length > 0;
+    };
+    
+    $scope.clearLog = function (event) {
+	    $scope.console_log = [];
     };
     
     $scope.$watch('console_hidden', function (newValue) {

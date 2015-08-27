@@ -1,4 +1,4 @@
-<div layout="column" class="console_transform" ng-class="console_hidden ? 'console_hidden' : 'console_expanded'">
+<div layout="column" layout-align="space-between" class="console_transform" ng-class="console_hidden ? 'console_hidden' : 'console_expanded'">
 	
 	<md-toolbar ng-click="consoleToggleConsole()" class="parlay-bottom-bar">
     	<div class="md-toolbar-tools">
@@ -10,15 +10,21 @@
 
 	<md-content>
 		<md-list>
-			<md-list-item class="parlay-console-list-item" ng-repeat="message in getConsoleLog() track by $index">{{message}}</md-list-item>
+			<md-list-item class="parlay-console-list-item" ng-repeat="message in getConsoleLog()">
+				<span ng-show="message.user">>> </span>
+				{{message.statement}}
+			</md-list-item>
 		</md-list>
 	</md-content>
 	
 	<span flex></span>
 	
-	<md-input-container ng-hide="console_hidden" class="parlay-python-statement-input-container md-whiteframe-z5">
-	    <label>Python Statement</label>
-		<input ng-model="console_command" ng-keyup="$event.keyCode == 13 && consoleSendCommand()">
-	</md-input-container>
+	<div layout="row" class="md-whiteframe-z5">
+		<md-input-container flex ng-hide="console_hidden" class="parlay-python-statement-input-container">
+		    <label>Python Statement</label>
+			<input ng-model="console_command" ng-keyup="$event.keyCode == 13 && consoleSendCommand()">
+		</md-input-container>
+		<md-button class="md-warn" ng-click="clearLog()" ng-disabled="!hasConsoleLog()">Clear</md-button>
+	</div>
 	
 </div>

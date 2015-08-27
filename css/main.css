@@ -19,4 +19,7 @@ md-list-item > a {
     top: 0 !important;
 }
 
-
+.logo {
+	width: 200px;
+	margin-right: 10px;
+}

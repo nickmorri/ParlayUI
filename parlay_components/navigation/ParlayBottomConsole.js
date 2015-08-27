@@ -20,6 +20,7 @@ bottom_bar.controller('ParlayConsoleBarController', ['$scope', '$timeout', 'Prom
     $scope.console_icon = 'unfold_more';
     $scope.received_message_status_icon = 'radio_button_off';
     $scope.filtering = false;
+    $scope.console_filter = undefined;
     
     $scope.consoleToggleConsole = function() {
 		$scope.console_hidden = !$scope.console_hidden;
@@ -57,6 +58,7 @@ bottom_bar.controller('ParlayConsoleBarController', ['$scope', '$timeout', 'Prom
     
     $scope.toggleConsoleLogFilter = function () {
 	    $scope.filtering = !$scope.filtering;
+	    if (!$scope.filtering) $scope.console_filter = undefined;
     };
     
     $scope.hasFilter = function () {

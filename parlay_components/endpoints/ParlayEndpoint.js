@@ -1,4 +1,4 @@
-var parlay_endpoint = angular.module('parlay.endpoints.endpoint', ['ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main', 'parlay.store']);
+var parlay_endpoint = angular.module('parlay.endpoints.endpoint', ['ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main', 'parlay.store.persistence_helper']);
 
 parlay_endpoint.factory('ParlayEndpoint', function () {
     
@@ -49,7 +49,7 @@ parlay_endpoint.factory('ParlayEndpoint', function () {
     
 });
 
-parlay_endpoint.directive('parlayEndpointCard', ['$compile', 'ParlayStore', function ($compile, ParlayStore) {
+parlay_endpoint.directive('parlayEndpointCard', ['$compile', function ($compile) {
     return {
         templateUrl: '../parlay_components/endpoints/directives/parlay-endpoint-card.html',
         link: function (scope, element, attributes) {
@@ -96,30 +96,8 @@ parlay_endpoint.directive('parlayEndpointCard', ['$compile', 'ParlayStore', func
 	            });
             }
             
-            function setActiveTab(newValue, oldValue) {
-	            var saved_state = ParlayStore('endpoints').getDirectiveContainer('parlayEndpointCard.' + scope.endpoint.name.replace(' ', '_') + '_' + scope.container.uid);
-		        if (saved_state) scope.active_tab_index = saved_state.active_tab_index;
-	            scope.$watch('active_tab_index', setAttr(key));
-            }
-            
-            function setAttr(directive) {
-		        return function () {
-			    	ParlayStore('endpoints').set(directive.replace(' ', '_'), this.exp, this.last);    
-		        };		        
-	        }
-	        
-	        function removeItem(directive) {
-				return function () {
-					ParlayStore('endpoints').remove(directive.replace(' ', '_'));
-				};
-			}
-	        
-	        compileToolbar();
+            compileToolbar();
 	        compileTabs();
-            setActiveTab();
-            
-            scope.$watch('$index', setAttr(key));
-	        scope.$on('$destroy', removeItem(key));
             
         }
     };

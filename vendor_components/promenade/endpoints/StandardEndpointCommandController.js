@@ -102,9 +102,7 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContai
             commandform: "="
         },
         templateUrl: '../vendor_components/promenade/endpoints/directives/promenade-standard-endpoint-card-command-container.html',
-        compile: function (element) {
-            return RecursionHelper.compile(element);
-        },
+        compile: RecursionHelper.compile,
         controller: function ($scope) {
 	        
 	        var storeID = "commandform";

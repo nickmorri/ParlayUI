@@ -35,13 +35,13 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
 			    param_name = field;
 		    }
 		    // if type is OBJECT or ARRAY then turn the JSON string into an actual object
-            if(field_type === 'OBJECT' || field_type === 'ARRAY') {
+            if (field_type === 'OBJECT' || field_type === 'ARRAY') {
                 try {
                     accumulator[param_name] = JSON.parse($scope.message[field]);
                 }
-                catch(e)
-                {
-                    alert(param_name + " Is not valid JSON");  //TODO: Have Nick show me how to make this check a pretty form validation error
+                catch (e) {
+	                $scope.error = true;
+	                $scope.status_message = param_name + " is not valid JSON.";
                 }
             }
 		    else if (angular.isArray($scope.message[field])) accumulator[param_name] = field_type === 'NUMBERS' ? $scope.message[field].map(parseFloat) : $scope.message[field];
@@ -61,18 +61,23 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
         
         var message = collectMessage();
         
-        $scope.endpoint.sendMessage(message).then(function (response) {
-	        $scope.status_message = response.STATUS_NAME;
-            if (sending_timeout !== null) $timeout.cancel(sending_timeout);
-        	sending_timeout = $timeout(function () {
-	        	sending_timeout = null;
-                $scope.sending = false;
-            }, 500);
-        }).catch(function (response) {
+        if ($scope.error) {
 	        $scope.sending = false;
-	        $scope.error = true;
-	        $scope.status_message = response.STATUS_NAME;
-        });
+        }
+        else {
+	     	$scope.endpoint.sendMessage(message).then(function (response) {
+		        $scope.status_message = response.STATUS_NAME;
+	            if (sending_timeout !== null) $timeout.cancel(sending_timeout);
+	        	sending_timeout = $timeout(function () {
+		        	sending_timeout = null;
+	                $scope.sending = false;
+	            }, 500);
+	        }).catch(function (response) {
+		        $scope.sending = false;
+		        $scope.error = true;
+		        $scope.status_message = response.STATUS_NAME;
+	        });   
+        }
 
         // Put the Python equivalent command in the log.
         ScriptLogger.logCommand("SendCommand(" + Object.keys(message).map(function (key) {

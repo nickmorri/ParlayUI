@@ -4,7 +4,7 @@ function relevantScope(currentScope, attribute) {
 
 var standard_endpoint_commands = angular.module('promenade.endpoints.standardendpoint.commands', ['RecursionHelper', 'parlay.store', 'parlay.navigation.bottombar']);
 
-standard_endpoint_commands.controller('PromenadeStandardEndpointCommandController', ['$scope', '$timeout', 'ParlayStore', 'ScriptLogger', function ($scope, $timeout, ParlayStore, ScriptLogger) {
+standard_endpoint_commands.controller('PromenadeStandardEndpointCommandController', ['$scope', '$timeout', 'ScriptLogger', function ($scope, $timeout, ScriptLogger) {
 
     $scope.error = false;
     $scope.sending = false;
@@ -128,12 +128,10 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContai
 		    
 		    // Returns a function that will automatically update the attribute being watched.
 		    function watchValue(input_name) {
-			    return function(newValue, oldValue) {
-				    
+			    var container = relevantScope($scope, 'container').container;
+				var key = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
+			    return function(newValue) {
 				    var value = newValue !== null && newValue !== undefined && newValue.value !== undefined ? newValue.value : newValue;
-				    
-					var container = relevantScope($scope, 'container').container;
-				    var key = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
 				    setAttribute(key, input_name, value);
 			    };
 		    }
@@ -158,13 +156,32 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContai
 			    for (var watcher in messageWatchers) messageWatchers[watcher]();
 		    }
 		    
-		    $scope.$watchCollection('message', function (newValue, oldValue) {
+		    $scope.$watchCollection('message', function (newValue) {
 			   	// When $scope.message is changed we will clear all watchers and then setup new watchers on the newValue.
 			    clearWatchers();
 			    setupWatchers(newValue);
 		    });
 		    
 		    $scope.$on('$destroy', clearWatchers);
+	        
+	        /**
+		     * Checks if the given field has sub fields available.
+		     * @param {Object} field - the field we are interested in.
+		     * @returns {Boolean} - true if the target field has sub fields available, false otherwise.
+		     */
+	        $scope.hasSubFields = function (field) {
+		        var message_field = $scope.message[field.msg_key + '_' + field.input];
+		        return message_field !== undefined && message_field !== null && message_field.sub_fields !== undefined;
+	        };
+	        
+	        /**
+		     * Returns a given field's sub fields.
+		     * @param {Object} field - the field we are interested in.
+		     * @returns {Object|Array} - the fields sub fields, may be Object or Array.
+		     */
+	        $scope.getSubFields = function (field) {
+		        return $scope.message[field.msg_key + '_' + field.input].sub_fields;
+	        };
 	        
 	        /**
 		     * Retrieves the value that was saved from a previous session for a endpoint's commandform attribute.
@@ -211,40 +228,19 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContai
 		        else return false;
 	        }
 	        
-	        /**
-		     * Checks if the given field has sub fields available.
-		     * @param {Object} field - the field we are interested in.
-		     * @returns {Boolean} - true if the target field has sub fields available, false otherwise.
-		     */
-	        $scope.hasSubFields = function (field) {
-		        var message_field = $scope.message[field.msg_key + '_' + field.input];
-		        return message_field !== undefined && message_field !== null && message_field.sub_fields !== undefined;
-	        };
-	        
-	        /**
-		     * Returns a given field's sub fields.
-		     * @param {Object} field - the field we are interested in.
-		     * @returns {Object|Array} - the fields sub fields, may be Object or Array.
-		     */
-	        $scope.getSubFields = function (field) {
-		        return $scope.message[field.msg_key + '_' + field.input].sub_fields;
-	        };
-	        
 	        // When fields is created we should first attempt to restore the previous values, if we are unable we will populate with the available default.
-	        // After this is done we will deregister this watchCollection as we don't need it anymore.
-			var one_time_watch = $scope.$watchCollection('fields', function (fields) {
-	            for (var field in fields) {
-		            if(!restoreFieldState($scope.fields[field])) {
-			            if (fields[field].default) {
-				        	$scope.message[fields[field].msg_key + '_' + fields[field].input] = fields[field].default;    
-			            }
-			            
-			            else if ($scope.message[fields[field].msg_key + '_' + fields[field].input] === undefined && ['NUMBERS', 'STRINGS', 'ARRAY'].indexOf(fields[field].input) > -1) {
-	                        $scope.message[fields[field].msg_key + '_' + fields[field].input] = [];
-	                    }    
+			$scope.$watchCollection('fields', function (fields) {
+				Object.keys(fields).map(function (field) {
+					return fields[field];
+				}).filter(function (field) {
+					return !restoreFieldState(field);
+				}).forEach(function (field) {
+					// For every field that cannot be restored from it's previous state we will attempt to find it's default.
+					if (field.default) $scope.message[field.msg_key + '_' + field.input] = field.default;
+		            else if ($scope.message[field.msg_key + '_' + field.input] === undefined && ['NUMBERS', 'STRINGS', 'ARRAY'].indexOf(field.input) > -1) {
+                        $scope.message[field.msg_key + '_' + field.input] = [];
                     }
-                }
-                one_time_watch();
+				});
             });
             
         }

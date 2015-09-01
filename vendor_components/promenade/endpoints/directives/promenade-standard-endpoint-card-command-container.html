@@ -19,7 +19,7 @@
         
         <!-- NUMBER input type -->
         <input ng-if="field.input === 'NUMBER'" name="{{field.msg_key}}" ng-model="message[field.msg_key + '_' + field.input]" type="number" ng-required="field.required">
-        <input ng-if="field.input === 'STRING'" name="{{field.msg_key}}" ng-model="message[field.msg_key + '_' + field.input]"               ng-required="field.required">
+
         
         <!-- STRING input type -->
         <input ng-if="field.input === 'STRING'" name="{{field.msg_key}}" ng-model="message[field.msg_key + '_' + field.input]" type="text" ng-required="field.required">

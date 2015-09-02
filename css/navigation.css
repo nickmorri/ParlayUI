@@ -22,18 +22,10 @@
 	min-height: 24px;
 }
 
-md-toolbar:focus {
-    outline: none;
-}
-
 .parlay-bottom-bar {
 	max-height: 30px;
 	min-height: 30px;
 	cursor: pointer;
-}
-
-.parlay-bottom-bar:focus {
-	outline: none;
 }
 
 .parlay-bottom-bar > .md-toolbar-tools {

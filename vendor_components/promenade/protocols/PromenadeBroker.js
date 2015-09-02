@@ -83,33 +83,36 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', 'ParlayNotification', '
         // Launches ParlayNotification discovery progress after 100 ms
         var progress = $timeout(ParlayNotification.showProgress, 100);
         
-        return Public.sendRequest('get_discovery', {'force': is_forced}).then(function (contents) {
+        return Public.requestOpenProtocols().then(function(open_protocols){
+            //request open protocols before discovery sow e know what we're discovering@
+            Public.sendRequest('get_discovery', {'force': is_forced}).then(function (contents) {
             
-            // Cancels $timeout callback execution. Better UX for immediate responses from Broker.
-            // If $timeout has already executed we should hide the ParlayNotification now.
-            if (!$timeout.cancel(progress)) ParlayNotification.hideProgress();
-                        
-            function buildNotificationMessage(result) {
-                var content_string = 'Discovered ';
-                        
-                if (result.length === 1) {
-                    content_string += result[0].NAME + '.';
-                }
-                else {
-                    content_string += result.length + ' protocols.';
-                }
-                
-                if (result.length === 0) {
-                    content_string += ' Verify connections.';
-                }
-                return content_string;
-            }
-            
-            ParlayNotification.show({
-                content: buildNotificationMessage(contents.discovery)
-            });
-                
-            return contents.discovery;
+                    // Cancels $timeout callback execution. Better UX for immediate responses from Broker.
+                    // If $timeout has already executed we should hide the ParlayNotification now.
+                    if (!$timeout.cancel(progress)) ParlayNotification.hideProgress();
+
+                    function buildNotificationMessage(result) {
+                        var content_string = 'Discovered ';
+
+                        if (result.length === 1) {
+                            content_string += result[0].NAME + '.';
+                        }
+                        else {
+                            content_string += result.length + ' protocols.';
+                        }
+
+                        if (result.length === 0) {
+                            content_string += ' Verify connections.';
+                        }
+                        return content_string;
+                    }
+
+                    ParlayNotification.show({
+                        content: buildNotificationMessage(contents.discovery)
+                    });
+
+                    return contents.discovery;
+                });
         });
         
     };

@@ -99,7 +99,7 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommands', fu
 });
 
 
-standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContainer', ['RecursionHelper', 'ParlayStore', function (RecursionHelper, ParlayStore) {
+standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContainer', ['RecursionHelper', 'ParlayStore', 'ParlayPersistence', function (RecursionHelper, ParlayStore, ParlayPersistence) {
     return {
         scope: {
             message: "=",
@@ -116,53 +116,12 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContai
 	        if (!$scope.message) $scope.message = {};
     
 		    // Contains $scope.$watch registrations.
-		    var messageWatchers = {};
+		    var message_watchers = {};
 		    
-		     // Records the directive's attribute to the ParlayStore.
-		    function setAttribute(directive, attribute, value) {
-			    var form_container = ParlayStore('endpoints').get(directive, storeID);
-			    if (form_container === undefined) form_container = {};
-			    form_container[attribute] = value;
-			    ParlayStore('endpoints').set(directive, storeID, form_container);
-		    }
+		    var container = relevantScope($scope, 'container').container;
+			var key = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
 		    
-		    // Returns a function that will automatically update the attribute being watched.
-		    function watchValue(input_name) {
-			    var container = relevantScope($scope, 'container').container;
-				var key = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
-			    return function(newValue) {
-				    var value = newValue !== null && newValue !== undefined && newValue.value !== undefined ? newValue.value : newValue;
-				    setAttribute(key, input_name, value);
-			    };
-		    }
-		    
-		    // Registers a watch for the specified field.
-		    function registerWatch(name, field) {
-			    if (messageWatchers[name]) messageWatchers[name]();
-			    messageWatchers[name] = Array.isArray(field) ? $scope.$watchCollection(function () {
-				    return field;
-			    }, watchValue(name)) : $scope.$watch(function () {
-				    return field;
-			    }, watchValue(name));
-		    }
-		    
-		    // Creates watch registration for each field available in the message.
-		    function setupWatchers(message) {
-			    for (var field in message) registerWatch(field, message[field]);
-		    }
-		    
-		    // Calls watch deregistration function for each watcher that we previously registered.
-		    function clearWatchers() {
-			    for (var watcher in messageWatchers) messageWatchers[watcher]();
-		    }
-		    
-		    $scope.$watchCollection('message', function (newValue) {
-			   	// When $scope.message is changed we will clear all watchers and then setup new watchers on the newValue.
-			    clearWatchers();
-			    setupWatchers(newValue);
-		    });
-		    
-		    $scope.$on('$destroy', clearWatchers);
+		    ParlayPersistence.monitorAttributes(key, ["message"], $scope);
 	        
 	        /**
 		     * Checks if the given field has sub fields available.

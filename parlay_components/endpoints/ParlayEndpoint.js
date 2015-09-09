@@ -49,14 +49,16 @@ parlay_endpoint.factory('ParlayEndpoint', function () {
     
 });
 
-parlay_endpoint.directive('parlayEndpointCard', ['$compile', function ($compile) {
+parlay_endpoint.directive('parlayEndpointCard', ['$compile', 'ParlayPersistence', function ($compile, ParlayPersistence) {
     return {
         templateUrl: '../parlay_components/endpoints/directives/parlay-endpoint-card.html',
         link: function (scope, element, attributes) {
 	        
-            scope.endpoint = scope.container.ref;
+	        scope.endpoint = scope.container.ref;
             
-            var key = 'parlayEndpointCard.' + scope.container.ref.name.replace(' ', '_') + '_' + scope.container.uid;
+            var key = 'parlayEndpointCard.' + scope.endpoint.name.replace(' ', '_') + '_' + scope.container.uid;
+            
+            ParlayPersistence.monitorAttributes(key, ['$index', 'active_tab_index'], scope);
             
             // Converts directive names to snake-case which Angular requires during directive compilation.
             function snake_case(name) {

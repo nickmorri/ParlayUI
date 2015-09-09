@@ -99,7 +99,7 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommands', fu
 });
 
 
-standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContainer', ['RecursionHelper', 'ParlayStore', 'ParlayPersistence', function (RecursionHelper, ParlayStore, ParlayPersistence) {
+standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContainer', ['RecursionHelper', 'ParlayPersistence', function (RecursionHelper, ParlayPersistence) {
     return {
         scope: {
             message: "=",
@@ -109,19 +109,14 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContai
         templateUrl: '../vendor_components/promenade/endpoints/directives/promenade-standard-endpoint-card-command-container.html',
         compile: RecursionHelper.compile,
         controller: function ($scope) {
-	        
-	        var storeID = "commandform";
-	        
+
 	        // If message doesn't exist yet, we're the top level PromenadeStandardEndpointCardCommandContainer which means we should instantiate it.
-	        if (!$scope.message) $scope.message = {};
-    
-		    // Contains $scope.$watch registrations.
-		    var message_watchers = {};
+	        if ($scope.message === undefined) $scope.message = {};
 		    
 		    var container = relevantScope($scope, 'container').container;
 			var key = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
 		    
-		    ParlayPersistence.monitorAttributes(key, ["message"], $scope);
+		    ParlayPersistence.monitorCollection(key, "message", $scope);
 	        
 	        /**
 		     * Checks if the given field has sub fields available.
@@ -141,66 +136,6 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContai
 	        $scope.getSubFields = function (field) {
 		        return $scope.message[field.msg_key + '_' + field.input].sub_fields;
 	        };
-	        
-	        /**
-		     * Retrieves the value that was saved from a previous session for a endpoint's commandform attribute.
-		     * @param {String} field_name - Name of the field we are looking to restore from the previous commandform.
-		     * @returns {Array|Object|Number|String} - previously saved value.
-		     */
-	        function getSavedValue(field_name) {
-		        // Locate the container property on this scope or from it's parent scopes.
-		        var container = relevantScope($scope, 'container').container;
-		        // Retrieve the previously saved commandform for this endpoint from the 'endpoints' ParlayStore.
-		        var saved_endpoint = ParlayStore('endpoints').get('parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid, storeID);
-		        // If we have found the saved endpoint and the requested property we can return it, otherwise return undefined.
-		        return saved_endpoint !== undefined && saved_endpoint.hasOwnProperty(field_name) ? saved_endpoint[field_name] : undefined;
-	        }
-	        
-	        /**
-		     * Sets the given field back to the state retrieved from the previous session.
-		     * @param {String} field - name of the field to restore.
-		     * @returns {Boolean} - if we successfully restored the value we return true, false otherwise.
-		     */
-	        function restoreFieldState(field) {
-		        // Retrieve the value from the previous session, if it is undefined or null then return instead of attempting to restore. 
-		        var saved = getSavedValue(field.msg_key + '_' + field.input);
-		        
-		        if (saved !== undefined) {
-			     	// Locate the message and fields properties on this scope or from it's parent scopes.
-			        var message = relevantScope($scope, 'message').message;
-			        var fields = relevantScope($scope, 'fields').fields;
-			        
-			        // If the saved value is an Array we should set the value.
-			        if (Array.isArray(saved)) {
-					     message[field.msg_key + '_' + field.input] = saved;   
-			        }
-			        // If the field is a dropdown and has options present we should use the saved value as a key to access the option saved.
-			        else if (!Array.isArray(fields) && fields[field.msg_key].hasOwnProperty('options') && fields[field.msg_key].options.hasOwnProperty(saved)) {
-				        message[field.msg_key + '_' + field.input] = fields[field.msg_key].options[saved];
-			        }
-			        // Otherwise just set the value to the saved value.
-			        else {
-				        message[field.msg_key + '_' + field.input] = saved;
-			        }
-			        return true;
-		        }
-		        else return false;
-	        }
-	        
-	        // When fields is created we should first attempt to restore the previous values, if we are unable we will populate with the available default.
-			$scope.$watchCollection('fields', function (fields) {
-				Object.keys(fields).map(function (field) {
-					return fields[field];
-				}).filter(function (field) {
-					return !restoreFieldState(field);
-				}).forEach(function (field) {
-					// For every field that cannot be restored from it's previous state we will attempt to find it's default.
-					if (field.default) $scope.message[field.msg_key + '_' + field.input] = field.default;
-		            else if ($scope.message[field.msg_key + '_' + field.input] === undefined && ['NUMBERS', 'STRINGS', 'ARRAY'].indexOf(field.input) > -1) {
-                        $scope.message[field.msg_key + '_' + field.input] = [];
-                    }
-				});
-            });
             
         }
     };

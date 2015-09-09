@@ -23,72 +23,49 @@ parlay_persistence_helper.factory('ParlayPersistence', ['ParlayStore', function 
 		watchers: {}
 	};
 	
-	Public.monitorAttributes = function(directive, attributes, scope) {
+	Public.monitor = function (directive, attribute, scope) {
+		Private.monitorCommon(directive, attribute, scope, false);
+	};
+	
+	Public.monitorCollection = function (directive, attribute, scope) {
+		Private.monitorCommon(directive, attribute, scope, true);
+	};
+	
+	Private.monitorCommon = function (directive, attribute, scope, collection) {
+		var restored = false;
 		
-		// Wait for the attributes to appear on scope then restore them and being persisting.
-		attributes.forEach(function (attribute) {
-			
-			var been_restored = false;
-			
-			function onChange() {
-				if (!been_restored) {
-					Public.restore(directive, Public.gatherProperties(attribute, scope), scope);
-					been_restored = true;
-				}
-				Public.persist(directive, Public.gatherProperties(attribute, scope), scope);
+		function onChange() {
+			if (!restored) {
+				var previous_value = Private.getAttr(directive, attribute);
+				if (previous_value) find_parent(attribute, find_scope(attribute, scope))[attribute] = previous_value;
+				restored = true;
 			}
 			
-			if (typeof scope[attribute] === "number" || typeof scope[attribute] === "string") scope.$watch(attribute, onChange);
-			else scope.$watchCollection(attribute, onChange);
-		});
-	};
-	
-	Public.gatherProperties = function(attribute, scope) {
-		
-		var obj = find_scope(attribute, scope)[attribute];
-		
-		if (obj === undefined) return [];
-		if (typeof obj === "number") return [attribute];
-		else if (typeof obj === "string") return [attribute];
-		else if (Array.isArray(obj)) return [attribute];
-		else return Object.keys(obj).map(function (field) {
-		    var key = attribute + "." + field;
-		    if (obj[field] !== undefined && obj[field].value !== undefined) return key + ".value";
-		    else return key;
-	    });
-    };
-	
-	Public.restore = function (directive, keys, scope) {
-		keys.forEach(function (key) {
-			var previous_value = Private.getAttr(directive, key);
-			if (previous_value) find_parent(key, find_scope(key, scope))[key] = previous_value;
-		});
-	};
-	
-	Public.persist = function (directive, keys, scope) {
-		keys.forEach(function (key) {
-			if (Private.watchers.hasOwnProperty(key)) Private.watchers[key]();
-			Private.watchers[key] = scope.$watch(key, Private.setAttr(directive));
-		});
-		scope.$on("$destroy", function () {
-			Private.removeItem(directive)();
-			keys.forEach(function (key) {
-				Private.watchers[key]();
+			if (Private.watchers.hasOwnProperty(attribute)) Private.watchers[attribute]();
+			
+			Private.watchers[attribute] = collection ? scope.$watchCollection(attribute, Private.setAttr(directive, attribute)) : scope.$watch(attribute, Private.setAttr(directive, attribute));
+				
+			scope.$on("$destroy", function () {
+				Private.removeDirective(directive)();
+				Private.watchers[attribute]();
 			});
-		});
+		}
+		
+		if (collection) scope.$watchCollection(attribute, onChange);
+		else scope.$watch(attribute, onChange);
 	};
 	
 	Private.getAttr = function(directive, attribute) {
 		return ParlayStore('endpoints').get(directive.replace(' ', '_'), attribute);
     };
 	
-	Private.setAttr = function(directive) {
-        return function () {
-	    	ParlayStore('endpoints').set(directive.replace(' ', '_'), this.exp, this.last);    
+	Private.setAttr = function(directive, attribute) {
+        return function (value) {
+	    	ParlayStore('endpoints').set(directive.replace(' ', '_'), attribute, value);
         };		        
     };
     
-    Private.removeItem = function(directive) {
+    Private.removeDirective = function(directive) {
 		return function () {
 			ParlayStore('endpoints').remove(directive.replace(' ', '_'));
 		};

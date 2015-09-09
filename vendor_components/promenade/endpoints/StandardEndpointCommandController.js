@@ -114,9 +114,9 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContai
 	        if ($scope.message === undefined) $scope.message = {};
 		    
 		    var container = relevantScope($scope, 'container').container;
-			var key = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
+			var directive_name = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
 		    
-		    ParlayPersistence.monitorCollection(key, "message", $scope);
+		    ParlayPersistence.monitorCollection(directive_name, "message", $scope);
 	        
 	        /**
 		     * Checks if the given field has sub fields available.

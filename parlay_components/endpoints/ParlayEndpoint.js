@@ -56,10 +56,10 @@ parlay_endpoint.directive('parlayEndpointCard', ['$compile', 'ParlayPersistence'
 	        
 	        scope.endpoint = scope.container.ref;
             
-            var key = 'parlayEndpointCard.' + scope.endpoint.name.replace(' ', '_') + '_' + scope.container.uid;
+            var directive_name = 'parlayEndpointCard.' + scope.endpoint.name.replace(' ', '_') + '_' + scope.container.uid;
             
-            ParlayPersistence.monitor(key, "$index", scope);
-            ParlayPersistence.monitor(key, "active_tab_index", scope);
+            ParlayPersistence.monitor(directive_name, "$index", scope);
+            ParlayPersistence.monitor(directive_name, "active_tab_index", scope);
             
             // Converts directive names to snake-case which Angular requires during directive compilation.
             function snake_case(name) {

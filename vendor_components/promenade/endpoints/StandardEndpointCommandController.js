@@ -136,6 +136,25 @@ standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContai
 	        $scope.getSubFields = function (field) {
 		        return $scope.message[field.msg_key + '_' + field.input].sub_fields;
 	        };
+	        
+	        // When fields is created we should first attempt to restore the previous values, if we are unable we will populate with the available default.
+			$scope.$watchCollection('fields', function (fields) {
+				
+				fields = Array.isArray(fields) ? fields : Object.keys(fields).map(function (field) {
+					return fields[field];
+				});
+				
+				fields.filter(function (field) {
+					// Check if we have already instantiated this message field.
+					return !$scope.message.hasOwnProperty(field.msg_key + '_' + field.input);
+				}).forEach(function (field) {
+					// For every field that has not been restored from it's previous state we will attempt to find it's default.
+					if (field.default) $scope.message[field.msg_key + '_' + field.input] = field.default;
+			        else if ($scope.message[field.msg_key + '_' + field.input] === undefined && ['NUMBERS', 'STRINGS', 'ARRAY'].indexOf(field.input) > -1) {
+			            $scope.message[field.msg_key + '_' + field.input] = [];
+			        }
+				});
+			});
             
         }
     };

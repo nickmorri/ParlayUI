@@ -69,7 +69,7 @@ parlay_endpoint.directive('parlayEndpointCard', ['$compile', 'ParlayPersistence'
 	                return endpoint.hasOwnProperty('toolbar');
 	            }).reduce(function (previous, endpoint) {
 	                return previous.concat(endpoint.toolbar.map(function (directive) {
-	                    return '<' + ParlayUtility.snake_case(directive, '-') + ' endpoint="endpoint" layout-fill layout="row" layout-align="space-between center"></' + ParlayUtility.snake_case(directive, '-') + '>';    
+	                    return '<' + ParlayUtility.snakeCase(directive, '-') + ' endpoint="endpoint" layout-fill layout="row" layout-align="space-between center"></' + ParlayUtility.snakeCase(directive, '-') + '>';    
 	                }));
 	            }, []).forEach(function (directive_string) {
 					toolbar.insertBefore($compile(directive_string)(scope)[0], toolbar.firstChild);
@@ -85,7 +85,7 @@ parlay_endpoint.directive('parlayEndpointCard', ['$compile', 'ParlayPersistence'
 	                return endpoint.hasOwnProperty('tabs');
 	            }).reduce(function (previous, endpoint) {
 		            return previous.concat(endpoint.tabs.map(function (directive) {
-	                    return '<' + ParlayUtility.snake_case(directive, '-') + ' endpoint="endpoint"></' + ParlayUtility.snake_case(directive, '-') + '>';
+	                    return '<' + ParlayUtility.snakeCase(directive, '-') + ' endpoint="endpoint"></' + ParlayUtility.snakeCase(directive, '-') + '>';
 	                }));
 	            }, []).forEach(function (directive_string) {
 	                tabs.appendChild($compile(directive_string)(scope)[0]);

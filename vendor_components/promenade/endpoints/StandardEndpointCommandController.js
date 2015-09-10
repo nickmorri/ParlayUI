@@ -1,6 +1,6 @@
 var standard_endpoint_commands = angular.module('promenade.endpoints.standardendpoint.commands', ['RecursionHelper', 'parlay.store', 'parlay.navigation.bottombar', 'parlay.utility']);
 
-standard_endpoint_commands.controller('PromenadeStandardEndpointCommandController', ['$scope', '$timeout', 'ScriptLogger', function ($scope, $timeout, ScriptLogger, ParlayUtility) {
+standard_endpoint_commands.controller('PromenadeStandardEndpointCommandController', ['$scope', '$timeout', 'ScriptLogger', 'ParlayUtility', function ($scope, $timeout, ScriptLogger, ParlayUtility) {
 
     $scope.error = false;
     $scope.sending = false;
@@ -9,17 +9,18 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
     var sending_timeout = null;
     
     function pushChipBuffer (chipElements) {
-	    for (var i = 0; i < chipElements.length; i++) {
-		    var ctrl = angular.element(chipElements[i].querySelector('input')).scope().$mdChipsCtrl;
+	    if (chipElements.length) {
+		    var ctrl = angular.element(chipElements[0].querySelector('input')).scope().$mdChipsCtrl;
 		    var buffer = ctrl.getChipBuffer();
-		    if (buffer.length) ctrl.appendChip(buffer);
-		    ctrl.resetChipBuffer();
-	    }
+			ctrl.appendChip(buffer);
+			ctrl.resetChipBuffer();
+		}
     }
     
-    function collectMessage () {
-        return Object.keys($scope.message).reduce(function (accumulator, field) {
+    function collectMessage (message) {
+        return Object.keys(message).reduce(function (accumulator, field) {
 	        var param_name, field_type;
+	        
 	        if (field.indexOf('_') > -1) {
 		        var split_field = field.split('_');
 
@@ -30,19 +31,12 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
 		    else {
 			    param_name = field;
 		    }
-		    // if type is OBJECT or ARRAY then turn the JSON string into an actual object
-            if (field_type === 'OBJECT' || field_type === 'ARRAY') {
-                try {
-                    accumulator[param_name] = JSON.parse($scope.message[field]);
-                }
-                catch (e) {
-	                $scope.error = true;
-	                $scope.status_message = param_name + " is not valid JSON.";
-                }
-            }
-		    else if (angular.isArray($scope.message[field])) accumulator[param_name] = field_type === 'NUMBERS' ? $scope.message[field].map(parseFloat) : $scope.message[field];
-		    else if (angular.isObject($scope.message[field])) accumulator[param_name] = $scope.message[field].value;
-            else accumulator[param_name] = $scope.message[field];
+		    
+		    // If type is Object or Array then turn the JSON string into an actual Object.
+            if (field_type === 'OBJECT' || field_type === 'ARRAY') accumulator[param_name] = JSON.parse(message[field]);
+		    else if (angular.isArray(message[field])) accumulator[param_name] = field_type === 'NUMBERS' ? message[field].map(parseFloat) : message[field];
+		    else if (angular.isObject(message[field])) accumulator[param_name] = message[field].value;
+            else accumulator[param_name] = message[field];
             
 	        return accumulator;
         }, {});
@@ -50,57 +44,68 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
     }
     
     $scope.send = function (event) {
-	    $scope.error = false;
-	    if (event) pushChipBuffer(event.target.querySelectorAll('md-chips'));
+	    var message;
 	    
+	    // Push the buffer into the md-chips ng-model
+	    pushChipBuffer(event.target.querySelectorAll('md-chips'));
+	    
+	    $scope.error = false;
         $scope.sending = true;
         
-        var message = collectMessage();
-        
-        if ($scope.error) {
-	        $scope.sending = false;
+        try {
+	    	message = collectMessage($scope.message);
+	    	$scope.endpoint.sendMessage(message)
+		     	.then(function (response) {
+			     	
+			     	// Use the response to display feedback on the send button.
+			        $scope.status_message = response.STATUS_NAME;
+			        // If we still have an outstanding timeout we should cancel it to prevent the send button from flickering.
+		            if (sending_timeout !== null) $timeout.cancel(sending_timeout);
+		            
+		            // Setup a timeout to reset the button to it's default state after a brief period of time.
+		        	sending_timeout = $timeout(function () {
+			        	sending_timeout = null;
+		                $scope.sending = false;
+		                $scope.status_message = null;
+		            }, 500);
+		            
+		        }).catch(function (response) {
+			        $scope.sending = false;
+			        $scope.error = true;
+			        $scope.status_message = response.STATUS_NAME;
+		        });
         }
-        else {
-	     	$scope.endpoint.sendMessage(message).then(function (response) {
-		        $scope.status_message = response.STATUS_NAME;
-	            if (sending_timeout !== null) $timeout.cancel(sending_timeout);
-	        	sending_timeout = $timeout(function () {
-		        	sending_timeout = null;
-	                $scope.sending = false;
-	            }, 500);
-	        }).catch(function (response) {
-		        $scope.sending = false;
-		        $scope.error = true;
-		        $scope.status_message = response.STATUS_NAME;
-	        });   
+        catch (e) {
+	     	$scope.error = true;
+	     	$scope.status_message = e;   
         }
 
         // Put the Python equivalent command in the log.
         ScriptLogger.logCommand("SendCommand(" + Object.keys(message).map(function (key) {
-	        return typeof message[key] === 'number' ? key + "=" + message[key] : key + "='" + message[key] + "'";
-        }).join(",") + ")");
+	        return typeof message[key] === 'number' ? key + '=' + message[key] : key + "='" + message[key] + "'";
+        }).join(',') + ')');
 
     };
     
 }]);
 
-standard_endpoint_commands.directive('promenadeStandardEndpointCardCommands', function () {
+standard_endpoint_commands.directive("promenadeStandardEndpointCardCommands", function () {
     return {
         scope: {
             endpoint: "="
         },
-        templateUrl: '../vendor_components/promenade/endpoints/directives/promenade-standard-endpoint-card-commands.html',
-        controller: 'PromenadeStandardEndpointCommandController'
+        templateUrl: "../vendor_components/promenade/endpoints/directives/promenade-standard-endpoint-card-commands.html",
+        controller: "PromenadeStandardEndpointCommandController"
     };
 });
 
 
-standard_endpoint_commands.directive('promenadeStandardEndpointCardCommandContainer', ['RecursionHelper', 'ParlayPersistence', function (RecursionHelper, ParlayPersistence) {
+standard_endpoint_commands.directive("promenadeStandardEndpointCardCommandContainer", ['RecursionHelper', 'ParlayPersistence', 'ParlayUtility', function (RecursionHelper, ParlayPersistence, ParlayUtility) {
     return {
         scope: {
-            message: "=",
-            fields: "=",
-            commandform: "="
+            message: '=',
+            fields: '=',
+            commandform: '='
         },
         templateUrl: '../vendor_components/promenade/endpoints/directives/promenade-standard-endpoint-card-command-container.html',
         compile: RecursionHelper.compile,

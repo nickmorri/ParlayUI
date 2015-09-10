@@ -1,6 +1,12 @@
+function relevantScope(currentScope, attribute) {
+    return currentScope.hasOwnProperty(attribute) ? currentScope : currentScope.hasOwnProperty('$parent') && currentScope.$parent !== null ? relevantScope(currentScope.$parent, attribute) : undefined;
+}
+
 var standard_endpoint_log = angular.module('promenade.endpoints.standardendpoint.log', []);
 
-standard_endpoint_log.controller('PromenadeStandardEndpointCardLogController', ['$scope', function ($scope) {
+standard_endpoint_log.controller('PromenadeStandardEndpointCardLogController', ['$scope', 'ParlayPersistence', function ($scope, ParlayPersistence) {
+    
+    $scope.filter_text = null;
     
     $scope.getFilteredLog = function (query) {
 	    var lower_case_query = angular.lowercase(query);
@@ -16,6 +22,11 @@ standard_endpoint_log.controller('PromenadeStandardEndpointCardLogController', [
     $scope.getLog = function () {
         return $scope.endpoint.log;
     };
+    
+    var container = relevantScope($scope, 'container').container;
+	var directive_name = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
+    
+    ParlayPersistence.monitorCollection(directive_name, "filter_text", $scope);
     
 }]);
 

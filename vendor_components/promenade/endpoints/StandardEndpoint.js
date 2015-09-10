@@ -3,6 +3,7 @@ var standard_endpoint = angular.module('promenade.endpoints.standardendpoint', [
 standard_endpoint.factory('PromenadeStandardEndpoint', ['ParlayEndpoint', function (ParlayEndpoint) {
     
     function PromenadeStandardEndpoint(data, protocol) {
+	    // Call our parent constructor first.
         ParlayEndpoint.call(this, data, protocol);
         
         Object.defineProperty(this, 'id', {
@@ -20,6 +21,7 @@ standard_endpoint.factory('PromenadeStandardEndpoint', ['ParlayEndpoint', functi
         if (data.CONTENT_FIELDS) {
         
             var parseField = (function parseField(field) {
+	            
                 var fieldObject = {
                     msg_key: field.MSG_KEY,
                     input: field.INPUT,
@@ -29,23 +31,20 @@ standard_endpoint.factory('PromenadeStandardEndpoint', ['ParlayEndpoint', functi
                     hidden: field.HIDDEN !== undefined ? field.HIDDEN : false
                 };
                 
-                /* istanbul ignore else */
+                // If a field has dropdown options we should process them.
                 if (field.DROPDOWN_OPTIONS !== undefined) {
                     
-                    /* istanbul ignore else */
-                    if (typeof field.DROPDOWN_OPTIONS[0] === 'string') {
-                        fieldObject.options = field.DROPDOWN_OPTIONS;
-                    }
-                    
-                    else if (Array.isArray(field.DROPDOWN_OPTIONS[0])) {
-                        fieldObject.options = field.DROPDOWN_OPTIONS.reduce(function (accumulator, enumeration, index) {                        
-                            accumulator[enumeration[0]] = {
-                                value: enumeration[1],
-                                sub_fields: field.DROPDOWN_SUB_FIELDS !== undefined ? field.DROPDOWN_SUB_FIELDS[index].map(parseField) : undefined
-                            };                            
-                            return accumulator;
-                        }, {});    
-                    }
+                    fieldObject.options = field.DROPDOWN_OPTIONS.map(function (option, index) {
+	                    return typeof option === "string" ? {
+		                    name: option,
+		                    value: option,
+		                    sub_fields: undefined
+	                    } : {
+		                  	name: option[0],
+		                  	value: option[1],
+		                  	sub_fields: field.DROPDOWN_SUB_FIELDS !== undefined ? field.DROPDOWN_SUB_FIELDS[index].map(parseField) : undefined
+	                    };
+                    });
                     
                 }
                 
@@ -66,6 +65,7 @@ standard_endpoint.factory('PromenadeStandardEndpoint', ['ParlayEndpoint', functi
         
     }
     
+    // Prototypically inherit from ParlayEndpoint.
     PromenadeStandardEndpoint.prototype = Object.create(ParlayEndpoint.prototype);
     
     Object.defineProperty(PromenadeStandardEndpoint.prototype, 'commands', {

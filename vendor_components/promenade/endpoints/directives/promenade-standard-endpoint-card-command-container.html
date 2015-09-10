@@ -7,14 +7,7 @@
 		
 		<!-- DROPDOWN input type -->
         <md-select ng-if="field.input === 'DROPDOWN'" name="{{field.msg_key}}" ng-model="message[field.msg_key + '_' + field.input]" ng-required="field.required">
-			<!-- For a Object(Map) of options -->
-            <span ng-if="!field.options.length">
-                <md-option ng-repeat="(key, option) in field.options" ng-value="option">{{key}}</md-option>
-            </span>
-            <!-- For a Array of options -->
-            <span ng-if="field.options.length">
-                <md-option ng-repeat="option in field.options" ng-value="option">{{option}}</md-option>
-            </span>            
+            <md-option ng-repeat="option in field.options" ng-value="option">{{option.name}}</md-option>
         </md-select>
         
         <!-- NUMBER input type -->
@@ -34,6 +27,12 @@
     </md-input-container>
     
     <!-- Recursive promenade-standard-endpoint-card-command-container directive element to handle any potential nesting of sub fields -->
-    <promenade-standard-endpoint-card-command-container ng-if="hasSubFields(field)" commandform="commandform" message="message" fields="getSubFields(field)" flex></promenade-standard-endpoint-card-command-container>
+    <promenade-standard-endpoint-card-command-container 
+	    ng-if="hasSubFields(field)"
+	    commandform="commandform"
+	    message="message"
+	    fields="getSubFields(field)"
+	    flex>
+    </promenade-standard-endpoint-card-command-container>
 
 </span>

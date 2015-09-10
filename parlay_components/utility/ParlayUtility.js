@@ -1,0 +1,16 @@
+var parlay_utility = angular.module('parlay.utility', []);
+
+parlay_utility.factory('ParlayUtility', function () {
+	return {
+		// Converts directive names to snake-case which Angular requires during directive compilation.
+        snake_case: function(name) {
+            return name.replace(/[A-Z]/g, function(letter, pos) {
+                return (pos ? '-' : '') + letter.toLowerCase();
+            });
+        },
+        // Traverses up scope tree looking for the target scope attribute
+        relevantScope: function(currentScope, attribute) {
+		    return currentScope.hasOwnProperty(attribute) ? currentScope : currentScope.hasOwnProperty('$parent') && currentScope.$parent !== null ? relevantScope(currentScope.$parent, attribute) : undefined;
+		}
+	};
+});

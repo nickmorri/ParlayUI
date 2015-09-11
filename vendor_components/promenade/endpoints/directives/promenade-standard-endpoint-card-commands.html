@@ -3,7 +3,12 @@
     
         <form name="commandform" layout="column" ng-submit="send($event)">
             <div layout="row">
-                <promenade-standard-endpoint-card-command-container commandform="commandform" message="message" fields="endpoint.content_fields" flex></promenade-standard-endpoint-card-command-container>
+                <promenade-standard-endpoint-card-command-container
+                	commandform="commandform"
+                	message="message"
+                	fields="endpoint.content_fields"
+                	flex>
+                </promenade-standard-endpoint-card-command-container>
             </div>
             
             <md-button flex type="submit" ng-class="error ? 'md-warn' : 'md-primary'" ng-disabled="commandform.$invalid" aria-label="Sends command to BIT Service object.">

@@ -22,7 +22,7 @@ standard_endpoint_log.controller('PromenadeStandardEndpointCardLogController', [
     var container = ParlayUtility.relevantScope($scope, 'container').container;
 	var directive_name = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
     
-    ParlayPersistence.monitorCollection(directive_name, "filter_text", $scope);
+    ParlayPersistence.monitor(directive_name, "filter_text", $scope);
     
 }]);
 

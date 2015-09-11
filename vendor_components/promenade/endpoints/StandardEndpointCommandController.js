@@ -2,6 +2,8 @@ var standard_endpoint_commands = angular.module('promenade.endpoints.standardend
 
 standard_endpoint_commands.controller('PromenadeStandardEndpointCommandController', ['$scope', '$timeout', 'ScriptLogger', 'ParlayUtility', function ($scope, $timeout, ScriptLogger, ParlayUtility) {
 
+	$scope.message = {};
+
     $scope.error = false;
     $scope.sending = false;
     $scope.status_message = null;
@@ -74,18 +76,33 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
 			        $scope.error = true;
 			        $scope.status_message = response.STATUS_NAME;
 		        });
+		    
+		    // Put the Python equivalent command in the log.
+	        ScriptLogger.logCommand("SendCommand(" + Object.keys(message).map(function (key) {
+		        return typeof message[key] === 'number' ? key + '=' + message[key] : key + "='" + message[key] + "'";
+	        }).join(',') + ')');
         }
         catch (e) {
 	     	$scope.error = true;
 	     	$scope.status_message = e;   
         }
 
-        // Put the Python equivalent command in the log.
-        ScriptLogger.logCommand("SendCommand(" + Object.keys(message).map(function (key) {
-	        return typeof message[key] === 'number' ? key + '=' + message[key] : key + "='" + message[key] + "'";
-        }).join(',') + ')');
-
     };
+    
+    // Watch for new fields to fill with defaults.
+    $scope.$watchCollection("message", function () {
+	    Object.keys($scope.message).filter(function (key) {
+		    return $scope.message[key] !== undefined && $scope.message[key].hasOwnProperty("sub_fields");
+	    }).map(function (key) {
+	        return $scope.message[key].sub_fields;
+	    }).reduce(function (accumulator, current) {
+		    return accumulator.concat(current);
+	    }, []).filter(function (field) {
+	        return field !== undefined && !$scope.message.hasOwnProperty(field.msg_key + '_' + field.input);
+	    }).forEach(function (field) {
+	        $scope.message[field.msg_key + '_' + field.input] = ['NUMBERS', 'STRINGS', 'ARRAY'].indexOf(field.input) > -1 ? [] : field.default;
+	    });
+    });
     
 }]);
 
@@ -111,13 +128,10 @@ standard_endpoint_commands.directive("promenadeStandardEndpointCardCommandContai
         compile: RecursionHelper.compile,
         controller: function ($scope) {
 
-	        // If message doesn't exist yet, we're the top level PromenadeStandardEndpointCardCommandContainer which means we should instantiate it.
-	        if ($scope.message === undefined) $scope.message = {};
-		    
-		    var container = ParlayUtility.relevantScope($scope, 'container').container;
+	        var container = ParlayUtility.relevantScope($scope, 'container').container;
 			var directive_name = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
 		    
-		    ParlayPersistence.monitorCollection(directive_name, "message", $scope);
+		    ParlayPersistence.monitor(directive_name, "message", $scope);
 	        
 	        /**
 		     * Checks if the given field has sub fields available.
@@ -137,25 +151,6 @@ standard_endpoint_commands.directive("promenadeStandardEndpointCardCommandContai
 	        $scope.getSubFields = function (field) {
 		        return $scope.message[field.msg_key + '_' + field.input].sub_fields;
 	        };
-	        
-	        // When fields is created we should first attempt to restore the previous values, if we are unable we will populate with the available default.
-			$scope.$watchCollection('fields', function (fields) {
-				
-				fields = Array.isArray(fields) ? fields : Object.keys(fields).map(function (field) {
-					return fields[field];
-				});
-				
-				fields.filter(function (field) {
-					// Check if we have already instantiated this message field.
-					return !$scope.message.hasOwnProperty(field.msg_key + '_' + field.input);
-				}).forEach(function (field) {
-					// For every field that has not been restored from it's previous state we will attempt to find it's default.
-					if (field.default) $scope.message[field.msg_key + '_' + field.input] = field.default;
-			        else if ($scope.message[field.msg_key + '_' + field.input] === undefined && ['NUMBERS', 'STRINGS', 'ARRAY'].indexOf(field.input) > -1) {
-			            $scope.message[field.msg_key + '_' + field.input] = [];
-			        }
-				});
-			});
             
         }
     };

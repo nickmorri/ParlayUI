@@ -24,35 +24,29 @@ parlay_persistence_helper.factory('ParlayPersistence', ['ParlayStore', function 
 	};
 	
 	Public.monitor = function (directive, attribute, scope) {
-		Private.monitorCommon(directive, attribute, scope, false);
-	};
-	
-	Public.monitorCollection = function (directive, attribute, scope) {
-		Private.monitorCommon(directive, attribute, scope, true);
-	};
-	
-	Private.monitorCommon = function (directive, attribute, scope, collection) {
-		var restored = false;
 		
 		function onChange() {
-			if (!restored) {
-				var previous_value = Private.getAttr(directive, attribute);
-				if (previous_value) find_parent(attribute, find_scope(attribute, scope))[attribute] = previous_value;
-				restored = true;
+			// Once we have been notified that the attribute has appeared we should remove this watcher.
+			initial_watcher();
+			
+			// Attempt to restore a previously saved value.
+			var previous_value = Private.getAttr(directive, attribute);
+			if (previous_value) {
+				find_parent(attribute, find_scope(attribute, scope))[attribute] = previous_value;
 			}
 			
-			if (Private.watchers.hasOwnProperty(attribute)) Private.watchers[attribute]();
-			
-			Private.watchers[attribute] = collection ? scope.$watchCollection(attribute, Private.setAttr(directive, attribute)) : scope.$watch(attribute, Private.setAttr(directive, attribute));
-				
+			// Register our permenant watcher on the attribute.
+			// NOTE: We are using Angular's deep equality $watch here, this may have a performance hit.
+			Private.watchers[attribute] = scope.$watch(attribute, Private.setAttr(directive, attribute), true);
+
+			// When the scope is destroyed we should ensure that we remove our directive from sessionStorage.
 			scope.$on("$destroy", function () {
 				Private.removeDirective(directive)();
-				Private.watchers[attribute]();
 			});
 		}
 		
-		if (collection) scope.$watchCollection(attribute, onChange);
-		else scope.$watch(attribute, onChange);
+		// We setup an initial watcher to wait until the attribute appears on the scope.
+		var initial_watcher = scope.$watch(attribute, onChange);
 	};
 	
 	Private.getAttr = function(directive, attribute) {

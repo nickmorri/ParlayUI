@@ -35,8 +35,7 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
 		    }
 		    
 		    // If type is Object or Array then turn the JSON string into an actual Object.
-            if (field_type === 'OBJECT' || field_type === 'ARRAY') accumulator[param_name] = JSON.parse(message[field]);
-		    else if (angular.isArray(message[field])) accumulator[param_name] = field_type === 'NUMBERS' ? message[field].map(parseFloat) : message[field];
+		    if (angular.isArray(message[field])) accumulator[param_name] = field_type === 'NUMBERS' ? message[field].map(parseFloat) : message[field];
 		    else if (angular.isObject(message[field])) accumulator[param_name] = message[field].value;
             else accumulator[param_name] = message[field];
             

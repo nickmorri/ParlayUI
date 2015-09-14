@@ -2,10 +2,6 @@ var parlay_endpoint = angular.module('parlay.endpoints.endpoint', ['ngMaterial',
 
 parlay_endpoint.factory('ParlayEndpoint', function () {
     
-    function NotImplementedError(method) {
-        console.warn(method + ' is not implemented for ' + this.name);
-    }
-    
     function ParlayEndpoint(data, protocol) {
         
         Object.defineProperty(this, 'name', {
@@ -42,7 +38,7 @@ parlay_endpoint.factory('ParlayEndpoint', function () {
     };
     
     ParlayEndpoint.prototype.matchesQuery = function (query) {
-        NotImplementedError('matchesQuery');
+	    console.warn('matchesQuery is not implemented for ' + this.name);
     };
     
     return ParlayEndpoint;
@@ -54,18 +50,24 @@ parlay_endpoint.directive('parlayEndpointCard', ['$compile', 'ParlayPersistence'
         templateUrl: '../parlay_components/endpoints/directives/parlay-endpoint-card.html',
         link: function (scope, element, attributes) {
 	        
+	        // Grab the endpoint reference from the container for convience of using scope.endpoint.
 	        scope.endpoint = scope.container.ref;
             
             var directive_name = 'parlayEndpointCard.' + scope.endpoint.name.replace(' ', '_') + '_' + scope.container.uid;
             
+            // Using ParlayPersistence we will first attempt to restore these values then we will record them to ParlayStore.
             ParlayPersistence.monitor(directive_name, "$index", scope);
             ParlayPersistence.monitor(directive_name, "active_tab_index", scope);
             
-            function compileToolbar() {
+            /**
+	         * Compiles the toolbar set on the endpoint.
+	         * @param {Array} directives - Array of directive name strings.
+	         */
+            function compileToolbar(directives) {
 	            // Locate toolbar where we are going to insert dynamic directives.
 	            var toolbar = element[0].querySelector('div.md-toolbar-tools');
 	            
-	            scope.endpoint.getDirectives().filter(function (endpoint) {
+	            directives.filter(function (endpoint) {
 	                return endpoint.hasOwnProperty('toolbar');
 	            }).reduce(function (previous, endpoint) {
 	                return previous.concat(endpoint.toolbar.map(function (directive) {
@@ -76,12 +78,16 @@ parlay_endpoint.directive('parlayEndpointCard', ['$compile', 'ParlayPersistence'
 	            });
             }
             
-            function compileTabs() {
+            /**
+	         * Compiles the tabs set on the endpoint.
+		     * @param {Array} directives - Array of directive name strings.
+	         */
+            function compileTabs(directives) {
 	            // Locate tabs where we are going to insert dynamic directives.
 	            var tabs = element[0].querySelector('md-tabs');
 	            
 	            // Append tabs directives.
-	            scope.endpoint.getDirectives().filter(function (endpoint) {
+	            directives.filter(function (endpoint) {
 	                return endpoint.hasOwnProperty('tabs');
 	            }).reduce(function (previous, endpoint) {
 		            return previous.concat(endpoint.tabs.map(function (directive) {
@@ -92,8 +98,10 @@ parlay_endpoint.directive('parlayEndpointCard', ['$compile', 'ParlayPersistence'
 	            });
             }
             
-            compileToolbar();
-	        compileTabs();
+            // Grab the directives from the endpoint and compile them.
+            var directives = scope.endpoint.getDirectives();
+            compileToolbar(directives);
+	        compileTabs(directives);
             
         }
     };

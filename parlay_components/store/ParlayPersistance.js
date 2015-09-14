@@ -4,9 +4,7 @@ parlay_persistence.factory('ParlayPersistence', ['ParlayStore', function (Parlay
 	
 	var Public = {};
 	
-	var Private = {
-		watchers: {}
-	};
+	var Private = {};
 	
 	/**
 	 * Restores then monitors the requested attribute to the from and to the given directive on the scope passed in.
@@ -23,14 +21,11 @@ parlay_persistence.factory('ParlayPersistence', ['ParlayStore', function (Parlay
 			initial_watcher();
 			
 			// Attempt to restore a previously saved value.
-			var previous_value = Private.getAttr(directive, attribute);
-			if (previous_value) {
-				Private.find_parent(attribute, Private.find_scope(attribute, scope))[attribute] = previous_value;
-			}
+			Private.restoreAttr(directive, attribute, scope);
 			
 			// Register our permenant watcher on the attribute.
 			// NOTE: We are using Angular's deep equality $watch here, this may have a performance hit. May want to do some profiling here.
-			Private.watchers[attribute] = scope.$watch(attribute, Private.setAttr(directive, attribute), true);
+			scope.$watch(attribute, Private.setAttr(directive, attribute), true);
 
 			// When the scope is destroyed we should ensure that we remove our directive from sessionStorage.
 			scope.$on("$destroy", function () {
@@ -45,13 +40,13 @@ parlay_persistence.factory('ParlayPersistence', ['ParlayStore', function (Parlay
 	/**
 	 * Given a key that belongs to the given scope search for the parent that belongs to the key.
 	 * Example: 'message.data.speed' returns the data Object on message.
-	 * @param {Object} scope - Angular scope to search for the parent of the key on.
+	 * @param {Object} parent - Object or Angular scope to search for the parent of the key on.
 	 * @param {String} key - Name of a potentially nested attribute whose parent we are looking for.
 	 */
-	Private.find_parent = function(key, scope) {
+	Private.find_parent = function(key, parent) {
 		var split_key = key.split('.');
-		if (split_key.length === 1 && scope.hasOwnProperty(split_key[0])) return scope;
-		else if (split_key.length > 1 && scope.hasOwnProperty(split_key[0])) return Private.find_parent(split_key.slice(1).join('.'), scope[split_key[0]]);
+		if (split_key.length === 1 && parent.hasOwnProperty(split_key[0])) return parent;
+		else if (split_key.length > 1 && parent.hasOwnProperty(split_key[0])) return Private.find_parent(split_key.slice(1).join('.'), parent[split_key[0]]);
 		else return undefined;
 	};
 	
@@ -66,6 +61,14 @@ parlay_persistence.factory('ParlayPersistence', ['ParlayStore', function (Parlay
 		else if (scope.hasOwnProperty(scope_attribute)) return scope;
 		else if (scope.hasOwnProperty("$parent")) return Private.find_scope(key, scope.$parent);
 		else return undefined;
+	};
+	
+	Private.restoreAttr = function (directive, attribute, scope) {
+		var split_key = attribute.split('.');
+		var previous_value = Private.getAttr(directive, attribute);
+		if (previous_value) {
+			Private.find_parent(attribute, Private.find_scope(attribute, scope))[split_key[split_key.length - 1]] = previous_value;
+		}
 	};
 	
 	/**

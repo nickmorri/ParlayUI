@@ -6,18 +6,18 @@
         <label ng-hide="field.input === 'NUMBERS' || field.input === 'STRINGS' || field.input === 'ARRAY'">{{field.label}}</label>
 		
 		<!-- DROPDOWN input type -->
-        <md-select ng-if="field.input === 'DROPDOWN'" name="{{field.msg_key}}" ng-model="message[field.msg_key + '_' + field.input]" ng-required="field.required">
+        <md-select ng-if="field.input === 'DROPDOWN'" name="{{field.msg_key}}" ng-model="wrapper.message[field.msg_key + '_' + field.input]" ng-required="field.required">
             <md-option ng-repeat="option in field.options" ng-value="option">{{option.name}}</md-option>
         </md-select>
         
         <!-- NUMBER input type -->
-        <input ng-if="field.input === 'NUMBER'" name="{{field.msg_key}}" ng-model="message[field.msg_key + '_' + field.input]" type="number" ng-required="field.required">
+        <input ng-if="field.input === 'NUMBER'" name="{{field.msg_key}}" ng-model="wrapper.message[field.msg_key + '_' + field.input]" type="number" ng-required="field.required">
         
         <!-- STRING input type -->
-        <input ng-if="field.input === 'STRING'" name="{{field.msg_key}}" ng-model="message[field.msg_key + '_' + field.input]" type="text" ng-required="field.required">
+        <input ng-if="field.input === 'STRING'" name="{{field.msg_key}}" ng-model="wrapper.message[field.msg_key + '_' + field.input]" type="text" ng-required="field.required">
         
         <!-- NUMBERS or STINGS or ARRAY input type -->
-        <md-chips name="{{field.msg_key}}" ng-model="message[field.msg_key + '_' + field.input]" ng-if="field.input === 'NUMBERS' || field.input === 'STRINGS' || field.input === 'ARRAY'" ng-required="field.required" placeholder="{{field.label}}" secondary-placeholder="{{field.label}}"></md-chips>
+        <md-chips name="{{field.msg_key}}" ng-model="wrapper.message[field.msg_key + '_' + field.input]" ng-if="field.input === 'NUMBERS' || field.input === 'STRINGS' || field.input === 'ARRAY'" ng-required="field.required" placeholder="{{field.label}}" secondary-placeholder="{{field.label}}"></md-chips>
         
         <!-- Displays error message if a field is required or does not properly validate -->
         <div class="errors" ng-messages="commandform[field.msg_key].$error" ng-if="commandform[field.msg_key + '_' + field.input]">
@@ -30,7 +30,7 @@
     <promenade-standard-endpoint-card-command-container 
 	    ng-if="hasSubFields(field)"
 	    commandform="commandform"
-	    message="message"
+	    wrapper="wrapper"
 	    fields="getSubFields(field)"
 	    flex>
     </promenade-standard-endpoint-card-command-container>

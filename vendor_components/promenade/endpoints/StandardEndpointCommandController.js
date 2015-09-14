@@ -2,7 +2,9 @@ var standard_endpoint_commands = angular.module('promenade.endpoints.standardend
 
 standard_endpoint_commands.controller('PromenadeStandardEndpointCommandController', ['$scope', '$timeout', 'ScriptLogger', 'ParlayUtility', function ($scope, $timeout, ScriptLogger, ParlayUtility) {
 
-	$scope.message = {};
+	$scope.wrapper = {
+		message: {}
+	};
 
     $scope.error = false;
     $scope.sending = false;
@@ -45,8 +47,6 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
     }
     
     $scope.send = function (event) {
-	    var message;
-	    
 	    // Push the buffer into the md-chips ng-model
 	    pushChipBuffer(event.target.querySelectorAll('md-chips'));
 	    
@@ -54,7 +54,7 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
         $scope.sending = true;
         
         try {
-	    	message = collectMessage($scope.message);
+	    	var message = collectMessage($scope.wrapper.message);
 	    	$scope.endpoint.sendMessage(message)
 		     	.then(function (response) {
 			     	
@@ -89,17 +89,17 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
     };
     
     // Watch for new fields to fill with defaults.
-    $scope.$watchCollection("message", function () {
-	    Object.keys($scope.message).filter(function (key) {
-		    return $scope.message[key] !== undefined && $scope.message[key].hasOwnProperty("sub_fields");
+    $scope.$watchCollection("wrapper.message", function () {
+	    Object.keys($scope.wrapper.message).filter(function (key) {
+		    return $scope.wrapper.message[key] !== undefined && $scope.wrapper.message[key].hasOwnProperty("sub_fields");
 	    }).map(function (key) {
-	        return $scope.message[key].sub_fields;
+	        return $scope.wrapper.message[key].sub_fields;
 	    }).reduce(function (accumulator, current) {
 		    return accumulator.concat(current);
 	    }, []).filter(function (field) {
-	        return field !== undefined && !$scope.message.hasOwnProperty(field.msg_key + '_' + field.input);
+	        return field !== undefined && !$scope.wrapper.message.hasOwnProperty(field.msg_key + '_' + field.input);
 	    }).forEach(function (field) {
-	        $scope.message[field.msg_key + '_' + field.input] = ['NUMBERS', 'STRINGS', 'ARRAY'].indexOf(field.input) > -1 ? [] : field.default;
+	        $scope.wrapper.message[field.msg_key + '_' + field.input] = ['NUMBERS', 'STRINGS', 'ARRAY'].indexOf(field.input) > -1 ? [] : field.default;
 	    });
     });
     
@@ -119,7 +119,7 @@ standard_endpoint_commands.directive("promenadeStandardEndpointCardCommands", fu
 standard_endpoint_commands.directive("promenadeStandardEndpointCardCommandContainer", ['RecursionHelper', 'ParlayPersistence', 'ParlayUtility', function (RecursionHelper, ParlayPersistence, ParlayUtility) {
     return {
         scope: {
-            message: '=',
+            wrapper: '=',
             fields: '=',
             commandform: '='
         },
@@ -130,7 +130,7 @@ standard_endpoint_commands.directive("promenadeStandardEndpointCardCommandContai
 	        var container = ParlayUtility.relevantScope($scope, 'container').container;
 			var directive_name = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
 		    
-		    ParlayPersistence.monitor(directive_name, "message", $scope);
+		    ParlayPersistence.monitor(directive_name, "wrapper.message", $scope);
 	        
 	        /**
 		     * Checks if the given field has sub fields available.
@@ -138,7 +138,7 @@ standard_endpoint_commands.directive("promenadeStandardEndpointCardCommandContai
 		     * @returns {Boolean} - true if the target field has sub fields available, false otherwise.
 		     */
 	        $scope.hasSubFields = function (field) {
-		        var message_field = $scope.message[field.msg_key + '_' + field.input];
+		        var message_field = $scope.wrapper.message[field.msg_key + '_' + field.input];
 		        return message_field !== undefined && message_field !== null && message_field.sub_fields !== undefined;
 	        };
 	        
@@ -148,7 +148,7 @@ standard_endpoint_commands.directive("promenadeStandardEndpointCardCommandContai
 		     * @returns {Object|Array} - the fields sub fields, may be Object or Array.
 		     */
 	        $scope.getSubFields = function (field) {
-		        return $scope.message[field.msg_key + '_' + field.input].sub_fields;
+		        return $scope.wrapper.message[field.msg_key + '_' + field.input].sub_fields;
 	        };
             
         }

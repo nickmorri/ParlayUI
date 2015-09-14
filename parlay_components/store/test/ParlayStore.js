@@ -5,7 +5,7 @@
     
         beforeEach(module('parlay.store'));
         
-        xdescribe('ParlayStore', function () {
+        describe('ParlayStore', function () {
             var ParlayStore;
 
             beforeEach(inject(function(_ParlayStore_) {
@@ -17,7 +17,7 @@
                 
                 it('constructs new object for distinct prefix', function () {
 	                /*jshint newcap: false */
-	                expect(ParlayStore('test1')).not().toBe(ParlayStore('test2'));
+	                expect(ParlayStore('test1')).not.toBe(ParlayStore('test2'));
                 });
                 
                 it('retrieves the same instance for same prefix', function () {

@@ -2,6 +2,7 @@ var standard_endpoint_commands = angular.module('promenade.endpoints.standardend
 
 standard_endpoint_commands.controller('PromenadeStandardEndpointCommandController', ['$scope', '$timeout', 'ScriptLogger', 'ParlayUtility', function ($scope, $timeout, ScriptLogger, ParlayUtility) {
 
+	// We are wrapping message in another object due to the way Angular handles nested scopes. Reference "Angular Dot Rule".
 	$scope.wrapper = {
 		message: {}
 	};
@@ -12,6 +13,10 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
     
     var sending_timeout = null;
     
+    /**
+	 * If the buffer is valid and available we should force the md-chips controller to push it to the ng-model.
+	 * @param {NodeList} chipElements - List of HTMLElements mapping to each md-chip.
+	 */
     function pushChipBuffer (chipElements) {
 	    if (chipElements.length) {
 		    var ctrl = angular.element(chipElements[0].querySelector('input')).scope().$mdChipsCtrl;
@@ -23,6 +28,11 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
 		}
     }
     
+    /**
+	 * Collects and formats the fields available on the given message object.
+	 * @param {Object} message - message container from the scope.
+	 * @returns - parsed and formatted StandardEndpoint data.
+	 */    
     function collectMessage (message) {
         return Object.keys(message).reduce(function (accumulator, field) {
 	        var param_name, field_type;
@@ -49,6 +59,7 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
     }
     
     $scope.send = function (event) {
+	    
 	    // Push the buffer into the md-chips ng-model
 	    pushChipBuffer(event.target.querySelectorAll('md-chips'));
 	    
@@ -62,6 +73,7 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
 			     	
 			     	// Use the response to display feedback on the send button.
 			        $scope.status_message = response.STATUS_NAME;
+			        
 			        // If we still have an outstanding timeout we should cancel it to prevent the send button from flickering.
 		            if (sending_timeout !== null) $timeout.cancel(sending_timeout);
 		            
@@ -93,14 +105,18 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
     // Watch for new fields to fill with defaults.
     $scope.$watchCollection("wrapper.message", function () {
 	    Object.keys($scope.wrapper.message).filter(function (key) {
+		    // Build an Array with fields that have sub fields.
 		    return $scope.wrapper.message[key] !== undefined && $scope.wrapper.message[key].hasOwnProperty("sub_fields");
 	    }).map(function (key) {
 	        return $scope.wrapper.message[key].sub_fields;
 	    }).reduce(function (accumulator, current) {
+		    // Join all the sub_fields into a larger Array.
 		    return accumulator.concat(current);
 	    }, []).filter(function (field) {
+		    // Check if the sub field already has a message field entry.
 	        return field !== undefined && !$scope.wrapper.message.hasOwnProperty(field.msg_key + '_' + field.input);
 	    }).forEach(function (field) {
+		    // Fill in the default value in the message Object.
 	        $scope.wrapper.message[field.msg_key + '_' + field.input] = ['NUMBERS', 'STRINGS', 'ARRAY'].indexOf(field.input) > -1 ? [] : field.default;
 	    });
     });

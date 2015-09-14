@@ -63,6 +63,12 @@ parlay_persistence.factory('ParlayPersistence', ['ParlayStore', function (Parlay
 		else return undefined;
 	};
 	
+	/**
+     * Handles restoring the directive's attribute on the given scope from ParlayStore.
+     * @param {String} directive - Name of the directive we are interested in.
+	 * @param {String} attribute - Name of the attribute we are interested in.
+	 * @param {Object} scope - Angular $scope object relevant to the attributes to restore.
+     */
 	Private.restoreAttr = function (directive, attribute, scope) {
 		var split_key = attribute.split('.');
 		var previous_value = Private.getAttr(directive, attribute);

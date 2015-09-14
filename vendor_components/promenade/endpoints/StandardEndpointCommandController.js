@@ -16,8 +16,10 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
 	    if (chipElements.length) {
 		    var ctrl = angular.element(chipElements[0].querySelector('input')).scope().$mdChipsCtrl;
 		    var buffer = ctrl.getChipBuffer();
-			ctrl.appendChip(buffer);
-			ctrl.resetChipBuffer();
+		    if (buffer !== "") {
+				ctrl.appendChip(buffer);
+				ctrl.resetChipBuffer();    
+		    }			
 		}
     }
     

@@ -1,6 +1,6 @@
-var parlay_persistence_helper = angular.module('parlay.store.persistence', ['parlay.store']);
+var parlay_persistence = angular.module('parlay.store.persistence', ['parlay.store']);
 
-parlay_persistence_helper.factory('ParlayPersistence', ['ParlayStore', function (ParlayStore) {
+parlay_persistence.factory('ParlayPersistence', ['ParlayStore', function (ParlayStore) {
 	
 	var Public = {};
 	
@@ -8,6 +8,14 @@ parlay_persistence_helper.factory('ParlayPersistence', ['ParlayStore', function 
 		watchers: {}
 	};
 	
+	/**
+	 * Restores then monitors the requested attribute to the from and to the given directive on the scope passed in.
+	 * @example
+	 * // ParlayPersistence.monitor('parlayEndpointCard.motor5', 'voltage', $scope); 
+	 * @param {String} directive - Name of the directive we are interested in.
+	 * @param {String} attribute - Name of the attribute we are interested in.
+	 * @param {Object} scope - Angular $scope object relevant to the attributes to persist.
+	 */
 	Public.monitor = function (directive, attribute, scope) {
 		
 		function onChange() {

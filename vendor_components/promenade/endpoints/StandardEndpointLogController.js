@@ -1,4 +1,4 @@
-var standard_endpoint_log = angular.module('promenade.endpoints.standardendpoint.log', ['parlay.utility', 'parlay.store.persistence_helper']);
+var standard_endpoint_log = angular.module('promenade.endpoints.standardendpoint.log', ['parlay.utility', 'parlay.store.persistence']);
 
 standard_endpoint_log.controller('PromenadeStandardEndpointCardLogController', ['$scope', 'ParlayPersistence', 'ParlayUtility', function ($scope, ParlayPersistence, ParlayUtility) {
     

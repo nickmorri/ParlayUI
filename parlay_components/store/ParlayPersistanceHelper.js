@@ -1,4 +1,4 @@
-var parlay_persistence_helper = angular.module('parlay.store.persistence_helper', ['parlay.store']);
+var parlay_persistence_helper = angular.module('parlay.store.persistence', ['parlay.store']);
 
 parlay_persistence_helper.factory('ParlayPersistence', ['ParlayStore', function (ParlayStore) {
 	

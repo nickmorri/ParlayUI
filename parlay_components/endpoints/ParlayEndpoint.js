@@ -1,4 +1,4 @@
-var parlay_endpoint = angular.module('parlay.endpoints.endpoint', ['ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main', 'parlay.store.persistence_helper', 'parlay.utility']);
+var parlay_endpoint = angular.module('parlay.endpoints.endpoint', ['ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main', 'parlay.store.persistence', 'parlay.utility']);
 
 parlay_endpoint.factory('ParlayEndpoint', function () {
     

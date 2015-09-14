@@ -5,8 +5,8 @@ parlay_store.factory('ParlayStore', ['ParlayStoreService', '$window', function (
 	var active_instances = {};
 	
 	function getInstance(prefix) {
-		if (active_instances.hasOwnProperty(prefix)) return active_instances[prefix];
-		else return new ParlayStoreService(prefix);
+		if (!active_instances.hasOwnProperty(prefix)) active_instances[prefix] = new ParlayStoreService(prefix);
+		return active_instances[prefix];
 	}
 	
 	$window.onbeforeunload = function () {

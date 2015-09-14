@@ -9,10 +9,12 @@ parlay_store.factory('ParlayStore', ['ParlayStoreService', '$window', function (
 		return active_instances[prefix];
 	}
 	
-	$window.onbeforeunload = function () {
+	function autoSave() {
 		var store = getInstance('endpoints');
 		if (store.length()) store.packItem('AutoSave', true);
-	};
+	}
+	
+	$window.onbeforeunload = autoSave;
 	
 	return function (prefix) {
 		return getInstance(prefix);

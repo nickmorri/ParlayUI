@@ -17,15 +17,18 @@
             
             it("restores attributes", function () {
 	            
+	            /*jshint newcap: false */
 	            var store = ParlayStore("endpoints");
 	            
 	            var directive_name = "parlayEndpoint";
 	            
+	            /*jshint newcap: false */
 	            ParlayStore("endpoints").set(directive_name, "demo_data", {
 		            velocity: 20,
 		            acceleration: 5
 	            });
 	            
+	            /*jshint newcap: false */
 	            expect(ParlayStore("endpoints").get(directive_name, "demo_data")).toEqual({
 		            velocity: 20,
 		            acceleration: 5
@@ -37,7 +40,8 @@
 		            velocity: undefined,
 		            acceleration: undefined
 	            };
-	            	            
+	            	 
+	           	// Call digest to ensure that the $watch'ers in ParlayPersistence.monitor are triggered by the scope data change.           
 	            $scope.$digest();
 	            
 	            expect($scope.demo_data).toEqual({
@@ -49,6 +53,7 @@
             
             it("persists attributes", function () {
 	            
+	            /*jshint newcap: false */
 	            var store = ParlayStore("endpoints");
 	            
 	            var directive_name = "parlayEndpoint";
@@ -60,15 +65,18 @@
 		            acceleration: undefined
 	            };
 	            
+	            // Call digest to ensure that the $watch'ers in ParlayPersistence.monitor are triggered by the scope data change.
 	            $scope.$digest();
 	            
 	            $scope.demo_data = {
 		            velocity: 100,
 		            acceleration: 200
 	            };
-	            	            
+	            
+	            // Call digest to ensure that the $watch'ers in ParlayPersistence.monitor are triggered by the scope data change.	            
 				$scope.$digest();	            
 	            
+	            /*jshint newcap: false */
 	            expect(ParlayStore("endpoints").get(directive_name, "demo_data")).toEqual({
 		            velocity: 100,
 		            acceleration: 200

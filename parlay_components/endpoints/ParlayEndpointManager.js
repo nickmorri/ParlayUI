@@ -98,8 +98,12 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ParlayPro
 	 */
     Public.duplicateEndpoint = function (index, uid) {
 	    var container = Private.active_endpoints[index];
-	    var newUid = uid + Math.floor(Math.random() * 1500);
-	    ParlayStore('endpoints').duplicate('parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid, newUid);
+	    var newUid = container.uid + Math.floor(Math.random() * 1500);
+	    
+	    var old_directive = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
+	    var new_directive = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + newUid;
+	    
+	    ParlayStore('endpoints').duplicate(old_directive, new_directive);
 	    Public.activateEndpoint(container.ref, newUid);
     };
     

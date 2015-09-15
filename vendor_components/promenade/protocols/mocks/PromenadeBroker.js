@@ -55,6 +55,9 @@ angular.module('mock.promenade.broker', []).factory('PromenadeBroker', ['$q', fu
         PromenadeBroker.onDiscoveryCallbacks.forEach(function (callback) {
             callback({discovery: [sample_discovery]});
         });
+        return $q(function (resolve, reject) {
+	        resolve({discovery: sample_discovery});
+        });
     };
     
     PromenadeBroker.onDiscovery = function (callback) {

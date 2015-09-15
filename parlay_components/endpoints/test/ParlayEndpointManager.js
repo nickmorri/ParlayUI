@@ -8,11 +8,12 @@
         beforeEach(module('mock.parlay.protocols.manager'));
         
         describe('ParlayEndpointManager', function () {
-            var scope, ParlayEndpointManager, PromenadeBroker;
+            var scope, ParlayEndpointManager, PromenadeBroker, $rootScope;
             
-            beforeEach(inject(function (_ParlayEndpointManager_, _PromenadeBroker_) {
+            beforeEach(inject(function (_ParlayEndpointManager_, _PromenadeBroker_, _$rootScope_) {
                 PromenadeBroker = _PromenadeBroker_;
                 ParlayEndpointManager = _ParlayEndpointManager_;
+                $rootScope = _$rootScope_;
             }));
             
             beforeEach(function () {
@@ -83,9 +84,11 @@
 		            ParlayEndpointManager.activateEndpoint({});
 		            ParlayEndpointManager.activateEndpoint({});
 		            expect(ParlayEndpointManager.getActiveEndpointCount()).toBe(2);
+		            
 		            var initial_endpoint_set_1 = angular.copy(ParlayEndpointManager.getActiveEndpoints());
 		            var initial_endpoint_set_2 = angular.copy(ParlayEndpointManager.getActiveEndpoints());
 		            expect(angular.equals(initial_endpoint_set_1, initial_endpoint_set_2)).toBeTruthy();
+		            
 		            ParlayEndpointManager.reorder(0, 1);
 		            var post_reorder_endpoint_set = angular.copy(ParlayEndpointManager.getActiveEndpoints());
 		            expect(angular.equals(post_reorder_endpoint_set, initial_endpoint_set_2)).toBeFalsy();
@@ -135,10 +138,20 @@
             
             describe('PromenadeBroker interactions', function () {
 
-                it('requestDiscovery', function () {
-                    spyOn(PromenadeBroker, 'requestDiscovery');
-                    ParlayEndpointManager.requestDiscovery();
-                    expect(PromenadeBroker.requestDiscovery).toHaveBeenCalledWith(true);
+				it("has discovered", function (done) {
+					expect(ParlayEndpointManager.hasDiscovered()).toBeFalsy();
+					ParlayEndpointManager.requestDiscovery().then(function () {
+						expect(ParlayEndpointManager.hasDiscovered()).toBeTruthy();	
+						done();
+					});
+					$rootScope.$digest();
+				});
+
+                it('requestDiscovery', function (done) {
+                    ParlayEndpointManager.requestDiscovery().then(function (response) {
+	                    done();
+                    });
+                    $rootScope.$digest();
                 });
                 
             });

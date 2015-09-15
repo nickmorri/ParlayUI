@@ -3,6 +3,7 @@ var endpoint_manager = angular.module('parlay.endpoints.manager', ['parlay.proto
 endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ParlayProtocolManager', 'ParlayNotification', 'ParlayStore', '$window', function (PromenadeBroker, ParlayProtocolManager, ParlayNotification, ParlayStore, $window) {
     
     var Private = {
+	    has_discovered: false,
 	    active_endpoints: []
     };
     
@@ -50,11 +51,22 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ParlayPro
     };
     
     /**
+	 * Check whether any discovery request has been made.
+	 * @returns {Boolean} - True if we have successfully completed a discovery, false otherwise.
+	 */
+    Public.hasDiscovered = function () {
+	    return Private.has_discovered;
+    };
+    
+    /**
 	 * Requests discovery from PromenadeBroker.
 	 * @returns {$q.defer.promise} Resolved when a response is received from the Broker.
 	 */
     Public.requestDiscovery = function () {
-        return PromenadeBroker.requestDiscovery(true);
+        return PromenadeBroker.requestDiscovery(true).then(function(response) {
+	        Private.has_discovered = true;
+	        return response;
+        });
     };
     
     /**

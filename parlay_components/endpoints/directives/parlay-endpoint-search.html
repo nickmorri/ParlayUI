@@ -13,6 +13,9 @@
         <md-item-template>
             <span md-highlight-text="search_text" mg-hightlight-flags="^i">{{item.name}}</span>
         </md-item-template>
+        <md-not-found>
+			No matches found. <span ng-hide="hasDiscovered()">Please request discovery and try again.</span>
+		</md-not-found>
     </md-autocomplete>
      
     <span flex ng-hide="searching"></span>

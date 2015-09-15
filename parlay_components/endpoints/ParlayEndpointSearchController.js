@@ -40,6 +40,11 @@ endpoint_search.controller('ParlayEndpointSearchController', ['$scope', 'ParlayE
             return endpoint.matchesQuery(lowercaseQuery);
         };
     };
+    
+    $scope.hasDiscovered = function () {
+	    return ParlayEndpointManager.hasDiscovered();
+    };
+    
 }]);
 
 /* istanbul ignore next */

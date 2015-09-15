@@ -150,7 +150,7 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ParlayPro
 	};
 	
 	Public.autoSave = function() {
-		ParlayStore("endpoints").packItem('AutoSave', true);
+		if (Public.hasActiveEndpoints()) ParlayStore("endpoints").packItem('AutoSave', true);
 	};
 	
 	$window.onbeforeunload = Public.autoSave;

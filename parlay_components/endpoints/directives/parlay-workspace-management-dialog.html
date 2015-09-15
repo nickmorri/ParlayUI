@@ -11,6 +11,7 @@
 	</md-toolbar>
 	
 	<md-dialog-content>
+	
 		<md-list>
 		
 			<md-list-item class="md-2-line" layout-gt-md="row" layout="column">
@@ -19,21 +20,23 @@
             	
             	<div class="md-list-item-text">
                     <h3>Current Workspace</h3>
-                    <h4>{{currentWorkspaceEndpointCount()}} endpoint<span ng-hide="currentWorkspaceEndpointCount() === 1">s</span></h4>
+                    <h4 ng-hide="currentWorkspaceEndpointCount()">empty</h4>
+                    <h4 ng-show="currentWorkspaceEndpointCount()">{{currentWorkspaceEndpointCount()}} endpoint<span ng-hide="currentWorkspaceEndpointCount() === 1">s</span></h4>
                 </div>
                 
-                <md-button class="md-primary" ng-click="saveCurrentWorkspace()" aria-label="Save workspace">
+                <md-button ng-show="currentWorkspaceEndpointCount()" class="md-primary" ng-click="saveCurrentWorkspace()" aria-label="Save workspace">
 		            Save As
 		        </md-button>
 		        
-		        <md-button class="md-warn" ng-click="clearCurrentWorkspace()" aria-label="Clear workspace">
+		        <md-button ng-show="currentWorkspaceEndpointCount()" class="md-warn" ng-click="clearCurrentWorkspace()" aria-label="Clear workspace">
 		            Clear
 		        </md-button>
             
             </md-list-item>
 		
 			<md-divider></md-divider>
-			<md-subheader class="md-no-sticky">Saved workspaces</md-subheader>
+			
+			<md-subheader class="md-primary">Saved workspaces</md-subheader>
 			
 			<md-list-item class="md-3-line" layout-gt-md="row" layout="column" ng-repeat="workspace in getSavedWorkspaces() | orderBy:'-timestamp'">
                 
@@ -42,24 +45,18 @@
                 <div class="md-list-item-text" ng-class="{'md-offset': $index !== 0}">
                     <h3>{{workspace.name}}</h3>
                     <h4>{{workspace.endpoint_count}} endpoint<span ng-hide="workspace.endpoint_count === 1">s</span></h4>
-					<p>Saved <span am-time-ago="workspace.timestamp"></span></p>
+					<p am-time-ago="workspace.timestamp"></p>
                 </div>
                 
-                <md-button class="md-primary" ng-click="loadWorkspace(workspace)" aria-label="Load workspace">
-		            Load
-		        </md-button>
+                <md-button class="md-primary" ng-click="loadWorkspace(workspace)" aria-label="Load workspace">Load</md-button>
                 
-                <md-button class="md-primary" ng-click="saveWorkspace(workspace)" aria-label="Save workspace">
-		            Save
-		        </md-button>
+                <md-button class="md-primary" ng-click="saveWorkspace(workspace)" aria-label="Save workspace">Save</md-button>
 		        
-		        <md-button class="md-warn" ng-click="deleteWorkspace(workspace)" aria-label="Delete workspace">
-		            Delete
-		        </md-button>
+		        <md-button class="md-warn" ng-click="deleteWorkspace(workspace)" aria-label="Delete workspace">Delete</md-button>
 		        
             </md-list-item>
 			
 		</md-list>
+		
 	</md-dialog-content>
-
 </md-dialog>

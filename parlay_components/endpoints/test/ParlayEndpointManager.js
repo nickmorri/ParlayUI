@@ -129,6 +129,7 @@
 	            
 	            it("AutoSaves stores values", function () {
 		    		expect(localStorage.length).toBe(0);
+		    		ParlayEndpointManager.activateEndpoint({}, 100);
 		    		/*jshint newcap: false */
 		    		ParlayEndpointManager.autoSave();
 		    		expect(localStorage.length).toBe(1);

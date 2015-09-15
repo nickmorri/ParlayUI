@@ -39,8 +39,15 @@ parlay_store.factory('ParlayStoreService', function () {
 		sessionStorage.removeItem(this.prefix + '-' + directive);
 	};
 	
-	ParlayStore.prototype.duplicate = function (old_directive, new_directive) {
-		this.setDirectiveContainer(new_directive, this.getDirectiveContainer(old_directive));
+	ParlayStore.prototype.duplicate = function (old_directive, new_directive) {		
+		var container = this.getDirectiveContainer(old_directive);
+		
+		// We should remove and Angular $ or $$ variables since they are generated.
+		for (var key in container) {
+			if (key.indexOf('$') !== -1) delete container[key];
+		}
+		
+		this.setDirectiveContainer(new_directive, container);
 	};
 	
 	ParlayStore.prototype.clear = function () {
@@ -73,10 +80,6 @@ parlay_store.factory('ParlayStoreService', function () {
 	};
 	
 	ParlayStore.prototype.setDirectiveContainer = function (directive, container) {
-		// We should remove and Angular $ or $$ variables since they are generated.
-		for (var key in container) {
-			if (key.indexOf('$') !== -1) delete container[key];
-		}
 		sessionStorage.setItem(this.prefix + '-' + directive, JSON.stringify(container));
 	};
 	

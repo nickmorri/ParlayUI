@@ -1,5 +1,36 @@
 var standard_endpoint = angular.module('promenade.endpoints.standardendpoint', ['parlay.endpoints', 'promenade.endpoints.standardendpoint.commands', 'promenade.endpoints.standardendpoint.log']);
 
+function parseField(field) {
+	            
+    var fieldObject = {
+        msg_key: field.MSG_KEY,
+        input: field.INPUT,
+        label: field.LABEL !== undefined ? field.LABEL : field.MSG_KEY,
+        required: field.REQUIRED !== undefined ? field.REQUIRED : false,
+        default: field.DEFAULT !== undefined ? field.DEFAULT : undefined,
+        hidden: field.HIDDEN !== undefined ? field.HIDDEN : false
+    };
+    
+    // If a field has dropdown options we should process them.
+    if (field.DROPDOWN_OPTIONS !== undefined) {
+        
+        fieldObject.options = field.DROPDOWN_OPTIONS.map(function (option, index) {
+            return typeof option === "string" ? {
+                name: option,
+                value: option,
+                sub_fields: undefined
+            } : {
+              	name: option[0],
+              	value: option[1],
+              	sub_fields: field.DROPDOWN_SUB_FIELDS !== undefined ? field.DROPDOWN_SUB_FIELDS[index].map(parseField) : undefined
+            };
+        });
+        
+    }
+    
+    return fieldObject;
+}
+
 standard_endpoint.factory('PromenadeStandardEndpoint', ['ParlayEndpoint', function (ParlayEndpoint) {
     
     function PromenadeStandardEndpoint(data, protocol) {
@@ -16,41 +47,10 @@ standard_endpoint.factory('PromenadeStandardEndpoint', ['ParlayEndpoint', functi
         this.type = 'StandardEndpoint';
         
         this.directives.toolbar.push('promenadeStandardEndpointCardToolbar');
-        this.directives.tabs.push('promenadeStandardEndpointCardLog', 'promenadeStandardEndpointCardCommands');
+        this.directives.tabs.push('promenadeStandardEndpointCardCommands', 'promenadeStandardEndpointCardLog');
           
         if (data.CONTENT_FIELDS) {
         
-            var parseField = (function parseField(field) {
-	            
-                var fieldObject = {
-                    msg_key: field.MSG_KEY,
-                    input: field.INPUT,
-                    label: field.LABEL !== undefined ? field.LABEL : field.MSG_KEY,
-                    required: field.REQUIRED !== undefined ? field.REQUIRED : false,
-                    default: field.DEFAULT !== undefined ? field.DEFAULT : undefined,
-                    hidden: field.HIDDEN !== undefined ? field.HIDDEN : false
-                };
-                
-                // If a field has dropdown options we should process them.
-                if (field.DROPDOWN_OPTIONS !== undefined) {
-                    
-                    fieldObject.options = field.DROPDOWN_OPTIONS.map(function (option, index) {
-	                    return typeof option === "string" ? {
-		                    name: option,
-		                    value: option,
-		                    sub_fields: undefined
-	                    } : {
-		                  	name: option[0],
-		                  	value: option[1],
-		                  	sub_fields: field.DROPDOWN_SUB_FIELDS !== undefined ? field.DROPDOWN_SUB_FIELDS[index].map(parseField) : undefined
-	                    };
-                    });
-                    
-                }
-                
-                return fieldObject;
-            });
-            
             Object.defineProperty(this, 'content_fields', {
                 value: data.CONTENT_FIELDS.reduce(function (accumulator, field) {
                     var parsed_field = parseField(field);
@@ -102,7 +102,7 @@ standard_endpoint.factory('PromenadeStandardEndpoint', ['ParlayEndpoint', functi
     
     PromenadeStandardEndpoint.prototype.matchesQuery = function (query) {
         var lowercase_query = angular.lowercase(query);
-        return this.matchesType(lowercase_query) || this.matchesId(lowercase_query) || this.matchesName(lowercase_query);
+        return this.matchesName(lowercase_query) || this.matchesType(lowercase_query) || this.matchesId(lowercase_query);
     };
     
     PromenadeStandardEndpoint.prototype.getMessageId = function () {

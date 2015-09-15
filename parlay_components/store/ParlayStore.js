@@ -1,6 +1,6 @@
 var parlay_store = angular.module('parlay.store', []);
 
-parlay_store.factory('ParlayStore', ['ParlayStoreService', '$window', function (ParlayStoreService, $window) {
+parlay_store.factory('ParlayStore', ['ParlayStoreService', function (ParlayStoreService) {
 	
 	var active_instances = {};
 	
@@ -8,13 +8,6 @@ parlay_store.factory('ParlayStore', ['ParlayStoreService', '$window', function (
 		if (!active_instances.hasOwnProperty(prefix)) active_instances[prefix] = new ParlayStoreService(prefix);
 		return active_instances[prefix];
 	}
-	
-	function autoSave() {
-		var store = getInstance('endpoints');
-		if (store.length()) store.packItem('AutoSave', true);
-	}
-	
-	$window.onbeforeunload = autoSave;
 	
 	return function (prefix) {
 		return getInstance(prefix);

@@ -15,6 +15,12 @@
                 ParlayEndpointManager = _ParlayEndpointManager_;
             }));
             
+            beforeEach(function () {
+	            // Clear localStorage and sessionStorage in case anything persisted from previous test cases.
+		        localStorage.clear();
+		        sessionStorage.clear();
+            });
+            
             describe('accessors', function () {
                 
                 it('get active endpoints', function () {
@@ -116,6 +122,13 @@
 		            expect(ParlayEndpointManager.hasActiveEndpoints()).toBeFalsy();
 		            ParlayEndpointManager.loadWorkspace(mockWorkspace);
 		            expect(ParlayEndpointManager.hasActiveEndpoints()).toBeFalsy();
+	            });
+	            
+	            it("AutoSaves stores values", function () {
+		    		expect(localStorage.length).toBe(0);
+		    		/*jshint newcap: false */
+		    		ParlayEndpointManager.autoSave();
+		    		expect(localStorage.length).toBe(1);
 	            });
 	            
             });

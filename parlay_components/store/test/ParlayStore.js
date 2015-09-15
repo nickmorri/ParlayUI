@@ -27,13 +27,6 @@
                 
     		});
     		
-    		xit('reacts to onbeforeunload', function () {
-	    		expect(localStorage.length).toBe(0);
-	    		ParlayStore("endpoints").set("test", "attr", 0);
-	    		angular.element(window).triggerHandler("onbeforeunload");
-	    		expect(localStorage.length).not.toBe(0);
-    		});
-    		
         });
         
         describe('ParlayStoreService', function () {

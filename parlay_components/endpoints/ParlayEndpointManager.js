@@ -1,6 +1,6 @@
 var endpoint_manager = angular.module('parlay.endpoints.manager', ['parlay.protocols.manager', 'promenade.broker', 'parlay.store', 'parlay.endpoints.workspaces']);
 
-endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ParlayProtocolManager', 'ParlayNotification', 'ParlayStore', function (PromenadeBroker, ParlayProtocolManager, ParlayNotification, ParlayStore) {
+endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ParlayProtocolManager', 'ParlayNotification', 'ParlayStore', '$window', function (PromenadeBroker, ParlayProtocolManager, ParlayNotification, ParlayStore, $window) {
     
     var Private = {
 	    active_endpoints: []
@@ -136,6 +136,12 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ParlayPro
 			'Unable to restore workspace from ' + workspace.name + '. Ensure endpoints have been discovered.'});
 		
 	};
+	
+	Public.autoSave = function() {
+		ParlayStore("endpoints").packItem('AutoSave', true);
+	};
+	
+	$window.onbeforeunload = Public.autoSave;
 	
 	return Public;
 }]);

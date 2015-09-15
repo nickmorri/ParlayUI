@@ -49,7 +49,10 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
 		    }
 		    
 		    // If type is Object or Array then turn the JSON string into an actual Object.
-		    if (angular.isArray(message[field])) accumulator[param_name] = field_type === 'NUMBERS' ? message[field].map(parseFloat) : message[field];
+		    if (field_type === "ARRAY") accumulator[param_name] = message[field].map(function (chip) { 
+			    return !Number.isNaN(chip.value) ? parseInt(chip.value) : chip.value;
+			});
+		    else if (field_type === "NUMBERS") accumulator[param_name] = message[field].map(parseFloat);
 		    else if (angular.isObject(message[field])) accumulator[param_name] = message[field].value;
             else accumulator[param_name] = message[field];
             
@@ -149,6 +152,10 @@ standard_endpoint_commands.directive("promenadeStandardEndpointCardCommandContai
 			var directive_name = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
 		    
 		    ParlayPersistence.monitor(directive_name, "wrapper.message", $scope);
+	        
+	        $scope.prepChip = function ($chip) {
+			    return {value:$chip};
+		    };
 	        
 	        /**
 		     * Checks if the given field has sub fields available.

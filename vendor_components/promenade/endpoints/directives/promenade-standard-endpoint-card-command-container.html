@@ -6,7 +6,7 @@
         <label ng-hide="field.input === 'NUMBERS' || field.input === 'STRINGS' || field.input === 'ARRAY'">{{::field.label}}</label>
 		
 		<!-- DROPDOWN input type -->
-        <md-select ng-if="field.input === 'DROPDOWN'" name="{{field.msg_key}}" ng-model="wrapper.message[field.msg_key + '_' + field.input]" ng-required="field.required">
+        <md-select ng-if="field.input === 'DROPDOWN'" name="{{field.msg_key}}" ng-model="wrapper.message[field.msg_key + '_' + field.input]" ng-model-options="{trackBy: '$value.value'}" ng-required="field.required">
             <md-option ng-repeat="option in field.options" ng-value="option">{{::option.name}}</md-option>
         </md-select>
         

@@ -1,6 +1,6 @@
-var configuration_controller = angular.module('parlay.protocols.configuration_controller', ['parlay.protocols.manager', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main', 'parlay.notification']);
+var configuration_controller = angular.module('parlay.protocols.configuration_controller', ['parlay.protocols.manager', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main']);
 
-configuration_controller.controller('ParlayProtocolConfigurationController', ['$scope', '$mdDialog', 'ParlayProtocolManager', 'ParlayNotification', function ($scope, $mdDialog, ParlayProtocolManager, ParlayNotification) {
+configuration_controller.controller('ParlayProtocolConfigurationController', ['$scope', '$mdDialog', 'ParlayProtocolManager', function ($scope, $mdDialog, ParlayProtocolManager) {
     
     $scope.selected_protocol = null;
     $scope.connecting = false;
@@ -57,21 +57,12 @@ configuration_controller.controller('ParlayProtocolConfigurationController', ['$
         ParlayProtocolManager.openProtocol({
             name: $scope.selected_protocol.name,
             parameters: Object.keys($scope.selected_protocol.parameters).reduce(function (param_obj, key) {
-                            param_obj[key] = $scope.selected_protocol.parameters[key].value;
-                            return param_obj;
-                        }, {})
+                param_obj[key] = $scope.selected_protocol.parameters[key].value;
+                return param_obj;
+            }, {})
         }).then(function (response) {
-            /* istanbul ignore next */
-            ParlayNotification.show({
-                content: 'Connected to ' + response.name + '.',
-                action: {
-                    text: 'Discover',
-                    callback: function () {
-                        ParlayProtocolManager.requestDiscovery(true);
-                    }
-                }
-            });
             $mdDialog.hide(response);
+            return response;
         }).catch(function (response) {
             $scope.connecting = false;
             $scope.error = true;

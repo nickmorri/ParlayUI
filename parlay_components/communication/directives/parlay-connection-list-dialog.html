@@ -10,6 +10,8 @@
             </div>
         </md-toolbar>
         
+        <md-progress-linear ng-show="connecting" md-mode="indeterminate"></md-progress-linear>
+        
         <md-dialog-content>
             <md-list>
                 
@@ -27,9 +29,9 @@
                 
                 <md-divider ng-if="isBrokerConnected()"></md-divider>
                 
-                <md-subheader ng-if="isBrokerConnected()" class="md-no-sticky">Protocols</md-subheader>
+                <md-subheader ng-if="isBrokerConnected() && hasOpenProtocols()" class="md-no-sticky">Connected Protocols</md-subheader>
                 
-                <md-list-item ng-if="isBrokerConnected()" class="md-2-line" layout-gt-md="row" layout="column" ng-repeat="protocol in getOpenProtocols()">
+                <md-list-item ng-if="isBrokerConnected() && hasOpenProtocols()" class="md-2-line" layout-gt-md="row" layout="column" ng-repeat="protocol in getOpenProtocols()">
                     <md-icon hide-sm hide-md ng-if="$index === 0"><ng-md-icon icon="settings_ethernet"></ng-md-icon></md-icon>
                     <div class="md-list-item-text" ng-class="{'md-offset': $index !== 0}">
                         <h3>{{protocol.getType()}}</h3>
@@ -47,13 +49,30 @@
                     No protocols connected
                 </md-list-item>
                 
+                <md-subheader ng-if="isBrokerConnected() && hasSavedProtocols()" class="md-no-sticky">Saved Protocols</md-subheader>
+                
+                <md-list-item ng-if="isBrokerConnected() && hasSavedProtocols()" class="md-3-line" layout-gt-md="row" layout="column" ng-repeat="configuration in getSavedProtocols()">
+	                <md-icon hide-sm hide-md ng-if="$index === 0"><ng-md-icon icon="settings_backup_restore"></ng-md-icon></md-icon>
+	                <div class="md-list-item-text" ng-class="{'md-offset': $index !== 0}">
+                        <h3>{{configuration.name}}</h3>
+                        <p><span ng-repeat="(key, value) in configuration.parameters">{{value}}</span></p>
+                        <p>Last connected <span am-time-ago="configuration.last_connected"></span></p>
+                    </div>
+                    <md-button class="md-primary" ng-click="openSavedProtocol(configuration)">
+                        Connect
+                    </md-button>
+                    <md-button class="md-warn" ng-click="deleteSavedProtocol(configuration)">
+                        Delete
+                    </md-button>
+                </md-list-item>
+                
             </md-list>
         </md-dialog-content>
         
         <div ng-if="isBrokerConnected()" class="md-actions" layout="row">
             <span flex></span>
             <md-button ng-click="openConfiguration($event)" class="md-primary">
-                Open protocol
+                Open connection
             </md-button>
         </div>
 

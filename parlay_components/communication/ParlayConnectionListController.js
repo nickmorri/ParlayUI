@@ -1,8 +1,9 @@
 var list_controller = angular.module('parlay.protocols.list_controller', ['parlay.protocols.configuration_controller', 'parlay.protocols.detail_controller', 'parlay.protocols.manager', 'promenade.broker', 'parlay.notification', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main']);
 
-list_controller.controller('ParlayConnectionListController', ['$scope', '$mdDialog', 'ParlayNotification', 'ParlayProtocolManager', 'PromenadeBroker', function ($scope, $mdDialog, ParlayNotification, ParlayProtocolManager, PromenadeBroker) {
+list_controller.controller('ParlayConnectionListController', ['$scope', '$mdDialog', 'ParlayProtocolManager', 'PromenadeBroker', function ($scope, $mdDialog, ParlayProtocolManager, PromenadeBroker) {
     
     $scope.hide = $mdDialog.hide;
+    $scope.connecting = false;
     
     /**
      * Returns Broker connection status.
@@ -36,12 +37,35 @@ list_controller.controller('ParlayConnectionListController', ['$scope', '$mdDial
         return ParlayProtocolManager.getOpenProtocols();
     };
     
+	$scope.getSavedProtocols = function () {
+		return ParlayProtocolManager.getSavedProtocols();
+	};
+	
+	/**
+     * Check if ParlayProtocolManager has saved protocols.
+     * @returns {Boolean} true if open protocols exist, false otherwise.
+     */
+	$scope.hasSavedProtocols = function () {
+		return $scope.getSavedProtocols().length !== 0;
+	};
+	
+	$scope.openSavedProtocol = function (configuration) {
+		$scope.connecting = true;
+	    ParlayProtocolManager.openProtocol(configuration).then(function (response) {
+		    $scope.connecting = false;
+	    });
+    };
+    
+    $scope.deleteSavedProtocol = function (configuration) {
+	  	ParlayProtocolManager.deleteProtocolConfiguration(configuration);  
+    };
+    
     /**
      * Check if ParlayProtocolManager has open protocols.
      * @returns {Boolean} true if open protocols exist, false otherwise.
      */
     $scope.hasOpenProtocols = function () {
-        return ParlayProtocolManager.getOpenProtocols().length !== 0;
+        return $scope.getOpenProtocols().length !== 0;
     };
     
     /**
@@ -50,15 +74,7 @@ list_controller.controller('ParlayConnectionListController', ['$scope', '$mdDial
      */
     /* istanbul ignore next */
     $scope.closeProtocol = function (protocol) {
-        ParlayProtocolManager.closeProtocol(protocol).then(function (result) {
-            ParlayNotification.show({
-                content: 'Closed ' + protocol.getName() + '.'
-            }); 
-        }).catch(function (result) {
-            ParlayNotification.show({
-                content: result.STATUS
-            });
-        });
+        ParlayProtocolManager.closeProtocol(protocol);
     };
     
     /* istanbul ignore next */

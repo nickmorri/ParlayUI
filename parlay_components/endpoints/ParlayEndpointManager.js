@@ -2,6 +2,8 @@ var endpoint_manager = angular.module('parlay.endpoints.manager', ['parlay.proto
 
 endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ParlayProtocolManager', 'ParlayNotification', 'ParlayStore', '$window', function (PromenadeBroker, ParlayProtocolManager, ParlayNotification, ParlayStore, $window) {
     
+    var store = ParlayStore("endpoint");
+    
     var Private = {
 	    has_discovered: false,
 	    active_endpoints: []
@@ -96,15 +98,23 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ParlayPro
 	 * Creates a duplicate endpoint container that references the same endpoint available at the given index.
 	 * @param {Number} index - position of the endpoint we want to duplicate.
 	 */
-    Public.duplicateEndpoint = function (index, uid) {
+    Public.duplicateEndpoint = function (index) {
 	    var container = Private.active_endpoints[index];
-	    var newUid = container.uid + Math.floor(Math.random() * 1500);
+	    var new_uid = container.uid + Math.floor(Math.random() * 1500);
 	    
 	    var old_directive = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
-	    var new_directive = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + newUid;
+	    var new_directive = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + new_uid;
 	    
-	    ParlayStore('endpoints').duplicate(old_directive, new_directive);
-	    Public.activateEndpoint(container.ref, newUid);
+		// We should remove and Angular $ or $$ variables since they are generated.
+		var session_data = store.getSessionItem(old_directive);
+		for (var key in session_data) {
+			if (key.indexOf('$') !== -1) {
+				delete session_data[key];
+			}
+		}
+	    
+	    store.setSessionItem(new_directive, session_data);
+	    Public.activateEndpoint(container.ref, new_uid);
     };
     
     /**
@@ -154,7 +164,7 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ParlayPro
 	};
 	
 	Public.autoSave = function() {
-		if (Public.hasActiveEndpoints()) ParlayStore("endpoints").packItem('AutoSave', true);
+		if (Public.hasActiveEndpoints()) ParlayStore("endpoints").moveItemToLocal('AutoSave', true);
 	};
 	
 	$window.onbeforeunload = Public.autoSave;

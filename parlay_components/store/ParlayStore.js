@@ -1,116 +1,128 @@
 var parlay_store = angular.module('parlay.store', []);
 
+parlay_store.run(function () {
+	// Clear sessionStorage every time we start as some browsers persist sessionStorage across page reloads.
+	sessionStorage.clear();
+});
+
 parlay_store.factory('ParlayStore', ['ParlayStoreService', function (ParlayStoreService) {
 	
 	var active_instances = {};
 	
-	function getInstance(prefix) {
-		if (!active_instances.hasOwnProperty(prefix)) active_instances[prefix] = new ParlayStoreService(prefix);
-		return active_instances[prefix];
+	function getInstance(namespace) {
+		if (!active_instances.hasOwnProperty(namespace)) active_instances[namespace] = new ParlayStoreService(namespace);
+		return active_instances[namespace];
 	}
 	
-	return function (prefix) {
-		return getInstance(prefix);
+	return function (namespace) {
+		return getInstance(namespace);
 	};
 	
 }]);
 
 parlay_store.factory('ParlayStoreService', function () {
 	
-	function ParlayStore(prefix) {
-		this.prefix = prefix;
+	function ParlayStore(namespace) {
+		this.namespace = namespace;
 	}
 	
-	ParlayStore.prototype.has = function (directive, attribute) {
-		return this.getDirectiveContainer(directive) !== undefined && this.get(directive, attribute) !== undefined;
+	ParlayStore.prototype.hasSessionItem = function (key) {
+		return this.getSessionItem(key) !== undefined;
 	};
 	
-	ParlayStore.prototype.get = function (directive, attribute) {
-		return this.getDirectiveContainer(directive)[attribute];
+	ParlayStore.prototype.getSessionItem = function (key) {
+		var json_string = sessionStorage.getItem(this.namespace + '-' + key);
+		return json_string !== null ? JSON.parse(json_string) : undefined;
 	};
 	
-	ParlayStore.prototype.set = function (directive, attribute, value) {
-		var directiveContainer = this.getDirectiveContainer(directive);
-		directiveContainer[attribute] = value;
-		this.setDirectiveContainer(directive, directiveContainer);
+	ParlayStore.prototype.setSessionItem = function (key, value) {
+		sessionStorage.setItem(this.namespace + '-' + key, JSON.stringify(value));
 	};
 	
-	ParlayStore.prototype.remove = function (directive) {
-		sessionStorage.removeItem(this.prefix + '-' + directive);
+	ParlayStore.prototype.removeSessionItem = function (key) {
+		sessionStorage.removeItem(this.namespace + '-' + key);
 	};
 	
-	ParlayStore.prototype.duplicate = function (old_directive, new_directive) {		
-		var container = this.getDirectiveContainer(old_directive);
-		
-		// We should remove and Angular $ or $$ variables since they are generated.
-		for (var key in container) {
-			if (key.indexOf('$') !== -1) delete container[key];
-		}
-		
-		this.setDirectiveContainer(new_directive, container);
+	ParlayStore.prototype.hasLocalItem = function (key) {
+		return this.getLocalItem(key) !== undefined;
 	};
 	
-	ParlayStore.prototype.clear = function () {
+	ParlayStore.prototype.getLocalItem = function (key) {
+		var json_string = localStorage.getItem(this.namespace + '-' + key);
+		return json_string !== null ? JSON.parse(json_string) : undefined;
+	};
+	
+	ParlayStore.prototype.setLocalItem = function (key, value) {
+		localStorage.setItem(this.namespace + '-' + key, JSON.stringify(value));
+	};
+	
+	ParlayStore.prototype.removeLocalItem = function (key) {
+		localStorage.removeItem("packed-"  + this.namespace + '[' + key + ']');
+	};
+	
+	ParlayStore.prototype.getSessionLength = function () {
+		return sessionStorage.length;
+	};
+	
+	ParlayStore.prototype.getLocalLength = function () {
+		return localStorage.length;
+	};
+	
+	ParlayStore.prototype.clearSession = function () {
 		sessionStorage.clear();
 	};
 	
-	ParlayStore.prototype.keys = function () {
+	ParlayStore.prototype.clearLocal = function () {
+		localStorage.clear();
+	};
+	
+	ParlayStore.prototype.getSessionKeys = function () {
 		var values = [];
-		for (var i = 0; i < this.length(); i++) {
+		for (var i = 0; i < this.getSessionLength(); i++) {
 			var key = sessionStorage.key(i);
-			if (key.startsWith(this.prefix)) values.push(key);
+			if (key.startsWith(this.namespace)) values.push(key);
 		}
 		return values;
 	};
 	
-	ParlayStore.prototype.length = function () {
-		return sessionStorage.length;
+	ParlayStore.prototype.getLocalKeys = function () {
+		var values = [];
+		for (var i = 0; i < this.getLocalLength(); i++) {
+			var key = localStorage.key(i);
+			if (key.startsWith("packed-")) values.push(key);
+		}
+		return values;
 	};
 	
-	ParlayStore.prototype.values = function () {
-		return this.keys().reduce(function (accumulator, key) {
+	ParlayStore.prototype.getSessionValues = function () {
+		return this.getSessionKeys().reduce(function (accumulator, key) {
 			accumulator[key] = JSON.parse(sessionStorage.getItem(key));
 			return accumulator;
 		}, {});
 	};
 	
-	ParlayStore.prototype.getDirectiveContainer = function (directive) {
-		var sessionStorageString = sessionStorage.getItem(this.prefix + '-' + directive);
-		return sessionStorageString !== null ? JSON.parse(sessionStorageString) : {};
+	ParlayStore.prototype.getLocalValues = function () {
+		return this.getLocalKeys().reduce(function (accumulator, key) {
+			accumulator[key] = JSON.parse(localStorage.getItem(key));
+			return accumulator;
+		}, {});
 	};
 	
-	ParlayStore.prototype.setDirectiveContainer = function (directive, container) {
-		sessionStorage.setItem(this.prefix + '-' + directive, JSON.stringify(container));
-	};
-	
-	ParlayStore.prototype.packedValues = function () {
-		var values = [];
-		for (var i = 0; i < localStorage.length; i++) {
-			var key = localStorage.key(i);
-			if (key.startsWith('packed-')) values.push(JSON.parse(localStorage.getItem(key)));
-		}
-		return values;
-	};
-	
-	ParlayStore.prototype.packItem = function (name, autosave) {
+	ParlayStore.prototype.moveItemToLocal = function (name, autosave) {
 		if (!autosave) autosave = false;
-		localStorage.setItem('packed-' + this.prefix + '[' + name + ']', JSON.stringify({
+		localStorage.setItem('packed-' + this.namespace + '[' + name + ']', JSON.stringify({
 			name: name,
 			timestamp: Date.now(),
-			data: this.values(),
+			data: this.getSessionValues(),
 			autosave: autosave
 		}));
 	};
 	
-	ParlayStore.prototype.unpackItem = function (name) {
-		var unpacked = JSON.parse(localStorage.getItem('packed-' + this.prefix + '[' + name + ']'));
+	ParlayStore.prototype.moveItemToSession = function (name) {
+		var unpacked = JSON.parse(localStorage.getItem('packed-' + this.namespace + '[' + name + ']'));
 		Object.keys(unpacked.data).forEach(function (key) {
 			sessionStorage.setItem(key, JSON.stringify(unpacked.data[key]));
 		});
-	};
-	
-	ParlayStore.prototype.removePackedItem = function (name) {
-		localStorage.removeItem('packed-' + this.prefix + '[' + name + ']');
 	};
 	
 	return ParlayStore;

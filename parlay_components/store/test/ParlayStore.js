@@ -15,12 +15,12 @@
             
             describe('constructs or retrieves', function () {
                 
-                it('constructs new object for distinct prefix', function () {
+                it('constructs new object for distinct namespace', function () {
 	                /*jshint newcap: false */
 	                expect(ParlayStore('test1')).not.toBe(ParlayStore('test2'));
                 });
                 
-                it('retrieves the same instance for same prefix', function () {
+                it('retrieves the same instance for same namespace', function () {
 	                /*jshint newcap: false */
 	                expect(ParlayStore('test1')).toBe(ParlayStore('test1'));
                 });
@@ -33,7 +33,7 @@
 	        var ParlayStoreService;
 	        
 	        beforeEach(inject(function (_ParlayStoreService_) {
-		        // Clear localStorage and sessionStorage in case anything persisted from previous test cases.
+		        // clearSession localStorage and sessionStorage in case anything persisted from previous test cases.
 		        localStorage.clear();
 		        sessionStorage.clear();
 		        /*jshint newcap: false */
@@ -43,105 +43,97 @@
 	        describe('initially', function () {
 		        
 		        it('is empty', function () {
-			        expect(ParlayStoreService.length()).toBe(0);
-			        expect(ParlayStoreService.keys()).toEqual([]);
-			        expect(ParlayStoreService.values()).toEqual({});
+			        expect(ParlayStoreService.getLocalLength()).toBe(0);
+			        expect(ParlayStoreService.getSessionLength()).toBe(0);
+			        
+			        expect(ParlayStoreService.getLocalKeys()).toEqual([]);
+			        expect(ParlayStoreService.getSessionKeys()).toEqual([]);
+			        
+			        expect(ParlayStoreService.getLocalValues()).toEqual({});
+			        expect(ParlayStoreService.getSessionValues()).toEqual({});
 		        });
 		        
 	        });
 	        
-	        describe('accessors', function () {
+	        describe('sessionStorage accessors', function () {
 		        
 		        it('sets', function () {
-			        expect(ParlayStoreService.length()).toBe(0);
-			        ParlayStoreService.set('card', 'speed', 10);
-			        expect(ParlayStoreService.length()).toBe(1);
+			        expect(ParlayStoreService.getSessionLength()).toBe(0);
+			        ParlayStoreService.setSessionItem('card', {speed: 10});
+			        expect(ParlayStoreService.getSessionLength()).toBe(1);
 		        });
 		        
 		        it('gets', function () {
-			        expect(ParlayStoreService.length()).toBe(0);
-			        ParlayStoreService.set('card', 'speed', 10);
-			        expect(ParlayStoreService.length()).toBe(1);
-					expect(ParlayStoreService.get('card', 'speed')).toBe(10);
+			        expect(ParlayStoreService.getSessionLength()).toBe(0);
+			        ParlayStoreService.setSessionItem('card', {speed: 10});
+			        expect(ParlayStoreService.getSessionLength()).toBe(1);
+					expect(ParlayStoreService.getSessionItem('card')).toEqual({speed: 10});
 		        });
 		        
 		        it('removes', function () {
-			        expect(ParlayStoreService.length()).toBe(0);
-			        ParlayStoreService.set('card', 'speed', 10);
-			        expect(ParlayStoreService.length()).toBe(1);
-			        ParlayStoreService.remove('card');
-			        expect(ParlayStoreService.length()).toBe(0);
+			        expect(ParlayStoreService.getSessionLength()).toBe(0);
+			        ParlayStoreService.setSessionItem('card', {speed: 10});
+			        expect(ParlayStoreService.getSessionLength()).toBe(1);
+			        ParlayStoreService.removeSessionItem('card');
+			        expect(ParlayStoreService.getSessionLength()).toBe(0);
 		        });
 		        
 		        it('has', function () {
-			        expect(ParlayStoreService.length()).toBe(0);
-			        ParlayStoreService.set('card', 'speed', 10);
-			        expect(ParlayStoreService.has('card', 'speed')).toBeTruthy();
-			        ParlayStoreService.remove('card');
-			        expect(ParlayStoreService.has('card', 'speed')).toBeFalsy();
+			        expect(ParlayStoreService.getSessionLength()).toBe(0);
+			        ParlayStoreService.setSessionItem('card', {speed: 10});
+			        expect(ParlayStoreService.hasSessionItem('card')).toBeTruthy();
+			        ParlayStoreService.removeSessionItem('card');
+			        expect(ParlayStoreService.hasSessionItem('card')).toBeFalsy();
 		        });
 		        
 		        it('clears', function () {
-			        expect(ParlayStoreService.length()).toBe(0);
-			        ParlayStoreService.set('card1', 'speed', 10);
-			        ParlayStoreService.set('card2', 'speed', 10);
-			        expect(ParlayStoreService.length()).toBe(2);
-			        ParlayStoreService.clear();
-			        expect(ParlayStoreService.length()).toBe(0);
+			        expect(ParlayStoreService.getSessionLength()).toBe(0);
+			        ParlayStoreService.setSessionItem('card1', {speed: 10});
+			        ParlayStoreService.setSessionItem('card2', {speed: 10});
+			        expect(ParlayStoreService.getSessionLength()).toBe(2);
+			        ParlayStoreService.clearSession();
+			        expect(ParlayStoreService.getSessionLength()).toBe(0);
 		        });
 		        
 	        });
 	        
-	        describe('directive container accessors', function () {
-		        
-		        it('set directive container', function () {
-			        expect(ParlayStoreService.length()).toBe(0);
-			        ParlayStoreService.setDirectiveContainer('card', {});
-			        expect(ParlayStoreService.length()).toBe(1);
-		        });
-		        
-		        it('get directive container', function () {
-			        expect(ParlayStoreService.length()).toBe(0);
-			        ParlayStoreService.setDirectiveContainer('card', {value: 10});
-			        expect(ParlayStoreService.length()).toBe(1);
-			        expect(ParlayStoreService.getDirectiveContainer('card').value).toBe(10);
-		        });
-		        
-	        });
+	        describe("localStorage accessors", function () {});
 	        
 	        describe('packing', function () {
 		        
 		        it('initially empty', function () {
-			        expect(ParlayStoreService.packedValues()).toEqual([]);
+			        expect(ParlayStoreService.getLocalLength()).toBe(0);
+			        expect(ParlayStoreService.getLocalKeys()).toEqual([]);
+			        expect(ParlayStoreService.getLocalValues()).toEqual({});
 		        });
 		        
 		        it('packs value', function () {
-			        ParlayStoreService.set('card1', 'speed', 10);
-			        expect(ParlayStoreService.packedValues()).toEqual([]);
-			        ParlayStoreService.packItem('packed-endpoints', false);
-			        expect(ParlayStoreService.packedValues()[0].data['test-card1']).toEqual({speed:10});
+			        ParlayStoreService.setSessionItem('card', {speed: 10});
+			        expect(ParlayStoreService.getLocalValues()).toEqual({});
+			        ParlayStoreService.moveItemToLocal("sample", false);
+					expect(ParlayStoreService.getLocalValues()["packed-test[sample]"].data["test-card"]).toEqual({speed:10});
 		        });
 		        
 		        it('removes pack value', function () {
-			        ParlayStoreService.set('card1', 'speed', 10);
-			        expect(ParlayStoreService.packedValues()).toEqual([]);
-			        ParlayStoreService.packItem('packed-endpoints', false);
-			        expect(ParlayStoreService.packedValues()[0].data['test-card1']).toEqual({speed:10});
-			        ParlayStoreService.removePackedItem('packed-endpoints');
-			        expect(ParlayStoreService.packedValues()).toEqual([]);
+			        ParlayStoreService.setSessionItem('card', {speed: 10});
+			        expect(ParlayStoreService.getLocalValues()).toEqual({});
+			        ParlayStoreService.moveItemToLocal('sample', false);
+			        expect(ParlayStoreService.getLocalValues()["packed-test[sample]"].data["test-card"]).toEqual({speed:10});
+			        ParlayStoreService.removeLocalItem('sample');
+			        expect(ParlayStoreService.getLocalValues()).toEqual({});
 		        });
 		        
 		        it('unpack value', function () {
-			        ParlayStoreService.set('card1', 'speed', 10);
-			        expect(ParlayStoreService.packedValues()).toEqual([]);
-			        ParlayStoreService.packItem('packed-endpoints', false);
+			        ParlayStoreService.setSessionItem('card1', {speed: 10});
+			        expect(ParlayStoreService.getLocalValues()).toEqual({});
+			        ParlayStoreService.moveItemToLocal('packed-endpoints', false);
 			        
-					ParlayStoreService.clear();
-					expect(ParlayStoreService.has('card1', 'speed')).toBeFalsy();
-					expect(ParlayStoreService.length()).toBe(0);
+					ParlayStoreService.clearSession();
+					expect(ParlayStoreService.hasSessionItem('card1')).toBeFalsy();
+					expect(ParlayStoreService.getSessionLength()).toBe(0);
 					
-					ParlayStoreService.unpackItem('packed-endpoints');
-					expect(ParlayStoreService.get('card1', 'speed')).toBe(10);
+					ParlayStoreService.moveItemToSession('packed-endpoints');
+					expect(ParlayStoreService.getSessionItem('card1')).toEqual({speed: 10});
 		        });
 		        
 	        });

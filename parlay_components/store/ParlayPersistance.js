@@ -2,6 +2,8 @@ var parlay_persistence = angular.module('parlay.store.persistence', ['parlay.sto
 
 parlay_persistence.factory('ParlayPersistence', ['ParlayStore', function (ParlayStore) {
 	
+	var store = ParlayStore("endpoints");
+	
 	var Public = {};
 	
 	var Private = {};
@@ -84,7 +86,8 @@ parlay_persistence.factory('ParlayPersistence', ['ParlayStore', function (Parlay
 	 * @returns {Object} - Requested attribute from ParlayStore.
 	 */
 	Private.getAttr = function(directive, attribute) {
-		return ParlayStore('endpoints').get(directive.replace(' ', '_'), attribute);
+		var container = store.getSessionItem(directive.replace(' ', '_'));
+		return container !== undefined && container.hasOwnProperty(attribute) ? container[attribute] : undefined;
     };
 	
 	
@@ -96,7 +99,10 @@ parlay_persistence.factory('ParlayPersistence', ['ParlayStore', function (Parlay
 	 */
 	Private.setAttr = function(directive, attribute) {
         return function setAttr(value) {
-	    	ParlayStore('endpoints').set(directive.replace(' ', '_'), attribute, value);
+	        var container = store.getSessionItem(directive.replace(' ', '_'));
+	        if (container === undefined) container = {};	
+	        container[attribute] = value;	        
+			store.setSessionItem(directive.replace(' ', '_'), container);            
         };		        
     };
     
@@ -107,7 +113,7 @@ parlay_persistence.factory('ParlayPersistence', ['ParlayStore', function (Parlay
 	 */
     Private.removeDirective = function(directive) {
 		return function removeDirective() {
-			ParlayStore('endpoints').remove(directive.replace(' ', '_'));
+			store.removeSessionItem(directive.replace(' ', '_'));
 		};
 	};
 	

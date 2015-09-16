@@ -1,10 +1,14 @@
 var workspace_controller = angular.module('parlay.endpoints.workspaces', ['parlay.store', 'parlay.endpoints.manager', 'angularMoment']);
 
 workspace_controller.controller('ParlayWorkspaceManagementController', ['$scope', '$mdDialog', 'ParlayStore', 'ParlayEndpointManager', function ($scope, $mdDialog, ParlayStore, ParlayEndpointManager) {
-	$scope.hide = $mdDialog.hide;
+	
+	var store = ParlayStore("endpoints");
 	
 	function getSavedWorkspaces() {
-		return ParlayStore('packed').packedValues().map(function (workspace) {
+		var workspaces = store.getLocalValues();
+		return Object.keys(workspaces).map(function (key) {
+			return workspaces[key];
+		}).map(function (workspace) {
 			workspace.timestamp = new Date(workspace.timestamp);
 			workspace.endpoint_count = Object.keys(workspace.data).length;
 			return workspace;
@@ -12,6 +16,8 @@ workspace_controller.controller('ParlayWorkspaceManagementController', ['$scope'
 	}
 	
 	var saved_workspaces = getSavedWorkspaces();
+	
+	$scope.hide = $mdDialog.hide;
 	
 	$scope.getSavedWorkspaces = function () {
 		return saved_workspaces;
@@ -31,11 +37,11 @@ workspace_controller.controller('ParlayWorkspaceManagementController', ['$scope'
 	
 	$scope.clearCurrentWorkspace = function () {
 		ParlayEndpointManager.clearActiveEndpoints();
-		ParlayStore('endpoints').clear();
+		store.clearSession();
 	};
 	
 	$scope.saveWorkspace = function (workspace) {
-		ParlayStore('endpoints').packItem(workspace.name);
+		store.moveItemToLocal(workspace.name);
 		saved_workspaces = getSavedWorkspaces();
 	};
 	
@@ -44,7 +50,7 @@ workspace_controller.controller('ParlayWorkspaceManagementController', ['$scope'
 		$scope.clearCurrentWorkspace();
 		
 		function load() {
-			ParlayStore('endpoints').unpackItem(workspace.name);
+			store.moveItemToSession(workspace.name);
 			ParlayEndpointManager.loadWorkspace(workspace);
 		}
 		
@@ -55,7 +61,7 @@ workspace_controller.controller('ParlayWorkspaceManagementController', ['$scope'
 	};
 	
 	$scope.deleteWorkspace = function (workspace) {
-		ParlayStore('endpoints').removePackedItem(workspace.name);
+		store.removeLocalItem(workspace.name);
 		saved_workspaces = getSavedWorkspaces();
 	};
 	

@@ -23,13 +23,17 @@
 	            var directive_name = "parlayEndpoint";
 	            
 	            /*jshint newcap: false */
-	            ParlayStore("endpoints").set(directive_name, "demo_data", {
-		            velocity: 20,
-		            acceleration: 5
+	            
+	            
+	            ParlayStore("endpoints").setSessionItem(directive_name, {
+		            demo_data: {
+			            velocity: 20,
+			            acceleration: 5
+	            	}
 	            });
 	            
 	            /*jshint newcap: false */
-	            expect(ParlayStore("endpoints").get(directive_name, "demo_data")).toEqual({
+	            expect(ParlayStore("endpoints").getSessionItem(directive_name).demo_data).toEqual({
 		            velocity: 20,
 		            acceleration: 5
 	            });
@@ -77,7 +81,7 @@
 				$scope.$digest();	            
 	            
 	            /*jshint newcap: false */
-	            expect(ParlayStore("endpoints").get(directive_name, "demo_data")).toEqual({
+	            expect(ParlayStore("endpoints").getSessionItem(directive_name).demo_data).toEqual({
 		            velocity: 100,
 		            acceleration: 200
 	            });

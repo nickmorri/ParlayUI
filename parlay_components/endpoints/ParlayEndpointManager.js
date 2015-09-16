@@ -2,7 +2,7 @@ var endpoint_manager = angular.module('parlay.endpoints.manager', ['parlay.proto
 
 endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ParlayProtocolManager', 'ParlayNotification', 'ParlayStore', '$window', function (PromenadeBroker, ParlayProtocolManager, ParlayNotification, ParlayStore, $window) {
     
-    var store = ParlayStore("endpoint");
+    var store = ParlayStore("endpoints");
     
     var Private = {
 	    has_discovered: false,

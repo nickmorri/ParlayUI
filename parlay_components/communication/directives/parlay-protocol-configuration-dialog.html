@@ -2,7 +2,7 @@
     <md-toolbar>
         <div class="md-toolbar-tools">
             <h2 ng-show="configuration.protocol === undefined">Protocol Configuration</h2>
-            <h2 ng-hide="configuration.protocol === undefined">{{configuration.protocol.name}}</h2>
+            <h2 ng-hide="configuration.protocol === undefined">{{::configuration.protocol.name}}</h2>
             <span flex></span>
             <md-button class="md-icon-button" ng-click="cancel()" aria-label="Close configuration dialog">
                 <md-icon><ng-md-icon icon="close" aria-label="Close dialog"></ng-md-icon></md-icon>

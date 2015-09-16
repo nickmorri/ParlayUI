@@ -3,11 +3,11 @@
     <md-input-container md-is-error="commandform[field.msg_key].$invalid" ng-hide="field.hidden">
 		
 		<!-- Label that is displayed above input for all inputs that don't use md-chips -->
-        <label ng-hide="field.input === 'NUMBERS' || field.input === 'STRINGS' || field.input === 'ARRAY'">{{field.label}}</label>
+        <label ng-hide="field.input === 'NUMBERS' || field.input === 'STRINGS' || field.input === 'ARRAY'">{{::field.label}}</label>
 		
 		<!-- DROPDOWN input type -->
         <md-select ng-if="field.input === 'DROPDOWN'" name="{{field.msg_key}}" ng-model="wrapper.message[field.msg_key + '_' + field.input]" ng-required="field.required">
-            <md-option ng-repeat="option in field.options" ng-value="option">{{option.name}}</md-option>
+            <md-option ng-repeat="option in field.options" ng-value="option">{{::option.name}}</md-option>
         </md-select>
         
         <!-- NUMBER input type -->
@@ -23,7 +23,7 @@
         
         <!-- Displays error message if a field is required or does not properly validate -->
         <div class="errors" ng-messages="commandform[field.msg_key].$error" ng-if="commandform[field.msg_key + '_' + field.input]">
-            <div ng-message="required">{{field.msg_key}} is required</div>
+            <div ng-message="required">{{::field.msg_key}} is required</div>
         </div>
         
     </md-input-container>

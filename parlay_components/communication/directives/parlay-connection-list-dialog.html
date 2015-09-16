@@ -34,8 +34,8 @@
                 <md-list-item ng-if="isBrokerConnected() && hasOpenProtocols()" class="md-2-line" layout-gt-md="row" layout="column" ng-repeat="protocol in getOpenProtocols()">
                     <md-icon hide-sm hide-md ng-if="$index === 0"><ng-md-icon icon="settings_ethernet"></ng-md-icon></md-icon>
                     <div class="md-list-item-text" ng-class="{'md-offset': $index !== 0}">
-                        <h3>{{protocol.getType()}}</h3>
-                        <p>{{protocol.getName()}}</p>
+                        <h3>{{::protocol.getType()}}</h3>
+                        <p>{{::protocol.getName()}}</p>
                     </div>
                     <md-button class="md-primary"  ng-click="viewProtocolConnectionDetails($event, protocol)">
                         Details
@@ -54,8 +54,8 @@
                 <md-list-item ng-if="isBrokerConnected() && hasSavedProtocols()" class="md-3-line" layout-gt-md="row" layout="column" ng-repeat="configuration in getSavedProtocols()">
 	                <md-icon hide-sm hide-md ng-if="$index === 0"><ng-md-icon icon="settings_backup_restore"></ng-md-icon></md-icon>
 	                <div class="md-list-item-text" ng-class="{'md-offset': $index !== 0}">
-                        <h3>{{configuration.name}}</h3>
-                        <p><span ng-repeat="(key, value) in configuration.parameters">{{value}}</span></p>
+                        <h3>{{::configuration.name}}</h3>
+                        <p><span ng-repeat="(key, value) in configuration.parameters">{{::value}}</span></p>
                         <p>Last connected <span am-time-ago="configuration.last_connected"></span></p>
                     </div>
                     <md-button class="md-primary" ng-click="openSavedProtocol(configuration)">

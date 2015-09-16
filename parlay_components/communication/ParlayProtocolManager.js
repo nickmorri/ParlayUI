@@ -40,6 +40,10 @@ protocol_manager.factory('ParlayProtocolManager', ['$injector', '$q', 'Promenade
 	    return Private.saved_protocols;
     };
     
+    /**
+	 * Save the protocol configuration in the ParlayStore.
+	 * @param {Object} configuration - Protocol configuration that can be sent to the Broker.
+	 */
     Private.saveProtocolConfiguration = function (configuration) {
 	    var saved_protocols = store.getLocalItem("saved");
 	    if (saved_protocols === undefined) saved_protocols = {};
@@ -52,6 +56,10 @@ protocol_manager.factory('ParlayProtocolManager', ['$injector', '$q', 'Promenade
 	    Private.setSavedProtocols();
     };
     
+    /**
+	 * Delete the protocol configuration in the ParlayStore.
+	 * @param {Object} configuration - Protocol configuration that we are removing from the ParlayStore.
+	 */
     Public.deleteProtocolConfiguration = function (configuration) {
 		var saved_protocols = store.getLocalItem("saved");
 		if (saved_protocols === undefined) return;

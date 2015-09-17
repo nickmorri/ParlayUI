@@ -11,15 +11,20 @@
 	</md-toolbar>
 	
 	<md-dialog-content>
+		<form name="saveform" ng-submit="accept()">
+			
 		<md-input-container>
 			<label>Name</label>
-			<input ng-model="name" type="text">
+			<input ng-model="name" type="text" name="name" required="true" autocomplete="off">
+			<div ng-messages="saveform.name.$error">
+				<div ng-message="required">Required to save.</div>
+			</div>
 		</md-input-container>
 	</md-dialog-content>
 	
 	<div class="md-actions" layout="row">
-		<md-button class="md-warn" ng-click="hide()">Cancel</md-button>
-		<md-button class="md-primary" ng-click="accept()">Save As</md-button>
+		<md-button class="md-warn" ng-click="hide()" aria-label="Cancels save as.">Cancel</md-button>
+		<md-button type="submit" class="md-primary" ng-disabled="saveform.$invalid" aria-label="Saves current workspace.">Save As</md-button>
 	</div>
 
 </md-dialog>

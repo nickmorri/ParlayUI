@@ -32,7 +32,7 @@ workspace_controller.controller('ParlayWorkspaceManagementController', ['$scope'
             }
 		}).then(function (name) {
 			$scope.saveWorkspace({name: name});
-		}, function (error) {});
+		});
 	};
 	
 	$scope.clearCurrentWorkspace = function () {
@@ -73,7 +73,7 @@ workspace_controller.controller('ParlayWorkspaceManagementController', ['$scope'
 
 workspace_controller.controller('ParlayWorkspaceSaveAsDialogController', ['$scope', '$mdDialog', function ($scope, $mdDialog) {
 	
-	$scope.name = null;
+	$scope.work = null;
 	
 	$scope.accept = function () {
 		$mdDialog.hide($scope.name);

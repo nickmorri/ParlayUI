@@ -3,7 +3,7 @@
 		<label>Filter</label>
 		<input ng-model="filter_text" type="text">
 	</md-input-container>
-    <md-content class="md-padding" style="max-height: 300px;">    	
+    <md-content class="md-padding" style="max-height: 300px;" scroll-glue>
         <md-list>
             <md-list-item class="md-2-line" ng-repeat="message in getFilteredLog(filter_text)">
                 <div class="md-list-item-text message-text">

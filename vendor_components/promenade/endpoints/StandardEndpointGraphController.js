@@ -46,13 +46,14 @@ standard_endpoint_graph.directive('smoothieChart', function () {
 			canvas.width = canvas.offsetWidth;
 	        canvas.height = canvas.offsetHeight;
 	        
-	        scope.smoothie = new SmoothieChart();
+	        scope.smoothie = new SmoothieChart({grid:{fillStyle:'transparent',strokeStyle:'transparent',borderVisible:false},labels:{fillStyle:'#000000', fontSize: 12}});
+			
 	        scope.smoothie.streamTo(canvas, 1000);
 	        
 	        var line = new TimeSeries();
     		    
 		    scope.smoothie.addTimeSeries(line, {
-			    strokeStyle: 'rgb(0, 255, 0)',
+			    strokeStyle: '#000000',
 			    lineWidth: 2
 			});
 		    

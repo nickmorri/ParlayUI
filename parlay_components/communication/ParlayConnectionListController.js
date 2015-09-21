@@ -1,6 +1,6 @@
 var list_controller = angular.module('parlay.protocols.list_controller', ['parlay.protocols.configuration_controller', 'parlay.protocols.detail_controller', 'parlay.protocols.manager', 'promenade.broker', 'parlay.notification', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main']);
 
-list_controller.controller('ParlayConnectionListController', ['$scope', '$mdDialog', 'ParlayProtocolManager', 'PromenadeBroker', function ($scope, $mdDialog, ParlayProtocolManager, PromenadeBroker) {
+list_controller.controller('ParlayConnectionListController', ['$scope', '$mdDialog', '$mdMedia', 'ParlayProtocolManager', 'PromenadeBroker', function ($scope, $mdDialog, $mdMedia, ParlayProtocolManager, PromenadeBroker) {
     
     $scope.hide = $mdDialog.hide;
     $scope.connecting = false;
@@ -107,5 +107,12 @@ list_controller.controller('ParlayConnectionListController', ['$scope', '$mdDial
             templateUrl: '../parlay_components/communication/directives/parlay-protocol-configuration-dialog.html'
         });
     };
+    
+    // Watch the size of the screen, if we are on a screen size that's greater than a small screen we should always display labels.
+    $scope.$watch(function () {
+        return $mdMedia('gt-sm');
+    }, function (large_screen) {
+        $scope.large_screen = large_screen;
+    });
     
 }]);

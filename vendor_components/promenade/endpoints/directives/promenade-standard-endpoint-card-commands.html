@@ -11,7 +11,7 @@
                 </promenade-standard-endpoint-card-command-container>
             </div>
             
-            <md-button flex type="submit" ng-class="error ? 'md-warn' : 'md-primary'" ng-disabled="commandform.$invalid" aria-label="Sends command to BIT Service object.">
+            <md-button flex type="submit" class="md-raised" ng-class="error ? 'md-warn' : 'md-primary'" ng-disabled="commandform.$invalid" aria-label="Sends command to BIT Service object.">
                 <span ng-show="sending">
                     Sent ({{status_message}}) [{{endpoint.getMessageId()}}]
                 </span>

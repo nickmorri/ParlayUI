@@ -1,15 +1,12 @@
-var standard_endpoint_graph = angular.module('promenade.endpoints.standardendpoint.graph', ['parlay.utility', 'parlay.store.persistence']);
+var standard_endpoint_graph = angular.module('promenade.endpoints.standardendpoint.graph', []);
 
-standard_endpoint_graph.controller('PromenadeStandardEndpointCardGraphController', ['$scope', 'ParlayPersistence', 'ParlayUtility', function ($scope, ParlayPersistence, ParlayUtility) {
-       
-    var container = ParlayUtility.relevantScope($scope, 'container').container;
-	var directive_name = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
-	
-	$scope.getGraphID = function () {
-		return directive_name + "_graph";
-	};
-    
-}]);
+function setSize(canvas) {
+	// Have canvas fill parent.
+	canvas.style.width = "100%";
+	canvas.style.height = "100%";
+	canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+}
 
 standard_endpoint_graph.directive('promenadeStandardEndpointCardGraph', ['$interval', function ($interval) {
     return {
@@ -17,7 +14,6 @@ standard_endpoint_graph.directive('promenadeStandardEndpointCardGraph', ['$inter
             endpoint: "="
         },
         templateUrl: '../vendor_components/promenade/endpoints/directives/promenade-standard-endpoint-card-graph.html',
-        controller: 'PromenadeStandardEndpointCardGraphController',
         link: function (scope, element, attributes) {
 	        scope.data = 50;
 	        $interval(function () {
@@ -27,7 +23,7 @@ standard_endpoint_graph.directive('promenadeStandardEndpointCardGraph', ['$inter
     };
 }]);
 
-standard_endpoint_graph.directive('smoothieChart', function () {
+standard_endpoint_graph.directive('smoothieChart', ['$window', function ($window) {
 	return {
 		restrict: "E",
 		scope: {
@@ -40,13 +36,19 @@ standard_endpoint_graph.directive('smoothieChart', function () {
 			// Add it as a child to our directive element.
 			element[0].appendChild(canvas);
 			
-			// Have canvas fill parent.
-			canvas.style.width = "100%";
-			canvas.style.height = "100%";
-			canvas.width = canvas.offsetWidth;
-	        canvas.height = canvas.offsetHeight;
+			setSize(canvas);
 	        
-	        scope.smoothie = new SmoothieChart({grid:{fillStyle:'transparent',strokeStyle:'transparent',borderVisible:false},labels:{fillStyle:'#000000', fontSize: 12}});
+	        scope.smoothie = new SmoothieChart({
+		        grid: {
+			        fillStyle: 'transparent',
+			        strokeStyle: 'transparent',
+			        borderVisible: false
+			    },
+			    labels: {
+				    fillStyle: '#000000',
+				    fontSize: 12
+				}
+			});
 			
 	        scope.smoothie.streamTo(canvas, 1000);
 	        
@@ -61,6 +63,12 @@ standard_endpoint_graph.directive('smoothieChart', function () {
 		    scope.$watch("value", function (newValue, oldValue, scope) {
 			   line.append(new Date().getTime(), newValue);
 		    });
+		    
+		    // If the window resizes we are going to need to resize our graphs as well.
+		    // They will not automatically resize otherwise.
+		    angular.element($window).bind("resize", function () {
+			    setSize(canvas);
+		    });
 		}
 	};
-});
+}]);

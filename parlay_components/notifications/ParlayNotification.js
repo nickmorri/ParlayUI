@@ -5,41 +5,45 @@ notifications.run(['$notification', function ($notification) {
     $notification.requestPermission();
 }]);
 
-notifications.factory('ParlayNotification', ['$mdToast', '$q', '$notification', function ($mdToast, $q, $notification) {
-    
-    function pageVisibile() {
-        return document.hidden;
-    }
-    
-    function visibilityChangeHandler() {
-        Private.hidden = pageVisibile();
-        Private.clearNotifications();
-    }
-    
+notifications.factory('ParlayNotification', ['$mdToast', '$q', '$notification', '$timeout', function ($mdToast, $q, $notification, $timeout) {
+            
     var Public = {};
     
     var Private = {
-        hidden: pageVisibile(),
-        active_notifications: []
+        active_notifications: [],
+        timeout: undefined
     };
     
     Public.show = function (configuration) {
-        var toast = $mdToast.simple().content(configuration.content);
+	    
+	    var toast = $mdToast.simple()
+	    	.content(configuration.content)
+	    	.hideDelay(false);
         
-        if (configuration.action) {
-            toast.action(configuration.action.text).highlightAction(true);
-        }
+        if (configuration.action) toast
+            	.action(configuration.action.text)
+            	.highlightAction(true);
         
-        if (Private.hidden) {
-            Private.active_notifications.push($notification(configuration.content, {
-                delay: 4000
-            }));
+        if (document.hidden) {
+	        var notification = $notification(configuration.content);
+            Private.active_notifications.push(notification);
         }
         
         $mdToast.show(toast).then(function (result) {
             // Result will be resolved with 'ok' if the action is performed and true if the $mdToast has hidden.
             if (result === 'ok' && configuration.action) configuration.action.callback();
         });
+        
+        if (Private.timeout !== undefined) $timeout.cancel(Private.timeout);
+        
+        Private.timeout = $timeout(function () {
+	        Public.hide();
+	        if (notification !== undefined) notification.close();
+        }, 4000);
+    };
+    
+    Public.hide = function () {
+	    $mdToast.hide();
     };
     
     Public.showProgress = function (configuration) {
@@ -59,7 +63,7 @@ notifications.factory('ParlayNotification', ['$mdToast', '$q', '$notification', 
         });
     };
     
-    document.addEventListener('visibilitychange', visibilityChangeHandler);
+    document.addEventListener('visibilitychange', Private.clearNotifications);
     
     return Public;
 }]);

@@ -61,7 +61,9 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', 'ParlayNotification', '
      * @returns {$q.defer.promise} Resolve when response is received with result of open request from Broker.
      */
     Public.openProtocol = function (configuration) {
-        return Public.sendRequest('open_protocol', {'protocol_name': configuration.name, 'params': configuration.parameters});
+        return Public.sendRequest('open_protocol', {'protocol_name': configuration.name, 'params': configuration.parameters}).then(function (response) {
+	        return response.STATUS.toLowerCase().indexOf("error") === -1 ? $q.resolve(response) : $q.reject(response.STATUS);
+        });
     };
     
     /**
@@ -70,7 +72,9 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', 'ParlayNotification', '
      * @returns {$q.defer.promise} Resolve when response is received with result of close request from Broker.
      */
     Public.closeProtocol = function (protocol_name) {
-        return Public.sendRequest('close_protocol', {'protocol': protocol_name});
+        return Public.sendRequest('close_protocol', {'protocol': protocol_name}).then(function (response) {
+	        return response.STATUS === "ok" ? $q.resolve(response) : $q.reject(response.STATUS);
+        });
     };
         
     /**
@@ -80,7 +84,7 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', 'ParlayNotification', '
      */
     Public.requestDiscovery = function (is_forced) {
         
-        // Check we are connected first, otherwise throw up warning.
+        // Check we are connected first, otherwise display ParlayNotification.
         if (!Public.isConnected()) {
 	        ParlayNotification.show({content: "Cannot discover while not connected to Broker."});
 	        return $q(function (resolve, reject) {
@@ -88,33 +92,31 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', 'ParlayNotification', '
 	        });
         }
         
-        // Launches ParlayNotification discovery progress after 100 ms
-        var progress = $timeout(ParlayNotification.showProgress, 100);
-        
-        // Request open protocols before discovery so we know what we're discovering.
-        return Public.requestOpenProtocols().then(function(open_protocols) {
-            return open_protocols;
-        }).then(function (open_protocols) {
-	    	return Public.sendRequest('get_discovery', {'force': is_forced}).then(function (contents) {
+        else {
+	    	// Launches ParlayNotification discovery progress after 100 ms
+	        var progress = $timeout(ParlayNotification.showProgress, 100);
+	        
+	        // Request open protocols before discovery so we know what we're discovering.
+	        return Public.requestOpenProtocols().then(function(open_protocols) {
+	            return open_protocols;
+	        }).then(function (open_protocols) {
+		    	return Public.sendRequest('get_discovery', {'force': is_forced});
+		    }).then(function (contents) {
 	            // Cancels $timeout callback execution. Better UX for immediate responses from Broker.
 	            // If $timeout has already executed we should hide the ParlayNotification now.
 	            if (!$timeout.cancel(progress)) ParlayNotification.hideProgress();
+	            
+	            var content_string = "Discovered ";
+	            
+	            if (contents.discovery.length === 0) content_string += " Verify connections.";
+	            else if (contents.discovery.length === 1) content_string += contents.discovery[0].NAME + '.';
+	            else content_string += contents.discovery.length + ' protocols.';
 	
-	            function buildNotificationMessage(result) {
-	                var content_string = 'Discovered ';
-	
-	                if (result.length === 0) content_string += ' Verify connections.';
-	                else if (result.length === 1) content_string += result[0].NAME + '.';
-	                else content_string += result.length + ' protocols.';
-	                
-	                return content_string;
-	            }
-	
-	            ParlayNotification.show({content: buildNotificationMessage(contents.discovery)});
+	            ParlayNotification.show({content: content_string});
 	
 	            return contents.discovery;
 	        });    
-        });
+        }
         
     };
     
@@ -159,16 +161,10 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', 'ParlayNotification', '
     };
     
     Private.subscribe = function () {
-	    ParlaySocket.sendMessage({'type': 'subscribe'}, {
-		    "TOPICS": {
-			    "TO": 61953
-		    }
-	    });
-        ParlaySocket.sendMessage({'type': 'subscribe'}, {
-		    "TOPICS": {
-			    "TO": "UI"
-		    }
-	    });
+	    return $q.all([
+	    	ParlaySocket.sendMessage({'type': 'subscribe'},{"TOPICS": {"TO": 61953}}),
+	    	ParlaySocket.sendMessage({'type': 'subscribe'},{"TOPICS": {"TO": "UI"}})
+	    ]);
     };
     
     Public.onMessage = ParlaySocket.onMessage;

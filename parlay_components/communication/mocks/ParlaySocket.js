@@ -1,4 +1,4 @@
-angular.module('mock.parlay.socket', []).factory('ParlaySocket', [function () {
+angular.module('mock.parlay.socket', []).factory('ParlaySocket', ['$q', function ($q) {
     var Public = {
 	    connected: false
     };
@@ -23,10 +23,16 @@ angular.module('mock.parlay.socket', []).factory('ParlaySocket', [function () {
     
     Public.open = function () {
 		this.connected = true;
+		return $q(function (resolve) {
+			resolve();
+		});
     };
     
     Public.close = function () {
         this.connected = false;
+        return $q(function (resolve) {
+			resolve();
+		});
     };
     
     Public.isConnected = function () {

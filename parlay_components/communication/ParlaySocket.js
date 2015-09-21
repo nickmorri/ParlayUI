@@ -31,7 +31,9 @@ socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', func
     var Private = {
         onMessageCallbacks: new Map(),
         onOpenCallbacks: [],
-        onCloseCallbacks: []
+        onCloseCallbacks: [],
+        onOpenPromise: undefined,
+        onClosePromise: undefined
     };
     
     /**
@@ -55,10 +57,9 @@ socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', func
      * @returns {$q.defer.promise} Resolved after $websocket.open()
      */
     Private.open = function () {
-        $q(function (resolve, reject) {
-            Private.socket.$open();
-            resolve(); 
-        });
+	    Private.onOpenPromise = $q.defer();
+	    Private.socket.$open();
+	    return Private.onOpenPromise.promise;
     };
         
     /**
@@ -66,10 +67,9 @@ socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', func
      * @returns {$q.defer.promise} Resolved after $websocket.close()
      */
     Private.close = function () {
-        $q(function (resolve, reject) {
-            Private.socket.$close();
-            resolve();
-        });
+	    Private.onClosePromise = $q.defer();
+	    Private.socket.$close();
+        return Private.onClosePromise.promise;
     };
     
     /**
@@ -232,12 +232,14 @@ socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', func
         
         if (mock === undefined || typeof mock === 'object') {            
             Private.socket = $websocket.$new({
+	            lazy: true,
                 url: BrokerAddress,
                 protocol: [],
                 enqueue: true,
                 reconnect: false,
                 mock: mock
             });
+            Private.open();
         }
         else {
             throw new TypeError('Invalid type for config, accepts mock configuration Object or undefined.', 'socket.js');
@@ -250,6 +252,11 @@ socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', func
         Private.socket.$on('$open', function (event) {
             Private.public.connected = Private.socket.$STATUS;
             
+            if (Private.onOpenPromise !== undefined) {
+	            Private.onOpenPromise.resolve();
+	            Private.onOpenPromise = undefined;
+            }
+            
             Private.onOpenCallbacks.forEach(function(callback) {
                 callback();
             });
@@ -258,6 +265,16 @@ socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', func
         // When the WebSocket closes set the connected status and execute onClose callbacks.
         Private.socket.$on('$close', function (event) {
             Private.public.connected = Private.socket.$STATUS;
+            
+            if (Private.onClosePromise !== undefined) {
+	            Private.onClosePromise.resolve();
+	            Private.onClosePromise = undefined;
+            }
+            
+            if (Private.onOpenPromise !== undefined) {
+	            Private.onOpenPromise.reject();
+	            Private.onOpenPromise = undefined;
+            }
             
             Private.onCloseCallbacks.forEach(function(callback) {
                 callback();

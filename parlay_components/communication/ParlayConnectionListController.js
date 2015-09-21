@@ -51,7 +51,7 @@ list_controller.controller('ParlayConnectionListController', ['$scope', '$mdDial
 	
 	$scope.openSavedProtocol = function (configuration) {
 		$scope.connecting = true;
-	    ParlayProtocolManager.openProtocol(configuration).then(function (response) {
+	    ParlayProtocolManager.openProtocol(configuration).finally(function (response) {
 		    $scope.connecting = false;
 	    });
     };

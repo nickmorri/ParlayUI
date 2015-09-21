@@ -90,6 +90,9 @@ protocol_manager.factory('ParlayProtocolManager', ['$injector', '$q', 'Promenade
                 }
             });
             return response;
+        }).catch(function (status) {
+	        ParlayNotification.show({content: status});
+	        return $q.reject(status);
         });
     };
     
@@ -100,24 +103,21 @@ protocol_manager.factory('ParlayProtocolManager', ['$injector', '$q', 'Promenade
      */
     Public.closeProtocol = function (protocol) {
         return PromenadeBroker.closeProtocol(protocol.getName()).then(function (response) {
-            if (response.STATUS === 'ok') {
-                // Search for open protocol requested to be closed.
-                var index = Private.open_protocols.findIndex(function (suspect) {
-                    return protocol.getName() === suspect.getName();
-                });
-                
-                // Remove if we find the protocol, then call it's onClose method.
-                /* istanbul ignore else */
-                if (index > -1) Private.open_protocols.splice(index, 1)[0].onClose();
-                
-                ParlayNotification.show({content: 'Closed ' + protocol.getName() + '.'}); 
-                
-                return response;
-            }
-            else {
-	            ParlayNotification.show({content: response.STATUS});
-	            return $q.reject(response);
-            }
+            // Search for open protocol requested to be closed.
+            var index = Private.open_protocols.findIndex(function (suspect) {
+                return protocol.getName() === suspect.getName();
+            });
+            
+            // Remove if we find the protocol, then call it's onClose method.
+            /* istanbul ignore else */
+            if (index > -1) Private.open_protocols.splice(index, 1)[0].onClose();
+            
+            ParlayNotification.show({content: 'Closed ' + protocol.getName() + '.'}); 
+            
+            return response;
+        }).catch(function (status) {
+	        ParlayNotification.show({content: status});
+	        return $q.reject(status);
         });
     };
     
@@ -242,21 +242,13 @@ protocol_manager.factory('ParlayProtocolManager', ['$injector', '$q', 'Promenade
      * PromenadeBroker callback registrations.
      */
     
-    PromenadeBroker.onOpen(function () {
-        Private.requestProtocols();
-    });
+    PromenadeBroker.onOpen(Private.requestProtocols);
     
-    PromenadeBroker.onClose(function () {
-        Private.clearProtocols();
-    });
+    PromenadeBroker.onClose(Private.clearProtocols);
     
-    PromenadeBroker.onMessage({type: 'broker', response: 'open_protocol_response'}, function (response) {
-        Private.requestOpenProtocols();
-    });
+    PromenadeBroker.onMessage({type: 'broker', response: 'open_protocol_response'}, Private.requestOpenProtocols);
     
-    PromenadeBroker.onMessage({type: 'broker', response: 'close_protocol_response'}, function (response) {
-        Private.requestOpenProtocols();
-    });
+    PromenadeBroker.onMessage({type: 'broker', response: 'close_protocol_response'}, Private.requestOpenProtocols);
     
     PromenadeBroker.onMessage({type: 'broker', response: 'get_protocols_response'}, function (response) {
         Private.setAvailableProtocols(response);

@@ -80,6 +80,14 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', 'ParlayNotification', '
      */
     Public.requestDiscovery = function (is_forced) {
         
+        // Check we are connected first, otherwise throw up warning.
+        if (!Public.isConnected()) {
+	        ParlayNotification.show({content: "Cannot discover while not connected to Broker."});
+	        return $q(function (resolve, reject) {
+		        reject("Cannot discover while not connected to Broker.");
+	        });
+        }
+        
         // Launches ParlayNotification discovery progress after 100 ms
         var progress = $timeout(ParlayNotification.showProgress, 100);
         

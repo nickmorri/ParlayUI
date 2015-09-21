@@ -17,6 +17,7 @@
     "angular-ui-router": "angular-ui-router#master",
     "es6-shim": "~0.32.3",
     "moment": "~2.10.6",
+    "smoothie": "~1.27.0",
     "svg-morpheus": "~0.1.8"
   },
   "resolutions": {

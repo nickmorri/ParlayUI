@@ -1,4 +1,4 @@
-var standard_endpoint = angular.module('promenade.endpoints.standardendpoint', ['parlay.endpoints', 'promenade.endpoints.standardendpoint.commands', 'promenade.endpoints.standardendpoint.log']);
+var standard_endpoint = angular.module('promenade.endpoints.standardendpoint', ['parlay.endpoints', 'promenade.endpoints.standardendpoint.commands', 'promenade.endpoints.standardendpoint.log', 'promenade.endpoints.standardendpoint.graph']);
 
 function parseField(field) {
 	            
@@ -47,7 +47,7 @@ standard_endpoint.factory('PromenadeStandardEndpoint', ['ParlayEndpoint', functi
         this.type = 'StandardEndpoint';
         
         this.directives.toolbar.push('promenadeStandardEndpointCardToolbar');
-        this.directives.tabs.push('promenadeStandardEndpointCardCommands', 'promenadeStandardEndpointCardLog');
+        this.directives.tabs.push("promenadeStandardEndpointCardCommands", "promenadeStandardEndpointCardLog", "promenadeStandardEndpointCardGraph");
           
         if (data.CONTENT_FIELDS) {
         

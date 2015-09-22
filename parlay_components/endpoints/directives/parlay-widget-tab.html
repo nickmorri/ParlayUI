@@ -1,0 +1,25 @@
+<md-tab ng-disabled="true">
+	<md-tab-label>
+		<md-menu ng-click="$mdOpenMenu($event)">
+			<md-button aria-label="Open available directive menu" class="md-icon-button parlay-directive-add-button">
+				<ng-md-icon icon="add"></ng-md-icon>
+		    </md-button>
+		    <md-menu-content>
+		        <md-menu-item ng-repeat="(target, directives) in getAvailableDirectives()">
+					<md-menu>
+						<md-button ng-click="$mdOpenMenu()">{{target}}</md-button>
+						<md-menu-content>
+							<md-menu-item ng-repeat="directive in directives">
+								<md-button ng-click="activateDirective(target, directive)">
+									<md-icon><ng-md-icon icon="add"></ng-md-icon></md-icon>
+									{{directive}}
+								</md-button>
+							</md-menu-item>
+						</md-menu-content>
+					</md-menu>
+				</md-menu-item>
+			</md-menu-content>
+		</md-menu>
+	</md-tab-label>
+</md-tab>
+

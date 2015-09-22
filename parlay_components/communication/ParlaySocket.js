@@ -3,7 +3,7 @@ var socket = angular.module('parlay.socket', ['ngWebsocket']);
 // If page is secure use a secure WebSocket.
 socket.value('BrokerAddress', location.protocol === 'https:' ? 'wss://' + location.hostname + ':8086' : 'ws://' + location.hostname + ':8085');
 
-//socket.value('BrokerAddress', 'ws://172.16.146.132:8085');
+socket.value('BrokerAddress', 'ws://172.16.146.132:8085');
 
 socket.factory('ParlaySocket', ['ParlaySocketService', function (ParlaySocketService) {
     var Private = {};

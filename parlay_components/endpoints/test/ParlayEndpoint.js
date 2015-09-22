@@ -27,7 +27,7 @@
                 it('has correct default values', function () {
                     expect(ParlayEndpoint.directives).toEqual({
                         toolbar: [],
-                        tabs: []
+                        tabs: ["parlayWidgetTab"]
                     });
                     expect(ParlayEndpoint.type).toBe('ParlayEndpoint');
                     

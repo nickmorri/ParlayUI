@@ -37,6 +37,8 @@ standard_endpoint.factory('PromenadeStandardEndpoint', ['ParlayEndpoint', functi
 	    // Call our parent constructor first.
         ParlayEndpoint.call(this, data, protocol);
         
+        this.type = 'StandardEndpoint';
+        
         Object.defineProperty(this, 'id', {
             value: data.ID,
             configurable: false,
@@ -44,10 +46,18 @@ standard_endpoint.factory('PromenadeStandardEndpoint', ['ParlayEndpoint', functi
             enumerable: true
         });
         
-        this.type = 'StandardEndpoint';
+        this.addAvailableDirective({
+	        tabs: [
+	        	"promenadeStandardEndpointCardCommands",
+	        	"promenadeStandardEndpointCardLog",
+	        	"promenadeStandardEndpointCardGraph"
+	        ]
+        });
         
-        this.directives.toolbar.push('promenadeStandardEndpointCardToolbar');
-        this.directives.tabs.push("promenadeStandardEndpointCardCommands", "promenadeStandardEndpointCardLog", "promenadeStandardEndpointCardGraph");
+        this.addDefaultDirective({
+	        toolbar: ["promenadeStandardEndpointCardToolbar"],
+	        tabs: ["promenadeStandardEndpointCardCommands"]
+	    });
           
         if (data.CONTENT_FIELDS) {
         

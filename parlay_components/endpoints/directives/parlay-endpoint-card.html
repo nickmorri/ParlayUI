@@ -1,23 +1,26 @@
 <md-card class="md-whiteframe-z3">
     <md-toolbar class="md-primary">
         <div class="md-toolbar-tools">
+			<md-menu>
+				<md-button aria-label="Open overflow menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
+					<md-icon md-menu-origin><ng-md-icon icon="more_vert"></ng-md-icon></md-icon>
+				</md-button>
+				<md-menu-content>
+					<md-menu-item ng-hide="$first">
+						<md-button md-menu-align-target ng-click="reorder($index, -1)">Move left</md-button>
+					</md-menu-item>
+					<md-menu-item ng-hide="$last">
+						<md-button md-menu-align-target ng-click="reorder($index, 1)">Move right</md-button>
+					</md-menu-item>
+					<md-menu-item>
+						<md-button md-menu-align-target ng-click="duplicate($index)">Duplicate</md-button>
+					</md-menu-item>
+					<md-menu-item>
+						<md-button md-menu-align-target ng-click="deactivate($index)">Deactivate</md-button>
+					</md-menu-item>
+				</md-menu-content>
+			</md-menu>
             <!-- Vendor specific endpoint toolbar-tools directives are automatically inserted here -->
-            <md-button class="md-icon-button" aria-label="Move left" ng-click="reorder($index, -1)" ng-hide="$first">
-				<md-icon><ng-md-icon icon="arrow_back"></ng-md-icon></md-icon>
-	            <md-tooltip>Move left</md-tooltip>
-            </md-button>
-	            <md-button class="md-icon-button" aria-label="Move right" ng-click="reorder($index, 1)" ng-hide="$last">
-				<md-icon><ng-md-icon icon="arrow_forward"></ng-md-icon></md-icon>
-	            <md-tooltip>Move right</md-tooltip>
-            </md-button>
-            <md-button class="md-icon-button" aria-label="Duplicate" ng-click="duplicate($index)">
-				<md-icon><ng-md-icon icon="content_copy"></ng-md-icon></md-icon>            	
-	            <md-tooltip>Duplicate</md-tooltip>
-            </md-button>     
-            <md-button class="md-icon-button" aria-label="Deactivate" ng-click="deactivate($index)">
-				<md-icon><ng-md-icon icon="close"></ng-md-icon></md-icon>            	
-	            <md-tooltip>Deactivate</md-tooltip>
-            </md-button>
         </div>
     </md-toolbar>
     

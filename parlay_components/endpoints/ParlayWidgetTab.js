@@ -21,9 +21,12 @@ angular.module("parlay.endpoints.widgettab", [])
 								
 			},
 			link: function (scope, element, attributes) {
-				element[0].firstChild.addEventListener("click", function () {
-					debugger;
-				});
+				
+				function test() {
+					
+				}
+				
+				element[0].children[0].onclick = test;
 			}
 		};
 	});

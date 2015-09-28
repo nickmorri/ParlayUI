@@ -157,7 +157,7 @@ module.exports = function (grunt) {
           'livereload': true
         },
         'files': '<%= meta.stylesheets %>',
-        'tasks': ['newer:csslint:dev', 'newer:copy']
+        'tasks': ['newer:csslint:dev', 'cssmin:dev']
       },
       'html': {
         'options': {

@@ -153,7 +153,7 @@ function PromenadeStandardEndpointCardCommandContainer(RecursionHelper, ParlayPe
 		    ParlayPersistence.monitor(directive_name, "wrapper.message", $scope);
 	        
 	        $scope.prepChip = function ($chip) {
-			    return {value:$chip};
+   			    return {value: $chip};
 		    };
 	        
 	        /**

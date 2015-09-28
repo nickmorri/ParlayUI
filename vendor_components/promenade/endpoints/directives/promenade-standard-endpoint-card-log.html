@@ -22,10 +22,11 @@
 		</div>
 	</md-toolbar>
 
-	<md-input-container layout-margin aria-label="Filter log messages">
+	<md-input-container ng-show="ctrl.getLog().length" class="filter-input-container" aria-label="Filter log messages">
 		<label>Filter</label>
 		<input ng-model="filter_text" type="text">
 	</md-input-container>
+	
     <md-content class="md-padding parlay-endpoint-card-tab-content" scroll-glue>
         <md-list>
             <md-list-item class="md-2-line" ng-repeat="message in ctrl.getFilteredLog(filter_text)">

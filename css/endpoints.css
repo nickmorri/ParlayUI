@@ -9,3 +9,7 @@
 .parlay-endpoint-card-tab-content {
 	max-height: 300px;
 }
+
+.filter-input-container {
+	padding-bottom: 0;
+}

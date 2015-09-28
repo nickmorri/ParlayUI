@@ -5,3 +5,7 @@
 .parlay-directive-add-button {
 	height: 37px !important;
 }
+
+.parlay-endpoint-card-tab-content {
+	max-height: 300px;
+}

@@ -1,26 +1,46 @@
 <md-tab label="Commands">
 
-	<md-content class="md-padding">
+	<md-toolbar class="md-hue-2">
+		<div class="md-toolbar-tools">
+			<span flex></span>
+			
+			<md-menu md-position-mode="target-right target">
+				<md-button class="md-icon-button" aria-label="More" ng-click="$mdOpenMenu($event)">
+					<md-icon md-menu-origin><ng-md-icon icon="more_vert"></ng-md-icon></md-icon>
+				</md-button>
+				<md-menu-content>
+					<md-menu-item>
+						<md-button ng-click="ctrl.closeTab()">
+							<md-icon md-menu-align-target><ng-md-icon icon="close"></ng-md-icon></md-icon>
+							Close tab
+						</md-button>
+					</md-menu-item>
+				</md-menu-content>
+			</md-menu>
+		</div>
+	</md-toolbar>
+
+    <md-content class="md-padding parlay-endpoint-card-tab-content">
     
-        <form name="commandform" layout="column" ng-submit="send($event)">
+        <form name="commandform" layout="column" ng-submit="ctrl.send($event)">
             <div layout="row">
                 <promenade-standard-endpoint-card-command-container
                 	commandform="commandform"
                 	wrapper="wrapper"
-                	fields="endpoint.content_fields"
+                	fields="ctrl.endpoint.content_fields"
                 	flex>
                 </promenade-standard-endpoint-card-command-container>
             </div>
             
-            <md-button flex type="submit" class="md-raised" ng-class="error ? 'md-warn' : 'md-primary'" ng-disabled="commandform.$invalid" aria-label="Sends command to BIT Service object.">
-                <span ng-show="sending">
-                    Sent ({{status_message}}) [{{endpoint.getMessageId()}}]
+            <md-button flex type="submit" class="md-raised" ng-class="ctrl.error ? 'md-warn' : 'md-primary'" ng-disabled="commandform.$invalid" aria-label="Sends command to a Promenade Standard Endpoint.">
+                <span ng-show="ctrl.sending">
+                    Sent ({{ctrl.status_message}}) [{{ctrl.endpoint.getMessageId()}}]
                 </span>
-                <span ng-hide="sending || error">
+                <span ng-hide="ctrl.sending || ctrl.error">
                     Send
                 </span>
-				<span ng-show="error">
-					Error check log. ({{status_message}}) [{{endpoint.getMessageId()}}]
+				<span ng-show="ctrl.error">
+					Error check log. ({{ctrl.status_message}}) [{{ctrl.endpoint.getMessageId()}}]
 				</span>
             </md-button>
             

@@ -1,37 +1,60 @@
-var standard_endpoint_log = angular.module('promenade.endpoints.standardendpoint.log', ['parlay.utility', 'parlay.store.persistence', 'luegg.directives']);
-
-standard_endpoint_log.controller('PromenadeStandardEndpointCardLogController', ['$scope', 'ParlayPersistence', 'ParlayUtility', function ($scope, ParlayPersistence, ParlayUtility) {
-    
-    $scope.filter_text = null;
-    
-    $scope.getFilteredLog = function (query) {
-	    var lower_case_query = angular.lowercase(query);
-	    return query ? $scope.endpoint.log.filter(function (message) {
-		    return Object.keys(message.TOPICS).some(function (key) {
-			    return angular.lowercase(message.TOPICS[key].toString()).indexOf(lower_case_query) > -1;
-		    }) || Object.keys(message.CONTENTS).some(function (key) {
-			    return angular.lowercase(message.CONTENTS[key].toString()).indexOf(lower_case_query) > -1;
-		    });
-	    }) : $scope.endpoint.log;
-    };
-    
-    $scope.getLog = function () {
-        return $scope.endpoint.log;
-    };
-    
-    var container = ParlayUtility.relevantScope($scope, 'container').container;
+/**
+ * Controller constructor for PromenadeStandardEndpointCardLogTabController.
+ */
+function PromenadeStandardEndpointCardLogTabController($scope, ParlayPersistence, ParlayUtility) {
+	ParlayBaseTabController.call(this, $scope);
+	
+	$scope.filter_text = null;
+	
+	var container = ParlayUtility.relevantScope($scope, 'container').container;
 	var directive_name = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
-    
-    ParlayPersistence.monitor(directive_name, "filter_text", $scope);
-    
-}]);
+	ParlayPersistence.monitor(directive_name, "filter_text", $scope);
+}
 
-standard_endpoint_log.directive('promenadeStandardEndpointCardLog', function () {
-    return {
+// Prototypically inherit from ParlayBaseTabController.
+PromenadeStandardEndpointCardLogTabController.prototype = Object.create(ParlayBaseTabController.prototype);
+
+/**
+ * Applies a filter to the endpoint log and returns the messages that pass.
+ * @param {String} query - text to filter the log by.
+ * @returns {Array} - If query is undefined return the full endpoint log, otherwise return the messages that pass the filter.
+ */
+PromenadeStandardEndpointCardLogTabController.prototype.getFilteredLog = function(query) {
+	// If the filter_text isn't null or undefined return the messages that match the query.
+    return query ? this.getLog().filter(function (message) {
+	    // Look through message topics and contents for a match on the query.
+	    return Object.keys(message.TOPICS).some(function (key) {
+		    return message.TOPICS[key] !== null && angular.lowercase(message.TOPICS[key].toString()).indexOf(this) > -1;
+	    }, this) || Object.keys(message.CONTENTS).some(function (key) {
+		    return message.CONTENTS[key] !== null && angular.lowercase(message.CONTENTS[key].toString()).indexOf(this) > -1;
+	    }, this);
+    }, angular.lowercase(query)) : this.getLog();
+};
+
+/**
+ * Returns the log stored on the endpoint Object.
+ * @returns {Array} - All messages captured by the endpoint.
+ */
+PromenadeStandardEndpointCardLogTabController.prototype.getLog = function () {
+	return this.endpoint.log;
+};
+
+/**
+ * Directive constructor for PromenadeStandardEndpointCardLog.
+ * @returns {Object} - Directive configuration.
+ */
+function PromenadeStandardEndpointCardLog() {
+	return {
         scope: {
             endpoint: "="
         },
         templateUrl: '../vendor_components/promenade/endpoints/directives/promenade-standard-endpoint-card-log.html',
-        controller: 'PromenadeStandardEndpointCardLogController'
+        controller: 'PromenadeStandardEndpointCardLogTabController',
+        controllerAs: "ctrl",
+        bindToController: true
     };
-});
+}
+
+angular.module('promenade.endpoints.standardendpoint.log', ['parlay.utility', 'parlay.store.persistence', 'luegg.directives'])
+	.controller('PromenadeStandardEndpointCardLogTabController', ['$scope', 'ParlayPersistence', 'ParlayUtility', PromenadeStandardEndpointCardLogTabController])
+	.directive('promenadeStandardEndpointCardLog', PromenadeStandardEndpointCardLog);

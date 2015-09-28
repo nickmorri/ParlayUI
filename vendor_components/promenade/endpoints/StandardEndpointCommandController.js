@@ -1,81 +1,78 @@
-var standard_endpoint_commands = angular.module('promenade.endpoints.standardendpoint.commands', ['RecursionHelper', 'parlay.store', 'parlay.navigation.bottombar', 'parlay.utility']);
+ /**
+ * If the buffer is valid and available we should force the md-chips controller to push it to the ng-model.
+ * @param {NodeList} chipElements - List of HTMLElements mapping to each md-chip.
+ */
+function pushChipBuffer (chipElements) {
+    if (chipElements.length) {
+	    var ctrl = angular.element(chipElements[0].querySelector('input')).scope().$mdChipsCtrl;
+	    var buffer = ctrl.getChipBuffer();
+	    if (buffer !== "") {
+			ctrl.appendChip(buffer);
+			ctrl.resetChipBuffer();    
+	    }			
+	}
+}
 
-standard_endpoint_commands.controller('PromenadeStandardEndpointCommandController', ['$scope', '$timeout', 'ScriptLogger', 'ParlayUtility', function ($scope, $timeout, ScriptLogger, ParlayUtility) {
+/**
+ * Collects and formats the fields available on the given message object.
+ * @param {Object} message - message container from the scope.
+ * @returns - parsed and formatted StandardEndpoint data.
+ */    
+function collectMessage (message) {
+    return Object.keys(message).reduce(function (accumulator, field) {
+        var param_name, field_type;
+        
+        if (field.indexOf('_') > -1) {
+	        var split_field = field.split('_');
 
-	// We are wrapping message in another object due to the way Angular handles nested scopes. Reference "Angular Dot Rule".
+            field_type = split_field[split_field.length - 1];
+
+            param_name = split_field.slice(0, split_field.length - 1).join('_');
+	    }
+	    else {
+		    param_name = field;
+	    }
+	    
+	    // If type is Object or Array then turn the JSON string into an actual Object.
+	    if (field_type === "ARRAY") accumulator[param_name] = message[field].map(function (chip) { 
+		    return !Number.isNaN(chip.value) ? parseInt(chip.value) : chip.value;
+		});
+	    else if (field_type === "NUMBERS") accumulator[param_name] = message[field].map(parseFloat);
+	    else if (angular.isObject(message[field])) accumulator[param_name] = message[field].value;
+        else accumulator[param_name] = message[field];
+        
+        return accumulator;
+    }, {});
+
+}
+
+function PromenadeStandardEndpointCardCommandTabController($scope, $timeout, ScriptLogger, ParlayUtility) {
+	ParlayBaseTabController.call(this, $scope);
+	
 	$scope.wrapper = {
 		message: {}
 	};
-
-    $scope.error = false;
-    $scope.sending = false;
-    $scope.status_message = null;
-    
-    var sending_timeout = null;
-    
-    /**
-	 * If the buffer is valid and available we should force the md-chips controller to push it to the ng-model.
-	 * @param {NodeList} chipElements - List of HTMLElements mapping to each md-chip.
-	 */
-    function pushChipBuffer (chipElements) {
-	    if (chipElements.length) {
-		    var ctrl = angular.element(chipElements[0].querySelector('input')).scope().$mdChipsCtrl;
-		    var buffer = ctrl.getChipBuffer();
-		    if (buffer !== "") {
-				ctrl.appendChip(buffer);
-				ctrl.resetChipBuffer();    
-		    }			
-		}
-    }
-    
-    /**
-	 * Collects and formats the fields available on the given message object.
-	 * @param {Object} message - message container from the scope.
-	 * @returns - parsed and formatted StandardEndpoint data.
-	 */    
-    function collectMessage (message) {
-        return Object.keys(message).reduce(function (accumulator, field) {
-	        var param_name, field_type;
-	        
-	        if (field.indexOf('_') > -1) {
-		        var split_field = field.split('_');
-
-                field_type = split_field[split_field.length - 1];
-
-                param_name = split_field.slice(0, split_field.length - 1).join('_');
-		    }
-		    else {
-			    param_name = field;
-		    }
-		    
-		    // If type is Object or Array then turn the JSON string into an actual Object.
-		    if (field_type === "ARRAY") accumulator[param_name] = message[field].map(function (chip) { 
-			    return !Number.isNaN(chip.value) ? parseInt(chip.value) : chip.value;
-			});
-		    else if (field_type === "NUMBERS") accumulator[param_name] = message[field].map(parseFloat);
-		    else if (angular.isObject(message[field])) accumulator[param_name] = message[field].value;
-            else accumulator[param_name] = message[field];
-            
-	        return accumulator;
-        }, {});
-
-    }
-    
-    $scope.send = function (event) {
+	
+	this.error = false;
+	this.sending = false;
+	this.status_message= null;
+	
+	this.sending_timeout = null;
+	
+	this.send = function ($event) {
+		// Push the buffer into the md-chips ng-model
+	    pushChipBuffer($event.target.querySelectorAll('md-chips'));
 	    
-	    // Push the buffer into the md-chips ng-model
-	    pushChipBuffer(event.target.querySelectorAll('md-chips'));
+	    this.error = false;
+	    this.sending = true;
 	    
-	    $scope.error = false;
-        $scope.sending = true;
-        
-        try {
+	    try {
 	    	var message = collectMessage($scope.wrapper.message);
-	    	$scope.endpoint.sendMessage(message)
+	    	this.endpoint.sendMessage(message)
 		     	.then(function (response) {
 			     	
 			     	// Use the response to display feedback on the send button.
-			        $scope.status_message = response.STATUS_NAME;
+			        this.status_message = response.STATUS_NAME;
 			        
 			        // If we still have an outstanding timeout we should cancel it to prevent the send button from flickering.
 		            if (sending_timeout !== null) $timeout.cancel(sending_timeout);
@@ -83,29 +80,28 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
 		            // Setup a timeout to reset the button to it's default state after a brief period of time.
 		        	sending_timeout = $timeout(function () {
 			        	sending_timeout = null;
-		                $scope.sending = false;
-		                $scope.status_message = null;
+		                this.sending = false;
+		                this.status_message = null;
 		            }, 500);
 		            
-		        }).catch(function (response) {
-			        $scope.sending = false;
-			        $scope.error = true;
-			        $scope.status_message = response.STATUS_NAME;
-		        });
+		        }.bind(this)).catch(function (response) {
+			        this.sending = false;
+			        this.error = true;
+			        this.status_message = response.STATUS_NAME;
+		        }.bind(this));
 		    
 		    // Put the Python equivalent command in the log.
 	        ScriptLogger.logCommand("SendCommand(" + Object.keys(message).map(function (key) {
 		        return typeof message[key] === 'number' ? key + '=' + message[key] : key + "='" + message[key] + "'";
 	        }).join(',') + ')');
-        }
-        catch (e) {
-	     	$scope.error = true;
-	     	$scope.status_message = e;   
-        }
-
-    };
-    
-    // Watch for new fields to fill with defaults.
+	    }
+	    catch (e) {
+	     	this.error = true;
+	     	this.status_message = e;   
+	    }
+	};
+	
+	// Watch for new fields to fill with defaults.
     $scope.$watchCollection("wrapper.message", function () {
 	    Object.keys($scope.wrapper.message).filter(function (key) {
 		    // Build an Array with fields that have sub fields.
@@ -123,22 +119,25 @@ standard_endpoint_commands.controller('PromenadeStandardEndpointCommandControlle
 	        $scope.wrapper.message[field.msg_key + '_' + field.input] = ['NUMBERS', 'STRINGS', 'ARRAY'].indexOf(field.input) > -1 ? [] : field.default;
 	    });
     });
-    
-}]);
+	
+}
 
-standard_endpoint_commands.directive("promenadeStandardEndpointCardCommands", function () {
-    return {
+PromenadeStandardEndpointCardCommandTabController.prototype = Object.create(ParlayBaseTabController.prototype);
+
+function PromenadeStandardEndpointCardCommands() {
+	return {
         scope: {
             endpoint: "="
         },
         templateUrl: "../vendor_components/promenade/endpoints/directives/promenade-standard-endpoint-card-commands.html",
-        controller: "PromenadeStandardEndpointCommandController"
+        controller: "PromenadeStandardEndpointCardCommandTabController",
+        controllerAs: "ctrl",
+        bindToController: true
     };
-});
+}
 
-
-standard_endpoint_commands.directive("promenadeStandardEndpointCardCommandContainer", ['RecursionHelper', 'ParlayPersistence', 'ParlayUtility', function (RecursionHelper, ParlayPersistence, ParlayUtility) {
-    return {
+function PromenadeStandardEndpointCardCommandContainer(RecursionHelper, ParlayPersistence, ParlayUtility) {
+	return {
         scope: {
             wrapper: '=',
             fields: '=',
@@ -178,4 +177,9 @@ standard_endpoint_commands.directive("promenadeStandardEndpointCardCommandContai
             
         }
     };
-}]);
+}
+
+angular.module('promenade.endpoints.standardendpoint.commands', ['RecursionHelper', 'parlay.store', 'parlay.navigation.bottombar', 'parlay.utility'])
+	.controller('PromenadeStandardEndpointCardCommandTabController', ['$scope', '$timeout', 'ScriptLogger', 'ParlayUtility', PromenadeStandardEndpointCardCommandTabController])
+	.directive("promenadeStandardEndpointCardCommands", PromenadeStandardEndpointCardCommands)
+	.directive("promenadeStandardEndpointCardCommandContainer", ['RecursionHelper', 'ParlayPersistence', 'ParlayUtility', PromenadeStandardEndpointCardCommandContainer]);

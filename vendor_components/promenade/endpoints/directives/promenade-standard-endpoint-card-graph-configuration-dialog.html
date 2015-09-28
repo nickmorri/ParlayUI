@@ -1,0 +1,21 @@
+<md-dialog flex="30" aria-label="Graph Configuration">
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+			<h2>Graph Configuration</h2>
+			<span flex></span>
+			<md-button class="md-icon-button" ng-click="ctrl.hide()">
+				<md-icon aria-label="Close"><ng-md-icon icon="close"></ng-md-icon></md-icon>
+			</md-button>
+		</div>
+	</md-toolbar>
+	<md-dialog-content layout="row" layout-wrap>
+		<md-list>
+		
+			<md-list-item ng-repeat="(name, line) in ctrl.data">
+				<md-checkbox ng-model="line.enabled"></md-checkbox>
+				<p>{{name}}</p>
+			</md-list-item>
+			
+		</md-list>
+	</md-dialog-content>
+</md-dialog>

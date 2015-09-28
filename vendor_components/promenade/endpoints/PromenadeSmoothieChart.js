@@ -22,7 +22,7 @@
  * @param {Object} config - Contains configuration data. Please reference the SmoothieChart constructor for options. http://smoothiecharts.org/tutorial.html#mycanvas6
  * @param {Number} [delay=1000] delay - Add delay so uncoming values are known before we need to plot the value.
  */
-
+ 
 angular.module("promenade.smoothiechart", [])
 	.directive('promenadeSmoothieChart', ['$window', function ($window) {
 		
@@ -50,7 +50,6 @@ angular.module("promenade.smoothiechart", [])
 			},
 			link: function (scope, element, attributes) {
 				var colors, canvas, smoothie, lines, resize;				
-				
 				// Easy colors to see on most transparent backgrounds.
 				colors = ["#000000", "#0433ff", "#aa7942", "#00fdff", "#00f900", "#ff40ff", "#ff9300", "#942192", "#ff2600", "#fffb00"];
 				
@@ -100,7 +99,7 @@ angular.module("promenade.smoothiechart", [])
 				    
 				    // If a line is removed we should remove the TimeSeries from the SmoothieChart.
 				    for (var line in lines) {
-					    if (!newValue[line]) delete lines[line];
+					    if (!newValue[line] || !newValue[line].enabled) delete lines[line];
 				    }
 				    
 			    }, true);
@@ -119,8 +118,7 @@ angular.module("promenade.smoothiechart", [])
 				    canvas.parentElement.removeChild(canvas);
 				    canvas = null;
 			    });
-			    
-			    
+			    			    
 			}
 		};
 	}]);

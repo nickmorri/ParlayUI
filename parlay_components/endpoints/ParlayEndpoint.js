@@ -100,6 +100,11 @@ parlay_endpoint.directive('parlayEndpointCard', ['$compile', 'ParlayPersistence'
         templateUrl: '../parlay_components/endpoints/directives/parlay-endpoint-card.html',
         link: function (scope, element, attributes) {
 	        
+	        // Grab the endpoint reference from the container for convience of using scope.endpoint.
+	        scope.endpoint = scope.container.ref;
+            
+            var directive_name = 'parlayEndpointCard.' + scope.endpoint.name.replace(' ', '_') + '_' + scope.container.uid;
+	        
 	        scope.active_directives = {};
 	        
 	        scope.activateDirective = function (target, directive) {
@@ -113,13 +118,8 @@ parlay_endpoint.directive('parlayEndpointCard', ['$compile', 'ParlayPersistence'
 			};
 			
 			scope.deactivateDirective = function (target, directive) {
-				
+				scope.active_directives[target].splice(scope.active_directives[target].indexOf(directive), 1);
 			};
-	        
-	        // Grab the endpoint reference from the container for convience of using scope.endpoint.
-	        scope.endpoint = scope.container.ref;
-            
-            var directive_name = 'parlayEndpointCard.' + scope.endpoint.name.replace(' ', '_') + '_' + scope.container.uid;
             
             // Using ParlayPersistence we will first attempt to restore these values then we will record them to ParlayStore.
             ParlayPersistence.monitor(directive_name, "$index", scope);
@@ -173,12 +173,8 @@ parlay_endpoint.directive('parlayEndpointCard', ['$compile', 'ParlayPersistence'
             }
             
             var one_time = scope.$watch("active_directives", function (newValue, oldValue, scope) {
-	            if (newValue !== undefined && Object.keys(newValue).length > 0) {
-		            restoreDirectives();
-	            }
-	            else {
-		            defaultDirectives();
-	            }
+	            if (newValue !== undefined && Object.keys(newValue).length > 0) restoreDirectives();
+	            else defaultDirectives();
 	            one_time();
             });
 	        

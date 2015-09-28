@@ -119,6 +119,10 @@ function PromenadeStandardEndpointCardCommandTabController($scope, $timeout, Scr
 	        $scope.wrapper.message[field.msg_key + '_' + field.input] = ['NUMBERS', 'STRINGS', 'ARRAY'].indexOf(field.input) > -1 ? [] : field.default;
 	    });
     });
+    
+    $scope.$on("$destroy", function () {
+		$scope.$parent.deactivateDirective("tabs", "promenadeStandardEndpointCardCommands");
+	});
 	
 }
 

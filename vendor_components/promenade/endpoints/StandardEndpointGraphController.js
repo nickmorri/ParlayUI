@@ -47,6 +47,10 @@ function PromenadeStandardEndpointCardGraphTabController($scope, $mdDialog, $int
 		});
 	};
 	
+	$scope.$on("$destroy", function () {
+		$scope.$parent.deactivateDirective("tabs", "promenadeStandardEndpointCardGraph");
+	});
+	
 }
 
 PromenadeStandardEndpointCardGraphTabController.prototype = Object.create(ParlayBaseTabController.prototype);

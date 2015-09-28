@@ -31,8 +31,7 @@ parlay_endpoint.factory('ParlayEndpoint', function () {
 	            default: [],
 	            available: []
             },
-            available_cache_valid: false,
-            available_cached: {}
+            available_cache: {}
         };
         
         this.addDefaultDirective({tabs: ["parlayWidgetTab"]});
@@ -63,8 +62,6 @@ parlay_endpoint.factory('ParlayEndpoint', function () {
     };
     
     ParlayEndpoint.prototype.addAvailableDirective = function (directives) {
-	    this.directives.available_cache_valid = false;
-	    
 	    var endpoint = this;
 	    Object.keys(directives).forEach(function (target) {
 		    directives[target].forEach(function (directive) {
@@ -74,17 +71,14 @@ parlay_endpoint.factory('ParlayEndpoint', function () {
     };
     
     ParlayEndpoint.prototype.getAvailableDirectives = function () {
-        if (!this.directives.available_cache_valid) {
-	        var endpoint = this;
-	    	endpoint.directives.available_cached = Object.keys(endpoint.directives).filter(function (target) {
-				return target.indexOf("cache") === -1;
-			}).reduce(function (accumulator, target) {
-		        accumulator[target] = endpoint.directives[target].available;
-		        return accumulator;
-	        }, {});
-	        endpoint.directives.available_cache_valid = true;    
-        }
-        return this.directives.available_cached;
+        var endpoint = this;
+    	endpoint.directives.available_cache = Object.keys(endpoint.directives).filter(function (target) {
+			return target.indexOf("cache") === -1;
+		}).reduce(function (accumulator, target) {
+	        accumulator[target] = endpoint.directives[target].available;
+	        return accumulator;
+        }, {});
+        return this.directives.available_cache;
     };
     
     ParlayEndpoint.prototype.matchesQuery = function (query) {

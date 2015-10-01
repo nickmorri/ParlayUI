@@ -1,3 +1,11 @@
+/**
+* Return true if n is a numeric number or string representation of a a number. False othereise
+ * E.G. :  isNumeric("-123.5") = true
+ *         isNumeric("FISH#123") = false
+ */
+function isNumeric(n){
+     return isNaN(parseFloat(n)) && isFinite(n);
+}
  /**
  * If the buffer is valid and available we should force the md-chips controller to push it to the ng-model.
  * @param {NodeList} chipElements - List of HTMLElements mapping to each md-chip.
@@ -34,9 +42,7 @@ function collectMessage (message) {
 	    }
 	    
 	    // If type is Object or Array then turn the JSON string into an actual Object.
-	    if (field_type === "ARRAY") accumulator[param_name] = message[field].map(function (chip) { 
-		    return !Number.isNaN(chip.value) ? parseInt(chip.value) : chip.value;
-		});
+	    if (field_type === "ARRAY" || field_type=="OBJECT") accumulator[param_name] = JSON.parse(message[field][0].value);
 	    else if (field_type === "NUMBERS") accumulator[param_name] = message[field].map(parseFloat);
 	    else if (angular.isObject(message[field])) accumulator[param_name] = message[field].value;
         else accumulator[param_name] = message[field];

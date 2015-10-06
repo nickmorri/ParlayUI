@@ -42,10 +42,11 @@
 	}
 	
 	return {
-		restrict: "E",
+		restrict: 'E',
 		scope: {
-			lines: '=',
-			config: '='
+			streams: '=',
+			config: '=',
+			getSmoothie: '=smoothieFn'
 		},
 		link: function (scope, element, attributes) {
 			var colors, canvas, smoothie, lines, resize, minimum, maximum;
@@ -86,35 +87,37 @@
 		    // Setup listener on $window resize event.
 		    angular.element($window).on("resize", resize);
 		    
-		    scope.getOptions = function () {
-			    return smoothie.options;
+		    /**
+			 * Returns reference to SmoothieChart Object
+			 * @returns {SmootheChart} - reference to SmoothieChart Object.
+			 */
+		    scope.getSmoothie = function () {
+			    return smoothie;
 		    };
 		    
-		    // Monitor value on the scope and append it to the SmoothieChart TimeSeries whenever it changes.
-		    // NOTE: We are using Angular's deep equality $watch here, this may have a performance hit. May want to do some profiling here.
-		    scope.$watch("lines", function (newValue, oldValue, scope) {
-			    
-			    Object.keys(newValue).forEach(function (key) {
+		    scope.$watch(function () {
+			    Object.keys(scope.streams).forEach(function (key) {
 				    
 				    // If we haven't created a TimeSeries for a line yet we should create it.
 				    if (!lines[key]) {
 					    lines[key] = new TimeSeries();
-					    var config = newValue[key].config;
-					    if (!config.strokeStyle && colors.length) config.strokeStyle = colors.pop();
-					    if (!config.lineWidth) config.lineWidth = 2;
-					    smoothie.addTimeSeries(lines[key], config);
+					    
+					    smoothie.addTimeSeries(lines[key], {
+						    strokeStyle: colors.pop(),
+						    lineWidth: 2
+					    });
 				    }
 				    
 				    // Add the value to the TimeSeries.
-				    lines[key].append(new Date().getTime(), newValue[key].value);
+				    lines[key].append(new Date().getTime(), scope.streams[key].value);
 			    });
 			    
 			    // If a line is removed we should remove the TimeSeries from the SmoothieChart.
 			    for (var line in lines) {
-				    if (!newValue[line] || !newValue[line].enabled) delete lines[line];
+				    if (!scope.streams[line] || !scope.streams[line].enabled) delete lines[line];
 			    }
-			    
-		    }, true);
+			    return true;
+		    });
 		    			    
 		    scope.$on("$destroy", function () {
 			    // Remove listener on $window resize when $destroy event is broadcast on scope.

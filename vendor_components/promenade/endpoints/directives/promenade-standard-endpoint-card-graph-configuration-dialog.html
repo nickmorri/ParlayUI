@@ -8,14 +8,52 @@
 			</md-button>
 		</div>
 	</md-toolbar>
-	<md-dialog-content layout="row" layout-wrap>
-		<md-list>
+	<md-dialog-content>
+	
+		<div layout="column">
+	
+			<div layout flex>
+		    	<div flex="15" layout layout-align="center center">
+		        	<span class="md-body-1">Label Size</span>
+				</div>
+				<md-slider flex md-discrete ng-model="ctrl.smoothie.options.labels.fontSize" step="1" min="1" max="36" aria-label="Label font size"></md-slider>
+				<div flex="10" layout layout-align="center center">
+					<input flex type="number" ng-model="ctrl.smoothie.options.labels.fontSize" step="1" min="1" max="36" aria-label="Label font size">
+			    </div>
+		    </div>
+		    
+		    <div layout flex>
+			    <div layout flex="50">
+				    <md-checkbox ng-model="ctrl.minimum_locked" ng-change="ctrl.lockMinimum()" aria-label="Lock minimum range"></md-checkbox>
+				    <md-input-container flex ng-switch="ctrl.minimum_locked">
+				    	<label>Minimum range</label>
+				    	<input ng-switch-when="false" ng-model="ctrl.smoothie.valueRange.min" type="number" disabled="true">
+				    	<input ng-switch-when="true" ng-model="ctrl.smoothie.options.minValue" type="number">
+				    </md-input-container>
+			    </div>
+			    <div layout flex="50">
+				    <md-checkbox ng-model="ctrl.maximum_locked" ng-change="ctrl.lockMaximum()" aria-label="Lock maximum range"></md-checkbox>
+				    <md-input-container flex ng-switch="ctrl.maximum_locked">
+				    	<label>Maximum range</label>
+				    	<input ng-switch-when="false" ng-model="ctrl.smoothie.valueRange.max" type="number" disabled="true">
+				    	<input ng-switch-when="true" ng-model="ctrl.smoothie.options.maxValue" type="number">
+				    </md-input-container>
+			    </div>
+		    </div>
 		
-			<md-list-item ng-repeat="(name, line) in ctrl.data">
-				<md-checkbox ng-model="line.enabled"></md-checkbox>
-				<p>{{name}}</p>
-			</md-list-item>
-			
-		</md-list>
+			<md-list>
+				<md-subheader class="md-no-sticky">Streams</md-subheader>
+				
+				<md-list-item ng-repeat="stream in ctrl.endpoint.data_streams">
+					<md-checkbox ng-model="stream.enabled" ng-change="ctrl.toggleStream(stream)"></md-checkbox>
+					<p>{{stream.NAME}}</p>
+					<md-icon class="md-secondary" ng-click="ctrl.configureStream($event, stream)" aria-label="Stream configuration"><ng-md-icon icon="settings"></ng-md-icon></md-icon>
+				</md-list-item>
+				
+			</md-list>
+		
+		</div>
+        
 	</md-dialog-content>
+		
 </md-dialog>

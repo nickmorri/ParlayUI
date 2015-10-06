@@ -59,8 +59,7 @@ standard_endpoint.factory('PromenadeStandardEndpoint', ['ParlayEndpoint', functi
 	        tabs: ["promenadeStandardEndpointCardCommands"]
 	    });
           
-        if (data.CONTENT_FIELDS) {
-        
+        if (data.CONTENT_FIELDS) {        
             Object.defineProperty(this, 'content_fields', {
                 value: data.CONTENT_FIELDS.reduce(function (accumulator, field) {
                     var parsed_field = parseField(field);
@@ -69,8 +68,25 @@ standard_endpoint.factory('PromenadeStandardEndpoint', ['ParlayEndpoint', functi
                 }, {}),
                 configurable: false,
                 enumerable: false
-            });
-            
+            });            
+        }
+        
+        if (data.PROPERTIES) {
+	        this.properties = data.PROPERTIES.reduce(function (accumulator, current) {
+		        accumulator[current.NAME] = current;
+		        return accumulator;
+	        }, {});
+        }
+        
+        if (data.DATASTREAMS) {
+	        this.data_streams = data.DATASTREAMS.reduce(function (accumulator, current) {
+		        accumulator[current.NAME] = current;
+		        accumulator[current.NAME].value = undefined;
+		        accumulator[current.NAME].listener = undefined;
+		        accumulator[current.NAME].enabled = false;
+		        accumulator[current.NAME].rate = 0;
+		        return accumulator;
+	        }, {});	        
         }
         
     }
@@ -127,29 +143,95 @@ standard_endpoint.factory('PromenadeStandardEndpoint', ['ParlayEndpoint', functi
     };
     
     PromenadeStandardEndpoint.prototype.generateContents = function (message) {
-        
-        var contents = {
-            COMMAND: message.command
-        };
-        
-        Object.keys(message).forEach(function (key) {
-            if (!contents.hasOwnProperty(key.toUpperCase())) {
-                contents[key] = message[key];
-            }
-        });
-        
-        return contents;
-    };
-    
-    PromenadeStandardEndpoint.prototype.generateMessage = function (message) {
-        return {
-            'TOPICS': this.generateTopics(),
-            'CONTENTS': this.generateContents(message)
-        };
+        return Object.keys(message).reduce(function (accumulator, key) {
+            if (!accumulator.hasOwnProperty(key.toUpperCase())) accumulator[key] = message[key];
+            return accumulator;
+        }, { COMMAND: message.command });
     };
     
     PromenadeStandardEndpoint.prototype.sendMessage = function (message) {
-        return this.protocol.sendCommand(this.generateMessage(message));
+        return this.protocol.sendMessage(this.generateTopics(), this.generateContents(message));
+    };
+    
+    PromenadeStandardEndpoint.prototype.requestStream = function (stream) {
+	    return this.protocol.sendMessage({
+		    TX_TYPE: "DIRECT",
+		    MSG_TYPE: "STREAM",
+		    TO: this.id
+		},
+		{
+			STREAM: stream.NAME,
+			RATE: stream.rate,
+			VALUE: null
+		},
+		{
+			TX_TYPE: "DIRECT",
+			MSG_TYPE: "STREAM",
+			TO: "UI",
+			FROM: this.id
+		}).then(function (response) {
+		    this.data_streams[stream.NAME].enabled = true;
+		    this.data_streams[stream.NAME].listener = this.protocol.onMessage({
+			    TX_TYPE: "DIRECT",
+			    MSG_TYPE: "STREAM",
+			    TO: "UI",
+			    FROM: this.id
+		    }, function (response) {
+			    this.data_streams[stream.NAME].value = response.VALUE;
+		    }.bind(this));
+		    
+		    return response;
+	    }.bind(this));
+    };
+    
+    PromenadeStandardEndpoint.prototype.cancelStream = function (stream) {
+	    stream.rate = 0;
+	    return this.protocol.sendMessage({
+		    TX_TYPE: "DIRECT",
+			MSG_TYPE: "STREAM",
+			TO: this.id
+		},
+		{
+			STREAM: stream.NAME,
+			RATE: stream.rate,
+			VALUE: null
+		},
+		{
+			TX_TYPE: "DIRECT",
+			MSG_TYPE: "STREAM",
+			TO: "UI",
+			FROM: this.id
+		}).then(function (response) {
+			this.data_streams[stream.NAME].enabled = false;
+		    this.data_streams[stream.NAME].listener();
+		    this.data_streams[stream.NAME].value = undefined;
+	    });
+    };
+    
+    PromenadeStandardEndpoint.prototype.getProperty = function (property) {
+	    return this.protocol.sendMessage({
+		    TX_TYPE: "DIRECT",
+		    MSG_TYPE: "PROPERTY",
+		    TO: this.id
+		},
+		{
+			PROPERTY: property.NAME,
+			ACTION: "GET",
+			VALUE: null
+		});
+    };
+    
+    PromenadeStandardEndpoint.prototype.setProperty = function (property, value) {
+	    return this.protocol.sendMessage({
+		    TX_TYPE: "DIRECT",
+		    MSG_TYPE: "PROPERTY",
+		    TO: this.id
+		},
+		{
+			PROPERTY: property.NAME,
+			ACTION: "SET",
+			VALUE: value
+	    });
     };
 
     return PromenadeStandardEndpoint;

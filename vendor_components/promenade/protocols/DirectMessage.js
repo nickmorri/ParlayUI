@@ -38,11 +38,11 @@ direct_message.factory('PromenadeDirectMessageProtocol', ['ParlayProtocol', 'Pro
 	 * @param {Object} message - partially constructed message.
 	 * @returns {Object} - partially constructed message with topics.
 	 */
-    PromenadeDirectMessageProtocol.prototype.buildMessageTopics = function (message) {
-        var new_message = angular.copy(message);
-        new_message.TOPICS.MSG_ID = this.consumeMessageId();
-        new_message.TOPICS.FROM = this.id;
-        return new_message;
+    PromenadeDirectMessageProtocol.prototype.buildMessageTopics = function (topics) {
+        var new_topics = angular.copy(topics);
+        new_topics.MSG_ID = this.consumeMessageId();
+        new_topics.FROM = this.id;
+        return new_topics;
     };
     
     /**
@@ -50,23 +50,16 @@ direct_message.factory('PromenadeDirectMessageProtocol', ['ParlayProtocol', 'Pro
 	 * @param {Object} message - partially constructed message, includes topics.
 	 * @returns {Object} - partially construtcted message with response topics.
 	 */
-    PromenadeDirectMessageProtocol.prototype.buildResponseTopics = function (message) {
+    PromenadeDirectMessageProtocol.prototype.buildResponseTopics = function (topics) {
         return {
-            FROM: message.TOPICS.TO,
-            TO: message.TOPICS.FROM,
-            MSG_ID: message.TOPICS.MSG_ID
+            FROM: topics.TO,
+            TO: topics.FROM,
+            MSG_ID: topics.MSG_ID
         };
     };
     
-    /**
-	 * Sends a constructed message over our protocol.
-	 * @param {Object} message - partially constructed message, we add topics and response topics.
-	 * @returns {$q.defer.Promise} - resolved when we receive a response.
-	 */
-    PromenadeDirectMessageProtocol.prototype.sendCommand = function (message) {
-        var new_message = this.buildMessageTopics(message);
-        var response_topics = this.buildResponseTopics(new_message);
-        return this.sendMessage(new_message.TOPICS, new_message.CONTENTS, response_topics);
+    PromenadeDirectMessageProtocol.prototype.sendMessage = function (topics, contents, response_topics) {
+	    return ParlayProtocol.prototype.sendMessage(this.buildMessageTopics(topics), contents, !response_topics ? this.buildResponseTopics(topics) : response_topics);
     };
         
     return PromenadeDirectMessageProtocol;    

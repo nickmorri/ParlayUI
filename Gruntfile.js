@@ -61,13 +61,13 @@ module.exports = function (grunt) {
         'bower_components/angular-scroll-glue/src/scrollglue.js',
         'bower_components/smoothie/smoothie.js'
       ],
-      'staticComponents': ['static_components/ng-websocket/ng-websocket.js'],
+      'staticComponents': ['static_components/ng-websocket/ng-websocket.js', 'static_components/smoothie/smoothie.js'],
       'mocks': getVendorItems (['mocks'], ['parlay_components/*/mocks/*.js']),
       'tests': getVendorItems(['tests'], ['parlay_components/*/test/*.js']),
       'compiledHtml': '<%= meta.tmp_destination %>/templates.js',
       'htmlDirectives': getVendorItems(['directives'], ['parlay_components/**/directives/*.html']),
       'htmlViews': 'parlay_components/**/views/*.html',
-      'commonFiles': ['images/logo.png', 'bower_components/angular-material/angular-material.css', 'bower_components/ace-builds/src/mode-python.js', 'static_components/ng-websocket/ng-websocket.js'],
+      'commonFiles': ['images/logo.png', 'bower_components/angular-material/angular-material.css', 'bower_components/ace-builds/src/mode-python.js', 'static_components/ng-websocket/ng-websocket.js', 'static_components/smoothie/smoothie.js'],
       'stylesheets': getVendorItems(['stylesheets'], ['css/*.css'])
     },
 

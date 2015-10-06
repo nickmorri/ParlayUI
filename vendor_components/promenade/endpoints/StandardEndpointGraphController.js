@@ -12,33 +12,15 @@ function PromenadeStandardEndpointCardGraphTabController($scope, $mdDialog, $int
 		    fontSize: 12
 		}
 	};
-    
-    $interval(function () {
-        
-        Object.keys(this.data).forEach(function (key) {
-	        this.data[key].value = Math.floor(Math.random() > 0.5 ? this.data[key].value + 100 : this.data[key].value - 100);
-        }.bind(this));
-        
-    }.bind(this), 1000);
-    
-    this.data = {};
-    
-    for (var i = 1; i < 11; i++) {
-        this.data["line" + i] = {
-	      	value: 10 * i,
-	      	config: {
-		  		lineWidth: 2
-	      	},
-	      	enabled: true
-        };
-    }
-	
+		
 	this.openConfigurationDialog = function($event) {
 		$mdDialog.show({
 			controller: "PromenadeStandardEndpointCardGraphTabConfigurationController",
 			controllerAs: "ctrl",
 			locals: {
-				data: this.data
+				endpoint: this.endpoint,
+				data: this.data,
+				smoothie: $scope.getSmoothie()
 			},
 			bindToController: true,
 			templateUrl: "../vendor_components/promenade/endpoints/directives/promenade-standard-endpoint-card-graph-configuration-dialog.html",
@@ -55,19 +37,58 @@ function PromenadeStandardEndpointCardGraphTabController($scope, $mdDialog, $int
 
 PromenadeStandardEndpointCardGraphTabController.prototype = Object.create(ParlayBaseTabController.prototype);
 
-PromenadeStandardEndpointCardGraphTabController.prototype.lineCount = function() {
-	return Object.keys(this.data).filter(function (key) {
-    	return this.data[key].enabled;
+PromenadeStandardEndpointCardGraphTabController.prototype.streamCount = function() {
+	return Object.keys(this.endpoint.data_streams).filter(function (key) {
+    	return this.endpoint.data_streams[key].enabled;
 	}.bind(this)).length;
 };
 
-function PromenadeStandardEndpointCardGraphTabConfigurationController($mdDialog, data) {
+function PromenadeStandardEndpointCardGraphTabConfigurationController($mdDialog, $timeout) {
 	this.hide = $mdDialog.cancel;
+	
+	this.minimum_locked = this.smoothie.options.minValue !== undefined;
+	this.maximum_locked = this.smoothie.options.maxValue !== undefined;	
+		
+	this.configureStream = function($event, stream) {
+		$mdDialog.show({
+			controller: "PromenadeStandardEndpointCardGraphTabStreamConfigurationController",
+			controllerAs: "ctrl",
+			locals: {
+				endpoint: this.endpoint,
+				stream: stream
+			},
+			bindToController: true,
+			templateUrl: "../vendor_components/promenade/endpoints/directives/promenade-standard-endpoint-card-graph-stream-configuration-dialog.html",
+			targetEvent: $event,
+			clickOutsideToClose: true
+		});
+	};
+	
 }
 
-PromenadeStandardEndpointCardGraphTabConfigurationController.prototype.removeLine = function (name) {
-	delete this.data[name];
+PromenadeStandardEndpointCardGraphTabConfigurationController.prototype.lockMinimum = function () {
+	if (this.minimum_locked) this.smoothie.options.minValue = this.smoothie.valueRange.min;
+	else delete this.smoothie.options.minValue;
 };
+
+PromenadeStandardEndpointCardGraphTabConfigurationController.prototype.lockMaximum = function () {
+	if (this.maximum_locked) this.smoothie.options.maxValue = this.smoothie.valueRange.max;
+	else delete this.smoothie.options.maxValue;
+};
+
+PromenadeStandardEndpointCardGraphTabConfigurationController.prototype.toggleStream = function(stream) {
+	if (stream.enabled) this.endpoint.requestStream(stream);
+	else this.endpoint.cancelStream(stream);
+};
+
+function PromenadeStandardEndpointCardGraphTabStreamConfigurationController($mdDialog, $timeout) {
+	this.hide = $mdDialog.cancel;
+	
+	this.updateRate = function() {
+		this.endpoint.requestStream(this.stream);
+	};
+	
+}
 
 function PromenadeStandardEndpointCardGraph() {
 	return {
@@ -83,5 +104,6 @@ function PromenadeStandardEndpointCardGraph() {
 
 angular.module('promenade.endpoints.standardendpoint.graph', ["promenade.smoothiechart"])
 	.controller("PromenadeStandardEndpointCardGraphTabController", ["$scope", "$mdDialog", '$interval', PromenadeStandardEndpointCardGraphTabController])
-	.controller("PromenadeStandardEndpointCardGraphTabConfigurationController", ["$mdDialog", "data", PromenadeStandardEndpointCardGraphTabConfigurationController])
+	.controller("PromenadeStandardEndpointCardGraphTabConfigurationController", ["$mdDialog", "$timeout", "endpoint", "data", "smoothie", PromenadeStandardEndpointCardGraphTabConfigurationController])
+	.controller("PromenadeStandardEndpointCardGraphTabStreamConfigurationController", ["$mdDialog", "$timeout", "stream", PromenadeStandardEndpointCardGraphTabStreamConfigurationController])
 	.directive('promenadeStandardEndpointCardGraph', PromenadeStandardEndpointCardGraph);

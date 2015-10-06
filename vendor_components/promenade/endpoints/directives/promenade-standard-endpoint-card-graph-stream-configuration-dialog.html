@@ -1,0 +1,28 @@
+<md-dialog flex="30" aria-label="Stream Configuration">
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+			<h2>Stream Configuration</h2>
+			<span flex></span>
+			<md-button class="md-icon-button" ng-click="ctrl.hide()">
+				<md-icon aria-label="Close"><ng-md-icon icon="close"></ng-md-icon></md-icon>
+			</md-button>
+		</div>
+	</md-toolbar>
+	<md-dialog-content>
+	
+		<div layout="column">
+			
+			<div flex layout="row">
+				<md-input-container layout flex>
+				    <label>Rate</label>
+				    <input type="number" ng-model="ctrl.stream.rate">			    
+			    </md-input-container>
+			    
+			    <md-button class="md-primary" ng-click="ctrl.updateRate()">Set</md-button>	
+			</div>
+		    
+		</div>
+	        
+	</md-dialog-content>
+	
+</md-dialog>

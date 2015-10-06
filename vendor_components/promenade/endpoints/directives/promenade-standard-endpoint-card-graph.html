@@ -2,7 +2,7 @@
 
 	<md-toolbar class="md-hue-2">
 		<div class="md-toolbar-tools">
-			<h5 ng-pluralize count="ctrl.lineCount()" when="{'0': 'No lines active', 'one': '1 line active', 'other': '{} lines active'}"></h5>
+			<h5 ng-pluralize count="ctrl.streamCount()" when="{'0': 'No streams active', 'one': '1 stream active', 'other': '{} streams active'}"></h5>
 			<span flex></span>
 			
 			<md-menu md-position-mode="target-right target">
@@ -27,5 +27,5 @@
 		</div>
 	</md-toolbar>
 
-	<promenade-smoothie-chart class="parlay-endpoint-card-tab-content" lines="ctrl.data" config="ctrl.chart_config"></promenade-smoothie-chart>
+	<promenade-smoothie-chart class="parlay-endpoint-card-tab-content" streams="ctrl.endpoint.data_streams" config="ctrl.chart_config" smoothie-fn="getSmoothie"></promenade-smoothie-chart>
 </md-tab>

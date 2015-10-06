@@ -1,22 +1,18 @@
 var parlay_protocol = angular.module('parlay.protocols.protocol', ['parlay.socket', 'parlay.endpoints.endpoint', 'promenade.protocols.directmessage']);
 
 parlay_protocol.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', '$q', function (ParlaySocket, ParlayEndpoint, $q) {
-
-    function NotImplementedError(method, name) {
-        console.warn(method + ' is not implemented for ' + name);
-    }
     
     function ParlayProtocol(configuration) {
-        'use strict';
+        "use strict";
         this.id = "UI";
         this.protocol_name = configuration.name;
         this.type = configuration.protocol_type;
         this.available_endpoints = [];
         this.active_endpoints = [];
-        this.log = [];        
-        this.listener_dereg = null;        
-        this.on_message_callbacks = [];
+        this.log = [];
         this.fields = {};
+        
+        this.listeners = {};
         
         // Objects that inherit from this ParlayProtocol's prototype can set their own endpoint_factory.
         this.endpoint_factory = ParlayEndpoint;
@@ -52,87 +48,41 @@ parlay_protocol.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', '$q
 	 */
     ParlayProtocol.prototype.getLog = function () {
         return this.log;
-    };        
-    
-    /**
-	 * Invokes all callbacks that have been registered with onMessage.
-	 * @param {Object} message object to be passed to registered callbacks
-	 */
-    ParlayProtocol.prototype.invokeCallbacks = function (response) {
-        this.on_message_callbacks = this.on_message_callbacks.filter(function (callback) {
-            callback(response);            
-            return true;
+    };
+          
+    ParlayProtocol.prototype.onMessage = function(response_topics, callback, verbose) {
+	    var topics = Object.keys(response_topics).reduce(function (accumulator, key) {
+		   	accumulator[key] = response_topics[key];
+		   	return accumulator;
+	    }, {
+	        TO: this.id
         });
+	    
+	    this.listeners[topics] = ParlaySocket.onMessage(topics, callback, verbose);
+	    
+	    return function() {
+		  	this.listeners[topics]();
+		  	delete this.listeners[topics];  
+	    };
     };
     
-    ParlayProtocol.prototype.buildSubscriptionTopics = function () {
-        return {
-            TOPICS: {
-                TO: this.id
-            }
-        };
-    };
-    
-    ParlayProtocol.prototype.buildSubscriptionListenerTopics = function () {
-        return this.buildSubscriptionTopics().TOPICS;
-    };
-    
-    ParlayProtocol.prototype.registerListener = function (topics) {
-	    this.listener_dereg = ParlaySocket.onMessage(this.buildSubscriptionListenerTopics(), this.invokeCallbacks.bind(this), true);     
-    };
-    
-    /**
-	 * Checks if we have a subscription listener active.
-	 * @returns {Boolean} status of registration listener
-	 */
-    ParlayProtocol.prototype.hasListener = function() {
-        return this.listener_dereg !== null;
-    };
-    
-    /**
-	 * Records a message into the message log.
-	 * @param {Object} message object
-	 */
-    ParlayProtocol.prototype.recordLog = function(response) {
-        this.log.push(response);
-    };
-    
-    /**
-	 * Registers a callback to be invoked when a message is received.
-	 * @param {Function} callback function
-	 */
-    ParlayProtocol.prototype.onMessage = function (callback) {
-        this.on_message_callbacks.push(callback.bind(this));    
-    };
-    
-    /**
-	 * Sends message to ParlaySocket.
-	 * @param {Object} topics - 
-	 * @param {Object} contents - 
-	 * @param {Object} response_topics - 
-	 * @returns {$q.defer.promise} resolved when we recieve a response
-	 */
     ParlayProtocol.prototype.sendMessage = function (topics, contents, response_topics) {
-        return $q(function(resolve, reject) {
-            ParlaySocket.sendMessage(topics, contents, response_topics, function (response) {
-                if (response.STATUS === 0) resolve(response);
-                else reject(response);
-            });
+        return $q(function(resolve) {
+            ParlaySocket.sendMessage(topics, contents, response_topics, resolve);
         }.bind(this));
     };
     
     ParlayProtocol.prototype.onOpen = function () {
-	    // Ensure than the protocol is listening for messages addressed to the UI.
-        this.registerListener();
         // Ensure that we record all messages address to the UI.
-        this.onMessage(this.recordLog);
+        this.onMessage({}, function (response) {
+	        this.log.push(response);
+        }.bind(this), true);
     };
     
     ParlayProtocol.prototype.onClose = function () {
-        if (this.hasListener()) {
-            this.listener_dereg();
-            this.listener_dereg = null;
-        }
+        this.listeners.forEach(function (deregistration) {
+	        deregistration();
+        });
         this.available_endpoints = [];
         this.active_endpoints = [];
     };

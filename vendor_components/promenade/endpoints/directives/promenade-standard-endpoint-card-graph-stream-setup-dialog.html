@@ -1,0 +1,39 @@
+<md-dialog flex="30" aria-label="Stream Configuration">
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+			<h2>Stream Setup</h2>
+			<span flex></span>
+			<md-button class="md-icon-button" ng-click="ctrl.hide()">
+				<md-icon aria-label="Close"><ng-md-icon icon="close"></ng-md-icon></md-icon>
+			</md-button>
+		</div>
+	</md-toolbar>
+	
+	<md-progress-linear ng-if="ctrl.requesting" md-mode="indeterminate"></md-progress-linear>
+	
+	<md-dialog-content>	
+	
+		<md-input-container>
+			<label>Stream</label>
+			<md-select ng-model="ctrl.selected_stream" md-on-close="ctrl.updateUnits()">
+				<md-option ng-repeat="(key, stream) in ctrl.getAvailableStreams()" value="{{stream}}">
+					{{key}}
+				</md-option>
+			</md-select>
+		</md-input-container>
+		
+		<md-input-container ng-disabled="!ctrl.selected_stream">
+			<label>Frequency <span ng-if="ctrl.units">(in {{ctrl.units}})</span></label>
+			<input ng-model="ctrl.rate" type="number">
+		</md-input-container>
+	        
+	</md-dialog-content>
+	
+	<div class="md-actions" layout="row">
+		<md-button class="md-primary" ng-click="ctrl.requestStream($event)">
+			Request stream
+		</md-button>
+	</div>
+
+	
+</md-dialog>

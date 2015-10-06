@@ -68,7 +68,7 @@
                 
                 spyOn(protocol, 'sendMessage');
                 
-                protocol.sendCommand({
+                protocol.sendMessage({
                     TOPICS: {
                         TO: 100
                     },

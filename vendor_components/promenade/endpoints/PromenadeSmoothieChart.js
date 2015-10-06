@@ -8,7 +8,7 @@
  * @usage
  * <promenade-smoothie-chart lines="data" config="chart_config"></promenade-smoothie-chart>
  *
- * @param {Object} lines - Contains references to the line data.
+ * @param {Object} streams - Contains references to the line data.
  * {
  *	 line1: {
  *	 	value: 10,
@@ -23,7 +23,7 @@
  * @param {Number} [delay=1000] delay - Add delay so uncoming values are known before we need to plot the value.
  */
  
- function PromenadeSmoothieChart ($window) {
+ function PromenadeSmoothieChart ($window, $interval) {
 	 
 	/**
 	 * Returns Function with canvas element in closure.
@@ -44,6 +44,7 @@
 	return {
 		restrict: 'E',
 		scope: {
+			delay: "=",
 			streams: '=',
 			config: '=',
 			getSmoothie: '=smoothieFn'
@@ -74,7 +75,7 @@
 			});
 			
 			// Attaches SmoothieChart to HTML5 Canvas element. Sets streaming delay to given value if available, otherwise defaults to 1000ms.
-			smoothie.streamTo(canvas, scope.delay ? scope.delay : 1000);
+			smoothie.streamTo(canvas, scope.delay);
 	        
 	        // Container for TimeSeries Objects.
 	        lines = {};
@@ -95,29 +96,42 @@
 			    return smoothie;
 		    };
 		    
-		    scope.$watch(function () {
-			    Object.keys(scope.streams).forEach(function (key) {
-				    
-				    // If we haven't created a TimeSeries for a line yet we should create it.
-				    if (!lines[key]) {
-					    lines[key] = new TimeSeries();
-					    
-					    smoothie.addTimeSeries(lines[key], {
-						    strokeStyle: colors.pop(),
-						    lineWidth: 2
-					    });
-				    }
-				    
-				    // Add the value to the TimeSeries.
-				    lines[key].append(new Date().getTime(), scope.streams[key].value);
+		    // 
+		    $interval(function () {			    
+			    // Get an array of currently enabled streams.
+			    var enabled_streams = Object.keys(scope.streams).map(function (key) {
+				    return scope.streams[key];
+			    }).filter(function (stream) {
+				    return stream.enabled;
 			    });
 			    
+			    // If the TimeSeries doesn't exist create it.
+			    enabled_streams.filter(function (stream) {
+				    return !lines[stream.NAME];
+				}).forEach(function(stream) {
+					lines[stream.NAME] = new TimeSeries();
+				    
+				    smoothie.addTimeSeries(lines[stream.NAME], {
+						strokeStyle: colors.pop(),
+					    lineWidth: 2
+				    });
+				});
+				
+				// Append the current time and value for each enabled stream.
+				enabled_streams.forEach(function(stream) {
+					lines[stream.NAME].append(new Date().getTime(), stream.value);
+				});
+			    
 			    // If a line is removed we should remove the TimeSeries from the SmoothieChart.
-			    for (var line in lines) {
-				    if (!scope.streams[line] || !scope.streams[line].enabled) delete lines[line];
-			    }
+			    Object.keys(lines).filter(function(key) {
+				    return !scope.streams[key] || !scope.streams[key].enabled;
+			    }).forEach(function (key) {
+				    smoothie.removeTimeSeries(lines[key]);
+				    delete lines[key];
+			    });
+			    
 			    return true;
-		    });
+		    }, scope.delay, 0, false);
 		    			    
 		    scope.$on("$destroy", function () {
 			    // Remove listener on $window resize when $destroy event is broadcast on scope.
@@ -131,4 +145,4 @@
 }
  
 angular.module("promenade.smoothiechart", [])
-	.directive('promenadeSmoothieChart', ['$window', PromenadeSmoothieChart]);
+	.directive('promenadeSmoothieChart', ['$window', "$interval", PromenadeSmoothieChart]);

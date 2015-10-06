@@ -63,7 +63,7 @@ parlay_protocol.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', '$q
 	    return function() {
 		  	this.listeners[topics]();
 		  	delete this.listeners[topics];  
-	    };
+	    }.bind(this);
     };
     
     ParlayProtocol.prototype.sendMessage = function (topics, contents, response_topics) {

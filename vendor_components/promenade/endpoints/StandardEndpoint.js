@@ -154,6 +154,7 @@ standard_endpoint.factory('PromenadeStandardEndpoint', ['ParlayEndpoint', functi
     };
     
     PromenadeStandardEndpoint.prototype.requestStream = function (stream) {
+		if (stream.rate < 1) stream.rate = 1;
 	    return this.protocol.sendMessage({
 		    TX_TYPE: "DIRECT",
 		    MSG_TYPE: "STREAM",
@@ -205,7 +206,7 @@ standard_endpoint.factory('PromenadeStandardEndpoint', ['ParlayEndpoint', functi
 			this.data_streams[stream.NAME].enabled = false;
 		    this.data_streams[stream.NAME].listener();
 		    this.data_streams[stream.NAME].value = undefined;
-	    });
+	    }.bind(this));
     };
     
     PromenadeStandardEndpoint.prototype.getProperty = function (property) {

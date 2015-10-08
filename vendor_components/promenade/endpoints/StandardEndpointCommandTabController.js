@@ -61,7 +61,7 @@ function PromenadeStandardEndpointCardCommandTabController($scope, $timeout, Scr
 	
 	this.send = function ($event) {
 		// Push the buffer into the md-chips ng-model
-	    pushChipBuffer($event.target.querySelectorAll('md-chips'));
+		if ($event) pushChipBuffer($event.target.querySelectorAll('md-chips'));
 	    
 	    this.error = false;
 	    this.sending = true;

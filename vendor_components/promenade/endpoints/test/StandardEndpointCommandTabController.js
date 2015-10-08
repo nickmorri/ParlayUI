@@ -7,12 +7,11 @@
         beforeEach(module('RecursionHelper'));
 
 		describe('PromenadeStandardEndpointCommandController', function () {
-            var scope, rootScope, PromenadeStandardEndpointCommandController, timeout;
+            var scope, rootScope, ctrl;
     
-            beforeEach(inject(function($rootScope, $controller, $q, $timeout) {
+            beforeEach(inject(function($rootScope, $controller, $q) {
                 rootScope = $rootScope;
     			scope = $rootScope.$new();
-    			timeout = $timeout;
     			
     			scope.endpoint = {
                     name: 'mockEndpoint',
@@ -26,31 +25,29 @@
                 
                 scope.container = {ref: scope.endpoint, uid: 1000};
                 
-    			PromenadeStandardEndpointCommandController = $controller('PromenadeStandardEndpointCommandController', {$scope: scope});
+    			ctrl = $controller('PromenadeStandardEndpointCardCommandTabController', {$scope: scope});
     		}));
     		
     		it('initial values', function () {
-                expect(scope.sending).toBeFalsy();
+                expect(ctrl.sending).toBeFalsy();
     		});
     		
     		describe('sending', function () {
         		
         		it('successfully', function () {
+                    expect(ctrl.sending).toBeFalsy();
                     scope.message = {command: 'send', test:{}};
-                    scope.send();
+                    ctrl.send();
                     rootScope.$apply();
-                    
-                    expect(scope.sending).toBeTruthy();
-                    timeout.flush();            		
-            		expect(scope.sending).toBeFalsy();
+                    expect(ctrl.sending).toBeTruthy();            		
         		});
         		
         		it('unsuccessfully', function () {
             		scope.message = {command: 'fail'};
-                    scope.send();
+                    ctrl.send();
                     rootScope.$apply();            		
         		    
-        		    expect(scope.error).toBeTruthy();
+        		    expect(ctrl.error).toBeTruthy();
         		});
             		
             });    		

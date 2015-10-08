@@ -48,7 +48,7 @@
 			getSmoothie: '=smoothieFn'
 		},
 		link: function (scope, element, attributes) {
-			var colors, canvas, smoothie, lines, resize, minimum, maximum;
+			var colors, canvas, smoothie, lines, resize;
 			
 			// Easy colors to see on most transparent backgrounds.
 			colors = ["#000000", "#0433ff", "#aa7942", "#00fdff", "#00f900", "#ff40ff", "#ff9300", "#942192", "#ff2600", "#fffb00"];

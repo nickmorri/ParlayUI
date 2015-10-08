@@ -15,7 +15,7 @@
                 
                 MockProtocol = {
                     data_types: ['int', 'float'],
-                    sendCommand: function () {},
+                    sendMessage: function () {},
                     getMessageId: function () {
                         return 200;
                     },
@@ -88,7 +88,15 @@
                         default: undefined,
                         hidden: false,
                         input: 'DROPDOWN',
-                        options: ['option1', 'option2']
+                        options: [{
+							name: "option1",
+							value: "option1",
+							sub_fields: undefined
+						}, {
+							name: "option2",
+							value: "option2",
+							sub_fields: undefined
+						}]
                     });
                 });
                 
@@ -116,45 +124,25 @@
                         type: 'int'
                     });
                 });
-                
-                it('generates message', function () {
-                    expect(endpoint.generateMessage({
-                        command: 'FOO',
-                        type: 'int'
-                    })).toEqual({
-                        TOPICS: {
-                            TO: 100,
-                            MSG_TYPE: 'COMMAND'
-                        },
-                        CONTENTS: {
-                            COMMAND: 'FOO',
-                            type: 'int'
-                        }
-                    });
-                });
                                 
             });
             
             it('sends message to protocol', function () {
                 
-                spyOn(MockProtocol, 'sendCommand');
+                spyOn(MockProtocol, 'sendMessage');
                 
                 endpoint.sendMessage({
                     command: 'FOO',
                     type: 'int'
                 });
                 
-                expect(MockProtocol.sendCommand).toHaveBeenCalledWith({
-                    TOPICS: {
-                        TO: 100,
-                        MSG_TYPE: 'COMMAND'
-                    },
-                    CONTENTS: {
-                        COMMAND: 'FOO',
-                        type: 'int'
-                    }
-                });
-                
+                expect(MockProtocol.sendMessage).toHaveBeenCalledWith({
+                    TO: 100,
+                    MSG_TYPE: 'COMMAND'
+                }, {
+                    COMMAND: 'FOO',
+                    type: 'int'
+                });                
             });
 
         });

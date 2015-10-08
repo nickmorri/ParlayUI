@@ -58,11 +58,13 @@ parlay_protocol.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', '$q
 	        TO: this.id
         });
 	    
-	    this.listeners[topics] = ParlaySocket.onMessage(topics, callback, verbose);
+	    var topics_string = JSON.stringify(topics);
+	    
+	    this.listeners[topics_string] = ParlaySocket.onMessage(topics, callback, verbose);
 	    
 	    return function() {
-		  	this.listeners[topics]();
-		  	delete this.listeners[topics];  
+		  	this.listeners[topics_string]();
+		  	delete this.listeners[topics_string];  
 	    }.bind(this);
     };
     
@@ -80,9 +82,12 @@ parlay_protocol.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', '$q
     };
     
     ParlayProtocol.prototype.onClose = function () {
-        this.listeners.forEach(function (deregistration) {
-	        deregistration();
-        });
+	    for (var listener in this.listeners) {
+		    this.listeners[listener]();
+	    }
+	    
+	    this.listeners = {};
+	    
         this.available_endpoints = [];
         this.active_endpoints = [];
     };

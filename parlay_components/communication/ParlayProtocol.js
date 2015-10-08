@@ -69,8 +69,13 @@ parlay_protocol.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', '$q
     };
     
     ParlayProtocol.prototype.sendMessage = function (topics, contents, response_topics) {
-        return $q(function(resolve) {
-            ParlaySocket.sendMessage(topics, contents, response_topics, resolve);
+        return $q(function(resolve, reject) {
+	        try {
+		    	ParlaySocket.sendMessage(topics, contents, response_topics, resolve);    
+	        }            
+            catch (error) {
+	            reject(error);
+            }
         }.bind(this));
     };
     

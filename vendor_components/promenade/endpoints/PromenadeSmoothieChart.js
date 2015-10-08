@@ -170,7 +170,7 @@
 		    			    
 			// When the scope the PromenadeSmoothieChart exists on is destroyed we need to cleanup listeners and remove the canvas element.
 		    scope.$on("$destroy", function () {
-			    cancel(update_interval_registration);
+			    $interval.cancel(update_interval_registration);
 			    angular.element($window).off("resize", resize);
 			    canvas.parentElement.removeChild(canvas);
 			    canvas = null;

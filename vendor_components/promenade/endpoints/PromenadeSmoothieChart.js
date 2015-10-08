@@ -6,16 +6,14 @@
  * The '<promenade-smoothie-chart>' creates a SmoothieChart HTML5 Canvas element for graphing values.
  * 
  * @usage
- * <promenade-smoothie-chart lines="data" config="chart_config"></promenade-smoothie-chart>
+ * <promenade-smoothie-chart delay="1000" streams="data" config="chart_config" smoothie-fn="getSmoothieConfig"></promenade-smoothie-chart>
  *
- * @param {Object} streams - Contains references to the line data.
+ * @param {Object} streams - Contains references to the stream data.
  * {
  *	 line1: {
  *	 	value: 10,
- *		config: {
- *	 		lineWidth: 2,
- *			strokeStyle: "#000000"
- * 		}
+ *		enabled: true,
+ *		rate: 5
  * 	 }
  * }
  *

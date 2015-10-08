@@ -6,12 +6,13 @@
         beforeEach(module('promenade.protocols.directmessage'));
         
         describe('PromenadeDirectMessageProtocol', function() {
-            var rootScope, protocol;
+            var rootScope, protocol, socket;
             
-            beforeEach(inject(function($rootScope, _PromenadeDirectMessageProtocol_) {
+            beforeEach(inject(function($rootScope, _PromenadeDirectMessageProtocol_, _ParlaySocket_) {
                 /*jshint newcap: false */
                 rootScope = $rootScope;
                 protocol = new _PromenadeDirectMessageProtocol_({name: 'TestProtocol', protocol_type: 'TestProtocolType'});
+                socket = _ParlaySocket_;
             }));
             
             it('constructs', function() {
@@ -31,58 +32,44 @@
             
             it('builds message topics', function () {
                 var previous_message_id = protocol.getMessageId();
-                expect(protocol.buildMessageTopics({TOPICS:{}})).toEqual({
-                    TOPICS: {
-                        MSG_ID: previous_message_id + 1,
-                        FROM: 'UI'
-                    }
+                expect(protocol.buildMessageTopics({})).toEqual({
+                    MSG_ID: previous_message_id + 1,
+                    FROM: 'UI'
                 });
             });
             
             it('builds response topics', function () {
                 var previous_message_id = protocol.getMessageId();
-                expect(protocol.buildResponseTopics({TOPICS: {
+                expect(protocol.buildResponseTopics({
                     TO: 100,
                     FROM: 'UI',
                     MSG_ID: protocol.consumeMessageId()
-                }})).toEqual({
+                })).toEqual({
                     FROM: 100,
                     TO: 'UI',
                     MSG_ID: previous_message_id + 1
                 });
             });
-
-            it('builds subscription topics', function () {
-                expect(protocol.buildSubscriptionTopics()).toEqual({TOPICS:{
-                    TO: 'UI'
-                }});
-            });
             
-            it('builds subscription listener topics', function () {
-                expect(protocol.buildSubscriptionListenerTopics()).toEqual({
-                    TO: 'UI'
-                });
-            });
-            
-            it('sends a command', function () {
+            it('sends a message', function () {
                 
-                spyOn(protocol, 'sendMessage');
+                spyOn(socket, 'sendMessage');
                 
                 protocol.sendMessage({
-                    TOPICS: {
-                        TO: 100
-                    },
-                    CONTENTS: {}
+                    TO: 100
+                }, {}, {
+	                FROM: 100
                 });
-                expect(protocol.sendMessage).toHaveBeenCalledWith({
-                        TO: 100,
-                        MSG_ID: protocol.getMessageId(),
-                        FROM: 'UI'
-                    }, {}, {
-                        FROM: 100,
-                        MSG_ID: protocol.getMessageId(),
-                        TO: 'UI'
-                    });
+                
+                
+                
+                expect(socket.sendMessage).toHaveBeenCalledWith(jasmine.objectContaining({
+	                TO: 100,
+                    FROM: "UI",
+                    MSG_ID: protocol.getMessageId(),
+                }), jasmine.objectContaining({}), jasmine.objectContaining({
+					FROM: 100,
+                }), jasmine.any(Function));
                 
             });
 

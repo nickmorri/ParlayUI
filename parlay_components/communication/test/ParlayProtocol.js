@@ -46,28 +46,10 @@
                 expect(protocol.getLog()).toEqual([]);
             });
             
-            it('records message', function () {
-                expect(protocol.getLog()).toEqual([]);
-                protocol.recordLog({type: 'test'});
-                expect(protocol.getLog()).toEqual([{type: 'test'}]);
-            });
-            
-            it('invokes onMessage callback', function () {
-                var testMsg = 'hey';
-                protocol.onMessage(function (testResp) {
-                    expect(testResp).toEqual(testMsg);
-                });
-                protocol.invokeCallbacks(testMsg);
-            });
-            
-            describe('performs operations onClose', function () {
-                
-                it('has listener', function () {
-	                protocol.onOpen();
-                    expect(protocol.hasListener()).toBeTruthy();
-                    protocol.onClose();
-                    expect(protocol.hasListener()).toBeFalsy();
-                });
+            it('performs operations onClose', function () {
+                protocol.listeners.test = function () {};
+                protocol.onClose();
+                expect(protocol.listeners.test).toBeUndefined();
                 
             });
             
@@ -80,14 +62,7 @@
                     });
                     rootScope.$apply();                    
                 });
-                
-                it('rejects', function(done) {
-                    protocol.sendMessage({type: 'test'}, null, {type: 'test'}).catch(function (response) {
-                        expect(response).toEqual({STATUS: -1});
-                        done();
-                    });
-                    rootScope.$apply();
-                });
+
             });
             
             describe('adding discovery information', function () {

@@ -44,7 +44,7 @@
 			<md-list>
 				<md-subheader class="md-no-sticky">Streams</md-subheader>
 				
-				<md-list-item ng-repeat="stream in ctrl.endpoint.data_streams">
+				<md-list-item ng-repeat="stream in ctrl.endpoint.data_streams | orderObjectBy: 'NAME'">
 					<md-checkbox ng-model="stream.enabled" ng-change="ctrl.toggleStream(stream)"></md-checkbox>
 					<p>{{stream.NAME}}</p>
 					<md-icon class="md-secondary" ng-click="ctrl.configureStream($event, stream)" aria-label="Stream configuration"><ng-md-icon icon="settings"></ng-md-icon></md-icon>

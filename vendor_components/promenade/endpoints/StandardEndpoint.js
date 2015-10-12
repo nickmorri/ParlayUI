@@ -1,4 +1,4 @@
-var standard_endpoint = angular.module('promenade.endpoints.standardendpoint', ['parlay.endpoints', 'promenade.endpoints.standardendpoint.commands', 'promenade.endpoints.standardendpoint.log', 'promenade.endpoints.standardendpoint.graph']);
+var standard_endpoint = angular.module('promenade.endpoints.standardendpoint', ['parlay.endpoints', 'promenade.endpoints.standardendpoint.commands', 'promenade.endpoints.standardendpoint.log', 'promenade.endpoints.standardendpoint.graph', 'ngOrderObjectBy']);
 
 function parseField(field) {
 	            

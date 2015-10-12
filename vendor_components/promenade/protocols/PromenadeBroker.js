@@ -93,19 +93,14 @@ broker.factory('PromenadeBroker', ['ParlaySocket', '$q', 'ParlayNotification', '
         }
         
         else {
-	    	// Launches ParlayNotification discovery progress after 100 ms
-	        var progress = $timeout(ParlayNotification.showProgress, 100);
+	        ParlayNotification.showProgress();
 	        
 	        // Request open protocols before discovery so we know what we're discovering.
 	        return Public.requestOpenProtocols().then(function(open_protocols) {
 	            return open_protocols;
 	        }).then(function (open_protocols) {
 		    	return Public.sendRequest('get_discovery', {'force': is_forced});
-		    }).then(function (contents) {
-	            // Cancels $timeout callback execution. Better UX for immediate responses from Broker.
-	            // If $timeout has already executed we should hide the ParlayNotification now.
-	            if (!$timeout.cancel(progress)) ParlayNotification.hideProgress();
-	            
+		    }).then(function (contents) {	            
 	            var content_string = "Discovered ";
 	            
 	            if (contents.discovery.length === 0) content_string += " Verify connections.";

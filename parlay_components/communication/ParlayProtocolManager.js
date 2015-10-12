@@ -1,6 +1,4 @@
-var protocol_manager = angular.module('parlay.protocols.manager', ['promenade.broker', 'promenade.protocols.directmessage', 'parlay.notification']);
-
-protocol_manager.factory('ParlayProtocolManager', ['$injector', '$q', 'PromenadeBroker', 'ParlayStore', 'ParlayNotification', function ($injector, $q, PromenadeBroker, ParlayStore, ParlayNotification) {
+function ParlayProtocolManager($injector, $q, PromenadeBroker, ParlayStore, ParlayNotification) {
     
     var store = ParlayStore("protocols");
     
@@ -264,4 +262,7 @@ protocol_manager.factory('ParlayProtocolManager', ['$injector', '$q', 'Promenade
     });	
     
     return Public;
-}]);
+}
+
+angular.module('parlay.protocols.manager', ['promenade.broker', 'promenade.protocols.directmessage', 'parlay.notification'])
+	.factory('ParlayProtocolManager', ['$injector', '$q', 'PromenadeBroker', 'ParlayStore', 'ParlayNotification', ParlayProtocolManager]);

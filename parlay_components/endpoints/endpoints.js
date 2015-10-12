@@ -1,16 +1,12 @@
-var endpoints = angular.module('parlay.endpoints', ['ui.router', 'parlay.endpoints.manager', 'parlay.endpoints.search', 'parlay.endpoints.endpoint', 'parlay.endpoints.controller']);
-
-/* istanbul ignore next */
-endpoints.config(function($stateProvider) {
+function EndpointsConfiguration($stateProvider) {
     $stateProvider.state('endpoints', {
         url: '/endpoints',
         templateUrl: '../parlay_components/endpoints/views/base.html',
         controller: 'ParlayEndpointController'
     });
-});
+}
 
-/* istanbul ignore next */
-endpoints.directive('parlayEndpointsToolbar', ['$mdMedia', function ($mdMedia) {
+function ParlayEndpointsToolbar($mdMedia) {
     return {
         templateUrl: '../parlay_components/endpoints/directives/parlay-endpoints-toolbar.html',
         link: function ($scope, element, attributes) {
@@ -24,4 +20,8 @@ endpoints.directive('parlayEndpointsToolbar', ['$mdMedia', function ($mdMedia) {
             
         }
     };
-}]);
+}
+
+angular.module('parlay.endpoints', ['ui.router', 'parlay.endpoints.manager', 'parlay.endpoints.search', 'parlay.endpoints.endpoint', 'parlay.endpoints.controller'])
+	.config(["$stateProvider", EndpointsConfiguration])
+	.directive('parlayEndpointsToolbar', ['$mdMedia', ParlayEndpointsToolbar]);

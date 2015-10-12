@@ -1,11 +1,9 @@
-var notifications = angular.module('parlay.notification', ['ngMaterial', 'notification', 'templates-main']);
-
-notifications.run(['$notification', function ($notification) {
+function RunNotification($notification) {
     // Request permissions as soon as possible.
     $notification.requestPermission();
-}]);
+}
 
-notifications.factory('ParlayNotification', ['$mdToast', '$q', '$notification', '$timeout', function ($mdToast, $q, $notification, $timeout) {
+function ParlayNotification($mdToast, $q, $notification, $timeout) {
             
     var Public = {};
     
@@ -66,4 +64,8 @@ notifications.factory('ParlayNotification', ['$mdToast', '$q', '$notification', 
     document.addEventListener('visibilitychange', Private.clearNotifications);
     
     return Public;
-}]);
+}
+
+angular.module('parlay.notification', ['ngMaterial', 'notification', 'templates-main'])
+	.run(['$notification', RunNotification])
+	.factory('ParlayNotification', ['$mdToast', '$q', '$notification', '$timeout', ParlayNotification]);

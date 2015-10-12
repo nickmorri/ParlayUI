@@ -1,6 +1,4 @@
-var endpoint_search = angular.module('parlay.endpoints.search', ['templates-main', 'parlay.endpoints.manager']);
-
-endpoint_search.controller('ParlayEndpointSearchController', ['$scope', 'ParlayEndpointManager', function ($scope, ParlayEndpointManager) {
+function ParlayEndpointSearchController($scope, ParlayEndpointManager) {
             
     $scope.searching = false;
     $scope.selected_item = null;
@@ -45,10 +43,9 @@ endpoint_search.controller('ParlayEndpointSearchController', ['$scope', 'ParlayE
 	    return ParlayEndpointManager.hasDiscovered();
     };
     
-}]);
+}
 
-/* istanbul ignore next */
-endpoint_search.directive('parlayEndpointSearch', ['$timeout', function ($timeout) {
+function ParlayEndpointSearch($timeout) {
     return {
         scope: {},
         templateUrl: '../parlay_components/endpoints/directives/parlay-endpoint-search.html',
@@ -69,4 +66,8 @@ endpoint_search.directive('parlayEndpointSearch', ['$timeout', function ($timeou
             
         }
     };
-}]);
+}
+
+angular.module('parlay.endpoints.search', ['templates-main', 'parlay.endpoints.manager'])
+	.controller('ParlayEndpointSearchController', ['$scope', 'ParlayEndpointManager', ParlayEndpointSearchController])
+	.directive('parlayEndpointSearch', ['$timeout', ParlayEndpointSearch]);

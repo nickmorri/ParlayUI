@@ -1,6 +1,4 @@
-var endpoint_manager = angular.module('parlay.endpoints.manager', ['parlay.protocols.manager', 'promenade.broker', 'parlay.store', 'parlay.endpoints.workspaces']);
-
-endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ParlayProtocolManager', 'ParlayNotification', 'ParlayStore', '$window', function (PromenadeBroker, ParlayProtocolManager, ParlayNotification, ParlayStore, $window) {
+function ParlayEndpointManager(PromenadeBroker, ParlayProtocolManager, ParlayNotification, ParlayStore, $window) {
     
     var store = ParlayStore("endpoints");
     
@@ -170,4 +168,7 @@ endpoint_manager.factory('ParlayEndpointManager', ['PromenadeBroker', 'ParlayPro
 	$window.onbeforeunload = Public.autoSave;
 	
 	return Public;
-}]);
+}
+
+angular.module('parlay.endpoints.manager', ['parlay.protocols.manager', 'promenade.broker', 'parlay.store', 'parlay.endpoints.workspaces'])
+	.factory('ParlayEndpointManager', ['PromenadeBroker', 'ParlayProtocolManager', 'ParlayNotification', 'ParlayStore', '$window', ParlayEndpointManager]);

@@ -1,4 +1,4 @@
-angular.module('mock.parlay.protocols.protocol', []).factory('ParlayProtocol', [function () {
+function ParlayProtocol() {
     return {
         has_subscription: false,
         getName: function () {
@@ -22,4 +22,7 @@ angular.module('mock.parlay.protocols.protocol', []).factory('ParlayProtocol', [
 	        return endpoints;
         }
     };
-}]);
+}
+
+angular.module('mock.parlay.protocols.protocol', [])
+	.factory('ParlayProtocol', ParlayProtocol);

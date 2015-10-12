@@ -1,6 +1,4 @@
-var bottom_bar = angular.module('parlay.navigation.bottombar', ['ngMaterial', 'ngMdIcons', 'promenade.broker', 'templates-main', 'angularMoment', 'luegg.directives']);
-
-bottom_bar.factory('ScriptLogger',  function () {
+function ScriptLogger() {
     return {
         logCommand :  function(s) {
 	        alert('UNDEFINED');
@@ -9,9 +7,9 @@ bottom_bar.factory('ScriptLogger',  function () {
 	        alert('UNDEFINED');
 	    }
     };
-});
+}
 
-bottom_bar.controller('ParlayConsoleBarController', ['$scope', '$timeout', 'PromenadeBroker', 'ScriptLogger', function ($scope, $timeout, PromenadeBroker, ScriptLogger) {
+function ParlayConsoleBarController($scope, $timeout, PromenadeBroker, ScriptLogger) {
 
     var console_hidden = true;
     var console_log = [];
@@ -80,12 +78,16 @@ bottom_bar.controller('ParlayConsoleBarController', ['$scope', '$timeout', 'Prom
     // Set up the ScriptLogger for other controllers to use.
     ScriptLogger.logCommand = $scope.consoleAddToLog;
     ScriptLogger.logResponse = $scope.consoleAddresponseToLog;
-}]);
+}
 
-/* istanbul ignore next */
-bottom_bar.directive('parlayBottomConsoleBar', function () {
+function ParlayBottomConsoleBar() {
     return {
         templateUrl: '../parlay_components/navigation/directives/parlay-bottom-console-bar.html',
         controller: 'ParlayConsoleBarController'
     };
-});
+}
+
+angular.module('parlay.navigation.bottombar', ['ngMaterial', 'ngMdIcons', 'promenade.broker', 'templates-main', 'angularMoment', 'luegg.directives'])
+	.factory('ScriptLogger', ScriptLogger)
+	.controller('ParlayConsoleBarController', ['$scope', '$timeout', 'PromenadeBroker', 'ScriptLogger', ParlayConsoleBarController])
+	.directive('parlayBottomConsoleBar', ParlayBottomConsoleBar);

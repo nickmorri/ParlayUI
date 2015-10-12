@@ -1,4 +1,4 @@
-angular.module('mock.parlay.socket', []).factory('ParlaySocket', ['$q', function ($q) {
+function ParlaySocket($q) {
     var Public = {
 	    connected: false
     };
@@ -48,4 +48,7 @@ angular.module('mock.parlay.socket', []).factory('ParlaySocket', ['$q', function
     };
     
     return Public;
-}]);
+}
+
+angular.module('mock.parlay.socket', [])
+	.factory('ParlaySocket', ['$q', ParlaySocket]);

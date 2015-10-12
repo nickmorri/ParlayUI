@@ -1,6 +1,4 @@
-var parlay_endpoint = angular.module('parlay.endpoints.endpoint', ['ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main', 'parlay.store.persistence', 'parlay.utility', 'parlay.endpoints.widgettab']);
-
-parlay_endpoint.factory('ParlayEndpoint', function () {
+function ParlayEndpointFactory() {
     
     function ParlayEndpoint(data, protocol) {
         
@@ -87,9 +85,9 @@ parlay_endpoint.factory('ParlayEndpoint', function () {
     
     return ParlayEndpoint;
     
-});
+}
 
-parlay_endpoint.directive('parlayEndpointCard', ['$compile', 'ParlayPersistence', 'ParlayUtility', function ($compile, ParlayPersistence, ParlayUtility) {
+function ParlayEndpointCard($compile, ParlayPersistence, ParlayUtility) {
     return {
         templateUrl: '../parlay_components/endpoints/directives/parlay-endpoint-card.html',
         link: function (scope, element, attributes) {
@@ -174,4 +172,8 @@ parlay_endpoint.directive('parlayEndpointCard', ['$compile', 'ParlayPersistence'
 	        
         }
     };
-}]);
+}
+
+angular.module('parlay.endpoints.endpoint', ['ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main', 'parlay.store.persistence', 'parlay.utility', 'parlay.endpoints.widgettab'])
+	.factory('ParlayEndpoint', ParlayEndpointFactory)
+	.directive('parlayEndpointCard', ['$compile', 'ParlayPersistence', 'ParlayUtility', ParlayEndpointCard]);

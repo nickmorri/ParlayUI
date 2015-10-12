@@ -1,6 +1,4 @@
-var parlay_persistence = angular.module('parlay.store.persistence', ['parlay.store']);
-
-parlay_persistence.factory('ParlayPersistence', ['ParlayStore', function (ParlayStore) {
+function ParlayPersistence(ParlayStore) {
 	
 	var store = ParlayStore("endpoints");
 	
@@ -118,4 +116,7 @@ parlay_persistence.factory('ParlayPersistence', ['ParlayStore', function (Parlay
 	};
 	
 	return Public;
-}]);
+}
+
+angular.module('parlay.store.persistence', ['parlay.store'])
+	.factory('ParlayPersistence', ['ParlayStore', ParlayPersistence]);

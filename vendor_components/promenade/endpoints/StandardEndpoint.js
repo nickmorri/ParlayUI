@@ -1,5 +1,3 @@
-var standard_endpoint = angular.module('promenade.endpoints.standardendpoint', ['parlay.endpoints', 'promenade.endpoints.standardendpoint.commands', 'promenade.endpoints.standardendpoint.log', 'promenade.endpoints.standardendpoint.graph', 'ngOrderObjectBy']);
-
 function parseField(field) {
 	            
     var fieldObject = {
@@ -31,7 +29,7 @@ function parseField(field) {
     return fieldObject;
 }
 
-standard_endpoint.factory('PromenadeStandardEndpoint', ['ParlayEndpoint', function (ParlayEndpoint) {
+function PromenadeStandardEndpointFactory(ParlayEndpoint) {
     
     function PromenadeStandardEndpoint(data, protocol) {
 	    // Call our parent constructor first.
@@ -238,13 +236,17 @@ standard_endpoint.factory('PromenadeStandardEndpoint', ['ParlayEndpoint', functi
 
     return PromenadeStandardEndpoint;
         
-}]);
+}
 
-standard_endpoint.directive('promenadeStandardEndpointCardToolbar', function () {
+function PromenadeStandardEndpointCardToolbar() {
     return {
         scope: {
             endpoint: "="
         },
         templateUrl: '../vendor_components/promenade/endpoints/directives/promenade-standard-endpoint-card-toolbar.html'
     };
-});
+}
+
+angular.module('promenade.endpoints.standardendpoint', ['parlay.endpoints', 'promenade.endpoints.standardendpoint.commands', 'promenade.endpoints.standardendpoint.log', 'promenade.endpoints.standardendpoint.graph', 'ngOrderObjectBy'])
+	.factory('PromenadeStandardEndpoint', ['ParlayEndpoint', PromenadeStandardEndpointFactory])
+	.directive('promenadeStandardEndpointCardToolbar', PromenadeStandardEndpointCardToolbar);

@@ -1,6 +1,4 @@
-var endpoint_controller = angular.module('parlay.endpoints.controller', ['parlay.endpoints.manager', 'parlay.endpoints.workspaces']);
-
-endpoint_controller.controller('ParlayEndpointController', ['$scope', '$mdDialog', 'ParlayEndpointManager', function ($scope, $mdDialog, ParlayEndpointManager) {
+function ParlayEndpointController($scope, $mdDialog, ParlayEndpointManager) {
 	    
     $scope.filterEndpoints = function () {
         return ParlayEndpointManager.getActiveEndpoints();
@@ -36,4 +34,7 @@ endpoint_controller.controller('ParlayEndpointController', ['$scope', '$mdDialog
 	    ParlayEndpointManager.deactivateEndpoint(parseInt(index, 10));
     };
 	    
-}]);
+}
+
+angular.module('parlay.endpoints.controller', ['parlay.endpoints.manager', 'parlay.endpoints.workspaces'])
+	.controller('ParlayEndpointController', ['$scope', '$mdDialog', 'ParlayEndpointManager', ParlayEndpointController]);

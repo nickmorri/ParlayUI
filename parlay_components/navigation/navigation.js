@@ -1,7 +1,4 @@
-var navigation = angular.module('parlay.navigation', ['ngAnimate', 'ui.router', 'ngMaterial', 'ngMdIcons', 'promenade.broker', 'parlay.protocols.list_controller', 'templates-main']);
-
-/* istanbul ignore next */
-navigation.controller('parlayToolbarController', ['$scope', '$state', function ($scope, $state) {
+function ParlayToolbarController($scope, $state) {
     
     /**
 	 * Returns the name of the current state from UI.Router.
@@ -11,9 +8,9 @@ navigation.controller('parlayToolbarController', ['$scope', '$state', function (
 	    return $state.$current.self.name;
     };
     
-}]);
+}
 
-navigation.controller('ParlayConnectionStatusController', ['$scope', '$mdDialog', function ($scope, $mdDialog) {
+function ParlayConnectionStatusController($scope, $mdDialog) {
     
     /* istanbul ignore next */
     $scope.viewConnections = function (event) {
@@ -25,10 +22,9 @@ navigation.controller('ParlayConnectionStatusController', ['$scope', '$mdDialog'
         });
     };    
     
-}]);
+}
 
-/* istanbul ignore next */
-navigation.directive('parlayConnectionStatus', ['PromenadeBroker', '$mdMedia', function (PromenadeBroker, $mdMedia) {
+function ParlayConnectionStatus(PromenadeBroker, $mdMedia) {
     return {
         scope: {},
         templateUrl: '../parlay_components/navigation/directives/parlay-connection-status.html',
@@ -51,12 +47,17 @@ navigation.directive('parlayConnectionStatus', ['PromenadeBroker', '$mdMedia', f
             
         }
     };
-}]);
+}
 
-/* istanbul ignore next */
-navigation.directive('parlayToolbar', function () {
+function ParlayToolbar() {
     return {
         templateUrl: '../parlay_components/navigation/directives/parlay-toolbar.html',
         controller: 'parlayToolbarController'
     };
-});
+}
+
+angular.module('parlay.navigation', ['ngAnimate', 'ui.router', 'ngMaterial', 'ngMdIcons', 'promenade.broker', 'parlay.protocols.list_controller', 'templates-main'])
+	.controller('parlayToolbarController', ['$scope', '$state', ParlayToolbarController])
+	.controller('ParlayConnectionStatusController', ['$scope', '$mdDialog', ParlayConnectionStatusController])
+	.directive('parlayConnectionStatus', ['PromenadeBroker', '$mdMedia', ParlayConnectionStatus])
+	.directive('parlayToolbar', ParlayToolbar);

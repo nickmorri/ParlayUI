@@ -1,6 +1,4 @@
-var parlay_protocol = angular.module('parlay.protocols.protocol', ['parlay.socket', 'parlay.endpoints.endpoint', 'promenade.protocols.directmessage']);
-
-parlay_protocol.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', '$q', function (ParlaySocket, ParlayEndpoint, $q) {
+function ParlayProtocolFactory(ParlaySocket, ParlayEndpoint, $q) {
     
     function ParlayProtocol(configuration) {
         "use strict";
@@ -137,4 +135,7 @@ parlay_protocol.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', '$q
     };
     
     return ParlayProtocol;
-}]);
+}
+
+angular.module('parlay.protocols.protocol', ['parlay.socket', 'parlay.endpoints.endpoint', 'promenade.protocols.directmessage'])
+	.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', '$q', ParlayProtocolFactory]);

@@ -1,6 +1,4 @@
-var list_controller = angular.module('parlay.protocols.list_controller', ['parlay.protocols.configuration_controller', 'parlay.protocols.detail_controller', 'parlay.protocols.manager', 'promenade.broker', 'parlay.notification', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main']);
-
-list_controller.controller('ParlayConnectionListController', ['$scope', '$mdDialog', '$mdMedia', 'ParlayProtocolManager', 'PromenadeBroker', function ($scope, $mdDialog, $mdMedia, ParlayProtocolManager, PromenadeBroker) {
+function ParlayConnectionListController($scope, $mdDialog, $mdMedia, ParlayProtocolManager, PromenadeBroker) {
     
     $scope.hide = $mdDialog.hide;
     $scope.connecting = false;
@@ -115,4 +113,7 @@ list_controller.controller('ParlayConnectionListController', ['$scope', '$mdDial
         $scope.large_screen = large_screen;
     });
     
-}]);
+}
+
+angular.module('parlay.protocols.list_controller', ['parlay.protocols.configuration_controller', 'parlay.protocols.detail_controller', 'parlay.protocols.manager', 'promenade.broker', 'parlay.notification', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main'])
+	.controller('ParlayConnectionListController', ['$scope', '$mdDialog', '$mdMedia', 'ParlayProtocolManager', 'PromenadeBroker', ParlayConnectionListController]);

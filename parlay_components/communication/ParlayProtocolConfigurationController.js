@@ -1,6 +1,4 @@
-var configuration_controller = angular.module('parlay.protocols.configuration_controller', ['parlay.protocols.manager', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main']);
-
-configuration_controller.controller('ParlayProtocolConfigurationController', ['$scope', '$mdDialog', 'ParlayProtocolManager', function ($scope, $mdDialog, ParlayProtocolManager) {
+function ParlayProtocolConfigurationController($scope, $mdDialog, ParlayProtocolManager) {
     
     $scope.selected_protocol = null;
     $scope.connecting = false;
@@ -71,4 +69,7 @@ configuration_controller.controller('ParlayProtocolConfigurationController', ['$
         });
     };
     
-}]);
+}
+
+angular.module('parlay.protocols.configuration_controller', ['parlay.protocols.manager', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main'])
+	.controller('ParlayProtocolConfigurationController', ['$scope', '$mdDialog', 'ParlayProtocolManager', ParlayProtocolConfigurationController]);

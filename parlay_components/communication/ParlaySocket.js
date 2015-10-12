@@ -1,9 +1,4 @@
-var socket = angular.module('parlay.socket', ['ngWebsocket']);
-
-// If page is secure use a secure WebSocket.
-socket.value('BrokerAddress', location.protocol === 'https:' ? 'wss://' + location.hostname + ':8086' : 'ws://' + location.hostname + ':8085');
-
-socket.factory('ParlaySocket', ['ParlaySocketService', function (ParlaySocketService) {
+function ParlaySocketFactory(ParlaySocketService) {
     var Private = {};
     
     // Stores registered socket.
@@ -22,9 +17,9 @@ socket.factory('ParlaySocket', ['ParlaySocketService', function (ParlaySocketSer
     
     return Private.get();
     
-}]);
+}
 
-socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', function (BrokerAddress, $websocket, $q) {
+function ParlaySocketServiceFactory(BrokerAddress, $websocket, $q) {
     
     var Private = {
         onMessageCallbacks: new Map(),
@@ -385,4 +380,9 @@ socket.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', func
             
     };
     
-}]);
+}
+
+angular.module('parlay.socket', ['ngWebsocket'])
+	.value('BrokerAddress', location.protocol === 'https:' ? 'wss://' + location.hostname + ':8086' : 'ws://' + location.hostname + ':8085')
+	.factory('ParlaySocket', ['ParlaySocketService', ParlaySocketFactory])
+	.factory('ParlaySocketService', ['BrokerAddress', '$websocket', '$q', ParlaySocketServiceFactory]);

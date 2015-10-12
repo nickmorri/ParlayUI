@@ -1,6 +1,4 @@
-var workspace_controller = angular.module('parlay.endpoints.workspaces', ['parlay.store', 'parlay.endpoints.manager', 'angularMoment']);
-
-workspace_controller.controller('ParlayWorkspaceManagementController', ['$scope', '$mdDialog', 'ParlayStore', 'ParlayEndpointManager', function ($scope, $mdDialog, ParlayStore, ParlayEndpointManager) {
+function ParlayWorkspaceManagementController($scope, $mdDialog, ParlayStore, ParlayEndpointManager) {
 	
 	var store = ParlayStore("endpoints");
 	
@@ -69,9 +67,9 @@ workspace_controller.controller('ParlayWorkspaceManagementController', ['$scope'
 		return ParlayEndpointManager.getActiveEndpointCount();
 	};
 	
-}]);
+}
 
-workspace_controller.controller('ParlayWorkspaceSaveAsDialogController', ['$scope', '$mdDialog', function ($scope, $mdDialog) {
+function ParlayWorkspaceSaveAsDialogController($scope, $mdDialog) {
 	
 	$scope.work = null;
 	
@@ -83,4 +81,8 @@ workspace_controller.controller('ParlayWorkspaceSaveAsDialogController', ['$scop
 		$mdDialog.cancel();
 	};
 	
-}]);
+}
+
+angular.module('parlay.endpoints.workspaces', ['parlay.store', 'parlay.endpoints.manager', 'angularMoment'])
+	.controller('ParlayWorkspaceSaveAsDialogController', ['$scope', '$mdDialog', ParlayWorkspaceSaveAsDialogController])
+	.controller('ParlayWorkspaceManagementController', ['$scope', '$mdDialog', 'ParlayStore', 'ParlayEndpointManager', ParlayWorkspaceManagementController]);

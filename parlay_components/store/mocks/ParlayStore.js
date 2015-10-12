@@ -1,4 +1,4 @@
-angular.module('mock.parlay.store', []).factory('ParlayStore', function () {
+function ParlayStore() {
     return function (prefix) {
 	    return {
 		    clear: function () {},
@@ -10,4 +10,6 @@ angular.module('mock.parlay.store', []).factory('ParlayStore', function () {
 		    removePackedItem: function () {}
 	    };
     };
-});
+}
+
+angular.module('mock.parlay.store', []).factory('ParlayStore', ParlayStore);

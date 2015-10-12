@@ -1,17 +1,15 @@
-var parlay_store = angular.module('parlay.store', []);
-
 /**
  * ParlayStore is a wrapper to the HTML Web Storage APIs.
  * Each ParlayStore instance is created with a namespace which allows management of a ParlayStore 
  * for different modules without worry of items bumping into each other.
  */
 
-parlay_store.run(function () {
+function RunStore() {
 	// Clear sessionStorage every time we start as some browsers persist sessionStorage across page reloads.
 	sessionStorage.clear();
-});
+}
 
-parlay_store.factory('ParlayStore', ['ParlayStoreService', function (ParlayStoreService) {
+function ParlayStore(ParlayStoreService) {
 	
 	var active_instances = {};
 	
@@ -28,9 +26,9 @@ parlay_store.factory('ParlayStore', ['ParlayStoreService', function (ParlayStore
 		return getInstance(namespace);
 	};
 	
-}]);
+}
 
-parlay_store.factory('ParlayStoreService', function () {
+function ParlayStoreService() {
 	
 	/**
 	 * Constructor for ParlayStore Objects.
@@ -224,4 +222,9 @@ parlay_store.factory('ParlayStoreService', function () {
 	
 	return ParlayStore;
 	
-});
+}
+
+angular.module('parlay.store', [])
+	.run(RunStore)
+	.factory('ParlayStore', ['ParlayStoreService', ParlayStore])
+	.factory('ParlayStoreService', ParlayStoreService);

@@ -1,6 +1,4 @@
-var parlay_utility = angular.module('parlay.utility', []);
-
-parlay_utility.factory('ParlayUtility', function () {
+function ParlayUtility() {
 	return {
 		// Converts directive names to snake-case which Angular requires during directive compilation.
         snakeCase: function(name) {
@@ -13,4 +11,7 @@ parlay_utility.factory('ParlayUtility', function () {
 		    return currentScope.hasOwnProperty(attribute) ? currentScope : currentScope.hasOwnProperty('$parent') && currentScope.$parent !== null ? this.relevantScope(currentScope.$parent, attribute) : undefined;
 		}
 	};
-});
+}
+
+angular.module('parlay.utility', [])
+	.factory('ParlayUtility', ParlayUtility);

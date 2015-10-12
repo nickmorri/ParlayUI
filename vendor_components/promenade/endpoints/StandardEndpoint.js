@@ -176,7 +176,8 @@ standard_endpoint.factory('PromenadeStandardEndpoint', ['ParlayEndpoint', functi
 			    TX_TYPE: "DIRECT",
 			    MSG_TYPE: "STREAM",
 			    TO: "UI",
-			    FROM: this.id
+			    FROM: this.id,
+			    STREAM: stream.NAME
 		    }, function (response) {
 			    this.data_streams[stream.NAME].value = response.VALUE;
 		    }.bind(this));

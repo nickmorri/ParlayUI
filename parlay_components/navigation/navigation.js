@@ -1,5 +1,5 @@
 function ParlayToolbarController($scope, $state) {
-    
+
     /**
 	 * Returns the name of the current state from UI.Router.
 	 * @returns {String} - state name
@@ -11,7 +11,6 @@ function ParlayToolbarController($scope, $state) {
 }
 
 function ParlayConnectionStatusController($scope, $mdDialog) {
-    
     /* istanbul ignore next */
     $scope.viewConnections = function (event) {
         $mdDialog.show({

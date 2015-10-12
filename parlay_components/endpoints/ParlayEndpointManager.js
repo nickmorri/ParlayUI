@@ -2,10 +2,8 @@ function ParlayEndpointManager(PromenadeBroker, ParlayProtocolManager, ParlayNot
     
     var store = ParlayStore("endpoints");
     
-    var Private = {
-	    has_discovered: false,
-	    active_endpoints: []
-    };
+    var has_discovered = false;
+	var active_endpoints = [];
     
     var Public = {};
     
@@ -14,7 +12,7 @@ function ParlayEndpointManager(PromenadeBroker, ParlayProtocolManager, ParlayNot
 	 * @returns {Object} key: order, value: active endpoint containers
 	 */
     Public.getActiveEndpoints = function () {
-        return Private.active_endpoints;
+        return active_endpoints;
     };
     
     /**
@@ -37,7 +35,7 @@ function ParlayEndpointManager(PromenadeBroker, ParlayProtocolManager, ParlayNot
 	 * Clears reference to active endpoint object.
 	 */
     Public.clearActiveEndpoints = function () {
-	    Private.active_endpoints = [];
+	    active_endpoints = [];
     };
     
     /**
@@ -55,7 +53,7 @@ function ParlayEndpointManager(PromenadeBroker, ParlayProtocolManager, ParlayNot
 	 * @returns {Boolean} - True if we have successfully completed a discovery, false otherwise.
 	 */
     Public.hasDiscovered = function () {
-	    return Private.has_discovered;
+	    return has_discovered;
     };
     
     /**
@@ -64,7 +62,7 @@ function ParlayEndpointManager(PromenadeBroker, ParlayProtocolManager, ParlayNot
 	 */
     Public.requestDiscovery = function () {
         return PromenadeBroker.requestDiscovery(true).then(function(response) {
-	        Private.has_discovered = true;
+	        has_discovered = true;
 	        return response;
         });
     };
@@ -75,9 +73,9 @@ function ParlayEndpointManager(PromenadeBroker, ParlayProtocolManager, ParlayNot
 	 * @param {Number} distance - how far to move target endpoint.
 	 */
     Public.reorder = function (index, distance) {
-	    var temp = Private.active_endpoints[index + distance];
-	    Private.active_endpoints[index + distance] = Private.active_endpoints[index];
-	    Private.active_endpoints[index] = temp;
+	    var temp = active_endpoints[index + distance];
+	    active_endpoints[index + distance] = active_endpoints[index];
+	    active_endpoints[index] = temp;
     };
     
     /**
@@ -86,7 +84,7 @@ function ParlayEndpointManager(PromenadeBroker, ParlayProtocolManager, ParlayNot
 	 * @param {Number} uid[optional] - If given a uid we will use the provided one. Otherwise we will randomly generate one.
 	 */
     Public.activateEndpoint = function (endpoint, uid) {
-	    Private.active_endpoints.push({
+	    active_endpoints.push({
 		    ref: endpoint,
 		    uid: uid !== undefined ? uid : Math.floor(Math.random() * 1500)
 	    });
@@ -97,7 +95,7 @@ function ParlayEndpointManager(PromenadeBroker, ParlayProtocolManager, ParlayNot
 	 * @param {Number} index - position of the endpoint we want to duplicate.
 	 */
     Public.duplicateEndpoint = function (index) {
-	    var container = Private.active_endpoints[index];
+	    var container = active_endpoints[index];
 	    var new_uid = container.uid + Math.floor(Math.random() * 1500);
 	    
 	    var old_directive = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
@@ -120,7 +118,7 @@ function ParlayEndpointManager(PromenadeBroker, ParlayProtocolManager, ParlayNot
 	 * @param {Number} index - position of endpoint to be deactivated.
 	 */
     Public.deactivateEndpoint = function (index) {
-	    Private.active_endpoints.splice(index, 1);
+	    active_endpoints.splice(index, 1);
     };
     
     /**

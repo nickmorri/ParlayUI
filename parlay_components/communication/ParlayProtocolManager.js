@@ -2,11 +2,9 @@ function ParlayProtocolManager($injector, $q, PromenadeBroker, ParlayStore, Parl
     
     var store = ParlayStore("protocols");
     
-    var Private = {
-        open_protocols: [],
-        available_protocols: [],
-        saved_protocols: []
-    };
+    var open_protocols = [];
+    var available_protocols = [];
+    var saved_protocols = [];
     
     var Public = {};
     
@@ -19,7 +17,7 @@ function ParlayProtocolManager($injector, $q, PromenadeBroker, ParlayStore, Parl
      * @returns {Array} - available protocols.
      */
     Public.getAvailableProtocols = function () {
-        return Private.available_protocols;
+        return available_protocols;
     };
     
     /**
@@ -27,7 +25,7 @@ function ParlayProtocolManager($injector, $q, PromenadeBroker, ParlayStore, Parl
      * @returns {Array} - open protocols.
      */
     Public.getOpenProtocols = function () {
-        return Private.open_protocols;
+        return open_protocols;
     };
     
     /**
@@ -35,37 +33,37 @@ function ParlayProtocolManager($injector, $q, PromenadeBroker, ParlayStore, Parl
 	 * @returns {Array} - Array of protocol configurations.
 	 */
     Public.getSavedProtocols = function () {
-	    return Private.saved_protocols;
+	    return saved_protocols;
     };
     
     /**
 	 * Save the protocol configuration in the ParlayStore.
 	 * @param {Object} configuration - Protocol configuration that can be sent to the Broker.
 	 */
-    Private.saveProtocolConfiguration = function (configuration) {
-	    var saved_protocols = store.getLocalItem("saved");
-	    if (saved_protocols === undefined) saved_protocols = {};
+    function saveProtocolConfiguration(configuration) {
+	    var protocols = store.getLocalItem("saved");
+	    if (protocols === undefined) protocols = {};
 	    
 	    configuration.last_connected = new Date();
 	    
-	    saved_protocols[configuration.name] = configuration;
+	    protocols[configuration.name] = configuration;
 	    
-	    store.setLocalItem("saved", saved_protocols);
-	    Private.setSavedProtocols();
-    };
+	    store.setLocalItem("saved", protocols);
+	    setSavedProtocols();
+    }
     
     /**
 	 * Delete the protocol configuration in the ParlayStore.
 	 * @param {Object} configuration - Protocol configuration that we are removing from the ParlayStore.
 	 */
     Public.deleteProtocolConfiguration = function (configuration) {
-		var saved_protocols = store.getLocalItem("saved");
-		if (saved_protocols === undefined) return;
+		var protocols = store.getLocalItem("saved");
+		if (protocols === undefined) return;
 		
-		delete saved_protocols[configuration.name];
+		delete protocols[configuration.name];
 			
-		store.setLocalItem("saved", saved_protocols);
-		Private.setSavedProtocols();
+		store.setLocalItem("saved", protocols);
+		setSavedProtocols();
     };
     
     /**
@@ -76,7 +74,7 @@ function ParlayProtocolManager($injector, $q, PromenadeBroker, ParlayStore, Parl
      */
     Public.openProtocol = function (configuration) {
 	    return PromenadeBroker.openProtocol(configuration).then(function (response) {
-		    Private.saveProtocolConfiguration(configuration);
+		    saveProtocolConfiguration(configuration);
 	        /* istanbul ignore next */
             ParlayNotification.show({
                 content: 'Connected to ' + response.name + '.',
@@ -102,13 +100,13 @@ function ParlayProtocolManager($injector, $q, PromenadeBroker, ParlayStore, Parl
     Public.closeProtocol = function (protocol) {
         return PromenadeBroker.closeProtocol(protocol.getName()).then(function (response) {
             // Search for open protocol requested to be closed.
-            var index = Private.open_protocols.findIndex(function (suspect) {
+            var index = open_protocols.findIndex(function (suspect) {
                 return protocol.getName() === suspect.getName();
             });
             
             // Remove if we find the protocol, then call it's onClose method.
             /* istanbul ignore else */
-            if (index > -1) Private.open_protocols.splice(index, 1)[0].onClose();
+            if (index > -1) open_protocols.splice(index, 1)[0].onClose();
             
             ParlayNotification.show({content: 'Closed ' + protocol.getName() + '.'}); 
             
@@ -119,57 +117,50 @@ function ParlayProtocolManager($injector, $q, PromenadeBroker, ParlayStore, Parl
         });
     };
     
-    /**
-     * Private Methods
-     */
-    
+    Public.requestDiscovery = function () {
+        return PromenadeBroker.requestDiscovery(true);
+    };
+        
     /**
      * Requests both available and open protocols.
      * @returns {$q.defer.promise} - Resolved when both request responses are received.
      */
-    Private.requestProtocols = function () {
-        return $q.all([Private.requestAvailableProtocols(), Private.requestOpenProtocols()]);
-    };
-    
-    /**
-     * 
-     */
-    Public.requestDiscovery = function () {
-        return PromenadeBroker.requestDiscovery(true);
-    };
+    function requestProtocols() {
+        return $q.all([requestAvailableProtocols(), requestOpenProtocols()]);
+    }
     
     /**
      * Requests available protocols.
      * @returns {$q.defer.promise} - Resolved when request response is recieved.
      */
-    Private.requestAvailableProtocols = function () {
+    function requestAvailableProtocols() {
         return PromenadeBroker.requestAvailableProtocols();
-    };
+    }
     
     /**
      * Requests open protocols.
      * @returns {$q.defer.promise} - Resolved when request response is recieved.
      */
-    Private.requestOpenProtocols = function () {
+    function requestOpenProtocols() {
         return PromenadeBroker.requestOpenProtocols();
-    };
+    }
     
     /**
      * Return a open protocol with the given name.
      * @returns {Object} - Returns Protocol object.
      */
-    Private.getOpenProtocol = function (name) {
-        return Private.open_protocols.find(function (protocol) {
+    function getOpenProtocol(name) {
+        return open_protocols.find(function (protocol) {
             return name === protocol.getName();
         });
-    };
+    }
     
     /**
      * Sets private attribute available to an Array of available protocols.
      * @param {Object} protocols - Map of protocol names : protocol details.
      */
-    Private.setAvailableProtocols = function (protocols) {
-        Private.available_protocols = Object.keys(protocols).map(function (protocol_name) {
+    function setAvailableProtocols(protocols) {
+        available_protocols = Object.keys(protocols).map(function (protocol_name) {
             return {
                 name: protocol_name,
                 parameters: protocols[protocol_name].params.reduce(function (param_obj, current_param) {
@@ -181,27 +172,27 @@ function ParlayProtocolManager($injector, $q, PromenadeBroker, ParlayStore, Parl
                 }, {})
             };
         });
-    };
+    }
     
     /**
      * Sets private attribute open to an Array of open protocols.
      * @param {Array} protocols - Array of open protocols.
      */
-    Private.setOpenProtocols = function (protocols) {
-        Private.open_protocols = protocols.map(function (configuration) {
+    function setOpenProtocols(protocols) {
+        open_protocols = protocols.map(function (configuration) {
             var protocol = $injector.has(configuration.protocol_type) ? $injector.get(configuration.protocol_type) : $injector.get('PromenadeDirectMessageProtocol');
             var instance = new protocol(configuration);
             instance.onOpen();
             return instance;
         });        
-    };
+    }
     
-    Private.setSavedProtocols = function () {
+    function setSavedProtocols() {
 	  	var saved = store.getLocalItem("saved");
 		if (saved === undefined) return;
 		
 		// Only show saved configurations that are currently available but not connected.
-		Private.saved_protocols = Object.keys(saved).map(function (key) {
+		saved_protocols = Object.keys(saved).map(function (key) {
 		    return saved[key];
 	    }).filter(function (configuration) {
 		  	return Public.getAvailableProtocols().some(function (protocol) {
@@ -214,51 +205,51 @@ function ParlayProtocolManager($injector, $q, PromenadeBroker, ParlayStore, Parl
 			  	});
 		  	});
 	  	});  
-    };
+    }
     
     /**
      * Clears private attributes open and available.
      */
-    Private.clearProtocols = function () {
-        Private.open_protocols.forEach(function (protocol) {
+    function clearProtocols() {
+        open_protocols.forEach(function (protocol) {
             protocol.onClose();
         });
-        Private.open_protocols = [];
-        Private.available_protocols = [];
-    };
+        open_protocols = [];
+        available_protocols = [];
+    }
     
     /**
      * Adds information from discovery to open Protocol instance.
      * @param {Object} info - Discovery information which may be vendor specific.
      */
-    Private.addDiscoveryInfoToOpenProtocol = function (info) {
-        var protocol = Private.getOpenProtocol(info.NAME);
+    function addDiscoveryInfoToOpenProtocol(info) {
+        var protocol = getOpenProtocol(info.NAME);
         if (protocol) protocol.addDiscoveryInfo(info);
-    };    
+    }
     
     /**
      * PromenadeBroker callback registrations.
      */
     
-    PromenadeBroker.onOpen(Private.requestProtocols);
+    PromenadeBroker.onOpen(requestProtocols);
     
-    PromenadeBroker.onClose(Private.clearProtocols);
+    PromenadeBroker.onClose(clearProtocols);
     
-    PromenadeBroker.onMessage({type: 'broker', response: 'open_protocol_response'}, Private.requestOpenProtocols);
+    PromenadeBroker.onMessage({type: 'broker', response: 'open_protocol_response'}, requestOpenProtocols);
     
-    PromenadeBroker.onMessage({type: 'broker', response: 'close_protocol_response'}, Private.requestOpenProtocols);
+    PromenadeBroker.onMessage({type: 'broker', response: 'close_protocol_response'}, requestOpenProtocols);
     
     PromenadeBroker.onMessage({type: 'broker', response: 'get_protocols_response'}, function (response) {
-        Private.setAvailableProtocols(response);
+        setAvailableProtocols(response);
     });
     
     PromenadeBroker.onMessage({type: 'broker', response: 'get_open_protocols_response'}, function (response) {
-        Private.setOpenProtocols(response.protocols);
-        Private.setSavedProtocols();
+        setOpenProtocols(response.protocols);
+        setSavedProtocols();
     });
     
     PromenadeBroker.onDiscovery(function (response) {
-        response.discovery.forEach(Private.addDiscoveryInfoToOpenProtocol);
+        response.discovery.forEach(addDiscoveryInfoToOpenProtocol);
     });	
     
     return Public;

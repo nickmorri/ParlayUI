@@ -1,0 +1,38 @@
+<md-tab label="Property">
+
+	<md-toolbar class="md-hue-2">
+		<div class="md-toolbar-tools">
+			
+			<md-progress-linear md-mode="indeterminate" ng-show="ctrl.waiting"></md-progress-linear>
+			
+			<span flex></span>
+			
+			<md-menu md-position-mode="target-right target">
+				<md-button class="md-icon-button" aria-label="More" ng-click="$mdOpenMenu($event)">
+					<md-icon md-menu-origin><ng-md-icon icon="more_vert"></ng-md-icon></md-icon>
+				</md-button>
+				<md-menu-content>
+	            	<md-menu-item>
+						<md-button ng-click="ctrl.closeTab()">
+							<md-icon md-menu-align-target><ng-md-icon icon="close"></ng-md-icon></md-icon>
+							Close tab
+						</md-button>
+					</md-menu-item>
+				</md-menu-content>
+			</md-menu>
+		</div>
+	</md-toolbar>
+
+	<md-content layout="column" layout-margin>
+		<div flex layout="row" ng-repeat="property in ctrl.endpoint.properties">
+			<md-input-container flex ng-switch="property.INPUT">
+				<label>{{property.NAME}}</label>
+				<input ng-switch-when="STRING" type="text" ng-model="property.VALUE" ng-disabled="property.READ_ONLY">
+				<input ng-switch-when="NUMBER" type="number" ng-model="property.VALUE" ng-disabled="property.READ_ONLY">				
+			</md-input-container>
+			<md-button class="md-primary" ng-click="ctrl.getProperty(property)">Get</md-button>
+			<md-button class="md-primary" ng-click="ctrl.setProperty(property)">Set</md-button>
+		</div>
+	</md-content>
+	
+</md-tab>

@@ -48,7 +48,8 @@ function PromenadeStandardEndpointFactory(ParlayEndpoint) {
 	        tabs: [
 	        	"promenadeStandardEndpointCardCommands",
 	        	"promenadeStandardEndpointCardLog",
-	        	"promenadeStandardEndpointCardGraph"
+	        	"promenadeStandardEndpointCardGraph",
+	        	"promenadeStandardEndpointCardProperty"
 	        ]
         });
         
@@ -247,6 +248,6 @@ function PromenadeStandardEndpointCardToolbar() {
     };
 }
 
-angular.module('promenade.endpoints.standardendpoint', ['parlay.endpoints', 'promenade.endpoints.standardendpoint.commands', 'promenade.endpoints.standardendpoint.log', 'promenade.endpoints.standardendpoint.graph', 'ngOrderObjectBy'])
+angular.module('promenade.endpoints.standardendpoint', ['parlay.endpoints', 'promenade.endpoints.standardendpoint.commands', 'promenade.endpoints.standardendpoint.log', 'promenade.endpoints.standardendpoint.graph', 'promenade.endpoints.standardendpoint.property', 'ngOrderObjectBy'])
 	.factory('PromenadeStandardEndpoint', ['ParlayEndpoint', PromenadeStandardEndpointFactory])
 	.directive('promenadeStandardEndpointCardToolbar', PromenadeStandardEndpointCardToolbar);

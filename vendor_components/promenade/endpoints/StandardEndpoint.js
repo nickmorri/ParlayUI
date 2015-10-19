@@ -219,10 +219,19 @@ function PromenadeStandardEndpointFactory(ParlayEndpoint) {
 			PROPERTY: property.NAME,
 			ACTION: "GET",
 			VALUE: null
-		});
+		},
+		{
+			TX_TYPE: "DIRECT",
+			MSG_TYPE: "RESPONSE",
+			FROM: this.id,
+			TO: "UI"
+		}).then(function(response) {
+			this.properties[response.PROPERTY].VALUE = response.VALUE;
+			return response;
+		}.bind(this));
     };
     
-    PromenadeStandardEndpoint.prototype.setProperty = function (property, value) {
+    PromenadeStandardEndpoint.prototype.setProperty = function (property) {
 	    return this.protocol.sendMessage({
 		    TX_TYPE: "DIRECT",
 		    MSG_TYPE: "PROPERTY",
@@ -231,8 +240,16 @@ function PromenadeStandardEndpointFactory(ParlayEndpoint) {
 		{
 			PROPERTY: property.NAME,
 			ACTION: "SET",
-			VALUE: value
-	    });
+			VALUE: property.VALUE
+	    },
+		{
+			TX_TYPE: "DIRECT",
+			MSG_TYPE: "RESPONSE",
+			FROM: this.id,
+			TO: "UI"
+		}).then(function(response) {
+			return response;
+		}.bind(this));
     };
 
     return PromenadeStandardEndpoint;

@@ -72,6 +72,7 @@ function PromenadeStandardEndpointFactory(ParlayEndpoint) {
         
         if (data.PROPERTIES) {
 	        this.properties = data.PROPERTIES.reduce(function (accumulator, current) {
+		        current.value = current.INPUT === "STRINGS" || current.INPUT === "NUMBERS" ? [] : undefined;
 		        accumulator[current.NAME] = current;
 		        return accumulator;
 	        }, {});

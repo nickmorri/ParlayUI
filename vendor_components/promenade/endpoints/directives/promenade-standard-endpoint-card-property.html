@@ -32,7 +32,9 @@
 			<md-input-container flex ng-switch="property.INPUT">
 				<label>{{property.NAME}}</label>
 				<input ng-switch-when="STRING" type="text" ng-model="property.VALUE" ng-disabled="property.READ_ONLY">
-				<input ng-switch-when="NUMBER" type="number" ng-model="property.VALUE" ng-disabled="property.READ_ONLY">				
+				<input ng-switch-when="NUMBER" type="number" ng-model="property.VALUE" ng-disabled="property.READ_ONLY">
+				<md-chips ng-switch-when="STRINGS" ng-model="property.VALUE" readonly="property.READ_ONLY">
+				<md-chips ng-switch-when="NUMBERS" ng-model="property.VALUE" readonly="property.READ_ONLY">
 			</md-input-container>
 			<md-button class="md-primary" ng-click="ctrl.getProperty(property)">Get</md-button>
 			<md-button class="md-primary" ng-click="ctrl.setProperty(property)">Set</md-button>

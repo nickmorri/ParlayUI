@@ -9,13 +9,20 @@
         describe('PromenadeStandardEndpoint', function() {
             var rootScope, endpoint, MockProtocol;
             
-            beforeEach(inject(function($rootScope, _PromenadeStandardEndpoint_) {
+            beforeEach(inject(function($rootScope, _PromenadeStandardEndpoint_, $q) {
                 /*jshint newcap: false */
                 rootScope = $rootScope;
                 
                 MockProtocol = {
                     data_types: ['int', 'float'],
-                    sendMessage: function () {},
+                    sendMessage: function (message) {
+	                    return $q(function (resolve) {
+		                    resolve("");
+	                    });
+                    },
+                    onMessage: function() {
+	                    return function() {};
+                    },
                     getMessageId: function () {
                         return 200;
                     },
@@ -54,6 +61,13 @@
                             ],
                             MSG_KEY: 'event'
                         }
+                    ],
+                    DATASTREAMS: [
+	                    {
+		                    ATTR_NAME: "stream1",
+							NAME: "stream1",
+							UNITS: "ms"
+	                    }
                     ]
                 }, MockProtocol);
             }));
@@ -143,6 +157,127 @@
                     COMMAND: 'FOO',
                     type: 'int'
                 });                
+            });
+            
+            it("requests stream", function(done) {
+	            spyOn(MockProtocol, "sendMessage").and.callThrough();
+	            spyOn(MockProtocol, "onMessage").and.callThrough();
+	            
+	            endpoint.requestStream({
+		            NAME: "stream1",
+		            rate: 1
+	            }).then(function() {
+		            expect(endpoint.data_streams.stream1.enabled).toBeTruthy();
+		            expect(MockProtocol.onMessage).toHaveBeenCalledWith({
+			            TX_TYPE: "DIRECT",
+					    MSG_TYPE: "STREAM",
+					    TO: "UI",
+					    FROM: endpoint.id,
+					    STREAM: "stream1"
+		            }, jasmine.any(Function));
+		            expect(endpoint.data_streams.stream1.listener).toEqual(jasmine.any(Function));
+		            done();
+	            });
+	            
+	            rootScope.$apply();
+	            
+	            expect(MockProtocol.sendMessage).toHaveBeenCalledWith({
+		            TX_TYPE: 'DIRECT',
+		            MSG_TYPE: 'STREAM',
+		            TO: 100
+	            },
+	            {
+		            STREAM: "stream1",
+		            RATE: 1,
+		            VALUE: null
+	            }, {
+		            TX_TYPE: 'DIRECT',
+		            MSG_TYPE: 'STREAM',
+		            TO: 'UI',
+		            FROM: 100
+	            });
+            });
+            
+            it("cancels stream", function(done) {
+	            spyOn(MockProtocol, "sendMessage").and.callThrough();
+	            spyOn(MockProtocol, "onMessage").and.callThrough();
+	            
+	            endpoint.cancelStream({
+		            NAME: "stream1",
+		            rate: 1
+	            }).then(function() {
+		            expect(endpoint.data_streams.stream1.enabled).toBeFalsy();
+		            expect(endpoint.data_streams.stream1.listener).toBeUndefined();
+		            expect(endpoint.data_streams.stream1.value).toBeUndefined();
+		            done();
+	            });
+	            
+	            rootScope.$apply();
+	            
+	            expect(MockProtocol.sendMessage).toHaveBeenCalledWith({
+		            TX_TYPE: 'DIRECT',
+		            MSG_TYPE: 'STREAM',
+		            TO: 100
+	            },
+	            {
+		            STREAM: "stream1",
+		            RATE: 0,
+		            VALUE: null
+	            }, {
+		            TX_TYPE: 'DIRECT',
+		            MSG_TYPE: 'STREAM',
+		            TO: 'UI',
+		            FROM: 100
+	            });
+            });
+            
+            it("gets property", function() {
+	            spyOn(MockProtocol, "sendMessage").and.callThrough();
+	            
+	            endpoint.getProperty({
+		            NAME: "property1"
+	            });
+	            
+	            expect(MockProtocol.sendMessage).toHaveBeenCalledWith({
+		            TX_TYPE: 'DIRECT',
+		            MSG_TYPE: 'PROPERTY',
+		            TO: 100
+	            },
+	            {
+		            PROPERTY: "property1",
+		            ACTION: "GET",
+		            VALUE: null
+	            }, {
+		            TX_TYPE: 'DIRECT',
+		            MSG_TYPE: 'RESPONSE',
+		            TO: 'UI',
+		            FROM: 100
+	            });
+            });
+            
+            it("sets property", function() {
+	            spyOn(MockProtocol, "sendMessage").and.callThrough();
+	            
+	            endpoint.setProperty({
+		            NAME: "property1",
+		            VALUE: 100
+	            });
+	            
+	            expect(MockProtocol.sendMessage).toHaveBeenCalledWith({
+		            TX_TYPE: 'DIRECT',
+		            MSG_TYPE: 'PROPERTY',
+		            TO: 100
+	            },
+	            {
+		            PROPERTY: "property1",
+		            ACTION: "SET",
+		            VALUE: 100
+	            }, {
+		            TX_TYPE: 'DIRECT',
+		            MSG_TYPE: 'RESPONSE',
+		            TO: 'UI',
+		            FROM: 100
+	            });
             });
 
         });

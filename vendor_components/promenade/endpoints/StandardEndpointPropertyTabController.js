@@ -3,26 +3,38 @@ function PromenadeStandardEndpointCardPropertyTabController($scope) {
 	
 	this.waiting = false;
 	
-	this.getProperty = function (property) {
-		this.waiting = true;
-		this.endpoint.getProperty(property).then(function (response) {
-			this.waiting = false;		
-		}.bind(this));
-	};
-	
-	this.setProperty = function (property) {
-		this.waiting = true;
-		this.endpoint.setProperty(property).then(function (response) {
-			this.waiting = false;
-		}.bind(this));
-	};
-	
 	$scope.$on("$destroy", function () {
 		$scope.$parent.deactivateDirective("tabs", "promenadeStandardEndpointCardProperty");
 	});
 }
 
 PromenadeStandardEndpointCardPropertyTabController.prototype = Object.create(ParlayBaseTabController.prototype);
+
+PromenadeStandardEndpointCardPropertyTabController.prototype.getAllProperties = function () {
+	Object.keys(this.endpoint.properties).map(function(key) {
+		return this.endpoint.properties[key];
+	}, this).forEach(this.getProperty.bind(this));
+};
+
+PromenadeStandardEndpointCardPropertyTabController.prototype.setAllProperties = function () {
+	Object.keys(this.endpoint.properties).map(function(key) {
+		return this.endpoint.properties[key];
+	}, this).forEach(this.setProperty.bind(this));
+};
+
+PromenadeStandardEndpointCardPropertyTabController.prototype.getProperty = function (property) {
+	this.waiting = true;
+	this.endpoint.getProperty(property).then(function (response) {
+		this.waiting = false;		
+	}.bind(this));
+};
+
+PromenadeStandardEndpointCardPropertyTabController.prototype.setProperty = function (property) {
+	this.waiting = true;
+	this.endpoint.setProperty(property).then(function (response) {
+		this.waiting = false;
+	}.bind(this));
+};
 
 /**
  * Directive constructor for PromenadeStandardEndpointCardProperty.

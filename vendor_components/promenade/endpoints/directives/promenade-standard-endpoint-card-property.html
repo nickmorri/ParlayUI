@@ -3,6 +3,9 @@
 	<md-toolbar class="md-hue-2">
 		<div class="md-toolbar-tools">
 			
+			<md-button class="md-primary" aria-label="Get all" ng-click="ctrl.getAllProperties()">Get All</md-button>
+			<md-button class="md-primary" aria-label="Set all" ng-click="ctrl.setAllProperties()">Set All</md-button>
+			
 			<md-progress-linear md-mode="indeterminate" ng-show="ctrl.waiting"></md-progress-linear>
 			
 			<span flex></span>
@@ -20,6 +23,7 @@
 					</md-menu-item>
 				</md-menu-content>
 			</md-menu>
+			
 		</div>
 	</md-toolbar>
 

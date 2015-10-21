@@ -209,7 +209,10 @@ function PromenadeStandardEndpointFactory(ParlayEndpoint) {
 			FROM: this.id
 		}).then(function (response) {
 			this.data_streams[stream.NAME].enabled = false;
-		    this.data_streams[stream.NAME].listener();
+			if (this.data_streams[stream.NAME].listener) {
+				this.data_streams[stream.NAME].listener();
+				this.data_streams[stream.NAME].listener = undefined;
+			}		    
 		    this.data_streams[stream.NAME].value = undefined;
 	    }.bind(this));
     };

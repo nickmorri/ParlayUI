@@ -2,29 +2,31 @@
 
 	<md-toolbar>
 		<div class="md-toolbar-tools">
-			<h2>Save As</h2>
+			<h2>Save</h2>
 			<span flex></span>
-			<md-button class="md-icon-button" ng-click="hide()" aria-label="Hide dialog">
+			<md-button class="md-icon-button" type="button" ng-click="cancel()" aria-label="Hide dialog">
 				<md-icon><ng-md-icon icon="close" aria-label="Close dialog"></ng-md-icon></md-icon>
 			</md-button>
 		</div>
 	</md-toolbar>
 	
-	<md-dialog-content>
-		<form name="saveform" ng-submit="accept()">
-			
-		<md-input-container>
-			<label>Name</label>
-			<input ng-model="name" type="text" name="name" required="true" autocomplete="off">
-			<div ng-messages="saveform.name.$error">
-				<div ng-message="required">Required to save.</div>
-			</div>
-		</md-input-container>
-	</md-dialog-content>
+	<form name="saveform" ng-submit="save()">
+		
+		<md-dialog-content>				
+			<md-input-container>
+				<label>Name</label>
+				<input ng-model="name" type="text" name="name" required="true" autocomplete="off">
+				<div ng-messages="saveform.name.$error">
+					<div ng-message="required">Required to save.</div>
+				</div>
+			</md-input-container>
+		</md-dialog-content>
+		
+		<div class="md-actions" layout="row">
+			<md-button type="button" class="md-warn" ng-click="cancel()" aria-label="Cancels save">Cancel</md-button>
+			<md-button type="submit" class="md-primary" ng-disabled="saveform.$invalid" aria-label="Save current workspace">Save</md-button>
+		</div>
 	
-	<div class="md-actions" layout="row">
-		<md-button class="md-warn" ng-click="hide()" aria-label="Cancels save as.">Cancel</md-button>
-		<md-button type="submit" class="md-primary" ng-disabled="saveform.$invalid" aria-label="Saves current workspace.">Save As</md-button>
-	</div>
+	</form>
 
 </md-dialog>

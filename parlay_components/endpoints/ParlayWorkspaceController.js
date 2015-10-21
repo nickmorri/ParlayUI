@@ -1,7 +1,5 @@
 function ParlayWorkspaceManagementController($scope, $mdDialog, ParlayStore, ParlayEndpointManager) {
 	
-	var store = ParlayStore("endpoints");
-	
 	function getSavedWorkspaces() {
 		var workspaces = store.getLocalValues();
 		return Object.keys(workspaces).map(function (key) {
@@ -12,6 +10,8 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, ParlayStore, Par
 			return workspace;
 		});
 	}
+	
+	var store = ParlayStore("endpoints");
 	
 	var saved_workspaces = getSavedWorkspaces();
 	
@@ -71,13 +71,11 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, ParlayStore, Par
 
 function ParlayWorkspaceSaveAsDialogController($scope, $mdDialog) {
 	
-	$scope.work = null;
-	
-	$scope.accept = function () {
+	$scope.save = function () {
 		$mdDialog.hide($scope.name);
 	};
 	
-	$scope.hide = function () {
+	$scope.cancel = function () {
 		$mdDialog.cancel();
 	};
 	

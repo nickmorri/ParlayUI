@@ -4,13 +4,13 @@
 		<div class="md-toolbar-tools">
 			<h2>Save</h2>
 			<span flex></span>
-			<md-button class="md-icon-button" type="button" ng-click="cancel()" aria-label="Hide dialog">
+			<md-button class="md-icon-button" type="button" ng-click="ctrl.cancel()" aria-label="Hide dialog">
 				<md-icon><ng-md-icon icon="close" aria-label="Close dialog"></ng-md-icon></md-icon>
 			</md-button>
 		</div>
 	</md-toolbar>
 	
-	<form name="saveform" ng-submit="save()">
+	<form name="saveform" ng-submit="ctrl.save()">
 		
 		<md-dialog-content>				
 			<md-input-container>
@@ -23,7 +23,7 @@
 		</md-dialog-content>
 		
 		<div class="md-actions" layout="row">
-			<md-button type="button" class="md-warn" ng-click="cancel()" aria-label="Cancels save">Cancel</md-button>
+			<md-button type="button" class="md-warn" ng-click="ctrl.cancel()" aria-label="Cancels save">Cancel</md-button>
 			<md-button type="submit" class="md-primary" ng-disabled="saveform.$invalid" aria-label="Save current workspace">Save</md-button>
 		</div>
 	

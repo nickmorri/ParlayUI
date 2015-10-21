@@ -23,10 +23,11 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, ParlayStore, Par
 	
 	$scope.saveCurrentWorkspace = function () {
 		$mdDialog.show({
-			controller: 'ParlayWorkspaceSaveAsDialogController',
-			templateUrl: '../parlay_components/endpoints/directives/parlay-workspace-save-as-dialog.html',
+			controller: "ParlayWorkspaceSaveAsDialogController",
+			controllerAs: "ctrl",
+			templateUrl: "../parlay_components/endpoints/directives/parlay-workspace-save-as-dialog.html",
 			onComplete: function (scope, element, options) {
-	            element.find('input').focus();
+	            element.find("input").focus();
             }
 		}).then(function (name) {
 			$scope.saveWorkspace({name: name});
@@ -71,16 +72,16 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, ParlayStore, Par
 
 function ParlayWorkspaceSaveAsDialogController($scope, $mdDialog) {
 	
-	$scope.save = function () {
+	this.save = function () {
 		$mdDialog.hide($scope.name);
 	};
 	
-	$scope.cancel = function () {
+	this.cancel = function () {
 		$mdDialog.cancel();
 	};
 	
 }
 
-angular.module('parlay.endpoints.workspaces', ['parlay.store', 'parlay.endpoints.manager', 'angularMoment'])
-	.controller('ParlayWorkspaceSaveAsDialogController', ['$scope', '$mdDialog', ParlayWorkspaceSaveAsDialogController])
-	.controller('ParlayWorkspaceManagementController', ['$scope', '$mdDialog', 'ParlayStore', 'ParlayEndpointManager', ParlayWorkspaceManagementController]);
+angular.module("parlay.endpoints.workspaces", ["parlay.store", "parlay.endpoints.manager", "angularMoment"])
+	.controller("ParlayWorkspaceSaveAsDialogController", ["$scope", "$mdDialog", ParlayWorkspaceSaveAsDialogController])
+	.controller("ParlayWorkspaceManagementController", ["$scope", "$mdDialog", "ParlayStore", "ParlayEndpointManager", ParlayWorkspaceManagementController]);

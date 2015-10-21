@@ -57,7 +57,7 @@ function PromenadeStandardEndpointCardCommandTabController($scope, $timeout, Scr
 	this.sending = false;
 	this.status_message= null;
 	
-	this.sending_timeout = null;
+	var sending_timeout = null;
 	
 	this.send = function ($event) {
 		// Push the buffer into the md-chips ng-model
@@ -68,8 +68,7 @@ function PromenadeStandardEndpointCardCommandTabController($scope, $timeout, Scr
 	    
 	    try {
 	    	var message = collectMessage($scope.wrapper.message);
-	    	this.endpoint.sendMessage(message)
-		     	.then(function (response) {
+	    	this.endpoint.sendMessage(message).then(function (response) {
 			     	
 			     	// Use the response to display feedback on the send button.
 			        this.status_message = response.STATUS_NAME;

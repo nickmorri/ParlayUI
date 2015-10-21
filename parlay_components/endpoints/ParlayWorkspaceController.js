@@ -1,6 +1,6 @@
 function ParlayWorkspaceManagementController($scope, $mdDialog, ParlayStore, ParlayEndpointManager) {
 	
-	function getSavedWorkspaces() {
+	function getWorkspaces() {
 		var workspaces = store.getLocalValues();
 		return Object.keys(workspaces).map(function (key) {
 			return workspaces[key];
@@ -13,12 +13,20 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, ParlayStore, Par
 	
 	var store = ParlayStore("endpoints");
 	
-	var saved_workspaces = getSavedWorkspaces();
+	var saved_workspaces = getWorkspaces();
 	
 	$scope.hide = $mdDialog.hide;
 	
 	$scope.getSavedWorkspaces = function () {
-		return saved_workspaces;
+		return saved_workspaces.filter(function(workspace) {
+			return !workspace.autosave;
+		});
+	};
+	
+	$scope.getAutosave = function () {
+		return saved_workspaces.find(function(workspace) {
+			return workspace.autosave;
+		});
 	};
 	
 	$scope.saveCurrentWorkspace = function () {
@@ -41,7 +49,7 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, ParlayStore, Par
 	
 	$scope.saveWorkspace = function (workspace) {
 		store.moveItemToLocal(workspace.name);
-		saved_workspaces = getSavedWorkspaces();
+		saved_workspaces = getWorkspaces();
 	};
 	
 	$scope.loadWorkspace = function (workspace) {
@@ -61,7 +69,7 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, ParlayStore, Par
 	
 	$scope.deleteWorkspace = function (workspace) {
 		store.removeLocalItem(workspace.name);
-		saved_workspaces = getSavedWorkspaces();
+		saved_workspaces = getWorkspaces();
 	};
 	
 	$scope.currentWorkspaceEndpointCount = function () {

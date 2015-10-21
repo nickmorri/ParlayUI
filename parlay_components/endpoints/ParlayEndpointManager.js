@@ -163,6 +163,10 @@ function ParlayEndpointManager(PromenadeBroker, ParlayProtocolManager, ParlayNot
 		if (Public.hasActiveEndpoints()) ParlayStore("endpoints").moveItemToLocal('AutoSave', true);
 	};
 	
+	PromenadeBroker.onClose(function () {
+		has_discovered = false;
+	});
+	
 	$window.onbeforeunload = Public.autoSave;
 	
 	return Public;

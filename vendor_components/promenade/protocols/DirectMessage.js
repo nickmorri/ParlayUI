@@ -59,7 +59,8 @@ direct_message.factory('PromenadeDirectMessageProtocol', ['ParlayProtocol', 'Pro
     };
     
     PromenadeDirectMessageProtocol.prototype.sendMessage = function (topics, contents, response_topics) {
-	    return ParlayProtocol.prototype.sendMessage(this.buildMessageTopics(topics), contents, !response_topics ? this.buildResponseTopics(topics) : response_topics);
+		var extended_topics = this.buildMessageTopics(topics);
+	    return ParlayProtocol.prototype.sendMessage(extended_topics, contents, !response_topics ? this.buildResponseTopics(extended_topics) : response_topics);
     };
         
     return PromenadeDirectMessageProtocol;    

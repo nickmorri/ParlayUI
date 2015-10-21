@@ -153,6 +153,12 @@ function PromenadeStandardEndpointFactory(ParlayEndpoint) {
         return this.protocol.sendMessage(this.generateTopics(), this.generateContents(message));
     };
     
+    PromenadeStandardEndpoint.prototype.buildStreamUpdater = function (stream) {
+	    return function streamUpdater(response) {
+		    this.data_streams[stream.NAME].value = response.VALUE;
+	    }.bind(this);
+    };
+    
     PromenadeStandardEndpoint.prototype.requestStream = function (stream) {
 		if (stream.rate < 1) stream.rate = 1;
 	    return this.protocol.sendMessage({
@@ -178,9 +184,7 @@ function PromenadeStandardEndpointFactory(ParlayEndpoint) {
 			    TO: "UI",
 			    FROM: this.id,
 			    STREAM: stream.NAME
-		    }, function (response) {
-			    this.data_streams[stream.NAME].value = response.VALUE;
-		    }.bind(this));
+		    }, this.buildStreamUpdater(stream));
 		    
 		    return response;
 	    }.bind(this));

@@ -1,18 +1,16 @@
-function PromenadeStandardEndpointCardGraphTabController($scope, $mdDialog, $interval) {
-	ParlayBaseTabController.call(this, $scope);
+/**
+ * Controller constructor for the graph tab.
+ * @constructor
+ * @param {AngularJS $scope} $scope - A AngularJS $scope Object.
+ * @param {Material Angular Service} $mdDialog - Dialog modal service.
+ */
+function PromenadeStandardEndpointCardGraphTabController($scope, $mdDialog) {
+	ParlayBaseTabController.call(this, $scope, "promenadeStandardEndpointCardGraph");
 	
-	this.chart_config = {
-        grid: {
-	        fillStyle: 'transparent',
-	        strokeStyle: 'transparent',
-	        borderVisible: false
-	    },
-	    labels: {
-		    fillStyle: '#000000',
-		    fontSize: 12
-		}
-	};
-		
+	/**
+	 * Launches graph configuration $mdDialog modal.
+	 * @param {MouseEvent} $event - Used to create source for $mdDialog opening animation.
+	 */
 	this.openConfigurationDialog = function($event) {
 		$mdDialog.show({
 			controller: "PromenadeStandardEndpointCardGraphTabConfigurationController",
@@ -28,27 +26,39 @@ function PromenadeStandardEndpointCardGraphTabController($scope, $mdDialog, $int
 			clickOutsideToClose: true
 		});
 	};
-	
-	$scope.$on("$destroy", function () {
-		$scope.$parent.deactivateDirective("tabs", "promenadeStandardEndpointCardGraph");
-	});
-	
+		
 }
 
+// Prototypically inherit from ParlayBaseTabController.
 PromenadeStandardEndpointCardGraphTabController.prototype = Object.create(ParlayBaseTabController.prototype);
 
+/**
+ * Returns a count of all currently enabled streams.
+ * @returns {Number} - Count of currently enabled streams.
+ */
 PromenadeStandardEndpointCardGraphTabController.prototype.streamCount = function() {
 	return Object.keys(this.endpoint.data_streams).filter(function (key) {
     	return this.endpoint.data_streams[key].enabled;
 	}.bind(this)).length;
 };
 
-function PromenadeStandardEndpointCardGraphTabConfigurationController($mdDialog, $timeout) {
+/**
+ * Controller constructor for the graph configuration dialog.
+ * @constructor
+ * @param {Material Angular Service} $mdDialog - Dialog modal service.
+ */
+function PromenadeStandardEndpointCardGraphTabConfigurationController($mdDialog) {
 	this.hide = $mdDialog.cancel;
 	
+	// When minValue or maxValue are defined we should initialize their lock to true.
 	this.minimum_locked = this.smoothie.options.minValue !== undefined;
-	this.maximum_locked = this.smoothie.options.maxValue !== undefined;	
-		
+	this.maximum_locked = this.smoothie.options.maxValue !== undefined;
+	
+	/**
+	 * Launch a $mdDialog modal to configure the given stream Object.
+	 * @param {MouseEvent} $event - Used to create source for $mdDialog opening animation.
+	 * @param {Object} stream - Object that holds stream data and configuration.
+	 */
 	this.configureStream = function($event, stream) {
 		$mdDialog.show({
 			controller: "PromenadeStandardEndpointCardGraphTabStreamConfigurationController",
@@ -66,22 +76,36 @@ function PromenadeStandardEndpointCardGraphTabConfigurationController($mdDialog,
 	
 }
 
+/**
+ * Toggles the state of the minimum lock. If we are removing lock we should remove the minValue from Smoothie options.
+ */
 PromenadeStandardEndpointCardGraphTabConfigurationController.prototype.lockMinimum = function () {
 	if (this.minimum_locked) this.smoothie.options.minValue = this.smoothie.valueRange.min;
 	else delete this.smoothie.options.minValue;
 };
 
+/**
+ * Toggles the state of the maximum lock. If we are removing lock we should remove the maxValue from Smoothie options.
+ */
 PromenadeStandardEndpointCardGraphTabConfigurationController.prototype.lockMaximum = function () {
 	if (this.maximum_locked) this.smoothie.options.maxValue = this.smoothie.valueRange.max;
 	else delete this.smoothie.options.maxValue;
 };
 
+/**
+ * Toggles the streams between enabled and disabled. Requests or cancels stream depending on state.
+ */
 PromenadeStandardEndpointCardGraphTabConfigurationController.prototype.toggleStream = function(stream) {
 	if (stream.enabled) this.endpoint.requestStream(stream);
 	else this.endpoint.cancelStream(stream);
 };
 
-function PromenadeStandardEndpointCardGraphTabStreamConfigurationController($mdDialog, $timeout) {
+/**
+ * Controller constructor for the stream configuration dialog.
+ * @constructor
+ * @param {Material Angular Service} $mdDialog - Dialog modal service.
+ */
+function PromenadeStandardEndpointCardGraphTabStreamConfigurationController($mdDialog) {
 	this.hide = $mdDialog.cancel;
 	
 	this.updateRate = function() {
@@ -90,6 +114,10 @@ function PromenadeStandardEndpointCardGraphTabStreamConfigurationController($mdD
 	
 }
 
+/**
+ * Constructor for the graph directive.
+ * @returns {Object} - AngularJS directive object.
+ */
 function PromenadeStandardEndpointCardGraph() {
 	return {
         scope: {
@@ -103,7 +131,7 @@ function PromenadeStandardEndpointCardGraph() {
 }
 
 angular.module('promenade.endpoints.standardendpoint.graph', ["promenade.smoothiechart"])
-	.controller("PromenadeStandardEndpointCardGraphTabController", ["$scope", "$mdDialog", '$interval', PromenadeStandardEndpointCardGraphTabController])
-	.controller("PromenadeStandardEndpointCardGraphTabConfigurationController", ["$mdDialog", "$timeout", "endpoint", "data", "smoothie", PromenadeStandardEndpointCardGraphTabConfigurationController])
-	.controller("PromenadeStandardEndpointCardGraphTabStreamConfigurationController", ["$mdDialog", "$timeout", "stream", PromenadeStandardEndpointCardGraphTabStreamConfigurationController])
+	.controller("PromenadeStandardEndpointCardGraphTabController", ["$scope", "$mdDialog", PromenadeStandardEndpointCardGraphTabController])
+	.controller("PromenadeStandardEndpointCardGraphTabConfigurationController", ["$mdDialog", "endpoint", "data", "smoothie", PromenadeStandardEndpointCardGraphTabConfigurationController])
+	.controller("PromenadeStandardEndpointCardGraphTabStreamConfigurationController", ["$mdDialog", "stream", PromenadeStandardEndpointCardGraphTabStreamConfigurationController])
 	.directive('promenadeStandardEndpointCardGraph', PromenadeStandardEndpointCardGraph);

@@ -10,7 +10,7 @@
  *
  * @param {Object} streams - Contains references to the stream data.
  * {
- *	 line1: {
+ *	 stream1: {
  *	 	value: 10,
  *		enabled: true,
  *		rate: 5
@@ -19,8 +19,16 @@
  *
  * @param {Object} config - Contains configuration data. Please reference the SmoothieChart constructor for options. http://smoothiecharts.org/tutorial.html#mycanvas6
  * @param {Number} [delay=1000] delay - Add delay so uncoming values are known before we need to plot the value.
+ * @param {Function} smoothieFn - Configuration retrieval function.
  */
  
+ 
+ /**
+ * Controller constructor for the PromenadeSmoothieChart.
+ * @constructor
+ * @param {AngularJS $scope} scope - A AngularJS $scope Object.
+ * @param {AngularJS Service} $interval - AngularJS interval Service.
+ */
  function PromenadeSmoothieChartController(scope, $interval) {
 	 
  	// Easy colors to see on most transparent backgrounds.
@@ -104,6 +112,11 @@
     });
  }
  
+ /**
+ * Directive constructor for PromenadeStandardEndpointCardProperty.
+ * @param {AngularJS Service} $window - AngularJS Window Service.
+ * @returns {Object} - Directive configuration.
+ */
  function PromenadeSmoothieChart($window) {
 	 
 	/**

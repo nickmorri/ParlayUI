@@ -2,17 +2,14 @@
  * Controller constructor for PromenadeStandardEndpointCardLogTabController.
  */
 function PromenadeStandardEndpointCardLogTabController($scope, ParlayPersistence, ParlayUtility) {
-	ParlayBaseTabController.call(this, $scope);
+	ParlayBaseTabController.call(this, $scope, "promenadeStandardEndpointCardLog");
 	
+	// Initially we don't want to filter logged messages by anything.
 	$scope.filter_text = null;
 	
 	var container = ParlayUtility.relevantScope($scope, 'container').container;
 	var directive_name = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
 	ParlayPersistence.monitor(directive_name, "filter_text", $scope);
-	
-	$scope.$on("$destroy", function () {
-		$scope.$parent.deactivateDirective("tabs", "promenadeStandardEndpointCardLog");
-	});
 }
 
 // Prototypically inherit from ParlayBaseTabController.

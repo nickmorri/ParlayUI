@@ -46,19 +46,35 @@ function collectMessage (message) {
 
 }
 
+/**
+ * Controller constructor for the command tab.
+ * @constructor
+ * @param {AngularJS $scope} $scope - A AngularJS $scope Object.
+ * @param {AngularJS Service} $timeout - AngularJS timeout service.
+ * @param {Parlay Service} ScriptLogger - Parlay ScriptLogger Service.
+ * @param {Parlay Service} ParlayUtility - Parlay Utlity Service.
+ */
 function PromenadeStandardEndpointCardCommandTabController($scope, $timeout, ScriptLogger, ParlayUtility) {
-	ParlayBaseTabController.call(this, $scope);
+	ParlayBaseTabController.call(this, $scope, "promenadeStandardEndpointCardCommands");
 	
+	// Due to the way JavaScript prototypical inheritance works and AngularJS scoping we want to enclose the message Object within another object.
+	// Reference AngularJS "dot rule": http://jimhoskins.com/2012/12/14/nested-scopes-in-angularjs.html
 	$scope.wrapper = {
 		message: {}
 	};
 	
+	// Controller attributes that reflect the state of the command form.
 	this.error = false;
 	this.sending = false;
 	this.status_message= null;
 	
+	// Reference to a $timeout deregistration function.
 	var sending_timeout = null;
 	
+	/**
+	 * Collects and sends the command from the form. During this process it will update controller attributes to inform the user the current status.
+	 * @param {Event} $event - This event's target is used to reference the md-chips element so that we can clear the buffer if available.
+	 */
 	this.send = function ($event) {
 		// Push the buffer into the md-chips ng-model
 		if ($event) pushChipBuffer($event.target.querySelectorAll('md-chips'));
@@ -118,15 +134,16 @@ function PromenadeStandardEndpointCardCommandTabController($scope, $timeout, Scr
 	        $scope.wrapper.message[field.msg_key + '_' + field.input] = ['NUMBERS', 'STRINGS', 'ARRAY'].indexOf(field.input) > -1 ? [] : field.default;
 	    });
     });
-    
-    $scope.$on("$destroy", function () {
-		$scope.$parent.deactivateDirective("tabs", "promenadeStandardEndpointCardCommands");
-	});
 	
 }
 
+// Prototypically inherit from ParlayBaseTabController.
 PromenadeStandardEndpointCardCommandTabController.prototype = Object.create(ParlayBaseTabController.prototype);
 
+/**
+ * Directive constructor for PromenadeStandardEndpointCardCommands.
+ * @returns {Object} - Directive configuration.
+ */
 function PromenadeStandardEndpointCardCommands() {
 	return {
         scope: {
@@ -139,6 +156,13 @@ function PromenadeStandardEndpointCardCommands() {
     };
 }
 
+/**
+ * Directive constructor for PromenadeStandardEndpointCardCommandContainer.
+ * @param {AngularJS Service} RecursionHelper - Allows recursive nesting of this directive within itself for sub field support.
+ * @param {Parlay Service} ParlayPersistence - Allows directive to persist values that it should retain between sessions.
+ * @param {Parlay Service} ParlayUtility - Parlay Utility Service.
+ * @returns {Object} - Directive configuration.
+ */
 function PromenadeStandardEndpointCardCommandContainer(RecursionHelper, ParlayPersistence, ParlayUtility) {
 	return {
         scope: {
@@ -155,8 +179,12 @@ function PromenadeStandardEndpointCardCommandContainer(RecursionHelper, ParlayPe
 		    
 		    ParlayPersistence.monitor(directive_name, "wrapper.message", $scope);
 	        
-	        $scope.prepChip = function ($chip) {
-   			    return {value: $chip};
+	        /**
+		     * Packages $mdChip object for insertion into message.
+		     * @param {$mdChip} chip - $mdChip Object
+		     */
+	        $scope.prepChip = function (chip) {
+   			    return {value: chip};
 		    };
 	        
 	        /**

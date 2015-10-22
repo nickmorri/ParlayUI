@@ -6,7 +6,7 @@
  * 
  */
 
-function ParlayBaseTabController($scope) {
+function ParlayBaseTabController($scope, tab_name) {
 	
 	/**
 	 * Destroys the controller's scope effectively removing the directive and all it's children.
@@ -15,5 +15,10 @@ function ParlayBaseTabController($scope) {
 	this.closeTab = function () {
 		$scope.$destroy();
 	};
+	
+	// When the $destroy event is dispatched we want to ensure that we remove our tab.
+	$scope.$on("$destroy", function () {
+		$scope.$parent.deactivateDirective("tabs", tab_name);
+	});
 	
 }

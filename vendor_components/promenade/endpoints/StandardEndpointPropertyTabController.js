@@ -1,27 +1,40 @@
+/**
+ * Controller constructor for the property tab.
+ * @constructor
+ * @param {AngularJS $scope} $scope - A AngularJS $scope Object.
+ */
 function PromenadeStandardEndpointCardPropertyTabController($scope) {
-	ParlayBaseTabController.call(this, $scope);
+	ParlayBaseTabController.call(this, $scope, "promenadeStandardEndpointCardProperty");
 	
+	// Controller state attribute, true if a request has been sent but the response has not been received. 
 	this.waiting = false;
-	
-	$scope.$on("$destroy", function () {
-		$scope.$parent.deactivateDirective("tabs", "promenadeStandardEndpointCardProperty");
-	});
 }
 
+// Prototypically inherit from ParlayBaseTabController.
 PromenadeStandardEndpointCardPropertyTabController.prototype = Object.create(ParlayBaseTabController.prototype);
 
+/**
+ * Gets all property values from an endpoint.
+ */
 PromenadeStandardEndpointCardPropertyTabController.prototype.getAllProperties = function () {
 	Object.keys(this.endpoint.properties).map(function(key) {
 		return this.endpoint.properties[key];
 	}, this).forEach(this.getProperty.bind(this));
 };
 
+/**
+ * Sets all property values from an endpoint.
+ */
 PromenadeStandardEndpointCardPropertyTabController.prototype.setAllProperties = function () {
 	Object.keys(this.endpoint.properties).map(function(key) {
 		return this.endpoint.properties[key];
 	}, this).forEach(this.setProperty.bind(this));
 };
 
+/**
+ * Gets the given property from the endpoint.
+ * @param {Object} property - Property object we want to get from an endpoint.
+ */
 PromenadeStandardEndpointCardPropertyTabController.prototype.getProperty = function (property) {
 	this.waiting = true;
 	this.endpoint.getProperty(property).then(function (response) {
@@ -29,6 +42,10 @@ PromenadeStandardEndpointCardPropertyTabController.prototype.getProperty = funct
 	}.bind(this));
 };
 
+/**
+ * Sets the given property on the endpoint.
+ * @param {Object} property - Property object we want to set on an endpoint.
+ */
 PromenadeStandardEndpointCardPropertyTabController.prototype.setProperty = function (property) {
 	this.waiting = true;
 	this.endpoint.setProperty(property).then(function (response) {

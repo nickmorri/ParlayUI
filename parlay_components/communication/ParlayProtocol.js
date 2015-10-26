@@ -42,23 +42,22 @@ function ParlayProtocolFactory(ParlaySocket, ParlayEndpoint, $q) {
     
     /**
 	 * Returns all messages that have been collected by the protocol.
-	 * @returns {Array} message log
+	 * @returns {Array} - messages collected by protocol.
 	 */
     ParlayProtocol.prototype.getLog = function () {
         return this.log;
     };
-          
-    ParlayProtocol.prototype.onMessage = function(response_topics, callback, verbose) {
-	    var topics = Object.keys(response_topics).reduce(function (accumulator, key) {
-		   	accumulator[key] = response_topics[key];
-		   	return accumulator;
-	    }, {
-	        TO: this.id
-        });
-	    
+    
+    /**
+	 * Records a listener's deregistration function with the protocol. 
+	 * We want to record this function so that when the protocol is closed can clear all onMessage listeners that are relevant to this protocol.
+	 * @param {Object} topics - Map of key/value pairs.
+	 * @param {Function} deregistrationFn - Function returned from ParlaySocket that will cancel the onMessage callback.
+	 */
+    ParlayProtocol.prototype.registerListener = function (topics, deregistrationFn) {
 	    var topics_string = JSON.stringify(topics);
 	    
-	    this.listeners[topics_string] = ParlaySocket.onMessage(topics, callback, verbose);
+	    this.listeners[topics_string] = deregistrationFn;
 	    
 	    return function() {
 		  	this.listeners[topics_string]();
@@ -66,6 +65,30 @@ function ParlayProtocolFactory(ParlaySocket, ParlayEndpoint, $q) {
 	    }.bind(this);
     };
     
+    /**
+	 * @param {Object} response_topics - Map of key/value pairs.
+	 * @param {Function} callback - Callback to invoke upon receipt of response.
+	 * @param {Boolean} verbose - If true full response is given to callback, otherwise a reduced Object is returned.
+	 * @returns {Function} - Listener deregistration.
+	 */
+    ParlayProtocol.prototype.onMessage = function(response_topics, callback, verbose) {
+	    var topics = Object.keys(response_topics).reduce(function (accumulator, key) {
+		   	accumulator[key] = response_topics[key];
+		   	return accumulator;
+	    }, {
+	        TO: this.id
+        });
+        
+        return this.registerListener(topics, ParlaySocket.onMessage(topics, callback, verbose));
+    };
+    
+    /**
+	 * Sends message through ParlaySocket.
+	 * @param {Object} topics - Map of key/value pairs.
+	 * @param {Object} contents - Map of key/value pairs.
+	 * @param {Object} response_contents - Map of key/value pairs.
+	 * @returns {$q.defer.Promise} - Resolved if ParlaySocket receives a response, rejected if an error occurs during send.
+	 */
     ParlayProtocol.prototype.sendMessage = function (topics, contents, response_topics) {
         return $q(function(resolve, reject) {
 	        try {
@@ -77,6 +100,9 @@ function ParlayProtocolFactory(ParlaySocket, ParlayEndpoint, $q) {
         }.bind(this));
     };
     
+    /**
+	 * Will be called on protocol open.
+	 */
     ParlayProtocol.prototype.onOpen = function () {
         // Ensure that we record all messages address to the UI.
         this.onMessage({}, function (response) {
@@ -84,6 +110,9 @@ function ParlayProtocolFactory(ParlaySocket, ParlayEndpoint, $q) {
         }.bind(this), true);
     };
     
+    /**
+	 * Will be called on protocol close.
+	 */
     ParlayProtocol.prototype.onClose = function () {
 	    for (var listener in this.listeners) {
 		    this.listeners[listener]();
@@ -95,39 +124,53 @@ function ParlayProtocolFactory(ParlaySocket, ParlayEndpoint, $q) {
         this.active_endpoints = [];
     };
     
+    /**
+	 * Add getter for each key that doesn't currently define one on this protocol instance.
+	 * @param {Object} keys - field keys from discovery.
+	 */
     ParlayProtocol.prototype.buildFieldMethods = function (keys) {
-        keys.forEach(function (key) {
-            /* istanbul ignore else  */
-            if (!this[key]) {
-                Object.defineProperty(Object.getPrototypeOf(this), key, {
-                    get: function() {
-                        return this.fields[key];
-                    }
-                });    
-            }            
-        }, this);
+	    keys.filter(function (key) {
+		    return !this[key];
+	    }, this).forEach(function (key) {
+		    Object.defineProperty(Object.getPrototypeOf(this), key, {
+                get: function() { return this.fields[key]; }
+            });
+	    }, this);
     };
     
+    /**
+	 * Sets protocol instance fields.
+	 * @param {Object} info - field keys from discovery.
+	 */
     ParlayProtocol.prototype.buildFields = function (info) {
-        this.fields = Object.keys(info).filter(function (key) {
-            // We should do some sort of filtering here.
-            return true;
-        }, this).reduce(function (accumulator, key) {
+        this.fields = Object.keys(info).reduce(function (accumulator, key) {
             accumulator[key] = info[key];
             return accumulator;
         }, {});
     };
     
+    /**
+	 * Returns protocol instance's fields.
+	 * @returns {Object} - protocol instance's fields.
+	 */
     ParlayProtocol.prototype.getDynamicFieldKeys = function () {
         return Object.keys(this.fields);
     };
     
+    /**
+	 * Adds endpoints to the protocol instance's available endpoints.
+	 * @param {Array} endpoints - Array of the protocol's endpoints.
+	 */
     ParlayProtocol.prototype.addEndpoints = function (endpoints) {
         this.available_endpoints = endpoints.map(function (endpoint) {
             return new this.endpoint_factory(endpoint, this);
         }, this);
     };
     
+    /**
+	 * Distributes discovery message to all relevant methods.
+	 * @param {Object} info - Discovery message
+	 */
     ParlayProtocol.prototype.addDiscoveryInfo = function (info) {
         this.buildFields(info);
         this.buildFieldMethods(Object.keys(info));
@@ -137,5 +180,5 @@ function ParlayProtocolFactory(ParlaySocket, ParlayEndpoint, $q) {
     return ParlayProtocol;
 }
 
-angular.module('parlay.protocols.protocol', ['parlay.socket', 'parlay.endpoints.endpoint', 'promenade.protocols.directmessage'])
-	.factory('ParlayProtocol', ['ParlaySocket', 'ParlayEndpoint', '$q', ParlayProtocolFactory]);
+angular.module("parlay.protocols.protocol", ["parlay.socket", "parlay.endpoints.endpoint", "promenade.protocols.directmessage"])
+	.factory("ParlayProtocol", ["ParlaySocket", "ParlayEndpoint", "$q", ParlayProtocolFactory]);

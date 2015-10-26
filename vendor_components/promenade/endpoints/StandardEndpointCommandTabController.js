@@ -177,7 +177,7 @@ function PromenadeStandardEndpointCardCommandContainer(RecursionHelper, ParlayPe
 	        var container = ParlayUtility.relevantScope($scope, 'container').container;
 			var directive_name = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
 		    
-		    ParlayPersistence.monitor(directive_name, "wrapper.message", $scope);
+		    ParlayPersistence(directive_name, "wrapper.message", $scope);
 	        
 	        /**
 		     * Packages $mdChip object for insertion into message.

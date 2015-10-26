@@ -9,7 +9,7 @@ function PromenadeStandardEndpointCardLogTabController($scope, ParlayPersistence
 	
 	var container = ParlayUtility.relevantScope($scope, 'container').container;
 	var directive_name = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
-	ParlayPersistence.monitor(directive_name, "filter_text", $scope);
+	ParlayPersistence(directive_name, "filter_text", $scope);
 }
 
 // Prototypically inherit from ParlayBaseTabController.

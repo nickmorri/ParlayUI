@@ -38,14 +38,14 @@
 		            acceleration: 5
 	            });
 	            
-	            ParlayPersistence.monitor(directive_name, "demo_data", $scope);
+	            ParlayPersistence(directive_name, "demo_data", $scope);
 	            
 	            $scope.demo_data = {
 		            velocity: undefined,
 		            acceleration: undefined
 	            };
 	            	 
-	           	// Call digest to ensure that the $watch'ers in ParlayPersistence.monitor are triggered by the scope data change.           
+	           	// Call digest to ensure that the $watch'ers in ParlayPersistence are triggered by the scope data change.           
 	            $scope.$digest();
 	            
 	            expect($scope.demo_data).toEqual({
@@ -62,14 +62,14 @@
 	            
 	            var directive_name = "parlayEndpoint";
 	            
-	            ParlayPersistence.monitor(directive_name, "demo_data", $scope);
+	            ParlayPersistence(directive_name, "demo_data", $scope);
 	            
 	            $scope.demo_data = {
 		            velocity: undefined,
 		            acceleration: undefined
 	            };
 	            
-	            // Call digest to ensure that the $watch'ers in ParlayPersistence.monitor are triggered by the scope data change.
+	            // Call digest to ensure that the $watch'ers in ParlayPersistence are triggered by the scope data change.
 	            $scope.$digest();
 	            
 	            $scope.demo_data = {
@@ -77,7 +77,7 @@
 		            acceleration: 200
 	            };
 	            
-	            // Call digest to ensure that the $watch'ers in ParlayPersistence.monitor are triggered by the scope data change.	            
+	            // Call digest to ensure that the $watch'ers in ParlayPersistence are triggered by the scope data change.	            
 				$scope.$digest();	            
 	            
 	            /*jshint newcap: false */

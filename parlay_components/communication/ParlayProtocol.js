@@ -60,8 +60,10 @@ function ParlayProtocolFactory(ParlaySocket, ParlayEndpoint, $q) {
 	    this.listeners[topics_string] = deregistrationFn;
 	    
 	    return function() {
-		  	this.listeners[topics_string]();
-		  	delete this.listeners[topics_string];  
+		    if (this.listeners[topics_string]) {
+				this.listeners[topics_string]();
+				delete this.listeners[topics_string];
+		    }		  	
 	    }.bind(this);
     };
     

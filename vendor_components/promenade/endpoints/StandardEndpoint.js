@@ -47,12 +47,23 @@ function PromenadeStandardEndpointFactory(ParlayEndpoint) {
         
         this.type = "StandardEndpoint";
         
-        Object.defineProperty(this, 'id', {
-            value: data.ID,
-            configurable: false,
-            writeable: false,
-            enumerable: true
-        });
+        this.id = data.ID;
+        
+        Object.defineProperty(this, 'commands', {
+	        get: function () { return this.content_fields.command; }
+	    });
+	    
+	    Object.defineProperty(this, 'data_types', {
+	        get: function () { return protocol.data_types; }
+	    });
+	    
+	    Object.defineProperty(this, 'log', {
+		    get: function () {
+			    return protocol.getLog().filter(function (message) {
+				    return message.TOPICS.FROM === this.id;
+				}, this);
+			} 
+	    });
         
         // Adds all available PromenadeEndpointCard tabs.
         this.addAvailableDirective({
@@ -105,26 +116,6 @@ function PromenadeStandardEndpointFactory(ParlayEndpoint) {
     
     // Prototypically inherit from ParlayEndpoint.
     PromenadeStandardEndpoint.prototype = Object.create(ParlayEndpoint.prototype);
-    
-    Object.defineProperty(PromenadeStandardEndpoint.prototype, 'commands', {
-        get: function () {
-            return this.content_fields.command;
-        }
-    });
-    
-    Object.defineProperty(PromenadeStandardEndpoint.prototype, 'data_types', {
-        get: function () {
-            return this.protocol.data_types;
-        }
-    });
-    
-    Object.defineProperty(PromenadeStandardEndpoint.prototype, 'log', {
-       get: function () {
-           return this.protocol.getLog().filter(function (message) {
-                return message.TOPICS.FROM === this.id;
-            }, this);
-       } 
-    });
     
     /**
 	 * Checks if query equals id.

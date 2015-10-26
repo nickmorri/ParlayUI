@@ -128,16 +128,6 @@
                         MSG_TYPE: 'COMMAND'
                     });
                 });
-                
-                it('generates contents', function () {
-                    expect(endpoint.generateContents({
-                        command: 'FOO',
-                        type: 'int'
-                    })).toEqual({
-                        COMMAND: 'FOO',
-                        type: 'int'
-                    });
-                });
                                 
             });
             

@@ -1,7 +1,12 @@
 function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification, $timeout) {
 	
+	// Reference to previously instantiated PromenadeBroker.
 	var broker_instance;
 	
+	/**
+	 * PromenadeBroker constructor.
+	 * @constructor
+	 */
 	function PromenadeBroker() {
 		"use strict";
 	

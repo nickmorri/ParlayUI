@@ -1,5 +1,10 @@
 function PromenadeDirectMessageProtocolFactory(ParlayProtocol, PromenadeStandardEndpoint) {
     
+    /**
+	 * PromenadeDirectMessageProtocol constructor.
+	 * Prototypically inherits from ParlayProtocol.
+	 * @constructor
+	 */
     function PromenadeDirectMessageProtocol(configuration) {
         "use strict";
         // Call the constructor of the prototype we inherit from.
@@ -56,6 +61,13 @@ function PromenadeDirectMessageProtocolFactory(ParlayProtocol, PromenadeStandard
         };
     };
     
+    /**
+	 * Sends message with topics specific to PromenadeDirectMessage.
+	 * @param {Object} topics - Map of key/value pairs.
+	 * @param {Object} contents - Map of key/value pairs.
+	 * @param {Object} response_topics - Map of key/value pairs.
+	 * @returns {$q.defer.Promise} - Resolved upon message receipt.
+	 */
     PromenadeDirectMessageProtocol.prototype.sendMessage = function (topics, contents, response_topics) {
 		var extended_topics = this.buildMessageTopics(topics);
 	    return ParlayProtocol.prototype.sendMessage(extended_topics, contents, !response_topics ? this.buildResponseTopics(extended_topics) : response_topics);

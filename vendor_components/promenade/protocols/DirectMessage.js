@@ -1,6 +1,4 @@
-var direct_message = angular.module('promenade.protocols.directmessage', ['parlay.protocols.protocol', 'promenade.endpoints.standardendpoint']);
-
-direct_message.factory('PromenadeDirectMessageProtocol', ['ParlayProtocol', 'PromenadeStandardEndpoint', function (ParlayProtocol, PromenadeStandardEndpoint) {
+function PromenadeDirectMessageProtocolFactory(ParlayProtocol, PromenadeStandardEndpoint) {
     
     function PromenadeDirectMessageProtocol(configuration) {
         "use strict";
@@ -64,4 +62,7 @@ direct_message.factory('PromenadeDirectMessageProtocol', ['ParlayProtocol', 'Pro
     };
         
     return PromenadeDirectMessageProtocol;    
-}]);
+}
+
+angular.module('promenade.protocols.directmessage', ['parlay.protocols.protocol', 'promenade.endpoints.standardendpoint'])
+	.factory('PromenadeDirectMessageProtocol', ['ParlayProtocol', 'PromenadeStandardEndpoint', PromenadeDirectMessageProtocolFactory]);

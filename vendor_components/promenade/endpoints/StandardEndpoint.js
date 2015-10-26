@@ -45,7 +45,7 @@ function PromenadeStandardEndpointFactory(ParlayEndpoint) {
 	    // Call our parent constructor first.
         ParlayEndpoint.call(this, data, protocol);
         
-        this.type = 'StandardEndpoint';
+        this.type = "StandardEndpoint";
         
         Object.defineProperty(this, 'id', {
             value: data.ID,
@@ -182,15 +182,6 @@ function PromenadeStandardEndpointFactory(ParlayEndpoint) {
         };
     };
     
-    PromenadeStandardEndpoint.prototype.generateContents = function (message) {
-        return Object.keys(message).reduce(function (accumulator, key) {
-            if (!accumulator.hasOwnProperty(key.toUpperCase())) accumulator[key] = message[key];
-            return accumulator;
-        }, { COMMAND: message.command });
-    };
-    
-    PromenadeStandardEndpoint.prototype.sendMessage = function (message) {
-        return this.protocol.sendMessage(this.generateTopics(), this.generateContents(message));
     /**
 	 * Sends message using the endpoint's protocol.
 	 * @param {Object} contents - Map of key/value pairs.

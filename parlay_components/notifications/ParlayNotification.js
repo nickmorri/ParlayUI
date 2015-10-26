@@ -3,44 +3,80 @@ function RunNotification($notification) {
     $notification.requestPermission();
 }
 
-function ParlayNotification($mdToast, $q, $notification, $timeout, NotificationDisplayDuration) {
-            
-    var active_notifications = [];
-    var timeout;
-    
-    function clearNotifications() {
-        active_notifications.forEach(function (notification) {
+function ParlayNotificationFactory($mdToast, $q, $notification, $timeout, NotificationDisplayDuration) {
+	
+	var instance;
+	
+	var toast_active = false;
+	
+	var pending_toasts = [];
+	var active_browser_notifications = [];
+	
+	// Clear browser notifications if visibility of the document changes.
+    document.addEventListener('visibilitychange', function clearNotifications() {
+        active_browser_notifications.forEach(function (notification) {
             notification.close();
+        });
+    });
+	
+	/**
+	 * Displays the next available toast. 
+	 * Then if more toasts are available display then next as well as call the callback if the $mdToast was resolved by user action.
+	 */
+	function displayToast() {
+	    toast_active = true;
+	    var next_toast = pending_toasts.shift();
+	    $mdToast.show(next_toast.toast).then(function (result) {
+            // If there are pending toasts remaining display the next toast.
+            if (pending_toasts.length) displayToast();
+	        toast_active = false;
+            // Result will be resolved with 'ok' if the action is performed and true if the $mdToast has hidden.
+            if (result === 'ok' && next_toast.callback) next_toast.callback();            
         });
     }
     
-    document.addEventListener('visibilitychange', clearNotifications);
+    /**
+	 * Creates $mdToast and shows it whenever we can, if nothing is currently shown show now otherwise show when no toast are being shown.
+	 * @param {Object} configuration - Notification configuration object.
+	 */
+    function prepToast(configuration) {
+	    var toast = $mdToast.simple().content(configuration.content).hideDelay(NotificationDisplayDuration);
+        
+        if (configuration.action) {
+	        toast.action(configuration.action.text).highlightAction(true);
+	        
+	        pending_toasts.push({
+		        toast: toast,
+		        callback: configuration.action.callback
+	        });
+        }
+        else {
+	        pending_toasts.push({toast: toast});
+        }
+        
+        if (!toast_active) displayToast();        
+        
+    }
+    
+    /**
+	 * Creates $notification (HTML5 Notifications API) and stores a reference that can be cleared later.
+	 * @param {Object} configuration - Notification configuration object.
+	 */
+    function prepBrowserNotification(configuration) { 
+        active_browser_notifications.push($notification(configuration.content, {
+	        delay: NotificationDisplayDuration
+        }));
+    }
     
     return {
-	    show: function (configuration) {	    
-		    var toast = $mdToast.simple()
-		    	.content(configuration.content)
-		    	.hideDelay(NotificationDisplayDuration);
-	        
-	        if (configuration.action) toast
-	            	.action(configuration.action.text)
-	            	.highlightAction(true);
-	        
-	        if (document.hidden) {
-		        var notification = $notification(configuration.content);
-	            active_notifications.push(notification);
-	        }
-	        
-	        $mdToast.show(toast).then(function (result) {
-	            // Result will be resolved with 'ok' if the action is performed and true if the $mdToast has hidden.
-	            if (result === 'ok' && configuration.action) configuration.action.callback();
-	        });
-	        
-	        if (timeout !== undefined) $timeout.cancel(timeout);
-	        
-	        timeout = $timeout(function () {
-		        if (notification !== undefined) notification.close();
-	        }, NotificationDisplayDuration);
+	    /**
+		 * Creates Toast and if the browser window is currently hidden a HTML5 Notification.
+		 * @param {Object} configuration - Notification configuration object.
+		 */
+		show: function (configuration) {	    
+		    prepToast(configuration);
+		    
+		    if (document.hidden) prepBrowserNotification(configuration);        
 	    },
 	    showProgress: function (configuration) {
 	        $mdToast.show({
@@ -50,11 +86,11 @@ function ParlayNotification($mdToast, $q, $notification, $timeout, NotificationD
 	    },
 	    hideProgress: function () {
 	        $mdToast.hide();
-	    }
+		}
     };
 }
 
 angular.module('parlay.notification', ['ngMaterial', 'notification', 'templates-main'])
 	.run(['$notification', RunNotification])
 	.value("NotificationDisplayDuration", 4000)
-	.factory('ParlayNotification', ['$mdToast', '$q', '$notification', '$timeout', "NotificationDisplayDuration", ParlayNotification]);
+	.factory('ParlayNotification', ['$mdToast', '$q', '$notification', '$timeout', "NotificationDisplayDuration", ParlayNotificationFactory]);

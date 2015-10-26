@@ -125,39 +125,6 @@ function ParlayProtocolFactory(ParlaySocket, ParlayEndpoint, $q) {
     };
     
     /**
-	 * Add getter for each key that doesn't currently define one on this protocol instance.
-	 * @param {Object} keys - field keys from discovery.
-	 */
-    ParlayProtocol.prototype.buildFieldMethods = function (keys) {
-	    keys.filter(function (key) {
-		    return !this[key];
-	    }, this).forEach(function (key) {
-		    Object.defineProperty(Object.getPrototypeOf(this), key, {
-                get: function() { return this.fields[key]; }
-            });
-	    }, this);
-    };
-    
-    /**
-	 * Sets protocol instance fields.
-	 * @param {Object} info - field keys from discovery.
-	 */
-    ParlayProtocol.prototype.buildFields = function (info) {
-        this.fields = Object.keys(info).reduce(function (accumulator, key) {
-            accumulator[key] = info[key];
-            return accumulator;
-        }, {});
-    };
-    
-    /**
-	 * Returns protocol instance's fields.
-	 * @returns {Object} - protocol instance's fields.
-	 */
-    ParlayProtocol.prototype.getDynamicFieldKeys = function () {
-        return Object.keys(this.fields);
-    };
-    
-    /**
 	 * Adds endpoints to the protocol instance's available endpoints.
 	 * @param {Array} endpoints - Array of the protocol's endpoints.
 	 */
@@ -172,8 +139,6 @@ function ParlayProtocolFactory(ParlaySocket, ParlayEndpoint, $q) {
 	 * @param {Object} info - Discovery message
 	 */
     ParlayProtocol.prototype.addDiscoveryInfo = function (info) {
-        this.buildFields(info);
-        this.buildFieldMethods(Object.keys(info));
         this.addEndpoints(info.CHILDREN);
     };
     

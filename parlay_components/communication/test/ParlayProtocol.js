@@ -73,23 +73,10 @@
                     expect(protocol.getAvailableEndpoints().length).toBe(50);
                 });
                 
-                it('gets field keys', function () {
-                    expect(protocol.getDynamicFieldKeys().length).toBe(0);
-                });
-                
-                it('buildsFields', function () {
-                    expect(protocol.getDynamicFieldKeys().length).toBe(0);
-                    protocol.buildFields(sample_discovery);
-                    expect(protocol.getDynamicFieldKeys().length).toBe(3);
-                });
-                
                 it('does full discovery process', function () {
                     expect(protocol.getAvailableEndpoints().length).toBe(0);
-                    expect(protocol.getDynamicFieldKeys().length).toBe(0);
                     protocol.addDiscoveryInfo(sample_discovery);
-                    expect(protocol.NAME).toBe(sample_discovery.NAME);
                     expect(protocol.getAvailableEndpoints().length).toBe(50);
-                    expect(protocol.getDynamicFieldKeys().length).toBe(3);
                 });
                 
             });

@@ -63,7 +63,7 @@ module.exports = function (grunt) {
       ],
       'staticComponents': ['static_components/ng-websocket/ng-websocket.js', 'static_components/smoothie/smoothie.js'],
       'mocks': getVendorItems (['mocks'], ['parlay_components/*/mocks/*.js']),
-      'tests': getVendorItems(['tests'], ['parlay_components/*/test/*.js']),
+      'tests': getVendorItems(['test'], ['parlay_components/*/test/*.js']),
       'compiledHtml': '<%= meta.tmp_destination %>/templates.js',
       'htmlDirectives': getVendorItems(['directives'], ['parlay_components/**/directives/*.html']),
       'htmlViews': 'parlay_components/**/views/*.html',

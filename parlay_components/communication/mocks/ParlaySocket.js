@@ -1,7 +1,7 @@
 function ParlaySocket($q) {
-    var Public = {
-	    connected: false
-    };
+    var connected = false;
+    
+    var Public = {};
     
     Public.onOpen = function () {
 	    
@@ -22,21 +22,21 @@ function ParlaySocket($q) {
     };
     
     Public.open = function () {
-		this.connected = true;
+		connected = true;
 		return $q(function (resolve) {
 			resolve();
 		});
     };
     
     Public.close = function () {
-        this.connected = false;
+        connected = false;
         return $q(function (resolve) {
 			resolve();
 		});
     };
     
     Public.isConnected = function () {
-        return this.connected;
+        return connected;
     };
     
     Public.onOpen = function () {};

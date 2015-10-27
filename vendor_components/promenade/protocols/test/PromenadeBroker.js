@@ -87,10 +87,9 @@
                 });
                 
                 it('discovers', function () {
+	                spyOn(ParlaySocket, 'sendMessage');
 	                // "Open" the mock ParlaySocket
 	                ParlaySocket.open();
-	                
-                    spyOn(ParlaySocket, 'sendMessage');
                     
                     PromenadeBroker.requestDiscovery(true);
                     

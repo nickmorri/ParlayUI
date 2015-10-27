@@ -18,7 +18,9 @@ function pushChipBuffer (chipElements) {
  * @param {Object} message - message container from the scope.
  * @returns - parsed and formatted StandardEndpoint data.
  */    
-function collectMessage (message) {
+function collectMessage(message) {
+	
+	if (!Object.keys(message).length) return undefined;
 	
 	var root_field = Object.keys(message).find(function (field) {
 		return field.indexOf("FUNC") > -1;
@@ -55,6 +57,12 @@ function collectMessage (message) {
         return accumulator;
 	}, {});
 
+}
+
+function buildPythonCommand(message) {
+	return message ? "SendCommand(" + Object.keys(message).map(function (key) {
+        return typeof message[key] === 'number' ? key + '=' + message[key] : key + "='" + message[key] + "'";
+    }).join(',') + ')' : undefined;
 }
 
 /**
@@ -116,14 +124,16 @@ function PromenadeStandardEndpointCardCommandTabController($scope, $timeout, Scr
 		    }.bind(this));
 		    
 		    // Put the Python equivalent command in the log.
-	        ScriptLogger.logCommand("SendCommand(" + Object.keys(message).map(function (key) {
-		        return typeof message[key] === 'number' ? key + '=' + message[key] : key + "='" + message[key] + "'";
-	        }).join(',') + ')');
+	        ScriptLogger.logCommand(buildPythonCommand(message));
 	    }
 	    catch (e) {
 	     	this.error = true;
 	     	this.status_message = e;   
 	    }
+	};
+	
+	this.generatePythonCommand = function() {
+		return buildPythonCommand(collectMessage($scope.wrapper.message));
 	};
 	
 	// Watch for new fields to fill with defaults.

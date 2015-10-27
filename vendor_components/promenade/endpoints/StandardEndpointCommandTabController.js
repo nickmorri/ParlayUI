@@ -104,9 +104,14 @@ function PromenadeStandardEndpointCardCommandTabController($scope, $timeout, Scr
 			        this.error = true;
 			        this.status_message = response.STATUS_NAME;
 		        }.bind(this));
-		    
+
+            var var_name = "e_"+this.endpoint.id;
+            ScriptLogger.logCommand(var_name + " = self.get_endpoint('"+this.endpoint.id+"')");
 		    // Put the Python equivalent command in the log.
-	        ScriptLogger.logCommand("SendCommand(" + Object.keys(message).map(function (key) {
+            var func = message.FUNC;
+            delete message.FUNC;
+
+	        ScriptLogger.logCommand(var_name +"."+func+"(" + Object.keys(message).map(function (key) {
 		        return typeof message[key] === 'number' ? key + '=' + message[key] : key + "='" + message[key] + "'";
 	        }).join(',') + ')');
 	    }

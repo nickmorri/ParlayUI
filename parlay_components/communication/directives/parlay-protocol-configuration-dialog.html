@@ -21,7 +21,8 @@
             md-items="protocol in filterProtocols(search_text)"
             md-item-text="protocol.name"
             md-min-length="0"
-            md-floating-label="Protocol">
+            md-floating-label="Protocol"
+            md-no-cache="true">
             <md-item-template>
                 <span md-highlight-text="search_text" md-highlight-flags="^i">{{protocol.name}}</span>
             </md-item-template>

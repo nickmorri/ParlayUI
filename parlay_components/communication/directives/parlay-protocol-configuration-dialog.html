@@ -29,21 +29,21 @@
             
         <div layout="row" flex ng-show="selectedProtocolHasParameters()" >
 
-            <span flex ng-repeat="(parameter_name, parameter) in selected_protocol.parameters">
+            <span flex ng-repeat="(parameter_name, parameter) in selected_protocol.parameters" ng-switch="parameter.defaults === null || !parameter.defaults.length">
                 
-                <md-input-container ng-show="parameter.defaults === null || !parameter.defaults.length">
+                <md-input-container ng-switch-when="true">
                     <label>{{parameter_name}} (Defaults not available)</label>
                     <input ng-model="parameter.value" type="text">
                 </md-input-container>
                 
                 <md-autocomplete
-                    ng-hide="parameter.defaults === null || !parameter.defaults.length"
+                    ng-switch-when="false"
                     md-no-cache="true"
                     md-autoselect="true"
                     md-search-text="parameter.search_text"
                     md-selected-item="parameter.value"
                     md-items="default in filterDefaults(parameter.defaults, parameter.search_text)"
-                    md-item-text="default"
+                    md-item-text="default.toString()"
                     md-min-length="0"
                     md-floating-label="{{parameter_name}}">
                     <md-item-template>

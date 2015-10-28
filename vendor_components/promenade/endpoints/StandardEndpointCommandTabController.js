@@ -18,9 +18,22 @@ function pushChipBuffer (chipElements) {
  * @param {Object} message - message container from the scope.
  * @returns - parsed and formatted StandardEndpoint data.
  */    
-function collectMessage (message) {
-    return Object.keys(message).reduce(function (accumulator, field) {
-        var param_name, field_type;
+function collectMessage(message) {
+	
+	if (!Object.keys(message).length) return undefined;
+	
+	var root_field = Object.keys(message).find(function (field) {
+		return field.indexOf("FUNC") > -1;
+	});
+	
+	var relevant_fields = message[root_field].sub_fields.map(function (field) {
+		return field.msg_key + "_" + field.input;
+	});
+	
+	relevant_fields.push(root_field);
+	
+	return relevant_fields.reduce(function(accumulator, field) {
+		var param_name, field_type;
         
         if (field.indexOf('_') > -1) {
 	        var split_field = field.split('_');
@@ -31,10 +44,10 @@ function collectMessage (message) {
 	    }
 	    else {
 		    param_name = field;
-	    }
+	    }	    
 	    
 	    // If type is Object or Array then turn the JSON string into an actual Object.
-	    if (field_type === "ARRAY") accumulator[param_name] = message[field].map(function (chip) { 
+	    if (field_type === "ARRAY") accumulator[param_name] = message[field].map(function (chip) {
 		    return !Number.isNaN(chip.value) ? parseInt(chip.value) : chip.value;
 		});
 	    else if (field_type === "NUMBERS") accumulator[param_name] = message[field].map(parseFloat);
@@ -42,7 +55,20 @@ function collectMessage (message) {
         else accumulator[param_name] = message[field];
         
         return accumulator;
-    }, {});
+	}, {});
+
+}
+
+function buildPythonCommand(endpoint_id, message) {
+     var var_name = "e_"+endpoint_id;
+    var setup = var_name + " = self.get_endpoint('"+endpoint_id+"')";
+    // Put the Python equivalent command in the log.
+    var func = message.FUNC;
+    delete message.FUNC;
+
+   return setup + "\n" + var_name +"."+func+"(" + Object.keys(message).map(function (key) {
+        return typeof message[key] === 'number' ? key + '=' + message[key] : key + "='" + message[key] + "'";
+    }).join(',') + ')';
 
 }
 
@@ -84,41 +110,38 @@ function PromenadeStandardEndpointCardCommandTabController($scope, $timeout, Scr
 	    
 	    try {
 	    	var message = collectMessage($scope.wrapper.message);
+	    	
 	    	this.endpoint.sendMessage(message).then(function (response) {
-			     	
-			     	// Use the response to display feedback on the send button.
-			        this.status_message = response.STATUS_NAME;
-			        
-			        // If we still have an outstanding timeout we should cancel it to prevent the send button from flickering.
-		            if (sending_timeout !== null) $timeout.cancel(sending_timeout);
-		            
-		            // Setup a timeout to reset the button to it's default state after a brief period of time.
-		        	sending_timeout = $timeout(function () {
-			        	sending_timeout = null;
-		                this.sending = false;
-		                this.status_message = null;
-		            }, 500);
-		            
-		        }.bind(this)).catch(function (response) {
-			        this.sending = false;
-			        this.error = true;
-			        this.status_message = response.STATUS_NAME;
-		        }.bind(this));
-
-            var var_name = "e_"+this.endpoint.id;
-            ScriptLogger.logCommand(var_name + " = self.get_endpoint('"+this.endpoint.id+"')");
+		    	// Use the response to display feedback on the send button.			     	
+		        this.status_message = response.STATUS_NAME;
+		        
+		        // If we still have an outstanding timeout we should cancel it to prevent the send button from flickering.
+	            if (sending_timeout !== null) $timeout.cancel(sending_timeout);
+	            
+	            // Setup a timeout to reset the button to it's default state after a brief period of time.
+	        	sending_timeout = $timeout(function () {
+		        	sending_timeout = null;
+	                this.sending = false;
+	                this.status_message = null;
+	            }, 500);
+	        }.bind(this)).catch(function (response) {
+		        this.sending = false;
+		        this.error = true;
+		        this.status_message = response.STATUS_NAME;
+		    }.bind(this));
+		    
 		    // Put the Python equivalent command in the log.
-            var func = message.FUNC;
-            delete message.FUNC;
+	        ScriptLogger.logCommand(this.endpoint.id, buildPythonCommand(message));
 
-	        ScriptLogger.logCommand(var_name +"."+func+"(" + Object.keys(message).map(function (key) {
-		        return typeof message[key] === 'number' ? key + '=' + message[key] : key + "='" + message[key] + "'";
-	        }).join(',') + ')');
 	    }
 	    catch (e) {
 	     	this.error = true;
 	     	this.status_message = e;   
 	    }
+	};
+	
+	this.generatePythonCommand = function() {
+		return buildPythonCommand(this.endpoint.id, collectMessage($scope.wrapper.message));
 	};
 	
 	// Watch for new fields to fill with defaults.

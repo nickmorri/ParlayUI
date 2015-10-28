@@ -102,7 +102,7 @@ function ParlayConnectionListController($scope, $mdDialog, $mdMedia, ParlayProto
 	            element.find('input').focus();
             },
             controller: 'ParlayProtocolConfigurationController',
-            templateUrl: '../parlay_components/communication/directives/parlay-protocol-configuration-dialog.html'
+            templateUrl: '../parlay_components/protocols/directives/parlay-protocol-configuration-dialog.html'
         });
     };
     

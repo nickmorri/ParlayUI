@@ -23,7 +23,7 @@ function collectMessage(message) {
 	if (!Object.keys(message).length) return undefined;
 	
 	var root_field = Object.keys(message).find(function (field) {
-		return field.indexOf("FUNC") > -1;
+		return field.indexOf("COMMAND") > -1;
 	});
 	
 	var relevant_fields = message[root_field].sub_fields.map(function (field) {
@@ -60,15 +60,23 @@ function collectMessage(message) {
 }
 
 function buildPythonCommand(endpoint_id, message) {
-     var var_name = "e_"+endpoint_id;
-    var setup = var_name + " = self.get_endpoint('"+endpoint_id+"')";
-    // Put the Python equivalent command in the log.
-    var func = message.FUNC;
-    delete message.FUNC;
+    try
+    {
+        var var_name = "e_"+endpoint_id;
+        var setup = var_name + " = self.get_endpoint('"+endpoint_id+"')";
+        // Put the Python equivalent command in the log.
+        var func = message.COMMAND;
+        delete message.COMMAND;
 
-   return setup + "\n" + var_name +"."+func+"(" + Object.keys(message).map(function (key) {
-        return typeof message[key] === 'number' ? key + '=' + message[key] : key + "='" + message[key] + "'";
-    }).join(',') + ')';
+       return setup + "\n" + var_name +"."+func+"(" + Object.keys(message).map(function (key) {
+            return typeof message[key] === 'number' ? key + '=' + message[key] : key + "='" + message[key] + "'";
+        }).join(',') + ')';
+    }
+    catch(e)
+    {
+        console.log("Can't log"+e);
+    }
+
 
 }
 

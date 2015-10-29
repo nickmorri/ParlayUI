@@ -17,25 +17,11 @@
         	
         	describe('search state', function () {
     
-    			it('initilization', function () {
-    				expect(scope.isSearching).toBeFalsy();
-    			});
-    
-    			it('toggle', function () {
-    				expect(scope.searching).toBeFalsy();
-    				scope.toggleSearch();
-    				expect(scope.searching).toBeTruthy();
-    				scope.toggleSearch();
-    				expect(scope.searching).toBeFalsy();
-    			});
-    			
     			it('selects endpoint', function () {
         			
         			spyOn(ParlayEndpointManager, 'activateEndpoint');
         			
-        			var endpoint = {
-            			name: 'test'
-        			};
+        			var endpoint = {name: 'test'};
         			
         			scope.search_text = 'still here';
         			

@@ -1,6 +1,5 @@
 function ParlayEndpointSearchController($scope, ParlayEndpointManager) {
             
-    $scope.searching = false;
     $scope.selected_item = null;
     
     $scope.selectEndpoint = function (endpoint) {
@@ -9,14 +8,6 @@ function ParlayEndpointSearchController($scope, ParlayEndpointManager) {
         ParlayEndpointManager.activateEndpoint(endpoint);
         $scope.selected_item = null;
         $scope.search_text = null;
-    };
-    
-    /**
-     * Display search bar and cleans state of search on close.
-     */
-    $scope.toggleSearch = function () {
-        $scope.searching = !$scope.searching;
-        if (!$scope.searching) $scope.search_text = null;
     };
 
     /**
@@ -51,13 +42,7 @@ function ParlayEndpointSearch($timeout) {
         templateUrl: '../parlay_components/endpoints/directives/parlay-endpoint-search.html',
         controller: 'ParlayEndpointSearchController',
         link: function ($scope, element, attributes) {
-            $scope.$watch('searching', function (newValue, oldValue, $scope) {
-                $scope.search_icon = $scope.searching ? 'close' : 'search';
-                if ($scope.searching) $timeout(function () {
-	                element.find('input').focus();
-                });	                
-            });
-			
+            
 			// Prevents random endpoints being added since the autofocus element is still focused.            
             $scope.$watch('selected_item', function (newValue, oldValue, $scope) {
 	            // We just added a new endpoint to the workspace. So we should blur the input.

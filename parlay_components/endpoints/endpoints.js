@@ -8,6 +8,7 @@ function EndpointsConfiguration($stateProvider) {
 
 function ParlayEndpointsToolbar($mdMedia) {
     return {
+	    replace: true,
         templateUrl: '../parlay_components/endpoints/directives/parlay-endpoints-toolbar.html',
         link: function ($scope, element, attributes) {
 	        

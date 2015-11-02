@@ -108,7 +108,7 @@ function ParlayConnectionListController($scope, $mdDialog, $mdMedia, ParlayProto
     
     // Watch the size of the screen, if we are on a screen size that's greater than a small screen we should always display labels.
     $scope.$watch(function () {
-        return $mdMedia('gt-sm');
+        return $mdMedia('gt-md');
     }, function (large_screen) {
         $scope.large_screen = large_screen;
     });

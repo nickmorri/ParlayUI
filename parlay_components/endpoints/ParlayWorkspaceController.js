@@ -1,4 +1,4 @@
-function ParlayWorkspaceManagementController($scope, $mdDialog, ParlayStore, ParlayEndpointManager) {
+function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, ParlayStore, ParlayEndpointManager) {
 	
 	function getWorkspaces() {
 		var workspaces = store.getLocalValues();
@@ -76,6 +76,13 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, ParlayStore, Par
 		return ParlayEndpointManager.getActiveEndpointCount();
 	};
 	
+	// Watch the size of the screen, if we are on a screen size that's greater than a small screen we should always display labels.
+    $scope.$watch(function () {
+        return $mdMedia('gt-md');
+    }, function (large_screen) {
+        $scope.large_screen = large_screen;
+    });
+	
 }
 
 function ParlayWorkspaceSaveAsDialogController($scope, $mdDialog) {
@@ -92,4 +99,4 @@ function ParlayWorkspaceSaveAsDialogController($scope, $mdDialog) {
 
 angular.module("parlay.endpoints.workspaces", ["parlay.store", "parlay.endpoints.manager", "angularMoment"])
 	.controller("ParlayWorkspaceSaveAsDialogController", ["$scope", "$mdDialog", ParlayWorkspaceSaveAsDialogController])
-	.controller("ParlayWorkspaceManagementController", ["$scope", "$mdDialog", "ParlayStore", "ParlayEndpointManager", ParlayWorkspaceManagementController]);
+	.controller("ParlayWorkspaceManagementController", ["$scope", "$mdDialog", "$mdMedia", "ParlayStore", "ParlayEndpointManager", ParlayWorkspaceManagementController]);

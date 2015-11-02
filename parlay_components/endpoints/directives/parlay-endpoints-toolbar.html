@@ -2,9 +2,11 @@
     
     <div class="md-toolbar-tools" layout="row">
 	    
+<!--
 	    <md-button class="md-icon-button" aria-label="Toggles side navigation">
 	        <md-icon><ng-md-icon class="white" icon="menu"></ng-md-icon></md-icon>
 	    </md-button>
+-->
         
         <md-button ng-class="large_screen ? '' : 'md-icon-button'" ng-click="requestDiscovery()" aria-label="Request discovery">
             <md-tooltip>Request discovery</md-tooltip>
@@ -18,9 +20,11 @@
 		    <md-icon ng-if="!large_screen"><ng-md-icon md-icon class="white" icon="dashboard"></ng-md-icon></md-icon>
         </md-button>
         
-        <parlay-endpoint-search></parlay-endpoint-search>
+        <span flex="10"></span>
         
-        <span flex></span>
+        <parlay-endpoint-search flex></parlay-endpoint-search>
+        
+        <span flex="15"></span>
         
         <parlay-connection-status></parlay-connection-status>
         

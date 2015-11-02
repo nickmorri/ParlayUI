@@ -1,15 +1,3 @@
-function ParlayToolbarController($scope, $state) {
-
-    /**
-	 * Returns the name of the current state from UI.Router.
-	 * @returns {String} - state name
-	 */
-    $scope.getStateName = function () {
-	    return $state.$current.self.name;
-    };
-    
-}
-
 function ParlayConnectionStatusController($scope, $mdDialog) {
     /* istanbul ignore next */
     $scope.viewConnections = function (event) {
@@ -48,15 +36,6 @@ function ParlayConnectionStatus(PromenadeBroker, $mdMedia) {
     };
 }
 
-function ParlayToolbar() {
-    return {
-        templateUrl: '../parlay_components/navigation/directives/parlay-toolbar.html',
-        controller: 'parlayToolbarController'
-    };
-}
-
 angular.module('parlay.navigation', ['ngAnimate', 'ui.router', 'ngMaterial', 'ngMdIcons', 'promenade.broker', 'parlay.protocols.list_controller', 'templates-main'])
-	.controller('parlayToolbarController', ['$scope', '$state', ParlayToolbarController])
 	.controller('ParlayConnectionStatusController', ['$scope', '$mdDialog', ParlayConnectionStatusController])
-	.directive('parlayConnectionStatus', ['PromenadeBroker', '$mdMedia', ParlayConnectionStatus])
-	.directive('parlayToolbar', ParlayToolbar);
+	.directive('parlayConnectionStatus', ['PromenadeBroker', '$mdMedia', ParlayConnectionStatus]);

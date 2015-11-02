@@ -1,88 +1,97 @@
-<md-dialog aria-label="Protocol Connection" flex="40" flex-sm="80">
+<md-dialog aria-label="Protocol Connection" flex="90" flex-gt-sm="70" flex-gt-md="50">
 
-        <md-toolbar>
-            <div class="md-toolbar-tools">
-                <h2>Connections</h2>
-                <span flex></span>
-                <md-button class="md-icon-button" ng-click="hide()"  aria-label="Close connection display dialog">
-                    <md-icon><ng-md-icon icon="close" aria-label="Close dialog"></ng-md-icon></md-icon>
-                </md-button>
-            </div>
-        </md-toolbar>
-        
-        <md-progress-linear ng-show="connecting" md-mode="indeterminate"></md-progress-linear>
-        
-        <md-dialog-content>
-            <md-list>
-                
-                <md-list-item class="md-2-line" layout="row">
-                    <md-icon hide-sm hide-md><ng-md-icon icon="group_work"></ng-md-icon></md-icon>
-                    <div class="md-list-item-text">
-                        <h3>Broker</h3>
-                        <p>{{getBrokerAddress()}}</p>
-                    </div>
-                    <md-button ng-class="{'md-warn' : isBrokerConnected(), 'md-primary': !isBrokerConnected(), 'md-raised' : large_screen, 'md-icon-button': !large_screen}" ng-click="toggleBrokerConnection()">
-                    	<md-icon ng-hide="large_screen">
-                    		<ng-md-icon ng-show="isBrokerConnected()" icon="highlight_remove"></ng-md-icon>
-                    		<ng-md-icon ng-hide="isBrokerConnected()" icon="input"></ng-md-icon>
-                    	</md-icon>
-                    	<span ng-show="large_screen">
-                    		<span ng-show="isBrokerConnected()">Disconnect</span>
-							<span ng-hide="isBrokerConnected()">Connect</span>
-                    	</span>                                                
-                    </md-button>
-                </md-list-item>
-                
-                <md-divider ng-if="isBrokerConnected()"></md-divider>
-                
-                <md-subheader ng-if="isBrokerConnected() && hasOpenProtocols()" class="md-no-sticky">Connected Protocols</md-subheader>
-                
-                <md-list-item ng-if="isBrokerConnected() && hasOpenProtocols()" class="md-2-line" layout="row" ng-repeat="protocol in getOpenProtocols()">
-                    <md-icon hide-sm hide-md ng-if="$index === 0"><ng-md-icon icon="settings_ethernet"></ng-md-icon></md-icon>
-                    <div class="md-list-item-text" ng-class="{'md-offset': $index !== 0 && large_screen}">
-                        <h3>{{::protocol.getType()}}</h3>
-                        <p>{{::protocol.getName()}}</p>
-                    </div>
-                    <md-button class="md-primary" ng-class="large_screen ? 'md-raised' : 'md-icon-button'" ng-click="viewProtocolConnectionDetails($event, protocol)">
-                        <span ng-show="large_screen">Details</span>
-                        <md-icon ng-hide="large_screen"><ng-md-icon icon="info"></ng-md-icon></md-icon>
-                    </md-button>
-                    
-                    <md-button class="md-warn" ng-class="large_screen ? 'md-raised' : 'md-icon-button'" ng-click="closeProtocol(protocol)">
-                    	<span ng-show="large_screen">Disconnect</span>
-                    	<md-icon ng-hide="large_screen"><ng-md-icon icon="highlight_remove"></ng-md-icon></md-icon>
-                    </md-button>
-                </md-list-item>
-                
-                <md-list-item ng-if="isBrokerConnected() && !hasOpenProtocols()">No protocols connected</md-list-item>
-                
-                <md-subheader ng-if="isBrokerConnected() && hasSavedProtocols()" class="md-no-sticky">Saved Protocols</md-subheader>
-                
-                <md-list-item ng-if="isBrokerConnected() && hasSavedProtocols()" class="md-3-line" layout-gt-md="row" layout="column" ng-repeat="configuration in getSavedProtocols()">
-	                <md-icon hide-sm hide-md ng-if="$index === 0"><ng-md-icon icon="settings_backup_restore"></ng-md-icon></md-icon>
-	                <div class="md-list-item-text" ng-class="{'md-offset': $index !== 0}">
-                        <h3>{{::configuration.name}}</h3>
-                        <p><span ng-repeat="(key, value) in configuration.parameters">{{::value}}</span></p>
-                        <p>Last connected <span am-time-ago="configuration.last_connected"></span></p>
-                    </div>
-                    <md-button class="md-primary" ng-class="large_screen ? 'md-raised' : 'md-icon-button'" ng-click="openSavedProtocol(configuration)">
-                    	<span ng-show="large_screen">Connect</span>
-                    	<md-icon ng-hide="large_screen"><ng-md-icon icon="input"></ng-md-icon></md-icon>
-                    </md-button>
-                    <md-button class="md-warn" ng-class="large_screen ? 'md-raised' : 'md-icon-button'" ng-click="deleteSavedProtocol(configuration)">
-                        <span ng-show="large_screen">Delete</span>
-                        <md-icon ng-hide="large_screen"><ng-md-icon icon="highlight_remove"></ng-md-icon></md-icon>
-                    </md-button>
-                </md-list-item>
-                
-            </md-list>
-        </md-dialog-content>
-        
-        <div ng-if="isBrokerConnected()" class="md-actions" layout="row">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Connections</h2>
             <span flex></span>
-            <md-button ng-click="openConfiguration($event)" class="md-primary">
-                Open connection
+            <md-button class="md-icon-button" ng-click="hide()" aria-label="Close connection list dialog">
+                <md-icon><ng-md-icon icon="close" aria-label="Close dialog"></ng-md-icon></md-icon>
             </md-button>
         </div>
+    </md-toolbar>
+    
+    <md-progress-linear ng-show="connecting" md-mode="indeterminate"></md-progress-linear>
+    
+    <md-dialog-content>
+    
+        <md-list>
+            
+            <md-list-item class="md-2-line" layout="row">
+                <md-icon hide-sm hide-md><ng-md-icon icon="group_work"></ng-md-icon></md-icon>
+                <div class="md-list-item-text">
+                    <h3>Broker</h3>
+                    <p>{{getBrokerAddress()}}</p>
+                </div>
+                <md-button ng-class="{'md-warn' : isBrokerConnected(), 'md-primary': !isBrokerConnected(), 'md-raised' : large_screen, 'md-icon-button': !large_screen}" ng-click="toggleBrokerConnection()" aria-label="Disconnect">
+                	<md-tooltip>Disconnect</md-tooltip>
+                	<md-icon ng-hide="large_screen">
+                		<ng-md-icon ng-show="isBrokerConnected()" icon="highlight_remove"></ng-md-icon>
+                		<ng-md-icon ng-hide="isBrokerConnected()" icon="input"></ng-md-icon>
+                	</md-icon>
+                	<span ng-show="large_screen">
+                		<span ng-show="isBrokerConnected()">Disconnect</span>
+						<span ng-hide="isBrokerConnected()">Connect</span>
+                	</span>                                                
+                </md-button>
+            </md-list-item>
+            
+            <md-divider ng-if="isBrokerConnected()"></md-divider>
+            
+            <md-subheader ng-if="isBrokerConnected() && hasOpenProtocols()" class="md-no-sticky">Connected Protocols</md-subheader>
+            
+            <md-list-item ng-if="isBrokerConnected() && hasOpenProtocols()" class="md-2-line" layout="row" ng-repeat="protocol in getOpenProtocols()">
+                <md-icon hide-sm hide-md ng-if="$index === 0"><ng-md-icon icon="settings_ethernet"></ng-md-icon></md-icon>
+                <div class="md-list-item-text" ng-class="{'md-offset': $index !== 0 && large_screen}">
+                    <h3>{{::protocol.getType()}}</h3>
+                    <p>{{::protocol.getName()}}</p>
+                </div>
+                <md-button class="md-primary" ng-class="large_screen ? 'md-raised' : 'md-icon-button'" ng-click="viewProtocolConnectionDetails($event, protocol)" aria-label="Details">
+                	<md-tooltip>Details</md-tooltip>
+                    <span ng-show="large_screen">Details</span>
+                    <md-icon ng-hide="large_screen"><ng-md-icon icon="info"></ng-md-icon></md-icon>
+                </md-button>
+                
+                <md-button class="md-warn" ng-class="large_screen ? 'md-raised' : 'md-icon-button'" ng-click="closeProtocol(protocol)" aria-label="Disconnect">
+                	<md-tooltip>Disconnect</md-tooltip>
+                	<span ng-show="large_screen">Disconnect</span>
+                	<md-icon ng-hide="large_screen"><ng-md-icon icon="highlight_remove"></ng-md-icon></md-icon>
+                </md-button>
+            </md-list-item>
+            
+            <md-list-item ng-if="isBrokerConnected() && !hasOpenProtocols()">No protocols connected</md-list-item>
+            
+            <md-divider ng-if="isBrokerConnected() && hasSavedProtocols()"></md-divider>
+            
+            <md-subheader ng-if="isBrokerConnected() && hasSavedProtocols()" class="md-no-sticky">Saved Protocols</md-subheader>
+            
+            <md-list-item ng-if="isBrokerConnected() && hasSavedProtocols()" class="md-3-line" layout="row" ng-repeat="configuration in getSavedProtocols()">
+                <md-icon hide-sm hide-md ng-if="$index === 0"><ng-md-icon icon="settings_backup_restore"></ng-md-icon></md-icon>
+                <div class="md-list-item-text" ng-class="{'md-offset': $index !== 0 && large_screen}">
+                    <h3>{{::configuration.name}}</h3>
+                    <p><span ng-repeat="(key, value) in configuration.parameters">{{::value}}</span></p>
+                    <p>Last connected <span am-time-ago="configuration.last_connected"></span></p>
+                </div>
+                <md-button class="md-primary" ng-class="large_screen ? 'md-raised' : 'md-icon-button'" ng-click="openSavedProtocol(configuration)" aria-label="Connect">
+                	<md-tooltip>Connect</md-tooltip>
+                	<span ng-show="large_screen">Connect</span>
+                	<md-icon ng-hide="large_screen"><ng-md-icon icon="input"></ng-md-icon></md-icon>
+                </md-button>
+                <md-button class="md-warn" ng-class="large_screen ? 'md-raised' : 'md-icon-button'" ng-click="deleteSavedProtocol(configuration)" aria-label="Delete">
+                	<md-tooltip>Delete</md-tooltip>
+                    <span ng-show="large_screen">Delete</span>
+                    <md-icon ng-hide="large_screen"><ng-md-icon icon="delete"></ng-md-icon></md-icon>
+                </md-button>
+            </md-list-item>
+            
+        </md-list>
+        
+    </md-dialog-content>
+    
+    <div ng-if="isBrokerConnected()" class="md-actions" layout="row">
+        <span flex></span>
+        <md-button ng-click="openConfiguration($event)" class="md-primary">
+            Open connection
+        </md-button>
+    </div>
 
 </md-dialog>

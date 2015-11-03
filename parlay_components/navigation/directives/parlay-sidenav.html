@@ -1,0 +1,39 @@
+<md-sidenav md-component-id="navigation" class="md-sidenav-left" layout="column">
+
+	<md-toolbar class="md-theme-indigo">
+		<div class="md-toolbar-tools">
+			<img class="logo" src="../../../images/logo.png">
+			<span flex></span>
+			<md-button class="md-icon-button" ng-click="ctrl.closeSidenav()"><md-icon class="white"><ng-md-icon icon="close"></ng-md-icon></md-icon></md-button>
+		</div>
+    </md-toolbar>
+    
+    <div flex layout="column">    
+    	
+    	<md-list>
+    	
+	    	<md-list-item ng-click="do()">
+	    		Endpoints
+	    	</md-list-item>
+	    	<md-list-item ng-click="do()">
+	    		Editor
+	    	</md-list-item>
+    	
+	    </md-list>
+	    
+	    <span flex></span>
+	    
+	    <md-list>
+	    
+	    	<md-list-item ng-click="do()">
+	    		Settings
+	    	</md-list-item>
+	    	<md-list-item ng-click="do()">
+	    		About
+	    	</md-list-item>
+	    	
+	    </md-list>
+    
+    </div>
+    
+</md-sidenav>

@@ -1,5 +1,9 @@
-function ParlayEndpointController($scope, $mdDialog, ParlayEndpointManager) {
-	    
+function ParlayEndpointController($scope, $mdDialog, $mdSidenav, ParlayEndpointManager) {
+	
+	$scope.openSidenav = function () {
+		$mdSidenav("navigation").open();
+	};
+	
     $scope.filterEndpoints = function () {
         return ParlayEndpointManager.getActiveEndpoints();
     };
@@ -15,8 +19,8 @@ function ParlayEndpointController($scope, $mdDialog, ParlayEndpointManager) {
     $scope.openWorkspaceManagementDialog = function (event) {
 	    /* istanbul ignore next */
 	    $mdDialog.show({
-		    controller: 'ParlayWorkspaceManagementController',
-		    templateUrl: '../parlay_components/endpoints/directives/parlay-workspace-management-dialog.html',
+		    controller: "ParlayWorkspaceManagementController",
+		    templateUrl: "../parlay_components/endpoints/directives/parlay-workspace-management-dialog.html",
 		    targetEvent: event,
 		    clickOutsideToClose: true
 	    });
@@ -36,5 +40,5 @@ function ParlayEndpointController($scope, $mdDialog, ParlayEndpointManager) {
 	    
 }
 
-angular.module('parlay.endpoints.controller', ['parlay.endpoints.manager', 'parlay.endpoints.workspaces'])
-	.controller('ParlayEndpointController', ['$scope', '$mdDialog', 'ParlayEndpointManager', ParlayEndpointController]);
+angular.module("parlay.endpoints.controller", ["parlay.endpoints.manager", "parlay.endpoints.workspaces"])
+	.controller("ParlayEndpointController", ["$scope", "$mdDialog", "$mdSidenav", "ParlayEndpointManager", ParlayEndpointController]);

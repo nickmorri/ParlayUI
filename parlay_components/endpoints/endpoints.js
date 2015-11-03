@@ -23,6 +23,6 @@ function ParlayEndpointsToolbar($mdMedia) {
     };
 }
 
-angular.module('parlay.endpoints', ['ui.router', 'parlay.endpoints.manager', 'parlay.endpoints.search', 'parlay.endpoints.endpoint', 'parlay.endpoints.controller'])
+angular.module('parlay.endpoints', ['ui.router', 'parlay.endpoints.manager', 'parlay.endpoints.search', 'parlay.endpoints.endpoint', 'parlay.endpoints.controller', "parlay.sidenav"])
 	.config(["$stateProvider", EndpointsConfiguration])
 	.directive('parlayEndpointsToolbar', ['$mdMedia', ParlayEndpointsToolbar]);

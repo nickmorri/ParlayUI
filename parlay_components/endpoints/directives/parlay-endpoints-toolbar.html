@@ -1,28 +1,34 @@
 <md-toolbar md-scroll-shrink class="md-whiteframe-z3">
     
-    <div class="md-toolbar-tools" layout="row">
+    <div class="md-toolbar-tools" layout="row" layout-align="space-between center">
 	    
-	    <md-button class="md-icon-button" aria-label="Toggles side navigation">
-	        <md-icon><ng-md-icon class="white" icon="menu"></ng-md-icon></md-icon>
-	    </md-button>
+	    <div flex layout="row" layout-align="start center">
+	    
+		    <md-button class="md-icon-button" aria-label="Toggles side navigation">
+		        <md-icon class="white"><ng-md-icon icon="menu"></ng-md-icon></md-icon>
+		    </md-button>
+	        
+	        <md-button ng-class="large_screen ? '' : 'md-icon-button'" ng-click="requestDiscovery()" aria-label="Request discovery">
+	            <md-tooltip>Request discovery</md-tooltip>
+			    <span ng-if="large_screen">Discovery</span>
+			    <md-icon ng-if="!large_screen" class="white"><ng-md-icon icon="autorenew"></ng-md-icon></md-icon>
+	        </md-button>
+	        
+	        <md-button ng-class="large_screen ? '' : 'md-icon-button'" ng-click="openWorkspaceManagementDialog()" aria-label="Manage workspaces">
+	            <md-tooltip>Manage workspaces</md-tooltip>
+			    <span ng-if="large_screen">Workspaces</span>
+			    <md-icon ng-if="!large_screen" class="white"><ng-md-icon icon="dashboard"></ng-md-icon></md-icon>
+	        </md-button>
         
-        <md-button ng-class="large_screen ? '' : 'md-icon-button'" ng-click="requestDiscovery()" aria-label="Request discovery">
-            <md-tooltip>Request discovery</md-tooltip>
-		    <span ng-if="large_screen">Discovery</span>
-		    <md-icon ng-if="!large_screen"><ng-md-icon md-icon class="white" icon="autorenew"></ng-md-icon></md-icon>
-        </md-button>
+	    </div>
         
-		<md-button ng-class="large_screen ? '' : 'md-icon-button'" ng-click="openWorkspaceManagementDialog()" aria-label="Manage workspaces">
-            <md-tooltip>Manage workspaces</md-tooltip>
-		    <span ng-if="large_screen">Workspaces</span>
-		    <md-icon ng-if="!large_screen"><ng-md-icon md-icon class="white" icon="dashboard"></ng-md-icon></md-icon>
-        </md-button>
+        <div flex layout="row" layout-align="center center">
+	        <parlay-endpoint-search flex></parlay-endpoint-search>
+        </div>
         
-        <span flex></span>
-        
-        <parlay-endpoint-search></parlay-endpoint-search>
-        
-        <parlay-connection-status></parlay-connection-status>
+        <div flex layout="row" layout-align="end center">
+	    	<parlay-connection-status></parlay-connection-status>    
+        </div>
         
     </div>
     

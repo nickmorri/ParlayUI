@@ -28,6 +28,10 @@
 	cursor: pointer;
 }
 
+.parlay-bottom-bar:focus {
+	outline: none;
+}
+
 .parlay-bottom-bar > .md-toolbar-tools {
 	max-height: 30px;
 	min-height: 30px;

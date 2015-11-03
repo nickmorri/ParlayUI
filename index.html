@@ -8,13 +8,9 @@
         <!-- bower:css --><!-- endbower -->
         <!-- build:css parlayui.min.css --><!-- /build -->
     </head>
-    <body ng-app="parlay.main">
+    <body ng-app="parlay.main" layout="column">
                
-        <div layout="column" layout-fill>
-            <parlay-toolbar></parlay-toolbar>
-            <md-content ui-view flex layout-fill></md-content>
-            <parlay-bottom-console-bar></parlay-bottom-console-bar>
-        </div>
+        <div ui-view layout-fill></div>
 
         <!-- bower:js --><!-- endbower -->
         

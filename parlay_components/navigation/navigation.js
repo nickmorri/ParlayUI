@@ -1,15 +1,3 @@
-function ParlayToolbarController($scope, $state) {
-
-    /**
-	 * Returns the name of the current state from UI.Router.
-	 * @returns {String} - state name
-	 */
-    $scope.getStateName = function () {
-	    return $state.$current.self.name;
-    };
-    
-}
-
 function ParlayConnectionStatusController($scope, $mdDialog) {
     /* istanbul ignore next */
     $scope.viewConnections = function (event) {
@@ -34,12 +22,11 @@ function ParlayConnectionStatus(PromenadeBroker, $mdMedia) {
                 return PromenadeBroker.isConnected();
             }, function (connected) {
 	            $scope.connected = connected;
-                $scope.connection_icon = connected ? 'cloud' : 'cloud_off';
             });
             
             // Watch the size of the screen, if we are on a screen size that's greater than a small screen we should always display labels.
             $scope.$watch(function () {
-	            return $mdMedia('gt-sm');
+	            return $mdMedia('gt-md');
             }, function (large_screen) {
 	            $scope.large_screen = large_screen;
             });
@@ -48,15 +35,6 @@ function ParlayConnectionStatus(PromenadeBroker, $mdMedia) {
     };
 }
 
-function ParlayToolbar() {
-    return {
-        templateUrl: '../parlay_components/navigation/directives/parlay-toolbar.html',
-        controller: 'parlayToolbarController'
-    };
-}
-
 angular.module('parlay.navigation', ['ngAnimate', 'ui.router', 'ngMaterial', 'ngMdIcons', 'promenade.broker', 'parlay.protocols.list_controller', 'templates-main'])
-	.controller('parlayToolbarController', ['$scope', '$state', ParlayToolbarController])
 	.controller('ParlayConnectionStatusController', ['$scope', '$mdDialog', ParlayConnectionStatusController])
-	.directive('parlayConnectionStatus', ['PromenadeBroker', '$mdMedia', ParlayConnectionStatus])
-	.directive('parlayToolbar', ParlayToolbar);
+	.directive('parlayConnectionStatus', ['PromenadeBroker', '$mdMedia', ParlayConnectionStatus]);

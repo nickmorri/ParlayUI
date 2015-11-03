@@ -1,9 +1,9 @@
 <md-autocomplete
     md-no-cache="true"
     md-selected-item="selected_item"
-    md-selected-item-change="selectEndpoint(selected_item)"
+    md-selected-item-change="ctrl.selectEndpoint(selected_item)"
     md-search-text="search_text"
-    md-items="item in querySearch(search_text)"
+    md-items="item in ctrl.querySearch(search_text)"
     md-item-text="item.name"
     md-autoselect="true"
     md-min-length="0"
@@ -12,6 +12,6 @@
         <span md-highlight-text="search_text" mg-hightlight-flags="^i">{{item.name}}</span>
     </md-item-template>
     <md-not-found>
-		No matches found. <span ng-hide="hasDiscovered()">Please request discovery and try again.</span>
+		No matches found. <span ng-hide="ctrl.hasDiscovered()">Please request discovery and try again.</span>
 	</md-not-found>
 </md-autocomplete>

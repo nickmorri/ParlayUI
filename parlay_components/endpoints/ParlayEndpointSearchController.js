@@ -1,8 +1,21 @@
+/**
+ * Create filter function for a query string
+ * @param {String} query - Name of endpoint to query by.
+ */
+function createFilterFor(query) {
+    var lowercase_query = angular.lowercase(query);
+
+    return function filterFn(endpoint) {
+        return endpoint.matchesQuery(lowercase_query);
+    };
+}
+
 function ParlayEndpointSearchController($scope, ParlayEndpointManager) {
             
     $scope.selected_item = null;
+    $scope.search_text = null;
     
-    $scope.selectEndpoint = function (endpoint) {
+    this.selectEndpoint = function (endpoint) {
         // Change is detected after we set endpoint to null.
         if (endpoint === null || endpoint === undefined) return;
         ParlayEndpointManager.activateEndpoint(endpoint);
@@ -14,23 +27,11 @@ function ParlayEndpointSearchController($scope, ParlayEndpointManager) {
      * Search for endpoints.
      * @param {String} query - Name of endpoint to find.
      */
-    $scope.querySearch = function(query) {
-        return query ? ParlayEndpointManager.getAvailableEndpoints().filter($scope.createFilterFor(query)) : ParlayEndpointManager.getAvailableEndpoints();
-    };
-
-    /**
-     * Create filter function for a query string
-     * @param {String} query - Name of endpoint to query by.
-     */
-    $scope.createFilterFor = function(query) {
-        var lowercaseQuery = angular.lowercase(query);
-
-        return function filterFn(endpoint) {
-            return endpoint.matchesQuery(lowercaseQuery);
-        };
+    this.querySearch = function(query) {
+        return query ? ParlayEndpointManager.getAvailableEndpoints().filter(createFilterFor(query)) : ParlayEndpointManager.getAvailableEndpoints();
     };
     
-    $scope.hasDiscovered = function () {
+    this.hasDiscovered = function () {
 	    return ParlayEndpointManager.hasDiscovered();
     };
     
@@ -45,11 +46,12 @@ function ParlayEndpointSearch($timeout) {
             
 			// Prevents random endpoints being added since the autofocus element is still focused.            
             $scope.$watch('selected_item', function (newValue, oldValue, $scope) {
-	            // We just added a new endpoint to the workspace. So we should blur the input.
+	            // We just added a new endpoint to the workspace so we should blur the input.
 	        	if (newValue === null && oldValue !== null) element.find('input').blur();
 	        });
             
-        }
+        },
+        controllerAs: "ctrl"
     };
 }
 

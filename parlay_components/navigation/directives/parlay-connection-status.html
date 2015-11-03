@@ -1,8 +1,6 @@
 <md-button ng-class="{'md-icon-button': !large_screen, 'md-warn': !connected}" ng-click="viewConnections($event)" aria-label="Connections menu">
     <md-tooltip>View connections</md-tooltip>
-    <span ng-if="large_screen">
-    	<span ng-show="connected">Connected</span>
-    	<span ng-hide="connected">Disconnected</span>
-    </span>
-    <md-icon ng-if="!large_screen"><ng-md-icon md-icon class="white" icon="{{connection_icon}}"></ng-md-icon></md-icon>
+    <span ng-if="large_screen && connected">Connected</span>
+    <span ng-if="large_screen && !connected">Disconnected</span>
+    <md-icon ng-if="!large_screen" class="white"><ng-md-icon icon="{{connected ? 'cloud' : 'cloud_off'}}"></ng-md-icon></md-icon>
 </md-button>

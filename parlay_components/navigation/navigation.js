@@ -22,7 +22,6 @@ function ParlayConnectionStatus(PromenadeBroker, $mdMedia) {
                 return PromenadeBroker.isConnected();
             }, function (connected) {
 	            $scope.connected = connected;
-                $scope.connection_icon = connected ? 'cloud' : 'cloud_off';
             });
             
             // Watch the size of the screen, if we are on a screen size that's greater than a small screen we should always display labels.

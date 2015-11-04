@@ -11,6 +11,12 @@
 				</md-button>
 				<md-menu-content>
 					<md-menu-item>
+						<md-button ng-click="ctrl.copyCommand($event)">
+							<md-icon md-menu-align-target><ng-md-icon icon="content_copy"></ng-md-icon></md-icon>
+							Copy command to clipboard
+						</md-button>
+					</md-menu-item>
+					<md-menu-item>
 						<md-button ng-click="ctrl.closeTab()">
 							<md-icon md-menu-align-target><ng-md-icon icon="close"></ng-md-icon></md-icon>
 							Close tab

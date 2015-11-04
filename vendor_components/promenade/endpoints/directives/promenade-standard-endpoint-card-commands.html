@@ -2,7 +2,6 @@
 
 	<md-toolbar class="md-hue-2">
 		<div class="md-toolbar-tools">
-			<h5>{{ctrl.generatePythonCommand()}}</h5>
 			<span flex></span>
 			
 			<md-menu md-position-mode="target-right target">
@@ -11,7 +10,13 @@
 				</md-button>
 				<md-menu-content>
 					<md-menu-item>
-						<md-button ng-click="ctrl.closeTab()">
+						<md-button ng-click="ctrl.copyCommand($event)" aria-label="Copy command to clipboard">
+							<md-icon md-menu-align-target><ng-md-icon icon="content_copy"></ng-md-icon></md-icon>
+							Copy command to clipboard
+						</md-button>
+					</md-menu-item>
+					<md-menu-item>
+						<md-button ng-click="ctrl.closeTab()" aria-label="Close tab">
 							<md-icon md-menu-align-target><ng-md-icon icon="close"></ng-md-icon></md-icon>
 							Close tab
 						</md-button>

@@ -45,20 +45,20 @@ function ParlayEndpointsToolbarController($scope, $mdDialog, $mdSidenav, ParlayE
     this.openWorkspaceManagementDialog = function (event) {
 	    /* istanbul ignore next */
 	    $mdDialog.show({
-		    controller: "ParlayWorkspaceManagementController",
 		    templateUrl: "../parlay_components/endpoints/directives/parlay-workspace-management-dialog.html",
 		    targetEvent: event,
+		    controller: "ParlayWorkspaceManagementController",
 		    clickOutsideToClose: true
 	    });
     };
     
-    this.viewConnections = function (event) {
+    this.openConnectionManagementDialog = function (event) {
 	    /* istanbul ignore next */
         $mdDialog.show({
+            templateUrl: "../parlay_components/communication/directives/parlay-connection-list-dialog.html",
             targetEvent: event,
-            clickOutsideToClose: true,
             controller: "ParlayConnectionListController",
-            templateUrl: "../parlay_components/communication/directives/parlay-connection-list-dialog.html"
+            clickOutsideToClose: true
         });
     };
     

@@ -7,16 +7,16 @@
 				</md-button>
 				<md-menu-content>
 					<md-menu-item ng-hide="$first">
-						<md-button md-menu-align-target ng-click="reorder($index, -1)">Move left</md-button>
+						<md-button md-menu-align-target ng-click="endpointCtrl.reorder($index, -1)">Move left</md-button>
 					</md-menu-item>
 					<md-menu-item ng-hide="$last">
-						<md-button md-menu-align-target ng-click="reorder($index, 1)">Move right</md-button>
+						<md-button md-menu-align-target ng-click="endpointCtrl.reorder($index, 1)">Move right</md-button>
 					</md-menu-item>
 					<md-menu-item>
-						<md-button md-menu-align-target ng-click="duplicate($index)">Duplicate</md-button>
+						<md-button md-menu-align-target ng-click="endpointCtrl.duplicate($index)">Duplicate</md-button>
 					</md-menu-item>
 					<md-menu-item>
-						<md-button md-menu-align-target ng-click="deactivate($index)">Deactivate</md-button>
+						<md-button md-menu-align-target ng-click="endpointCtrl.deactivate($index)">Deactivate</md-button>
 					</md-menu-item>
 				</md-menu-content>
 			</md-menu>

@@ -1,20 +1,20 @@
-<md-toolbar md-scroll-shrink class="md-whiteframe-z3">
+<md-toolbar md-scroll-shrink class="md-whiteframe-z3" ng-class="{'md-warn': !connected}">
     
     <div class="md-toolbar-tools" layout="row" layout-align="space-between">
 	    
 	    <div flex layout="row" layout-align="start">
 	    
-		    <md-button class="md-icon-button" ng-click="openSidenav()" aria-label="Opens side navigation">
+		    <md-button class="md-icon-button" ng-click="ctrl.openSidenav()" aria-label="Opens side navigation">
 		        <md-icon class="white"><ng-md-icon icon="menu"></ng-md-icon></md-icon>
 		    </md-button>
 	        
-	        <md-button ng-class="large_screen ? '' : 'md-icon-button'" ng-click="requestDiscovery()" aria-label="Request discovery">
+	        <md-button ng-class="large_screen ? '' : 'md-icon-button'" ng-click="ctrl.requestDiscovery()" aria-label="Request discovery">
 	            <md-tooltip>Request discovery</md-tooltip>
 			    <span ng-if="large_screen">Discovery</span>
 			    <md-icon ng-if="!large_screen" class="white"><ng-md-icon icon="autorenew"></ng-md-icon></md-icon>
 	        </md-button>
 	        
-	        <md-button ng-class="large_screen ? '' : 'md-icon-button'" ng-click="openWorkspaceManagementDialog()" aria-label="Manage workspaces">
+	        <md-button ng-class="large_screen ? '' : 'md-icon-button'" ng-click="ctrl.openWorkspaceManagementDialog()" aria-label="Manage workspaces">
 	            <md-tooltip>Manage workspaces</md-tooltip>
 			    <span ng-if="large_screen">Workspaces</span>
 			    <md-icon ng-if="!large_screen" class="white"><ng-md-icon icon="dashboard"></ng-md-icon></md-icon>
@@ -27,7 +27,11 @@
         </div>
         
         <div flex layout="row" layout-align="end">
-	    	<parlay-connection-status></parlay-connection-status>    
+	    	<md-button ng-class="{'md-icon-button': !large_screen}" ng-click="ctrl.viewConnections($event)" aria-label="Connections menu">
+			    <md-tooltip>View connections</md-tooltip>
+			    <span ng-if="large_screen">Connections</span>
+			    <md-icon ng-if="!large_screen" class="white"><ng-md-icon icon="settings_ethernet"></ng-md-icon></md-icon>
+			</md-button>
         </div>
         
     </div>

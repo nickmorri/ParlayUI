@@ -4,8 +4,8 @@ function ParlayConnectionStatusController($scope, $mdDialog) {
         $mdDialog.show({
             targetEvent: event,
             clickOutsideToClose: true,
-            controller: 'ParlayConnectionListController',
-            templateUrl: '../parlay_components/communication/directives/parlay-connection-list-dialog.html'
+            controller: "ParlayConnectionListController",
+            templateUrl: "../parlay_components/communication/directives/parlay-connection-list-dialog.html"
         });
     };    
     
@@ -14,8 +14,8 @@ function ParlayConnectionStatusController($scope, $mdDialog) {
 function ParlayConnectionStatus(PromenadeBroker, $mdMedia) {
     return {
         scope: {},
-        templateUrl: '../parlay_components/navigation/directives/parlay-connection-status.html',
-        controller: 'ParlayConnectionStatusController',
+        templateUrl: "../parlay_components/navigation/directives/parlay-connection-status.html",
+        controller: "ParlayConnectionStatusController",
         link: function ($scope, element, attributes) {
 	        // Watch our connection status to Broker and update the icon if connectivity changes.
 	        $scope.$watch(function () {
@@ -24,9 +24,9 @@ function ParlayConnectionStatus(PromenadeBroker, $mdMedia) {
 	            $scope.connected = connected;
             });
             
-            // Watch the size of the screen, if we are on a screen size that's greater than a small screen we should always display labels.
+            // Watch the size of the screen, if we are on a screen size that"s greater than a small screen we should always display labels.
             $scope.$watch(function () {
-	            return $mdMedia('gt-md');
+	            return $mdMedia("gt-md");
             }, function (large_screen) {
 	            $scope.large_screen = large_screen;
             });
@@ -35,6 +35,6 @@ function ParlayConnectionStatus(PromenadeBroker, $mdMedia) {
     };
 }
 
-angular.module('parlay.navigation', ['ngAnimate', 'ui.router', 'ngMaterial', 'ngMdIcons', 'promenade.broker', 'parlay.protocols.list_controller', 'templates-main'])
-	.controller('ParlayConnectionStatusController', ['$scope', '$mdDialog', ParlayConnectionStatusController])
-	.directive('parlayConnectionStatus', ['PromenadeBroker', '$mdMedia', ParlayConnectionStatus]);
+angular.module("parlay.navigation", ["ngAnimate", "ui.router", "ngMaterial", "ngMdIcons", "promenade.broker", "parlay.protocols.list_controller", "templates-main"])
+	.controller("ParlayConnectionStatusController", ["$scope", "$mdDialog", ParlayConnectionStatusController])
+	.directive("parlayConnectionStatus", ["PromenadeBroker", "$mdMedia", ParlayConnectionStatus]);

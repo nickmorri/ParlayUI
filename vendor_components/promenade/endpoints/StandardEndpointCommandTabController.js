@@ -85,7 +85,7 @@ function buildPythonCommand(endpoint_id, message) {
  * @param {Parlay Service} ScriptLogger - Parlay ScriptLogger Service.
  * @param {Parlay Service} ParlayUtility - Parlay Utlity Service.
  */
-function PromenadeStandardEndpointCardCommandTabController($scope, $timeout, ScriptLogger, ParlayUtility) {
+function PromenadeStandardEndpointCardCommandTabController($scope, $timeout, $mdToast, ScriptLogger, ParlayUtility) {
 	ParlayBaseTabController.call(this, $scope, "promenadeStandardEndpointCardCommands");
 	
 	// Due to the way JavaScript prototypical inheritance works and AngularJS scoping we want to enclose the message Object within another object.
@@ -168,10 +168,13 @@ function PromenadeStandardEndpointCardCommandTabController($scope, $timeout, Scr
 		
 		// Copy the current selection
 		var successful = document.execCommand('copy');
-		
+				
 		// Remove the selection and delete the temporary element.
 		window.getSelection().removeAllRanges();
 		document.body.removeChild(element);
+		
+		$mdToast.show($mdToast.simple().content(successful ? "Command copied to clipboard." : "Copy failed. Check browser compatibility."));
+		
 	};
 	
 	// Watch for new fields to fill with defaults.
@@ -269,6 +272,6 @@ function PromenadeStandardEndpointCardCommandContainer(RecursionHelper, ParlayPe
 }
 
 angular.module('promenade.endpoints.standardendpoint.commands', ['RecursionHelper', 'parlay.store', 'parlay.navigation.bottombar', 'parlay.utility'])
-	.controller('PromenadeStandardEndpointCardCommandTabController', ['$scope', '$timeout', 'ScriptLogger', 'ParlayUtility', PromenadeStandardEndpointCardCommandTabController])
+	.controller('PromenadeStandardEndpointCardCommandTabController', ['$scope', '$timeout', '$mdToast', 'ScriptLogger', 'ParlayUtility', PromenadeStandardEndpointCardCommandTabController])
 	.directive("promenadeStandardEndpointCardCommands", PromenadeStandardEndpointCardCommands)
 	.directive("promenadeStandardEndpointCardCommandContainer", ['RecursionHelper', 'ParlayPersistence', 'ParlayUtility', PromenadeStandardEndpointCardCommandContainer]);

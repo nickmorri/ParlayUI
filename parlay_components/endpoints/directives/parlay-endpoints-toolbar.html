@@ -14,7 +14,7 @@
 			    <md-icon ng-if="!large_screen" class="white"><ng-md-icon icon="autorenew"></ng-md-icon></md-icon>
 	        </md-button>
 	        
-	        <md-button ng-class="large_screen ? '' : 'md-icon-button'" ng-click="ctrl.openWorkspaceManagementDialog()" aria-label="Manage workspaces">
+	        <md-button ng-class="large_screen ? '' : 'md-icon-button'" ng-click="ctrl.openWorkspaceManagementDialog($event)" aria-label="Manage workspaces">
 	            <md-tooltip>Manage workspaces</md-tooltip>
 			    <span ng-if="large_screen">Workspaces</span>
 			    <md-icon ng-if="!large_screen" class="white"><ng-md-icon icon="dashboard"></ng-md-icon></md-icon>
@@ -27,7 +27,7 @@
         </div>
         
         <div flex layout="row" layout-align="end">
-	    	<md-button ng-class="{'md-icon-button': !large_screen}" ng-click="ctrl.viewConnections($event)" aria-label="Connections menu">
+	    	<md-button ng-class="{'md-icon-button': !large_screen}" ng-click="ctrl.openConnectionManagementDialog($event)" aria-label="Connections menu">
 			    <md-tooltip>View connections</md-tooltip>
 			    <span ng-if="large_screen">Connections</span>
 			    <md-icon ng-if="!large_screen" class="white"><ng-md-icon icon="settings_ethernet"></ng-md-icon></md-icon>

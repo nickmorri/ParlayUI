@@ -103,9 +103,7 @@ function ParlayPersistenceFactory(ParlayStore) {
 			scope.$watch(attribute, setAttr(directive, attribute), true);
 
 			// When the scope is destroyed we should ensure that we remove our directive from sessionStorage.
-			scope.$on("$destroy", function () {
-				removeDirective(directive)();
-			});
+			scope.$on("$destroy", removeDirective(directive));
 		}
 		
 		// We setup an initial watcher to wait until the attribute appears on the scope.

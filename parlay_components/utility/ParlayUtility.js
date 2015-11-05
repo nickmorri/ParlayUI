@@ -32,6 +32,30 @@ ParlayUtility.prototype.relevantScope = function(scope, attribute) {
 		return undefined;
 };
 
+/**
+ * Copies given text to clipboard and returns outcome.
+ * @param {String} text - Content to copy to clipboard.
+ * @returns {Boolean} - Status of copy operation.
+ */
+ParlayUtility.prototype.copyToClipboard = function(text) {
+	// Create temporary element that will hold text we want to put in the user's clipboard.
+	var element = document.createElement("textarea");
+	element.value = text;
+	document.body.appendChild(element);
+	
+	// Select the element, adding a selection to the text.
+	element.select();
+	
+	// Copy the current selection
+	var successful = document.execCommand('copy');
+			
+	// Remove the selection and delete the temporary element.
+	window.getSelection().removeAllRanges();
+	document.body.removeChild(element);
+	
+	return successful;
+};
+
 function ParlayUtilityFactory() {
 	return new ParlayUtility();
 }

@@ -50,7 +50,7 @@ function collectMessage(message) {
 	    if (field_type === "ARRAY") accumulator[param_name] = message[field].map(function (chip) {
 		    return !Number.isNaN(chip.value) ? parseInt(chip.value) : chip.value;
 		});
-	    else if (field_type === "NUMBERS") accumulator[param_name] = message[field].map(parseFloat);
+	    else if (field_type === "NUMBERS") accumulator[param_name] = message[field].map(function(field){ return parseFloat(field.value); });
 	    else if (angular.isObject(message[field])) accumulator[param_name] = message[field].value;
         else accumulator[param_name] = message[field];
         

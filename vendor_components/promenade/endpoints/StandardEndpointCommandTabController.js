@@ -163,7 +163,8 @@ function PromenadeStandardEndpointCardCommandTabController($scope, $timeout, $md
 	
 	// Watch for new fields to fill with defaults.
     $scope.$watchCollection("wrapper.message", function () {
-	    Object.keys($scope.wrapper.message).filter(function (key) {
+	    
+	    var fields = Object.keys($scope.wrapper.message).filter(function (key) {
 		    // Build an Array with fields that have sub fields.
 		    return $scope.wrapper.message[key] !== undefined && $scope.wrapper.message[key].hasOwnProperty("sub_fields");
 	    }).map(function (key) {
@@ -171,12 +172,23 @@ function PromenadeStandardEndpointCardCommandTabController($scope, $timeout, $md
 	    }).reduce(function (accumulator, current) {
 		    // Join all the sub_fields into a larger Array.
 		    return accumulator.concat(current);
-	    }, []).filter(function (field) {
-		    // Check if the sub field already has a message field entry.
-	        return field !== undefined && !$scope.wrapper.message.hasOwnProperty(field.msg_key + '_' + field.input);
+	    }, []);
+	    
+	    // Fill in the default value in the message Object.
+	    fields.filter(function (field) {
+		    // Check if the sub field has a default.
+	        return field !== undefined && field.default !== undefined;
+	    }).forEach(function (field) {    
+	        $scope.wrapper.message[field.msg_key + '_' + field.input] = field.default;
+	    });
+	    
+	    fields.filter(function (field) {
+		    // Check if the sub field has a default.
+	        return field !== undefined && field.default === undefined;
 	    }).forEach(function (field) {
-		    // Fill in the default value in the message Object.
-	        $scope.wrapper.message[field.msg_key + '_' + field.input] = ['NUMBERS', 'STRINGS', 'ARRAY'].indexOf(field.input) > -1 ? [] : field.default;
+		    if ($scope.wrapper.message[field.msg_key + '_' + field.input] === undefined && ['NUMBERS', 'STRINGS', 'ARRAY'].indexOf(field.input) > -1) {
+				$scope.wrapper.message[field.msg_key + '_' + field.input] = [];    
+		    }		    
 	    });
     });
 	

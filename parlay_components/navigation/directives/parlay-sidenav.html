@@ -4,7 +4,9 @@
 		<div class="md-toolbar-tools">
 			<img class="logo" src="../../../images/logo.png">
 			<span flex></span>
-			<md-button class="md-icon-button" ng-click="ctrl.closeSidenav()"><md-icon class="white"><ng-md-icon icon="close"></ng-md-icon></md-icon></md-button>
+			<md-button class="md-icon-button" ng-click="ctrl.closeSidenav()" aria-label="Close sidenav">
+				<md-icon class="white"><ng-md-icon icon="close"></ng-md-icon></md-icon>
+			</md-button>
 		</div>
     </md-toolbar>
     
@@ -12,14 +14,10 @@
     	
     	<md-list>
     	
-	    	<md-list-item ng-click="do()">
-	    		<md-icon ng-md-icon class="parlay-nav-icon" icon="dashboard"></md-icon>
-	    		Endpoints
-	    	</md-list-item>
-	    	<md-list-item ng-click="do()">
-	    		<md-icon ng-md-icon class="parlay-nav-icon" icon="mode_edit"></md-icon>
-	    		Editor
-	    	</md-list-item>
+    		<md-list-item ng-click="ctrl.navigateToState(state.name)" ng-repeat="state in ctrl.states">
+    			<md-icon ng-md-icon class="parlay-nav-icon" icon="{{state.icon}}"></md-icon>
+    			{{state.display}}
+    		</md-list-item>
     	
 	    </md-list>
 	    

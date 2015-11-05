@@ -7,14 +7,39 @@ function ParlaySidenav() {
 	};
 }
 
-function ParlaySidenavController($mdSidenav) {
+function ParlaySidenavController($mdSidenav, $state) {
 	
-	this.closeSidenav = function () {
+	this.closeSidenav = function() {
 		$mdSidenav("navigation").close();
 	};
 	
+	this.navigateToState = function(state_name) {
+		$state.go(state_name);	
+	};
+	
+	this.states = $state.get().filter(function(state) {
+		return !state.abstract;
+	}).map(function(state) {
+		return {
+			name: state.name,
+			display: state.data.display,
+			icon: state.data.icon
+		};
+	});
+	
 }
 
-angular.module("parlay.sidenav", [])
-	.controller("ParlaySidenavController", ["$mdSidenav", ParlaySidenavController])
-	.directive("parlaySidenav", [ParlaySidenav]);
+function TitlecaseFilter() {
+	// http://ng.malsup.com/#!/titlecase-filter
+	return function(str) {
+		s = ( s === undefined || s === null ) ? '' : s;
+        return s.toString().toLowerCase().replace( /\b([a-z])/g, function(ch) {
+            return ch.toUpperCase();
+        });
+	};
+}
+
+angular.module("parlay.sidenav", ["ngMaterial", "ui.router"])
+	.controller("ParlaySidenavController", ["$mdSidenav", "$state", ParlaySidenavController])
+	.directive("parlaySidenav", [ParlaySidenav])
+	.filter("titlecase", TitlecaseFilter);

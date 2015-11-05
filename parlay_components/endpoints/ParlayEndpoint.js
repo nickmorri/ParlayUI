@@ -2,21 +2,21 @@ function ParlayEndpointFactory() {
     
     function ParlayEndpoint(data, protocol) {
         
-        Object.defineProperty(this, 'name', {
+        Object.defineProperty(this, "name", {
             value: data.NAME,
             enumerable: true,
             writeable: false,
             configurable: false
         });
         
-        Object.defineProperty(this, 'protocol', {
+        Object.defineProperty(this, "protocol", {
             value: protocol,
             writeable: false,
             enumerable: false,
             configurable: false
         });
         
-        this.type = 'ParlayEndpoint';
+        this.type = "ParlayEndpoint";
         
         this.interfaces = data.INTERFACES;
         
@@ -32,7 +32,7 @@ function ParlayEndpointFactory() {
             available_cache: {}
         };
         
-        this.addDefaultDirective({tabs: ["parlayWidgetTab"]});
+        this.addDefaultDirectives("tabs", ["parlayWidgetTab"]);
         
     }
     
@@ -40,13 +40,12 @@ function ParlayEndpointFactory() {
         return this.type;
     };
     
-    ParlayEndpoint.prototype.addDefaultDirective = function (directives) {
-	    var endpoint = this;
-	    Object.keys(directives).forEach(function (target) {
-		    directives[target].forEach(function (directive) {
-			    endpoint.directives[target].default.push(directive);
-		    });
-	    });
+    ParlayEndpoint.prototype.addDefaultDirectives = function(target, directives) {
+	    this.directives[target].default = this.directives[target].default.concat(directives);
+    };
+    
+    ParlayEndpoint.prototype.addAvailableDirectives = function (target, directives) {
+	    this.directives[target].available = this.directives[target].available.concat(directives);
     };
     
     ParlayEndpoint.prototype.getDefaultDirectives = function () {
@@ -57,15 +56,6 @@ function ParlayEndpointFactory() {
 		    }
 		    return accumulator;
 	    }, {});
-    };
-    
-    ParlayEndpoint.prototype.addAvailableDirective = function (directives) {
-	    var endpoint = this;
-	    Object.keys(directives).forEach(function (target) {
-		    directives[target].forEach(function (directive) {
-			    endpoint.directives[target].available.push(directive);
-		    });
-	    });
     };
     
     ParlayEndpoint.prototype.getAvailableDirectives = function () {
@@ -80,7 +70,7 @@ function ParlayEndpointFactory() {
     };
     
     ParlayEndpoint.prototype.matchesQuery = function (query) {
-	    console.warn('matchesQuery is not implemented for ' + this.name);
+	    console.warn("matchesQuery is not implemented for " + this.name);
     };
     
     return ParlayEndpoint;
@@ -89,13 +79,13 @@ function ParlayEndpointFactory() {
 
 function ParlayEndpointCard($compile, ParlayPersistence, ParlayUtility) {
     return {
-        templateUrl: '../parlay_components/endpoints/directives/parlay-endpoint-card.html',
+        templateUrl: "../parlay_components/endpoints/directives/parlay-endpoint-card.html",
         link: function (scope, element, attributes) {
 	        
 	        // Grab the endpoint reference from the container for convience of using scope.endpoint.
 	        scope.endpoint = scope.container.ref;
             
-            var directive_name = 'parlayEndpointCard.' + scope.endpoint.name.replace(' ', '_') + '_' + scope.container.uid;
+            var directive_name = "parlayEndpointCard." + scope.endpoint.name.replace(" ", "_") + "_" + scope.container.uid;
 	        
 	        scope.active_directives = {};
 	        
@@ -124,10 +114,10 @@ function ParlayEndpointCard($compile, ParlayPersistence, ParlayUtility) {
 	         */
             function compileToolbar(directives) {
 	            // Locate toolbar where we are going to insert dynamic directives.
-	            var toolbar = element[0].querySelector('div.md-toolbar-tools');
+	            var toolbar = element[0].querySelector("div.md-toolbar-tools");
 	            
 	            directives.map(function (directive) {
-                    return '<' + ParlayUtility.snakeCase(directive, '-') + ' endpoint="endpoint" layout-fill layout="row" layout-align="space-between center"></' + ParlayUtility.snakeCase(directive, '-') + '>';    
+                    return "<" + ParlayUtility.snakeCase(directive, "-") + " endpoint='endpoint' layout-fill layout='row' layout-align='space-between center'></" + ParlayUtility.snakeCase(directive, "-") + ">";    
                 }).forEach(function (directive_string) {
 					toolbar.insertBefore($compile(directive_string)(scope)[0], toolbar.firstChild);
 	            });
@@ -139,10 +129,10 @@ function ParlayEndpointCard($compile, ParlayPersistence, ParlayUtility) {
 	         */
             function compileTabs(directives) {
 	            // Locate tabs where we are going to insert dynamic directives.
-	            var tabs = element[0].querySelector('md-tabs');
+	            var tabs = element[0].querySelector("md-tabs");
 	            
 	            directives.map(function (directive) {
-					return '<' + ParlayUtility.snakeCase(directive, '-') + ' endpoint="endpoint"></' + ParlayUtility.snakeCase(directive, '-') + '>';
+					return "<" + ParlayUtility.snakeCase(directive, "-") + " endpoint='endpoint'></" + ParlayUtility.snakeCase(directive, "-") + ">";
 	            }).forEach(function (directive_string) {
 	                tabs.appendChild($compile(directive_string)(scope)[0]);
 	            });
@@ -174,6 +164,6 @@ function ParlayEndpointCard($compile, ParlayPersistence, ParlayUtility) {
     };
 }
 
-angular.module('parlay.endpoints.endpoint', ['ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main', 'parlay.store.persistence', 'parlay.utility', 'parlay.endpoints.widgettab'])
-	.factory('ParlayEndpoint', ParlayEndpointFactory)
-	.directive('parlayEndpointCard', ['$compile', 'ParlayPersistence', 'ParlayUtility', ParlayEndpointCard]);
+angular.module("parlay.endpoints.endpoint", ["ngMaterial", "ngMessages", "ngMdIcons", "templates-main", "parlay.store.persistence", "parlay.utility", "parlay.endpoints.widgettab"])
+	.factory("ParlayEndpoint", ParlayEndpointFactory)
+	.directive("parlayEndpointCard", ["$compile", "ParlayPersistence", "ParlayUtility", ParlayEndpointCard]);

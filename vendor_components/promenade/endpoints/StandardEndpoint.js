@@ -49,10 +49,6 @@ function PromenadeStandardEndpointFactory(ParlayEndpoint) {
         
         this.id = data.ID;
         
-        Object.defineProperty(this, 'commands', {
-	        get: function () { return this.content_fields.command; }
-	    });
-	    
 	    Object.defineProperty(this, 'data_types', {
 	        get: function () { return protocol.data_types; }
 	    });
@@ -66,31 +62,22 @@ function PromenadeStandardEndpointFactory(ParlayEndpoint) {
 	    });
         
         // Adds all available PromenadeEndpointCard tabs.
-        this.addAvailableDirective({
-	        tabs: [
-	        	"promenadeStandardEndpointCardCommands",
-	        	"promenadeStandardEndpointCardLog",
-	        	"promenadeStandardEndpointCardGraph",
-	        	"promenadeStandardEndpointCardProperty"
-	        ]
-        });
+        this.addAvailableDirectives("tabs", [
+        	"promenadeStandardEndpointCardCommands",
+        	"promenadeStandardEndpointCardLog",
+        	"promenadeStandardEndpointCardGraph",
+        	"promenadeStandardEndpointCardProperty"
+        ]);
         
-        // Adds default PromenadeEndpointCard tabs.
-        this.addDefaultDirective({
-	        toolbar: ["promenadeStandardEndpointCardToolbar"],
-	        tabs: ["promenadeStandardEndpointCardCommands"]
-	    });
+        this.addDefaultDirectives("tabs", ["promenadeStandardEndpointCardCommands"]);
+        this.addDefaultDirectives("toolbar", ["promenadeStandardEndpointCardToolbar"]);
 	    
         if (data.CONTENT_FIELDS) {        
-            Object.defineProperty(this, "content_fields", {
-                value: data.CONTENT_FIELDS.reduce(function (accumulator, field) {
-                    var parsed_field = parseField(field);
-                    accumulator[parsed_field.label] = parsed_field;
-                    return accumulator;
-                }, {}),
-                configurable: false,
-                enumerable: false
-            });            
+            this.content_fields = data.CONTENT_FIELDS.reduce(function (accumulator, field) {
+                var parsed_field = parseField(field);
+                accumulator[parsed_field.label] = parsed_field;
+                return accumulator;
+            }, {});
         }
         
         if (data.PROPERTIES) {

@@ -8,7 +8,7 @@ function pushChipBuffer (chipElements) {
 	    var buffer = ctrl.getChipBuffer();
 	    if (buffer !== "") {
 			ctrl.appendChip(buffer);
-			ctrl.resetChipBuffer();    
+			ctrl.resetChipBuffer();
 	    }			
 	}
 }
@@ -50,7 +50,7 @@ function collectMessage(message) {
 	    if (field_type === "ARRAY") accumulator[param_name] = message[field].map(function (chip) {
 		    return !Number.isNaN(chip.value) ? parseInt(chip.value) : chip.value;
 		});
-	    else if (field_type === "NUMBERS") accumulator[param_name] = message[field].map(function(field){ return parseFloat(field.value); });
+	    else if (field_type === "NUMBERS") accumulator[param_name] = message[field].map(function(field) { return parseFloat(field.value); });
 	    else if (angular.isObject(message[field])) accumulator[param_name] = message[field].value;
         else accumulator[param_name] = message[field];
         
@@ -73,7 +73,7 @@ function buildPythonCommand(endpoint_id, message) {
         }).join(", ") + ")";
     }
     catch(e) {
-        console.log("Can't log" + e);
+        console.log("Can't build" + e);
     }
 }
 
@@ -106,7 +106,7 @@ function PromenadeStandardEndpointCardCommandTabController($scope, $timeout, $md
 	 * Collects and sends the command from the form. During this process it will update controller attributes to inform the user the current status.
 	 * @param {Event} $event - This event's target is used to reference the md-chips element so that we can clear the buffer if available.
 	 */
-	this.send = function ($event) {
+	this.send = function ($event, wrapper) {
 		// Push the buffer into the md-chips ng-model
 		if ($event) pushChipBuffer($event.target.querySelectorAll('md-chips'));
 	    
@@ -114,7 +114,7 @@ function PromenadeStandardEndpointCardCommandTabController($scope, $timeout, $md
 	    this.sending = true;
 	    
 	    try {
-	    	var message = collectMessage($scope.wrapper.message);
+	    	var message = collectMessage(wrapper.message);
 	    	
 	    	this.endpoint.sendMessage(message).then(function (response) {
 		    	// Use the response to display feedback on the send button.			     	

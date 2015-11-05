@@ -29,12 +29,11 @@
     </md-input-container>
     
     <!-- Recursive promenade-standard-endpoint-card-command-container directive element to handle any potential nesting of sub fields -->
-    <promenade-standard-endpoint-card-command-container 
+    <promenade-standard-endpoint-card-command-container flex
 	    ng-if="hasSubFields(field)"
 	    commandform="commandform"
 	    wrapper="wrapper"
-	    fields="getSubFields(field)"
-	    flex>
+	    fields="getSubFields(field)">
     </promenade-standard-endpoint-card-command-container>
 
 </span>

@@ -94,26 +94,6 @@
                     expect(endpoint.getMessageId()).toBe(200);
                 });
                 
-                it('gets commands', function () {
-                    expect(endpoint.commands).toEqual({
-                        msg_key: 'command',
-                        label: 'command',
-                        required: false,
-                        default: undefined,
-                        hidden: false,
-                        input: 'DROPDOWN',
-                        options: [{
-							name: "option1",
-							value: "option1",
-							sub_fields: undefined
-						}, {
-							name: "option2",
-							value: "option2",
-							sub_fields: undefined
-						}]
-                    });
-                });
-                
                 it('gets data types from protocol', function () {
                     expect(endpoint.data_types).toEqual(['int', 'float']);
                 });

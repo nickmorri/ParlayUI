@@ -278,14 +278,16 @@ function ParlaySocketServiceFactory(BrokerAddress, $websocket, $q) {
 	         * @param {Object} contents - Map of key/value pairs.
 	         * @param {Object} response_topics - Map of key/value pairs.
 	         * @param {Function} response_callback - Callback to invoke upon receipt of message matching response topics.
+	         * @param {Boolean} verbose - If true we should invoke callback with full message. If false or undefined invoke with only contents for simplicity.
 	         * @returns {$q.defer.promise} Resolves once message has been passed to socket.
 	         */
-	        sendMessage: function sendMessage(topics, contents, response_topics, response_callback) {
-	            
+	        sendMessage: function sendMessage(topics, contents, response_topics, response_callback, verbose) {
+	            // If verbose is not passed default to false.
+	            var verbosity = verbose ? true : false;	            
 	            // Register response callback
 	            if (response_topics !== undefined || response_callback !== undefined) {
 	                if (response_topics === undefined || response_callback === undefined) throw new TypeError('If a response callback is desired both response topics and response callback must be defined.', 'socket.js');
-	                else registerListener(response_topics, response_callback, false);
+	                else registerListener(response_topics, response_callback, false, verbosity);
 	            }
 	            
 	            // Push message down to socket.send()

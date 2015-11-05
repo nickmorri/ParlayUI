@@ -89,12 +89,13 @@ function ParlayProtocolFactory(ParlaySocket, ParlayEndpoint, $q) {
 	 * @param {Object} topics - Map of key/value pairs.
 	 * @param {Object} contents - Map of key/value pairs.
 	 * @param {Object} response_contents - Map of key/value pairs.
+	 * @param {Boolean} verbose - If true we should invoke callback with full message. If false or undefined invoke with only contents for simplicity.
 	 * @returns {$q.defer.Promise} - Resolved if ParlaySocket receives a response, rejected if an error occurs during send.
 	 */
-    ParlayProtocol.prototype.sendMessage = function (topics, contents, response_topics) {
+    ParlayProtocol.prototype.sendMessage = function (topics, contents, response_topics, verbose) {
         return $q(function(resolve, reject) {
 	        try {
-		    	ParlaySocket.sendMessage(topics, contents, response_topics, resolve);    
+		    	ParlaySocket.sendMessage(topics, contents, response_topics, resolve, verbose);    
 	        }            
             catch (error) {
 	            reject(error);

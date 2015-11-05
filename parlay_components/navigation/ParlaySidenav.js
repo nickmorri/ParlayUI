@@ -29,17 +29,6 @@ function ParlaySidenavController($mdSidenav, $state) {
 	
 }
 
-function TitlecaseFilter() {
-	// http://ng.malsup.com/#!/titlecase-filter
-	return function(str) {
-		s = ( s === undefined || s === null ) ? '' : s;
-        return s.toString().toLowerCase().replace( /\b([a-z])/g, function(ch) {
-            return ch.toUpperCase();
-        });
-	};
-}
-
 angular.module("parlay.sidenav", ["ngMaterial", "ui.router"])
 	.controller("ParlaySidenavController", ["$mdSidenav", "$state", ParlaySidenavController])
-	.directive("parlaySidenav", [ParlaySidenav])
-	.filter("titlecase", TitlecaseFilter);
+	.directive("parlaySidenav", [ParlaySidenav]);

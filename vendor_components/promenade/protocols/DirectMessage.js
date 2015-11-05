@@ -1,4 +1,4 @@
-function PromenadeDirectMessageProtocolFactory(ParlayProtocol, PromenadeStandardEndpoint) {
+function PromenadeDirectMessageProtocolFactory(ParlayProtocol, PromenadeStandardEndpoint, $q) {
     
     /**
 	 * PromenadeDirectMessageProtocol constructor.
@@ -15,6 +15,7 @@ function PromenadeDirectMessageProtocolFactory(ParlayProtocol, PromenadeStandard
         
         // Defining custom attributes.
         this.current_message_id = 200;
+        
     }
     
     // Create a Object that inherits from the prototype of ParlayProtocol.
@@ -61,6 +62,10 @@ function PromenadeDirectMessageProtocolFactory(ParlayProtocol, PromenadeStandard
         };
     };
     
+    PromenadeDirectMessageProtocol.prototype.isResponseOk = function (response) {
+	    return ["ERROR", "WARNING"].indexOf(response.TOPICS.MSG_STATUS) === -1;
+    };
+    
     /**
 	 * Sends message with topics specific to PromenadeDirectMessage.
 	 * @param {Object} topics - Map of key/value pairs.
@@ -70,11 +75,15 @@ function PromenadeDirectMessageProtocolFactory(ParlayProtocol, PromenadeStandard
 	 */
     PromenadeDirectMessageProtocol.prototype.sendMessage = function (topics, contents, response_topics) {
 		var extended_topics = this.buildMessageTopics(topics);
-	    return ParlayProtocol.prototype.sendMessage(extended_topics, contents, !response_topics ? this.buildResponseTopics(extended_topics) : response_topics);
+		var extended_response_topics = !response_topics ? this.buildResponseTopics(extended_topics) : response_topics;
+		
+	    return ParlayProtocol.prototype.sendMessage(extended_topics, contents, extended_response_topics, true).then(function (response) {
+		    return this.isResponseOk(response) ? response : $q.reject(response);
+	    }.bind(this));
     };
         
     return PromenadeDirectMessageProtocol;    
 }
 
-angular.module('promenade.protocols.directmessage', ['parlay.protocols.protocol', 'promenade.endpoints.standardendpoint'])
-	.factory('PromenadeDirectMessageProtocol', ['ParlayProtocol', 'PromenadeStandardEndpoint', PromenadeDirectMessageProtocolFactory]);
+angular.module("promenade.protocols.directmessage", ["parlay.protocols.protocol", "promenade.endpoints.standardendpoint"])
+	.factory("PromenadeDirectMessageProtocol", ["ParlayProtocol", "PromenadeStandardEndpoint", "$q", PromenadeDirectMessageProtocolFactory]);

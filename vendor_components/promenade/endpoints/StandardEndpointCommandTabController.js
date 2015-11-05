@@ -118,7 +118,7 @@ function PromenadeStandardEndpointCardCommandTabController($scope, $timeout, $md
 	    	
 	    	this.endpoint.sendMessage(message).then(function (response) {
 		    	// Use the response to display feedback on the send button.			     	
-		        this.status_message = response.STATUS_NAME;
+		        this.status_message = response.TOPICS.MSG_STATUS;
 		        
 		        // If we still have an outstanding timeout we should cancel it to prevent the send button from flickering.
 	            if (sending_timeout !== null) $timeout.cancel(sending_timeout);
@@ -128,11 +128,12 @@ function PromenadeStandardEndpointCardCommandTabController($scope, $timeout, $md
 		        	sending_timeout = null;
 	                this.sending = false;
 	                this.status_message = null;
-	            }, 500);
+	            }.bind(this), 500);
+	            
 	        }.bind(this)).catch(function (response) {
 		        this.sending = false;
 		        this.error = true;
-		        this.status_message = response.STATUS_NAME;
+		        this.status_message = response.TOPICS.MSG_STATUS;
 		    }.bind(this));
 		    
 		    // Put the Python equivalent command in the log.
@@ -140,6 +141,7 @@ function PromenadeStandardEndpointCardCommandTabController($scope, $timeout, $md
 
 	    }
 	    catch (e) {
+		    this.sending = false;
 	     	this.error = true;
 	     	this.status_message = e;   
 	    }

@@ -61,15 +61,14 @@
 	                FROM: 100
                 });
                 
-                
-                
                 expect(socket.sendMessage).toHaveBeenCalledWith(jasmine.objectContaining({
 	                TO: 100,
                     FROM: "UI",
                     MSG_ID: protocol.getMessageId(),
                 }), jasmine.objectContaining({}), jasmine.objectContaining({
 					FROM: 100,
-                }), jasmine.any(Function));
+                }), jasmine.any(Function),
+                true);
                 
             });
 

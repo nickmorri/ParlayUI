@@ -1,6 +1,6 @@
-<span ng-repeat="field in fields">
+<span ng-repeat="field in fields" layout="column">
 
-    <md-input-container md-is-error="commandform[field.msg_key].$invalid" ng-hide="field.hidden">
+    <md-input-container flex md-is-error="commandform[field.msg_key].$invalid" ng-hide="field.hidden">
 		
 		<!-- Label that is displayed above input for all inputs that don't use md-chips -->
         <label ng-hide="field.input === 'NUMBERS' || field.input === 'STRINGS' || field.input === 'ARRAY'">{{::field.label}}</label>

@@ -1,4 +1,4 @@
-<md-tab label="Log">
+<md-tab label="Log" layout="column">
 
 	<md-toolbar class="md-hue-2">
 		<div class="md-toolbar-tools">
@@ -22,7 +22,7 @@
 		</div>
 	</md-toolbar>
 
-	<md-input-container ng-show="ctrl.getLog().length" class="filter-input-container" aria-label="Filter log messages">
+	<md-input-container flex="100" ng-show="ctrl.getLog().length" class="filter-input-container" aria-label="Filter log messages">
 		<label>Filter</label>
 		<input ng-model="filter_text" type="text">
 	</md-input-container>

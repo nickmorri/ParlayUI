@@ -10,18 +10,22 @@
             </div>
         </md-toolbar>
         
-        <md-dialog-content scroll-glue>
+        <md-dialog-content>
         
-            <p ng-hide="getLog().length">
-                Nothing has been logged<span ng-show="hasListener()"> although we currently have a listener.</span>
-                <span ng-hide="hasListener()"> maybe because we're not listening?</span>
-            </p>
+        	<div class="md-dialog-content" scroll-glue>
+        
+	            <p ng-hide="getLog().length">
+	                Nothing has been logged<span ng-show="hasListener()"> although we currently have a listener.</span>
+	                <span ng-hide="hasListener()"> maybe because we're not listening?</span>
+	            </p>
+	            
+	            <md-list ng-show="getLog().length">
+	                <md-list-item class="message-text" ng-repeat="message in getLog()">
+	                    {{message}}
+	                </md-list-item>
+	            </md-list>
             
-            <md-list ng-show="getLog().length">
-                <md-list-item class="message-text" ng-repeat="message in getLog()">
-                    {{message}}
-                </md-list-item>
-            </md-list>
+        	</div>
         </md-dialog-content>        
         
 </md-dialog>

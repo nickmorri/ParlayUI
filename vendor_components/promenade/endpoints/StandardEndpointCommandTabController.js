@@ -26,11 +26,13 @@ function collectMessage(message) {
 		return field.indexOf("COMMAND") > -1 || field.indexOf("FUNC") > -1;
 	});
 	
-	var relevant_fields = message[root_field].sub_fields.map(function (field) {
-		return field.msg_key + "_" + field.input;
-	});
+	var relevant_fields = [root_field];
 	
-	relevant_fields.push(root_field);
+	if (message[root_field].sub_fields) {
+		relevant_fields = relevant_fields.concat(message[root_field].sub_fields.map(function (field) {
+			return field.msg_key + "_" + field.input;
+		}));
+	}
 	
 	return relevant_fields.reduce(function(accumulator, field) {
 		var param_name, field_type;
@@ -106,15 +108,15 @@ function PromenadeStandardEndpointCardCommandTabController($scope, $timeout, $md
 	 * Collects and sends the command from the form. During this process it will update controller attributes to inform the user the current status.
 	 * @param {Event} $event - This event's target is used to reference the md-chips element so that we can clear the buffer if available.
 	 */
-	this.send = function ($event, wrapper) {
+	this.send = function ($event) {
 		// Push the buffer into the md-chips ng-model
 		if ($event) pushChipBuffer($event.target.querySelectorAll('md-chips'));
-	    
+			    
 	    this.error = false;
 	    this.sending = true;
 	    
 	    try {
-	    	var message = collectMessage(wrapper.message);
+	    	var message = collectMessage($scope.wrapper.message);
 	    	
 	    	this.endpoint.sendMessage(message).then(function (response) {
 		    	// Use the response to display feedback on the send button.			     	

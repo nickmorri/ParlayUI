@@ -79,7 +79,7 @@
 	                <div flex-sm="75" class="md-list-item-text" ng-class="{'md-offset': $index !== 0 && large_screen}">
 	                    <h3>{{::configuration.name}}</h3>
 	                    <p><span ng-repeat="(key, value) in configuration.parameters">{{::value}}</span></p>
-	                    <p>Last connected <span am-time-ago="configuration.last_connected"></span></p>
+	                    <p title="{{configuration.last_connected}}">Last connected <span am-time-ago="configuration.last_connected"></span></p>
 	                </div>
 	                
 	                <div layout="row" flex-sm="25" layout-sm="row" layout-align-sm="center end">

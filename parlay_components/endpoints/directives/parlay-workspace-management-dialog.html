@@ -47,7 +47,7 @@
 	            	<div flex-sm="60"class="md-list-item-text">
 	                    <h3>Autosaved Workspace</h3>
 	                    <h4>{{getAutosave().endpoint_count}} endpoint<span ng-hide="currentWorkspaceEndpointCount() === 1">s</span></h4>
-	                    <p am-time-ago="getAutosave().timestamp"></p>
+	                    <p am-time-ago="getAutosave().timestamp" title="{{getAutosave().timestamp}}"></p>
 	                </div>
 	                <div layout="row" flex-sm="40" layout-sm="row" layout-align-sm="center end">
 		                <md-button class="md-primary" ng-class="large_screen ? 'md-raised' : 'md-icon-button'" ng-click="loadWorkspace(getAutosave())" aria-label="Load workspace">
@@ -76,7 +76,7 @@
 	                <div flex-sm="60" class="md-list-item-text" ng-class="{'md-offset': $index !== 0 && large_screen}">
 	                    <h3>{{workspace.name}}</h3>
 	                    <h4>{{workspace.endpoint_count}} endpoint<span ng-hide="workspace.endpoint_count === 1">s</span></h4>
-						<p am-time-ago="workspace.timestamp"></p>
+						<p am-time-ago="workspace.timestamp" title="{{workspace.timestamp}}"></p>
 	                </div>
 	                
 	                <div layout="row" flex-sm="40" layout-sm="row" layout-align-sm="center end">

@@ -1,13 +1,13 @@
 function ParlayConnectionListController($scope, $mdDialog, $mdMedia, ParlayProtocolManager, PromenadeBroker) {
     
-    $scope.hide = $mdDialog.hide;
-    $scope.connecting = false;
+    this.hide = $mdDialog.hide;
+    this.connecting = false;
     
     /**
      * Returns Broker connection status.
      * @returns {Boolean} Broker connection status
      */
-    $scope.isBrokerConnected = function () {
+    this.isBrokerConnected = function () {
         return PromenadeBroker.isConnected();
     };
     
@@ -15,14 +15,14 @@ function ParlayConnectionListController($scope, $mdDialog, $mdMedia, ParlayProto
      * Returns Broker location.
      * @returns {String} location of Broker where WebSocket is connected to.
      */
-    $scope.getBrokerAddress = function () {
+    this.getBrokerAddress = function () {
         return PromenadeBroker.getBrokerAddress();  
     };
     
     /**
      * Switches Broker connected and disconnected.
      */
-    $scope.toggleBrokerConnection = function () {
+    this.toggleBrokerConnection = function () {
         if (PromenadeBroker.isConnected()) PromenadeBroker.disconnect();
         else PromenadeBroker.connect();
     };
@@ -31,11 +31,11 @@ function ParlayConnectionListController($scope, $mdDialog, $mdMedia, ParlayProto
      * Returns open protocols from ParlayProtocolManager.
      * @returns {Array} open protocols
      */
-    $scope.getOpenProtocols = function () {
+    this.getOpenProtocols = function () {
         return ParlayProtocolManager.getOpenProtocols();
     };
     
-	$scope.getSavedProtocols = function () {
+	this.getSavedProtocols = function () {
 		return ParlayProtocolManager.getSavedProtocols();
 	};
 	
@@ -43,18 +43,18 @@ function ParlayConnectionListController($scope, $mdDialog, $mdMedia, ParlayProto
      * Check if ParlayProtocolManager has saved protocols.
      * @returns {Boolean} true if open protocols exist, false otherwise.
      */
-	$scope.hasSavedProtocols = function () {
-		return $scope.getSavedProtocols().length !== 0;
+	this.hasSavedProtocols = function () {
+		return this.getSavedProtocols().length !== 0;
 	};
 	
-	$scope.openSavedProtocol = function (configuration) {
-		$scope.connecting = true;
+	this.openSavedProtocol = function (configuration) {
+		this.connecting = true;
 	    ParlayProtocolManager.openProtocol(configuration).finally(function (response) {
-		    $scope.connecting = false;
-	    });
+		    this.connecting = false;
+	    }.bind(this));
     };
     
-    $scope.deleteSavedProtocol = function (configuration) {
+    this.deleteSavedProtocol = function (configuration) {
 	  	ParlayProtocolManager.deleteProtocolConfiguration(configuration);  
     };
     
@@ -62,8 +62,8 @@ function ParlayConnectionListController($scope, $mdDialog, $mdMedia, ParlayProto
      * Check if ParlayProtocolManager has open protocols.
      * @returns {Boolean} true if open protocols exist, false otherwise.
      */
-    $scope.hasOpenProtocols = function () {
-        return $scope.getOpenProtocols().length !== 0;
+    this.hasOpenProtocols = function () {
+        return this.getOpenProtocols().length !== 0;
     };
     
     /**
@@ -71,12 +71,12 @@ function ParlayConnectionListController($scope, $mdDialog, $mdMedia, ParlayProto
      * @param {Object} protocol - Protocol configuration object.
      */
     /* istanbul ignore next */
-    $scope.closeProtocol = function (protocol) {
+    this.closeProtocol = function (protocol) {
         ParlayProtocolManager.closeProtocol(protocol);
     };
     
     /* istanbul ignore next */
-    $scope.viewProtocolConnectionDetails = function (event, protocol) {
+    this.viewProtocolConnectionDetails = function (event, protocol) {
         $mdDialog.show({
             targetEvent: event,
             clickOutsideToClose: true,
@@ -93,14 +93,12 @@ function ParlayConnectionListController($scope, $mdDialog, $mdMedia, ParlayProto
      * @param {Event} - Event generated when button is selected. Allows use to have origin for dialog display animation.
      */
     /* istanbul ignore next */
-    $scope.openConfiguration = function (event) {
+    this.openConfiguration = function (event) {
         // Show a configuraton dialog allowing us to setup a protocol configuration.
         $mdDialog.show({
             targetEvent: event,
             clickOutsideToClose: true,
-            onComplete: function (scope, element, options) {
-	            element.find("input").focus();
-            },
+            onComplete: function (scope, element, options) { element.find("input").focus(); },
             controller: "ParlayProtocolConfigurationController",
             controllerAs: "ctrl",
             bindToController: true,

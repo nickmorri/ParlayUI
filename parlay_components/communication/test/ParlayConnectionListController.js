@@ -6,7 +6,7 @@
         beforeEach(module('parlay.protocols.list_controller'));
         
         describe('ParlayConnectionListController', function () {
-            var rootScope, scope, ParlayConnectionListController, MockPromenadeBroker;                
+            var rootScope, scope, ctrl, MockPromenadeBroker;                
             
             beforeEach(inject(function ($rootScope, $controller, $q) {
                 
@@ -28,22 +28,22 @@
                 
                 rootScope = $rootScope;
                 scope = $rootScope.$new();
-                ParlayConnectionListController = $controller('ParlayConnectionListController', {$scope: scope, PromenadeBroker: MockPromenadeBroker});
+                ctrl = $controller('ParlayConnectionListController', {$scope: scope, PromenadeBroker: MockPromenadeBroker});
             }));
             
             describe('PromenadeBroker interactions', function () {
                 
                 it('tests connection', function () {
-                    expect(scope.isBrokerConnected()).toBeFalsy();
-                    expect(scope.getBrokerAddress()).toBe('ws://localhost:8080');
+                    expect(ctrl.isBrokerConnected()).toBeFalsy();
+                    expect(ctrl.getBrokerAddress()).toBe('ws://localhost:8080');
                 });
                 
                 it('toggles connection', function () {
-                    expect(scope.isBrokerConnected()).toBeFalsy();
-                    scope.toggleBrokerConnection();
-                    expect(scope.isBrokerConnected()).toBeTruthy();
-                    scope.toggleBrokerConnection();                        
-                    expect(scope.isBrokerConnected()).toBeFalsy();
+                    expect(ctrl.isBrokerConnected()).toBeFalsy();
+                    ctrl.toggleBrokerConnection();
+                    expect(ctrl.isBrokerConnected()).toBeTruthy();
+                    ctrl.toggleBrokerConnection();                        
+                    expect(ctrl.isBrokerConnected()).toBeFalsy();
                 });
                 
             });

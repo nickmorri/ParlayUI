@@ -25,6 +25,7 @@ function ParlayEndpointsToolbarController($scope, $mdDialog, $mdSidenav, ParlayE
             templateUrl: "../parlay_components/communication/directives/parlay-connection-list-dialog.html",
             targetEvent: event,
             controller: "ParlayConnectionListController",
+            controllerAs: "ctrl",
             clickOutsideToClose: true
         });
     };

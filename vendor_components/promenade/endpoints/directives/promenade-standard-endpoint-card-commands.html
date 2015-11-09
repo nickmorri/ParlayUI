@@ -29,13 +29,14 @@
     <md-content class="md-padding parlay-endpoint-card-tab-content">
     
         <form name="commandform" layout="column" ng-submit="ctrl.send($event)">
-
-            <promenade-standard-endpoint-card-command-container
-            	commandform="commandform"
-            	wrapper="wrapper"
-            	fields="ctrl.endpoint.content_fields"
-            	flex>
-            </promenade-standard-endpoint-card-command-container>
+			<div layout="row">
+	            <promenade-standard-endpoint-card-command-container
+	            	commandform="commandform"
+	            	wrapper="wrapper"
+	            	fields="ctrl.endpoint.content_fields"
+	            	flex>
+	            </promenade-standard-endpoint-card-command-container>
+			</div>
             
             <md-button flex type="submit" class="md-raised" ng-class="ctrl.error ? 'md-warn' : 'md-primary'" ng-disabled="commandform.$invalid" aria-label="Sends command to a Promenade Standard Endpoint.">
                 <span ng-show="ctrl.sending">

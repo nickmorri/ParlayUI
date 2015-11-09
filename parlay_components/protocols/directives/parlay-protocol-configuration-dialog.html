@@ -1,75 +1,79 @@
-<md-dialog aria-label="Protocol Configuration" flex="40" flex-sm="80">
+<md-dialog aria-label="Protocol Configuration" flex="90" flex-md="70" flex-sm="50">
     <md-toolbar>
         <div class="md-toolbar-tools">
-            <h2 ng-show="configuration.protocol === undefined">Protocol Configuration</h2>
-            <h2 ng-hide="configuration.protocol === undefined">{{::configuration.protocol.name}}</h2>
+            <h2 ng-show="ctrl.configuration.protocol === undefined">Protocol Configuration</h2>
+            <h2 ng-hide="ctrl.configuration.protocol === undefined">{{::ctrl.configuration.protocol.name}}</h2>
             <span flex></span>
-            <md-button class="md-icon-button" ng-click="cancel()" aria-label="Close configuration dialog">
+            <md-button class="md-icon-button" ng-click="ctrl.cancel()" aria-label="Close configuration dialog">
                 <md-icon><ng-md-icon icon="close" aria-label="Close dialog"></ng-md-icon></md-icon>
             </md-button>
         </div>
     </md-toolbar>
     
-    <md-progress-linear ng-show="connecting" md-mode="indeterminate"></md-progress-linear>
+    <md-progress-linear ng-show="ctrl.connecting" md-mode="indeterminate"></md-progress-linear>
     
-    <md-dialog-content layout="column" layout-padding>
+    <form name="configform" ng-submit="ctrl.connect()">
     
-        <md-autocomplete
-            md-autoselect="true"
-            md-selected-item="selected_protocol"
-            md-search-text="search_text"
-            md-items="protocol in filterProtocols(search_text)"
-            md-item-text="protocol.name"
-            md-min-length="0"
-            md-floating-label="Protocol"
-            md-no-cache="true">
-            <md-item-template>
-                <span md-highlight-text="search_text" md-highlight-flags="^i">{{protocol.name}}</span>
-            </md-item-template>
-        </md-autocomplete>
-            
-        <span ng-repeat="(parameter_name, parameter) in selected_protocol.parameters" ng-switch="parameter.defaults === null || !parameter.defaults.length">
-                
-            <md-input-container ng-switch-when="true">
-                <label>{{parameter_name}} (Defaults not available)</label>
-                <input ng-model="parameter.value" type="text">
-            </md-input-container>
-            
-            <md-autocomplete
-                ng-switch-when="false"
-                md-no-cache="true"
-                md-autoselect="true"
-                md-search-text="parameter.search_text"
-                md-selected-item="parameter.value"
-                md-items="default in filterDefaults(parameter.defaults, parameter.search_text)"
-                md-item-text="default.toString()"
-                md-min-length="0"
-                md-floating-label="{{parameter_name}}">
-                <md-item-template>
-                    <span md-highlight-text="parameter.search_text" md-highlight-flags="^i">{{default}}</span>
-                </md-item-template>
-            </md-autocomplete>
-            
-        </span>
-        
-        <md-input-container flex ng-hide="selected_protocol === null || selectedProtocolHasParameters()">
-            Protocol hasn't provided configuration parameters.
-        </md-input-container>
-        
-        <div ng-show="error">
-            <md-icon class="md-warn"><ng-md-icon icon="error"></ng-md-icon></md-icon>
-            {{error_message}}
-        </div>
-                        
-    </md-dialog-content>
+	    <md-dialog-content layout="column" layout-padding>
+	    
+	    	<div class="md-dialog-content" layout="column">
+	    
+		        <md-autocomplete
+		            md-autoselect="true"
+		            md-selected-item="ctrl.selected_protocol"
+		            md-search-text="search_text"
+		            md-items="protocol in ctrl.filterProtocols(search_text)"
+		            md-item-text="protocol.name"
+		            md-min-length="0"
+		            md-floating-label="Protocol"
+		            md-no-cache="true">
+		            <md-item-template>
+		                <span md-highlight-text="search_text" md-highlight-flags="^i">{{protocol.name}}</span>
+		            </md-item-template>
+		        </md-autocomplete>
+		            
+		        <span flex="100" ng-repeat="(parameter_name, parameter) in ctrl.selected_protocol.parameters" ng-switch="ctrl.isContainer(parameter.defaults)" layout="row">
+					
+					<md-autocomplete flex="100"
+						ng-switch-when="true"
+		                md-no-cache="true"
+		                md-autoselect="true"
+		                md-search-text="parameter.search_text"
+		                md-selected-item="parameter.value"
+		                md-items="default in ctrl.filterDefaults(parameter.defaults, parameter.search_text)"
+		                md-item-text="default.toString()"
+		                md-min-length="0"
+		                md-floating-label="{{parameter_name}}">
+		                <md-item-template>
+		                    <span md-highlight-text="parameter.search_text" md-highlight-flags="^i">{{default}}</span>
+		                </md-item-template>
+		            </md-autocomplete>
+		            
+		            <md-input-container flex="100" ng-switch-when="false">
+		                <label>{{parameter_name}} (Defaults not available)</label>
+		                <input ng-model="parameter.value" type="text">
+		            </md-input-container>
+		            
+		        </span>
+		        
+		        <md-input-container flex ng-hide="ctrl.selected_protocol === null || ctrl.selectedProtocolHasParameters()">
+		            Protocol hasn't provided configuration parameters.
+		        </md-input-container>
+		        
+		        <div ng-show="ctrl.error">
+		            <md-icon class="md-warn"><ng-md-icon icon="error"></ng-md-icon></md-icon>
+		            {{ctrl.error_message}}
+		        </div>
+	        
+	    	</div>
+	    </md-dialog-content>
+	    
+	    <md-dialog-actions layout="row" ng-hide="ctrl.connecting">
+	        <span flex></span>
+	        <md-button ng-click="ctrl.cancel()" class="md-warn" aria-label="Close configuration dialog">Cancel</md-button>
+	        <md-button type="submit" class="md-primary" aria-label="Connect to protcol with configuration">Connect</md-button>
+	    </md-dialog-actions>
     
-    <div class="md-actions" layout="row" ng-hide="connecting">
-        <span flex></span>
-        <md-button ng-click="cancel()" class="md-warn" aria-label="Close configuration dialog">
-            Close
-        </md-button>
-        <md-button ng-click="connect()" class="md-primary" aria-label="Connect to protcol with configuration">
-            Connect
-        </md-button>
-    </div>
+    </form>
+    
 </md-dialog>

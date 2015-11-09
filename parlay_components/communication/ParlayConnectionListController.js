@@ -80,8 +80,8 @@ function ParlayConnectionListController($scope, $mdDialog, $mdMedia, ParlayProto
         $mdDialog.show({
             targetEvent: event,
             clickOutsideToClose: true,
-            controller: 'ParlayProtocolConnectionDetailController',
-            templateUrl: '../parlay_components/protocols/directives/parlay-protocol-connection-details.html',
+            controller: "ParlayProtocolConnectionDetailController",
+            templateUrl: "../parlay_components/protocols/directives/parlay-protocol-connection-details.html",
             locals: {
                 protocol: protocol
             }
@@ -99,21 +99,23 @@ function ParlayConnectionListController($scope, $mdDialog, $mdMedia, ParlayProto
             targetEvent: event,
             clickOutsideToClose: true,
             onComplete: function (scope, element, options) {
-	            element.find('input').focus();
+	            element.find("input").focus();
             },
-            controller: 'ParlayProtocolConfigurationController',
-            templateUrl: '../parlay_components/protocols/directives/parlay-protocol-configuration-dialog.html'
+            controller: "ParlayProtocolConfigurationController",
+            controllerAs: "ctrl",
+            bindToController: true,
+            templateUrl: "../parlay_components/protocols/directives/parlay-protocol-configuration-dialog.html"
         });
     };
     
     // Watch the size of the screen, if we are on a screen size that's greater than a small screen we should always display labels.
     $scope.$watch(function () {
-        return $mdMedia('gt-md');
+        return $mdMedia("gt-md");
     }, function (large_screen) {
         $scope.large_screen = large_screen;
     });
     
 }
 
-angular.module('parlay.protocols.list_controller', ['parlay.protocols.configuration_controller', 'parlay.protocols.detail_controller', 'parlay.protocols.manager', 'promenade.broker', 'parlay.notification', 'ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main'])
-	.controller('ParlayConnectionListController', ['$scope', '$mdDialog', '$mdMedia', 'ParlayProtocolManager', 'PromenadeBroker', ParlayConnectionListController]);
+angular.module("parlay.protocols.list_controller", ["parlay.protocols.configuration_controller", "parlay.protocols.detail_controller", "parlay.protocols.manager", "promenade.broker", "parlay.notification", "ngMaterial", "ngMessages", "ngMdIcons", "templates-main"])
+	.controller("ParlayConnectionListController", ["$scope", "$mdDialog", "$mdMedia", "ParlayProtocolManager", "PromenadeBroker", ParlayConnectionListController]);

@@ -16,16 +16,19 @@ function pushChipBuffer (chipElements) {
 /**
  * Collects and formats the fields available on the given message object.
  * @param {Object} message - message container from the scope.
- * @returns - parsed and formatted StandardEndpoint data.
+ * @returns {Object} - parsed and formatted StandardEndpoint data.
  */    
 function collectMessage(message) {
 	
 	if (!Object.keys(message).length) return undefined;
 	
+	// Find root most field.
+	// TODO: Should rethink this so that we don't have to hard code these values.
 	var root_field = Object.keys(message).find(function (field) {
 		return field.indexOf("COMMAND") > -1 || field.indexOf("FUNC") > -1;
 	});
 	
+	// Build Array of relevant fields, relevant meaning a sub field of the root field.
 	var relevant_fields = [root_field];
 	
 	if (message[root_field].sub_fields) {
@@ -34,6 +37,7 @@ function collectMessage(message) {
 		}));
 	}
 	
+	// Reduce these fields and their data to a Object.
 	return relevant_fields.reduce(function(accumulator, field) {
 		var param_name, field_type;
         
@@ -61,6 +65,12 @@ function collectMessage(message) {
 
 }
 
+/**
+ * Constructs Python statement from the given message.
+ * @param {String} endpoint_id - name of the endpoint
+ * @param {Object} message - message we're converting to a Python statement
+ * @returns {String} - Python statement
+ */
 function buildPythonCommand(endpoint_id, message) {
     try {
         var var_name = "e_" + endpoint_id;

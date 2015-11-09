@@ -14,7 +14,8 @@ function ParlaySidenavController($mdSidenav, $state) {
 	};
 	
 	this.navigateToState = function(state_name) {
-		$state.go(state_name);	
+		$state.go(state_name);
+		this.closeSidenav();
 	};
 	
 	this.states = $state.get().filter(function(state) {

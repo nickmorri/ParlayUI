@@ -153,9 +153,7 @@ function ParlayEndpointManager(PromenadeBroker, ParlayProtocolManager, ParlayNot
 			}
 		});
 		
-		ParlayNotification.show({content: loaded_endpoints ? 
-			'Restored workspace from ' + workspace.name + '.' : 
-			'Unable to restore workspace from ' + workspace.name + '. Ensure endpoints have been discovered.'});
+		return loaded_endpoints;
 		
 	};
 	

@@ -1,4 +1,4 @@
-function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, ParlayStore, ParlayEndpointManager) {
+function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, ParlayNotification, ParlayStore, ParlayEndpointManager) {
 	
 	function getWorkspaces() {
 		var workspaces = store.getLocalValues();
@@ -34,12 +34,8 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
 			controller: "ParlayWorkspaceSaveAsDialogController",
 			controllerAs: "ctrl",
 			templateUrl: "../parlay_components/endpoints/directives/parlay-workspace-save-as-dialog.html",
-			onComplete: function (scope, element, options) {
-	            element.find("input").focus();
-            }
-		}).then(function (name) {
-			$scope.saveWorkspace({name: name});
-		});
+			onComplete: function (scope, element) { element.find("input").focus(); }
+		}).then($scope.saveWorkspace);
 	};
 	
 	$scope.clearCurrentWorkspace = function () {
@@ -50,6 +46,7 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
 	$scope.saveWorkspace = function (workspace) {
 		store.moveItemToLocal(workspace.name);
 		saved_workspaces = getWorkspaces();
+		ParlayNotification.show({ content: "Saved '" + workspace.name + "' workspace." });
 	};
 	
 	$scope.loadWorkspace = function (workspace) {
@@ -58,7 +55,10 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
 		
 		function load() {
 			store.moveItemToSession(workspace.name);
-			ParlayEndpointManager.loadWorkspace(workspace);
+			if (ParlayEndpointManager.loadWorkspace(workspace))
+				ParlayNotification.show({content: "Restored workspace from " + workspace.name + "."}); 
+			else
+				ParlayNotification.show({content: "Unable to restore workspace from " + workspace.name + ". Ensure endpoints have been discovered."});
 		}
 		
 		if (ParlayEndpointManager.hasDiscovered()) load();
@@ -70,6 +70,7 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
 	$scope.deleteWorkspace = function (workspace) {
 		store.removeLocalItem(workspace.name);
 		saved_workspaces = getWorkspaces();
+		ParlayNotification.show({ content: "Deleted '" + workspace.name + "' workspace." });
 	};
 	
 	$scope.currentWorkspaceEndpointCount = function () {
@@ -88,7 +89,7 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
 function ParlayWorkspaceSaveAsDialogController($scope, $mdDialog) {
 	
 	this.save = function () {
-		$mdDialog.hide($scope.name);
+		$mdDialog.hide({name: $scope.name});
 	};
 	
 	this.cancel = function () {
@@ -99,4 +100,4 @@ function ParlayWorkspaceSaveAsDialogController($scope, $mdDialog) {
 
 angular.module("parlay.endpoints.workspaces", ["parlay.store", "parlay.endpoints.manager", "angularMoment"])
 	.controller("ParlayWorkspaceSaveAsDialogController", ["$scope", "$mdDialog", ParlayWorkspaceSaveAsDialogController])
-	.controller("ParlayWorkspaceManagementController", ["$scope", "$mdDialog", "$mdMedia", "ParlayStore", "ParlayEndpointManager", ParlayWorkspaceManagementController]);
+	.controller("ParlayWorkspaceManagementController", ["$scope", "$mdDialog", "$mdMedia", "ParlayNotification", "ParlayStore", "ParlayEndpointManager", ParlayWorkspaceManagementController]);

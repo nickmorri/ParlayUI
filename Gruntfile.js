@@ -1,31 +1,39 @@
-function getVendors () {
-	return grunt.file.expand('vendor_components/**/vendor.json').map(function (vendor) {
-		return grunt.file.readJSON(vendor);
-    }).reduce(function (accumulator, vendor) {
-        accumulator[vendor.name] = vendor.source;
-        return accumulator;
-    }, {});
-}
-
-function getVendorItems (items, initial) {
-	var vendors = getVendors();
-	if (initial === undefined) initial = [];
-	var extracted = initial.concat(Object.keys(vendors).reduce(function (accumulator, vendor)  {
-		return accumulator.concat(Object.keys(vendors[vendor]).filter(function (key) {
-			return items.some(function (item) {
-				return key.indexOf(item) > -1;
-			});
-        }).map(function (key) {
-            return '<%= vendor.' + vendor + '.' + key + ' %>';
-        }));
-    }, []));
-    return extracted;
-}
-
 module.exports = function (grunt) {
+	
+	/**
+	 * Loads each vendor configuration file available in vendor_components
+	 * @returns {Object} - key (vendor name) -> Object of vendor source paths.
+	 */
+	function getVendors () {
+		return grunt.file.expand('vendor_components/**/vendor.json').map(function (vendor) {
+			return grunt.file.readJSON(vendor);
+	    }).reduce(function (accumulator, vendor) {
+	        accumulator[vendor.name] = vendor.source;
+	        return accumulator;
+	    }, {});
+	}
+	
+	/**
+	 * Process vendor items and return an Array of Strings that Grunt can use.
+	 * @param {Array} items - Component items we are searching for.
+	 * @param {Array} initial - Any component we want to include explicitly.
+	 * @returns {Array} - Array of all components we extracted from the vendor Object and explicitly included components.
+	 */
+	function getVendorItems (items, initial) {
+		var vendors = getVendors();
+		if (initial === undefined) initial = [];
+		return initial.concat(Object.keys(vendors).reduce(function (accumulator, vendor)  {
+			return accumulator.concat(Object.keys(vendors[vendor]).filter(function (key) {
+				return items.some(function (item) { return key.indexOf(item) > -1; });
+	        }).map(function (key) { return '<%= vendor.' + vendor + '.' + key + ' %>'; }));
+	    }, []));
+	}
 
-	grunt.loadNpmTasks('main-bower-files');
+	// Read the dependencies in package.json and load Grunt tasks that match the "grunt-*".
 	require('load-grunt-tasks')(grunt);
+	
+	// Load this Grunt task individually since it doesn't match the "grunt-*" pattern.
+	grunt.loadNpmTasks('main-bower-files');
 
 	grunt.initConfig({
     	'pkg': grunt.file.readJSON('package.json'),
@@ -178,7 +186,7 @@ module.exports = function (grunt) {
 		},
 
 		'open': {
-			'all': {
+			'server': {
 				'path': 'http://localhost:<%= express.options.port %>'
 			},
 			'coverage': {
@@ -190,8 +198,36 @@ module.exports = function (grunt) {
 		},
 
 		'karma': {
-			'dev': {
+			'options': {
 				'configFile': 'karma.conf.js',
+			},
+			'dev': {
+				'options': {
+					'reporters': ['progress'],
+					'files': [
+			            '<%= meta.bowerComponents %>',
+			            '<%= meta.staticComponents %>',
+			            '<%= meta.compiledHtml %>',
+			            '<%= meta.source %>',
+			            '<%= meta.mocks %>',
+			            '<%= meta.vendorComponents %>',
+			            '<%= meta.tests %>'
+					],
+				}
+			},
+			'dist': {
+				'options': {
+					'reporters': ['progress'],					
+					'files': [
+			            '<%= meta.bowerComponents %>',
+			            '<%= meta.staticComponents %>',
+			            '<%= meta.dist_destination %>/<%= pkg.namelower %>.min.js',
+			            '<%= meta.mocks %>',
+			            '<%= meta.tests %>'
+					],
+				}
+			},
+			'coverage': {
 				'options': {
 					'reporters': ['progress', 'coverage'],
 					'preprocessors': {
@@ -213,19 +249,6 @@ module.exports = function (grunt) {
 			            '<%= meta.tests %>'
 					],
 				}
-			},
-			'dist': {
-				'options': {
-					'reporters': ['progress'],
-					'configFile': 'karma.conf.js',
-					'files': [
-			            '<%= meta.bowerComponents %>',
-			            '<%= meta.staticComponents %>',
-			            '<%= meta.dist_destination %>/<%= pkg.namelower %>.min.js',
-			            '<%= meta.mocks %>',
-			            '<%= meta.tests %>'
-					],
-				}
 			}
 		},
 
@@ -239,15 +262,15 @@ module.exports = function (grunt) {
 				'gruntfile': 'Gruntfile.js'
 			},
 			'dist': {
+				'options': {
+					'esnext': true
+				},
 				'src': ['<%= meta.source %>', '<%= meta.vendorComponents %>']
 			}
 		},
 
 		'csslint': {
 			'dist': {
-				'options': {
-					'import': 2
-				},
 				'src': '<%= meta.stylesheets %>'
 			},
 			'dev': {
@@ -326,8 +349,10 @@ module.exports = function (grunt) {
 		}
 		
 	});
+	
+	grunt.registerTask('default', ['develop']);
 
-	grunt.registerTask('develop', [
+	grunt.registerTask('develop', 'Lints and tests JavaScript files, processes HTML and finally starts HTTP server which autoreloads on file changes.', [
 	    'jshint:dev',
 	    'csslint:dev',
 	    'clean:dev',
@@ -340,15 +365,17 @@ module.exports = function (grunt) {
 	    'processhtml:dev',
 	    'wiredep:dev',
 	    'express:dev',
-	    'open',
+	    'open:server',
 	    'watch'
 	]);
 
-	grunt.registerTask('test', ['jshint', 'karma:dev']);
+	grunt.registerTask('test', 'Lints and tests JavaScript files.', ['jshint', 'karma:dev']);
+	
+	grunt.registerTask('coverage', 'Generates and opens test coverage.', ['karma:coverage', 'open:coverage'])
 
-	grunt.registerTask('dist', [
+	grunt.registerTask('dist', 'Generates tested and linted minified JavaScript and CSS files with HTML templates included in JavaScript.', [
 	    'jshint:dist',
-	    'csslint:dev',
+	    'csslint:dist',
 	    'clean:dist',
 	    'bower-install-simple:dist',
 	    'bower:dist',
@@ -364,9 +391,9 @@ module.exports = function (grunt) {
 
 	grunt.registerTask('build', ['dist']);
 
-	grunt.registerTask('server', [
+	grunt.registerTask('server', 'Launches HTTP server with distribution files as source.', [
 	    'express:dist',
-	    'open',
+	    'open:server',
 	    'express-keepalive'
 	]);
 

@@ -1,3 +1,19 @@
+/**
+ * General use of ParlayNotification.
+ *
+ * ParlayNotification.show({content: "Text you want to display."});
+ *
+ * With action button.
+ *
+ * ParlayNotification.show({
+ *      content: "Text you want to display.",
+ *	    action: {
+ *		    text: "Text that the action button displays.",
+ *		    callback: "Function to invoke when Toast action is clicked."
+ *	    }
+ *  });
+ */
+
 function RunNotification($notification) {
     // Request permissions as soon as possible.
     $notification.requestPermission();
@@ -72,13 +88,22 @@ function ParlayNotificationFactory($mdToast, $q, $notification, $timeout, Notifi
 	    /**
 		 * Creates Toast and if the browser window is currently hidden a HTML5 Notification.
 		 * @param {Object} configuration - Notification configuration object.
+		 *
+		 * {
+		 *      content: "Text you want to display."
+		 *	    action: {
+		 *		    text: "Text that the action button displays.",
+		 *		    callback: "Function to invoke when Toast action is clicked."
+		 *	    }
+		 *  }
+		 *
 		 */
 		show: function (configuration) {	    
 		    prepToast(configuration);
 		    
 		    if (document.hidden) prepBrowserNotification(configuration);        
 	    },
-	    showProgress: function (configuration) {
+	    showProgress: function () {
 	        $mdToast.show({
 	            template: '<md-toast><md-progress-linear flex class="notification-progress" md-mode="indeterminate"></md-progress-linear></md-toast>',
 	            hideDelay: false

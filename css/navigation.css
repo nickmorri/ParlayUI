@@ -38,8 +38,9 @@
 	min-height: 30px;
 }
 
-.parlay-python-console-log-filter {
-	padding-bottom: 0;
+.parlay-python-console-log-filter-input-container {
+	margin-bottom: 5px;
+    margin-top: 10px;
 }
 
 .parlay-console-list {

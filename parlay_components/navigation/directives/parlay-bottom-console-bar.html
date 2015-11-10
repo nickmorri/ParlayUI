@@ -12,7 +12,7 @@
 	</md-toolbar>
 
 	<div layout="row" ng-hide="ctrl.console_hidden">
-		<md-input-container flex class="parlay-python-console-log-filter" ng-show="ctrl.console_filtering">
+		<md-input-container flex class="parlay-python-console-log-filter-input-container" ng-if="ctrl.console_filtering">
 		    <label>Filter log</label>
 			<input ng-model="ctrl.console_filter">
 		</md-input-container>
@@ -20,12 +20,8 @@
 
 	<md-list class="parlay-console-list" scroll-glue flex>
 		<md-list-item class="md-2-line parlay-console-list-item" ng-repeat="message in ctrl.getConsoleLog() | filter: {statement: ctrl.console_filter}">
-			<md-icon ng-switch="message.user">
-				<ng-md-icon ng-switch-when="true" icon="label"></ng-md-icon>
-				<ng-md-icon ng-switch-when="false" icon="label_outline"></ng-md-icon>
-			</md-icon>
 			<div class="md-list-item-text parlay-console-list-item-text">
-				<h3>{{message.statement}}</h3>
+				<p><span ng-if="message.user">>>> </span>{{message.statement}}</p>
 				<p am-time-ago="message.timeStamp"></p>
 			</div>				
 		</md-list-item>

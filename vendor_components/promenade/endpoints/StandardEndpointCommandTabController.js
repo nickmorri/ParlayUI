@@ -94,10 +94,10 @@ function buildPythonCommand(endpoint_id, message) {
  * @constructor
  * @param {AngularJS $scope} $scope - A AngularJS $scope Object.
  * @param {AngularJS Service} $timeout - AngularJS timeout service.
- * @param {Parlay Service} ScriptLogger - Parlay ScriptLogger Service.
+ * @param {Parlay Service} ParlayScriptLogger - ParlayScriptLogger Service.
  * @param {Parlay Service} ParlayUtility - Parlay Utlity Service.
  */
-function PromenadeStandardEndpointCardCommandTabController($scope, $timeout, $mdToast, ScriptLogger, ParlayUtility) {
+function PromenadeStandardEndpointCardCommandTabController($scope, $timeout, $mdToast, ParlayScriptLogger, ParlayUtility) {
 	ParlayBaseTabController.call(this, $scope, "promenadeStandardEndpointCardCommands");
 	
 	// Due to the way JavaScript prototypical inheritance works and AngularJS scoping we want to enclose the message Object within another object.
@@ -149,7 +149,7 @@ function PromenadeStandardEndpointCardCommandTabController($scope, $timeout, $md
 		    }.bind(this));
 		    
 		    // Put the Python equivalent command in the log.
-	        ScriptLogger.logCommand(buildPythonCommand(this.endpoint.id, message));
+	        ParlayScriptLogger.logCommand(buildPythonCommand(this.endpoint.id, message));
 
 	    }
 	    catch (e) {
@@ -282,6 +282,6 @@ function PromenadeStandardEndpointCardCommandContainer(RecursionHelper, ParlayPe
 }
 
 angular.module('promenade.endpoints.standardendpoint.commands', ['RecursionHelper', 'parlay.store', 'parlay.navigation.bottombar', 'parlay.utility'])
-	.controller('PromenadeStandardEndpointCardCommandTabController', ['$scope', '$timeout', '$mdToast', 'ScriptLogger', 'ParlayUtility', PromenadeStandardEndpointCardCommandTabController])
+	.controller('PromenadeStandardEndpointCardCommandTabController', ['$scope', '$timeout', '$mdToast', 'ParlayScriptLogger', 'ParlayUtility', PromenadeStandardEndpointCardCommandTabController])
 	.directive("promenadeStandardEndpointCardCommands", PromenadeStandardEndpointCardCommands)
 	.directive("promenadeStandardEndpointCardCommandContainer", ['RecursionHelper', 'ParlayPersistence', 'ParlayUtility', PromenadeStandardEndpointCardCommandContainer]);

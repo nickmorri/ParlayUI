@@ -1,93 +1,100 @@
-function ScriptLogger() {
-    return {
-        logCommand :  function(s) {
-	        alert('UNDEFINED');
-	    },
-        logResponse: function(s) {
-	        alert('UNDEFINED');
-	    }
-    };
-}
-
-function ParlayConsoleBarController($scope, $timeout, PromenadeBroker, ScriptLogger) {
-
-    var console_hidden = true;
-    var console_log = [];
-    var console_filtering = false;
-    
-    $scope.console_command = undefined;
-    $scope.console_icon = 'unfold_more';
-    $scope.received_message_status_icon = 'radio_button_off';
-
-    $scope.console_filter = undefined;
-    
-    $scope.toggleConsole = function() {
-		console_hidden = !console_hidden;
-		$scope.console_icon = console_hidden ? 'unfold_more' : 'unfold_less';
-    };
-    
-    $scope.isConsoleHidden = function () {
-	    return console_hidden;
-    };
-    
-    // Call this to add strings to the log
-    $scope.consoleAddToLog = function (statement, user) {
-	    console_log.push({
+function ParlayScriptLoggerFactory() {
+	
+	function ParlayScriptLogger() {
+		this.log = [];
+	}
+	
+	ParlayScriptLogger.prototype.logCommand = function (statement, user) {
+		this.log.push({
 		    timeStamp: Date.now(),
 		    statement: statement,
 		    user: user
 		});
 	};
 	
-	$scope.getConsoleLog = function () {
-	    return console_log;
+	ParlayScriptLogger.prototype.getLog = function () {
+		return this.log;
+	};
+	
+	ParlayScriptLogger.prototype.hasLog = function() {
+		return this.getLog().length > 0;
+	};
+	
+	ParlayScriptLogger.prototype.clearLog = function () {
+		this.log = [];
+	};
+	
+	return new ParlayScriptLogger();
+}
+
+function ParlayConsoleBarController($scope, $timeout, PromenadeBroker, ParlayScriptLogger) {
+
+    this.console_hidden = true;
+    this.console_filtering = false;
+    
+    this.console_command = undefined;
+    this.console_icon = "unfold_more";
+    this.received_message_status_icon = "radio_button_off";
+
+    this.console_filter = undefined;
+    
+    this.toggleConsole = function() {
+		this.console_hidden = !this.console_hidden;
     };
     
-    $scope.hasConsoleLog = function () {
-	    return $scope.getConsoleLog().length > 0;
+    this.consoleAddToLog = function (statement, user) {
+	    ParlayScriptLogger.logCommand(statement, user);
+	};
+	
+	this.getConsoleLog = function () {
+	    return ParlayScriptLogger.getLog();
+    };
+    
+    this.hasConsoleLog = function () {
+	    return ParlayScriptLogger.hasLog();
     };
 
-	$scope.clearConsoleLog = function (event) {
-		console_log = [];
+	this.clearConsoleLog = function (event) {
+		ParlayScriptLogger.clearLog();
     };
 
-    $scope.consoleSendCommand = function() {
-        $scope.consoleAddToLog($scope.console_command, true);
-        PromenadeBroker.sendRequest('eval_statement', {'statement': $scope.console_command}).then(function (contents) {
-	        $scope.received_message_status_icon = 'radio_button_on';
-			$timeout(function () {
-				$scope.received_message_status_icon = 'radio_button_off';
-			}, 250);
-            $scope.consoleAddToLog(contents.result, false);
-        });
-        // Clear out the command input
-        $scope.console_command = undefined;
+    this.consoleSendCommand = function() {
+	    ParlayScriptLogger.logCommand(this.console_command, true);
+        
+        PromenadeBroker.sendMessage({request: "eval_statement"}, {"statement": this.console_command}, {response: "eval_statement_response"}).then(function (contents) {
+	        this.blinkMessageIcon();
+			
+			ParlayScriptLogger.logCommand(contents.result, false);
+        }.bind(this));
+        
+        this.console_command = undefined;
     };
     
-    
-    
-    $scope.toggleConsoleLogFilter = function () {
-	    console_filtering = !console_filtering;
-	    if (!console_filtering) $scope.console_filter = undefined;
+    this.blinkMessageIcon = function () {
+	    this.received_message_status_icon = "radio_button_on";
+	        
+		$timeout(function () {
+			this.received_message_status_icon = "radio_button_off";
+		}.bind(this), 500);
     };
     
-    $scope.hasConsoleLogFilter = function () {
-	    return console_filtering;
+    this.toggleConsoleLogFilter = function () {
+	    this.console_filtering = !this.console_filtering;
+	    if (!this.console_filtering) this.console_filter = undefined;
     };
-
-    // Set up the ScriptLogger for other controllers to use.
-    ScriptLogger.logCommand = $scope.consoleAddToLog;
-    ScriptLogger.logResponse = $scope.consoleAddresponseToLog;
+    
 }
 
 function ParlayBottomConsoleBar() {
     return {
-        templateUrl: '../parlay_components/navigation/directives/parlay-bottom-console-bar.html',
-        controller: 'ParlayConsoleBarController'
+	    scope: {},
+        templateUrl: "../parlay_components/navigation/directives/parlay-bottom-console-bar.html",
+        controller: "ParlayConsoleBarController",
+        controllerAs: "ctrl"
     };
 }
 
-angular.module('parlay.navigation.bottombar', ['ngMaterial', 'ngMdIcons', 'promenade.broker', 'templates-main', 'angularMoment', 'luegg.directives'])
-	.factory('ScriptLogger', ScriptLogger)
-	.controller('ParlayConsoleBarController', ['$scope', '$timeout', 'PromenadeBroker', 'ScriptLogger', ParlayConsoleBarController])
-	.directive('parlayBottomConsoleBar', ParlayBottomConsoleBar);
+angular.module("parlay.navigation.bottombar", ["ngMaterial", "ngMdIcons", "promenade.broker", "templates-main", "angularMoment", "luegg.directives"])
+	.factory("ParlayScriptLogger", ParlayScriptLoggerFactory)
+	.controller("ParlayConsoleBarController", ["$scope", "$timeout", "PromenadeBroker", "ParlayScriptLogger", ParlayConsoleBarController])
+	.directive("parlayBottomConsoleBar", ParlayBottomConsoleBar);

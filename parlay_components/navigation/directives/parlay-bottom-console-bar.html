@@ -1,49 +1,43 @@
-<div layout="column" layout-align="space-between" class="console_transform" ng-class="isConsoleHidden() ? 'console_hidden' : 'console_expanded'">
+<div layout="column" class="console_transform" ng-class="ctrl.console_hidden ? 'console_hidden' : 'console_expanded'">
 	
-	<md-toolbar ng-click="toggleConsole()" class="parlay-bottom-bar">
+	<md-toolbar ng-click="ctrl.toggleConsole()" class="parlay-bottom-bar">
     	<div class="md-toolbar-tools">
 	    	<h2>
-		    	<md-icon class="white"><ng-md-icon icon="{{received_message_status_icon}}"></ng-md-icon></md-icon>
+		    	<md-icon class="white"><ng-md-icon icon="{{ctrl.received_message_status_icon}}"></ng-md-icon></md-icon>
 		    	Console
 		    </h2>
 			<span flex></span>
-			<md-button class="md-icon-button" aria-label="Toggle console"><md-icon><ng-md-icon class="white" icon="{{console_icon}}"></ng-md-icon></md-icon></md-button>
+			<md-button class="md-icon-button" aria-label="Toggle console"><md-icon><ng-md-icon class="white" icon="{{ctrl.console_hidden ? 'unfold_more' : 'unfold_less'}}"></ng-md-icon></md-icon></md-button>
 		</div>
 	</md-toolbar>
 
-	<div layout="row" ng-hide="isConsoleHidden()">
-		<md-input-container flex class="parlay-python-console-log-filter" ng-show="hasConsoleLogFilter()">
+	<div layout="row" ng-hide="ctrl.console_hidden">
+		<md-input-container flex class="parlay-python-console-log-filter" ng-show="ctrl.console_filtering">
 		    <label>Filter log</label>
-			<input ng-model="console_filter">
+			<input ng-model="ctrl.console_filter">
 		</md-input-container>
 	</div>
 
-	<md-content scroll-glue ng-hide="isConsoleHidden()">
+	<md-list class="parlay-console-list" scroll-glue flex>
+		<md-list-item class="md-2-line parlay-console-list-item" ng-repeat="message in ctrl.getConsoleLog() | filter: {statement: ctrl.console_filter}">
+			<md-icon ng-switch="message.user">
+				<ng-md-icon ng-switch-when="true" icon="label"></ng-md-icon>
+				<ng-md-icon ng-switch-when="false" icon="label_outline"></ng-md-icon>
+			</md-icon>
+			<div class="md-list-item-text parlay-console-list-item-text">
+				<h3>{{message.statement}}</h3>
+				<p am-time-ago="message.timeStamp"></p>
+			</div>				
+		</md-list-item>
+	</md-list>
 	
-		<md-list class="parlay-console-list">
-			<md-list-item class="md-2-line parlay-console-list-item" ng-repeat="message in getConsoleLog() | filter: {statement: console_filter}">
-				<md-icon ng-switch="message.user">
-					<ng-md-icon ng-switch-when="true" icon="label"></ng-md-icon>
-					<ng-md-icon ng-switch-when="false" icon="label_outline"></ng-md-icon>
-				</md-icon>
-				<div class="md-list-item-text parlay-console-list-item-text">
-					<h3>{{message.statement}}</h3>
-					<p am-time-ago="message.timeStamp"></p>
-				</div>				
-			</md-list-item>
-		</md-list>
-		
-	</md-content>
-	
-	<span flex></span>
-	
-	<div layout="row" class="md-whiteframe-z5" ng-hide="isConsoleHidden()">
+	<div layout="row" class="md-whiteframe-z5" ng-hide="ctrl.console_hidden">
 		<md-input-container flex class="parlay-python-statement-input-container">
-		    <label class="parlay-python-statement-label">Python Statement</label>
-			<input ng-model="console_command" ng-keyup="$event.keyCode == 13 && consoleSendCommand()">
+		    <label>Python Statement</label>
+			<input ng-model="ctrl.console_command" ng-keyup="$event.keyCode == 13 && ctrl.consoleSendCommand()">
 		</md-input-container>
-		<md-button class="md-icon-button" ng-click="toggleConsoleLogFilter()" aria-label="Toggle console filter"><md-icon><ng-md-icon icon="filter_list"></ng-md-icon></md-icon></md-button>
-		<md-button class="md-icon-button md-warn" ng-click="clearConsoleLog()" ng-disabled="!hasConsoleLog()" aria-label="Clear console log"><md-icon><ng-md-icon icon="delete"></ng-md-icon></md-icon></md-button>
+		<md-button class="md-icon-button" ng-click="ctrl.toggleConsoleLogFilter()" aria-label="Toggle console filter"><md-icon><ng-md-icon icon="filter_list"></ng-md-icon></md-icon></md-button>
+		<md-button class="md-icon-button md-warn" ng-click="ctrl.clearConsoleLog()" ng-disabled="!ctrl.hasConsoleLog()" aria-label="Clear console log"><md-icon><ng-md-icon icon="delete"></ng-md-icon></md-icon></md-button>
 	</div>
 	
 </div>

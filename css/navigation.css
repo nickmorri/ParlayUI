@@ -15,7 +15,8 @@
 }
 
 .parlay-python-statement-input-container {
-	padding-bottom: 0;
+	margin-bottom: 5px;
+    margin-top: 10px;
 }
 
 .parlay-console-list-item {
@@ -41,12 +42,8 @@
 	padding-bottom: 0;
 }
 
-.parlay-python-statement-label {
-	top: -12px;	
-}
-
 .parlay-console-list {
-	padding-top: 10px;
+	overflow-y: scroll;
 }
 
 .parlay-console-list-item-text {

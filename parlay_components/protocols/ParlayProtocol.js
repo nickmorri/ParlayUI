@@ -118,7 +118,9 @@ function ParlayProtocolFactory(ParlaySocket, ParlayEndpoint, $q) {
 	 */
     ParlayProtocol.prototype.onClose = function () {
 	    for (var listener in this.listeners) {
-		    this.listeners[listener]();
+            if (this.listeners.hasOwnProperty(listener)) {
+                this.listeners[listener]();
+            }
 	    }
 	    
 	    this.listeners = {};

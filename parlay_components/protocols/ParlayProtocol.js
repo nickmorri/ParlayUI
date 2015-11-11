@@ -88,7 +88,7 @@ function ParlayProtocolFactory(ParlaySocket, ParlayEndpoint, $q) {
 	 * Sends message through ParlaySocket.
 	 * @param {Object} topics - Map of key/value pairs.
 	 * @param {Object} contents - Map of key/value pairs.
-	 * @param {Object} response_contents - Map of key/value pairs.
+	 * @param {Object} response_topics - Map of key/value pairs.
 	 * @param {Boolean} verbose - If true we should invoke callback with full message. If false or undefined invoke with only contents for simplicity.
 	 * @returns {$q.defer.Promise} - Resolved if ParlaySocket receives a response, rejected if an error occurs during send.
 	 */

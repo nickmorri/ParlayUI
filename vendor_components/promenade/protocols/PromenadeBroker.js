@@ -62,9 +62,8 @@ function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification) {
 	        
 	        ParlayNotification.show({content: "Connected to Parlay Broker!"});
 	        
-	        // Wait for Broker's discovery request.
-	        this.onMessage({command: "get_discovery"}, function(response) {
-		        // Respond with a empty discovery message.
+	        // Wait for Broker's discovery request and respond with a empty discovery message.
+	        this.onMessage({command: "get_discovery"}, function() {
 		        this.sendMessage({response: "get_discovery_response"}, {discovery: []});
 	        });
 	        

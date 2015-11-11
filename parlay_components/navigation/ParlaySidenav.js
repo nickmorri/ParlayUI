@@ -8,25 +8,41 @@ function ParlaySidenav() {
 }
 
 function ParlaySidenavController($mdSidenav, $state) {
-	
+    "use strict";
+
+	/**
+	 * Closes $mdSidenav
+	 */
 	this.closeSidenav = function() {
 		$mdSidenav("navigation").close();
 	};
-	
-	this.navigateToState = function(state_name) {
-		$state.go(state_name);
+
+	/**
+	 * Sets current state to the given state and closes the sidenav.
+	 * @param {Object} state - Object that holds the state details.
+     */
+	this.navigateToState = function(state) {
+		$state.go(state.name);
 		this.closeSidenav();
 	};
-	
-	this.states = $state.get().filter(function(state) {
-		return !state.abstract;
-	}).map(function(state) {
-		return {
-			name: state.name,
-			display: state.data.display,
-			icon: state.data.icon
-		};
-	});
+
+    /**
+     * Gets available states from UI-Router $state service.
+     * @returns {Array} - Array of Objects that hold state details.
+     */
+	this.getStates = function() {
+		return $state.get().filter(function(state) {
+			return !state.abstract;
+		}).map(function(state) {
+			return {
+				name: state.name,
+				display: state.data.display,
+				icon: state.data.icon
+			};
+		});
+	};
+
+	this.states = this.getStates();
 	
 }
 

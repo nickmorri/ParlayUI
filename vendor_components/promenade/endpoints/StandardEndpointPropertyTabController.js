@@ -37,9 +37,7 @@ PromenadeStandardEndpointCardPropertyTabController.prototype.setAllProperties = 
  */
 PromenadeStandardEndpointCardPropertyTabController.prototype.getProperty = function (property) {
 	this.waiting = true;
-	this.endpoint.getProperty(property).then(function (response) {
-		this.waiting = false;		
-	}.bind(this));
+	this.endpoint.getProperty(property).then(function () { this.waiting = false; }.bind(this));
 };
 
 /**
@@ -48,9 +46,7 @@ PromenadeStandardEndpointCardPropertyTabController.prototype.getProperty = funct
  */
 PromenadeStandardEndpointCardPropertyTabController.prototype.setProperty = function (property) {
 	this.waiting = true;
-	this.endpoint.setProperty(property).then(function (response) {
-		this.waiting = false;
-	}.bind(this));
+	this.endpoint.setProperty(property).then(function () { this.waiting = false; }.bind(this));
 };
 
 /**

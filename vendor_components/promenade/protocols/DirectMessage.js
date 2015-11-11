@@ -39,7 +39,7 @@ function PromenadeDirectMessageProtocolFactory(ParlayProtocol, PromenadeStandard
     
     /**
 	 * Constructs message topics from the partially built given message.
-	 * @param {Object} message - partially constructed message.
+	 * @param {Object} topics - partially constructed message.
 	 * @returns {Object} - partially constructed message with topics.
 	 */
     PromenadeDirectMessageProtocol.prototype.buildMessageTopics = function (topics) {
@@ -51,8 +51,8 @@ function PromenadeDirectMessageProtocolFactory(ParlayProtocol, PromenadeStandard
     
     /**
 	 * Constructs response topics from the partially built given message.
-	 * @param {Object} message - partially constructed message, includes topics.
-	 * @returns {Object} - partially construtcted message with response topics.
+	 * @param {Object} topics - partially constructed message, includes topics.
+	 * @returns {Object} - partially constructed message with response topics.
 	 */
     PromenadeDirectMessageProtocol.prototype.buildResponseTopics = function (topics) {
         return {

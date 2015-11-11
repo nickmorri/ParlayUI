@@ -1,6 +1,3 @@
-	
-	// Reference to previously instantiated PromenadeBroker.
-	var broker_instance;
 function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification) {
 	"use strict";
 	
@@ -192,13 +189,8 @@ function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification) {
 	PromenadeBroker.prototype.onDiscovery = function (callbackFunc) {
 	    return this.onMessage({"response": "get_discovery_response"}, callbackFunc);
 	};
-	
-	// If we don't have an instance of PromenadeBroker instantiated create it and 
-	if (!broker_instance) {
-		broker_instance = new PromenadeBroker();
-	}
-	
-	return broker_instance;
+
+	return new PromenadeBroker();
 }
 
 angular.module("promenade.broker", ["parlay.socket", "parlay.notification", "ngMaterial"])

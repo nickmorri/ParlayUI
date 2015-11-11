@@ -1,12 +1,12 @@
 function PromenadeDirectMessageProtocolFactory(ParlayProtocol, PromenadeStandardEndpoint, $q) {
-    
+    "use strict";
+
     /**
 	 * PromenadeDirectMessageProtocol constructor.
 	 * Prototypically inherits from ParlayProtocol.
 	 * @constructor
 	 */
     function PromenadeDirectMessageProtocol(configuration) {
-        "use strict";
         // Call the constructor of the prototype we inherit from.
         ParlayProtocol.call(this, configuration);
         

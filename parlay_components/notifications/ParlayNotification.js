@@ -19,17 +19,16 @@ function RunNotification($notification) {
     $notification.requestPermission();
 }
 
-function ParlayNotificationFactory($mdToast, $q, $notification, $timeout, NotificationDisplayDuration) {
-	
-	var instance;
-	
+function ParlayNotificationFactory($mdToast, $notification, NotificationDisplayDuration) {
+	"use strict";
+
 	var toast_active = false;
 	
 	var pending_toasts = [];
 	var active_browser_notifications = [];
 	
 	// Clear browser notifications if visibility of the document changes.
-    document.addEventListener('visibilitychange', function clearNotifications() {
+    document.addEventListener("visibilitychange", function clearNotifications() {
         active_browser_notifications.forEach(function (notification) {
             notification.close();
         });
@@ -46,8 +45,8 @@ function ParlayNotificationFactory($mdToast, $q, $notification, $timeout, Notifi
             // If there are pending toasts remaining display the next toast.
             if (pending_toasts.length) displayToast();
 	        toast_active = false;
-            // Result will be resolved with 'ok' if the action is performed and true if the $mdToast has hidden.
-            if (result === 'ok' && next_toast.callback) next_toast.callback();            
+            // Result will be resolved with "ok" if the action is performed and true if the $mdToast has hidden.
+            if (result === "ok" && next_toast.callback) next_toast.callback();
         });
     }
     
@@ -105,17 +104,14 @@ function ParlayNotificationFactory($mdToast, $q, $notification, $timeout, Notifi
 	    },
 	    showProgress: function () {
 	        $mdToast.show({
-	            template: '<md-toast><md-progress-linear flex class="notification-progress" md-mode="indeterminate"></md-progress-linear></md-toast>',
+	            template: "<md-toast><md-progress-linear flex class='notification-progress' md-mode='indeterminate'></md-progress-linear></md-toast>",
 	            hideDelay: false
 	        });
-	    },
-	    hideProgress: function () {
-	        $mdToast.hide();
-		}
+	    }
     };
 }
 
-angular.module('parlay.notification', ['ngMaterial', 'notification', 'templates-main'])
-	.run(['$notification', RunNotification])
+angular.module("parlay.notification", ["ngMaterial", "notification", "templates-main"])
+	.run(["$notification", RunNotification])
 	.value("NotificationDisplayDuration", 4000)
-	.factory('ParlayNotification', ['$mdToast', '$q', '$notification', '$timeout', "NotificationDisplayDuration", ParlayNotificationFactory]);
+	.factory("ParlayNotification", ["$mdToast", "$notification", "NotificationDisplayDuration", ParlayNotificationFactory]);

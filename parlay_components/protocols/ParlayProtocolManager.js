@@ -200,7 +200,7 @@ function ParlayProtocolManagerFactory($injector, $q, PromenadeBroker, parlayStor
          * @param {Object} saved_configurations - Container of saved protocols configurations.
          */
         function setSavedProtocols (saved_configurations) {
-            if (saved === undefined) return;
+            if (saved_configurations === undefined) return;
 
             // Only show saved configurations that are currently available but not connected.
             saved_protocols = Object.keys(saved_configurations)

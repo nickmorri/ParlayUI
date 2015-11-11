@@ -49,7 +49,7 @@ function ParlayConnectionListController($scope, $mdDialog, $mdMedia, ParlayProto
 	
 	this.openSavedProtocol = function (configuration) {
 		this.connecting = true;
-	    ParlayProtocolManager.openProtocol(configuration).finally(function (response) {
+	    ParlayProtocolManager.openProtocol(configuration).finally(function () {
 		    this.connecting = false;
 	    }.bind(this));
     };
@@ -94,11 +94,11 @@ function ParlayConnectionListController($scope, $mdDialog, $mdMedia, ParlayProto
      */
     /* istanbul ignore next */
     this.openConfiguration = function (event) {
-        // Show a configuraton dialog allowing us to setup a protocol configuration.
+        // Show a configuration dialog allowing us to setup a protocol configuration.
         $mdDialog.show({
             targetEvent: event,
             clickOutsideToClose: true,
-            onComplete: function (scope, element, options) { element.find("input").focus(); },
+            onComplete: function (scope, element) { element.find("input").focus(); },
             controller: "ParlayProtocolConfigurationController",
             controllerAs: "ctrl",
             bindToController: true,

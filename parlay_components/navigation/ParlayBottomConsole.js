@@ -27,13 +27,12 @@ function ParlayScriptLoggerFactory() {
 	return new ParlayScriptLogger();
 }
 
-function ParlayConsoleBarController($scope, $timeout, PromenadeBroker, ParlayScriptLogger) {
+function ParlayConsoleBarController($timeout, PromenadeBroker, ParlayScriptLogger) {
 
     this.console_hidden = true;
     this.console_filtering = false;
     
     this.console_command = undefined;
-    this.console_icon = "unfold_more";
     this.received_message_status_icon = "radio_button_off";
 
     this.console_filter = undefined;
@@ -41,10 +40,6 @@ function ParlayConsoleBarController($scope, $timeout, PromenadeBroker, ParlayScr
     this.toggleConsole = function() {
 		this.console_hidden = !this.console_hidden;
     };
-    
-    this.consoleAddToLog = function (statement, user) {
-	    ParlayScriptLogger.logCommand(statement, user);
-	};
 	
 	this.getConsoleLog = function () {
 	    return ParlayScriptLogger.getLog();
@@ -54,7 +49,7 @@ function ParlayConsoleBarController($scope, $timeout, PromenadeBroker, ParlayScr
 	    return ParlayScriptLogger.hasLog();
     };
 
-	this.clearConsoleLog = function (event) {
+	this.clearConsoleLog = function () {
 		ParlayScriptLogger.clearLog();
     };
 
@@ -96,5 +91,5 @@ function ParlayBottomConsoleBar() {
 
 angular.module("parlay.navigation.bottombar", ["ngMaterial", "ngMdIcons", "promenade.broker", "templates-main", "angularMoment", "luegg.directives"])
 	.factory("ParlayScriptLogger", ParlayScriptLoggerFactory)
-	.controller("ParlayConsoleBarController", ["$scope", "$timeout", "PromenadeBroker", "ParlayScriptLogger", ParlayConsoleBarController])
+	.controller("ParlayConsoleBarController", ["$timeout", "PromenadeBroker", "ParlayScriptLogger", ParlayConsoleBarController])
 	.directive("parlayBottomConsoleBar", ParlayBottomConsoleBar);

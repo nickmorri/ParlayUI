@@ -1,15 +1,19 @@
-function ParlayProtocolConnectionDetailController($scope, $mdDialog, protocol) {
-    $scope.getProtocolName = function () {
+function ParlayProtocolConnectionDetailController($mdDialog, protocol) {
+    "use strict";
+
+    this.getProtocolName = function () {
         return protocol.getName();
     };
     
-    $scope.getLog = function () {
+    this.getLog = function () {
         return protocol.getLog();
     };
     
-    $scope.hide = $mdDialog.hide;
-    
+    this.hide = function () {
+        $mdDialog.hide();
+    };
+
 }
 
-angular.module('parlay.protocols.detail_controller', ['ngMaterial', 'ngMessages', 'ngMdIcons', 'templates-main', 'luegg.directives'])
-	.controller('ParlayProtocolConnectionDetailController', ['$scope', '$mdDialog', 'protocol', ParlayProtocolConnectionDetailController]);
+angular.module("parlay.protocols.detail_controller", ["ngMaterial", "ngMessages", "ngMdIcons", "templates-main", "luegg.directives"])
+	.controller("ParlayProtocolConnectionDetailController", ["$mdDialog", "protocol", ParlayProtocolConnectionDetailController]);

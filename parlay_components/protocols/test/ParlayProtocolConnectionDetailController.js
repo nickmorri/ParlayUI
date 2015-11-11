@@ -7,21 +7,21 @@
 		beforeEach(module('mock.parlay.protocols.protocol'));
         
         describe('ParlayProtocolConnectionDetailController', function () {
-                var scope, ParlayProtocolConnectionDetailController;
+                var scope, ctrl;
                 
                 beforeEach(inject(function ($rootScope, $controller, ParlayProtocol) {
                     scope = $rootScope.$new();
-                    ParlayProtocolConnectionDetailController = $controller('ParlayProtocolConnectionDetailController', {$scope: scope, protocol: ParlayProtocol});
+                    ctrl = $controller('ParlayProtocolConnectionDetailController', {$scope: scope, protocol: ParlayProtocol});
                 }));
                 
                 describe('protocol interactions', function () {
                     
                     it('gets protocols name', function () {
-                        expect(scope.getProtocolName()).toBe('foo');
+                        expect(ctrl.getProtocolName()).toBe('foo');
                     });
                     
                     it('gets log', function () {
-                        expect(scope.getLog()).toEqual([]);
+                        expect(ctrl.getLog()).toEqual([]);
                     });
                     
                 });

@@ -81,6 +81,7 @@ function ParlayConnectionListController($scope, $mdDialog, $mdMedia, ParlayProto
             targetEvent: event,
             clickOutsideToClose: true,
             controller: "ParlayProtocolConnectionDetailController",
+            controllerAs: "ctrl",
             templateUrl: "../parlay_components/protocols/directives/parlay-protocol-connection-details.html",
             locals: {
                 protocol: protocol

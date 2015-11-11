@@ -20,7 +20,7 @@ function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification) {
 	        topics.type = "broker";
 	        response_topics.type = "broker";
 	        
-	        return $q(function (resolve, reject) { ParlaySocket.sendMessage(topics, contents, response_topics, resolve); });
+	        return $q(function (resolve) { ParlaySocket.sendMessage(topics, contents, response_topics, resolve); });
 	    };
 	    
 	    /**

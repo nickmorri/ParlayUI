@@ -116,16 +116,10 @@ function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification) {
 		        reject("Cannot discover while not connected to Broker.");
 	        });
 	    }
-	    
 	    else {
 	        ParlayNotification.showProgress();
 	        
-	        // Request open protocols before discovery so we know what we're discovering.
-	        return this.requestOpenProtocols().then(function(open_protocols) {
-	            return open_protocols;
-	        }).then(function (open_protocols) {
-		    	return this.sendMessage({request: "get_discovery"}, {"force": is_forced}, {response: "get_discovery_response"});
-		    }.bind(this)).then(function (contents) {	            
+            return this.sendMessage({request: "get_discovery"}, {"force": is_forced}, {response: "get_discovery_response"}).then(function (contents) {
 	            var content_string = "Discovered ";
 	            
 	            if (contents.discovery.length === 0) content_string += " Verify connections.";

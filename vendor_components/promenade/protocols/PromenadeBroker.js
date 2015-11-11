@@ -1,7 +1,7 @@
-function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification, $timeout) {
 	
 	// Reference to previously instantiated PromenadeBroker.
 	var broker_instance;
+function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification) {
 	"use strict";
 	
 	/**
@@ -202,4 +202,4 @@ function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification, $timeout) 
 }
 
 angular.module("promenade.broker", ["parlay.socket", "parlay.notification", "ngMaterial"])
-	.factory("PromenadeBroker", ["ParlaySocket", "$q", "ParlayNotification", "$timeout", PromenadeBrokerFactory]);
+	.factory("PromenadeBroker", ["ParlaySocket", "$q", "ParlayNotification", PromenadeBrokerFactory]);

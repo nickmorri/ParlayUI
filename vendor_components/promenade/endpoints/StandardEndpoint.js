@@ -244,7 +244,7 @@ function PromenadeStandardEndpointFactory(ParlayEndpoint) {
 			MSG_TYPE: "STREAM",
 			TO: "UI",
 			FROM: this.id
-		}).then(function (response) {
+		}).then(function () {
 			this.data_streams[stream.NAME].enabled = false;
 			if (this.data_streams[stream.NAME].listener) {
 				this.data_streams[stream.NAME].listener();

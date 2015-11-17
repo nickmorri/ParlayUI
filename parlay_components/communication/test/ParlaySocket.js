@@ -4,58 +4,477 @@
     describe('parlay.socket', function() {
     
         beforeEach(module('parlay.socket'));
-        
-        describe('ParlaySocket', function () {
-            var ParlaySocket;
-            
-            beforeEach(inject(function(_ParlaySocket_) {
-                ParlaySocket = _ParlaySocket_;
+
+        describe("CallbackContainer", function () {
+
+            var container;
+
+            beforeEach(inject(function (CallbackContainer) {
+                container = new CallbackContainer();
             }));
-            
-            describe('retrieve a ParlaySocket instance', function () {
-                
-                it('returns socket', function () {
-                    expect(ParlaySocket).not.toBeUndefined();
-                    expect(ParlaySocket).toEqual(ParlaySocket);
-                });
-                
+
+            it("starts empty", function () {
+                expect(container.size()).toBe(0);
+                expect(container.callbackCount()).toBe(0);
             });
-            
-        });
-        
-        describe('construction', function () {
-    	    var ParlaySocketService;
-    	    
-    	    it('throws exception on invalid configuration', inject(function (_ParlaySocketService_) {
-        	    expect(function () {
-            	    ParlaySocketService = _ParlaySocketService_(0);
-        	    }).toThrowError(TypeError);
-    	    }));
-    	    
-		});
-        
-    	describe('ParlaySocketService', function () {
-    		var ParlaySocketService;
-    
-    		beforeEach(inject(function(_ParlaySocketService_) {
-        		ParlaySocketService = _ParlaySocketService_({
-            		openTimeout: 1,
-                    closeTimeout: 1,
-                    messageInterval: 1
+
+            describe("adds topics callbacks", function () {
+
+                it("one topic", function () {
+                    container.add({key: 0}, function () {}, false, false);
+                    expect(container.size()).toBe(1);
                 });
-    		}));
-    		
-    		describe('initialization', function () {
-    
-    			it('is mock', function () {
-        			expect(ParlaySocketService.isMock()).toBeTruthy();
+
+                it("multiple callbacks to same topic", function () {
+                    container.add({key: 0}, function () {}, false, false);
+                    container.add({key: 0}, function () {}, false, false);
+                    container.add({key: 0}, function () {}, false, false);
+                    container.add({key: 0}, function () {}, false, false);
+                    container.add({key: 0}, function () {}, false, false);
+                    expect(container.callbackCount()).toBe(5);
+                    expect(container.size()).toBe(1);
                 });
-                
-                it('is open', function (done) {
-                    ParlaySocketService.onOpen(function () {
-                        expect(ParlaySocketService.isConnected()).toBeTruthy();
+
+                it("multiple callbacks to separate topics", function () {
+                    container.add({key: 0}, function () {}, false, false);
+                    container.add({key: 1}, function () {}, false, false);
+                    container.add({key: 2}, function () {}, false, false);
+                    container.add({key: 3}, function () {}, false, false);
+                    container.add({key: 4}, function () {}, false, false);
+                    expect(container.callbackCount()).toBe(5);
+                    expect(container.size()).toBe(5);
+                });
+
+            });
+
+            describe("removes topics callbacks", function () {
+
+                it("one topic callback", function () {
+                    var reference = function () {};
+                    container.add({key: 0}, reference, false, false);
+                    expect(container.size()).toBe(1);
+                    container.delete({key: 0}, reference);
+                    expect(container.size()).toBe(0);
+                });
+
+                it("multiple callbacks same topic", function () {
+                    var references = [];
+
+                    for (var i = 0; i < 5; i++) {
+                        references[i] = function () {};
+                        container.add({key: 0}, references[i], false, false);
+                    }
+
+                    expect(container.callbackCount()).toBe(5);
+                    expect(container.size()).toBe(1);
+
+                    references.forEach(function (reference) {
+                        container.delete({key: 0}, reference);
+                    });
+
+                    expect(container.callbackCount()).toBe(0);
+                    expect(container.size()).toBe(0);
+
+                });
+
+                it("multiple callbacks different topics", function () {
+                    var references = [];
+
+                    for (var i = 0; i < 5; i++) {
+                        references[i] = function () {};
+                        container.add({key: i}, references[i], false, false);
+                    }
+
+                    expect(container.callbackCount()).toBe(5);
+                    expect(container.size()).toBe(5);
+
+                    references.forEach(function (reference, index) {
+                        container.delete({key: index}, reference);
+                    });
+
+                    expect(container.callbackCount()).toBe(0);
+                    expect(container.size()).toBe(0);
+                });
+
+            });
+
+            describe("invokes temporary callbacks", function () {
+
+                it("one topic one callback", function (done) {
+                    container.add({key: 0}, function (contents) {
+                        expect(contents).toEqual({data: 100});
                         done();
-                    });                
+                    }, false, false);
+
+                    expect(container.size()).toBe(1);
+                    container.invoke({key: 0}, {data: 100});
+                });
+
+                it("one topic multiple callbacks", function () {
+
+                    var count = 0;
+
+                    function checkDone() {
+                        count++;
+                    }
+
+                    container.add({key: 0}, checkDone, false, false);
+                    container.add({key: 0}, checkDone, false, false);
+                    container.add({key: 0}, checkDone, false, false);
+
+                    expect(container.size()).toBe(1);
+                    expect(container.callbackCount()).toBe(3);
+                    container.invoke({key: 0}, {});
+
+                    expect(count).toBe(3);
+
+                    expect(container.size()).toBe(0);
+                    expect(container.callbackCount()).toBe(0);
+                });
+
+                it("multiple topics", function () {
+
+                    var value = 0;
+
+                    function checkDone(contents) {
+                        value += contents.value;
+                    }
+
+                    container.add({key: 0}, checkDone, false, false);
+                    container.add({key: 1}, checkDone, false, false);
+                    container.add({key: 2}, checkDone, false, false);
+
+                    expect(container.size()).toBe(3);
+                    expect(container.callbackCount()).toBe(3);
+
+                    container.invoke({key: 0}, {value: 10});
+
+                    expect(value).toBe(10);
+
+                    expect(container.size()).toBe(2);
+                    expect(container.callbackCount()).toBe(2);
+
+                    container.invoke({key: 1}, {value: 10});
+
+                    expect(value).toBe(20);
+
+                    expect(container.size()).toBe(1);
+                    expect(container.callbackCount()).toBe(1);
+
+                    container.invoke({key: 2}, {value: 10});
+
+                    expect(value).toBe(30);
+
+                    expect(container.size()).toBe(0);
+                    expect(container.callbackCount()).toBe(0);
+
+                });
+
+                it("overlapping topics", function () {
+
+                    var value = 0;
+
+                    container.add({key: "value"}, function () {
+                        value += 10;
+                    }, false, false);
+
+                    container.add({key: "value", test: "value"}, function () {
+                        value += 10;
+                    }, false, false);
+
+                    container.invoke({key: "value", test: "value"}, {value: 10});
+                    expect(value).toBe(20);
+
+                });
+
+            });
+
+            describe("invokes persistant callbacks", function () {
+
+                it("one topic one callback", function () {
+
+                    var called = 0;
+
+                    container.add({key: 0}, function (contents) {
+                        called++;
+                    }, true, false);
+
+                    expect(container.size()).toBe(1);
+                    container.invoke({key: 0}, {data: 100});
+                    container.invoke({key: 0}, {data: 100});
+                    container.invoke({key: 0}, {data: 100});
+                    expect(container.size()).toBe(1);
+                    expect(called).toBe(3);
+                });
+
+                it("one topic multiple callbacks", function () {
+
+                    var count = 0;
+
+                    function checkDone() {
+                        count++;
+                    }
+
+                    container.add({key: 0}, checkDone, true, false);
+                    container.add({key: 0}, checkDone, true, false);
+                    container.add({key: 0}, checkDone, true, false);
+
+                    expect(container.size()).toBe(1);
+                    expect(container.callbackCount()).toBe(3);
+
+                    container.invoke({key: 0}, {});
+
+                    expect(count).toBe(3);
+
+                    expect(container.size()).toBe(1);
+                    expect(container.callbackCount()).toBe(3);
+
+                    container.invoke({key: 0}, {});
+
+                    expect(count).toBe(6);
+
+                    expect(container.size()).toBe(1);
+                    expect(container.callbackCount()).toBe(3);
+                });
+
+                it("multiple topics", function () {
+
+                    var value = 0;
+
+                    function checkDone(contents) {
+                        value += contents.value;
+                    }
+
+                    container.add({key: 0}, checkDone, true, false);
+                    container.add({key: 1}, checkDone, true, false);
+                    container.add({key: 2}, checkDone, true, false);
+
+                    expect(container.size()).toBe(3);
+                    expect(container.callbackCount()).toBe(3);
+
+                    container.invoke({key: 0}, {value: 10});
+
+                    expect(value).toBe(10);
+
+                    expect(container.size()).toBe(3);
+                    expect(container.callbackCount()).toBe(3);
+
+                    container.invoke({key: 1}, {value: 10});
+
+                    expect(value).toBe(20);
+
+                    expect(container.size()).toBe(3);
+                    expect(container.callbackCount()).toBe(3);
+
+                    container.invoke({key: 2}, {value: 10});
+
+                    expect(value).toBe(30);
+
+                    expect(container.size()).toBe(3);
+                    expect(container.callbackCount()).toBe(3);
+
+                    container.invoke({key: 0}, {value: 10});
+                    container.invoke({key: 1}, {value: 10});
+                    container.invoke({key: 2}, {value: 10});
+
+                    expect(value).toBe(60);
+
+                });
+
+                it("overlapping topics", function () {
+
+                    var value = 0;
+
+                    container.add({key: "value"}, function () {
+                        value += 10;
+                    }, true, false);
+
+                    container.add({key: "value", test: "value"}, function () {
+                        value += 10;
+                    }, true, false);
+
+                    container.invoke({key: "value"}, {value: 10});
+
+                    expect(value).toBe(10);
+
+                    container.invoke({key: "value", test: "value"}, {value: 10});
+
+                    expect(value).toBe(30);
+
+                    container.invoke({key: "value"}, {value: 10});
+
+                    expect(value).toBe(40);
+
+                    container.invoke({key: "value", test: "value"}, {value: 10});
+
+                    expect(value).toBe(60);
+
+                });
+
+            });
+
+            describe("invokes mixed (temporary and persistant) callbacks", function () {
+
+                it("one topic multiple callbacks", function () {
+
+                    var count = 0;
+
+                    function checkDone() {
+                        count++;
+                    }
+
+                    container.add({key: 0}, checkDone, true, false);
+                    container.add({key: 0}, checkDone, false, false);
+                    container.add({key: 0}, checkDone, false, false);
+
+                    expect(container.size()).toBe(1);
+                    expect(container.callbackCount()).toBe(3);
+
+                    container.invoke({key: 0}, {});
+
+                    expect(count).toBe(3);
+
+                    expect(container.size()).toBe(1);
+                    expect(container.callbackCount()).toBe(1);
+
+                    container.invoke({key: 0}, {});
+
+                    expect(count).toBe(4);
+
+                    expect(container.size()).toBe(1);
+                    expect(container.callbackCount()).toBe(1);
+                });
+
+                it("multiple topics", function () {
+
+                    var value = 0;
+
+                    function checkDone(contents) {
+                        value += contents.value;
+                    }
+
+                    container.add({key: 0}, checkDone, true, false);
+                    container.add({key: 1}, checkDone, false, false);
+                    container.add({key: 2}, checkDone, false, false);
+
+                    expect(container.size()).toBe(3);
+                    expect(container.callbackCount()).toBe(3);
+
+                    container.invoke({key: 0}, {value: 10});
+
+                    expect(value).toBe(10);
+
+                    expect(container.size()).toBe(3);
+                    expect(container.callbackCount()).toBe(3);
+
+                    container.invoke({key: 1}, {value: 10});
+
+                    expect(value).toBe(20);
+
+                    expect(container.size()).toBe(2);
+                    expect(container.callbackCount()).toBe(2);
+
+                    container.invoke({key: 2}, {value: 10});
+
+                    expect(value).toBe(30);
+
+                    expect(container.size()).toBe(1);
+                    expect(container.callbackCount()).toBe(1);
+
+                    container.invoke({key: 0}, {value: 10});
+                    container.invoke({key: 1}, {value: 10});
+                    container.invoke({key: 2}, {value: 10});
+
+                    expect(value).toBe(40);
+
+                });
+
+                it("overlapping topics", function () {
+
+                    var value = 0;
+
+                    container.add({key: "value"}, function () {
+                        value += 10;
+                    }, false, false);
+
+                    container.add({key: "value", test: "value"}, function () {
+                        value += 10;
+                    }, true, false);
+
+                    container.invoke({key: "value"}, {value: 10});
+
+                    expect(value).toBe(10);
+                    expect(container.size()).toBe(1);
+                    expect(container.callbackCount()).toBe(1);
+
+                    container.invoke({key: "value", test: "value"}, {value: 10});
+
+                    expect(value).toBe(20);
+                    expect(container.size()).toBe(1);
+                    expect(container.callbackCount()).toBe(1);
+
+                    container.invoke({key: "value"}, {value: 10});
+
+                    expect(value).toBe(20);
+                    expect(container.size()).toBe(1);
+                    expect(container.callbackCount()).toBe(1);
+
+                    container.invoke({key: "value", test: "value"}, {value: 10});
+
+                    expect(value).toBe(30);
+                    expect(container.size()).toBe(1);
+                    expect(container.callbackCount()).toBe(1);
+
+                });
+
+            });
+
+        });
+
+    	describe('ParlaySocket', function () {
+    		var ParlaySocket, MockSocket;
+
+            MockSocket = {
+                readyState: 3,
+                CONNECTING: 0,
+                OPEN: 1,
+                CLOSING: 2,
+                CLOSED: 3
+            };
+
+            MockSocket.force_open = function () {
+                this.readyState = this.OPEN;
+                this.onopen();
+            };
+
+            MockSocket.close = function (reason) {
+                this.readyState = this.CLOSED;
+                this.onclose({wasClean: false});
+            };
+
+            MockSocket.send = function (message_string) {
+                this.onmessage({data: message_string});
+            };
+
+            WebSocket = function () {
+                return MockSocket;
+            };
+
+    		beforeEach(inject(function(_$timeout_, _ParlaySocket_) {
+                ParlaySocket = _ParlaySocket_;
+    		}));
+
+    		describe('initialization', function () {
+
+                it('is open', function (done) {
+                    expect(ParlaySocket.isConnected()).toBeFalsy();
+                    ParlaySocket.onOpen(function () {
+                        expect(ParlaySocket.isConnected()).toBeTruthy();
+                        done();
+                    });
+
+                    MockSocket.force_open();
+
                 });
         
             });
@@ -63,73 +482,84 @@
             describe('destructs', function () {
                 
                 it('is closed', function (done) {
-                    ParlaySocketService.onOpen(function () {
-                        ParlaySocketService.onClose(function () {
-                            expect(ParlaySocketService.isConnected()).toBeFalsy();
+                    ParlaySocket.onOpen(function () {
+                        ParlaySocket.onClose(function () {
+                            expect(ParlaySocket.isConnected()).toBeFalsy();
                             done();
                         });
-                        ParlaySocketService.close();
+                        ParlaySocket.close();
                     });
-                    
+
+                    MockSocket.force_open();
+
                 });
                 
                 it('closes and reopens', function (done) {
                     var has_closed = false;
                     
-                    ParlaySocketService.onOpen(function () {
+                    ParlaySocket.onOpen(function () {
                         
-                        expect(ParlaySocketService.isConnected()).toBeTruthy();
+                        expect(ParlaySocket.isConnected()).toBeTruthy();
                         
                         if (has_closed) done();
                         
-                        ParlaySocketService.onClose(function () {
+                        ParlaySocket.onClose(function () {
                             has_closed = true;
-                            expect(ParlaySocketService.isConnected()).toBeFalsy();
-                            ParlaySocketService.open();
+                            expect(ParlaySocket.isConnected()).toBeFalsy();
+                            ParlaySocket.open();
+                            MockSocket.force_open();
                         });
-                        if (!has_closed) ParlaySocketService.close();
+
+                        if (!has_closed) ParlaySocket.close();
                         
                     });
+
+                    MockSocket.force_open();
+
                 });
                 
             });
             
             describe('sends', function () {
-                
+
+                beforeEach(function () {
+                    MockSocket.force_open();
+                });
+
                 it('a message', function (done) {
-                    ParlaySocketService.sendMessage({"type":"motor"}, {"data":"test"}, {"type":"motor"}, function (response) {
+                    ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"}, {"type":"motor"}, function (response) {
                         expect(response.data).toBe("test");
                         done();
-                    });            
+                    });
                 });
                 
                 it('a message with topics but without contents', function (done) {
-                    ParlaySocketService.sendMessage({"type":"motor"}, undefined, {"type":"motor"}, function (response) {
+                    ParlaySocket.sendMessage({"type":"motor"}, undefined, {"type":"motor"}, function (response) {
                         expect(response).toEqual({});
                         done();    
                     });
                 });
                 
                 it('multiple messages', function (done) {
-                    var count = 10;
+                    var count = 0;
                     function checkDone (done) {
                         count++;
                         if (count >= 4) done();
                     }
-                    
-                    ParlaySocketService.sendMessage({"type":"motor"}, {"data":"test"}, {"type":"motor"}, function (response) {
+
+                    ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"}, {"type":"motor"}, function (response) {
                         expect(response.data).toBe("test");
                         checkDone(done);
                     });
-                    ParlaySocketService.sendMessage({"type":"motor"}, {"data":"test"}, {"type":"motor"}, function (response) {
+                    ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"}, {"type":"motor"}, function (response) {
                         expect(response.data).toBe("test");
                         checkDone(done);
                     });
-                    ParlaySocketService.sendMessage({"type":"motor"}, {"data":"test"}, {"type":"motor"}, function (response) {
+                    ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"}, {"type":"motor"}, function (response) {
                         expect(response.data).toBe("test");
                         checkDone(done);
                     });
-                    ParlaySocketService.sendMessage({"type":"motor"}, {"data":"test"}, {"type":"motor"}, function (response) {
+                    ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"}, {"type":"motor"}, function (response) {
                         expect(response.data).toBe("test");
                         checkDone(done);
                     });
@@ -137,118 +567,141 @@
                 
                 it('includes response topics but not response callback', function() {
                     expect(function () {
-                        ParlaySocketService.sendMessage({"type":"motor"}, {"data":"test"}, {"type":"motor"});
+                        ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"}, {"type":"motor"});
                     }).toThrowError(TypeError);
                 });
                 
                 it('includes response callback but not response topics', function() {
                     expect(function () {
-                        ParlaySocketService.sendMessage({"type":"motor"}, {"data":"test"}, undefined, function () {});
+                        ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"}, undefined, function () {});
                     }).toThrowError(TypeError);
                 });
                 
                 it('invalid topics type', function () {
                     expect(function () {
-                        ParlaySocketService.sendMessage('test topics');
+                        ParlaySocket.sendMessage('test topics');
                     }).toThrowError(TypeError);
                 });
                 
                 it('invalid contents type', function () {
                     expect(function () {
-                        ParlaySocketService.sendMessage({"type":"motor"}, 0, {"type":"motor"}, function (response) {});
+                        ParlaySocket.sendMessage({"type":"motor"}, 0, {"type":"motor"}, function (response) {});
                     }).toThrowError(TypeError);
                 });
                 
             });
             
             describe('listens for', function () {
+
+                beforeEach(function () {
+                    MockSocket.force_open();
+                });
                 
                 it('a message', function (done) {
-                    ParlaySocketService.onMessage({"type":"motor"}, function (response) {
+                    ParlaySocket.onMessage({"type":"motor"}, function (response) {
                         expect(response.data).toBe("test");
                         done();
                     });
-                    ParlaySocketService.sendMessage({"type":"motor"}, {"data":"test"});
+                    MockSocket.force_open();
+                    ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"});
                 });
                 
                 it('multiple messages', function (done) {
                     var count = 0;
                     
-                    ParlaySocketService.onMessage({"type":"motor"}, function () {
+                    ParlaySocket.onMessage({"type":"motor"}, function () {
                         count++;
                         if (count === 4) done();
                     });
-    
-                    ParlaySocketService.sendMessage({"type":"motor"}, {"data":"test"});
-                    ParlaySocketService.sendMessage({"type":"motor"}, {"data":"test"});
-                    ParlaySocketService.sendMessage({"type":"motor"}, {"data":"test"});
-                    ParlaySocketService.sendMessage({"type":"motor"}, {"data":"test"});
+
+                    ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"});
+                    ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"});
+                    ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"});
+                    ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"});
                 });
                 
                 it('invalid topics type', function () {
                     expect(function () {
-                        ParlaySocketService.onMessage('test topics');
+                        ParlaySocket.onMessage('test topics');
                     }).toThrowError(TypeError);
                 });
                 
                 it('verbose message', function (done) {
-                    ParlaySocketService.onMessage({"type":"motor"}, function (response) {
+                    ParlaySocket.onMessage({"type":"motor"}, function (response) {
                         expect(response.TOPICS).toEqual({"type":"motor"});
                         expect(response.CONTENTS).toEqual({"data":"test"});
                         done();
                     }, true);
-                    ParlaySocketService.sendMessage({"type":"motor"}, {"data":"test"});
+                    ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"});
                 });
                 
                 it('subset of a message', function (done) {
-                    ParlaySocketService.onMessage({"subtype":"stepper"}, function (response) {
+                    ParlaySocket.onMessage({"subtype":"stepper"}, function (response) {
                         expect(response.data).toBe(10);
                         done();
                     });
-                    ParlaySocketService.sendMessage({"type":"motor","subtype":"stepper","from_device":1,"from_system":10}, {"data": 10});
+                    ParlaySocket.sendMessage({"type":"motor","subtype":"stepper","from_device":1,"from_system":10}, {"data": 10});
                 });
                 
             });
             
             describe('queues', function () {
+
+                beforeEach(function () {
+                    MockSocket.close();
+                });
                 
                 it('a message', function (done) {
-                    ParlaySocketService.sendMessage({"type":"motor"}, {"data":"test"});
-                    ParlaySocketService.onMessage({"type":"motor"}, function (response) {
-                        expect(response.data).toBe("test");
+
+                    ParlaySocket.sendMessage({type: "motor"}, {data: "queue"});
+
+                    ParlaySocket.onMessage({type: "motor"}, function (response) {
+                        expect(response.data).toBe("queue");
                         done();
                     });
+
+                    MockSocket.force_open();
+
                 });
                 
                 it('multiple messages', function (done) {
                     var count = 0;
-                    for (var i = 0; i < 10; i++) ParlaySocketService.sendMessage({"type":"motor"}, {"data":"test"});
-                    ParlaySocketService.onMessage({"type":"motor"}, function (response) {
+
+                    for (var i = 0; i < 10; i++) {
+                        ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"});
+                    }
+
+                    ParlaySocket.onMessage({"type":"motor"}, function () {
                         count++;
                         if (count === 10) done();
-                    }); 
+                    });
+
+                    MockSocket.force_open();
+
                 });
                 
             });
             
             describe('deregisters', function () {
+
+                beforeEach(function () {
+                    MockSocket.force_open();
+                });
                 
                 it('one listener', function (done) {
                     
                     var update = false;
                     
-                    var registration = ParlaySocketService.onMessage({"type":"motor"}, function () {
+                    ParlaySocket.onMessage({type: "motor"}, function () {
                         update = true;
-                    });
-                    
-                    ParlaySocketService.sendMessage({"type":"motor"});
+                    })();
+
+                    ParlaySocket.sendMessage({type: "motor"});
                     
                     setTimeout(function () {
                         expect(update).toBeFalsy();
                         done();
                     }, 100);
-                    
-                    registration();
                     
                 });
                 
@@ -257,17 +710,17 @@
                     var registrations = [];
                     var update_count = 0;
                     
-                    registrations.push(ParlaySocketService.onMessage({"type":"motor"}, function () {
+                    registrations.push(ParlaySocket.onMessage({type: "motor"}, function () {
                         update_count++;
                     }));
                     
-                    registrations.push(ParlaySocketService.onMessage({"type":"motor"}, function () {
+                    registrations.push(ParlaySocket.onMessage({type: "motor"}, function () {
                         update_count++;
                     }));
-                    
-                    ParlaySocketService.sendMessage({"type":"motor"});
-                    
+
                     registrations.pop()();
+
+                    ParlaySocket.sendMessage({type: "motor"});
                     
                     setTimeout(function () {
                         expect(update_count).toBe(1);
@@ -286,12 +739,12 @@
                     }
                     
                     for (var i = 0; i < 10; i++) {
-                        registrations.push(ParlaySocketService.onMessage({"type":"motor"}, do_update));
+                        registrations.push(ParlaySocket.onMessage({"type":"motor"}, do_update));
                     }
-                    
+
                     while (registrations.length) registrations.pop()();
-                                    
-                    ParlaySocketService.sendMessage({"type":"motor"});
+
+                    ParlaySocket.sendMessage({"type":"motor"});
                     
                     setTimeout(function () {
                         expect(update_count).toBe(0);
@@ -301,48 +754,6 @@
                 });
                 
             });
-            
-            describe('encodes', function () {
-                
-                // NOTE: Encoding is done by sorting topics by comparison of keys in Unicode code point order.
-                
-                it('strings', function () {
-                    expect(ParlaySocketService._private.encodeTopics({"type": "motor"})).toBe('{"type":"motor"}');
-                });
-                
-                it('numbers', function () {
-                    expect(ParlaySocketService._private.encodeTopics({"to_device": 22})).toBe('{"to_device":22}');   
-                });
-                
-                it('arrays', function () {
-                    expect(ParlaySocketService._private.encodeTopics({"params": []})).toBe('{"params":[]}');
-                    expect(ParlaySocketService._private.encodeTopics({"params": [5, 10]})).toBe('{"params":[10,5]}');
-                    expect(ParlaySocketService._private.encodeTopics({"params": [{"type":1}, 10]})).toBe('{"params":[10,{"type":1}]}');
-                });
-                
-                it('multiple topics', function () {
-                    expect(ParlaySocketService._private.encodeTopics({"type": "motor", "weight":"bold"})).toBe('{"type":"motor","weight":"bold"}');
-                });
-                
-                it('mixed types', function () {
-                    expect(ParlaySocketService._private.encodeTopics({"to_device": 22})).toBe('{"to_device":22}');
-                });
-                
-                it('nested', function () {
-                    expect(ParlaySocketService._private.encodeTopics({"params": {"port": 22, "socket":"localhost"}, "data": []})).toBe('{"data":[],"params":{"port":22,"socket":"localhost"}}');
-                });
-                
-                it('orders topics consistently', function () {
-                    expect(ParlaySocketService._private.encodeTopics({"aaa":0, "bbb":1})).toBe('{"aaa":0,"bbb":1}');
-                    expect(ParlaySocketService._private.encodeTopics({"bbb":1, "aaa":0})).toBe('{"aaa":0,"bbb":1}');
-                });
-                
-                it('other type', function () {
-                    expect(ParlaySocketService._private.encodeTopics(Boolean(true))).toBe('true');
-                });
-                
-            });            
-            
         		
         });
         

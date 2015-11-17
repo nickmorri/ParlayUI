@@ -69,7 +69,7 @@ module.exports = function (grunt) {
 				'bower_components/angular-scroll-glue/src/scrollglue.js',
 				'bower_components/angular-order-object-by/src/ng-order-object-by.js'
 			],
-			'staticComponents': ['static_components/ng-websocket/ng-websocket.js', 'static_components/smoothie/smoothie.js'],
+			'staticComponents': ['static_components/smoothie/smoothie.js'],
 			'mocks': getVendorItems (['mocks'], ['parlay_components/*/mocks/*.js']),
 			'tests': getVendorItems(['test'], ['parlay_components/*/test/*.js']),
 			'compiledHtml': '<%= meta.tmp_destination %>/templates.js',

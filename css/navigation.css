@@ -29,6 +29,7 @@
 	cursor: pointer;
 }
 
+/*csslint outline-none: false */
 .parlay-bottom-bar:focus {
 	outline: none;
 }

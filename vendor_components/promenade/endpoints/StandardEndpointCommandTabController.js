@@ -18,8 +18,8 @@ function pushChipBuffer (chipElements) {
  * @param {Object} message - message container from the scope.
  * @returns {Object} - parsed and formatted StandardEndpoint data.
  */    
-function collectMessage(message) {
-	
+function collectMessage(message, for_statement) {
+
 	if (!Object.keys(message).length) return undefined;
 	
 	// Find root most field.
@@ -57,7 +57,7 @@ function collectMessage(message) {
 		    return !Number.isNaN(chip.value) ? parseInt(chip.value) : chip.value;
 		});
 	    else if (field_type === "NUMBERS") accumulator[param_name] = message[field].map(function(field) { return parseFloat(field.value); });
-	    else if (angular.isObject(message[field])) accumulator[param_name] = message[field].value;
+	    else if (angular.isObject(message[field])) accumulator[param_name] = for_statement ? message[field].name : message[field].value;
         else accumulator[param_name] = message[field];
         
         return accumulator;
@@ -76,13 +76,15 @@ function buildPythonCommand(endpoint_id, message) {
         var var_name = "e_" + endpoint_id;
         var setup = var_name + " = self.get_endpoint('" + endpoint_id + "')";
         var func = message.COMMAND ? message.COMMAND : message.FUNC;
-        
-        // Remove command or func field from message.
-        delete message[Object.keys(message).find(function (field) { return message[field] === func; })];
 
-		return setup + "\n" + var_name + "." + func + "(" + Object.keys(message).map(function (key) {
-			return typeof message[key] === "number" ? key + "=" + message[key] : key + "='" + message[key] + "'";
-        }).join(", ") + ")";
+        // Remove command or func field from message.
+        delete message[Object.keys(message).find(function (field) {
+            return message[field] === func;
+        })];
+
+        return setup + "\n" + var_name + "." + func + "(" + Object.keys(message).map(function (key) {
+                return typeof message[key] === "number" ? key + "=" + message[key] : key + "='" + message[key] + "'";
+            }).join(", ") + ")";
     }
     catch(e) {
         console.log("Can't build" + e);
@@ -126,9 +128,7 @@ function PromenadeStandardEndpointCardCommandTabController($scope, $timeout, $md
 	    this.sending = true;
 	    
 	    try {
-	    	var message = collectMessage($scope.wrapper.message);
-	    	
-	    	this.endpoint.sendMessage(message).then(function (response) {
+	    	this.endpoint.sendMessage(collectMessage($scope.wrapper.message, false)).then(function (response) {
 		    	// Use the response to display feedback on the send button.			     	
 		        this.status_message = response.TOPICS.MSG_STATUS;
 		        
@@ -147,9 +147,9 @@ function PromenadeStandardEndpointCardCommandTabController($scope, $timeout, $md
 		        this.error = true;
 		        this.status_message = response.TOPICS.MSG_STATUS;
 		    }.bind(this));
-		    
+
 		    // Put the Python equivalent command in the log.
-	        ParlayScriptLogger.logCommand(buildPythonCommand(this.endpoint.id, message));
+	        ParlayScriptLogger.logCommand(this.generatePythonCommand());
 
 	    }
 	    catch (e) {
@@ -164,7 +164,7 @@ function PromenadeStandardEndpointCardCommandTabController($scope, $timeout, $md
 	 * @returns {String} - equivalent Python statements
 	 */
 	this.generatePythonCommand = function() {
-		return buildPythonCommand(this.endpoint.id, collectMessage($scope.wrapper.message));
+		return buildPythonCommand(this.endpoint.name.replace(" ", "_"), collectMessage($scope.wrapper.message, true));
 	};
 	
 	/**

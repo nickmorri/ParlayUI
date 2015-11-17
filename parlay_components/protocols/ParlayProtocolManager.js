@@ -63,11 +63,11 @@ function ParlayProtocolManagerFactory($injector, $q, PromenadeBroker, parlayStor
                     content: "Connected to " + response.name + ".",
                     action: {
                         text: "Discover",
-                        callback: function () { this.requestDiscovery(true); }
+                        callback: function () { this.requestDiscovery(true); }.bind(this)
                     }
                 });
                 return response;
-            }).catch(function (status) {
+            }.bind(this)).catch(function (status) {
                 ParlayNotification.show({content: status});
                 return $q.reject(status);
             });

@@ -210,11 +210,11 @@
             // NOTE: Weird bug happening here if this test suite is executed. Likely will happen on other tests suites too.
             // Seems like toHaveBeenCalled is not being cleared between test suites causing expectations to creep into other test suites.
             
-            xdescribe("properties", function() {
+            describe("properties", function() {
 	            
 	            it("gets", function() {
 		            
-		            spyOn(MockProtocol, "sendMessage");
+		            spyOn(MockProtocol, "sendMessage").and.callThrough();
 		            
 		            endpoint.getProperty({
 			            NAME: "property1"

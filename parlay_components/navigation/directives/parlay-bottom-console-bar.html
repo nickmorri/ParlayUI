@@ -21,7 +21,7 @@
 	<md-list class="parlay-console-list" scroll-glue flex>
 		<md-list-item class="md-2-line parlay-console-list-item" ng-repeat="message in ctrl.getConsoleLog() | filter: {statement: ctrl.console_filter}">
 			<div class="md-list-item-text parlay-console-list-item-text">
-				<p><span ng-if="message.user">>>> </span>{{message.statement}}</p>
+				<pre><span ng-if="message.user">>>> </span>{{message.statement}}</pre>
 				<p am-time-ago="message.timeStamp"></p>
 			</div>				
 		</md-list-item>

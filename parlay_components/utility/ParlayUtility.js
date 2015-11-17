@@ -7,6 +7,8 @@ Object.defineProperty(Set.prototype, "powerset", {
     writable: false,
     enumerable: false,
     value: function () {
+        "use strict";
+
         var sets = new Set();
 
         if (this.size < 1) {

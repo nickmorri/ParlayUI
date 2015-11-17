@@ -117,7 +117,7 @@ function ParlayEndpointCard($compile, ParlayPersistence, ParlayUtility) {
 	            var toolbar = element[0].querySelector("div.md-toolbar-tools");
 	            
 	            directives.map(function (directive) {
-                    return "<" + ParlayUtility.snakeCase(directive, "-") + " endpoint='endpoint' layout-fill layout='row' layout-align='space-between center'></" + ParlayUtility.snakeCase(directive, "-") + ">";    
+                    return "<" + directive.snakeCase() + " endpoint='endpoint' layout-fill layout='row' layout-align='space-between center'></" + directive.snakeCase() + ">";
                 }).forEach(function (directive_string) {
 					toolbar.insertBefore($compile(directive_string)(scope)[0], toolbar.firstChild);
 	            });
@@ -132,7 +132,7 @@ function ParlayEndpointCard($compile, ParlayPersistence, ParlayUtility) {
 	            var tabs = element[0].querySelector("md-tabs");
 	            
 	            directives.map(function (directive) {
-					return "<" + ParlayUtility.snakeCase(directive, "-") + " endpoint='endpoint'></" + ParlayUtility.snakeCase(directive, "-") + ">";
+					return "<" + directive.snakeCase() + " endpoint='endpoint'></" + directive.snakeCase() + ">";
 	            }).forEach(function (directive_string) {
 	                tabs.appendChild($compile(directive_string)(scope)[0]);
 	            });

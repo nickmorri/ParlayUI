@@ -71,10 +71,10 @@ function collectMessage(message, for_statement) {
  * @param {Object} message - message we're converting to a Python statement
  * @returns {String} - Python statement
  */
-function buildPythonCommand(endpoint_id, message) {
+function buildPythonCommand(endpoint_name, message) {
     try {
-        var var_name = "e_" + endpoint_id;
-        var setup = var_name + " = self.get_endpoint('" + endpoint_id + "')";
+        var var_name = "e_" + endpoint_name.replace(" ", "_");
+        var setup = var_name + " = self.get_endpoint_by_name('" + endpoint_name + "')";
         var func = message.COMMAND ? message.COMMAND : message.FUNC;
 
         // Remove command or func field from message.
@@ -164,7 +164,7 @@ function PromenadeStandardEndpointCardCommandTabController($scope, $timeout, $md
 	 * @returns {String} - equivalent Python statements
 	 */
 	this.generatePythonCommand = function() {
-		return buildPythonCommand(this.endpoint.name.replace(" ", "_"), collectMessage($scope.wrapper.message, true));
+		return buildPythonCommand(this.endpoint.name, collectMessage($scope.wrapper.message, true));
 	};
 	
 	/**

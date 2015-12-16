@@ -83,7 +83,7 @@ function buildPythonCommand(endpoint_name, message) {
         })];
 
         return setup + "\n" + var_name + "." + func + "(" + Object.keys(message).map(function (key) {
-                return typeof message[key] === "number" ? key + "=" + message[key] : key + "='" + message[key] + "'";
+                return key + "=" + JSON.stringify(message[key]);
             }).join(", ") + ")";
     }
     catch(e) {

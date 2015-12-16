@@ -30,7 +30,7 @@ function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification) {
 		 * @returns {Function} - Listener deregistration.
 		 */
 	    this.onMessage = function(response_topics, response_callback) {
-	        response_topics.type = "broker";
+	        if(response_topics === undefined) response_topics.type = "broker";
 	        
 	        return ParlaySocket.onMessage(response_topics, response_callback);
 	    };
@@ -61,11 +61,17 @@ function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification) {
 	        this.setConnectedPreviously();
 	        
 	        ParlayNotification.show({content: "Connected to Parlay Broker!"});
-	        
+
+            var broker_protocol = this;
 	        // Wait for Broker's discovery request and respond with a empty discovery message.
-	        this.onMessage({command: "get_discovery"}, function() {
-		        this.sendMessage({response: "get_discovery_response"}, {discovery: []});
+	        this.onMessage({'type': "get_protocol_discovery"}, function() {
+		        //broker_protocol.sendMessage({response: "get_protocol_discovery_response"}, {discovery: {}}, {});
+                ParlaySocket.sendMessage({type: "get_protocol_discovery_response"}, {discovery: {}});
 	        });
+
+            //request a fast discovery to see if there's already one there
+
+            setTimeout(function() {broker_protocol.requestDiscovery(false);},100);
 	        
 	    }.bind(this));
 	    
@@ -129,7 +135,7 @@ function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification) {
 	            ParlayNotification.show({content: content_string});
 	
 	            return contents.discovery;
-	        });    
+	        });
 	    }
 	    
 	};

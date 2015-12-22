@@ -247,7 +247,9 @@ function PromenadeStandardEndpointCardCommandContainer(RecursionHelper, ParlayPe
 
 	        var container = ParlayUtility.relevantScope($scope, 'container').container;
 			var directive_name = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
-		    
+		    var uuid = 0; // unique index for chip objects so that even chips with the same value will be 'unique'
+            var max_safe_int = 9007199254740990; // per the EXCMAScript2015 spec
+
 		    ParlayPersistence(directive_name, "wrapper.message", $scope);
 	        
 	        /**
@@ -255,7 +257,9 @@ function PromenadeStandardEndpointCardCommandContainer(RecursionHelper, ParlayPe
 		     * @param {$mdChip} chip - $mdChip Object
 		     */
 	        $scope.prepChip = function (chip) {
-   			    return {value: chip};
+                uuid += 1;
+                if( uuid > max_safe_int) { uuid = 0;} // wrap around after max safe int
+   			    return {value: chip, idx: uuid};
 		    };
 	        
 	        /**

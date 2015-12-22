@@ -134,6 +134,8 @@ function ParlayProtocolFactory(ParlaySocket, ParlayEndpoint, $q) {
 	 * @param {Array} endpoints - Array of the protocol's endpoints.
 	 */
     ParlayProtocol.prototype.addEndpoints = function (endpoints) {
+        //type check
+        if(!Array.isArray(endpoints)) return;
         this.available_endpoints = endpoints.map(function (endpoint) {
             return new this.endpoint_factory(endpoint, this);
         }, this);

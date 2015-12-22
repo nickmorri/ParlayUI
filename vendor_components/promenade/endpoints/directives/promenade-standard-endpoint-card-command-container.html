@@ -17,7 +17,7 @@
         <input ng-if="field.input === 'STRING'" name="{{field.msg_key}}" ng-model="wrapper.message[field.msg_key + '_' + field.input]" type="text" ng-required="field.required">
         
         <!-- NUMBERS or STINGS or ARRAY input type -->
-        <md-chips style='float:none' name="{{field.msg_key}}" ng-model="wrapper.message[field.msg_key + '_' + field.input]" ng-if="field.input === 'NUMBERS' || field.input === 'STRINGS' || field.input === 'ARRAY'" ng-required="field.required"
+        <md-chips  name="{{field.msg_key}}" ng-model="wrapper.message[field.msg_key + '_' + field.input]" ng-if="field.input === 'NUMBERS' || field.input === 'STRINGS' || field.input === 'ARRAY'" ng-required="field.required"
                   placeholder="{{field.label}}" secondary-placeholder="{{field.label}}" md-transform-chip="prepChip($chip)" md-separator-keys="[188, 32]">
                                                                                                                             <!-- 188=',' 32=' ' -->
         	<md-chip-template>{{$chip.value}}</md-chip-template>

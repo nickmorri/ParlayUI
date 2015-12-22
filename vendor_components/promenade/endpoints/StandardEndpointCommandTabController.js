@@ -243,15 +243,15 @@ function PromenadeStandardEndpointCardCommandContainer(RecursionHelper, ParlayPe
         },
         templateUrl: '../vendor_components/promenade/endpoints/directives/promenade-standard-endpoint-card-command-container.html',
         compile: RecursionHelper.compile,
-        controller: function ($scope) {
+        controller: function ($scope, $mdConstant) {
 
 	        var container = ParlayUtility.relevantScope($scope, 'container').container;
 			var directive_name = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
 		    var uuid = 0; // unique index for chip objects so that even chips with the same value will be 'unique'
-            var max_safe_int = 9007199254740990; // per the EXCMAScript2015 spec
+            var max_safe_int = 9007199254740990; // per the ECMAScript2015 spec
 
 		    ParlayPersistence(directive_name, "wrapper.message", $scope);
-	        
+
 	        /**
 		     * Packages $mdChip object for insertion into message.
 		     * @param {$mdChip} chip - $mdChip Object

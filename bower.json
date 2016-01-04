@@ -3,7 +3,7 @@
   "private": true,
   "dependencies": {
     "ace-builds": "ace-builds#master",
-    "angular": "~1.4.5",
+    "angular": "~1.4.8",
     "angular-animate": "~1.4.4",
     "angular-material": "1.0.1",
     "angular-material-icons": "angular-material-icons#0.6.0",
@@ -21,7 +21,6 @@
     "angular-order-object-by": "~1.2.1"
   },
   "resolutions": {
-    "angular": "1.4.5",
     "ace-builds": "^1"
   },
   "overrides": {

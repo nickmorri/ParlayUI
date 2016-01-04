@@ -78,7 +78,7 @@ function PromenadeDirectMessageProtocolFactory(ParlayProtocol, PromenadeStandard
 		var extended_response_topics = !response_topics ? this.buildResponseTopics(extended_topics) : response_topics;
 		
 	    return ParlayProtocol.prototype.sendMessage(extended_topics, contents, extended_response_topics, true).then(function (response) {
-		    return this.isResponseOk(response) ? response : $q.reject(response);
+		    return this.isResponseOk(response) ? response.CONTENTS : $q.reject(response.CONTENTS);
 	    }.bind(this));
     };
         

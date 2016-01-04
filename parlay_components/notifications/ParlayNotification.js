@@ -103,10 +103,12 @@ function ParlayNotificationFactory($mdToast, $notification, NotificationDisplayD
 		    if (document.hidden) prepBrowserNotification(configuration);        
 	    },
 	    showProgress: function () {
-	        $mdToast.show({
-	            template: "<md-toast><md-progress-linear flex class='notification-progress' md-mode='indeterminate'></md-progress-linear></md-toast>",
-	            hideDelay: false
-	        });
+			if (!toast_active) {
+				$mdToast.show({
+					template: "<md-toast><md-progress-linear flex class='notification-progress' md-mode='indeterminate'></md-progress-linear></md-toast>",
+					hideDelay: false
+				});
+			}
 	    }
     };
 }

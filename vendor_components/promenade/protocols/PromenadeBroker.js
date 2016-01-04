@@ -126,11 +126,17 @@ function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification) {
 	        ParlayNotification.showProgress();
 	        
             return this.sendMessage({request: "get_discovery"}, {"force": is_forced}, {response: "get_discovery_response"}).then(function (contents) {
-	            var content_string = "Discovered ";
-	            
-	            if (contents.discovery.length === 0) content_string += " Verify connections.";
-	            else if (contents.discovery.length === 1) content_string += contents.discovery[0].NAME + ".";
-	            else content_string += contents.discovery.length + " protocols.";
+	            var content_string;
+
+				if (contents.discovery.length === 1) {
+					content_string = "Discovered " + contents.discovery[0].NAME + ".";
+				}
+				else if (contents.discovery.length > 1) {
+					content_string = "Discovered " + contents.discovery.length + " protocols.";
+				}
+	            else {
+					content_string = "Discovered 0 protocols. Verify connections.";
+				}
 	
 	            ParlayNotification.show({content: content_string});
 	

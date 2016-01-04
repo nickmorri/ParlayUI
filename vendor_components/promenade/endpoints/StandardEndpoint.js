@@ -277,7 +277,7 @@ function PromenadeStandardEndpointFactory(ParlayEndpoint) {
 			FROM: this.id,
 			TO: "UI"
 		}).then(function(response) {
-			this.properties[response.PROPERTY].VALUE = response.VALUE;
+			this.properties[response.CONTENTS.PROPERTY].VALUE = response.CONTENTS.VALUE;
 			return response;
 		}.bind(this));
     };

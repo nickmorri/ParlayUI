@@ -8,6 +8,9 @@ function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification) {
 	function PromenadeBroker() {
 	
 	    var connected_previously = false;
+		var last_discovery;
+
+		var on_discovery_callbacks = [];
 	    
 	    /**
 	     * Sends message to the Broker adding relevant topic fields.
@@ -30,7 +33,7 @@ function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification) {
 		 * @returns {Function} - Listener deregistration.
 		 */
 	    this.onMessage = function(response_topics, response_callback) {
-	        if(response_topics === undefined) response_topics.type = "broker";
+	        if (response_topics === undefined) response_topics.type = "broker";
 	        
 	        return ParlaySocket.onMessage(response_topics, response_callback);
 	    };
@@ -49,9 +52,71 @@ function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification) {
 	    this.setConnectedPreviously = function() {
 		    connected_previously = true;
 	    };
-	    
+
+        /**
+         * Stores discovery data in private variable.
+         * @param {Object} data - Discovery data.
+         */
+        this.setLastDiscovery = function(data) {
+            last_discovery = data;
+        };
+
+        /**
+         * Retreives latest private discovery data.
+         * @returns {Object} - Latest discovery data object
+         */
+        this.getLastDiscovery = function() {
+            return last_discovery;
+        };
+
+		this.setSavedDiscovery = function(data) {
+			on_discovery_callbacks.forEach(function (callback) {
+				callback({discovery: data});
+			});
+		};
+
+		/**
+		 * Registers a callback on discovery.
+		 * @param {Function} callbackFunc - Callback function to be called on message receipt.
+		 */
+		this.onDiscovery = function (callbackFunc) {
+			on_discovery_callbacks.push(callbackFunc);
+		};
+
+		/**
+		 * Register a callback on get_discovery_response. Call all registered discovery callbacks.
+		 */
+		this.onMessage({"response": "get_discovery_response"}, function (response) {
+			on_discovery_callbacks.forEach(function (callback) {
+				callback(response);
+			});
+		});
+
+		/**
+		 * Register PromenadeBroker's notification callback for discovery.
+		 */
+		this.onDiscovery(function (contents) {
+			// Build the contents of the notification to display.
+			var content_string;
+
+			if (contents.discovery.length === 1) {
+				content_string = "Discovered " + contents.discovery[0].NAME + ".";
+			}
+			else if (contents.discovery.length > 1) {
+				content_string = "Discovered " + contents.discovery.length + " protocols.";
+			}
+			else {
+				content_string = "Discovered 0 protocols. Verify connections.";
+			}
+
+			ParlayNotification.show({content: content_string});
+
+			// Store latest discovery data.
+			this.setLastDiscovery(contents.discovery);
+		}.bind(this));
+
 	    // Actions that PromenadeBroker needs to perform on ParlaySocket open.
-	    // NOTE: Could run into issues if registration occurs after ParlaySocket has been opened. Should investiate solutions.
+	    // TODO: Could run into issues if registration occurs after ParlaySocket has been opened.
 		ParlaySocket.onOpen(function () {
 		    
 		    // Request a subscription from the Broker for this protocol.	    
@@ -62,16 +127,13 @@ function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification) {
 	        
 	        ParlayNotification.show({content: "Connected to Parlay Broker!"});
 
-            var broker_protocol = this;
 	        // Wait for Broker's discovery request and respond with a empty discovery message.
 	        this.onMessage({'type': "get_protocol_discovery"}, function() {
-		        //broker_protocol.sendMessage({response: "get_protocol_discovery_response"}, {discovery: {}}, {});
                 ParlaySocket.sendMessage({type: "get_protocol_discovery_response"}, {discovery: {}});
 	        });
 
-            //request a fast discovery to see if there's already one there
-
-            setTimeout(function() {broker_protocol.requestDiscovery(false);},100);
+            // Request a fast discovery to see if there's already one there.
+			this.requestDiscovery(false);
 	        
 	    }.bind(this));
 	    
@@ -113,37 +175,17 @@ function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification) {
 	 * @returns {$q.defer.promise} Resolve when response is received with available endpoints.
 	 */
 	PromenadeBroker.prototype.requestDiscovery = function (is_forced) {
-	    
 	    // Check we are connected first, otherwise display ParlayNotification.
-	    if (!this.isConnected()) {
-	        ParlayNotification.show({content: "Cannot discover while not connected to Broker."});
-	        
-	        return $q(function (resolve, reject) {
-		        reject("Cannot discover while not connected to Broker.");
-	        });
-	    }
-	    else {
-	        ParlayNotification.showProgress();
-	        
-            return this.sendMessage({request: "get_discovery"}, {"force": is_forced}, {response: "get_discovery_response"}).then(function (contents) {
-	            var content_string;
+	    if (this.isConnected()) {
+			ParlayNotification.showProgress();
 
-				if (contents.discovery.length === 1) {
-					content_string = "Discovered " + contents.discovery[0].NAME + ".";
-				}
-				else if (contents.discovery.length > 1) {
-					content_string = "Discovered " + contents.discovery.length + " protocols.";
-				}
-	            else {
-					content_string = "Discovered 0 protocols. Verify connections.";
-				}
-	
-	            ParlayNotification.show({content: content_string});
-	
-	            return contents.discovery;
-	        });
+			return this.sendMessage({request: "get_discovery"}, {"force": is_forced}, {response: "get_discovery_response"});
+		}
+	    else {
+	        ParlayNotification.show({content: "Cannot discover while not connected to Broker."});
+
+			return $q(function (resolve, reject) { reject("Cannot discover while not connected to Broker."); });
 	    }
-	    
 	};
 	
 	/**
@@ -184,15 +226,6 @@ function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification) {
 	    return this.sendMessage({request: "close_protocol"}, {"protocol": protocol_name}, {response: "close_protocol_response"}).then(function (response) {
 	        return response.STATUS === "ok" ? $q.resolve(response) : $q.reject(response.STATUS);
 	    });
-	}; 
-	
-	/**
-	 * Registers a callback on discovery.
-	 * @param {Function} callbackFunc - Callback function to be called on message receipt.
-	 * @returns {Function} - Listener deregistration.
-	 */
-	PromenadeBroker.prototype.onDiscovery = function (callbackFunc) {
-	    return this.onMessage({"response": "get_discovery_response"}, callbackFunc);
 	};
 
 	return new PromenadeBroker();

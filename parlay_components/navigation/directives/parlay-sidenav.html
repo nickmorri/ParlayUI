@@ -24,15 +24,18 @@
 	    <span flex></span>
 	    
 	    <md-list>
-	    
-	    	<md-list-item ng-click="do()">
-		    	<md-icon ng-md-icon class="parlay-nav-icon" icon="settings"></md-icon>
-	    		Settings
-	    	</md-list-item>
-	    	<md-list-item ng-click="do()">
-	    		<md-icon ng-md-icon class="parlay-nav-icon" icon="info"></md-icon>
-	    		About
-	    	</md-list-item>
+
+			<!--Hidden file input that is triggered on md-list-item click-->
+			<input id="discoveryInput" type="file" style="visibility:hidden" custom-on-change="ctrl.fileChanged" />
+
+			<md-list-item ng-click="ctrl.saveDiscovery()">
+				<md-icon ng-md-icon class="parlay-nav-icon" icon="file_download"></md-icon>
+				Save Discovery
+			</md-list-item>
+			<md-list-item ng-click="ctrl.loadDiscovery($event)">
+				<md-icon ng-md-icon class="parlay-nav-icon" icon="file_upload"></md-icon>
+				Load Discovery
+			</md-list-item>
 	    	
 	    </md-list>
     

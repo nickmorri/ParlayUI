@@ -1,6 +1,10 @@
 body {
 	overflow: hidden;
 }
+/*Prevents jumpy veritical scrollbar*/
+html {
+    overflow-x: hidden;
+}
 md-toast .md-action {
     line-height: 36px;
 }

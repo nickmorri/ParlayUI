@@ -174,5 +174,19 @@ function ParlayUtilityFactory() {
 	return new ParlayUtility();
 }
 
+/**
+ * Attribute directive that binds the given function to the change event.
+ * @returns {AngularJS Directive}
+ */
+function customOnChange () {
+    return {
+        restrict: 'A',
+        link: function (scope, element, attributes) {
+            element.bind('change', scope.$eval(attributes.customOnChange));
+        }
+    };
+}
+
 angular.module('parlay.utility', [])
+    .directive("customOnChange", customOnChange)
 	.factory('ParlayUtility', ParlayUtilityFactory);

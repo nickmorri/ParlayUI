@@ -60,19 +60,17 @@ function PromenadeStandardEndpointFactory(ParlayEndpoint) {
 				}, this);
 			} 
 	    });
-        
-        // Adds all available PromenadeEndpointCard tabs.
-        this.addAvailableDirectives("tabs", [
-        	"promenadeStandardEndpointCardCommands",
-        	"promenadeStandardEndpointCardLog",
-        	"promenadeStandardEndpointCardGraph",
-        	"promenadeStandardEndpointCardProperty"
-        ]);
-        
-        this.addDefaultDirectives("tabs", ["promenadeStandardEndpointCardCommands"]);
+
         this.addDefaultDirectives("toolbar", ["promenadeStandardEndpointCardToolbar"]);
-	    
-        if (data.CONTENT_FIELDS) {        
+
+        // Automatically add log tab.
+        this.addAvailableDirectives("tabs", ["promenadeStandardEndpointCardLog"]);
+        this.addDefaultDirectives("tabs", ["promenadeStandardEndpointCardLog"]);
+        
+        if (data.CONTENT_FIELDS) {
+            // Automatically add command tab if content fields are available.
+            this.addDefaultDirectives("tabs", ["promenadeStandardEndpointCardCommands"]);
+            this.addAvailableDirectives("tabs", ["promenadeStandardEndpointCardCommands"]);
             this.content_fields = data.CONTENT_FIELDS.reduce(function (accumulator, field) {
                 var parsed_field = parseField(field);
                 accumulator[parsed_field.label] = parsed_field;
@@ -81,6 +79,9 @@ function PromenadeStandardEndpointFactory(ParlayEndpoint) {
         }
         
         if (data.PROPERTIES) {
+            // Automatically add command property tab if properties are available.
+            this.addDefaultDirectives("tabs", ["promenadeStandardEndpointCardProperty"]);
+            this.addAvailableDirectives("tabs", ["promenadeStandardEndpointCardProperty"]);
 	        this.properties = data.PROPERTIES.reduce(function (accumulator, current) {
 		        current.value = current.INPUT === "STRINGS" || current.INPUT === "NUMBERS" ? [] : undefined;
 		        accumulator[current.NAME] = current;
@@ -89,6 +90,9 @@ function PromenadeStandardEndpointFactory(ParlayEndpoint) {
         }
         
         if (data.DATASTREAMS) {
+            // Automatically add graph tab if data streams are available.
+            this.addDefaultDirectives("tabs", ["promenadeStandardEndpointCardGraph"]);
+            this.addAvailableDirectives("tabs", ["promenadeStandardEndpointCardGraph"]);
 	        this.data_streams = data.DATASTREAMS.reduce(function (accumulator, current) {
 		        accumulator[current.NAME] = current;
 		        accumulator[current.NAME].value = undefined;

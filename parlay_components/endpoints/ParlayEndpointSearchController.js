@@ -37,17 +37,17 @@ function ParlayEndpointSearchController($scope, ParlayEndpointManager) {
     
 }
 
-function ParlayEndpointSearch($timeout) {
+function ParlayEndpointSearch() {
     return {
         scope: {},
         templateUrl: '../parlay_components/endpoints/directives/parlay-endpoint-search.html',
         controller: 'ParlayEndpointSearchController',
-        link: function ($scope, element, attributes) {
+        link: function (scope, element, attributes) {
             
 			// Prevents random endpoints being added since the autofocus element is still focused.            
-            $scope.$watch('selected_item', function (newValue, oldValue, $scope) {
+            scope.$watch('selected_item', function (newValue, oldValue, scope) {
 	            // We just added a new endpoint to the workspace so we should blur the input.
-	        	if (newValue === null && oldValue !== null) element.find('input').blur();
+	        	if (newValue === null && oldValue !== null) scope.$$childHead.$mdAutocompleteCtrl.blur();
 	        });
             
         },
@@ -57,4 +57,4 @@ function ParlayEndpointSearch($timeout) {
 
 angular.module('parlay.endpoints.search', ['templates-main', 'parlay.endpoints.manager'])
 	.controller('ParlayEndpointSearchController', ['$scope', 'ParlayEndpointManager', ParlayEndpointSearchController])
-	.directive('parlayEndpointSearch', ['$timeout', ParlayEndpointSearch]);
+	.directive('parlayEndpointSearch', [ParlayEndpointSearch]);

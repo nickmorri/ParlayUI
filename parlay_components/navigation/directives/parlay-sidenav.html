@@ -3,7 +3,10 @@
 	<md-toolbar class="md-theme-indigo">
 		<div class="md-toolbar-tools">
 
+			<h2>Menu</h2>
+
 			<span flex></span>
+
 			<md-button class="md-icon-button" ng-click="ctrl.closeSidenav()" aria-label="Close sidenav">
 				<md-icon class="white"><ng-md-icon icon="close"></ng-md-icon></md-icon>
 			</md-button>
@@ -18,12 +21,14 @@
     			<md-icon ng-md-icon class="parlay-nav-icon" icon="{{state.icon}}"></md-icon>
     			{{state.display}}
     		</md-list-item>
-    	
+
 	    </md-list>
 	    
 	    <span flex></span>
 	    
 	    <md-list>
+
+			<md-divider ></md-divider>
 
 			<!--Hidden file input that is triggered on md-list-item click-->
 			<input id="discoveryInput" type="file" style="visibility:hidden" custom-on-change="ctrl.fileChanged" />

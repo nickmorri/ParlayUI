@@ -7,16 +7,28 @@
 				</md-button>
 				<md-menu-content>
 					<md-menu-item ng-hide="$first">
-						<md-button md-menu-align-target ng-click="endpointCtrl.reorder($index, -1)">Move left</md-button>
+						<md-button md-menu-align-target ng-click="endpointCtrl.reorder($index, -1)">
+							<md-icon><ng-md-icon icon="keyboard_arrow_left"></ng-md-icon></md-icon>
+							Move left
+						</md-button>
 					</md-menu-item>
 					<md-menu-item ng-hide="$last">
-						<md-button md-menu-align-target ng-click="endpointCtrl.reorder($index, 1)">Move right</md-button>
+						<md-button md-menu-align-target ng-click="endpointCtrl.reorder($index, 1)">
+							<md-icon><ng-md-icon icon="keyboard_arrow_right"></ng-md-icon></md-icon>
+							Move right
+						</md-button>
 					</md-menu-item>
 					<md-menu-item>
-						<md-button md-menu-align-target ng-click="endpointCtrl.duplicate($index)">Duplicate</md-button>
+						<md-button md-menu-align-target ng-click="endpointCtrl.duplicate($index)">
+							<md-icon><ng-md-icon icon="content_copy"></ng-md-icon></md-icon>
+							Duplicate
+						</md-button>
 					</md-menu-item>
 					<md-menu-item>
-						<md-button md-menu-align-target ng-click="endpointCtrl.deactivate($index)">Deactivate</md-button>
+						<md-button md-menu-align-target ng-click="endpointCtrl.deactivate($index)">
+							<md-icon><ng-md-icon icon="clear"></ng-md-icon></md-icon>
+							Close card
+						</md-button>
 					</md-menu-item>
 				</md-menu-content>
 			</md-menu>

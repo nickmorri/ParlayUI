@@ -8,6 +8,7 @@ function ParlayWidgetTab() {
 							
 			$scope.getAvailableDirectives = function () {
 				var directives = $scope.endpoint.getAvailableDirectives();
+
 				for (var target in directives) {
 					if (directives[target].length <= 0) delete directives[target];
 				}
@@ -18,14 +19,6 @@ function ParlayWidgetTab() {
 				$scope.$parent.activateDirective(target, directive);
 			};
 							
-		},
-		link: function (scope, element, attributes) {
-			
-			function test() {
-				
-			}
-			
-			element[0].children[0].onclick = test;
 		}
 	};
 }

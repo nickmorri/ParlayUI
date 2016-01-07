@@ -1,3 +1,9 @@
+/**
+ * @name EndpointsConfiguration
+ * @param $stateProvider - Service provided by ui.router
+ * @description
+ * The EndpointsConfiguration sets up the endpoints state. The data object is passed with the display name and icon.
+ */
 function EndpointsConfiguration($stateProvider) {
     $stateProvider.state("endpoints", {
         url: "/endpoints",
@@ -11,30 +17,5 @@ function EndpointsConfiguration($stateProvider) {
     });
 }
 
-function ParlayEndpointController($scope, ParlayEndpointManager) {
-	
-	this.filterEndpoints = function () {
-        return ParlayEndpointManager.getActiveEndpoints();
-    };
-    
-    this.hasEndpoints = function () {
-	    return ParlayEndpointManager.hasActiveEndpoints();
-    };
-    
-    this.reorder = function (index, distance) {
-	    ParlayEndpointManager.reorder(parseInt(index, 10), distance);
-    };
-    
-    this.duplicate = function (index, uid) {
-	    ParlayEndpointManager.duplicateEndpoint(parseInt(index, 10), uid);
-    };
-    
-    this.deactivate = function (index) {
-	    ParlayEndpointManager.deactivateEndpoint(parseInt(index, 10));
-    };
-	    
-}
-
-angular.module("parlay.endpoints", ["ui.router", "parlay.endpoints.manager", "parlay.endpoints.toolbar"])
-	.config(["$stateProvider", EndpointsConfiguration])
-	.controller("ParlayEndpointController", ["$scope", "ParlayEndpointManager", ParlayEndpointController]);
+angular.module("parlay.endpoints", ["ui.router", "parlay.endpoints.toolbar", "parlay.endpoints.controller"])
+	.config(["$stateProvider", EndpointsConfiguration]);

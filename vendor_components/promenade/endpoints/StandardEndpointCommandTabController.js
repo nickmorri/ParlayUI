@@ -131,6 +131,7 @@ function PromenadeStandardEndpointCardCommandTabController($scope, $timeout, $md
 	    	this.endpoint.sendMessage(collectMessage($scope.wrapper.message, false)).then(function (response) {
 		    	// Use the response to display feedback on the send button.			     	
 		        this.status_message = response.TOPICS.MSG_STATUS;
+				this.contents_message = response.CONTENTS;
 		        
 		        // If we still have an outstanding timeout we should cancel it to prevent the send button from flickering.
 	            if (sending_timeout !== null) $timeout.cancel(sending_timeout);

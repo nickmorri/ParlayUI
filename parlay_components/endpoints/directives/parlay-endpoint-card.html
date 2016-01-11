@@ -3,6 +3,7 @@
         <div class="md-toolbar-tools">
 			<md-menu>
 				<md-button aria-label="Open overflow menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
+                    <md-tooltip>Card menu</md-tooltip>
 					<md-icon md-menu-origin><ng-md-icon icon="more_vert"></ng-md-icon></md-icon>
 				</md-button>
 				<md-menu-content>
@@ -24,14 +25,12 @@
 							Duplicate
 						</md-button>
 					</md-menu-item>
-					<md-menu-item>
-						<md-button md-menu-align-target ng-click="endpointCtrl.deactivate($index)">
-							<md-icon><ng-md-icon icon="clear"></ng-md-icon></md-icon>
-							Close card
-						</md-button>
-					</md-menu-item>
 				</md-menu-content>
 			</md-menu>
+			<md-button aria-label="Close card" class="md-icon-button" ng-click="endpointCtrl.deactivate($index)">
+                <md-tooltip>Close card</md-tooltip>
+				<md-icon class="white"><ng-md-icon icon="clear"></ng-md-icon></md-icon>
+			</md-button>
             <!-- Vendor specific endpoint toolbar-tools directives are automatically inserted here -->
         </div>
     </md-toolbar>

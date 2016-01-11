@@ -7,5 +7,36 @@
 }
 
 .parlay-endpoint-card-tab-content {
-	max-height: 1000px;
+	max-height: 600px;
+}
+
+md-card > md-toolbar > .md-toolbar-tools {
+	height: 48px;
+}
+
+md-tab-content > div > md-toolbar > .md-toolbar-tools {
+	height: 48px;
+}
+
+md-card > md-toolbar {
+	height: 48px;
+	min-height: 48px;
+}
+
+md-tab-content > div > md-toolbar {
+	height: 48px;
+	min-height: 48px;
+}
+
+.parlay-command-container {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.parlay-command-container > md-select {
+	margin: inherit;
+}
+
+form > .parlay-endpoint-card-tab-content > promenade-standard-endpoint-card-command-container > span > md-input-container {
+	margin-bottom: 10px;
 }

@@ -14,7 +14,7 @@
 		<input ng-model="filter_text" type="text">
 	</md-input-container>
 	
-    <md-content class="md-padding parlay-endpoint-card-tab-content" scroll-glue>
+    <md-content ng-show="ctrl.getLog().length" class="md-padding parlay-endpoint-card-tab-content" scroll-glue>
         <md-list>
 			<span ng-repeat="message in ctrl.getFilteredLog(filter_text)">
 				<md-list-item class="md-2-line parlay-log-item">

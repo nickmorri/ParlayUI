@@ -31,7 +31,7 @@
 	                        available: []
                         },
                         tabs: {
-	                        default: ["parlayWidgetTab"],
+	                        default: [],
 	                        available: []
                         },
                         available_cache: {}

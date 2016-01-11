@@ -31,9 +31,6 @@ function ParlayEndpointFactory() {
             },
             available_cache: {}
         };
-
-        // Add widget selection tab by default for every ParlayEndpoint.
-        this.addDefaultDirectives("tabs", ["parlayWidgetTab"]);
         
     }
 

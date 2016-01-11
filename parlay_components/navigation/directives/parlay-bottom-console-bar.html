@@ -18,22 +18,9 @@
 		</md-input-container>
 	</div>
 
+    <!--Scroll glue will automatically keep md-list at the most recent item unless the user has independently scrolled in the list-->
 	<md-list class="parlay-console-list" scroll-glue flex>
-		<md-list-item class="md-2-line parlay-console-list-item" ng-repeat="message in ctrl.getConsoleLog() | filter: {statement: ctrl.console_filter}">
-			<div class="md-list-item-text parlay-console-list-item-text">
-				<pre><span ng-if="message.user">>>> </span>{{message.statement}}</pre>
-				<p am-time-ago="message.timeStamp"></p>
-			</div>				
-		</md-list-item>
+        <parlay-console-list-item ng-repeat="message in ctrl.getConsoleLog() | filter: {statement: ctrl.console_filter}" message="message"></parlay-console-list-item>
 	</md-list>
-	
-	<div layout="row" class="md-whiteframe-z5" ng-hide="ctrl.console_hidden">
-		<md-input-container flex class="parlay-python-statement-input-container">
-		    <label>Python Statement</label>
-			<input ng-model="ctrl.console_command" ng-keyup="$event.keyCode == 13 && ctrl.consoleSendCommand()">
-		</md-input-container>
-		<md-button class="md-icon-button" ng-click="ctrl.toggleConsoleLogFilter()" aria-label="Toggle console filter"><md-icon><ng-md-icon icon="filter_list"></ng-md-icon></md-icon></md-button>
-		<md-button class="md-icon-button md-warn" ng-click="ctrl.clearConsoleLog()" ng-disabled="!ctrl.hasConsoleLog()" aria-label="Clear console log"><md-icon><ng-md-icon icon="delete"></ng-md-icon></md-icon></md-button>
-	</div>
-	
+
 </div>

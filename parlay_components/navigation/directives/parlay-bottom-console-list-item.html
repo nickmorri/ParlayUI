@@ -1,0 +1,9 @@
+<span>
+    <md-list-item class="md-2-line parlay-console-list-item">
+        <div class="md-list-item-text parlay-console-list-item-text" layout="row">
+            <pre flex="10" am-time-ago="message.timeStamp"></pre>
+            <pre flex="90"><span ng-if="message.user">>>> </span>{{message.statement}}</pre>
+        </div>
+    </md-list-item>
+    <md-divider></md-divider>
+</span>

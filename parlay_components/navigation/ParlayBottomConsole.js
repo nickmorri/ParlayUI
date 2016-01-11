@@ -80,6 +80,15 @@ function ParlayConsoleBarController($timeout, PromenadeBroker, ParlayScriptLogge
     
 }
 
+function ParlayConsoleListItem() {
+	return {
+		scope: {
+			message: "="
+		},
+		templateUrl: "../parlay_components/navigation/directives/parlay-bottom-console-list-item.html"
+	};
+}
+
 function ParlayBottomConsoleBar() {
     return {
 	    scope: {},
@@ -92,4 +101,5 @@ function ParlayBottomConsoleBar() {
 angular.module("parlay.navigation.bottombar", ["ngMaterial", "ngMdIcons", "promenade.broker", "templates-main", "angularMoment", "luegg.directives"])
 	.factory("ParlayScriptLogger", ParlayScriptLoggerFactory)
 	.controller("ParlayConsoleBarController", ["$timeout", "PromenadeBroker", "ParlayScriptLogger", ParlayConsoleBarController])
+	.directive("parlayConsoleListItem", ParlayConsoleListItem)
 	.directive("parlayBottomConsoleBar", ParlayBottomConsoleBar);

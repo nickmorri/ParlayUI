@@ -1,0 +1,64 @@
+.console_transform {
+    -webkit-transition: height 200ms linear;
+    -moz-transition: height 200ms linear;
+    -o-transition: height 200ms linear;
+    -ms-transition: height 200ms linear;
+    transition: height 200ms linear;
+}
+
+.console_expanded {
+    height: 400px;
+}
+
+.console_hidden {
+    height: 30px;
+}
+
+.parlay-python-statement-input-container {
+    margin-bottom: 5px;
+    margin-top: 10px;
+}
+
+.parlay-console-list-item {
+    min-height: 0 !important;
+}
+
+.parlay-bottom-bar {
+    max-height: 30px;
+    min-height: 30px;
+    cursor: pointer;
+}
+
+/*csslint outline-none: false */
+.parlay-bottom-bar:focus {
+    outline: none;
+}
+
+.parlay-bottom-bar > .md-toolbar-tools {
+    max-height: 30px;
+    min-height: 30px;
+}
+
+.parlay-python-console-log-filter-input-container {
+    margin-bottom: 5px;
+    margin-top: 10px;
+}
+
+.parlay-console-list {
+    overflow-y: scroll;
+}
+
+.parlay-console-list-item-text {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.parlay-console-list-item-text > pre {
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+.parlay-console-list-item > md-icon:first-child {
+    margin-bottom: 0 !important;
+    margin-top: -4px !important;
+}

@@ -1,4 +1,4 @@
-function ParlayEndpointManagerFactory(PromenadeBroker, ParlayProtocolManager, ParlayNotification, ParlayStore, $window) {
+function ParlayEndpointManagerFactory(PromenadeBroker, ParlayProtocolManager, ParlayStore, $window) {
     
     var instance;
     
@@ -175,4 +175,4 @@ function ParlayEndpointManagerFactory(PromenadeBroker, ParlayProtocolManager, Pa
 }
 
 angular.module('parlay.endpoints.manager', ['parlay.protocols.manager', 'promenade.broker', 'parlay.store', 'parlay.endpoints.workspaces'])
-	.factory('ParlayEndpointManager', ['PromenadeBroker', 'ParlayProtocolManager', 'ParlayNotification', 'ParlayStore', '$window', ParlayEndpointManagerFactory]);
+	.factory('ParlayEndpointManager', ['PromenadeBroker', 'ParlayProtocolManager', 'ParlayStore', '$window', ParlayEndpointManagerFactory]);

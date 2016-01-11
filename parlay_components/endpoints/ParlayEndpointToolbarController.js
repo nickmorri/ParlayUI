@@ -1,4 +1,4 @@
-function ParlayEndpointsToolbarController($scope, $mdDialog, $mdSidenav, ParlayEndpointManager) {
+function ParlayEndpointsToolbarController($mdDialog, $mdSidenav, ParlayEndpointManager) {
 	
 	this.openSidenav = function () {
 		/* istanbul ignore next */
@@ -60,5 +60,5 @@ function ParlayEndpointsToolbar($mdMedia, PromenadeBroker) {
 }
 
 angular.module("parlay.endpoints.toolbar", ["parlay.protocols.list_controller", "parlay.sidenav", "parlay.endpoints.search"])
-	.controller("ParlayEndpointsToolbarController", ["$scope", "$mdDialog", "$mdSidenav", "ParlayEndpointManager", ParlayEndpointsToolbarController])
+	.controller("ParlayEndpointsToolbarController", ["$mdDialog", "$mdSidenav", "ParlayEndpointManager", ParlayEndpointsToolbarController])
 	.directive("parlayEndpointsToolbar", ["$mdMedia", "PromenadeBroker", ParlayEndpointsToolbar]);

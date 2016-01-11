@@ -161,7 +161,7 @@ module.exports = function (grunt) {
 			},
 			'stylesheets': {
 	        	'options': {
-					'debounceDelay': 100,
+					'debounceDelay': 10,
 					'livereload': true
 				},
 				'files': '<%= meta.stylesheets %>',
@@ -169,7 +169,7 @@ module.exports = function (grunt) {
 			},
 			'html': {
 	        	'options': {
-					'debounceDelay': 100,
+					'debounceDelay': 10,
 					'livereload': true
 				},
 				'files': ['<%= meta.htmlDirectives %>', '<%= meta.htmlViews %>', 'index.html'],

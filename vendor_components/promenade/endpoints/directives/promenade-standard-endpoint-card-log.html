@@ -29,12 +29,15 @@
 	
     <md-content class="md-padding parlay-endpoint-card-tab-content" scroll-glue>
         <md-list>
-            <md-list-item class="md-2-line parlay-log-item" ng-repeat="message in ctrl.getFilteredLog(filter_text)">
-                <div class="md-list-item-text message-text">
-                    <p>topics:{<span ng-repeat="(key, value) in message.TOPICS">{{key}}:{{value}}<span ng-if="!$last">,</span></span>}</p>
-                    <p>contents:{<span ng-repeat="(key, value) in message.CONTENTS">{{key}}:{{value}}<span ng-if="!$last">,</span></span>}</p>
-                </div>
-            </md-list-item>
+			<span ng-repeat="message in ctrl.getFilteredLog(filter_text)">
+				<md-list-item class="md-2-line parlay-log-item">
+					<div class="md-list-item-text message-text">
+						<p>topics:{<span ng-repeat="(key, value) in message.TOPICS">{{key}}:{{value}}<span ng-if="!$last">,</span></span>}</p>
+						<p>contents:{<span ng-repeat="(key, value) in message.CONTENTS">{{key}}:{{value}}<span ng-if="!$last">,</span></span>}</p>
+					</div>
+				</md-list-item>
+				<md-divider ng-hide="$last"></md-divider>
+			</span>
         </md-list>
     </md-content>
     

@@ -6,20 +6,6 @@
 			<h5 ng-if="!filter_text" ng-pluralize count="ctrl.getLog().length" when="{'0': 'No messages logged', 'one': '1 message logged', 'other': '{} messages logged'}"></h5>
 			<span flex></span>
 			
-			<md-menu md-position-mode="target-right target">
-				<md-button class="md-icon-button" aria-label="More" ng-click="$mdOpenMenu($event)">
-                    <md-tooltip>Tab menu</md-tooltip>
-					<md-icon md-menu-origin><ng-md-icon icon="more_vert"></ng-md-icon></md-icon>
-				</md-button>
-				<md-menu-content>
-					<md-menu-item>
-						<md-button ng-click="ctrl.closeTab()">
-							<md-icon md-menu-align-target><ng-md-icon icon="close"></ng-md-icon></md-icon>
-							Close tab
-						</md-button>
-					</md-menu-item>
-				</md-menu-content>
-			</md-menu>
 		</div>
 	</md-toolbar>
 

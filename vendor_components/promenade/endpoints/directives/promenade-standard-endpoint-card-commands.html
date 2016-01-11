@@ -6,55 +6,36 @@
 			<pre>{{ctrl.contents_message}}</pre>
 
 			<span flex></span>
-			
-			<md-menu md-position-mode="target-right target">
-				<md-button class="md-icon-button" aria-label="More" ng-click="$mdOpenMenu($event)">
-                    <md-tooltip>Tab menu</md-tooltip>
-					<md-icon md-menu-origin><ng-md-icon icon="more_vert"></ng-md-icon></md-icon>
-				</md-button>
-				<md-menu-content>
-					<md-menu-item>
-						<md-button ng-click="ctrl.copyCommand($event)" aria-label="Copy command to clipboard">
-							<md-icon md-menu-align-target><ng-md-icon icon="content_copy"></ng-md-icon></md-icon>
-							Copy command to clipboard
-						</md-button>
-					</md-menu-item>
-					<md-menu-item>
-						<md-button ng-click="ctrl.closeTab()" aria-label="Close tab">
-							<md-icon md-menu-align-target><ng-md-icon icon="close"></ng-md-icon></md-icon>
-							Close tab
-						</md-button>
-					</md-menu-item>
-				</md-menu-content>
-			</md-menu>
+
+            <md-button ng-click="ctrl.copyCommand($event)" class="md-icon-button" aria-label="Copy command to clipboard">
+                <md-tooltip>Copy command to clipboard</md-tooltip>
+                <md-icon><ng-md-icon icon="content_copy"></ng-md-icon></md-icon>
+            </md-button>
 		</div>
 	</md-toolbar>
 
-    <md-content class="md-padding parlay-endpoint-card-tab-content">
-    
-        <form name="commandform" layout="column" ng-submit="ctrl.send($event)">
-			<div layout="row">
-	            <promenade-standard-endpoint-card-command-container
-	            	commandform="commandform"
-	            	wrapper="wrapper"
-	            	fields="ctrl.endpoint.content_fields"
-	            	flex>
-	            </promenade-standard-endpoint-card-command-container>
-			</div>
-            
-            <md-button flex type="submit" class="md-raised" ng-class="ctrl.error ? 'md-warn' : 'md-primary'" ng-disabled="commandform.$invalid" aria-label="Sends command to a Promenade Standard Endpoint.">
-                <span ng-show="ctrl.sending">
-                    Sent ({{ctrl.status_message}}) [{{ctrl.endpoint.getMessageId()}}]
-                </span>
-                <span ng-hide="ctrl.sending || ctrl.error">
-                    Send
-                </span>
-				<span ng-show="ctrl.error">
-					Error check log. ({{ctrl.status_message}}) [{{ctrl.endpoint.getMessageId()}}]
-				</span>
-            </md-button>
-            
-        </form>
-    
-    </md-content>
+    <form name="commandform" layout="column" ng-submit="ctrl.send($event)">
+
+        <md-content class="parlay-endpoint-card-tab-content md-padding">
+            <promenade-standard-endpoint-card-command-container
+                    commandform="commandform"
+                    wrapper="wrapper"
+                    fields="ctrl.endpoint.content_fields">
+            </promenade-standard-endpoint-card-command-container>
+        </md-content>
+
+        <md-button flex class="md-raised" type="submit" style="margin-top: 0;" ng-class="ctrl.error ? 'md-warn' : 'md-primary'" ng-disabled="commandform.$invalid" aria-label="Sends command to a Promenade Standard Endpoint.">
+            <span ng-hide="ctrl.sending || ctrl.error">
+                Send
+            </span>
+            <span ng-show="ctrl.sending">
+                Sent ({{ctrl.status_message}}) [{{ctrl.endpoint.getMessageId()}}]
+            </span>
+            <span ng-show="ctrl.error">
+                Error check log. ({{ctrl.status_message}}) [{{ctrl.endpoint.getMessageId()}}]
+            </span>
+        </md-button>
+
+    </form>
+
 </md-tab>

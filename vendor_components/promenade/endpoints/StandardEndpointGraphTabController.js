@@ -18,7 +18,7 @@ function PromenadeStandardEndpointCardGraphTabController($scope, $mdDialog) {
 			locals: {
 				endpoint: this.endpoint,
 				data: this.data,
-				smoothie: $scope.getSmoothie()
+				smoothie: this.getSmoothie()
 			},
 			bindToController: true,
 			templateUrl: "../vendor_components/promenade/endpoints/directives/promenade-standard-endpoint-card-graph-configuration-dialog.html",

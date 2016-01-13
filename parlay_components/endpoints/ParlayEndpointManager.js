@@ -156,7 +156,7 @@ function ParlayEndpointManagerFactory(PromenadeBroker, ParlayProtocolManager, Pa
 		return loaded_endpoints;
 		
 	};
-	
+
 	ParlayEndpointManager.prototype.autoSave = function() {
 		if (this.hasActiveEndpoints()) ParlayStore("endpoints").moveItemToLocal('AutoSave', true);
 	};
@@ -164,12 +164,12 @@ function ParlayEndpointManagerFactory(PromenadeBroker, ParlayProtocolManager, Pa
 	PromenadeBroker.onClose(function () {
 		has_discovered = false;
 	});
-	
-	$window.onbeforeunload = ParlayEndpointManager.prototype.autoSave;
-	
+
 	if (!instance) {
 		instance = new ParlayEndpointManager();
 	}
+
+	$window.onbeforeunload = ParlayEndpointManager.prototype.autoSave.bind(instance);
 	
 	return instance;
 }

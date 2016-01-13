@@ -1,12 +1,21 @@
 /**
  * Controller constructor for PromenadeStandardEndpointCardLogTabController.
  */
-function PromenadeStandardEndpointCardLogTabController($scope, ParlayPersistence, ParlayUtility) {
+function PromenadeStandardEndpointCardLogTabController($scope, ParlayPersistence, ParlayUtility, $timeout) {
 	ParlayBaseTabController.call(this, $scope, "promenadeStandardEndpointCardLog");
 	
 	// Initially we don't want to filter logged messages by anything.
 	$scope.filter_text = null;
-	
+
+	this.dynamicItems = {
+		getLength: function () {
+			return this.getFilteredLog($scope.filter_text).length;
+		}.bind(this),
+		getItemAtIndex: function (index) {
+			return this.getFilteredLog($scope.filter_text).reverse()[index];
+		}.bind(this)
+	};
+
 	var container = ParlayUtility.relevantScope($scope, 'container').container;
 	var directive_name = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
 	ParlayPersistence(directive_name, "filter_text", $scope);
@@ -57,5 +66,5 @@ function PromenadeStandardEndpointCardLog() {
 }
 
 angular.module('promenade.endpoints.standardendpoint.log', ['parlay.utility', 'parlay.store.persistence', 'luegg.directives'])
-	.controller('PromenadeStandardEndpointCardLogTabController', ['$scope', 'ParlayPersistence', 'ParlayUtility', PromenadeStandardEndpointCardLogTabController])
+	.controller('PromenadeStandardEndpointCardLogTabController', ['$scope', 'ParlayPersistence', 'ParlayUtility', '$timeout', PromenadeStandardEndpointCardLogTabController])
 	.directive('promenadeStandardEndpointCardLog', PromenadeStandardEndpointCardLog);

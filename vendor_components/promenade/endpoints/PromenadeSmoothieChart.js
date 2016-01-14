@@ -163,9 +163,17 @@
 			
 			// Add it as a child to our directive element.
 			element[0].appendChild(canvas);
-			
+
+
+
 			// Use the configuration from scope if available. Otherwise use the default configuration.
 			scope.smoothie = new SmoothieChart(scope.config ? scope.config : {
+                yRangeFunction: function (range) {
+                    return {
+                        min: isNaN(range.min) ? range.min : range.min * 0.75,
+                        max: isNaN(range.max) ? range.max : range.max * 1.25,
+                    };
+                },
 		        grid: {
 			        fillStyle: 'transparent',
 			        strokeStyle: 'transparent',

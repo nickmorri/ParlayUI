@@ -91,16 +91,42 @@ function PromenadeStandardEndpointCardGraphTabConfigurationController($mdDialog)
  * Toggles the state of the minimum lock. If we are removing lock we should remove the minValue from Smoothie options.
  */
 PromenadeStandardEndpointCardGraphTabConfigurationController.prototype.lockMinimum = function () {
-	if (this.minimum_locked) this.smoothie.options.minValue = this.smoothie.valueRange.min;
-	else delete this.smoothie.options.minValue;
+    // Occurs when user enables checkbox.
+	if (this.minimum_locked) {
+        // We want to remove the y range function when the user explicitly sets value as these should not automatically
+        // be scaled. Store a reference to it so it can be restored if the lock is removed.
+        this.smoothie.options.yRangeFunctionRef = this.smoothie.options.yRangeFunction;
+        delete this.smoothie.options.yRangeFunction;
+        this.smoothie.options.minValue = this.smoothie.valueRange.min;
+    }
+    // Occurs when user disables checkbox.
+	else {
+        // Set the y range function when the user remove the lock.
+        this.smoothie.options.yRangeFunction = this.smoothie.options.yRangeFunctionRef;
+        delete this.smoothie.options.yRangeFunctionRef;
+        delete this.smoothie.options.minValue;
+    }
 };
 
 /**
  * Toggles the state of the maximum lock. If we are removing lock we should remove the maxValue from Smoothie options.
  */
 PromenadeStandardEndpointCardGraphTabConfigurationController.prototype.lockMaximum = function () {
-	if (this.maximum_locked) this.smoothie.options.maxValue = this.smoothie.valueRange.max;
-	else delete this.smoothie.options.maxValue;
+    // Occurs when user enables checkbox.
+	if (this.maximum_locked) {
+        // We want to remove the y range function when the user explicitly sets value as these should not automatically
+        // be scaled. Store a reference to it so it can be restored if the lock is removed.
+        this.smoothie.options.yRangeFunctionRef = this.smoothie.options.yRangeFunction;
+        delete this.smoothie.options.yRangeFunction;
+        this.smoothie.options.maxValue = this.smoothie.valueRange.max;
+    }
+    // Occurs when user disables checkbox.
+	else {
+        // Set the y range function when the user remove the lock.
+        this.smoothie.options.yRangeFunction = this.smoothie.options.yRangeFunctionRef;
+        delete this.smoothie.options.yRangeFunctionRef;
+        delete this.smoothie.options.maxValue;
+    }
 };
 
 /**

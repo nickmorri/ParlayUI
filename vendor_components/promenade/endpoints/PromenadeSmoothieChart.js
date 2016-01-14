@@ -61,7 +61,8 @@
 		    
 		    scope.smoothie.addTimeSeries(this.lines[stream.NAME], {
 				strokeStyle: this.colors.pop(),
-			    lineWidth: 2
+			    lineWidth: 2,
+				streamName: stream.NAME
 		    });
 		}, this);
     }.bind(this);

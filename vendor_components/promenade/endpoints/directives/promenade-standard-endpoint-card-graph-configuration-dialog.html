@@ -9,40 +9,43 @@
 		</div>
 	</md-toolbar>
 	<md-dialog-content>
-	
 		<div class="md-dialog-content" layout="column">
-	
-			<div layout flex>
-		    	<div flex="15" layout layout-align="center center">
-		        	<span class="md-body-1">Label Size</span>
-				</div>
-				<md-slider flex md-discrete ng-model="ctrl.smoothie.options.labels.fontSize" step="1" min="1" max="36" aria-label="Label font size"></md-slider>
-				<div flex="10" layout layout-align="center center">
-					<input flex type="number" ng-model="ctrl.smoothie.options.labels.fontSize" step="1" min="1" max="36" aria-label="Label font size">
-			    </div>
-		    </div>
-		    
-		    <div layout flex>
-			    <div layout flex="50">
-				    <md-checkbox ng-model="ctrl.minimum_locked" ng-change="ctrl.lockMinimum()" aria-label="Lock minimum range"></md-checkbox>
-				    <md-input-container flex ng-switch="ctrl.minimum_locked">
-				    	<label>Minimum range</label>
-				    	<input ng-switch-when="false" ng-model="ctrl.smoothie.valueRange.min" type="number" disabled="true">
-				    	<input ng-switch-when="true" ng-model="ctrl.smoothie.options.minValue" type="number">
-				    </md-input-container>
-			    </div>
-			    <div layout flex="50">
-				    <md-checkbox ng-model="ctrl.maximum_locked" ng-change="ctrl.lockMaximum()" aria-label="Lock maximum range"></md-checkbox>
-				    <md-input-container flex ng-switch="ctrl.maximum_locked">
-				    	<label>Maximum range</label>
-				    	<input ng-switch-when="false" ng-model="ctrl.smoothie.valueRange.max" type="number" disabled="true">
-				    	<input ng-switch-when="true" ng-model="ctrl.smoothie.options.maxValue" type="number">
-				    </md-input-container>
-			    </div>
-		    </div>
-		
 			<md-list>
-				<md-subheader class="md-no-sticky">Streams</md-subheader>
+
+				<md-subheader class="md-no-sticky">Label Size</md-subheader>
+
+				<md-list-item layout="row" flex>
+					<md-slider flex md-discrete ng-model="ctrl.smoothie.options.labels.fontSize" step="1" min="1" max="36" aria-label="Label font size"></md-slider>
+					<md-input-container flex="10" layout layout-align="center center">
+                        <label>Size</label>
+						<input flex type="number" ng-model="ctrl.smoothie.options.labels.fontSize" step="1" min="1" max="36" aria-label="Label font size">
+					</md-input-container>
+				</md-list-item>
+
+                <md-subheader class="md-no-sticky">Y-Axis Range</md-subheader>
+
+				<md-list-item layout="row" flex>
+					<div layout flex="50">
+						<md-checkbox ng-model="ctrl.minimum_locked" ng-change="ctrl.lockMinimum()" aria-label="Lock minimum range"></md-checkbox>
+						<md-input-container flex ng-switch="ctrl.minimum_locked">
+							<label>Minimum range</label>
+							<input ng-switch-when="false" ng-model="ctrl.smoothie.valueRange.min" type="number" disabled="true">
+							<input ng-switch-when="true" ng-model="ctrl.smoothie.options.minValue" type="number">
+						</md-input-container>
+					</div>
+					<div layout flex="50">
+						<md-checkbox ng-model="ctrl.maximum_locked" ng-change="ctrl.lockMaximum()" aria-label="Lock maximum range"></md-checkbox>
+						<md-input-container flex ng-switch="ctrl.maximum_locked">
+							<label>Maximum range</label>
+							<input ng-switch-when="false" ng-model="ctrl.smoothie.valueRange.max" type="number" disabled="true">
+							<input ng-switch-when="true" ng-model="ctrl.smoothie.options.maxValue" type="number">
+						</md-input-container>
+					</div>
+				</md-list-item>
+
+                <md-divider></md-divider>
+
+                <md-subheader class="md-no-sticky">Streams</md-subheader>
 				
 				<md-list-item ng-repeat="stream in ctrl.endpoint.data_streams | orderObjectBy: 'NAME'">
 					<md-checkbox ng-model="stream.enabled" ng-change="ctrl.toggleStream(stream)"></md-checkbox>
@@ -51,9 +54,7 @@
 				</md-list-item>
 				
 			</md-list>
-		
 		</div>
-        
 	</md-dialog-content>
 		
 </md-dialog>

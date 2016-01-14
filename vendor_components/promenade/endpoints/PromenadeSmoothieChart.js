@@ -75,6 +75,12 @@
 	    Object.keys(this.lines).filter(function(key) {
 		    return !streams.some(function(stream) { return stream.NAME === key; });
 	    }, this).forEach(function (key) {
+
+            // Re-add the now unused color to available list of colors.
+            this.colors.push(scope.smoothie.seriesSet.find(function (series) {
+                return series.options.streamName === key;
+            }).options.strokeStyle);
+
 		    scope.smoothie.removeTimeSeries(this.lines[key]);
 		    delete this.lines[key];
 	    }, this);

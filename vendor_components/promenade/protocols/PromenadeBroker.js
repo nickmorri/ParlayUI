@@ -62,7 +62,7 @@ function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification) {
         };
 
         /**
-         * Retreives latest private discovery data.
+         * Retrieves latest private discovery data.
          * @returns {Object} - Latest discovery data object
          */
         this.getLastDiscovery = function() {

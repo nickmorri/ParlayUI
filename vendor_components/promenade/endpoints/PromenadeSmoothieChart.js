@@ -32,7 +32,7 @@
  function PromenadeSmoothieChartController(scope, $interval) {
 	 
  	// Easy colors to see on most transparent backgrounds.
-	this.colors = ["#000000", "#0433ff", "#aa7942", "#00fdff", "#00f900", "#ff40ff", "#ff9300", "#942192", "#ff2600"];
+	this.colors = ["#000000", "#0433ff", "#aa7942", "#00fdff", "#00f900", "#ff40ff", "#ff9300", "#942192", "#ff2600", "#666633"];
 	 
 	// Container for TimeSeries Objects.
 	this.lines = {};

@@ -59,7 +59,7 @@ PromenadeStandardEndpointCardGraphTabController.prototype.streamCount = function
  * @param {Material Angular Service} $mdDialog - Dialog modal service.
  */
 function PromenadeStandardEndpointCardGraphTabConfigurationController($mdDialog) {
-	this.hide = $mdDialog.cancel;
+	this.hide = $mdDialog.hide;
 	
 	// When minValue or maxValue are defined we should initialize their lock to true.
 	this.minimum_locked = this.smoothie.options.minValue !== undefined;

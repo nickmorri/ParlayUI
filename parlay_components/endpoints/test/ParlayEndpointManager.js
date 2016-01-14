@@ -140,9 +140,9 @@
             describe('PromenadeBroker interactions', function () {
 
 				it("has discovered", function (done) {
-					expect(ParlayEndpointManager.hasDiscovered()).toBeFalsy();
+					expect(ParlayEndpointManager.hasDiscovered()).toBe(PromenadeBroker.getLastDiscovery() !== undefined);
 					ParlayEndpointManager.requestDiscovery().then(function () {
-						expect(ParlayEndpointManager.hasDiscovered()).toBeTruthy();	
+						expect(ParlayEndpointManager.hasDiscovered()).toBe(PromenadeBroker.getLastDiscovery() !== undefined);
 						done();
 					});
 					$rootScope.$digest();

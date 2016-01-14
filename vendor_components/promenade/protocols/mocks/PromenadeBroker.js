@@ -24,7 +24,8 @@ angular.module('mock.promenade.broker', []).factory('PromenadeBroker', ['$q', fu
         connected: false,
         onDiscoveryCallbacks: [],
         onOpenCallbacks: [],
-        onCloseCallbacks: []
+        onCloseCallbacks: [],
+        discovered: false
     };
     
     PromenadeBroker.requestAvailableProtocols = function () {
@@ -58,6 +59,7 @@ angular.module('mock.promenade.broker', []).factory('PromenadeBroker', ['$q', fu
         return $q(function (resolve, reject) {
 	        resolve({discovery: sample_discovery});
         });
+        this.discovered = true;
     };
     
     PromenadeBroker.onDiscovery = function (callback) {
@@ -114,6 +116,10 @@ angular.module('mock.promenade.broker', []).factory('PromenadeBroker', ['$q', fu
             if (protocol === 'TestProtocol') resolve({STATUS: 'ok'});
             else resolve({STATUS: 'error'});
         });
+    };
+
+    PromenadeBroker.getLastDiscovery = function () {
+        return this.discovered ? [] : undefined;
     };
     
     return PromenadeBroker;

@@ -1,10 +1,11 @@
 function ParlayEndpointManagerFactory(PromenadeBroker, ParlayProtocolManager, ParlayStore, $window) {
-    
-    var instance;
-    
+
+    // Endpoints currently active in the workspace.
+    var active_endpoints = [];
+
     function ParlayEndpointManager() {
-	    this.has_discovered = false;
-	    this.active_endpoints = [];
+        // Add event handler before window unload to autosave endpoints.
+        $window.onbeforeunload = ParlayEndpointManager.prototype.autoSave.bind(this);
     }
     
     /**
@@ -12,7 +13,7 @@ function ParlayEndpointManagerFactory(PromenadeBroker, ParlayProtocolManager, Pa
 	 * @returns {Object} key: order, value: active endpoint containers
 	 */
     ParlayEndpointManager.prototype.getActiveEndpoints = function () {
-	    return this.active_endpoints;
+	    return active_endpoints;
     };
     
     /**
@@ -35,12 +36,12 @@ function ParlayEndpointManagerFactory(PromenadeBroker, ParlayProtocolManager, Pa
 	 * Clears reference to active endpoint object.
 	 */
     ParlayEndpointManager.prototype.clearActiveEndpoints = function () {
-	    this.active_endpoints = [];
+	    active_endpoints = [];
     };
     
     /**
 	 * Returns the available endpoints from all connected protocols.
-	 * @returns {Array} endpoints available on all protocols
+	 * @returns {Array} - Endpoints available on all protocols
 	 */
     ParlayEndpointManager.prototype.getAvailableEndpoints = function () {
         return ParlayProtocolManager.getOpenProtocols().reduce(function (previous, current) {
@@ -53,38 +54,35 @@ function ParlayEndpointManagerFactory(PromenadeBroker, ParlayProtocolManager, Pa
 	 * @returns {Boolean} - True if we have successfully completed a discovery, false otherwise.
 	 */
     ParlayEndpointManager.prototype.hasDiscovered = function () {
-	    return this.has_discovered;
+	    return PromenadeBroker.getLastDiscovery() !== undefined;
     };
     
     /**
 	 * Requests discovery from PromenadeBroker.
-	 * @returns {$q.defer.promise} Resolved when a response is received from the Broker.
+	 * @returns {$q.defer.promise} - Resolved when a response is received from the Broker.
 	 */
     ParlayEndpointManager.prototype.requestDiscovery = function () {
-        return PromenadeBroker.requestDiscovery(true).then(function(response) {
-	        this.has_discovered = true;
-	        return response;
-        }.bind(this));
+        return PromenadeBroker.requestDiscovery(true);
     };
     
     /**
 	 * Swaps the endpoint at the specified index with the endpoint at index + distance.
 	 * @param {Number} index - position of endpoint to swap.
-	 * @param {Number} distance - how far to move target endpoint.
+	 * @param {Number} distance - How far to move target endpoint.
 	 */
     ParlayEndpointManager.prototype.reorder = function (index, distance) {
-	    var temp = this.active_endpoints[index + distance];
-	    this.active_endpoints[index + distance] = this.active_endpoints[index];
-	    this.active_endpoints[index] = temp;
+	    var temp = active_endpoints[index + distance];
+	    active_endpoints[index + distance] = active_endpoints[index];
+	    active_endpoints[index] = temp;
     };
     
     /**
 	 * Activates endpoint. 
-	 * @param {ParlayEndpoint} endpoint - reference to the endpoint object we want to activate.
+	 * @param {ParlayEndpoint} endpoint - Reference to the endpoint object we want to activate.
 	 * @param {Number} uid[optional] - If given a uid we will use the provided one. Otherwise we will randomly generate one.
 	 */
     ParlayEndpointManager.prototype.activateEndpoint = function (endpoint, uid) {
-	    this.active_endpoints.push({
+	    active_endpoints.push({
 		    ref: endpoint,
 		    uid: uid !== undefined ? uid : Math.floor(Math.random() * 1500)
 	    });
@@ -92,10 +90,10 @@ function ParlayEndpointManagerFactory(PromenadeBroker, ParlayProtocolManager, Pa
     
     /**
 	 * Creates a duplicate endpoint container that references the same endpoint available at the given index.
-	 * @param {Number} index - position of the endpoint we want to duplicate.
+	 * @param {Number} index - Position of the endpoint we want to duplicate.
 	 */
     ParlayEndpointManager.prototype.duplicateEndpoint = function (index) {
-	    var container = this.active_endpoints[index];
+	    var container = active_endpoints[index];
 	    var new_uid = container.uid + Math.floor(Math.random() * 1500);
 	    
 	    var old_directive = 'parlayEndpointCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
@@ -115,15 +113,15 @@ function ParlayEndpointManagerFactory(PromenadeBroker, ParlayProtocolManager, Pa
     
     /**
 	 * Deactivates an endoint that is currently active.
-	 * @param {Number} index - position of endpoint to be deactivated.
+	 * @param {Number} index - Position of endpoint to be deactivated.
 	 */
     ParlayEndpointManager.prototype.deactivateEndpoint = function (index) {
-	    this.active_endpoints.splice(index, 1);
+	    active_endpoints.splice(index, 1);
     };
     
     /**
 	 * Loads endpoints from the specified workspace.
-	 * @param {Workspace} workspace - saved workspace to be loaded.
+	 * @param {Workspace} workspace - Saved workspace to be loaded.
 	 */
 	ParlayEndpointManager.prototype.loadWorkspace = function (workspace) {
 		
@@ -157,21 +155,16 @@ function ParlayEndpointManagerFactory(PromenadeBroker, ParlayProtocolManager, Pa
 		
 	};
 
+    /**
+     * Saves active endpoints to a workspace titled AutoSave automatically.
+     */
 	ParlayEndpointManager.prototype.autoSave = function() {
-		if (this.hasActiveEndpoints()) ParlayStore("endpoints").moveItemToLocal('AutoSave', true);
+		if (this.hasActiveEndpoints()) {
+            ParlayStore("endpoints").moveItemToLocal('AutoSave', true);
+        }
 	};
-	
-	PromenadeBroker.onClose(function () {
-		has_discovered = false;
-	});
 
-	if (!instance) {
-		instance = new ParlayEndpointManager();
-	}
-
-	$window.onbeforeunload = ParlayEndpointManager.prototype.autoSave.bind(instance);
-	
-	return instance;
+	return new ParlayEndpointManager();
 }
 
 angular.module('parlay.endpoints.manager', ['parlay.protocols.manager', 'promenade.broker', 'parlay.store', 'parlay.endpoints.workspaces'])

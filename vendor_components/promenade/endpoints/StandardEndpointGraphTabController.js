@@ -6,7 +6,18 @@
  */
 function PromenadeStandardEndpointCardGraphTabController($scope, $mdDialog) {
 	ParlayBaseTabController.call(this, $scope, "promenadeStandardEndpointCardGraph");
-	
+
+    this.streamColors = [];
+
+    function getStreamColors() {
+        this.streamColors = this.getSmoothie().seriesSet.map(function (series) {
+            return {
+                name: series.options.streamName,
+                color: series.options.strokeStyle
+            };
+        });
+    }
+
 	/**
 	 * Launches graph configuration $mdDialog modal.
 	 * @param {MouseEvent} $event - Used to create source for $mdDialog opening animation.
@@ -24,7 +35,7 @@ function PromenadeStandardEndpointCardGraphTabController($scope, $mdDialog) {
 			templateUrl: "../vendor_components/promenade/endpoints/directives/promenade-standard-endpoint-card-graph-configuration-dialog.html",
 			targetEvent: $event,
 			clickOutsideToClose: true
-		});
+		}).finally(getStreamColors.bind(this));
 	};
 		
 }

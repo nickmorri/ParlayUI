@@ -1,20 +1,20 @@
-var sample_endpoints = function () {
-    var endpoints = [];
+var sample_items = function () {
+    var items = [];
     
     for (var i = 0; i < 50; i++) {
-        endpoints.push({
+        items.push({
             ID: 100 + i,
             INTERFACES: [],
             NAME: 'TEST' + i,
-            TEMPLATE: 'STD_ENDPOINT'
+            TEMPLATE: 'STD_ITEM'
         });
     }
     
-    return endpoints;
+    return items;
 }();
 
 var sample_discovery = {
-    CHILDREN: sample_endpoints,
+    CHILDREN: sample_items,
     NAME: 'TestProtocol',
     TEMPLATE: 'Protocol'
 };

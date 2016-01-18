@@ -126,13 +126,13 @@
 		        it('unpack value', function () {
 			        ParlayStoreService.setSessionItem('card1', {speed: 10});
 			        expect(ParlayStoreService.getLocalValues()).toEqual({});
-			        ParlayStoreService.moveItemToLocal('packed-endpoints', false);
+			        ParlayStoreService.moveItemToLocal('packed-items', false);
 			        
 					ParlayStoreService.clearSession();
 					expect(ParlayStoreService.hasSessionItem('card1')).toBeFalsy();
 					expect(ParlayStoreService.getSessionLength()).toBe(0);
 					
-					ParlayStoreService.moveItemToSession('packed-endpoints');
+					ParlayStoreService.moveItemToSession('packed-items');
 					expect(ParlayStoreService.getSessionItem('card1')).toEqual({speed: 10});
 		        });
 		        

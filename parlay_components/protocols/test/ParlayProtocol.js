@@ -1,23 +1,23 @@
 (function () {
     'use strict';
 
-	var sample_endpoints = function () {
-	    var endpoints = [];
+	var sample_items = function () {
+	    var items = [];
 	    
 	    for (var i = 0; i < 50; i++) {
-	        endpoints.push({
+	        items.push({
 	            ID: 100 + i,
 	            INTERFACES: [],
 	            NAME: 'TEST' + i,
-	            TEMPLATE: 'STD_ENDPOINT'
+	            TEMPLATE: 'STD_ITEM'
 	        });
 	    }
 	    
-	    return endpoints;
+	    return items;
 	}();
 	
 	var sample_discovery = {
-	    CHILDREN: sample_endpoints,
+	    CHILDREN: sample_items,
 	    NAME: 'TestProtocol',
 	    TEMPLATE: 'Protocol'
 	};
@@ -42,7 +42,7 @@
             });
             
             it('accesses attributes', function () {
-                expect(protocol.getAvailableEndpoints()).toEqual([]);
+                expect(protocol.getAvailableItems()).toEqual([]);
                 expect(protocol.getLog()).toEqual([]);
             });
             
@@ -67,16 +67,16 @@
             
             describe('adding discovery information', function () {
                 
-                it('adds endpoints', function () {
-                    expect(protocol.getAvailableEndpoints().length).toBe(0);
-                    protocol.addEndpoints(sample_discovery.CHILDREN);
-                    expect(protocol.getAvailableEndpoints().length).toBe(50);
+                it('adds items', function () {
+                    expect(protocol.getAvailableItems().length).toBe(0);
+                    protocol.addItems(sample_discovery.CHILDREN);
+                    expect(protocol.getAvailableItems().length).toBe(50);
                 });
                 
                 it('does full discovery process', function () {
-                    expect(protocol.getAvailableEndpoints().length).toBe(0);
+                    expect(protocol.getAvailableItems().length).toBe(0);
                     protocol.addDiscoveryInfo(sample_discovery);
-                    expect(protocol.getAvailableEndpoints().length).toBe(50);
+                    expect(protocol.getAvailableItems().length).toBe(50);
                 });
                 
             });

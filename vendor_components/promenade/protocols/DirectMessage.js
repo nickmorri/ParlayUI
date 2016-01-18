@@ -1,4 +1,4 @@
-function PromenadeDirectMessageProtocolFactory(ParlayProtocol, PromenadeStandardEndpoint, $q) {
+function PromenadeDirectMessageProtocolFactory(ParlayProtocol, PromenadeStandardItem, $q) {
     "use strict";
 
     /**
@@ -10,8 +10,8 @@ function PromenadeDirectMessageProtocolFactory(ParlayProtocol, PromenadeStandard
         // Call the constructor of the prototype we inherit from.
         ParlayProtocol.call(this, configuration);
         
-        // Set our own endpoint_factory.
-        this.endpoint_factory = PromenadeStandardEndpoint;
+        // Set our own item_factory.
+        this.item_factory = PromenadeStandardItem;
         
         // Defining custom attributes.
         this.current_message_id = 200;
@@ -85,5 +85,5 @@ function PromenadeDirectMessageProtocolFactory(ParlayProtocol, PromenadeStandard
     return PromenadeDirectMessageProtocol;    
 }
 
-angular.module("promenade.protocols.directmessage", ["parlay.protocols.protocol", "promenade.endpoints.standardendpoint"])
-	.factory("PromenadeDirectMessageProtocol", ["ParlayProtocol", "PromenadeStandardEndpoint", "$q", PromenadeDirectMessageProtocolFactory]);
+angular.module("promenade.protocols.directmessage", ["parlay.protocols.protocol", "promenade.items.standarditem"])
+	.factory("PromenadeDirectMessageProtocol", ["ParlayProtocol", "PromenadeStandardItem", "$q", PromenadeDirectMessageProtocolFactory]);

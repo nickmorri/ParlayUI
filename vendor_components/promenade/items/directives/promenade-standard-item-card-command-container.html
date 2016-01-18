@@ -1,0 +1,42 @@
+<span ng-repeat="field in fields" layout="column">
+
+    <md-input-container flex md-is-error="commandform[field.msg_key].$invalid" ng-hide="field.hidden" class="parlay-command-container">
+		
+		<!-- Label that is displayed above input for all inputs that don't use md-chips -->
+        <label ng-hide="field.input === 'NUMBERS' || field.input === 'STRINGS' || field.input === 'ARRAY'">{{::field.label}}</label>
+		
+		<!-- DROPDOWN input type -->
+        <md-select ng-if="field.input === 'DROPDOWN'" name="{{field.msg_key}}" ng-model="wrapper.message[field.msg_key + '_' + field.input]" ng-model-options="{trackBy: '$value.value'}" ng-required="field.required">
+            <md-option ng-repeat="option in field.options" ng-value="option">{{::option.name}}</md-option>
+        </md-select>
+        
+        <!-- NUMBER input type -->
+        <input ng-if="field.input === 'NUMBER'" name="{{field.msg_key}}" ng-model="wrapper.message[field.msg_key + '_' + field.input]" type="number" step="any" ng-required="field.required">
+        
+        <!-- STRING input type -->
+        <input ng-if="field.input === 'STRING'" name="{{field.msg_key}}" ng-model="wrapper.message[field.msg_key + '_' + field.input]" type="text" ng-required="field.required">
+        
+        <!-- NUMBERS or STINGS or ARRAY input type -->
+        <md-chips name="{{field.msg_key}}" ng-model="wrapper.message[field.msg_key + '_' + field.input]"
+                  ng-if="field.input === 'NUMBERS' || field.input === 'STRINGS' || field.input === 'ARRAY'"
+                  ng-required="field.required" placeholder="{{field.label}}" secondary-placeholder="{{field.label}}"
+                  md-transform-chip="prepChip($chip)" md-separator-keys="[188, 32]"><!-- 188=',' 32=' ' -->
+        	<md-chip-template>{{$chip.value}}</md-chip-template>
+        </md-chips>
+        
+        <!-- Displays error message if a field is required or does not properly validate -->
+        <div class="errors" ng-messages="commandform[field.msg_key].$error" ng-if="commandform[field.msg_key + '_' + field.input]">
+            <div ng-message="required">{{::field.msg_key}} is required</div>
+        </div>
+        
+    </md-input-container>
+    
+    <!-- Recursive promenade-standard-item-card-command-container directive element to handle any potential nesting of sub fields -->
+    <promenade-standard-item-card-command-container flex
+	    ng-if="hasSubFields(field)"
+	    commandform="commandform"
+	    wrapper="wrapper"
+	    fields="getSubFields(field)">
+    </promenade-standard-item-card-command-container>
+
+</span>

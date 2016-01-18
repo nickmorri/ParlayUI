@@ -1,0 +1,43 @@
+<md-toolbar md-scroll-shrink class="md-whiteframe-z3" ng-class="{'md-warn': !connected}">
+    
+    <div class="md-toolbar-tools" layout="row" layout-align="space-between">
+	    
+	    <div flex layout="row" layout-align="start center">
+
+			<img hide-sm hide-xs class="logo" src="../../../images/logo.png">
+
+		    <md-button ng-class="{'md-icon-button': !large_screen}" ng-click="ctrl.requestDiscovery()" aria-label="Request discovery">
+	            <md-tooltip>Request discovery</md-tooltip>
+			    <span ng-if="large_screen">Discovery</span>
+			    <md-icon ng-if="!large_screen" class="white"><ng-md-icon icon="autorenew"></ng-md-icon></md-icon>
+	        </md-button>
+	        
+	        <md-button ng-class="{'md-icon-button': !large_screen}" ng-click="ctrl.openWorkspaceManagementDialog($event)" aria-label="Manage workspaces">
+	            <md-tooltip>Manage workspaces</md-tooltip>
+			    <span ng-if="large_screen">Workspaces</span>
+			    <md-icon ng-if="!large_screen" class="white"><ng-md-icon icon="dashboard"></ng-md-icon></md-icon>
+	        </md-button>
+        
+	    </div>
+        
+        <div flex layout="row" layout-align="center center">
+	        <parlay-item-search flex></parlay-item-search>
+        </div>
+        
+        <div flex layout="row" layout-align="end center">
+	    	
+	    	<md-button ng-class="{'md-icon-button': !large_screen}" ng-click="ctrl.openConnectionManagementDialog($event)" aria-label="Connections menu">
+			    <md-tooltip>View connections</md-tooltip>
+			    <span ng-if="large_screen">Connections</span>
+			    <md-icon ng-if="!large_screen" class="white"><ng-md-icon icon="settings_ethernet"></ng-md-icon></md-icon>
+			</md-button>
+
+			<md-button class="md-icon-button" ng-click="ctrl.openSidenav()" aria-label="Opens side navigation">
+				<md-icon class="white"><ng-md-icon icon="menu"></ng-md-icon></md-icon>
+			</md-button>
+			
+        </div>
+        
+    </div>
+    
+</md-toolbar>

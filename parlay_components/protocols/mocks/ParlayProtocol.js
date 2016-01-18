@@ -16,10 +16,10 @@ function ParlayProtocol() {
         unsubscribe: function () {
             this.has_subscription = false;
         },
-        getAvailableEndpoints: function () {
-	        var endpoints = [];
-	        for (var i = 0; i < 5; i++) endpoints.push({name:'Endpoint' + i});
-	        return endpoints;
+        getAvailableItems: function () {
+	        var items = [];
+	        for (var i = 0; i < 5; i++) items.push({name:'Item' + i});
+	        return items;
         }
     };
 }

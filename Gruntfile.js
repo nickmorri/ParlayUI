@@ -42,7 +42,7 @@ module.exports = function (grunt) {
 
 		'meta': {
 			'source': ['app.js', 'parlay_components/*/*.js'],
-			'vendorComponents': getVendorItems(['protocols', 'endpoints']),
+			'vendorComponents': getVendorItems(['protocols', 'items']),
 			'dist_destination': 'dist',
 			'dev_destination': 'dev',
 			'doc_destination': 'doc',

@@ -1,19 +1,19 @@
-function ParlayProtocolFactory(ParlaySocket, ParlayEndpoint, $q) {
+function ParlayProtocolFactory(ParlaySocket, ParlayItem, $q) {
     
     function ParlayProtocol(configuration) {
         "use strict";
         this.id = "UI";
         this.protocol_name = configuration.name;
         this.type = configuration.protocol_type;
-        this.available_endpoints = [];
-        this.active_endpoints = [];
+        this.available_items = [];
+        this.active_items = [];
         this.log = [];
         this.fields = {};
         
         this.listeners = {};
         
-        // Objects that inherit from this ParlayProtocol's prototype can set their own endpoint_factory.
-        this.endpoint_factory = ParlayEndpoint;
+        // Objects that inherit from this ParlayProtocol's prototype can set their own item_factory.
+        this.item_factory = ParlayItem;
     }
     
     /**
@@ -33,11 +33,11 @@ function ParlayProtocolFactory(ParlaySocket, ParlayEndpoint, $q) {
     };
     
     /**
-	 * Returns available endpoints in protocol.
-	 * @returns {Array} available endpoints
+	 * Returns available items in protocol.
+	 * @returns {Array} available items
 	 */
-    ParlayProtocol.prototype.getAvailableEndpoints = function () {
-        return this.available_endpoints;
+    ParlayProtocol.prototype.getAvailableItems = function () {
+        return this.available_items;
     };
     
     /**
@@ -125,19 +125,19 @@ function ParlayProtocolFactory(ParlaySocket, ParlayEndpoint, $q) {
 	    
 	    this.listeners = {};
 	    
-        this.available_endpoints = [];
-        this.active_endpoints = [];
+        this.available_items = [];
+        this.active_items = [];
     };
     
     /**
-	 * Adds endpoints to the protocol instance's available endpoints.
-	 * @param {Array} endpoints - Array of the protocol's endpoints.
+	 * Adds items to the protocol instance's available items.
+	 * @param {Array} items - Array of the protocol's items.
 	 */
-    ParlayProtocol.prototype.addEndpoints = function (endpoints) {
+    ParlayProtocol.prototype.addItems = function (items) {
         //type check
-        if(!Array.isArray(endpoints)) return;
-        this.available_endpoints = endpoints.map(function (endpoint) {
-            return new this.endpoint_factory(endpoint, this);
+        if(!Array.isArray(items)) return;
+        this.available_items = items.map(function (item) {
+            return new this.item_factory(item, this);
         }, this);
     };
     
@@ -146,11 +146,11 @@ function ParlayProtocolFactory(ParlaySocket, ParlayEndpoint, $q) {
 	 * @param {Object} info - Discovery message
 	 */
     ParlayProtocol.prototype.addDiscoveryInfo = function (info) {
-        this.addEndpoints(info.CHILDREN);
+        this.addItems(info.CHILDREN);
     };
     
     return ParlayProtocol;
 }
 
-angular.module("parlay.protocols.protocol", ["parlay.socket", "parlay.endpoints.endpoint", "promenade.protocols.directmessage"])
-	.factory("ParlayProtocol", ["ParlaySocket", "ParlayEndpoint", "$q", ParlayProtocolFactory]);
+angular.module("parlay.protocols.protocol", ["parlay.socket", "parlay.items.item", "promenade.protocols.directmessage"])
+	.factory("ParlayProtocol", ["ParlaySocket", "ParlayItem", "$q", ParlayProtocolFactory]);

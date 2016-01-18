@@ -1,0 +1,16 @@
+<div layout-fill layout="column">
+    
+    <parlay-items-toolbar></parlay-items-toolbar>
+    
+    <parlay-sidenav></parlay-sidenav>
+    
+	<!-- layout-wrap allows flex children to wrap within the container if the elements use more than 100% -->
+	<!-- layout-align="space-around start" specifies that the children will be aligned with space-around in the row, start specifies how they will be aligned perpendicular to the layout's direction -->
+	
+    <md-content flex layout-wrap layout="row" layout-align="space-around start">
+    	<parlay-item-card flex-xs="100" flex-sm="100" flex-md="50" flex="33" ng-repeat="container in itemCtrl.filterItems() track by container.uid"></parlay-item-card>
+    </md-content>
+    
+    <parlay-bottom-console-bar></parlay-bottom-console-bar>
+                
+</div>

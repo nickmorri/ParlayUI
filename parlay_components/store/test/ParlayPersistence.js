@@ -18,14 +18,14 @@
             it("restores attributes", function () {
 	            
 	            /*jshint newcap: false */
-	            var store = ParlayStore("endpoints");
+	            var store = ParlayStore("items");
 	            
-	            var directive_name = "parlayEndpoint";
+	            var directive_name = "parlayItem";
 	            
 	            /*jshint newcap: false */
 	            
 	            
-	            ParlayStore("endpoints").setSessionItem(directive_name, {
+	            ParlayStore("items").setSessionItem(directive_name, {
 		            demo_data: {
 			            velocity: 20,
 			            acceleration: 5
@@ -33,7 +33,7 @@
 	            });
 	            
 	            /*jshint newcap: false */
-	            expect(ParlayStore("endpoints").getSessionItem(directive_name).demo_data).toEqual({
+	            expect(ParlayStore("items").getSessionItem(directive_name).demo_data).toEqual({
 		            velocity: 20,
 		            acceleration: 5
 	            });
@@ -58,9 +58,9 @@
             it("persists attributes", function () {
 	            
 	            /*jshint newcap: false */
-	            var store = ParlayStore("endpoints");
+	            var store = ParlayStore("items");
 	            
-	            var directive_name = "parlayEndpoint";
+	            var directive_name = "parlayItem";
 	            
 	            ParlayPersistence(directive_name, "demo_data", $scope);
 	            
@@ -81,7 +81,7 @@
 				$scope.$digest();	            
 	            
 	            /*jshint newcap: false */
-	            expect(ParlayStore("endpoints").getSessionItem(directive_name).demo_data).toEqual({
+	            expect(ParlayStore("items").getSessionItem(directive_name).demo_data).toEqual({
 		            velocity: 100,
 		            acceleration: 200
 	            });

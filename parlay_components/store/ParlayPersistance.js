@@ -1,6 +1,6 @@
 function ParlayPersistenceFactory(ParlayStore) {
 	
-	var store = ParlayStore("endpoints");
+	var store = ParlayStore("items");
 	
 	/**
 	 * Returns the attribute from the ParlayStore.
@@ -82,7 +82,7 @@ function ParlayPersistenceFactory(ParlayStore) {
 	/**
 	 * Restores then monitors the requested attribute to the from and to the given directive on the scope passed in.
 	 * @example
-	 * // ParlayPersistence('parlayEndpointCard.motor5', 'voltage', $scope); 
+	 * // ParlayPersistence('parlayItemCard.motor5', 'voltage', $scope); 
 	 * Returns the attribute from the ParlayStore.
 	 * @param {String} directive - Name of the directive we are interested in.
 	 * @param {String} attribute - Name of the attribute we are interested in.

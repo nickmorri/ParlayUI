@@ -172,7 +172,7 @@ function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification) {
 	/**
 	 * Request the Broker for a discovery.
 	 * @param {Boolean} is_forced - Force cached invalidation.
-	 * @returns {$q.defer.promise} Resolve when response is received with available endpoints.
+	 * @returns {$q.defer.promise} Resolve when response is received with available items.
 	 */
 	PromenadeBroker.prototype.requestDiscovery = function (is_forced) {
 	    // Check we are connected first, otherwise display ParlayNotification.

@@ -63,10 +63,6 @@ function PromenadeStandardEndpointFactory(ParlayEndpoint) {
 
         this.addDefaultDirectives("toolbar", ["promenadeStandardEndpointCardToolbar"]);
 
-        // Automatically add log tab.
-        this.addAvailableDirectives("tabs", ["promenadeStandardEndpointCardLog"]);
-        this.addDefaultDirectives("tabs", ["promenadeStandardEndpointCardLog"]);
-        
         if (data.CONTENT_FIELDS) {
             // Automatically add command tab if content fields are available.
             this.addDefaultDirectives("tabs", ["promenadeStandardEndpointCardCommands"]);
@@ -102,6 +98,10 @@ function PromenadeStandardEndpointFactory(ParlayEndpoint) {
 		        return accumulator;
 	        }, {});	        
         }
+
+		// Automatically add log tab.
+		this.addAvailableDirectives("tabs", ["promenadeStandardEndpointCardLog"]);
+		this.addDefaultDirectives("tabs", ["promenadeStandardEndpointCardLog"]);
         
     }
     

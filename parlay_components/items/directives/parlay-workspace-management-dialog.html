@@ -65,9 +65,9 @@
 	            	
 	            </md-list-item>
 			
-				<md-divider></md-divider>
+				<md-divider ng-show="getSavedWorkspaces().length"></md-divider>
 				
-				<md-subheader class="md-primary">Saved workspaces</md-subheader>
+				<md-subheader ng-show="getSavedWorkspaces().length" class="md-primary">Saved workspaces</md-subheader>
 				
 				<md-list-item class="md-3-line" layout="row" layout-align="space-between center" ng-repeat="workspace in getSavedWorkspaces() | orderBy:'-timestamp'">
 	                
@@ -100,7 +100,7 @@
 	                </div>
 			        
 	            </md-list-item>
-				
+
 			</md-list>
 			
 		</div>

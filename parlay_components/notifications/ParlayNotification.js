@@ -19,7 +19,27 @@ function RunNotification($notification) {
     $notification.requestPermission();
 }
 
-function ParlayNotificationFactory($mdToast, $notification, NotificationDisplayDuration) {
+function ParlayNotificationHistory() {
+
+	var history = [];
+
+    return {
+        add: function (contents) {
+            history.push({
+                time: new Date(),
+                contents: contents
+            });
+        },
+        get: function () {
+            return history;
+        },
+        clear: function () {
+            history = [];
+        }
+    };
+}
+
+function ParlayNotificationFactory($mdToast, $notification, NotificationDisplayDuration, ParlayNotificationHistory) {
 	"use strict";
 
 	var toast_active = false;
@@ -82,6 +102,10 @@ function ParlayNotificationFactory($mdToast, $notification, NotificationDisplayD
 	        delay: NotificationDisplayDuration
         }));
     }
+
+    function addToHistory(configuration) {
+        ParlayNotificationHistory.add(configuration.content);
+    }
     
     return {
 	    /**
@@ -99,15 +123,17 @@ function ParlayNotificationFactory($mdToast, $notification, NotificationDisplayD
 		 */
 		show: function (configuration) {	    
 		    prepToast(configuration);
+            addToHistory(configuration);
 		    
 		    if (document.hidden) prepBrowserNotification(configuration);        
 	    },
 	    showProgress: function () {
 			if (!toast_active) {
-				$mdToast.show({
+                $mdToast.show({
 					template: "<md-toast><md-progress-linear flex class='notification-progress' md-mode='indeterminate'></md-progress-linear></md-toast>",
 					hideDelay: false
 				});
+                addToHistory("Progress bar displayed.");
 			}
 	    }
     };
@@ -116,4 +142,5 @@ function ParlayNotificationFactory($mdToast, $notification, NotificationDisplayD
 angular.module("parlay.notification", ["ngMaterial", "notification", "templates-main"])
 	.run(["$notification", RunNotification])
 	.value("NotificationDisplayDuration", 4000)
-	.factory("ParlayNotification", ["$mdToast", "$notification", "NotificationDisplayDuration", ParlayNotificationFactory]);
+	.factory("ParlayNotificationHistory", ParlayNotificationHistory)
+	.factory("ParlayNotification", ["$mdToast", "$notification", "NotificationDisplayDuration", "ParlayNotificationHistory", ParlayNotificationFactory]);

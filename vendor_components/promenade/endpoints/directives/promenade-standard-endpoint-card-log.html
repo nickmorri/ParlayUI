@@ -2,8 +2,8 @@
 
 	<md-toolbar class="md-hue-2">
 		<div class="md-toolbar-tools">
-			<h5 ng-if="filter_text" ng-pluralize count="ctrl.getFilteredLog(filter_text).length" when="{'0': 'No messages match filter', 'one': '1 message matches', 'other': '{} messages match'}"></h5>
-			<h5 ng-if="!filter_text" ng-pluralize count="ctrl.getLog().length" when="{'0': 'No messages logged', 'one': '1 message logged', 'other': '{} messages logged'}"></h5>
+			<h5 ng-if="ctrl.filter_text" ng-pluralize count="ctrl.getFilteredLog(ctrl.filter_text).length" when="{'0': 'No messages match filter', 'one': '1 message matches', 'other': '{} messages match'}"></h5>
+			<h5 ng-if="!ctrl.filter_text" ng-pluralize count="ctrl.getLog().length" when="{'0': 'No messages logged', 'one': '1 message logged', 'other': '{} messages logged'}"></h5>
 			<span flex></span>
 			
 		</div>
@@ -11,7 +11,7 @@
 
 	<md-input-container flex="100" ng-show="ctrl.getLog().length" class="filter-input-container" aria-label="Filter log messages">
 		<label>Filter</label>
-		<input ng-model="filter_text" type="text">
+		<input ng-model="ctrl.filter_text" type="text">
 	</md-input-container>
 
 

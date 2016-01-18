@@ -5,14 +5,14 @@ function PromenadeStandardEndpointCardLogTabController($scope, ParlayPersistence
 	ParlayBaseTabController.call(this, $scope, "promenadeStandardEndpointCardLog");
 	
 	// Initially we don't want to filter logged messages by anything.
-	$scope.filter_text = null;
+	this.filter_text = null;
 
 	this.dynamicItems = {
 		getLength: function () {
-			return this.getFilteredLog($scope.filter_text).length;
+			return this.getFilteredLog(this.filter_text).length;
 		}.bind(this),
 		getItemAtIndex: function (index) {
-			return this.getFilteredLog($scope.filter_text).reverse()[index];
+			return this.getFilteredLog(this.filter_text).reverse()[index];
 		}.bind(this)
 	};
 

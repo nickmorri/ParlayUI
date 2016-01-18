@@ -131,9 +131,6 @@ function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification) {
 	        this.onMessage({'type': "get_protocol_discovery"}, function() {
                 ParlaySocket.sendMessage({type: "get_protocol_discovery_response"}, {discovery: {}});
 	        });
-
-            // Request a fast discovery to see if there's already one there.
-			this.requestDiscovery(false);
 	        
 	    }.bind(this));
 	    

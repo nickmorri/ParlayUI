@@ -250,7 +250,10 @@ function ParlayProtocolManagerFactory($injector, $q, PromenadeBroker, parlayStor
         PromenadeBroker.onMessage({type: "broker", response: "get_open_protocols_response"}, function (response) {
             setOpenProtocols(response.protocols);
             setSavedProtocols(parlayStore("protocols").getLocalItem("saved"));
-        });
+
+            // Request a fast discovery to see if there's already one there.
+            this.requestDiscovery();
+        }.bind(this));
 
         PromenadeBroker.onDiscovery(function (response) {
             response.discovery.forEach(addDiscoveryInfoToOpenProtocol);

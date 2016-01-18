@@ -42,15 +42,6 @@ function ParlayEndpointSearch() {
         scope: {},
         templateUrl: '../parlay_components/endpoints/directives/parlay-endpoint-search.html',
         controller: 'ParlayEndpointSearchController',
-        link: function (scope, element, attributes) {
-            
-			// Prevents random endpoints being added since the autofocus element is still focused.            
-            scope.$watch('selected_item', function (newValue, oldValue, scope) {
-	            // We just added a new endpoint to the workspace so we should blur the input.
-	        	if (newValue === null && oldValue !== null) scope.$$childHead.$mdAutocompleteCtrl.blur();
-	        });
-            
-        },
         controllerAs: "ctrl"
     };
 }

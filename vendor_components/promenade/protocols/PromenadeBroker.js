@@ -1,4 +1,4 @@
-function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification) {
+function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification, ParlayErrorDialog) {
 	"use strict";
 	
 	/**
@@ -91,6 +91,20 @@ function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification) {
 				callback(response);
 			});
 		});
+
+        /**
+         * Register a callback on MSG_STATUS == 'ERROR' so that we can display a dialog.
+         */
+        this.onMessage({"MSG_STATUS": "ERROR"}, function (response) {
+            ParlayErrorDialog.show(response);
+        });
+
+        /**
+         * Register a callback on MSG_STATUS == 'WARNING' so that we can display a dialog.
+         */
+        this.onMessage({"MSG_STATUS": "WARNING"}, function (response) {
+            ParlayErrorDialog.show(response);
+        });
 
 		/**
 		 * Register PromenadeBroker's notification callback for discovery.
@@ -228,5 +242,5 @@ function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification) {
 	return new PromenadeBroker();
 }
 
-angular.module("promenade.broker", ["parlay.socket", "parlay.notification", "ngMaterial"])
-	.factory("PromenadeBroker", ["ParlaySocket", "$q", "ParlayNotification", PromenadeBrokerFactory]);
+angular.module("promenade.broker", ["parlay.socket", "parlay.notification", "parlay.notification.error", "ngMaterial"])
+	.factory("PromenadeBroker", ["ParlaySocket", "$q", "ParlayNotification", "ParlayErrorDialog", PromenadeBrokerFactory]);

@@ -1,19 +1,19 @@
-function ParlaySidenav() {
+function ParlayNavigationSidenav() {
 	return {
 		scope: {},
-		templateUrl: "../parlay_components/navigation/directives/parlay-sidenav.html",
-		controller: "ParlaySidenavController",
+		templateUrl: "../parlay_components/navigation/directives/parlay-navigation-sidenav.html",
+		controller: "ParlayNavigationSidenavController",
 		controllerAs: "ctrl"
 	};
 }
 
-function ParlaySidenavController($mdSidenav, $state, PromenadeBroker) {
+function ParlayNavigationSidenavController($mdSidenav, $state, PromenadeBroker) {
     "use strict";
 
 	/**
 	 * Closes $mdSidenav
 	 */
-	this.closeSidenav = function() {
+	this.close = function() {
 		$mdSidenav("navigation").close();
 	};
 
@@ -69,8 +69,6 @@ function ParlaySidenavController($mdSidenav, $state, PromenadeBroker) {
 	
 }
 
-
-
-angular.module("parlay.sidenav", ["ngMaterial", "ui.router", "parlay.utility", "promenade.broker"])
-	.controller("ParlaySidenavController", ["$mdSidenav", "$state", "PromenadeBroker", ParlaySidenavController])
-	.directive("parlaySidenav", [ParlaySidenav]);
+angular.module("parlay.navigation.sidenav", ["ngMaterial", "ui.router", "parlay.utility", "promenade.broker"])
+	.controller("ParlayNavigationSidenavController", ["$mdSidenav", "$state", "PromenadeBroker", ParlayNavigationSidenavController])
+	.directive("parlayNavigationSidenav", [ParlayNavigationSidenav]);

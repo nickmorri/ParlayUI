@@ -5,7 +5,7 @@
 function ParlayNotificationSidenav() {
     return {
         scope: {},
-        templateUrl: "../parlay_components/notifications/directives/parlay-notification-sidenav.html",
+        templateUrl: "../parlay_components/notification/directives/parlay-notification-sidenav.html",
         controller: "ParlayNotificationSidenavController",
         controllerAs: "ctrl"
     };

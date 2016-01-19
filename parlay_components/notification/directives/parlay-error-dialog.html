@@ -1,0 +1,22 @@
+<md-dialog aria-label="Error dialog">
+
+    <md-toolbar class="md-accent">
+        <div class="md-toolbar-tools">
+            <h2>Error</h2>
+            <span flex></span>
+            <md-button class="md-icon-button" ng-click="ctrl.close()">
+                <md-icon aria-label="Close dialog"><ng-md-icon icon="close"></ng-md-icon></md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div ng-repeat="(key, data) in ctrl.content" >
+                <h4>{{key}}</h4>
+                <pre style="white-space: pre-wrap;">{{data}}</pre>
+            </div>
+        </div>
+    </md-dialog-content>
+
+</md-dialog>

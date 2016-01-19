@@ -1,0 +1,35 @@
+<md-sidenav flex="40" style="width: 40%" md-component-id="notifications" class="md-sidenav-right" layout="column">
+
+    <md-toolbar class="md-theme-indigo">
+        <div class="md-toolbar-tools">
+
+            <h2>Notifications</h2>
+
+            <span flex></span>
+
+            <md-button class="md-icon-button" ng-click="ctrl.close()" aria-label="Close notifications">
+                <md-tooltip>Close</md-tooltip>
+                <md-icon class="white"><ng-md-icon icon="close"></ng-md-icon></md-icon>
+            </md-button>
+
+        </div>
+    </md-toolbar>
+
+    <div flex layout="column">
+        <md-list>
+
+            <md-list-item ng-hide="ctrl.notificationHistory().length">No notifications available</md-list-item>
+
+            <md-list-item class="md-2-line" style="padding-right: 100px" ng-repeat="notification in ctrl.notificationHistory()">
+                <div class="md-list-item-text">
+                    <h3>{{notification.contents}}</h3>
+                    <p am-time-ago="notification.time" title="{{notification.time}}"></p>
+                </div>
+                <md-button ng-show="notification.action" class="md-secondary" ng-click="notification.action.callback()">{{notification.action.text}}</md-button>
+            </md-list-item>
+
+        </md-list>
+    </div>
+
+
+</md-sidenav>

@@ -24,10 +24,11 @@ function ParlayNotificationHistory() {
 	var history = [];
 
     return {
-        add: function (contents) {
+        add: function (contents, action) {
             history.push({
                 time: new Date(),
-                contents: contents
+                contents: contents,
+                action: action
             });
         },
         get: function () {
@@ -104,7 +105,7 @@ function ParlayNotificationFactory($mdToast, $notification, NotificationDisplayD
     }
 
     function addToHistory(configuration) {
-        ParlayNotificationHistory.add(configuration.content);
+        ParlayNotificationHistory.add(configuration.content, configuration.action);
     }
     
     return {
@@ -129,15 +130,17 @@ function ParlayNotificationFactory($mdToast, $notification, NotificationDisplayD
 	    },
 	    showProgress: function () {
 			if (!toast_active) {
+
                 $mdToast.show({
 					template: "<md-toast><md-progress-linear flex class='notification-progress' md-mode='indeterminate'></md-progress-linear></md-toast>",
 					hideDelay: false
 				});
-                addToHistory("Progress bar displayed.");
 			}
 	    }
     };
 }
+
+
 
 angular.module("parlay.notification", ["ngMaterial", "notification", "templates-main"])
 	.run(["$notification", RunNotification])

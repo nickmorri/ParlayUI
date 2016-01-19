@@ -29,6 +29,11 @@ function ParlayItemsToolbarController($mdDialog, $mdSidenav, ParlayItemManager) 
             clickOutsideToClose: true
         });
     };
+
+    this.openNotificationDisplay = function () {
+        /* istanbul ignore next */
+        $mdSidenav("notifications").open();
+    };
     
 }
 
@@ -59,6 +64,6 @@ function ParlayItemsToolbar($mdMedia, PromenadeBroker) {
     };
 }
 
-angular.module("parlay.items.toolbar", ["parlay.protocols.list_controller", "parlay.sidenav", "parlay.items.search"])
+angular.module("parlay.items.toolbar", ["parlay.protocols.list_controller", "parlay.navigation.sidenav", "parlay.notification.sidenav", "parlay.items.search"])
 	.controller("ParlayItemsToolbarController", ["$mdDialog", "$mdSidenav", "ParlayItemManager", ParlayItemsToolbarController])
 	.directive("parlayItemsToolbar", ["$mdMedia", "PromenadeBroker", ParlayItemsToolbar]);

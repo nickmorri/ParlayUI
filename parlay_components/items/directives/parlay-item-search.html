@@ -7,11 +7,11 @@
     md-item-text="item.name"
     md-autoselect="false"
     md-min-length="0"
-    placeholder="Search for a item">
+    placeholder="Search for a connected item">
     <md-item-template>
         <span md-highlight-text="search_text" mg-hightlight-flags="^i">{{item.name}}</span>
     </md-item-template>
     <md-not-found>
-		No matches found. <span ng-hide="ctrl.hasDiscovered()">Please request discovery and try again.</span>
+		No matches found. <span ng-hide="ctrl.hasDiscovered()">Ensure protocols are connected, request discovery and try again.</span>
 	</md-not-found>
 </md-autocomplete>

@@ -144,13 +144,13 @@ function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification) {
                 content: "Disconnected from Parlay Broker!",
                 action: {
                     text: "Reconnect",
-                    callback: this.connect
+                    callback: this.connect.bind(this)
                 }
             } : {
                 content: "Failed to connect to Parlay Broker!",
                 action: {
                     text: "Connect",
-                    callback: this.connect
+					callback: this.connect.bind(this)
                 }
             });
 	    }.bind(this));

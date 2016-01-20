@@ -40,7 +40,7 @@ function ParlayNotificationHistory() {
     };
 }
 
-function ParlayNotificationFactory($mdToast, $notification, NotificationDisplayDuration, ParlayNotificationHistory) {
+function ParlayNotificationFactory($mdToast, $mdSidenav, $notification, NotificationDisplayDuration, ParlayNotificationHistory) {
 	"use strict";
 
 	var toast_active = false;
@@ -86,6 +86,14 @@ function ParlayNotificationFactory($mdToast, $notification, NotificationDisplayD
 		        callback: configuration.action.callback
 	        });
         }
+		else if (!angular.isString(configuration.content)) {
+			toast.action("View more").highlightAction(true);
+
+			pending_toasts.push({
+				toast: toast,
+				callback: $mdSidenav("notifications").open
+			});
+		}
         else {
 	        pending_toasts.push({toast: toast});
         }
@@ -146,4 +154,4 @@ angular.module("parlay.notification", ["ngMaterial", "notification", "templates-
 	.run(["$notification", RunNotification])
 	.value("NotificationDisplayDuration", 4000)
 	.factory("ParlayNotificationHistory", ParlayNotificationHistory)
-	.factory("ParlayNotification", ["$mdToast", "$notification", "NotificationDisplayDuration", "ParlayNotificationHistory", ParlayNotificationFactory]);
+	.factory("ParlayNotification", ["$mdToast", "$mdSidenav", "$notification", "NotificationDisplayDuration", "ParlayNotificationHistory", ParlayNotificationFactory]);

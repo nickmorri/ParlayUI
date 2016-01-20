@@ -34,7 +34,8 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
 			controller: "ParlayWorkspaceSaveAsDialogController",
 			controllerAs: "ctrl",
 			templateUrl: "../parlay_components/items/directives/parlay-workspace-save-as-dialog.html",
-			onComplete: function (scope, element) { element.find("input").focus(); }
+			onComplete: function (scope, element) { element.find("input").focus(); },
+			fullscreen: !$mdMedia("gt-sm")
 		}).then($scope.saveWorkspace);
 	};
 	

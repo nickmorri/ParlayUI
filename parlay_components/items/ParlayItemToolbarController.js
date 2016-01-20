@@ -1,4 +1,4 @@
-function ParlayItemsToolbarController($mdDialog, $mdSidenav, ParlayItemManager) {
+function ParlayItemsToolbarController($mdDialog, $mdSidenav, $mdMedia, ParlayItemManager) {
 	
 	this.openSidenav = function () {
 		/* istanbul ignore next */
@@ -15,7 +15,8 @@ function ParlayItemsToolbarController($mdDialog, $mdSidenav, ParlayItemManager) 
 		    templateUrl: "../parlay_components/items/directives/parlay-workspace-management-dialog.html",
 		    targetEvent: event,
 		    controller: "ParlayWorkspaceManagementController",
-		    clickOutsideToClose: true
+		    clickOutsideToClose: true,
+            fullscreen: !$mdMedia("gt-sm")
 	    });
     };
     
@@ -26,7 +27,8 @@ function ParlayItemsToolbarController($mdDialog, $mdSidenav, ParlayItemManager) 
             targetEvent: event,
             controller: "ParlayConnectionListController",
             controllerAs: "ctrl",
-            clickOutsideToClose: true
+            clickOutsideToClose: true,
+            fullscreen: !$mdMedia("gt-sm")
         });
     };
 
@@ -65,5 +67,5 @@ function ParlayItemsToolbar($mdMedia, PromenadeBroker) {
 }
 
 angular.module("parlay.items.toolbar", ["parlay.protocols.list_controller", "parlay.navigation.sidenav", "parlay.notification.sidenav", "parlay.items.search"])
-	.controller("ParlayItemsToolbarController", ["$mdDialog", "$mdSidenav", "ParlayItemManager", ParlayItemsToolbarController])
+	.controller("ParlayItemsToolbarController", ["$mdDialog", "$mdSidenav", "$mdMedia", "ParlayItemManager", ParlayItemsToolbarController])
 	.directive("parlayItemsToolbar", ["$mdMedia", "PromenadeBroker", ParlayItemsToolbar]);

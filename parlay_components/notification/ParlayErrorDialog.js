@@ -1,4 +1,4 @@
-function ParlayErrorDialog($mdDialog) {
+function ParlayErrorDialog($mdDialog, $mdMedia) {
 
     return {
         show: function (content) {
@@ -10,7 +10,8 @@ function ParlayErrorDialog($mdDialog) {
                     content: content
                 },
                 bindToController: true,
-                clickOutsideToClose: true
+                clickOutsideToClose: true,
+                fullscreen: !$mdMedia("gt-sm")
             });
         }
     };
@@ -27,4 +28,4 @@ function ParlayErrorDialogController($mdDialog) {
 
 angular.module("parlay.notification.error", ["ngMaterial", "parlay.notification"])
     .controller("ParlayErrorDialogController", ["$mdDialog", ParlayErrorDialogController])
-    .factory("ParlayErrorDialog", ["$mdDialog", "ParlayNotificationHistory", ParlayErrorDialog]);
+    .factory("ParlayErrorDialog", ["$mdDialog", "$mdMedia", ParlayErrorDialog]);

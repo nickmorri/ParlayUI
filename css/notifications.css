@@ -1,5 +1,16 @@
+/* Truncates contents of span rather than allowing awkward overflowing to occur */
 .md-toast-content > span {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/* Prevent truncation of notification content */
+.parlay-notification-list-item .md-list-item-text .parlay-notification-content {
+    white-space: normal;
+}
+
+/* Add padding to ensure there is space for the action button */
+.parlay-notification-list-item {
+    padding-right: 100px;
 }

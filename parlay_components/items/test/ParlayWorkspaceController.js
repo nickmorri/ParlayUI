@@ -24,11 +24,11 @@
     		describe('initial state', function () {
 
 	    		it('getting saved workspaces', function () {
-		    		expect(scope.getSavedWorkspaces()).toEqual([]);
+		    		expect(ParlayWorkspaceManagementController.getSavedWorkspaces()).toEqual([]);
 	    		});
 	    		
 	    		it('does not have items in current workspace', function () {
-		    		expect(scope.currentWorkspaceItemCount()).toBe(0);
+		    		expect(ParlayWorkspaceManagementController.currentWorkspaceItemCount()).toBe(0);
 	    		});
 	    		
     		});
@@ -36,22 +36,22 @@
     		describe('saves, loads and deletes a workspace', function () {
 	    		
 	    		it('saves a workspace', function () {
-		    		expect(scope.getSavedWorkspaces().length).toBe(0);
-		    		scope.saveWorkspace({name:'test'});
-		    		expect(scope.getSavedWorkspaces().length).toBe(1);
+		    		expect(ParlayWorkspaceManagementController.getSavedWorkspaces().length).toBe(0);
+		    		ParlayWorkspaceManagementController.saveWorkspace({name:'test'});
+		    		expect(ParlayWorkspaceManagementController.getSavedWorkspaces().length).toBe(1);
 	    		});
 	    		
 	    		xit('loads a workspace', function () {
-		    		scope.saveWorkspace({name:'test'});
-		    		scope.loadWorkspace({name:'test'});
+		    		ParlayWorkspaceManagementController.saveWorkspace({name:'test'});
+		    		ParlayWorkspaceManagementController.loadWorkspace({name:'test'});
 	    		});
 	    		
 	    		it('deletes a workspace', function () {
-		    		expect(scope.getSavedWorkspaces().length).toBe(0);
-		    		scope.saveWorkspace({name:'test'});
-		    		expect(scope.getSavedWorkspaces().length).toBe(1);
-		    		scope.deleteWorkspace({name:'test'});
-		    		expect(scope.getSavedWorkspaces().length).toBe(0);
+		    		expect(ParlayWorkspaceManagementController.getSavedWorkspaces().length).toBe(0);
+		    		ParlayWorkspaceManagementController.saveWorkspace({name:'test'});
+		    		expect(ParlayWorkspaceManagementController.getSavedWorkspaces().length).toBe(1);
+		    		ParlayWorkspaceManagementController.deleteWorkspace({name:'test'});
+		    		expect(ParlayWorkspaceManagementController.getSavedWorkspaces().length).toBe(0);
 	    		});
 	    		
     		});
@@ -62,7 +62,7 @@
 		    		/*jshint newcap: false */
 					spyOn(ParlayItemManager, 'clearActiveItems');
 					// spyOn(ParlayStore('items'), 'clear');
-					scope.clearCurrentWorkspace();
+					ParlayWorkspaceManagementController.clearCurrentWorkspace();
 					expect(ParlayItemManager.clearActiveItems).toHaveBeenCalled();
 					// expect(ParlayStore('items').clear).toHaveBeenCalled();
 	    		});

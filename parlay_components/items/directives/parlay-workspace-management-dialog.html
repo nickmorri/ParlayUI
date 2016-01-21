@@ -4,7 +4,7 @@
 		<div class="md-toolbar-tools">
 			<h2>Workspaces</h2>
 			<span flex></span>
-			<md-button class="md-icon-button" ng-click="hide()" aria-label="Hide dialog">
+			<md-button class="md-icon-button" ng-click="ctrl.hide()" aria-label="Hide dialog">
 				<md-icon><ng-md-icon icon="close" aria-label="Close dialog"></ng-md-icon></md-icon>
 			</md-button>
 		</div>
@@ -20,18 +20,18 @@
 	            	<md-icon hide-sm hide-md><ng-md-icon icon="home"></ng-md-icon></md-icon>            	
 	            	<div flex-sm="60" class="md-list-item-text">
 	                    <h3>Current Workspace</h3>
-	                    <p ng-hide="currentWorkspaceItemCount()">empty</p>
-	                    <p ng-show="currentWorkspaceItemCount()">{{currentWorkspaceItemCount()}} item<span ng-hide="currentWorkspaceItemCount() === 1">s</span></p>
+	                    <p ng-hide="ctrl.currentWorkspaceItemCount()">empty</p>
+	                    <p ng-show="ctrl.currentWorkspaceItemCount()">{{ctrl.currentWorkspaceItemCount()}} item<span ng-hide="ctrl.currentWorkspaceItemCount() === 1">s</span></p>
 	                </div>
 	                
 	                <div layout="row" flex-sm="40" layout-sm="row" layout-align-sm="center end">
-		                <md-button ng-disabled="currentWorkspaceItemCount() === 0" class="md-primary" ng-class="large_screen ? 'md-raised' : 'md-icon-button'" ng-click="saveCurrentWorkspace()" aria-label="Save workspace">
+		                <md-button ng-disabled="ctrl.currentWorkspaceItemCount() === 0" class="md-primary" ng-class="large_screen ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.saveCurrentWorkspace()" aria-label="Save workspace">
 				            <md-tooltip>Save As</md-tooltip>
 						    <span ng-if="large_screen">Save As</span>
 							<md-icon ng-if="!large_screen"><ng-md-icon icon="save"></ng-md-icon></md-icon>
 				        </md-button>
 				        
-				        <md-button ng-disabled="currentWorkspaceItemCount() === 0" class="md-warn" ng-class="large_screen ? 'md-raised' : 'md-icon-button'" ng-click="clearCurrentWorkspace()" aria-label="Clear workspace">
+				        <md-button ng-disabled="ctrl.currentWorkspaceItemCount() === 0" class="md-warn" ng-class="large_screen ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.clearCurrentWorkspace()" aria-label="Clear workspace">
 				            <md-tooltip>Clear workspace</md-tooltip>
 						    <span ng-if="large_screen">Clear</span>
 							<md-icon ng-if="!large_screen"><ng-md-icon icon="clear"></ng-md-icon></md-icon>
@@ -40,23 +40,23 @@
 	            
 	            </md-list-item>
 	                        
-	            <md-list-item class="md-3-line" layout="row" layout-align="space-between center" ng-if="getAutosave()">
+	            <md-list-item class="md-3-line" layout="row" layout-align="space-between center" ng-if="ctrl.getAutosave()">
 	            	
 	            	<md-icon hide-sm hide-md><ng-md-icon icon="history"></ng-md-icon></md-icon>
 	            	
 	            	<div flex-sm="60"class="md-list-item-text">
 	                    <h3>Autosaved Workspace</h3>
-	                    <h4>{{getAutosave().item_count}} item<span ng-hide="currentWorkspaceItemCount() === 1">s</span></h4>
-	                    <p am-time-ago="getAutosave().timestamp" title="{{getAutosave().timestamp}}"></p>
+	                    <h4>{{ctrl.getAutosave().item_count}} item<span ng-hide="ctrl.currentWorkspaceItemCount() === 1">s</span></h4>
+	                    <p am-time-ago="ctrl.getAutosave().timestamp" title="{{ctrl.getAutosave().timestamp}}"></p>
 	                </div>
 	                <div layout="row" flex-sm="40" layout-sm="row" layout-align-sm="center end">
-		                <md-button class="md-primary" ng-class="large_screen ? 'md-raised' : 'md-icon-button'" ng-click="loadWorkspace(getAutosave())" aria-label="Load workspace">
+		                <md-button class="md-primary" ng-class="large_screen ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.loadWorkspace(ctrl.getAutosave())" aria-label="Load workspace">
 		                	<md-tooltip>Load workspace</md-tooltip>
 						    <span ng-if="large_screen">Load</span>
 							<md-icon ng-if="!large_screen"><ng-md-icon icon="open_in_browser"></ng-md-icon></md-icon>
 				        </md-button>
 				        
-				        <md-button class="md-warn" ng-class="large_screen ? 'md-raised' : 'md-icon-button'" ng-click="deleteWorkspace(getAutosave())" aria-label="Delete workspace">
+				        <md-button class="md-warn" ng-class="large_screen ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.deleteWorkspace(ctrl.getAutosave())" aria-label="Delete workspace">
 				            <md-tooltip>Delete workspace</md-tooltip>
 						    <span ng-if="large_screen">Delete</span>
 							<md-icon ng-if="!large_screen"><ng-md-icon icon="delete"></ng-md-icon></md-icon>
@@ -64,41 +64,41 @@
 	                </div>
 	            	
 	            </md-list-item>
-			
-				<md-divider ng-show="getSavedWorkspaces().length"></md-divider>
-				
-				<md-subheader ng-show="getSavedWorkspaces().length" class="md-primary">Saved workspaces</md-subheader>
-				
-				<md-list-item class="md-3-line" layout="row" layout-align="space-between center" ng-repeat="workspace in getSavedWorkspaces() | orderBy:'-timestamp'">
-	                
+
+				<md-divider ng-show="ctrl.getSavedWorkspaces().length"></md-divider>
+
+				<md-subheader ng-show="ctrl.getSavedWorkspaces().length" class="md-primary">Saved workspaces</md-subheader>
+
+				<md-list-item class="md-3-line" layout="row" layout-align="space-between center" ng-repeat="workspace in ctrl.getSavedWorkspaces() | orderBy:'-timestamp'">
+
 	                <md-icon hide-sm hide-md ng-if="$index === 0"><ng-md-icon icon="dashboard"></ng-md-icon></md-icon>
-	                
+
 	                <div flex-sm="60" class="md-list-item-text" ng-class="{'md-offset': $index !== 0 && large_screen}">
 	                    <h3>{{workspace.name}}</h3>
 	                    <h4>{{workspace.item_count}} item<span ng-hide="workspace.item_count === 1">s</span></h4>
 						<p am-time-ago="workspace.timestamp" title="{{workspace.timestamp}}"></p>
 	                </div>
-	                
+
 	                <div layout="row" flex-sm="40" layout-sm="row" layout-align-sm="center end">
-		                <md-button class="md-primary" ng-class="large_screen ? 'md-raised' : 'md-icon-button'" ng-click="loadWorkspace(workspace)" aria-label="Load workspace">
+		                <md-button class="md-primary" ng-class="large_screen ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.loadWorkspace(workspace)" aria-label="Load workspace">
 				            <md-tooltip>Load workspace</md-tooltip>
 						    <span ng-if="large_screen">Load</span>
 							<md-icon ng-if="!large_screen"><ng-md-icon icon="open_in_browser"></ng-md-icon></md-icon>
 				        </md-button>
-				        
-				        <md-button ng-disabled="currentWorkspaceItemCount() === 0" class="md-primary" ng-class="large_screen ? 'md-raised' : 'md-icon-button'" ng-click="saveWorkspace(workspace)" aria-label="Save workspace">
+
+				        <md-button ng-disabled="ctrl.currentWorkspaceItemCount() === 0" class="md-primary" ng-class="large_screen ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.saveWorkspace(workspace)" aria-label="Save workspace">
 				            <md-tooltip>Save workspace</md-tooltip>
 						    <span ng-if="large_screen">Save</span>
 							<md-icon ng-if="!large_screen"><ng-md-icon icon="save"></ng-md-icon></md-icon>
 				        </md-button>
-				        
-				        <md-button class="md-warn" ng-class="large_screen ? 'md-raised' : 'md-icon-button'" ng-click="deleteWorkspace(workspace)" aria-label="Delete workspace">
+
+				        <md-button class="md-warn" ng-class="large_screen ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.deleteWorkspace(workspace)" aria-label="Delete workspace">
 				            <md-tooltip>Delete workspace</md-tooltip>
 						    <span ng-if="large_screen">Delete</span>
 							<md-icon ng-if="!large_screen"><ng-md-icon icon="delete"></ng-md-icon></md-icon>
 				        </md-button>
 	                </div>
-			        
+
 	            </md-list-item>
 
 			</md-list>

@@ -15,6 +15,7 @@ function ParlayItemsToolbarController($mdDialog, $mdSidenav, $mdMedia, ParlayIte
 		    templateUrl: "../parlay_components/items/directives/parlay-workspace-management-dialog.html",
 		    targetEvent: event,
 		    controller: "ParlayWorkspaceManagementController",
+            controllerAs: "ctrl",
 		    clickOutsideToClose: true,
             fullscreen: !$mdMedia("gt-sm")
 	    });

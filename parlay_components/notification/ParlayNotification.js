@@ -10,7 +10,8 @@
  *	    action: {
  *		    text: "Text that the action button displays.",
  *		    callback: "Function to invoke when Toast action is clicked."
- *	    }
+ *	    },
+ *	    warning: True // Only true if the given notification is a warning and should be styled as such.
  *  });
  */
 
@@ -89,6 +90,9 @@ function ParlayNotificationFactory($mdToast, $mdSidenav, $notification, Notifica
 	 */
     function prepToast(configuration) {
 	    var toast = $mdToast.simple().content(configuration.content).hideDelay(NotificationDisplayDuration);
+
+        // If the warning option is true we should theme the toast to indicate that a warning has occurred.
+        if (configuration.warning) toast.theme("warning-toast");
 
         // Guess if the content that we want to add to the toast could overflow the container that is available.
         // TODO: Do check in more deterministic way that leverages DOM elements.

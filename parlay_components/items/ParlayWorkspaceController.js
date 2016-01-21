@@ -79,6 +79,20 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
 	};
 	
 	// Watch the size of the screen, if we are on a screen size that's greater than a small screen we should always display labels.
+    this.clearSavedWorkspaces = function (event) {
+        var confirm = $mdDialog.confirm()
+            .title('Would you like to clear all saved workspaces?')
+            .textContent('This cannot be undone.')
+            .ariaLabel('Clear saved workspaces')
+            .targetEvent(event)
+            .ok('Clear all workspaces')
+            .cancel('Close');
+        $mdDialog.show(confirm).then(function () {
+            store.clearLocal();
+            saved_workspaces = getWorkspaces();
+            ParlayNotification.show({content: "Cleared all saved workspaces."});
+        });
+    };
     $scope.$watch(function () {
         return $mdMedia('gt-md');
     }, function (large_screen) {

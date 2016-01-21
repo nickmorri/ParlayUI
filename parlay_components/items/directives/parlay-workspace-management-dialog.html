@@ -106,4 +106,9 @@
 		</div>
 		
 	</md-dialog-content>
+
+	<md-dialog-actions ng-show="ctrl.getSavedWorkspaces().length">
+		<md-button ng-click="ctrl.clearSavedWorkspaces($event)" class="md-primary">Clear saved workspaces</md-button>
+	</md-dialog-actions>
+
 </md-dialog>

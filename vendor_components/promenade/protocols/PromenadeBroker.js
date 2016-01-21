@@ -104,7 +104,7 @@ function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification, ParlayErro
          * Register a callback on MSG_STATUS == 'WARNING' so that we can display a dialog.
          */
         this.onMessage({"MSG_STATUS": "WARNING"}, function (response) {
-            ParlayErrorDialog.show(response);
+            ParlayNotification.show({content: response, warning: true});
         });
 
 		/**

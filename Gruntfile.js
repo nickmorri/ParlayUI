@@ -75,7 +75,7 @@ module.exports = function (grunt) {
 			'compiledHtml': '<%= meta.tmp_destination %>/templates.js',
 			'htmlDirectives': getVendorItems(['directives'], ['parlay_components/**/directives/*.html']),
 			'htmlViews': 'parlay_components/**/views/*.html',
-			'commonFiles': ['images/logo.png', 'bower_components/angular-material/angular-material.css', 'bower_components/ace-builds/src/mode-python.js', 'static_components/ng-websocket/ng-websocket.js', 'static_components/smoothie/smoothie.js'],
+			'commonFiles': ['images/logo.png', 'images/icon.png', 'bower_components/angular-material/angular-material.css', 'bower_components/ace-builds/src/mode-python.js', 'static_components/ng-websocket/ng-websocket.js', 'static_components/smoothie/smoothie.js'],
 			'stylesheets': getVendorItems(['stylesheets'], ['css/*.css'])
 		},
 		

@@ -131,6 +131,40 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
         });
     };
 
+    /**
+     * Downloads the saved workspaces to a JSON stringified file.
+     */
+    this.exportSavedWorkspaces = function () {
+        store.export().download("saved_workspaces_" + new Date().toISOString() + ".txt");
+    };
+
+    /**
+     * Emulates click on hidden input element which will open file selection dialog.
+     * @param event - Mouse click event
+     */
+    this.importSavedWorkspaces = function (event) {
+        event.target.parentElement.parentElement.parentElement.getElementsByTagName("input")[0].click();
+    };
+
+    /**
+     * Called when input element is changed. Contents of file are passed to ParlayStore once loaded.
+     * @param event - Mouse click event
+     */
+    this.fileChanged = function (event) {
+
+        // Instantiate FileReader object
+        var fileReader = new FileReader();
+
+        // After file load pass saved discovery data to the PromenadeBroker
+        fileReader.onload = function (event) {
+            store.import(event.target.result);
+            saved_workspaces = getWorkspaces();
+        };
+
+        // Read file as text
+        fileReader.readAsText(event.target.files[0]);
+    };
+
     // Watch the size of the screen, if we are on a screen size that's greater than a small screen we should always display labels.
     $scope.$watch(function () {
         return $mdMedia('gt-md');
@@ -158,6 +192,6 @@ function ParlayWorkspaceSaveAsDialogController($scope, $mdDialog) {
 	
 }
 
-angular.module("parlay.items.workspaces", ["parlay.store", "parlay.items.manager", "angularMoment"])
+angular.module("parlay.items.workspaces", ["parlay.store", "parlay.items.manager", "angularMoment", "parlay.utility"])
 	.controller("ParlayWorkspaceSaveAsDialogController", ["$scope", "$mdDialog", ParlayWorkspaceSaveAsDialogController])
 	.controller("ParlayWorkspaceManagementController", ["$scope", "$mdDialog", "$mdMedia", "ParlayNotification", "ParlayStore", "ParlayItemManager", ParlayWorkspaceManagementController]);

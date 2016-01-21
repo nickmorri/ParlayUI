@@ -219,7 +219,25 @@ function ParlayStoreService() {
 			sessionStorage.setItem(key, JSON.stringify(unpacked.data[key]));
 		});
 	};
-	
+
+    /**
+     * Loads a String of all items in the namespace into localStorage.
+     * @param {String} data - JSON stringified Object of items in the namespace
+     */
+	ParlayStore.prototype.import = function (data) {
+		var items = JSON.parse(data);
+        Object.keys(items).forEach(function (name) {
+            localStorage.setItem(name, JSON.stringify(items[name]));
+        });
+	};
+
+    /**
+     * @returns {Array} - All items in the current namespace.
+     */
+	ParlayStore.prototype.export = function () {
+		return this.getLocalValues();
+	};
+
 	return ParlayStore;
 	
 }

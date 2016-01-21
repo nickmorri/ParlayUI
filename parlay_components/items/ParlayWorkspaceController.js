@@ -11,25 +11,39 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
         });
     }
 
+    // Reference to ParlayStore Object that manages the items namespace.
     var store = ParlayStore("items");
 
+    // Array of all saved workspaces in the items namespace.
     var saved_workspaces = getWorkspaces();
 
     this.hide = $mdDialog.hide;
 
+    /**
+     * Returns all saved workspaces except for those that were autosaved.
+     * @returns {Array} - Array of workspace objects.
+     */
     this.getSavedWorkspaces = function () {
         return saved_workspaces.filter(function (workspace) {
             return !workspace.autosave;
         });
     };
 
+    /**
+     * Returns autosaved workspace Object.
+     * @returns {Object}
+     */
     this.getAutosave = function () {
         return saved_workspaces.find(function (workspace) {
             return workspace.autosave;
         });
     };
 
-    this.saveCurrentWorkspace = function () {
+    /**
+     * Saves current items in workspace to a workspace of the name collected by launching a
+     * $mdDialog to allow user to name the saved workspace.
+     */
+    this.saveCurrentWorkspaceAs = function () {
         $mdDialog.show({
             controller: "ParlayWorkspaceSaveAsDialogController",
             controllerAs: "ctrl",
@@ -41,17 +55,28 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
         }).then(this.saveWorkspace);
     };
 
+    /**
+     * Clears the workspace of all items currently active.
+     */
     this.clearCurrentWorkspace = function () {
         ParlayItemManager.clearActiveItems();
         store.clearSession();
     };
 
+    /**
+     * Saves the items active in the workspace to a workspace with the given name.
+     * @param {Object} workspace - Workspace container Object.
+     */
     this.saveWorkspace = function (workspace) {
         store.moveItemToLocal(workspace.name);
         saved_workspaces = getWorkspaces();
         ParlayNotification.show({content: "Saved '" + workspace.name + "' workspace."});
     };
 
+    /**
+     * Loads the given saved workspace, items are made active on the current workspace.
+     * @param {Object} workspace - Workspace container Object.
+     */
     this.loadWorkspace = function (workspace) {
 
         this.clearCurrentWorkspace();
@@ -70,16 +95,27 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
         $mdDialog.hide();
     };
 
+    /**
+     * Deletes the given saved workspace.
+     * @param {Object} workspace - Workspace container Object.
+     */
     this.deleteWorkspace = function (workspace) {
         store.removeLocalItem(workspace.name);
         saved_workspaces = getWorkspaces();
         ParlayNotification.show({content: "Deleted '" + workspace.name + "' workspace."});
     };
 
+    /**
+     * @returns {Number} - active items.
+     */
     this.currentWorkspaceItemCount = function () {
         return ParlayItemManager.getActiveItemCount();
     };
 
+    /**
+     * Clears all saved workspaces if the user confirms the $mdDialog.
+     * @param {event} - Used to set source of dialog animation.
+     */
     this.clearSavedWorkspaces = function (event) {
         var confirm = $mdDialog.confirm()
             .title('Would you like to clear all saved workspaces?')
@@ -105,11 +141,17 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
 }
 
 function ParlayWorkspaceSaveAsDialogController($scope, $mdDialog) {
-	
+
+    /**
+     * Resolves $mdDialog promise with the name entered in the input.
+     */
 	this.save = function () {
 		$mdDialog.hide({name: $scope.name});
 	};
-	
+
+    /**
+     * Rejects the $mdDialog promise.
+     */
 	this.cancel = function () {
 		$mdDialog.cancel();
 	};

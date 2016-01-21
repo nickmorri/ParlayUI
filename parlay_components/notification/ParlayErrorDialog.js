@@ -1,13 +1,18 @@
-function ParlayErrorDialog($mdDialog, $mdMedia) {
+function ParlayErrorDialog($mdDialog, $mdMedia, ParlayNotificationHistory) {
 
     return {
-        show: function (content) {
+        show: function (message) {
+            // Record message given to the dialog in the notification history.
+            ParlayNotificationHistory.add(message);
+
+            // Display the error dialog.
             $mdDialog.show({
                 controller: "ParlayErrorDialogController",
                 controllerAs: "ctrl",
                 templateUrl: "../parlay_components/notification/directives/parlay-error-dialog.html",
                 locals: {
-                    content: content
+                    topics: message.TOPICS,
+                    contents: message.CONTENTS
                 },
                 bindToController: true,
                 clickOutsideToClose: true,
@@ -28,4 +33,4 @@ function ParlayErrorDialogController($mdDialog) {
 
 angular.module("parlay.notification.error", ["ngMaterial", "parlay.notification"])
     .controller("ParlayErrorDialogController", ["$mdDialog", ParlayErrorDialogController])
-    .factory("ParlayErrorDialog", ["$mdDialog", "$mdMedia", ParlayErrorDialog]);
+    .factory("ParlayErrorDialog", ["$mdDialog", "$mdMedia", "ParlayNotificationHistory", ParlayErrorDialog]);

@@ -11,11 +11,31 @@
     </md-toolbar>
 
     <md-dialog-content>
-        <div class="md-dialog-content">
-            <div ng-repeat="(key, data) in ctrl.content" >
-                <h4>{{key}}</h4>
-                <pre style="white-space: pre-wrap;">{{data}}</pre>
-            </div>
+        <div class="md-dialog-content parlay-error-dialog-content">
+
+            <md-card>
+                <md-card-contents>
+                    <md-toolbar><div class="md-toolbar-tools"><h3>TOPICS</h3></div></md-toolbar>
+
+                    <md-list>
+                        <md-list-item class="parlay-error-dialog-list-item" ng-repeat="(key, data) in ctrl.topics"><b>{{key}}:</b>&nbsp;{{data}}</md-list-item>
+                    </md-list>
+                </md-card-contents>
+            </md-card>
+
+            <md-card>
+                <md-card-contents>
+                    <md-toolbar><div class="md-toolbar-tools"><h3>CONTENTS</h3></div></md-toolbar>
+
+                    <md-content class="md-padding" flex>
+                        <div ng-repeat="(key, data) in ctrl.contents" >
+                            <h4>{{key}}</h4>
+                            <pre style="white-space: pre-wrap;">{{data}}</pre>
+                        </div>
+                    </md-content>
+                </md-card-contents>
+            </md-card>
+
         </div>
     </md-dialog-content>
 

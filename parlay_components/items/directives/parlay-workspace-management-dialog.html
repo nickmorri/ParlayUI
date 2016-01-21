@@ -25,7 +25,7 @@
 	                </div>
 	                
 	                <div layout="row" flex-sm="40" layout-sm="row" layout-align-sm="center end">
-		                <md-button ng-disabled="ctrl.currentWorkspaceItemCount() === 0" class="md-primary" ng-class="large_screen ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.saveCurrentWorkspace()" aria-label="Save workspace">
+		                <md-button ng-disabled="ctrl.currentWorkspaceItemCount() === 0" class="md-primary" ng-class="large_screen ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.saveCurrentWorkspaceAs()" aria-label="Save workspace">
 				            <md-tooltip>Save As</md-tooltip>
 						    <span ng-if="large_screen">Save As</span>
 							<md-icon ng-if="!large_screen"><ng-md-icon icon="save"></ng-md-icon></md-icon>

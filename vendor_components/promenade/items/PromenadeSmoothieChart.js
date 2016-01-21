@@ -145,7 +145,7 @@
 	return {
 		restrict: 'E',
 		scope: {
-			delay: "=",
+			delay: "=?",
 			streams: '=',
 			config: '=',
 			getSmoothie: '=smoothieFn'

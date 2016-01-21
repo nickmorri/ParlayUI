@@ -30,12 +30,13 @@ function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification, ParlayErro
 		 * Listens for message with relevant response topics from Broker.
 		 * @param {Object} response_topics - Map of key/value response topic pairs.
 		 * @param {Function} response_callback - Function callback to be called on message receipt.
+         * @param {Boolean} verbose - If true we should invoke callback with full message. If false or undefined invoke with only contents for simplicity.
 		 * @returns {Function} - Listener deregistration.
 		 */
-	    this.onMessage = function(response_topics, response_callback) {
+	    this.onMessage = function(response_topics, response_callback, verbose) {
 	        if (response_topics === undefined) response_topics.type = "broker";
 	        
-	        return ParlaySocket.onMessage(response_topics, response_callback);
+	        return ParlaySocket.onMessage(response_topics, response_callback, verbose);
 	    };
 	    
 	    /**
@@ -97,7 +98,7 @@ function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification, ParlayErro
          */
         this.onMessage({"MSG_STATUS": "ERROR"}, function (response) {
             ParlayErrorDialog.show(response);
-        });
+        }, true);
 
         /**
          * Register a callback on MSG_STATUS == 'WARNING' so that we can display a dialog.
@@ -172,7 +173,6 @@ function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification, ParlayErro
 	}
 	
 	// Bind ParlaySocket methods to PromenadeBroker.
-    PromenadeBroker.prototype.onMessage = ParlaySocket.onMessage;
     PromenadeBroker.prototype.onOpen = ParlaySocket.onOpen;
     PromenadeBroker.prototype.onClose = ParlaySocket.onClose;
     PromenadeBroker.prototype.getBrokerAddress = ParlaySocket.getAddress;

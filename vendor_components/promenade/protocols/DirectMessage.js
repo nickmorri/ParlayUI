@@ -72,7 +72,12 @@ function PromenadeDirectMessageProtocolFactory(ParlayProtocol, PromenadeStandard
         return base;
 
     };
-    
+
+    /**
+     * Examines response and returns True if message status ok.
+     * @param {Object} response - Map of key/value pairs.
+     * @returns {Boolean} - True if MSG_STATUS is not ERROR or WARNING
+     */
     PromenadeDirectMessageProtocol.prototype.isResponseOk = function (response) {
 	    return ["ERROR", "WARNING"].indexOf(response.TOPICS.MSG_STATUS) === -1;
     };

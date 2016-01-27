@@ -126,6 +126,8 @@ function PromenadeStandardItemCardCommandTabController($scope, $timeout, $mdToas
 			    
 	    this.error = false;
 	    this.sending = true;
+
+		this.contents_message = undefined;
 	    
 	    try {
 	    	this.item.sendMessage(collectMessage($scope.wrapper.message, false)).then(function (response) {

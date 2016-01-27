@@ -10,7 +10,7 @@
 	max-height: 600px;
 }
 
-md-card > md-toolbar > .md-toolbar-tools {
+.parlay-item-card > md-toolbar > .md-toolbar-tools {
 	height: 48px;
 }
 
@@ -18,7 +18,7 @@ md-tab-content > div > md-toolbar > .md-toolbar-tools {
 	height: 48px;
 }
 
-md-card > md-toolbar {
+.parlay-item-card > md-toolbar {
 	height: 48px;
 	min-height: 48px;
 }

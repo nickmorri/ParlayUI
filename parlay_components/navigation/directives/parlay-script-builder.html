@@ -1,0 +1,22 @@
+<md-card ng-class="ctrl.hidden ? 'script_builder_hidden' : 'script_builder_expanded'" layout="column">
+    <md-toolbar ng-click="ctrl.toggle()" class="parlay-script-builder-toolbar">
+        <div class="md-toolbar-tools">
+            <h2>Script Builder</h2>
+            <span flex></span>
+            <md-button class="md-icon-button" aria-label="Toggle script builder"><md-icon><ng-md-icon class="white" icon="{{ctrl.hidden ? 'unfold_more' : 'unfold_less'}}"></ng-md-icon></md-icon></md-button>
+        </div>
+    </md-toolbar>
+    <!--Scroll glue will automatically keep md-list at the most recent item unless the user has independently scrolled in the list-->
+    <md-list class="parlay-script-builder-list" scroll-glue flex>
+            <span ng-repeat="message in ctrl.getLog()">
+                <md-list-item>
+                    <pre flex="90">{{message.statement}}</pre>
+                </md-list-item>
+                <md-divider></md-divider>
+            </span>
+    </md-list>
+    <md-card-actions layout="row" layout-align="end center" ng-show="ctrl.getLog().length">
+        <md-button aria-label="Copy to clipboard" ng-click="ctrl.toClipboard()">Copy to clipboard</md-button>
+        <md-button aria-label="Clear" ng-click="ctrl.clearLog()">Clear</md-button>
+    </md-card-actions>
+</md-card>

@@ -295,7 +295,7 @@ function PromenadeStandardItemCardCommandContainer(RecursionHelper, ParlayPersis
     };
 }
 
-angular.module('promenade.items.standarditem.commands', ['RecursionHelper', 'parlay.store', 'parlay.navigation.bottombar', 'parlay.utility'])
+angular.module('promenade.items.standarditem.commands', ['ngMaterial', 'RecursionHelper', 'parlay.store', 'parlay.utility', 'parlay.navigation.scriptbuilder'])
 	.controller('PromenadeStandardItemCardCommandTabController', ['$scope', '$timeout', '$mdToast', 'ParlayScriptLogger', 'ParlayUtility', PromenadeStandardItemCardCommandTabController])
 	.directive("promenadeStandardItemCardCommands", PromenadeStandardItemCardCommands)
 	.directive("promenadeStandardItemCardCommandContainer", ['RecursionHelper', 'ParlayPersistence', 'ParlayUtility', PromenadeStandardItemCardCommandContainer]);

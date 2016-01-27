@@ -1,0 +1,32 @@
+.script_builder_transform {
+    -webkit-transition: height 200ms linear;
+    -moz-transition: height 200ms linear;
+    -o-transition: height 200ms linear;
+    -ms-transition: height 200ms linear;
+    transition: height 200ms linear;
+}
+
+.script_builder_expanded {
+    height: 400px;
+}
+
+.script_builder_hidden {
+    height: 64px;
+}
+
+.parlay-script-builder-toolbar {
+    cursor: pointer;
+}
+
+/*csslint outline-none: false */
+.parlay-script-builder-toolbar:focus {
+    outline: none;
+}
+
+.parlay-script-builder-list {
+    overflow-y: scroll;
+}
+
+parlay-script-builder > md-card {
+    margin: 0;
+}

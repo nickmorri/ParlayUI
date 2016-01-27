@@ -1,5 +1,5 @@
 <md-card ng-class="ctrl.hidden ? 'script_builder_hidden' : 'script_builder_expanded'" layout="column">
-    <md-toolbar ng-click="ctrl.toggle()" class="parlay-script-builder-toolbar">
+    <md-toolbar ng-click="ctrl.toggle()" class="parlay-script-builder-toolbar md-whiteframe-z3">
         <div class="md-toolbar-tools">
             <h2>Script Builder</h2>
             <span flex></span>
@@ -8,9 +8,12 @@
     </md-toolbar>
     <!--Scroll glue will automatically keep md-list at the most recent item unless the user has independently scrolled in the list-->
     <md-list class="parlay-script-builder-list" scroll-glue flex>
+            <md-list-item ng-hide="ctrl.getLog().length">
+                <pre>No Python statements currently available. Try sending a command from a ParlayItem.</pre>
+            </md-list-item>
             <span ng-repeat="message in ctrl.getLog()">
                 <md-list-item>
-                    <pre flex="90">{{message.statement}}</pre>
+                    <pre>{{message.statement}}</pre>
                 </md-list-item>
                 <md-divider></md-divider>
             </span>

@@ -2,7 +2,7 @@
 
     <md-toolbar class="md-accent">
         <div class="md-toolbar-tools">
-            <h2>Error</h2>
+            <h2>Error from <b>{{ctrl.topics.FROM}}</b></h2>
             <span flex></span>
             <md-button class="md-icon-button" ng-click="ctrl.close()">
                 <md-icon aria-label="Close dialog"><ng-md-icon icon="close"></ng-md-icon></md-icon>
@@ -21,23 +21,25 @@
 
             <md-card>
                 <md-card-contents>
-                    <md-toolbar ng-click="ctrl.toggleTopics()" class="parlay-error-dialog-toolbar">
-                        <div class="md-toolbar-tools"><h3>TOPICS</h3><span flex></span><md-icon><ng-md-icon icon="{{ctrl.topics_icon}}"></ng-md-icon></md-icon></div>
+                    <md-toolbar ng-click="ctrl.toggleMore()" class="parlay-error-dialog-toolbar">
+                        <div class="md-toolbar-tools"><h3>More</h3><span flex></span><md-icon><ng-md-icon icon="{{ctrl.more_icon}}"></ng-md-icon></md-icon></div>
                     </md-toolbar>
 
-                    <md-list ng-hide="ctrl.topics_hidden">
-                        <md-list-item class="parlay-error-dialog-list-item" ng-repeat="(key, data) in ctrl.topics"><b>{{key}}:</b>&nbsp;{{data}}</md-list-item>
+                    <md-toolbar class="md-hue-2" ng-hide="ctrl.more_hidden">
+                        <div class="md-toolbar-tools"><h3>TOPICS</h3></div>
+                    </md-toolbar>
+
+                    <md-list ng-hide="ctrl.more_hidden">
+                        <md-list-item class="parlay-error-dialog-list-item" ng-repeat="(key, data) in ctrl.topics">
+                            <b>{{key}}:</b>&nbsp;{{data}}
+                        </md-list-item>
                     </md-list>
-                </md-card-contents>
-            </md-card>
 
-            <md-card>
-                <md-card-contents>
-                    <md-toolbar ng-click="ctrl.toggleContents()" class="parlay-error-dialog-toolbar">
-                        <div class="md-toolbar-tools"><h3>CONTENTS</h3><span flex></span><md-icon><ng-md-icon icon="{{ctrl.contents_icon}}"></ng-md-icon></md-icon></div>
+                    <md-toolbar class="md-hue-2" ng-hide="ctrl.more_hidden">
+                        <div class="md-toolbar-tools"><h3>CONTENTS</h3></div>
                     </md-toolbar>
 
-                    <md-content class="md-padding" flex ng-hide="ctrl.contents_hidden">
+                    <md-content class="md-padding" flex ng-hide="ctrl.more_hidden">
                         <div ng-repeat="(key, data) in ctrl.contents" >
                             <h4>{{key}}</h4>
                             <pre style="white-space: pre-wrap;">{{data}}</pre>

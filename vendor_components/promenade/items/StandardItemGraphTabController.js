@@ -4,18 +4,18 @@
  * @param {AngularJS $scope} $scope - A AngularJS $scope Object.
  * @param {Material Angular Service} $mdDialog - Dialog modal service.
  */
-function PromenadeStandardItemCardGraphTabController($scope, $mdDialog) {
+function PromenadeStandardItemCardGraphTabController($scope, $mdDialog, $interval) {
 	ParlayBaseTabController.call(this, $scope, "promenadeStandardItemCardGraph");
 
     this.streamColors = [];
 
     function getStreamColors() {
-        this.streamColors = this.getSmoothie().seriesSet.map(function (series) {
+        this.streamColors = this.getSmoothie() ? this.getSmoothie().seriesSet.map(function (series) {
             return {
                 name: series.options.streamName,
                 color: series.options.strokeStyle
             };
-        });
+        }) : [];
     }
 
 	/**
@@ -37,6 +37,8 @@ function PromenadeStandardItemCardGraphTabController($scope, $mdDialog) {
 			clickOutsideToClose: true
 		}).finally(getStreamColors.bind(this));
 	};
+
+	$interval(getStreamColors.bind(this), 1000);
 		
 }
 
@@ -168,7 +170,7 @@ function PromenadeStandardItemCardGraph() {
 }
 
 angular.module('promenade.items.standarditem.graph', ["promenade.smoothiechart"])
-	.controller("PromenadeStandardItemCardGraphTabController", ["$scope", "$mdDialog", PromenadeStandardItemCardGraphTabController])
+	.controller("PromenadeStandardItemCardGraphTabController", ["$scope", "$mdDialog", "$interval", PromenadeStandardItemCardGraphTabController])
 	.controller("PromenadeStandardItemCardGraphTabConfigurationController", ["$mdDialog", "item", "data", "smoothie", PromenadeStandardItemCardGraphTabConfigurationController])
 	.controller("PromenadeStandardItemCardGraphTabStreamConfigurationController", ["$mdDialog", "stream", PromenadeStandardItemCardGraphTabStreamConfigurationController])
 	.directive('promenadeStandardItemCardGraph', PromenadeStandardItemCardGraph);

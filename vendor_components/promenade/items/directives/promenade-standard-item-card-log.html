@@ -2,8 +2,8 @@
 
 	<md-toolbar class="md-hue-2">
 		<div class="md-toolbar-tools">
-			<h5 ng-if="ctrl.filter_text" ng-pluralize count="ctrl.getFilteredLog(this.filter_text).length" when="{'0': 'No messages match filter', 'one': '1 message matches', 'other': '{} messages match'}"></h5>
-			<h5 ng-if="!ctrl.filter_text" ng-pluralize count="ctrl.getFilteredLog(this.filter_text).length" when="{'0': 'No messages logged', 'one': '1 message logged', 'other': '{} messages logged'}"></h5>
+			<h5 ng-if="ctrl.filter_text" ng-pluralize count="ctrl.getFilteredLog(ctrl.filter_text).length" when="{'0': 'No messages match filter', 'one': '1 message matches', 'other': '{} messages match'}"></h5>
+			<h5 ng-if="!ctrl.filter_text" ng-pluralize count="ctrl.getFilteredLog(ctrl.filter_text).length" when="{'0': 'No messages logged', 'one': '1 message logged', 'other': '{} messages logged'}"></h5>
 			<span flex></span>
 			
 		</div>
@@ -17,8 +17,8 @@
 
 	<md-content ng-show="ctrl.getLog().length" class="parlay-item-card-tab-content" layout="column" style="height: 292px;">
         <md-list>
-            <md-virtual-repeat-container id="vertical-container" style="height: 292px;">
-                <md-list-item class="md-2-line parlay-log-item" md-virtual-repeat="message in ctrl.getFilteredLog(this.filter_text).reverse()" md-auto-shrink flex>
+            <md-virtual-repeat-container>
+                <md-list-item class="md-2-line parlay-log-item" md-virtual-repeat="message in ctrl.getFilteredLog(ctrl.filter_text).reverse()" md-auto-shrink flex>
                     <div class="md-list-item-text message-text">
                         <p>topics:{<span ng-repeat="(key, value) in message.TOPICS">{{key}}:{{value}}<span ng-if="!$last">,</span></span>}</p>
                         <p>contents:{<span ng-repeat="(key, value) in message.CONTENTS">{{key}}:{{value}}<span ng-if="!$last">,</span></span>}</p>

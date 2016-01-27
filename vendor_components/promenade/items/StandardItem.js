@@ -170,7 +170,7 @@ function PromenadeStandardItemFactory(ParlayItem) {
 	 * @returns {$q.defer.Promise} - Resolved when message response received.
 	 */
     PromenadeStandardItem.prototype.sendMessage = function (contents) {
-        return this.protocol.sendMessage(this.generateTopics(), contents);
+        return this.protocol.sendMessage(this.generateTopics(), contents, {}, true);
     };
     
     /**
@@ -280,7 +280,7 @@ function PromenadeStandardItemFactory(ParlayItem) {
 			MSG_TYPE: "RESPONSE",
 			FROM: this.id,
 			TO: "UI"
-		}).then(function(response) {
+		}, true).then(function(response) {
 			this.properties[response.CONTENTS.PROPERTY].VALUE = response.CONTENTS.VALUE;
 			return response;
 		}.bind(this));
@@ -307,7 +307,7 @@ function PromenadeStandardItemFactory(ParlayItem) {
 			MSG_TYPE: "RESPONSE",
 			FROM: this.id,
 			TO: "UI"
-		}).then(function(response) {
+		}, true).then(function(response) {
 			return response;
 		}.bind(this));
     };

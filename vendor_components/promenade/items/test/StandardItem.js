@@ -234,7 +234,7 @@
 			            MSG_TYPE: 'RESPONSE',
 			            TO: 'UI',
 			            FROM: 100
-		            });
+		            }, true);
 	            });
 	            
 	            it("sets", function() {
@@ -259,7 +259,7 @@
 			            MSG_TYPE: 'RESPONSE',
 			            TO: 'UI',
 			            FROM: 100
-		            });
+		            }, true);
 	            });
 	            
             });

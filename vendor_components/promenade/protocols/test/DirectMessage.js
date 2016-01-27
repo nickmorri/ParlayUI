@@ -44,7 +44,7 @@
                     TO: 100,
                     FROM: 'UI',
                     MSG_ID: protocol.consumeMessageId()
-                })).toEqual({
+                }, {}, true)).toEqual({
                     FROM: 100,
                     TO: 'UI',
                     MSG_ID: previous_message_id + 1

@@ -13,7 +13,7 @@
 	</md-toolbar>
 
     <md-toolbar class="md-hue-3" ng-show="ctrl.streamCount()">
-        <div class="md-toolbar-tools" layout="row" style="overflow-y: scroll;">
+        <div class="md-toolbar-tools" layout="row" style="overflow-x: scroll; overflow-y: hidden;">
             <h5 ng-repeat="stream in ctrl.streamColors | orderBy: 'name'" ng-style="{'color': stream.color}">
                 {{stream.name}}<span ng-show="!$last">,&nbsp;</span>
             </h5>

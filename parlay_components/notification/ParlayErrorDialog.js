@@ -26,7 +26,7 @@ function ParlayErrorDialog($mdDialog, $mdMedia, ParlayNotificationHistory) {
 function ParlayErrorDialogController($mdDialog) {
 
     // Holds state of topics visibility and the corresponding icon to indicate this state to the user.
-    this.topics_hidden = false;
+    this.topics_hidden = true;
     this.topics_icon = "arrow_drop_down";
 
     /**

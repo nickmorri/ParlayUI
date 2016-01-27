@@ -51,15 +51,26 @@ function PromenadeDirectMessageProtocolFactory(ParlayProtocol, PromenadeStandard
     
     /**
 	 * Constructs response topics from the partially built given message.
-	 * @param {Object} topics - partially constructed message, includes topics.
+	 * @param {Object} topics - topics portion of message, to and from are swapped.
+     * @param {Object} additional_topics - additional topics that are expected on response.
 	 * @returns {Object} - partially constructed message with response topics.
 	 */
-    PromenadeDirectMessageProtocol.prototype.buildResponseTopics = function (topics) {
-        return {
+    PromenadeDirectMessageProtocol.prototype.buildResponseTopics = function (topics, additional_topics) {
+
+        var base = {
             FROM: topics.TO,
             TO: topics.FROM,
             MSG_ID: topics.MSG_ID
         };
+
+        if (additional_topics) {
+            Object.keys(additional_topics).forEach(function(key) {
+                base[key] = additional_topics[key];
+            });
+        }
+
+        return base;
+
     };
     
     PromenadeDirectMessageProtocol.prototype.isResponseOk = function (response) {
@@ -75,7 +86,7 @@ function PromenadeDirectMessageProtocolFactory(ParlayProtocol, PromenadeStandard
 	 */
     PromenadeDirectMessageProtocol.prototype.sendMessage = function (topics, contents, response_topics) {
 		var extended_topics = this.buildMessageTopics(topics);
-		var extended_response_topics = !response_topics ? this.buildResponseTopics(extended_topics) : response_topics;
+		var extended_response_topics = this.buildResponseTopics(extended_topics, response_topics);
 		
 	    return ParlayProtocol.prototype.sendMessage(extended_topics, contents, extended_response_topics, true).then(function (response) {
 		    return this.isResponseOk(response) ? response : $q.reject(response);

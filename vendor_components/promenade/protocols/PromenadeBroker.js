@@ -97,7 +97,7 @@ function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification, ParlayErro
          * Register a callback on MSG_STATUS == 'ERROR' so that we can display a dialog.
          */
         this.onMessage({"MSG_STATUS": "ERROR"}, function (response) {
-            ParlayErrorDialog.show(response);
+			ParlayErrorDialog.show(response.TOPICS.FROM, response.CONTENTS.DESCRIPTION, response);
         }, true);
 
         /**

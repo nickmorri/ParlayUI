@@ -1,9 +1,9 @@
 function ParlayErrorDialog($mdDialog, $mdMedia, ParlayNotificationHistory) {
 
     return {
-        show: function (message) {
+        show: function (from, description, details) {
             // Record message given to the dialog in the notification history.
-            ParlayNotificationHistory.add(message);
+            ParlayNotificationHistory.add({from: from, description: description, details: details});
 
             // Display the error dialog.
             $mdDialog.show({
@@ -11,8 +11,9 @@ function ParlayErrorDialog($mdDialog, $mdMedia, ParlayNotificationHistory) {
                 controllerAs: "ctrl",
                 templateUrl: "../parlay_components/notification/directives/parlay-error-dialog.html",
                 locals: {
-                    topics: message.TOPICS,
-                    contents: message.CONTENTS
+                    from: from,
+                    description: description,
+                    details: details
                 },
                 bindToController: true,
                 clickOutsideToClose: true,

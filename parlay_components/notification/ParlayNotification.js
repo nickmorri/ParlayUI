@@ -49,7 +49,7 @@ function ParlayNotificationHistory() {
     };
 }
 
-function ParlayNotificationFactory($mdToast, $mdSidenav, $notification, NotificationDisplayDuration, ParlayNotificationHistory) {
+function ParlayNotificationFactory($mdToast, $mdSidenav, $notification, $interval, NotificationDisplayDuration, ParlayNotificationHistory) {
 	"use strict";
 
     // True if a toast is currently being displayed.
@@ -166,10 +166,20 @@ function ParlayNotificationFactory($mdToast, $mdSidenav, $notification, Notifica
 	    showProgress: function () {
 			if (!toast_active) {
 
+                // To ensure that the progress doesn't take priority over other toasts we should check every half second
+                // for any pending toasts. If there are any pending toasts we should display them.
+                var registration = $interval(function () {
+                    if (pending_toasts.length) {
+                        registration();
+                        displayToast();
+                    }
+                }, 500);
+
                 $mdToast.show({
 					template: "<md-toast><md-progress-linear flex class='notification-progress' md-mode='indeterminate'></md-progress-linear></md-toast>",
 					hideDelay: false
 				});
+
 			}
 	    }
     };
@@ -179,4 +189,4 @@ angular.module("parlay.notification", ["ngMaterial", "notification", "templates-
 	.run(["$notification", RunNotification])
 	.value("NotificationDisplayDuration", 4000)
 	.factory("ParlayNotificationHistory", ParlayNotificationHistory)
-	.factory("ParlayNotification", ["$mdToast", "$mdSidenav", "$notification", "NotificationDisplayDuration", "ParlayNotificationHistory", ParlayNotificationFactory]);
+	.factory("ParlayNotification", ["$mdToast", "$mdSidenav", "$notification", "$interval", "NotificationDisplayDuration", "ParlayNotificationHistory", ParlayNotificationFactory]);

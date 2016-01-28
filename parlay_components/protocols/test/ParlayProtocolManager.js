@@ -17,11 +17,7 @@
             }));
                         
             describe('PromenadeBroker interactions', function () {
-                
-                it('requests discovery', function () {
-                    ParlayProtocolManager.requestDiscovery();
-                });
-                
+
                 it('opens protocol', function () {
                     ParlayProtocolManager.openProtocol({}).then(function (response) {
                         expect(response).toBeTruthy();
@@ -69,7 +65,7 @@
                 
                 it('onClose', function () {
                     expect(ParlayProtocolManager.getAvailableProtocols().length).toBe(1);
-                    ParlayProtocolManager.requestDiscovery();
+                    PromenadeBroker.requestDiscovery();
                     expect(ParlayProtocolManager.getOpenProtocols().length).toBe(1);
                     
                     PromenadeBroker.triggerOnClose();

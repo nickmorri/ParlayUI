@@ -58,14 +58,6 @@ function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager, Parlay
     };
     
     /**
-	 * Requests discovery from PromenadeBroker.
-	 * @returns {$q.defer.promise} - Resolved when a response is received from the Broker.
-	 */
-    ParlayItemManager.prototype.requestDiscovery = function () {
-        return PromenadeBroker.requestDiscovery(true);
-    };
-    
-    /**
 	 * Swaps the item at the specified index with the item at index + distance.
 	 * @param {Number} index - position of item to swap.
 	 * @param {Number} distance - How far to move target item.

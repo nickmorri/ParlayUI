@@ -1,4 +1,4 @@
-function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, ParlayNotification, ParlayStore, ParlayItemManager) {
+function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, ParlayNotification, ParlayStore, ParlayItemManager, PromenadeBroker) {
 
     function getWorkspaces() {
         var workspaces = store.getLocalValues();
@@ -90,7 +90,7 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
         }
 
         if (ParlayItemManager.hasDiscovered()) load();
-        else ParlayItemManager.requestDiscovery().then(load);
+        else PromenadeBroker.requestDiscovery().then(load);
 
         $mdDialog.hide();
     };
@@ -194,4 +194,4 @@ function ParlayWorkspaceSaveAsDialogController($scope, $mdDialog) {
 
 angular.module("parlay.items.workspaces", ["parlay.store", "parlay.items.manager", "angularMoment", "parlay.utility"])
 	.controller("ParlayWorkspaceSaveAsDialogController", ["$scope", "$mdDialog", ParlayWorkspaceSaveAsDialogController])
-	.controller("ParlayWorkspaceManagementController", ["$scope", "$mdDialog", "$mdMedia", "ParlayNotification", "ParlayStore", "ParlayItemManager", ParlayWorkspaceManagementController]);
+	.controller("ParlayWorkspaceManagementController", ["$scope", "$mdDialog", "$mdMedia", "ParlayNotification", "ParlayStore", "ParlayItemManager", "PromenadeBroker", ParlayWorkspaceManagementController]);

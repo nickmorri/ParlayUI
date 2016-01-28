@@ -31,9 +31,6 @@ function ParlayProtocolManagerFactory($injector, $q, PromenadeBroker, parlayStor
             });
         };
 
-        this.requestDiscovery = function () {
-            return PromenadeBroker.requestDiscovery(true);
-        };
 
         /**
          * Delete the protocol configuration in the ParlayStore.
@@ -63,7 +60,7 @@ function ParlayProtocolManagerFactory($injector, $q, PromenadeBroker, parlayStor
                     content: "Connected to " + response.name + ".",
                     action: {
                         text: "Discover",
-                        callback: function () { this.requestDiscovery(true); }.bind(this)
+                        callback: function () { PromenadeBroker.requestDiscovery(true); }.bind(this)
                     }
                 });
                 return response;

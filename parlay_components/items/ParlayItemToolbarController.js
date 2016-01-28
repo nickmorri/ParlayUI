@@ -1,4 +1,4 @@
-function ParlayItemsToolbarController($mdDialog, $mdSidenav, $mdMedia, ParlayItemManager) {
+function ParlayItemsToolbarController($mdDialog, $mdSidenav, $mdMedia, PromenadeBroker) {
 	
 	this.openSidenav = function () {
 		/* istanbul ignore next */
@@ -6,7 +6,7 @@ function ParlayItemsToolbarController($mdDialog, $mdSidenav, $mdMedia, ParlayIte
 	};
 	
 	this.requestDiscovery = function () {
-        ParlayItemManager.requestDiscovery();
+        PromenadeBroker.requestDiscovery(true);
     };
     
     this.openWorkspaceManagementDialog = function (event) {
@@ -68,5 +68,5 @@ function ParlayItemsToolbar($mdMedia, PromenadeBroker) {
 }
 
 angular.module("parlay.items.toolbar", ["parlay.protocols.list_controller", "parlay.navigation.sidenav", "parlay.notification.sidenav", "parlay.items.search"])
-	.controller("ParlayItemsToolbarController", ["$mdDialog", "$mdSidenav", "$mdMedia", "ParlayItemManager", ParlayItemsToolbarController])
+	.controller("ParlayItemsToolbarController", ["$mdDialog", "$mdSidenav", "$mdMedia", "PromenadeBroker", ParlayItemsToolbarController])
 	.directive("parlayItemsToolbar", ["$mdMedia", "PromenadeBroker", ParlayItemsToolbar]);

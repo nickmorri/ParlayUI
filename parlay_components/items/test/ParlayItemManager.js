@@ -141,7 +141,7 @@
 
 				it("has discovered", function (done) {
 					expect(ParlayItemManager.hasDiscovered()).toBe(PromenadeBroker.getLastDiscovery() !== undefined);
-					ParlayItemManager.requestDiscovery().then(function () {
+					PromenadeBroker.requestDiscovery(true).then(function () {
 						expect(ParlayItemManager.hasDiscovered()).toBe(PromenadeBroker.getLastDiscovery() !== undefined);
 						done();
 					});
@@ -149,7 +149,7 @@
 				});
 
                 it('requestDiscovery', function (done) {
-                    ParlayItemManager.requestDiscovery().then(function (response) {
+                    PromenadeBroker.requestDiscovery(true).then(function (response) {
 	                    done();
                     });
                     $rootScope.$digest();

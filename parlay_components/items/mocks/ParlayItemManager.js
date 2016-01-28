@@ -3,7 +3,6 @@ angular.module('mock.parlay.items.manager', []).factory('ParlayItemManager', ['$
 		getActiveItems: function () {
 			return [];
 		},
-		requestDiscovery: function () {},
 		activateItem: function(item) {},
 		hasActiveItems: function () {
 			return false;

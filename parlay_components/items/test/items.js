@@ -67,13 +67,6 @@
     			ParlayItemToolbarController = $controller("ParlayItemsToolbarController", {$scope: scope});
     		}));
 	    	
-	    	
-	    	it("requests discovery", function () {
-		    	spyOn(ParlayItemManager, "requestDiscovery");
-		    	ParlayItemToolbarController.requestDiscovery();
-		    	expect(ParlayItemManager.requestDiscovery).toHaveBeenCalled();
-	    	});
-	    	
     	});
         
     });

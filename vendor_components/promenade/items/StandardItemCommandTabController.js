@@ -101,7 +101,7 @@ function buildPythonCommand(item_name, message) {
  * @param {Parlay Service} ParlayScriptLogger - ParlayScriptLogger Service.
  * @param {Parlay Service} ParlayUtility - Parlay Utlity Service.
  */
-function PromenadeStandardItemCardCommandTabController($scope, $timeout, $mdToast, ParlayScriptLogger, ParlayUtility) {
+function PromenadeStandardItemCardCommandTabController($scope, $timeout, ParlayScriptLogger, ParlayNotification) {
 	ParlayBaseTabController.call(this, $scope, "promenadeStandardItemCardCommands");
 	
 	// Due to the way JavaScript prototypical inheritance works and AngularJS scoping we want to enclose the message Object within another object.
@@ -178,12 +178,9 @@ function PromenadeStandardItemCardCommandTabController($scope, $timeout, $mdToas
 	this.copyCommand = function() {
         var command = this.generatePythonCommand();
 
-        if (command) {
-            $mdToast.show($mdToast.simple().content(command.copyToClipboard() ? "Command copied to clipboard." : "Copy failed. Check browser compatibility."));
-        }
-        else {
-            $mdToast.show($mdToast.simple().content("Cannot copy empty command."));
-        }
+        if (command) ParlayNotification.show({content: command.copyToClipboard() ?
+			"Command copied to clipboard." : "Copy failed. Check browser compatibility."});
+        else ParlayNotification.show({content: "Cannot copy empty command."});
 
 	};
 	
@@ -298,6 +295,6 @@ function PromenadeStandardItemCardCommandContainer(RecursionHelper, ParlayPersis
 }
 
 angular.module('promenade.items.standarditem.commands', ['ngMaterial', 'RecursionHelper', 'parlay.store', 'parlay.utility', 'parlay.navigation.scriptbuilder'])
-	.controller('PromenadeStandardItemCardCommandTabController', ['$scope', '$timeout', '$mdToast', 'ParlayScriptLogger', 'ParlayUtility', PromenadeStandardItemCardCommandTabController])
+	.controller('PromenadeStandardItemCardCommandTabController', ['$scope', '$timeout', 'ParlayScriptLogger', 'ParlayNotification', PromenadeStandardItemCardCommandTabController])
 	.directive("promenadeStandardItemCardCommands", PromenadeStandardItemCardCommands)
 	.directive("promenadeStandardItemCardCommandContainer", ['RecursionHelper', 'ParlayPersistence', 'ParlayUtility', PromenadeStandardItemCardCommandContainer]);

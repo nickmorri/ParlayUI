@@ -1,7 +1,10 @@
-function ParlayProtocolManagerFactory($injector, $q, PromenadeBroker, parlayStore, ParlayNotification) {
+function ParlayProtocolManagerFactory($injector, $q, PromenadeBroker, ParlayStore, ParlayNotification) {
     "use strict";
 
     function ParlayProtocolManager() {
+
+        // Reference to ParlayStore protocols namespace
+        var store = ParlayStore("protocols");
 
         var open_protocols = [];
         var available_protocols = [];
@@ -31,21 +34,6 @@ function ParlayProtocolManagerFactory($injector, $q, PromenadeBroker, parlayStor
             });
         };
 
-
-        /**
-         * Delete the protocol configuration in the ParlayStore.
-         * @param {Object} configuration - Protocol configuration that we are removing from the ParlayStore.
-         */
-        this.deleteProtocolConfiguration = function (configuration) {
-            var protocols = parlayStore("protocols").getLocalItem("saved");
-            if (protocols === undefined) return;
-
-            delete protocols[configuration.name];
-
-            parlayStore("protocols").setLocalItem("saved", protocols);
-            setSavedProtocols(parlayStore("protocols").getLocalItem("saved"));
-        };
-
         /**
          * Requests the Broker to open a protocol.
          * Saves the configuration in ParlayStore for later ease of use.
@@ -68,6 +56,20 @@ function ParlayProtocolManagerFactory($injector, $q, PromenadeBroker, parlayStor
                 ParlayNotification.show({content: status});
                 return $q.reject(status);
             });
+        };
+
+        /**
+         * Delete the protocol configuration in the ParlayStore.
+         * @param {Object} configuration - Protocol configuration that we are removing from the ParlayStore.
+         */
+        this.deleteProtocolConfiguration = function (configuration) {
+            var protocols = store.getLocalItem("saved");
+            if (protocols === undefined) return;
+
+            delete protocols[configuration.name];
+
+            store.setLocalItem("saved", protocols);
+            setSavedProtocols();
         };
 
         /**
@@ -194,10 +196,12 @@ function ParlayProtocolManagerFactory($injector, $q, PromenadeBroker, parlayStor
 
         /**
          * Sets the saved_protocols Array if a protocol is available.
-         * @param {Object} saved_configurations - Container of saved protocols configurations.
          */
-        function setSavedProtocols (saved_configurations) {
-            if (saved_configurations === undefined) return;
+        function setSavedProtocols () {
+            var saved_configurations = store.getLocalItem("saved");
+
+            // If there aren't any saved configurations we should just return and leave the saved_protocols as is.
+            if (!saved_configurations) return;
 
             // Only show saved configurations that are currently available but not connected.
             saved_protocols = Object.keys(saved_configurations)
@@ -219,14 +223,14 @@ function ParlayProtocolManagerFactory($injector, $q, PromenadeBroker, parlayStor
          * @param {Object} configuration - Protocol configuration that can be sent to the Broker.
          */
         function saveProtocolConfiguration(configuration) {
-            var protocols = parlayStore("protocols").getLocalItem("saved");
+            var protocols = store.getLocalItem("saved");
             if (protocols === undefined) protocols = {};
 
             configuration.last_connected = new Date();
 
             protocols[configuration.name] = configuration;
 
-            parlayStore("protocols").setLocalItem("saved", protocols);
+            store.setLocalItem("saved", protocols);
             setSavedProtocols();
         }
 

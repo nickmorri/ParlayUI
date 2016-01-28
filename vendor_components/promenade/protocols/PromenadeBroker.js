@@ -190,7 +190,7 @@ function PromenadeBrokerFactory(ParlaySocket, $q, ParlayNotification, ParlayErro
 	    if (this.isConnected()) {
 			ParlayNotification.showProgress();
 
-			return this.sendMessage({request: "get_discovery"}, {"force": is_forced}, {response: "get_discovery_response"});
+			return this.sendMessage({request: "get_discovery"}, {"force": !!is_forced}, {response: "get_discovery_response"});
 		}
 	    else {
 	        ParlayNotification.show({content: "Cannot discover while not connected to Broker."});

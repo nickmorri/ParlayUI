@@ -59,6 +59,30 @@ function PromenadeStandardItemCardLog() {
     };
 }
 
-angular.module('promenade.items.standarditem.log', ['parlay.utility', 'parlay.store.persistence'])
+function PromenadeStandardItemCardLogItem(ParlayNotification) {
+    return {
+        scope: {
+            message: "="
+        },
+        controller: function () {
+
+            this.copy = function () {
+                ParlayNotification.show({content: JSON.stringify(angular.copy(this.message)).copyToClipboard() ?
+                    "Message copied to clipboard" : "Copy failed. Check browser compatibility."});
+            };
+
+            this.hasLargeContents = function () {
+                return Object.keys(this.message.CONTENTS).length > 1;
+            };
+
+        },
+        controllerAs: "ctrl",
+        bindToController: true,
+        templateUrl: '../vendor_components/promenade/items/directives/promenade-standard-item-card-log-item.html'
+    };
+}
+
+angular.module('promenade.items.standarditem.log', ['parlay.utility', 'parlay.store.persistence', 'luegg.directives'])
 	.controller('PromenadeStandardItemCardLogTabController', ['$scope', 'ParlayPersistence', 'ParlayUtility', PromenadeStandardItemCardLogTabController])
-	.directive('promenadeStandardItemCardLog', PromenadeStandardItemCardLog);
+	.directive('promenadeStandardItemCardLog', PromenadeStandardItemCardLog)
+	.directive('promenadeStandardItemCardLogItem', ["ParlayNotification", PromenadeStandardItemCardLogItem]);

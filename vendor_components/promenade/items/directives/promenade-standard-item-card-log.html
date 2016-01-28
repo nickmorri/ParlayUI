@@ -15,17 +15,18 @@
 	</md-input-container>
 
 
-	<md-content ng-show="ctrl.getLog().length" class="parlay-item-card-tab-content" layout="column" style="height: 292px;">
-        <md-list>
-            <md-virtual-repeat-container>
-                <md-list-item class="md-2-line parlay-log-item" md-virtual-repeat="message in ctrl.getFilteredLog(ctrl.filter_text).reverse()" md-auto-shrink flex>
-                    <div class="md-list-item-text message-text">
-                        <p>topics:{<span ng-repeat="(key, value) in message.TOPICS">{{key}}:{{value}}<span ng-if="!$last">,</span></span>}</p>
-                        <p>contents:{<span ng-repeat="(key, value) in message.CONTENTS">{{key}}:{{value}}<span ng-if="!$last">,</span></span>}</p>
-                    </div>
-                </md-list-item>
-            </md-virtual-repeat-container>
-        </md-list>
+	<md-content ng-show="ctrl.getLog().length" class="parlay-item-card-tab-content" layout="column" scroll-glue>
+
+		<md-virtual-repeat-container style="height: 292px;">
+			<div md-virtual-repeat="message in ctrl.getFilteredLog(ctrl.filter_text)" md-auto-shrink>
+                <promenade-standard-item-card-log-item message="message"></promenade-standard-item-card-log-item>
+			</div>
+		</md-virtual-repeat-container>
+
+        <!--<md-list>-->
+            <!--<promenade-standard-item-card-log-item ng-repeat="message in ctrl.getFilteredLog(ctrl.filter_text)" message="message"></promenade-standard-item-card-log-item>-->
+        <!--</md-list>-->
+
 	</md-content>
     
 </md-tab>

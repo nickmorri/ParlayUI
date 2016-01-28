@@ -1,0 +1,19 @@
+<md-card>
+    <md-card-header>
+        <md-card-avatar><md-icon class="md-avatar-icon"><ng-md-icon icon="message"></ng-md-icon></md-icon></md-card-avatar>
+        <md-card-header-text>
+            <span class="md-title">ID: {{ctrl.message.TOPICS.MSG_ID}}</span>
+            <span class="md-subhead">STATUS: {{ctrl.message.TOPICS.MSG_STATUS}}, TYPE: {{ctrl.message.TOPICS.MSG_TYPE}}</span>
+        </md-card-header-text>
+        <md-button class="md-icon-button" ng-click="ctrl.copy()">
+            <md-tooltip>Copy to clipboard</md-tooltip>
+            <md-icon><ng-md-icon icon="content_copy"></ng-md-icon></md-icon>
+        </md-button>
+    </md-card-header>
+    <md-list>
+        <md-subheader class="md-no-sticky">CONTENTS</md-subheader>
+        <md-list-item ng-repeat="(key, value) in ctrl.message.CONTENTS" style="overflow-x: scroll;">
+            <pre>{{key}}: {{value}}</pre>
+        </md-list-item>
+    </md-list>
+</md-card>

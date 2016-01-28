@@ -158,23 +158,32 @@ function ParlayProtocolManagerFactory($injector, $q, PromenadeBroker, ParlayStor
         }
 
         /**
-         * Construct and instantiate a protocol with the given configuration.
-         * @param {Object} configuration - Protocol configuration information.
-         */
-        function openPrototcol (configuration) {
-            var Constructor = $injector.has(configuration.protocol_type) ?
-                $injector.get(configuration.protocol_type) : $injector.get("PromenadeDirectMessageProtocol");
-            var instance = new Constructor(configuration);
-            instance.onOpen();
-            return instance;
-        }
-
-        /**
          * Instantiates and opens the given Array of protocol configurations.
          * @param {Array} protocols - Array of open protocols.
          */
-        function setOpenProtocols(protocols) {
-            open_protocols = protocols.map(openPrototcol);
+        function setOpenProtocols(response) {
+
+            /**
+             * Construct and instantiate a protocol with the given configuration.
+             * If the given protocol type is not available in system default to PromenadeDirectMessageProtocol.
+             * @param {Object} configuration - Protocol configuration information.
+             */
+            function constructProtocol (configuration) {
+                var Constructor = $injector.has(configuration.protocol_type) ?
+                    $injector.get(configuration.protocol_type) : $injector.get("PromenadeDirectMessageProtocol");
+
+                var instance = new Constructor(configuration);
+                instance.onOpen();
+                return instance;
+            }
+
+            var protocols = response.protocols;
+
+            setSavedProtocols();
+
+            // Request a fast discovery to see if there's already one there.
+            PromenadeBroker.requestDiscovery(false);
+            open_protocols = protocols.map(constructProtocol);
         }
 
         /**
@@ -248,13 +257,7 @@ function ParlayProtocolManagerFactory($injector, $q, PromenadeBroker, ParlayStor
 
         PromenadeBroker.onMessage({type: "broker", response: "get_protocols_response"}, setAvailableProtocols);
 
-        PromenadeBroker.onMessage({type: "broker", response: "get_open_protocols_response"}, function (response) {
-            setOpenProtocols(response.protocols);
-            setSavedProtocols(parlayStore("protocols").getLocalItem("saved"));
-
-            // Request a fast discovery to see if there's already one there.
-            this.requestDiscovery();
-        }.bind(this));
+        PromenadeBroker.onMessage({type: "broker", response: "get_open_protocols_response"}, setOpenProtocols);
 
         PromenadeBroker.onDiscovery(function (response) {
             response.discovery.forEach(addDiscoveryInfoToOpenProtocol);

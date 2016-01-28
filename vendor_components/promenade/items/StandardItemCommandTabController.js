@@ -83,7 +83,9 @@ function buildPythonCommand(item_name, message) {
         })];
 
         return setup + "\n" + var_name + "." + func + "(" + Object.keys(message).map(function (key) {
-            return key + "=" + JSON.stringify(message[key]);
+                var value = JSON.stringify(message[key]);
+                if (value === undefined) value = "None";
+                return key + "=" + value;
         }).join(", ") + ")";
     }
     catch(e) {

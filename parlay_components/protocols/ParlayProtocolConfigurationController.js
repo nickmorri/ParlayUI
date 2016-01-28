@@ -46,7 +46,7 @@ function ParlayProtocolConfigurationController($mdDialog, ParlayProtocolManager)
 	 * @returns {Boolean} - True if container, false otherwise.
 	 */
     this.isContainer = function (item) {
-	    return item !== null && !angular.isString(item) && angular.isNumber(item.length);
+	    return item !== null && item !== undefined && !angular.isString(item) && angular.isNumber(item.length);
     };
     
     /**

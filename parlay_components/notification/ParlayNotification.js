@@ -175,10 +175,11 @@ function ParlayNotificationFactory($mdToast, $mdSidenav, $notification, $interva
                     }
                 }, 500);
 
+                // Show $mdToast and when resolved (on toast hide) be sure to deregister the $interval.
                 $mdToast.show({
 					template: "<md-toast><md-progress-linear flex class='notification-progress' md-mode='indeterminate'></md-progress-linear></md-toast>",
 					hideDelay: false
-				});
+				}).then(registration);
 
 			}
 	    }

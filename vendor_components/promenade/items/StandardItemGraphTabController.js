@@ -4,7 +4,7 @@
  * @param {AngularJS $scope} $scope - A AngularJS $scope Object.
  * @param {Material Angular Service} $mdDialog - Dialog modal service.
  */
-function PromenadeStandardItemCardGraphTabController($scope, $mdDialog, $interval) {
+function PromenadeStandardItemCardGraphTabController($scope, $mdDialog, $interval, $mdMedia) {
 	ParlayBaseTabController.call(this, $scope, "promenadeStandardItemCardGraph");
 
     this.streamColors = [];
@@ -34,7 +34,8 @@ function PromenadeStandardItemCardGraphTabController($scope, $mdDialog, $interva
 			bindToController: true,
 			templateUrl: "../vendor_components/promenade/items/directives/promenade-standard-item-card-graph-configuration-dialog.html",
 			targetEvent: $event,
-			clickOutsideToClose: true
+			clickOutsideToClose: true,
+			fullscreen: !$mdMedia("gt-sm")
 		}).finally(getStreamColors.bind(this));
 	};
 
@@ -170,7 +171,7 @@ function PromenadeStandardItemCardGraph() {
 }
 
 angular.module('promenade.items.standarditem.graph', ["promenade.smoothiechart"])
-	.controller("PromenadeStandardItemCardGraphTabController", ["$scope", "$mdDialog", "$interval", PromenadeStandardItemCardGraphTabController])
+	.controller("PromenadeStandardItemCardGraphTabController", ["$scope", "$mdDialog", "$interval", "$mdMedia", PromenadeStandardItemCardGraphTabController])
 	.controller("PromenadeStandardItemCardGraphTabConfigurationController", ["$mdDialog", "item", "data", "smoothie", PromenadeStandardItemCardGraphTabConfigurationController])
 	.controller("PromenadeStandardItemCardGraphTabStreamConfigurationController", ["$mdDialog", "stream", PromenadeStandardItemCardGraphTabStreamConfigurationController])
 	.directive('promenadeStandardItemCardGraph', PromenadeStandardItemCardGraph);

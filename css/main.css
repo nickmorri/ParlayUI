@@ -27,3 +27,8 @@ md-list-item > a {
 	width: 125px;
 	margin-right: 10px;
 }
+
+/* We only need top and bottom padding to align buttons with baseline */
+.md-button.md-icon-button {
+    padding: 8px 0 8px 0;
+}

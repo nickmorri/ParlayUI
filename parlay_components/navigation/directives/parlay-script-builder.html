@@ -7,7 +7,7 @@
         </div>
     </md-toolbar>
     <!--Scroll glue will automatically keep md-list at the most recent item unless the user has independently scrolled in the list-->
-    <md-list class="parlay-script-builder-list" scroll-glue flex>
+    <md-list class="parlay-script-builder-list" scroll-glue flex ng-hide="ctrl.hidden">
             <md-list-item ng-hide="ctrl.getLog().length">
                 <pre>No Python statements currently available. Try sending a command from a ParlayItem.</pre>
             </md-list-item>
@@ -18,7 +18,7 @@
                 <md-divider></md-divider>
             </span>
     </md-list>
-    <md-card-actions layout="row" layout-align="end center" ng-show="ctrl.getLog().length">
+    <md-card-actions layout="row" layout-align="end center" ng-show="ctrl.getLog().length && !ctrl.hidden">
         <md-button aria-label="Copy to clipboard" ng-click="ctrl.toClipboard()">Copy to clipboard</md-button>
         <md-button aria-label="Clear" ng-click="ctrl.clearLog()">Clear</md-button>
     </md-card-actions>

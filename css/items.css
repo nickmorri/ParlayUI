@@ -40,3 +40,8 @@ md-tab-content > div > md-toolbar {
 form > .parlay-item-card-tab-content > promenade-standard-item-card-command-container > span > md-input-container {
 	margin-bottom: 10px;
 }
+
+/* Allow autocomplete to shrink on smaller screen sizes */
+parlay-item-search > md-autocomplete {
+	min-width: 0;
+}

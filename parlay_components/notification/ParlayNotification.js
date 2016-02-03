@@ -89,7 +89,7 @@ function ParlayNotificationFactory($mdToast, $mdSidenav, $notification, $interva
 	 * @param {Object} configuration - Notification configuration object.
 	 */
     function prepToast(configuration) {
-	    var toast = $mdToast.simple().content(configuration.content).hideDelay(NotificationDisplayDuration).position(NotificationLocation);
+	    var toast = $mdToast.simple().content(configuration.content).position(NotificationLocation);
 
         // If the warning option is true we should theme the toast to indicate that a warning has occurred.
         if (configuration.warning) toast.theme("warning-toast");
@@ -97,6 +97,18 @@ function ParlayNotificationFactory($mdToast, $mdSidenav, $notification, $interva
         // Guess if the content that we want to add to the toast could overflow the container that is available.
         // TODO: Do check in more deterministic way that leverages DOM elements.
         var could_overflow = !angular.isString(configuration.content) || configuration.content.length > 60;
+
+        if (configuration.permanent) {
+            toast.hideDelay(false);
+            // To ensure that the toast doesn't take priority over other toasts we should check every half second
+            // for any pending toasts. If there are any pending toasts we should display them.
+            var registration = $interval(function () {
+                if (pending_toasts.length) {
+                    $interval.cancel(registration);
+                    displayToast();
+                }
+            }, 500);
+        }
 
         if (configuration.action) {
 	        toast.action(configuration.action.text).highlightAction(true);
@@ -170,7 +182,7 @@ function ParlayNotificationFactory($mdToast, $mdSidenav, $notification, $interva
                 // for any pending toasts. If there are any pending toasts we should display them.
                 var registration = $interval(function () {
                     if (pending_toasts.length) {
-                        registration();
+                        $interval.cancel(registration);
                         displayToast();
                     }
                 }, 500);

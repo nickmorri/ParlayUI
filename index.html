@@ -9,9 +9,13 @@
         <!-- bower:css --><!-- endbower -->
         <!-- build:css parlayui.min.css --><!-- /build -->
     </head>
-    <body ng-app="parlay.main" layout="column">
-               
-        <div ui-view layout-fill></div>
+    <body ng-app="parlay.main" layout="column" layout-gt-sm="row">
+
+        <parlay-navigation-container layout="column"></parlay-navigation-container>
+
+        <div ui-view flex></div>
+
+        <parlay-notification-sidenav></parlay-notification-sidenav>
 
         <!-- bower:js --><!-- endbower -->
         
@@ -21,10 +25,12 @@
         <!-- build:js:dist parlayui.min.js -->
         <script src="app.js"></script>
         <script src="tmp/templates.js"></script>
+
         <script src="parlay_components/utility/ParlayUtility.js"></script>
+
         <script src="parlay_components/navigation/ParlayNavigationSidenav.js"></script>
-        <script src="parlay_components/navigation/ParlayScriptBuilder.js"></script>
-        
+        <script src="parlay_components/navigation/ParlayNavigationContainer.js"></script>
+
         <script src="parlay_components/notification/ParlayNotification.js"></script>
         <script src="parlay_components/notification/ParlayNotificationSidenav.js"></script>
         <script src="parlay_components/notification/ParlayErrorDialog.js"></script>
@@ -39,7 +45,6 @@
         
         <script src="parlay_components/items/items.js"></script>
         <script src="parlay_components/items/ParlayItemController.js"></script>
-        <script src="parlay_components/items/ParlayItemToolbarController.js"></script>
         <script src="parlay_components/items/ParlayItem.js"></script>
         <script src="parlay_components/items/ParlayItemManager.js"></script>
         <script src="parlay_components/items/ParlayBaseTabController.js"></script>

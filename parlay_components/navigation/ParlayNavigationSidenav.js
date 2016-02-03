@@ -1,45 +1,37 @@
-function ParlayNavigationSidenav() {
-	return {
-		scope: {},
-		templateUrl: "../parlay_components/navigation/directives/parlay-navigation-sidenav.html",
-		controller: "ParlayNavigationSidenavController",
-		controllerAs: "ctrl"
-	};
-}
-
-function ParlayNavigationSidenavController($mdSidenav, $state, PromenadeBroker) {
+function ParlayNavigationSidenavController($mdSidenav, $mdDialog, $mdMedia, PromenadeBroker) {
     "use strict";
 
-	/**
-	 * Closes $mdSidenav
-	 */
-	this.close = function() {
-		$mdSidenav("navigation").close();
+	this.requestDiscovery = function () {
+		PromenadeBroker.requestDiscovery(true);
 	};
 
-	/**
-	 * Sets current state to the given state and closes the sidenav.
-	 * @param {Object} state - Object that holds the state details.
-     */
-	this.navigateToState = function(state) {
-		$state.go(state.name);
-		this.closeSidenav();
-	};
-
-    /**
-     * Gets available states from UI-Router $state service.
-     * @returns {Array} - Array of Objects that hold state details.
-     */
-	this.getStates = function() {
-		return $state.get().filter(function(state) {
-			return !state.abstract;
-		}).map(function(state) {
-			return {
-				name: state.name,
-				display: state.data.display,
-				icon: state.data.icon
-			};
+	this.openWorkspaceManagementDialog = function (event) {
+		/* istanbul ignore next */
+		$mdDialog.show({
+			templateUrl: "../parlay_components/items/directives/parlay-workspace-management-dialog.html",
+			targetEvent: event,
+			controller: "ParlayWorkspaceManagementController",
+			controllerAs: "ctrl",
+			clickOutsideToClose: true,
+			fullscreen: !$mdMedia("gt-sm")
 		});
+	};
+
+	this.openProtocolManagementDialog = function (event) {
+		/* istanbul ignore next */
+		$mdDialog.show({
+			templateUrl: "../parlay_components/communication/directives/parlay-connection-list-dialog.html",
+			targetEvent: event,
+			controller: "ParlayConnectionListController",
+			controllerAs: "ctrl",
+			clickOutsideToClose: true,
+			fullscreen: !$mdMedia("gt-sm")
+		});
+	};
+
+	this.openNotificationDisplay = function () {
+		/* istanbul ignore next */
+		$mdSidenav("notifications").open();
 	};
 
 	this.saveDiscovery = function () {
@@ -48,7 +40,7 @@ function ParlayNavigationSidenavController($mdSidenav, $state, PromenadeBroker) 
 	};
 
 	this.loadDiscovery = function (event) {
-		event.target.parentElement.parentElement.parentElement.getElementsByTagName("input")[0].click();
+        event.target.getElementsByTagName("input")[0].click();
 	};
 
 	this.fileChanged = function (event) {
@@ -64,11 +56,8 @@ function ParlayNavigationSidenavController($mdSidenav, $state, PromenadeBroker) 
 		// Read file as text
 		fileReader.readAsText(event.target.files[0]);
 	};
-
-	this.states = this.getStates();
 	
 }
 
-angular.module("parlay.navigation.sidenav", ["ngMaterial", "ui.router", "parlay.utility", "promenade.broker"])
-	.controller("ParlayNavigationSidenavController", ["$mdSidenav", "$state", "PromenadeBroker", ParlayNavigationSidenavController])
-	.directive("parlayNavigationSidenav", [ParlayNavigationSidenav]);
+angular.module("parlay.navigation.sidenav", ["ngMaterial", "parlay.utility", "promenade.broker", "parlay.items.search"])
+	.controller("ParlayNavigationSidenavController", ["$mdSidenav", "$mdDialog", "$mdMedia", "PromenadeBroker", ParlayNavigationSidenavController]);

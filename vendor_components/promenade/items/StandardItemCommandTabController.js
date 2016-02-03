@@ -98,10 +98,9 @@ function buildPythonCommand(item_name, message) {
  * @constructor
  * @param {AngularJS $scope} $scope - A AngularJS $scope Object.
  * @param {AngularJS Service} $timeout - AngularJS timeout service.
- * @param {Parlay Service} ParlayScriptLogger - ParlayScriptLogger Service.
  * @param {Parlay Service} ParlayUtility - Parlay Utlity Service.
  */
-function PromenadeStandardItemCardCommandTabController($scope, $timeout, ParlayScriptLogger, ParlayNotification) {
+function PromenadeStandardItemCardCommandTabController($scope, $timeout, ParlayNotification) {
 	ParlayBaseTabController.call(this, $scope, "promenadeStandardItemCardCommands");
 	
 	// Due to the way JavaScript prototypical inheritance works and AngularJS scoping we want to enclose the message Object within another object.
@@ -154,7 +153,7 @@ function PromenadeStandardItemCardCommandTabController($scope, $timeout, ParlayS
 		    }.bind(this));
 
 		    // Put the Python equivalent command in the log.
-	        ParlayScriptLogger.logCommand(this.generatePythonCommand());
+            //ParlayScriptLogger.logCommand(this.generatePythonCommand());
 
 	    }
 	    catch (e) {
@@ -294,7 +293,7 @@ function PromenadeStandardItemCardCommandContainer(RecursionHelper, ParlayPersis
     };
 }
 
-angular.module('promenade.items.standarditem.commands', ['ngMaterial', 'RecursionHelper', 'parlay.store', 'parlay.utility', 'parlay.navigation.scriptbuilder'])
-	.controller('PromenadeStandardItemCardCommandTabController', ['$scope', '$timeout', 'ParlayScriptLogger', 'ParlayNotification', PromenadeStandardItemCardCommandTabController])
+angular.module('promenade.items.standarditem.commands', ['ngMaterial', 'RecursionHelper', 'parlay.store', 'parlay.utility', 'parlay.notification'])
+	.controller('PromenadeStandardItemCardCommandTabController', ['$scope', '$timeout', 'ParlayNotification', PromenadeStandardItemCardCommandTabController])
 	.directive("promenadeStandardItemCardCommands", PromenadeStandardItemCardCommands)
 	.directive("promenadeStandardItemCardCommandContainer", ['RecursionHelper', 'ParlayPersistence', 'ParlayUtility', PromenadeStandardItemCardCommandContainer]);

@@ -49,7 +49,7 @@ function ParlayNotificationHistory() {
     };
 }
 
-function ParlayNotificationFactory($mdToast, $mdSidenav, $notification, $interval, NotificationDisplayDuration, ParlayNotificationHistory) {
+function ParlayNotificationFactory($mdToast, $mdSidenav, $notification, $interval, NotificationDisplayDuration, NotificationLocation, ParlayNotificationHistory) {
 	"use strict";
 
     // True if a toast is currently being displayed.
@@ -89,7 +89,7 @@ function ParlayNotificationFactory($mdToast, $mdSidenav, $notification, $interva
 	 * @param {Object} configuration - Notification configuration object.
 	 */
     function prepToast(configuration) {
-	    var toast = $mdToast.simple().content(configuration.content).hideDelay(NotificationDisplayDuration);
+	    var toast = $mdToast.simple().content(configuration.content).hideDelay(NotificationDisplayDuration).position(NotificationLocation);
 
         // If the warning option is true we should theme the toast to indicate that a warning has occurred.
         if (configuration.warning) toast.theme("warning-toast");
@@ -176,10 +176,12 @@ function ParlayNotificationFactory($mdToast, $mdSidenav, $notification, $interva
                 }, 500);
 
                 // Show $mdToast and when resolved (on toast hide) be sure to deregister the $interval.
-                $mdToast.show({
-					template: "<md-toast><md-progress-linear flex class='notification-progress' md-mode='indeterminate'></md-progress-linear></md-toast>",
-					hideDelay: false
-				}).then(registration);
+                var toast = $mdToast.build()
+                    .template("<md-progress-linear flex class='notification-progress' md-mode='indeterminate'></md-progress-linear>")
+                    .hideDelay(false)
+                    .position(NotificationLocation);
+
+                $mdToast.show(toast).then(registration);
 
 			}
 	    }
@@ -189,5 +191,6 @@ function ParlayNotificationFactory($mdToast, $mdSidenav, $notification, $interva
 angular.module("parlay.notification", ["ngMaterial", "notification", "templates-main"])
 	.run(["$notification", RunNotification])
 	.value("NotificationDisplayDuration", 4000)
+    .value("NotificationLocation", "bottom right")
 	.factory("ParlayNotificationHistory", ParlayNotificationHistory)
-	.factory("ParlayNotification", ["$mdToast", "$mdSidenav", "$notification", "$interval", "NotificationDisplayDuration", "ParlayNotificationHistory", ParlayNotificationFactory]);
+	.factory("ParlayNotification", ["$mdToast", "$mdSidenav", "$notification", "$interval", "NotificationDisplayDuration", "NotificationLocation", "ParlayNotificationHistory", ParlayNotificationFactory]);

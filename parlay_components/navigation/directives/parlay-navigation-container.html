@@ -1,0 +1,80 @@
+<md-toolbar class="md-theme-indigo" hide-gt-sm layout="row">
+    <div class="md-toolbar-tools">
+        <img class="logo" src="../images/logo.png">
+
+        <span flex></span>
+
+        <md-button class="md-icon-button" ng-click="ctrl.toggleSidenav()" aria-label="Opens side navigation">
+            <md-tooltip>View menu</md-tooltip>
+            <md-icon class="white"><ng-md-icon icon="menu"></ng-md-icon></md-icon>
+        </md-button>
+    </div>
+</md-toolbar>
+
+<md-sidenav flex md-component-id="navigation" class="md-sidenav-left md-whiteframe-z2" layout="column" md-is-locked-open="$mdMedia('gt-sm')">
+
+    <md-toolbar class="md-theme-indigo">
+        <div class="md-toolbar-tools">
+            <img class="logo" src="../images/logo.png">
+
+            <span flex></span>
+
+            <md-button hide-gt-sm class="md-icon-button" ng-click="ctrl.toggleSidenav()" aria-label="Opens side navigation">
+                <md-tooltip>Close menu</md-tooltip>
+                <md-icon class="white"><ng-md-icon icon="close"></ng-md-icon></md-icon>
+            </md-button>
+
+        </div>
+    </md-toolbar>
+
+    <md-list layout="column" flex ng-controller="ParlayNavigationSidenavController as ctrl">
+
+        <md-list-item ng-click="ctrl.openProtocolManagementDialog($event)">
+            <md-icon ng-md-icon class="parlay-nav-icon" icon="settings_ethernet"></md-icon>
+            <p>Protocols</p>
+        </md-list-item>
+
+        <md-divider></md-divider>
+
+        <md-subheader>Items</md-subheader>
+
+        <md-list-item ng-click="ctrl.requestDiscovery()">
+            <md-icon ng-md-icon class="parlay-nav-icon" icon="autorenew"></md-icon>
+            <p>Discover</p>
+        </md-list-item>
+
+        <parlay-item-search style="padding-left: 16px; padding-right: 30px;" layout="row"></parlay-item-search>
+
+        <md-divider style="margin-top: 16px;"></md-divider>
+
+        <md-list-item ng-click="ctrl.openWorkspaceManagementDialog($event)">
+            <md-icon ng-md-icon class="parlay-nav-icon" icon="dashboard"></md-icon>
+            <p>Workspaces</p>
+        </md-list-item>
+
+        <span flex></span>
+
+        <md-divider></md-divider>
+
+        <md-list-item ng-click="ctrl.openNotificationDisplay()">
+            <md-icon ng-md-icon class="parlay-nav-icon" icon="notifications"></md-icon>
+            <p>Notifications</p>
+        </md-list-item>
+
+
+
+        <md-list-item ng-click="ctrl.saveDiscovery()">
+            <md-icon ng-md-icon class="parlay-nav-icon" icon="file_download"></md-icon>
+            Save Discovery
+        </md-list-item>
+
+        <md-list-item ng-click="ctrl.loadDiscovery($event)">
+            <md-icon ng-md-icon class="parlay-nav-icon" icon="file_upload"></md-icon>
+            Load Discovery
+            <!--Hidden file input that is triggered on md-list-item click-->
+            <input id="discoveryInput" type="file" style="display: none;;" custom-on-change="ctrl.fileChanged" />
+        </md-list-item>
+
+    </md-list>
+
+</md-sidenav>

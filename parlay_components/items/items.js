@@ -9,13 +9,9 @@ function ItemsConfiguration($stateProvider) {
         url: "/items",
         templateUrl: "../parlay_components/items/views/base.html",
         controller: "ParlayItemController",
-        controllerAs: "itemCtrl",
-        data: {
-	        display: "Items",
-			icon: "dashboard"
-		}
+        controllerAs: "itemCtrl"
     });
 }
 
-angular.module("parlay.items", ["ui.router", "parlay.items.toolbar", "parlay.items.controller"])
+angular.module("parlay.items", ["ui.router", "parlay.items.controller"])
 	.config(["$stateProvider", ItemsConfiguration]);

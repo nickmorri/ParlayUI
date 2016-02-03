@@ -1,4 +1,4 @@
-function ParlayProtocolConnectionDetailController($mdDialog, protocol) {
+function ParlayProtocolDetailController($mdDialog, protocol) {
     "use strict";
 
     /**
@@ -27,4 +27,4 @@ function ParlayProtocolConnectionDetailController($mdDialog, protocol) {
 }
 
 angular.module("parlay.protocols.detail_controller", ["ngMaterial", "ngMessages", "ngMdIcons", "templates-main", "luegg.directives"])
-	.controller("ParlayProtocolConnectionDetailController", ["$mdDialog", "protocol", ParlayProtocolConnectionDetailController]);
+	.controller("ParlayProtocolDetailController", ["$mdDialog", "protocol", ParlayProtocolDetailController]);

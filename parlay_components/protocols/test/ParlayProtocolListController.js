@@ -5,7 +5,7 @@
     
         beforeEach(module('parlay.protocols.list_controller'));
         
-        describe('ParlayConnectionListController', function () {
+        describe('ParlayProtocolListController', function () {
             var rootScope, scope, ctrl, MockPromenadeBroker;                
             
             beforeEach(inject(function ($rootScope, $controller, $q) {
@@ -28,7 +28,7 @@
                 
                 rootScope = $rootScope;
                 scope = $rootScope.$new();
-                ctrl = $controller('ParlayConnectionListController', {$scope: scope, PromenadeBroker: MockPromenadeBroker});
+                ctrl = $controller('ParlayProtocolListController', {$scope: scope, PromenadeBroker: MockPromenadeBroker});
             }));
             
             describe('PromenadeBroker interactions', function () {

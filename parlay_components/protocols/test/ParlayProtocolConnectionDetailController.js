@@ -6,12 +6,12 @@
 		beforeEach(module('parlay.protocols.detail_controller'));
 		beforeEach(module('mock.parlay.protocols.protocol'));
         
-        describe('ParlayProtocolConnectionDetailController', function () {
+        describe('ParlayProtocolDetailController', function () {
                 var scope, ctrl;
                 
                 beforeEach(inject(function ($rootScope, $controller, ParlayProtocol) {
                     scope = $rootScope.$new();
-                    ctrl = $controller('ParlayProtocolConnectionDetailController', {$scope: scope, protocol: ParlayProtocol});
+                    ctrl = $controller('ParlayProtocolDetailController', {$scope: scope, protocol: ParlayProtocol});
                 }));
                 
                 describe('protocol interactions', function () {

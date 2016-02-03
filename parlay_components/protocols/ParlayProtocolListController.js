@@ -1,4 +1,4 @@
-function ParlayConnectionListController($scope, $mdDialog, $mdMedia, ParlayProtocolManager, PromenadeBroker) {
+function ParlayProtocolListController($scope, $mdDialog, $mdMedia, ParlayProtocolManager, PromenadeBroker) {
     
     this.hide = $mdDialog.hide;
     this.connecting = false;
@@ -76,13 +76,13 @@ function ParlayConnectionListController($scope, $mdDialog, $mdMedia, ParlayProto
     };
     
     /* istanbul ignore next */
-    this.viewProtocolConnectionDetails = function (event, protocol) {
+    this.viewProtocolDetails = function (event, protocol) {
         $mdDialog.show({
             targetEvent: event,
             clickOutsideToClose: true,
-            controller: "ParlayProtocolConnectionDetailController",
+            controller: "ParlayProtocolDetailController",
             controllerAs: "ctrl",
-            templateUrl: "../parlay_components/protocols/directives/parlay-protocol-connection-details.html",
+            templateUrl: "../parlay_components/protocols/directives/parlay-protocol-details.html",
             locals: {
                 protocol: protocol
             },
@@ -119,4 +119,4 @@ function ParlayConnectionListController($scope, $mdDialog, $mdMedia, ParlayProto
 }
 
 angular.module("parlay.protocols.list_controller", ["parlay.protocols.configuration_controller", "parlay.protocols.detail_controller", "parlay.protocols.manager", "promenade.broker", "parlay.notification", "ngMaterial", "ngMessages", "ngMdIcons", "templates-main"])
-	.controller("ParlayConnectionListController", ["$scope", "$mdDialog", "$mdMedia", "ParlayProtocolManager", "PromenadeBroker", ParlayConnectionListController]);
+	.controller("ParlayProtocolListController", ["$scope", "$mdDialog", "$mdMedia", "ParlayProtocolManager", "PromenadeBroker", ParlayProtocolListController]);

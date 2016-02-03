@@ -1,3 +1,19 @@
 .parlay-nav-icon {
-	margin: 10px !important;
+    fill: white;
+    margin: 10px !important;
+}
+
+.parlay-navigation-list {
+    background-color: rgb(96,125,139);
+    color: white;
+    fill: white;
+}
+
+.parlay-navigation-list > .md-subheader {
+    background-color: transparent;
+    color: white;
+}
+
+.parlay-navigation-list > .md-subheader.md-default-theme, .md-subheader {
+    color: white;
 }

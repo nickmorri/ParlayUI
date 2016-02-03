@@ -1,4 +1,4 @@
-<md-toolbar class="md-theme-indigo" hide-gt-sm layout="row">
+<md-toolbar class="md-theme-indigo md-hue-1" hide-gt-sm layout="row">
     <div class="md-toolbar-tools">
         <img class="logo" src="../images/logo.png">
 
@@ -13,7 +13,7 @@
 
 <md-sidenav flex md-component-id="navigation" class="md-sidenav-left md-whiteframe-z2" layout="column" md-is-locked-open="$mdMedia('gt-sm')">
 
-    <md-toolbar class="md-theme-indigo">
+    <md-toolbar class="md-theme-indigo md-hue-1">
         <div class="md-toolbar-tools">
             <img class="logo" src="../images/logo.png">
 
@@ -27,7 +27,7 @@
         </div>
     </md-toolbar>
 
-    <md-list layout="column" flex ng-controller="ParlayNavigationSidenavController as ctrl">
+    <md-list layout="column" flex class="parlay-navigation-list" ng-controller="ParlayNavigationSidenavController as ctrl">
 
         <md-list-item ng-click="ctrl.openProtocolManagementDialog($event)">
             <md-icon ng-md-icon class="parlay-nav-icon" icon="settings_ethernet"></md-icon>
@@ -43,7 +43,7 @@
             <p>Discover</p>
         </md-list-item>
 
-        <parlay-item-search style="padding-left: 16px; padding-right: 30px;" layout="row"></parlay-item-search>
+        <parlay-item-search style="padding-left: 16px; padding-right: 30px; padding-top: 10px;" layout="row"></parlay-item-search>
 
         <md-divider style="margin-top: 16px;"></md-divider>
 

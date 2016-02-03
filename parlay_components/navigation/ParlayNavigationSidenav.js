@@ -20,9 +20,9 @@ function ParlayNavigationSidenavController($mdSidenav, $mdDialog, $mdMedia, Prom
 	this.openProtocolManagementDialog = function (event) {
 		/* istanbul ignore next */
 		$mdDialog.show({
-			templateUrl: "../parlay_components/communication/directives/parlay-connection-list-dialog.html",
+			templateUrl: "../parlay_components/protocols/directives/parlay-protocol-list-dialog.html",
 			targetEvent: event,
-			controller: "ParlayConnectionListController",
+			controller: "ParlayProtocolListController",
 			controllerAs: "ctrl",
 			clickOutsideToClose: true,
 			fullscreen: !$mdMedia("gt-sm")
@@ -59,5 +59,5 @@ function ParlayNavigationSidenavController($mdSidenav, $mdDialog, $mdMedia, Prom
 	
 }
 
-angular.module("parlay.navigation.sidenav", ["ngMaterial", "parlay.utility", "promenade.broker", "parlay.items.search"])
+angular.module("parlay.navigation.sidenav", ["ngMaterial", "parlay.utility", "promenade.broker", "parlay.items.search", "parlay.protocols.list_controller"])
 	.controller("ParlayNavigationSidenavController", ["$mdSidenav", "$mdDialog", "$mdMedia", "PromenadeBroker", ParlayNavigationSidenavController]);

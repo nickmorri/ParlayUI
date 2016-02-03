@@ -29,5 +29,31 @@ function ParlayItemController(ParlayItemManager) {
 
 }
 
+function ParlayEmptyWorkspacePlaceholderController($mdSidenav) {
+
+    this.focusItemSearch = function () {
+        var sidenav = $mdSidenav("navigation");
+
+        // ParlayItemSearch autocomplete element.
+        var element = document.getElementById("item-search");
+
+        // If sidenav is open, on screens gt-sm, focus the element.
+        // Otherwise, on screens <= sm, open the sidenav then focus the element.
+        if (sidenav.isOpen()) element.focus();
+        else sidenav.open().then(function () { element.focus(); });
+    };
+
+}
+
+function ParlayEmptyWorkspacePlaceholder () {
+    return {
+        templateUrl: '../parlay_components/items/directives/parlay-empty-workspace-placeholder.html',
+        controller: "ParlayEmptyWorkspacePlaceholderController",
+        controllerAs: "ctrl"
+    };
+}
+
 angular.module("parlay.items.controller", ["parlay.items.manager"])
+    .controller("ParlayEmptyWorkspacePlaceholderController", ["$mdSidenav", ParlayEmptyWorkspacePlaceholderController])
+    .directive("parlayEmptyWorkspacePlaceholder", [ParlayEmptyWorkspacePlaceholder])
     .controller("ParlayItemController", ["ParlayItemManager", ParlayItemController]);

@@ -2,9 +2,11 @@
 
 	<md-toolbar class="md-hue-2">
 		<div class="md-toolbar-tools">
-			
-			<md-button class="md-primary" aria-label="Get all" ng-click="ctrl.getAllProperties()">Get All</md-button>
-			<md-button class="md-primary" aria-label="Set all" ng-click="ctrl.setAllProperties()">Set All</md-button>
+
+            <h1 ng-hide="ctrl.hasProperties()">No properties available</h1>
+
+			<md-button ng-show="ctrl.hasProperties()" class="md-primary" aria-label="Get all" ng-click="ctrl.getAllProperties()">Get All</md-button>
+			<md-button ng-show="ctrl.hasProperties()" class="md-primary" aria-label="Set all" ng-click="ctrl.setAllProperties()">Set All</md-button>
 			
 			<md-progress-linear md-mode="indeterminate" ng-show="ctrl.waiting"></md-progress-linear>
 			
@@ -14,6 +16,14 @@
 	</md-toolbar>
 
 	<md-content layout="column" layout-margin>
+
+		<div flex layout="column" ng-hide="ctrl.hasProperties()" layout-padding>
+			<div>Here is an example of a local_item with a property called prop1</div>
+			<pre style="white-space: pre-line;">from parlay import ParlayCommandItem, parlay_property
+class MyItem(ParlayCommandItem):
+	prop1 = parlay_property(default=0, type=int)</pre>
+		</div>
+
 		<div flex layout="row" ng-repeat="property in ctrl.item.properties">
 			<md-input-container flex ng-switch="property.INPUT">
 				<label>{{property.NAME}}</label>

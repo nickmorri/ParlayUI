@@ -13,6 +13,11 @@ function PromenadeStandardItemCardPropertyTabController($scope) {
 // Prototypically inherit from ParlayBaseTabController.
 PromenadeStandardItemCardPropertyTabController.prototype = Object.create(ParlayBaseTabController.prototype);
 
+PromenadeStandardItemCardPropertyTabController.prototype.hasProperties = function () {
+	"use strict";
+	return Object.keys(this.item.properties).length > 0;
+};
+
 /**
  * Gets all property values from an item.
  */

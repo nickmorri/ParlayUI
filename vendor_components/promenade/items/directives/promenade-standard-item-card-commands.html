@@ -3,18 +3,18 @@
 	<md-toolbar class="md-hue-2">
 		<div class="md-toolbar-tools">
 
-			<pre>{{ctrl.contents_message}}</pre>
+			<h3>Command Builder</h3>
 
 			<span flex></span>
 
-            <md-button ng-click="ctrl.copyCommand($event)" class="md-icon-button" aria-label="Copy command to clipboard">
-                <md-tooltip>Copy command to clipboard</md-tooltip>
-                <md-icon><ng-md-icon icon="content_copy"></ng-md-icon></md-icon>
+            <md-button ng-click="ctrl.toggleCommandBuilder($event)" class="md-icon-button" aria-label="Toggle command builder">
+                <md-tooltip>Toggle command builder</md-tooltip>
+                <md-icon ng-md-icon icon="{{ctrl.command_builder_collapsed ? 'unfold_more' : 'unfold_less'}}"></md-icon>
             </md-button>
 		</div>
 	</md-toolbar>
 
-    <form name="commandform" layout="column" ng-submit="ctrl.send($event)">
+    <form name="commandform" layout="column" ng-submit="ctrl.send($event)" ng-hide="ctrl.command_builder_collapsed">
 
         <md-content class="parlay-item-card-tab-content md-padding">
             <promenade-standard-item-card-command-container
@@ -24,18 +24,84 @@
             </promenade-standard-item-card-command-container>
         </md-content>
 
-        <md-button flex class="md-raised" type="submit" style="margin-top: 0;" ng-class="ctrl.error ? 'md-warn' : 'md-primary'" ng-disabled="commandform.$invalid" aria-label="Sends command to a Promenade Standard Item.">
-            <span ng-hide="ctrl.sending || ctrl.error">
+        <div flex layout="row" layout-padding>
+
+            <md-button class="md-raised" type="submit" ng-class="ctrl.error ? 'md-warn' : 'md-primary'" ng-disabled="commandform.$invalid" aria-label="Sends command to a Promenade Standard Item.">
                 Send
-            </span>
-            <span ng-show="ctrl.sending">
-                Sent ({{ctrl.status_message}}) [{{ctrl.item.getMessageId()}}]
-            </span>
-            <span ng-show="ctrl.error">
-                Error check log. ({{ctrl.status_message}}) [{{ctrl.item.getMessageId()}}]
-            </span>
-        </md-button>
+            </md-button>
+
+            <div flex layout="row" layout-align="center center">
+                <h1 class="md-subhead">Message ID: {{ctrl.item.getMessageId()}}</h1>
+            </div>
+
+        </div>
 
     </form>
+
+    <md-toolbar class="md-hue-2">
+        <div class="md-toolbar-tools">
+
+            <h3>Script Builder</h3>
+
+            <span flex></span>
+
+            <md-button ng-click="ctrl.copyCommand($event)" class="md-icon-button" aria-label="Copy command to clipboard">
+                <md-tooltip>Copy command to clipboard</md-tooltip>
+                <md-icon><ng-md-icon icon="content_copy"></ng-md-icon></md-icon>
+            </md-button>
+
+            <md-button ng-click="ctrl.toggleScriptBuilder($event)" class="md-icon-button" aria-label="Toggle script builder">
+                <md-tooltip>Toggle script builder</md-tooltip>
+                <md-icon ng-md-icon icon="{{ctrl.script_builder_collapsed ? 'unfold_more' : 'unfold_less'}}"></md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
+
+    <div layout="column" layout-padding ng-hide="ctrl.script_builder_collapsed">
+        <pre style="white-space: pre-line;">
+            {{ctrl.generatePythonCommand()}}
+        </pre>
+    </div>
+
+    <md-toolbar class="md-hue-2">
+        <div class="md-toolbar-tools">
+
+            <h3>Response Contents</h3>
+
+            <span flex></span>
+
+            <md-button ng-click="ctrl.toggleResponseContents($event)" class="md-icon-button" aria-label="Toggle response contents">
+                <md-tooltip>Toggle response contents</md-tooltip>
+                <md-icon ng-md-icon icon="{{ctrl.response_contents_collapsed ? 'unfold_more' : 'unfold_less'}}"></md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
+
+    <div layout="column" ng-hide="ctrl.response_contents_collapsed" layout-padding>
+
+        <div ng-show="ctrl.responses.length" layout="column">
+            <div ng-repeat="response in ctrl.responses">
+
+                <div ng-show="response.received" layout="row" layout-align="start center" layout-padding>
+                    <p class="md-body-2">{{response.MSG_ID}}</p>
+                    <p class="md-body-1" ng-repeat="(key, value) in response.message.CONTENTS">
+                        {{key}} = {{value}}
+                    </p>
+                </div>
+
+                <div ng-hide="response.received" layout="row" layout-align="start center" layout-padding>
+                    <p class="md-body-2">{{response.MSG_ID}}</p>
+                    <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                    <p class="md-body-1">Waiting for response..</p>
+                </div>
+
+            </div>
+        </div>
+
+        <div ng-hide="ctrl.responses.length">
+            <p class="md-body-1">No response received.</p>
+        </div>
+
+    </div>
 
 </md-tab>

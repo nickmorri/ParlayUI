@@ -197,6 +197,10 @@ function PromenadeStandardItemCardCommandTabController($scope, $timeout, ParlayN
 
 	};
 
+	this.clearResponses = function () {
+        this.responses = [];
+    };
+
     this.toggleCommandBuilder = function () {
 		this.command_builder_collapsed = !this.command_builder_collapsed;
 	};

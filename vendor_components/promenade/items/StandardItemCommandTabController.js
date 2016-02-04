@@ -116,7 +116,6 @@ function PromenadeStandardItemCardCommandTabController($scope, $timeout, ParlayN
     this.response_contents_collapsed = false;
 
     // Controller attributes that reflect the state of the command form.
-	this.error = false;
 	this.sending = false;
 
     this.responses = [];
@@ -132,7 +131,6 @@ function PromenadeStandardItemCardCommandTabController($scope, $timeout, ParlayN
 		// Push the buffer into the md-chips ng-model
 		if ($event) pushChipBuffer($event.target.querySelectorAll('md-chips'));
 			    
-	    this.error = false;
 	    this.sending = true;
 
         this.responses.push({
@@ -168,12 +166,10 @@ function PromenadeStandardItemCardCommandTabController($scope, $timeout, ParlayN
 	            
 	        }.bind(this)).catch(function (response) {
 		        this.sending = false;
-		        this.error = true;
 		    }.bind(this));
 	    }
 	    catch (e) {
 		    this.sending = false;
-	     	this.error = true;
 	    }
 	};
 	

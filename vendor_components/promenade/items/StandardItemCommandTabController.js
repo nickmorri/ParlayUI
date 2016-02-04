@@ -141,12 +141,12 @@ function PromenadeStandardItemCardCommandTabController($scope, $timeout, ParlayN
             message: undefined
         });
 
+        this.responses = this.responses.filter(function (pending_response) {
+            return !pending_response.received;
+        });
+
 	    try {
 	    	this.item.sendMessage(collectMessage($scope.wrapper.message, false)).then(function (response) {
-
-                this.responses = this.responses.filter(function (pending_response) {
-                    return !pending_response.received;
-                });
 
                 var pending_response = this.responses.find(function (pending_response) {
                     return pending_response.MSG_ID === response.TOPICS.MSG_ID;

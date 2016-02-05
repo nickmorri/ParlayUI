@@ -50,8 +50,7 @@
 	        		};
 	        		
 	        		expect(ctrl.sending).toBeFalsy();
-	        		expect(ctrl.error).toBeFalsy();
-	        		
+
 	        		spyOn(scope.item, "sendMessage").and.callThrough();
                     
                     // Passing undefined for $event
@@ -61,7 +60,6 @@
                     $timeout.flush();
                     
                     expect(ctrl.sending).toBeFalsy();
-                    expect(ctrl.error).toBeFalsy();
         		});
         		
         		it("unsuccessfully", function () {
@@ -74,8 +72,7 @@
 	        		};
 	        		
 	        		expect(ctrl.sending).toBeFalsy();
-	        		expect(ctrl.error).toBeFalsy();
-	        		
+
 	        		spyOn(scope.item, "sendMessage").and.callThrough();
 	        		
 	        		// Passing undefined for $event
@@ -84,7 +81,6 @@
                     rootScope.$apply();
 
         		    expect(ctrl.sending).toBeFalsy();
-        		    expect(ctrl.error).toBeTruthy();
         		});
             		
             });    		

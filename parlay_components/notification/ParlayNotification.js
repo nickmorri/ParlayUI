@@ -49,7 +49,7 @@ function ParlayNotificationHistory() {
     };
 }
 
-function ParlayNotificationFactory($mdToast, $mdSidenav, $notification, $interval, NotificationDisplayDuration, NotificationLocation, ParlayNotificationHistory) {
+function ParlayNotificationFactory($mdToast, $mdSidenav, $mdDialog, $notification, $interval, NotificationDisplayDuration, NotificationLocation, ParlayNotificationHistory) {
 	"use strict";
 
     // True if a toast is currently being displayed.
@@ -73,6 +73,7 @@ function ParlayNotificationFactory($mdToast, $mdSidenav, $notification, $interva
 	 * Then if more toasts are available display then next as well as call the callback if the $mdToast was resolved by user action.
 	 */
 	function displayToast() {
+        if (!pending_toasts.length) return;
 	    toast_active = true;
 	    var next_toast = pending_toasts.shift();
 	    $mdToast.show(next_toast.toast).then(function (result) {
@@ -175,27 +176,57 @@ function ParlayNotificationFactory($mdToast, $mdSidenav, $notification, $interva
         /**
          * Creates Toast that contains a linear indeterminate progress bar. Will remain indefinitely until hidden.
          */
-	    showProgress: function () {
-			if (!toast_active) {
+	    showProgress: function (deferred) {
+
+            // Build the toast object which may be used to display an indeterminate progress.
+            var toast = $mdToast.build()
+                .template("<md-toast><span flex>Discovering</span><md-progress-linear flex class='notification-progress' md-mode='indeterminate'></md-progress-linear><md-toast>")
+                .hideDelay(false)
+                .position(NotificationLocation);
+
+            // Show a dialog to indicate to the user that a discovery is in progress.
+            $mdDialog.show({
+                templateUrl: "../parlay_components/notification/directives/parlay-discovery-dialog.html",
+                controller: function ($mdDialog) {
+
+                    // Allow the user to hide the dialog.
+                    this.hide = function () {
+                        // If the user hides the dialog we should pass the deferred along so that the toast can be
+                        // dismissed open deferred resolution.
+                        $mdDialog.hide(deferred);
+                    };
+
+                    // If the deferred is resolved while the dialog is open we should reject the dialog's promise
+                    // this will prevent the toast from being shown on dialog promise resolution.
+                    deferred.promise.then($mdDialog.cancel);
+                },
+                locals: { deferred: deferred },
+                bindToController: true,
+                controllerAs: "ctrl",
+                autoWrap: false,
+                escapeToClose: false,
+                clickOutsideToClose: false
+            }).then(function (deferred) {
+
+                function dismiss() {
+                    $interval.cancel(registration);
+                    $mdToast.hide();
+                    displayToast();
+                }
 
                 // To ensure that the progress doesn't take priority over other toasts we should check every half second
                 // for any pending toasts. If there are any pending toasts we should display them.
                 var registration = $interval(function () {
-                    if (pending_toasts.length) {
-                        $interval.cancel(registration);
-                        displayToast();
-                    }
+                    if (pending_toasts.length) dismiss();
                 }, 500);
 
                 // Show $mdToast and when resolved (on toast hide) be sure to deregister the $interval.
-                var toast = $mdToast.build()
-                    .template("<md-progress-linear flex class='notification-progress' md-mode='indeterminate'></md-progress-linear>")
-                    .hideDelay(false)
-                    .position(NotificationLocation);
-
                 $mdToast.show(toast).then(registration);
 
-			}
+                // If the deferred is resolved we should cancel the $interval registration and display any pending toast.
+                deferred.promise.then(dismiss);
+
+            });
 	    }
     };
 }
@@ -205,4 +236,4 @@ angular.module("parlay.notification", ["ngMaterial", "notification", "templates-
 	.value("NotificationDisplayDuration", 4000)
     .value("NotificationLocation", "bottom right")
 	.factory("ParlayNotificationHistory", ParlayNotificationHistory)
-	.factory("ParlayNotification", ["$mdToast", "$mdSidenav", "$notification", "$interval", "NotificationDisplayDuration", "NotificationLocation", "ParlayNotificationHistory", ParlayNotificationFactory]);
+	.factory("ParlayNotification", ["$mdToast", "$mdSidenav", "$mdDialog", "$notification", "$interval", "NotificationDisplayDuration", "NotificationLocation", "ParlayNotificationHistory", ParlayNotificationFactory]);

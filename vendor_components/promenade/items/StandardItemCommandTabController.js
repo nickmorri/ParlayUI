@@ -277,7 +277,7 @@ function PromenadeStandardItemCardCommandContainer(RecursionHelper, ParlayPersis
         },
         templateUrl: '../vendor_components/promenade/items/directives/promenade-standard-item-card-command-container.html',
         compile: RecursionHelper.compile,
-        controller: function ($scope, $mdConstant) {
+        controller: function ($scope) {
 
 	        var container = ParlayUtility.relevantScope($scope, 'container').container;
 			var directive_name = 'parlayItemCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;

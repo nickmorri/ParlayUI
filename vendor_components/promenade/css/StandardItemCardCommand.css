@@ -1,0 +1,14 @@
+.parlay-script-builder-text {
+    white-space: pre-line;
+    overflow-x: scroll;
+}
+.parlay-response-contents-body > * {
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.parlay-response-contents-key-values {
+    overflow-wrap: break-word;
+}

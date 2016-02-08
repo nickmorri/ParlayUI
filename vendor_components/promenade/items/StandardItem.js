@@ -78,11 +78,22 @@ function PromenadeStandardItemFactory(ParlayItem) {
         ]);
 
         if (data.CONTENT_FIELDS) {
-            this.content_fields = data.CONTENT_FIELDS.reduce(function (accumulator, field) {
-                var parsed_field = parseField(field);
-                accumulator[parsed_field.label] = parsed_field;
-                return accumulator;
-            }, {});
+
+			// If there are multiple commands available they will be contained in a dropdown field
+			if (data.CONTENT_FIELDS.length == 1) {
+				this.content_fields = data.CONTENT_FIELDS.reduce(function (accumulator, field) {
+					var parsed_field = parseField(field);
+					accumulator[parsed_field.label] = parsed_field;
+					return accumulator;
+				}, {});
+			}
+			// Otherwise the single available command will have it's parameters as it's siblings
+			else {
+				var parsed_field = parseField(data.CONTENT_FIELDS[0]);
+                parsed_field.sub_fields = [parseField(data.CONTENT_FIELDS[1])];
+                this.content_fields = {command: parsed_field};
+			}
+
         }
 
         if (data.PROPERTIES) {

@@ -11,12 +11,13 @@
                 <md-tooltip>Toggle command builder</md-tooltip>
                 <md-icon ng-md-icon icon="{{ctrl.command_builder_collapsed ? 'unfold_more' : 'unfold_less'}}"></md-icon>
             </md-button>
+
 		</div>
 	</md-toolbar>
 
     <form name="commandform" layout="column" ng-submit="ctrl.send($event)" ng-hide="ctrl.command_builder_collapsed">
 
-        <md-content class="parlay-item-card-tab-content md-padding">
+        <md-content class="parlay-item-card-tab-content md-margin">
             <promenade-standard-item-card-command-container
                     commandform="commandform"
                     wrapper="wrapper"
@@ -54,13 +55,12 @@
                 <md-tooltip>Toggle script builder</md-tooltip>
                 <md-icon ng-md-icon icon="{{ctrl.script_builder_collapsed ? 'unfold_more' : 'unfold_less'}}"></md-icon>
             </md-button>
+
         </div>
     </md-toolbar>
 
-    <div layout="column" layout-padding ng-hide="ctrl.script_builder_collapsed">
-        <pre style="white-space: pre-line;">
-            {{ctrl.generatePythonCommand()}}
-        </pre>
+    <div layout="column" layout-margin ng-hide="ctrl.script_builder_collapsed">
+        <pre class="parlay-script-builder-text">{{ctrl.generatePythonCommand()}}</pre>
     </div>
 
     <md-toolbar class="md-hue-2">
@@ -79,25 +79,48 @@
                 <md-tooltip>Toggle response contents</md-tooltip>
                 <md-icon ng-md-icon icon="{{ctrl.response_contents_collapsed ? 'unfold_more' : 'unfold_less'}}"></md-icon>
             </md-button>
+
         </div>
     </md-toolbar>
 
-    <div layout="column" ng-hide="ctrl.response_contents_collapsed" layout-padding>
+    <div layout="column" ng-hide="ctrl.response_contents_collapsed" layout-margin>
 
         <div ng-show="ctrl.responses.length" layout="column">
+
+            <div layout="row" layout-align="start center" class="parlay-response-contents-body">
+
+                <p flex="15" class="md-body-2">MSG ID</p>
+
+                <span flex="5"></span>
+
+                <p flex ng-hide="response.received" class="md-body-2">Contents</p>
+
+                <span flex="5"></span>
+
+                <p class="md-body-2">Received</p>
+
+            </div>
+
             <div ng-repeat="response in ctrl.responses">
 
-                <div ng-show="response.received" layout="row" layout-align="start center" layout-padding>
-                    <p class="md-body-2">{{response.MSG_ID}}</p>
-                    <p class="md-body-1" ng-repeat="(key, value) in response.message.CONTENTS">
+                <div layout="row" layout-align="start center" class="parlay-response-contents-body">
+
+                    <p flex="15" class="md-body-1">{{response.MSG_ID}}</p>
+
+                    <span flex="5"></span>
+
+                    <p flex ng-hide="response.received" class="md-body-1">Waiting for response..</p>
+
+                    <p flex ng-show="response.received" class="md-body-1 parlay-response-contents-key-values" ng-repeat="(key, value) in response.message.CONTENTS">
                         {{key}} = {{value}}
                     </p>
-                </div>
 
-                <div ng-hide="response.received" layout="row" layout-align="start center" layout-padding>
-                    <p class="md-body-2">{{response.MSG_ID}}</p>
-                    <md-progress-circular md-mode="indeterminate"></md-progress-circular>
-                    <p class="md-body-1">Waiting for response..</p>
+                    <span flex="5"></span>
+
+                    <md-icon ng-md-icon icon="check" ng-show="response.received"></md-icon>
+
+                    <md-progress-circular ng-hide="response.received" md-mode="indeterminate" md-diameter="30px"></md-progress-circular>
+
                 </div>
 
             </div>

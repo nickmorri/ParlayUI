@@ -31,9 +31,16 @@ function ParlaySettingsDialogController ($scope, $mdDialog, ParlaySettings, Prom
         fileReader.readAsText(event.target.files[0]);
     };
 
+    this.requestNotificationPermission = function () {
+        Notification.requestPermission();
+        $scope.notification_permission = Notification.permission === "granted";
+    };
+
     var discovery_settings = ParlaySettings.getDiscoverySettings();
 
     $scope.auto_discovery = discovery_settings && discovery_settings.auto_discovery ? true : false;
+
+    $scope.notification_permission = Notification.permission === "granted";
 
     $scope.$watch("auto_discovery", function (newValue) {
         $scope.auto_discovery_message = newValue ? "enabled" : "disabled";

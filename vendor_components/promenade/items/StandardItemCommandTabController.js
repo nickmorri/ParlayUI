@@ -111,6 +111,13 @@ function PromenadeStandardItemCardCommandTabController($scope, $timeout, ParlayN
 		message: {}
 	};
 
+    // If there is only one field we should automatically assign it's default.
+    if (this.item.content_fields && Object.keys(this.item.content_fields).length === 1) {
+        Object.keys(this.item.content_fields).forEach(function (key) {
+            $scope.wrapper.message[this.item.content_fields[key].msg_key + '_' + this.item.content_fields[key].input] = this.item.content_fields[key].options.find(function (option) { return option.name === this.item.content_fields[key].default; }.bind(this));
+        }.bind(this));
+    }
+
     this.command_builder_collapsed = false;
     this.script_builder_collapsed = false;
     this.response_contents_collapsed = false;

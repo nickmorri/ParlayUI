@@ -18,6 +18,10 @@ function PromenadeStandardItemCardGraphTabController($scope, $mdDialog, $interva
         }) : [];
     }
 
+	this.hasStreamsAvailable = function () {
+		return Object.keys(this.item.data_streams).length > 0;
+	};
+
 	/**
 	 * Launches graph configuration $mdDialog modal.
 	 * @param {MouseEvent} $event - Used to create source for $mdDialog opening animation.

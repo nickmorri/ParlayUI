@@ -2,10 +2,11 @@
 
 	<md-toolbar class="md-hue-2">
 		<div class="md-toolbar-tools" layout="row">
-            <h5 ng-pluralize count="ctrl.streamCount()" when="{'0': 'No streams active', 'one': '1 stream active', 'other': '{} streams active'}"></h5>
+            <h1 ng-hide="ctrl.hasStreamsAvailable()">No datastreams available</h1>
+            <h1 ng-show="ctrl.hasStreamsAvailable()" ng-pluralize count="ctrl.streamCount()" when="{'0': 'No streams active', 'one': '1 stream active', 'other': '{} streams active'}"></h1>
             <span flex></span>
 
-            <md-button class="md-icon-button" ng-click="ctrl.openConfigurationDialog($event)">
+            <md-button ng-show="ctrl.hasStreamsAvailable()" class="md-icon-button" ng-click="ctrl.openConfigurationDialog($event)">
                 <md-tooltip>Configure graph</md-tooltip>
                 <md-icon><ng-md-icon icon="settings"></ng-md-icon></md-icon>
             </md-button>
@@ -19,6 +20,17 @@
             </h5>
         </div>
     </md-toolbar>
+
+    <md-content ng-hide="ctrl.hasStreamsAvailable()" layout-margin>
+        <div flex layout="column">
+            <p>Here is an example of a local_item with a datastream called <i>data1</i></p>
+            <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">from</span> <span style="color: #0e84b5; font-weight: bold">parlay</span> <span style="color: #008800; font-weight: bold">import</span> ParlayCommandItem, parlay_datastream
+
+<span style="color: #008800; font-weight: bold">class</span> <span style="color: #BB0066; font-weight: bold">MyItem</span>(ParlayCommandItem):
+	data1 <span style="color: #333333">=</span> parlay_datastream(default<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>)
+</pre></div>
+        </div>
+    </md-content>
 
 	<promenade-smoothie-chart ng-show="ctrl.streamCount()" class="parlay-item-card-tab-content" delay="1000" streams="ctrl.item.data_streams" config="ctrl.chart_config" smoothie-fn="ctrl.getSmoothie"></promenade-smoothie-chart>
 </md-tab>

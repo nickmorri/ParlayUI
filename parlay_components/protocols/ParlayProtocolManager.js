@@ -48,7 +48,7 @@ function ParlayProtocolManagerFactory($injector, $q, PromenadeBroker, ParlayStor
                     content: "Connected to " + response.name + ".",
                     action: {
                         text: "Discover",
-                        callback: function () { PromenadeBroker.requestDiscovery(true); }.bind(this)
+                        callback: function () { PromenadeBroker.requestDiscovery(true); }
                     }
                 });
                 return response;

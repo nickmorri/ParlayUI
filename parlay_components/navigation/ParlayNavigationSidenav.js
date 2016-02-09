@@ -29,35 +29,23 @@ function ParlayNavigationSidenavController($mdSidenav, $mdDialog, $mdMedia, Prom
 		});
 	};
 
-	this.openNotificationDisplay = function () {
+	this.openNotificationSidenav = function () {
 		/* istanbul ignore next */
 		$mdSidenav("notifications").open();
 	};
 
-	this.saveDiscovery = function () {
-		var time = new Date();
-        PromenadeBroker.getLastDiscovery().download("discovery_" + time.toISOString() + ".txt");
-	};
-
-	this.loadDiscovery = function (event) {
-        event.target.getElementsByTagName("input")[0].click();
-	};
-
-	this.fileChanged = function (event) {
-
-		// Instantiate FileReader object
-		var fileReader = new FileReader();
-
-		// After file load pass saved discovery data to the PromenadeBroker
-		fileReader.onload = function (event) {
-			PromenadeBroker.setSavedDiscovery(JSON.parse(event.target.result));
-		};
-
-		// Read file as text
-		fileReader.readAsText(event.target.files[0]);
+	this.openSettingsDialog = function (event) {
+		$mdDialog.show({
+			templateUrl: "../parlay_components/navigation/directives/parlay-settings-dialog.html",
+			targetEvent: event,
+            controller: "ParlaySettingsDialogController",
+            controllerAs: "ctrl",
+            clickOutsideToClose: true,
+            fullscreen: !$mdMedia("gt-sm")
+		});
 	};
 	
 }
 
-angular.module("parlay.navigation.sidenav", ["ngMaterial", "parlay.utility", "promenade.broker", "parlay.items.search", "parlay.protocols.list_controller"])
+angular.module("parlay.navigation.sidenav", ["ngMaterial", "parlay.utility", "promenade.broker", "parlay.items.search", "parlay.protocols.list_controller", "parlay.settings.dialog"])
 	.controller("ParlayNavigationSidenavController", ["$mdSidenav", "$mdDialog", "$mdMedia", "PromenadeBroker", ParlayNavigationSidenavController]);

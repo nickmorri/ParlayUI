@@ -56,23 +56,14 @@
 
         <md-divider></md-divider>
 
-        <md-list-item ng-click="ctrl.openNotificationDisplay()">
+        <md-list-item ng-click="ctrl.openNotificationSidenav()">
             <md-icon ng-md-icon class="parlay-nav-icon" icon="notifications"></md-icon>
             <p>Notifications</p>
         </md-list-item>
 
-
-
-        <md-list-item ng-click="ctrl.saveDiscovery()">
-            <md-icon ng-md-icon class="parlay-nav-icon" icon="file_download"></md-icon>
-            Save Discovery
-        </md-list-item>
-
-        <md-list-item ng-click="ctrl.loadDiscovery($event)">
-            <md-icon ng-md-icon class="parlay-nav-icon" icon="file_upload"></md-icon>
-            Load Discovery
-            <!--Hidden file input that is triggered on md-list-item click-->
-            <input id="discoveryInput" type="file" style="display: none;;" custom-on-change="ctrl.fileChanged" />
+        <md-list-item ng-click="ctrl.openSettingsDialog()">
+            <md-icon ng-md-icon class="parlay-nav-icon" icon="settings"></md-icon>
+            <p>Settings</p>
         </md-list-item>
 
     </md-list>

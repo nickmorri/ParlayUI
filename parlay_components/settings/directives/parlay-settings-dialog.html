@@ -1,0 +1,64 @@
+<md-dialog aria-label="Settings" flex="90" flex-gt-sm="70" flex-gt-md="50">
+
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Settings</h2>
+            <span flex></span>
+            <md-button class="md-icon-button" ng-click="ctrl.hide()" aria-label="Hide dialog">
+                <md-icon><ng-md-icon icon="close" aria-label="Close dialog"></ng-md-icon></md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content layout="column" layout-margin>
+
+        <md-card>
+            <md-toolbar class="md-hue-1">
+                <h2 class="md-toolbar-tools">Discovery settings</h2>
+            </md-toolbar>
+            <md-card-content>
+                <md-switch ng-model="auto_discovery" ng-change="ctrl.toggleAutodiscoveryMessage()" aria-label="Autodiscover">
+                    Automatically discover on startup <b>{{auto_discovery_message}}.</b>
+                </md-switch>
+            </md-card-content>
+            <md-card-actions layout="row">
+                <md-button ng-click="ctrl.requestDiscovery()"><md-icon ng-md-icon icon="autorenew"></md-icon>
+                    Request Discovery
+                </md-button>
+                <span flex></span>
+                <md-button ng-click="ctrl.saveDiscovery()"><md-icon ng-md-icon icon="file_download"></md-icon>
+                    Save Discovery
+                </md-button>
+                <md-button ng-click="ctrl.loadDiscovery($event)">
+                    <md-icon ng-md-icon icon="file_upload"></md-icon>
+                    Load Discovery
+                    <!--Hidden file input that is triggered on md-list-item click-->
+                    <input id="discoveryInput" type="file" style="display: none;;" custom-on-change="ctrl.fileChanged" />
+                </md-button>
+            </md-card-actions>
+        </md-card>
+
+        <md-card>
+            <md-toolbar class="md-hue-1">
+                <h2 class="md-toolbar-tools">Log settings</h2>
+            </md-toolbar>
+            <md-card-content layout="column">
+                <md-input-container flex>
+                    <label>Max log size</label>
+                    <input ng-model="">
+                </md-input-container>
+            </md-card-content>
+        </md-card>
+
+        <md-card>
+            <md-toolbar class="md-hue-1">
+                <h2 class="md-toolbar-tools">Notification settings</h2>
+            </md-toolbar>
+            <md-card-content layout="column">
+
+            </md-card-content>
+        </md-card>
+
+    </md-dialog-content>
+
+</md-dialog>

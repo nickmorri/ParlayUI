@@ -165,7 +165,7 @@ function ParlayStoreService() {
 		var values = [];
 		for (var i = 0; i < localStorage.length; i++) {
 			var key = localStorage.key(i);
-			if (key.startsWith("packed-")) values.push(key);
+			if (key.startsWith("packed-" + this.namespace)) values.push(key);
 		}
 		return values;
 	};
@@ -214,10 +214,14 @@ function ParlayStoreService() {
 	 * @param {String} name - Unique name of the container we are going to unpack in sessionStorage
 	 */
 	ParlayStore.prototype.moveItemToSession = function (name) {
-		var unpacked = JSON.parse(localStorage.getItem('packed-' + this.namespace + '[' + name + ']'));
-		Object.keys(unpacked.data).forEach(function (key) {
-			sessionStorage.setItem(key, JSON.stringify(unpacked.data[key]));
-		});
+        var item = localStorage.getItem('packed-' + this.namespace + '[' + name + ']');
+        if (item) {
+            var unpacked = JSON.parse(item);
+            Object.keys(unpacked.data).forEach(function (key) {
+                sessionStorage.setItem(key, JSON.stringify(unpacked.data[key]));
+            });
+        }
+
 	};
 
     /**

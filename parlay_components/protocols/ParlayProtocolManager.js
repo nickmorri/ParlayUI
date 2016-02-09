@@ -1,4 +1,4 @@
-function ParlayProtocolManagerFactory($injector, $q, PromenadeBroker, ParlayStore, ParlayNotification) {
+function ParlayProtocolManagerFactory($injector, $q, PromenadeBroker, ParlayStore, ParlaySettings, ParlayNotification) {
     "use strict";
 
     function ParlayProtocolManager() {
@@ -181,9 +181,12 @@ function ParlayProtocolManagerFactory($injector, $q, PromenadeBroker, ParlayStor
 
             setSavedProtocols();
 
-            // Request a fast discovery to see if there's already one there.
-            PromenadeBroker.requestDiscovery(false);
             open_protocols = protocols.map(constructProtocol);
+
+            // Request a fast discovery to see if there's already one there if that is the user preference.
+            if (ParlaySettings.getDiscoverySettings().auto_discovery) {
+                PromenadeBroker.requestDiscovery(false);
+            }
         }
 
         /**
@@ -269,5 +272,5 @@ function ParlayProtocolManagerFactory($injector, $q, PromenadeBroker, ParlayStor
 
 }
 
-angular.module("parlay.protocols.manager", ["promenade.broker", "promenade.protocols.directmessage", "parlay.notification"])
-	.factory("ParlayProtocolManager", ["$injector", "$q", "PromenadeBroker", "ParlayStore", "ParlayNotification", ParlayProtocolManagerFactory]);
+angular.module("parlay.protocols.manager", ["promenade.broker", "promenade.protocols.directmessage", "parlay.notification", "parlay.settings"])
+	.factory("ParlayProtocolManager", ["$injector", "$q", "PromenadeBroker", "ParlayStore", "ParlaySettings", "ParlayNotification", ParlayProtocolManagerFactory]);

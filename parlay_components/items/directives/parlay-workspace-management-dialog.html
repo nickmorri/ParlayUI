@@ -17,7 +17,7 @@
             <md-list>
 
 				<md-list-item class="md-2-line" layout="row" layout-align="space-between center">
-	            	<md-icon hide-sm hide-md><ng-md-icon icon="home"></ng-md-icon></md-icon>
+	            	<md-icon hide-xs hide-sm hide-md><ng-md-icon icon="home"></ng-md-icon></md-icon>
 	            	<div flex-sm="60" class="md-list-item-text">
 	                    <h3>Current Workspace</h3>
 	                    <p ng-hide="ctrl.currentWorkspaceItemCount()">empty</p>
@@ -42,7 +42,7 @@
 
 	            <md-list-item class="md-3-line" layout="row" layout-align="space-between center" ng-if="ctrl.getAutosave()">
 
-	            	<md-icon hide-sm hide-md><ng-md-icon icon="history"></ng-md-icon></md-icon>
+	            	<md-icon hide-xs hide-sm hide-md><ng-md-icon icon="history"></ng-md-icon></md-icon>
 
 	            	<div flex-sm="60"class="md-list-item-text">
 	                    <h3>Autosaved Workspace</h3>
@@ -71,7 +71,7 @@
 
 				<md-list-item class="md-3-line" layout="row" layout-align="space-between center" ng-repeat="workspace in ctrl.getSavedWorkspaces() | orderBy:'-timestamp'">
 
-	                <md-icon hide-sm hide-md ng-if="$index === 0"><ng-md-icon icon="dashboard"></ng-md-icon></md-icon>
+	                <md-icon hide-xs hide-sm hide-md ng-if="$index === 0"><ng-md-icon icon="dashboard"></ng-md-icon></md-icon>
 
 	                <div flex-sm="60" class="md-list-item-text" ng-class="{'md-offset': $index !== 0 && large_screen}">
 	                    <h3>{{workspace.name}}</h3>

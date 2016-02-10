@@ -19,7 +19,7 @@
 	        <md-list>
 	            
 	            <md-list-item class="md-2-line" layout="row">
-	                <md-icon hide-sm hide-md><ng-md-icon icon="group_work"></ng-md-icon></md-icon>
+	                <md-icon hide-xs hide-sm hide-md><ng-md-icon icon="group_work"></ng-md-icon></md-icon>
 	                <div class="md-list-item-text">
 	                    <h3>Broker</h3>
 	                    <p>{{ctrl.getBrokerAddress()}}</p>
@@ -43,7 +43,7 @@
 	            
 	            <md-list-item ng-if="ctrl.isBrokerConnected() && ctrl.hasOpenProtocols()" class="md-2-line" layout="row" layout-align="space-between center" ng-repeat="protocol in ctrl.getOpenProtocols()">
 	                
-	                <md-icon hide-sm hide-md ng-if="$index === 0"><ng-md-icon icon="settings_ethernet"></ng-md-icon></md-icon>
+	                <md-icon hide-xs hide-sm hide-md ng-if="$index === 0"><ng-md-icon icon="settings_ethernet"></ng-md-icon></md-icon>
 	                
 	                <div flex-sm="75" class="md-list-item-text" ng-class="{'md-offset': $index !== 0 && large_screen}">
 	                    <h3>{{::protocol.getType()}}</h3>

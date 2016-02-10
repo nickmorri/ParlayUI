@@ -16,8 +16,12 @@
  */
 
 function RunNotification($notification) {
-    // Request permissions as soon as possible.
-    $notification.requestPermission();
+    // Microsoft Edge does not have support for HTML 5 Notifications.
+    if (!navigator.userAgent.includes("Edge")) {
+        // Request permissions as soon as possible.
+        $notification.requestPermission();
+    }
+
 }
 
 /**

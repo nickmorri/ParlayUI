@@ -55,10 +55,11 @@
                 <h2 class="md-toolbar-tools">Notification settings</h2>
             </md-toolbar>
             <md-card-content layout="column">
+                <p ng-show="ctrl.isMSEdge()">Microsoft Edge does not support browser Notifications.</p>
                 <p ng-show="notification_permission">Browser can send notifications when user is away from page.</p>
-                <p ng-hide="notification_permission">Browser cannot send notifications when user is away from page. Request permissions below.</p>
+                <p ng-hide="notification_permission || ctrl.isMSEdge()">Browser cannot send notifications when user is away from page. Request permissions below.</p>
             </md-card-content>
-            <md-card-actions layout="row" layout-align="end center" ng-hide="notification_permission">
+            <md-card-actions layout="row" layout-align="end center" ng-hide="notification_permission || ctrl.isMSEdge()">
                 <md-button ng-click="ctrl.requestNotificationPermission()"><md-icon ng-md-icon icon="notifications"></md-icon>
                     Request browser notifications
                 </md-button>

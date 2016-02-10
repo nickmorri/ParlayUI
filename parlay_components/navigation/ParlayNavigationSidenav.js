@@ -1,4 +1,4 @@
-function ParlayNavigationSidenavController($mdSidenav, $mdDialog, $mdMedia) {
+function ParlayNavigationSidenavController($mdSidenav, $mdDialog, $mdMedia, PromenadeBroker) {
     "use strict";
 
 	this.openWorkspaceManagementDialog = function (event) {
@@ -25,6 +25,10 @@ function ParlayNavigationSidenavController($mdSidenav, $mdDialog, $mdMedia) {
 		});
 	};
 
+	this.requestDiscovery = function () {
+		PromenadeBroker.requestDiscovery(true);
+	};
+
 	this.openNotificationSidenav = function () {
 		/* istanbul ignore next */
 		$mdSidenav("notifications").open();
@@ -44,4 +48,4 @@ function ParlayNavigationSidenavController($mdSidenav, $mdDialog, $mdMedia) {
 }
 
 angular.module("parlay.navigation.sidenav", ["ngMaterial", "parlay.utility", "parlay.items.search", "parlay.protocols.list_controller", "parlay.settings.dialog"])
-	.controller("ParlayNavigationSidenavController", ["$mdSidenav", "$mdDialog", "$mdMedia", ParlayNavigationSidenavController]);
+	.controller("ParlayNavigationSidenavController", ["$mdSidenav", "$mdDialog", "$mdMedia", "PromenadeBroker", ParlayNavigationSidenavController]);

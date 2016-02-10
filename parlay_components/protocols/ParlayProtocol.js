@@ -1,4 +1,4 @@
-function ParlayProtocolFactory(ParlaySocket, ParlayItem, $q) {
+function ParlayProtocolFactory(ParlaySocket, ParlayItem, ParlaySettings, $q) {
     
     function ParlayProtocol(configuration) {
         "use strict";
@@ -107,10 +107,19 @@ function ParlayProtocolFactory(ParlaySocket, ParlayItem, $q) {
 	 * Will be called on protocol open.
 	 */
     ParlayProtocol.prototype.onOpen = function () {
+
         // Ensure that we record all messages address to the UI.
         this.onMessage({}, function (response) {
+            // Upon reaching the 1.5 times the maximum specified log size we should remove 0.5
+            // the maximum size elements from the beginning of the log.
+            if (this.log.length >= ParlaySettings.getLogSettings().max_size * 1.5) {
+                this.log.splice(0, ParlaySettings.getLogSettings().max_size * 0.5);
+            }
+
 	        this.log.push(response);
+            
         }.bind(this), true);
+
     };
     
     /**
@@ -152,5 +161,5 @@ function ParlayProtocolFactory(ParlaySocket, ParlayItem, $q) {
     return ParlayProtocol;
 }
 
-angular.module("parlay.protocols.protocol", ["parlay.socket", "parlay.items.item", "promenade.protocols.directmessage"])
-	.factory("ParlayProtocol", ["ParlaySocket", "ParlayItem", "$q", ParlayProtocolFactory]);
+angular.module("parlay.protocols.protocol", ["parlay.socket", "parlay.items.item", "promenade.protocols.directmessage", "parlay.settings"])
+	.factory("ParlayProtocol", ["ParlaySocket", "ParlayItem", "ParlaySettings", "$q", ParlayProtocolFactory]);

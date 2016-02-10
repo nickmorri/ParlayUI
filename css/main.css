@@ -32,3 +32,21 @@ md-list-item > a {
 .md-button.md-icon-button {
     padding: 8px 0 8px 0;
 }
+
+/* On Microsoft Edge browser we should disable some animations for a better user experience */
+_:-ms-lang(x), .md-ripple-container, .md-ripple-placed {
+    transition: none !important;
+}
+
+_:-ms-lang(x), .md-transition-in, .md-transition-out {
+    transition: none !important;
+    transform: none !important;
+}
+
+_:-ms-lang(x), md-sidenav {
+    transition: none !important;
+}
+
+_:-ms-lang(x), md-toast {
+    transition: none !important;
+}

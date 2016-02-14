@@ -10,6 +10,61 @@ function CallbackContainerFactory() {
 
         // EMCAScript 2015 Map Object.
         var internal_map = new Map();
+        //This won't collide with any possible hash because it doesnt match the get_hash function that other keys use
+        var callback_key = "__CALLBACK__"; // this is the key that will be used for the callback list
+
+        /*
+        Get the hash for a particular key vaue pair to put in the map
+         */
+        var get_hash = function(key, value)
+        {
+            if(key === undefined) key = "__undefined__";
+            if(value === undefined) value = "__undefined__";
+            return 'k=' + key.stableEncode() + ':v=' + value.stableEncode();
+        };
+
+        var get_callbacks_for_topics = function(topics)
+        {
+            //var encoded_topics = topics.stableEncode();
+            //this will be the map that we encode (sorted so we're stable)
+            var keys = Object.keys(topics).sort();
+
+            var leaf_map = internal_map;
+            //special case, of keys are empty, then just append to root map
+            if(keys.length > 0) // if not empty then go through chain
+            {
+                var init_key = keys.shift();
+                var init_hash = get_hash(init_key, topics[init_key]);
+
+                //take the first one out
+                leaf_map = internal_map.get(init_hash) || new Map();
+                internal_map.set(init_hash, leaf_map); //re-set it in case its new
+                //now go through the rest and chain them through the maps
+                for(var i=0; i < keys.length; i++)
+                {
+                    var key = keys[i];
+                    //get the map for this or a new Map() if there is none
+                    var hash = get_hash(key, topics[key]);
+                    var next_leaf_map = leaf_map.get(hash);
+                    if(next_leaf_map === undefined)
+                    {
+                         next_leaf_map = new Map();
+                         leaf_map.set(hash, next_leaf_map);
+                    }
+                    //set it as the next leaf and iterate
+                    leaf_map = next_leaf_map;
+                }
+            }
+
+            var callbacks = leaf_map.get(callback_key);
+            if (callbacks === undefined)
+            {
+                callbacks = [];
+                leaf_map.set(callback_key, callbacks);
+            }
+            return callbacks;
+        };
+
 
         /**
          * Adds callback registration for the given topics.
@@ -22,20 +77,14 @@ function CallbackContainerFactory() {
          */
         this.add = function (topics, callback, persist, verbose) {
 
-            var encoded_topics = topics.stableEncode();
 
-            var callbacks = internal_map.get(encoded_topics);
-
+            var callbacks = get_callbacks_for_topics(topics);
             var callbackObj = {
                 func: callback,
                 persist: persist,
                 verbose: verbose
             };
-
-            if (callbacks !== undefined) callbacks.push(callbackObj);
-            else callbacks = [callbackObj];
-
-            internal_map.set(encoded_topics, callbacks);
+            callbacks.push(callbackObj);
 
             return function () { this.delete(topics, callback); }.bind(this);
         };
@@ -47,46 +96,33 @@ function CallbackContainerFactory() {
          * @returns {Boolean} - True if a registration was removed, false otherwise.
          */
         this.delete = function (topics, callback) {
+            var callbacks = get_callbacks_for_topics(topics);
+            var index = callbacks.map(function(e) { return e.func; }).indexOf(callback);
 
-            var encoded_topics = topics.stableEncode();
-
-            var callbacks = internal_map.get(encoded_topics);
-
-            if (callbacks !== undefined) {
-                // Search for the location of the callback function.
-                var index = callbacks.findIndex(function (funcObj) {
-                    return callback === funcObj.func;
-                });
-
-                // Remove callback from array if it exists.
-                if (index > -1) callbacks.splice(index, 1);
-
-                // Set the updated message callbacks if some still exist.
-                if (callbacks.length > 0) internal_map.set(encoded_topics, callbacks);
-                else internal_map.delete(encoded_topics);
+            if(index > -1)
+            {
+                callbacks.splice(index, 1);
                 return true;
             }
-            else {
+            else
+            {
                 return false;
             }
         };
 
         /**
-         * Calls all applicable callbacks for the given topics Object.
-         * Will remove any invoked callback that is not persistent.
-         * @param {Object} topics - Object of key/value pairs.
-         * @param {Object} contents - Object of key/value pairs.
+         *  invoke all registered callbacks in 'map', and recursively with the hash list
+         *  start at start_index in the hash list
          */
-        this.invoke = function (topics, contents) {
-            // Generate all possible combinations of topics.
-            // This is to ensure that any topic registration that is applicable is invoked.
-            topics.combinationsOf().forEach(function (encoded_topics) {
-                var callbacks = internal_map.get(encoded_topics);
+        var invoke_all_with_hashes = function(topics, contents, hash_list, start_index, map)
+        {
+            //if no map then we're done
+            if(map === undefined) return;
 
-                // Check that callbacks exist for the given topics.
-                if (callbacks !== undefined) {
-
-                    // Invoke all applicable callbacks, retain only persistent callbacks.
+            var callbacks = map.get(callback_key);
+            if(callbacks !== undefined)
+            {//do callbacks
+                // Invoke all applicable callbacks, retain only persistent callbacks.
                     var remaining_callbacks = callbacks.filter(function (callback) {
                         // If during registration a verbose callback was requested pass topics and contents,
                         // otherwise pass only contents.
@@ -97,28 +133,62 @@ function CallbackContainerFactory() {
                     });
 
                     // Set the updated message callbacks if some still exist.
-                    if (remaining_callbacks.length > 0) internal_map.set(encoded_topics, remaining_callbacks);
-                    else internal_map.delete(encoded_topics);
-                }
+                    if (remaining_callbacks.length > 0) map.set(callback_key, remaining_callbacks);
+                    else map.delete(callback_key);
+            }
+            // now go down the list from start_index and try with that key
+            for(var i=start_index; i < hash_list.length;i++)
+            {
+               invoke_all_with_hashes(topics,contents,hash_list,start_index+1,map.get(hash_list[i]));
+            }
 
+        };
+        /**
+         * Calls all applicable callbacks for the given topics Object.
+         * Will remove any invoked callback that is not persistent.
+         * @param {Object} topics - Object of key/value pairs.
+         * @param {Object} contents - Object of key/value pairs.
+         */
+        this.invoke = function (topics, contents) {
+
+            //this will be the map that we encode (sorted so we're stable)
+            var keys = Object.keys(topics).sort();
+            var hash_list = [];
+            keys.forEach(function(key)
+            {
+                hash_list.push(get_hash(key, topics[key]));
             });
+            //start at the root
+            invoke_all_with_hashes(topics,contents,hash_list,0,internal_map);
         };
 
         /**
          * Returns number of unique topic keys.
          * @returns {Number} - Count of topics keys.
          */
-        this.size = function () {
-            return internal_map.size;
+        this.size = function (map) {
+            map = map || internal_map;
+            var count = 0;
+            //if we have anything in our callbacks then we count as 1 unique topic
+            if(map.get(callback_key) !== undefined && map.get(callback_key).length > 0) count = 1;
+            var m_this = this;
+            //recursively add our children up
+            map.forEach(function (value, key) { if(key !== callback_key && value !== undefined) { count += m_this.size(value);} });
+            return count;
         };
 
         /**
          * Returns number of registered callback functions.
          * @returns {Number} - Count of registered callback functions.
          */
-        this.callbackCount = function () {
+        this.callbackCount = function (map) {
+            map = map || internal_map;
             var count = 0;
-            internal_map.forEach(function (value, key) { count += value.length; });
+            //if we have anything in our callbacks then we count as n unique callbacks
+            if(map.get(callback_key) !== undefined) count = map.get(callback_key).length;
+            var m_this = this;
+            //recursively add our children up
+            map.forEach(function (value, key) { if(key !== callback_key && value !== undefined) { count += m_this.callbackCount(value);} });
             return count;
         };
 

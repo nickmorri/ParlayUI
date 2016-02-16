@@ -134,24 +134,12 @@
             
             describe("streams", function() {
 	            	            
-	            it("requests", function(done) {
+	            it("requests", function() {
 		            spyOn(MockProtocol, "sendMessage").and.callThrough();
-		            spyOn(MockProtocol, "onMessage").and.callThrough();
-		            
+
 		            item.requestStream({
 			            NAME: "stream1",
 			            rate: 1
-		            }).then(function() {
-			            expect(item.data_streams.stream1.enabled).toBeTruthy();
-			            expect(MockProtocol.onMessage).toHaveBeenCalledWith({
-				            TX_TYPE: "DIRECT",
-						    MSG_TYPE: "STREAM",
-						    TO: "UI",
-						    FROM: item.id,
-						    STREAM: "stream1"
-			            }, jasmine.any(Function));
-			            expect(item.data_streams.stream1.listener).toEqual(jasmine.any(Function));
-			            done();
 		            });
 		            
 		            rootScope.$apply();
@@ -173,17 +161,11 @@
 		            });
 	            });
 	            
-	            it("cancels", function(done) {
+	            it("cancels", function() {
 		            spyOn(MockProtocol, "sendMessage").and.callThrough();
-		            spyOn(MockProtocol, "onMessage").and.callThrough();
-		            
+
 		            item.cancelStream({
 			            NAME: "stream1"
-		            }).then(function() {
-			            expect(item.data_streams.stream1.enabled).toBeFalsy();
-			            expect(item.data_streams.stream1.listener).toBeUndefined();
-			            expect(item.data_streams.stream1.value).toBeUndefined();
-			            done();
 		            });
 		            
 		            rootScope.$apply();

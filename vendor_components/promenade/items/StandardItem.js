@@ -97,11 +97,20 @@ function PromenadeStandardItemFactory(ParlayItem) {
 	        this.data_streams = data.DATASTREAMS.reduce(function (accumulator, current) {
 		        accumulator[current.NAME] = current;
 		        accumulator[current.NAME].value = undefined;
-		        accumulator[current.NAME].listener = undefined;
-		        accumulator[current.NAME].enabled = false;
-		        accumulator[current.NAME].rate = 0;
+                accumulator[current.NAME].rate = 0;
+
+		        accumulator[current.NAME].listener = this.protocol.onMessage({
+                    TX_TYPE: "DIRECT",
+                    MSG_TYPE: "STREAM",
+                    TO: "UI",
+                    FROM: this.id,
+                    STREAM: current.NAME
+                }, function streamUpdater(response) {
+                    this.data_streams[current.NAME].value = response.VALUE;
+                }.bind(this));
+
 		        return accumulator;
-	        }, {});	        
+            }.bind(this), {});
         }
         
     }
@@ -175,28 +184,15 @@ function PromenadeStandardItemFactory(ParlayItem) {
     };
     
     /**
-	 * Returns function that updates the given stream with the value from the response.
-	 * @param {Object} stream - Data stream object.
-	 * @returns {Function} - Function described below.
-	 */
-    PromenadeStandardItem.prototype.buildStreamUpdater = function (stream) {
-	    /**
-		 * Updates the stream object in the closure scope with value from response.
-		 * @param {Object} response - stream response that contains value.
-		 */
-	    return function streamUpdater(response) {
-		    this.data_streams[stream.NAME].value = response.VALUE;
-	    }.bind(this);
-    };
-    
-    /**
 	 * Sends message requesting a data stream. 
 	 * Then sets up a onMessage listener to update the data stream object.
 	 * @param {Object} stream - Data stream object.
 	 * @returns {$q.defer.Promise} - Resolved when we receive stream response.
 	 */
     PromenadeStandardItem.prototype.requestStream = function (stream) {
-		if (stream.rate < 1) stream.rate = 1;
+		if (stream.rate < 1) {
+            stream.rate = 1;
+        }
 	    return this.protocol.sendMessage({
 		    TX_TYPE: "DIRECT",
 		    MSG_TYPE: "STREAM",
@@ -212,18 +208,7 @@ function PromenadeStandardItemFactory(ParlayItem) {
 			MSG_TYPE: "STREAM",
 			TO: "UI",
 			FROM: this.id
-		}).then(function (response) {
-		    this.data_streams[stream.NAME].enabled = true;
-		    this.data_streams[stream.NAME].listener = this.protocol.onMessage({
-			    TX_TYPE: "DIRECT",
-			    MSG_TYPE: "STREAM",
-			    TO: "UI",
-			    FROM: this.id,
-			    STREAM: stream.NAME
-		    }, this.buildStreamUpdater(stream));
-		    
-		    return response;
-	    }.bind(this));
+		});
     };
     
     /**
@@ -249,14 +234,7 @@ function PromenadeStandardItemFactory(ParlayItem) {
 			MSG_TYPE: "STREAM",
 			TO: "UI",
 			FROM: this.id
-		}).then(function () {
-			this.data_streams[stream.NAME].enabled = false;
-			if (this.data_streams[stream.NAME].listener) {
-				this.data_streams[stream.NAME].listener();
-				this.data_streams[stream.NAME].listener = undefined;
-			}		    
-		    this.data_streams[stream.NAME].value = undefined;
-	    }.bind(this));
+		});
     };
     
     /**

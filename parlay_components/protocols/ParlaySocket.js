@@ -30,6 +30,31 @@ function CallbackContainerFactory() {
             }
             return 'k=' + key.stableEncode() + ':v=' + value.stableEncode();
         }
+
+        /**
+         * Traverse internal_map and delete branches of tree if no longer needed.
+         * @param {Object} topics - Object of key/value pairs.
+         */
+        function prune_topics(topics) {
+
+            function traverse(hash, tree) {
+
+                // Continue traversing the tree until hashed_keys is empty which indicates we're at a leaf.
+                if (hashed_keys.length) {
+
+                    // If the size of the sub-tree is 0 we should remove this subtree.
+                    if (!traverse(hashed_keys.shift(), tree.get(hash))) {
+                        tree.delete(hash);
+                    }
+                }
+
+                // If there aren't any callbacks registered to a topic delete the callback key/value pair.
+                if (tree.get(callback_key) && !tree.get(callback_key).length) {
+                    tree.delete(callback_key);
+                }
+
+                // Return the key/value pairs remaining.
+                return tree.size;
             }
 
             var hashed_keys = Object.keys(topics).sort().map(function (key) {
@@ -136,6 +161,7 @@ function CallbackContainerFactory() {
             // Otherwise return false if the callback doesn't exist in the array.
             if (index > -1) {
                 callbacks.splice(index, 1);
+                prune_topics(topics);
                 return true;
             }
             else {

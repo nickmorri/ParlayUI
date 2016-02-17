@@ -111,14 +111,14 @@
                                 
             });
             
-            it('sends message to protocol', function (done) {
+            it('sends message to protocol', function () {
                 
                 spyOn(MockProtocol, 'sendMessage').and.callThrough();
                 
                 item.sendMessage({
-                    command: 'FOO',
+                    COMMAND: 'FOO',
                     type: 'int'
-                }).then(done);
+                });
                 
                 rootScope.$apply();
                 
@@ -128,8 +128,8 @@
                 }, {
                     COMMAND: 'FOO',
                     type: 'int'
-                });
-                                       
+                }, {}, true);
+
             });
             
             describe("streams", function() {

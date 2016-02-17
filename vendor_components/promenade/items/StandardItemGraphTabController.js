@@ -110,17 +110,9 @@ function PromenadeStandardItemCardGraphTabConfigurationController($mdDialog) {
         if (this.enabled_streams.indexOf(stream.NAME) == -1) {
             this.enabled_streams.push(stream.NAME);
 
-            // If stream value currently undefined ask the user if they want to request the stream.
+            // If stream value currently undefined request the stream automatically.
             if (!stream.value) {
-                $mdDialog.show($mdDialog.confirm()
-                    .title("Request to stream " + stream.NAME + "?")
-                    .content("Stream value currently undefined. Request this stream so data will be available to graph.")
-                    .ok("Request")
-                    .cancel("Dismiss")
-                )
-                .then(function () {
-                    this.item.requestStream(stream);
-                }.bind(this));
+				this.item.requestStream(stream);
             }
         }
         else {

@@ -1,17 +1,26 @@
 <md-dialog aria-label="Stream Configuration" flex="90" flex-gt-sm="70" flex-gt-md="50">
-	<md-toolbar>
+
+    <md-toolbar>
 		<div class="md-toolbar-tools">
-			<h2>Stream Configuration</h2>
+			<h2>{{ctrl.stream.NAME}} stream configuration</h2>
 			<span flex></span>
 			<md-button class="md-icon-button" ng-click="ctrl.hide()">
 				<md-icon aria-label="Close"><ng-md-icon icon="close"></ng-md-icon></md-icon>
 			</md-button>
 		</div>
 	</md-toolbar>
+
 	<md-dialog-content>
-	
 		<div class="md-dialog-content" layout="column">
-			
+
+			<div flex layout="row">
+				<md-input-container layout flex>
+					<label>Value</label>
+					<input disabled type="number" ng-model="ctrl.stream.value">
+				</md-input-container>
+
+			</div>
+
 			<div flex layout="row">
 				<md-input-container layout flex>
 				    <label>Rate</label>
@@ -22,7 +31,11 @@
 			</div>
 		    
 		</div>
-	        
 	</md-dialog-content>
+
+	<md-dialog-actions>
+		<md-button ng-click="ctrl.requestStream()" class="md-primary">Request stream</md-button>
+		<md-button ng-click="ctrl.cancelStream()" class="md-primary">Cancel stream</md-button>
+	</md-dialog-actions>
 	
 </md-dialog>

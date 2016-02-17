@@ -219,6 +219,7 @@ function PromenadeStandardItemFactory(ParlayItem) {
 	 */
     PromenadeStandardItem.prototype.cancelStream = function (stream) {
 	    stream.rate = 0;
+        this.data_streams[stream.NAME].value = undefined;
 	    return this.protocol.sendMessage({
 		    TX_TYPE: "DIRECT",
 			MSG_TYPE: "STREAM",

@@ -3,9 +3,21 @@
  * @constructor
  * @param {AngularJS $scope} $scope - A AngularJS $scope Object.
  * @param {Material Angular Service} $mdDialog - Dialog modal service.
+ * @param {AnguarJS $interval} $interval - A AngularJS service that is analogous to setInterval.
+ * @param {Material Angular Service} $mdMedia - Media size detection service.
+ * @param {Parlay Service} ParlayUtility - Service that provides utility functions.
+ * @param {Parlay Service} ParlayPersistence - Service that provides automatic persistence of scope variables to localStorage.
  */
-function PromenadeStandardItemCardGraphTabController($scope, $mdDialog, $interval, $mdMedia) {
+function PromenadeStandardItemCardGraphTabController($scope, $mdDialog, $interval, $mdMedia, ParlayUtility, ParlayPersistence) {
 	ParlayBaseTabController.call(this, $scope, "promenadeStandardItemCardGraph");
+
+	this.enabled_streams = [];
+
+    var container = ParlayUtility.relevantScope($scope, 'container').container;
+    var directive_name = 'parlayItemCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
+
+    // Persist enabled streams across workspaces.
+    ParlayPersistence(directive_name, "ctrl.enabled_streams", $scope);
 
     this.streamColors = [];
 
@@ -32,7 +44,7 @@ function PromenadeStandardItemCardGraphTabController($scope, $mdDialog, $interva
 			controllerAs: "ctrl",
 			locals: {
 				item: this.item,
-				data: this.data,
+				enabled_streams: this.enabled_streams,
 				smoothie: this.getSmoothie()
 			},
 			bindToController: true,
@@ -55,9 +67,7 @@ PromenadeStandardItemCardGraphTabController.prototype = Object.create(ParlayBase
  * @returns {Number} - Count of currently enabled streams.
  */
 PromenadeStandardItemCardGraphTabController.prototype.streamCount = function() {
-	return Object.keys(this.item.data_streams).filter(function (key) {
-    	return this.item.data_streams[key].enabled;
-	}.bind(this)).length;
+	return this.enabled_streams.length;
 };
 
 /**
@@ -91,6 +101,45 @@ function PromenadeStandardItemCardGraphTabConfigurationController($mdDialog) {
 			clickOutsideToClose: true
 		});
 	};
+
+    /**
+     * Toggles the streams between enabled and disabled. Requests or cancels stream depending on state.
+     */
+    this.toggleStream = function(stream) {
+
+        if (this.enabled_streams.indexOf(stream.NAME) == -1) {
+            this.enabled_streams.push(stream.NAME);
+
+            // If stream value currently undefined ask the user if they want to request the stream.
+            if (!stream.value) {
+                $mdDialog.show($mdDialog.confirm()
+                    .title("Request to stream " + stream.NAME + "?")
+                    .content("Stream value currently undefined. Request this stream so data will be available to graph.")
+                    .ok("Request")
+                    .cancel("Dismiss")
+                )
+                .then(function () {
+                    this.item.requestStream(stream);
+                }.bind(this));
+            }
+        }
+        else {
+            this.enabled_streams.splice(this.enabled_streams.indexOf(stream.NAME), 1);
+
+            // If stream value currently defined ask the user if they want to request the stream.
+            if (stream.value) {
+                // Ask the user if they'd like to cancel the stream as well.
+                $mdDialog.show($mdDialog.confirm()
+                    .title("Cancel streaming " + stream.NAME + "?")
+                    .content("End the current stream request.")
+                    .ok("End")
+                    .cancel("Dismiss")
+                ).then(function () {
+                    this.item.cancelStream(stream);
+                }.bind(this));
+            }
+        }
+    };
 	
 }
 
@@ -136,12 +185,8 @@ PromenadeStandardItemCardGraphTabConfigurationController.prototype.lockMaximum =
     }
 };
 
-/**
- * Toggles the streams between enabled and disabled. Requests or cancels stream depending on state.
- */
-PromenadeStandardItemCardGraphTabConfigurationController.prototype.toggleStream = function(stream) {
-	if (stream.enabled) this.item.requestStream(stream);
-	else this.item.cancelStream(stream);
+PromenadeStandardItemCardGraphTabConfigurationController.prototype.isStreamEnabled = function (stream) {
+    return this.enabled_streams.indexOf(stream.NAME) >= 0;
 };
 
 /**
@@ -151,9 +196,17 @@ PromenadeStandardItemCardGraphTabConfigurationController.prototype.toggleStream 
  */
 function PromenadeStandardItemCardGraphTabStreamConfigurationController($mdDialog) {
 	this.hide = $mdDialog.cancel;
-	
+
 	this.updateRate = function() {
 		this.item.requestStream(this.stream);
+	};
+
+	this.requestStream = function () {
+		this.item.requestStream(this.stream);
+	};
+
+	this.cancelStream = function () {
+		this.item.cancelStream(this.stream);
 	};
 	
 }
@@ -175,7 +228,7 @@ function PromenadeStandardItemCardGraph() {
 }
 
 angular.module('promenade.items.standarditem.graph', ["promenade.smoothiechart"])
-	.controller("PromenadeStandardItemCardGraphTabController", ["$scope", "$mdDialog", "$interval", "$mdMedia", PromenadeStandardItemCardGraphTabController])
-	.controller("PromenadeStandardItemCardGraphTabConfigurationController", ["$mdDialog", "item", "data", "smoothie", PromenadeStandardItemCardGraphTabConfigurationController])
+	.controller("PromenadeStandardItemCardGraphTabController", ["$scope", "$mdDialog", "$interval", "$mdMedia", "ParlayUtility", "ParlayPersistence", PromenadeStandardItemCardGraphTabController])
+	.controller("PromenadeStandardItemCardGraphTabConfigurationController", ["$mdDialog", "item", "enabled_streams", "smoothie", PromenadeStandardItemCardGraphTabConfigurationController])
 	.controller("PromenadeStandardItemCardGraphTabStreamConfigurationController", ["$mdDialog", "stream", PromenadeStandardItemCardGraphTabStreamConfigurationController])
 	.directive('promenadeStandardItemCardGraph', PromenadeStandardItemCardGraph);

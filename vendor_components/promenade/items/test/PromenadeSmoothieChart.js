@@ -17,18 +17,20 @@
                 scope = $rootScope.$new();
                 
                 scope.data = {};
+                scope.enabled_streams = [];
                 
             }));
             
             afterEach(function () {
 	            scope.chart_config = {};
 	            scope.data = {};
+				scope.enabled_streams = [];
 	            
 	            scope.$destroy();
             });
 	    	
 	    	it("defaults delay to 1000 if user doesn't provide a value", function() {
-		    	element = $compile('<promenade-smoothie-chart class="parlay-item-card-tab-content" streams="data" config="chart_config" smoothie-fn="getSmoothie"></promenade-smoothie-chart>')(scope);
+		    	element = $compile('<promenade-smoothie-chart class="parlay-item-card-tab-content" enabled_streams="enabled_streams" stream_data="data" config="chart_config" smoothie-fn="getSmoothie"></promenade-smoothie-chart>')(scope);
                 $rootScope.$digest();
                 
                 var config = scope.getSmoothie();
@@ -37,7 +39,7 @@
 	    	});
 	    	
 	    	it("sets delay to user preference", function () {
-		    	element = $compile('<promenade-smoothie-chart class="parlay-item-card-tab-content" delay="500" streams="data" config="chart_config" smoothie-fn="getSmoothie"></promenade-smoothie-chart>')(scope);
+		    	element = $compile('<promenade-smoothie-chart class="parlay-item-card-tab-content" delay="500" enabled_streams="enabled_streams" stream_data="data" config="chart_config" smoothie-fn="getSmoothie"></promenade-smoothie-chart>')(scope);
                 $rootScope.$digest();
 				
 				var config = scope.getSmoothie();
@@ -47,7 +49,7 @@
 	    	
 	    	it("creates SmoothieChart object with default parameters", function () {
 		    	
-		    	element = $compile('<promenade-smoothie-chart class="parlay-item-card-tab-content" delay="1000" streams="data" config="chart_config" smoothie-fn="getSmoothie"></promenade-smoothie-chart>')(scope);
+		    	element = $compile('<promenade-smoothie-chart class="parlay-item-card-tab-content" delay="1000" enabled_streams="enabled_streams" stream_data="data" config="chart_config" smoothie-fn="getSmoothie"></promenade-smoothie-chart>')(scope);
                 $rootScope.$digest();
                 
                 var config = scope.getSmoothie().options;
@@ -85,7 +87,7 @@
 					}
 				};
 				
-				element = $compile('<promenade-smoothie-chart class="parlay-item-card-tab-content" delay="1000" streams="data" config="chart_config" smoothie-fn="getSmoothie"></promenade-smoothie-chart>')(scope);
+				element = $compile('<promenade-smoothie-chart class="parlay-item-card-tab-content" delay="1000" enabled_streams="enabled_streams" stream_data="data" config="chart_config" smoothie-fn="getSmoothie"></promenade-smoothie-chart>')(scope);
                 $rootScope.$digest();
                 
                 var config = scope.getSmoothie().options;
@@ -129,14 +131,16 @@
                 scope = $rootScope.$new();
                 
                 scope.data = {};
+                scope.enabled_streams = [];
                 
-                element = $compile('<promenade-smoothie-chart class="parlay-item-card-tab-content" delay="1000" streams="data" config="chart_config" smoothie-fn="getSmoothie"></promenade-smoothie-chart>')(scope);
+                element = $compile('<promenade-smoothie-chart class="parlay-item-card-tab-content" delay="1000" enabled_streams="enabled_streams" stream_data="data" config="chart_config" smoothie-fn="getSmoothie"></promenade-smoothie-chart>')(scope);
                 controller = $controller("PromenadeSmoothieChartController", {$scope: scope});
                 $rootScope.$digest();
             }));
             
             afterEach(function () {
 	            scope.data = {};
+                scope.enabled_streams = [];
 	            
 	            scope.$destroy();
             });
@@ -144,12 +148,13 @@
             it("adding a stream", function () {
 	            
 	            scope.data.stream2 = {
-		            enabled: true,
 		            value: 5,
 		            ATTR_NAME: "stream2",
 					NAME: "stream2",
 					UNITS: "ms"
 	            };
+
+                scope.enabled_streams.push("stream2");
 	            
 	            expect(scope.getSmoothie().seriesSet.length).toBe(0);
 	            
@@ -163,12 +168,13 @@
             it("removing a stream", function () {
 	            
 	            scope.data.stream2 = {
-		            enabled: true,
 		            value: 5,
 		            ATTR_NAME: "stream2",
 					NAME: "stream2",
 					UNITS: "ms"
 	            };
+
+                scope.enabled_streams.push("stream2");
 	            
 	            expect(scope.getSmoothie().seriesSet.length).toBe(0);
 	            
@@ -176,8 +182,8 @@
 	            scope.$digest();
 	            
 	            expect(scope.getSmoothie().seriesSet.length).toBe(1);
-	            
-	            delete scope.data.stream2;
+
+				scope.enabled_streams.splice(scope.enabled_streams.indexOf("stream2"), 1);
 	            
 	            $interval.flush(1000);
 	            scope.$digest();
@@ -192,12 +198,12 @@
 	            
 	            for (var i = 0; i < 10; i++) {
 		        	scope.data["stream" + i] = {
-			            enabled: true,
 			            value: i * 2,
 			            ATTR_NAME: "stream" + i,
 						NAME: "stream" + i,
 						UNITS: "ms"
-		            };    
+		            };
+                    scope.enabled_streams.push("stream" + i);
 	            }
 	            
 	            $interval.flush(1000);
@@ -212,12 +218,12 @@
 	            
 	            for (var i = 0; i < 10; i++) {
 		        	scope.data["stream" + i] = {
-			            enabled: true,
 			            value: i * 2,
 			            ATTR_NAME: "stream" + i,
 						NAME: "stream" + i,
 						UNITS: "ms"
-		            };    
+		            };
+                    scope.enabled_streams.push("stream" + i);
 	            }
 	            
 	            $interval.flush(1000);
@@ -227,6 +233,7 @@
 	            
 				for (i = 0; i < 10; i++) {
 					delete scope.data["stream" + i];
+                    scope.enabled_streams.splice(scope.enabled_streams.indexOf("stream" + i), 1);
 				}
 	            
 	            $interval.flush(1000);
@@ -239,7 +246,6 @@
             it("handles disabled streams", function () {
 	           
 	           scope.data.stream = {
-		            enabled: true,
 		            value: 5,
 		            ATTR_NAME: "stream",
 					NAME: "stream",
@@ -247,20 +253,22 @@
 	            };
 	            
 	            expect(scope.getSmoothie().seriesSet.length).toBe(0);
-	            
+
+				scope.enabled_streams.push("stream");
+
 	            $interval.flush(1000);
 	            scope.$digest();
 	            
 	            expect(scope.getSmoothie().seriesSet.length).toBe(1);
-	            
-	            scope.data.stream.enabled = false;
+
+				scope.enabled_streams.splice(scope.enabled_streams.indexOf("stream"), 1);
 	            
 	            $interval.flush(1000);
 	            scope.$digest();
 	            
 	            expect(scope.getSmoothie().seriesSet.length).toBe(0);
-	            
-	            scope.data.stream.enabled = true;
+
+				scope.enabled_streams.push("stream");
 	            
 	            $interval.flush(1000);
 	            scope.$digest();
@@ -272,12 +280,13 @@
             it("updates streams with latest available values", function() {
 	            
 	            scope.data.stream = {
-		            enabled: true,
 		            value: 5,
 		            ATTR_NAME: "stream",
 					NAME: "stream",
 					UNITS: "ms"
 	            };
+
+                scope.enabled_streams.push("stream");
 	            
 	            $interval.flush(1000);
 	            scope.$digest();

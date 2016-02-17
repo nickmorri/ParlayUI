@@ -43,13 +43,11 @@
 					</div>
 				</md-list-item>
 
-                <md-divider></md-divider>
-
-                <md-subheader class="md-no-sticky">Streams</md-subheader>
+                <md-subheader>Streams</md-subheader>
 				
-				<md-list-item ng-repeat="stream in ctrl.item.data_streams | orderObjectBy: 'NAME'">
-					<md-checkbox ng-model="stream.enabled" ng-change="ctrl.toggleStream(stream)"></md-checkbox>
-					<p>{{stream.NAME}}</p>
+				<md-list-item ng-repeat="stream in ctrl.item.data_streams | orderObjectBy: 'NAME'" ng-click="ctrl.toggleStream(stream)">
+                    <md-icon ng-md-icon icon="{{ctrl.isStreamEnabled(stream) ? 'check_box' : 'check_box_outline_blank'}}" options="{'rotation': 'none'}"></md-icon>
+					<p>{{stream.NAME}} <span ng-show="stream.value">has value {{stream.value}}</span></p>
 					<md-icon class="md-secondary" ng-click="ctrl.configureStream($event, stream)" aria-label="Stream configuration"><ng-md-icon icon="settings"></ng-md-icon></md-icon>
 				</md-list-item>
 				

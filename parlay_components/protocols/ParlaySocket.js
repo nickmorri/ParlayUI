@@ -64,7 +64,7 @@ function CallbackContainerFactory() {
             var init_hash = hashed_keys.shift();
 
             // If the init_hash sub-tree is empty delete it.
-            if (!traverse(init_hash, internal_map.get(init_hash))) {
+            if (!traverse(hashed_keys.shift(), internal_map.get(init_hash))) {
                 internal_map.delete(init_hash);
             }
         }

@@ -25,10 +25,10 @@
         <div flex layout="column">
             <p>Here is an example of a local_item with a datastream called <i>data1</i></p>
             <div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
-                <pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">from</span> <span style="color: #0e84b5; font-weight: bold">parlay</span> <span style="color: #008800; font-weight: bold">import</span> ParlayCommandItem, parlay_datastream
+                <pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">from</span> <span style="color: #0e84b5; font-weight: bold">parlay</span> <span style="color: #008800; font-weight: bold">import</span> ParlayCommandItem, ParlayDatastream
 
 <span style="color: #008800; font-weight: bold">class</span> <span style="color: #BB0066; font-weight: bold">MyItem</span>(ParlayCommandItem):
-	data1 <span style="color: #333333">=</span> parlay_datastream(default<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>)
+	data1 <span style="color: #333333">=</span> ParlayDatastream(default<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>)
 </pre>
             </div>
         </div>

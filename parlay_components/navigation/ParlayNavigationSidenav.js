@@ -34,6 +34,10 @@ function ParlayNavigationSidenavController($mdSidenav, $mdDialog, $mdMedia, Prom
 		$mdSidenav("notifications").open();
 	};
 
+	this.openHelpTab = function () {
+		window.open("http://" + window.location.hostname +  ":" + window.location.port + "/help", '_blank').focus();
+	};
+
 	this.openSettingsDialog = function (event) {
 		$mdDialog.show({
 			templateUrl: "../parlay_components/settings/directives/parlay-settings-dialog.html",

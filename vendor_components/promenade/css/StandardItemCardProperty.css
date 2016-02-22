@@ -1,0 +1,12 @@
+.parlay-property-container {
+    margin-top: 5px !important;
+    margin-bottom: 0 !important;
+}
+
+.parlay-property-container > .md-button {
+    margin: 0 !important;
+}
+
+.parlay-property-container > md-input-container {
+    margin: 5px !important;
+}

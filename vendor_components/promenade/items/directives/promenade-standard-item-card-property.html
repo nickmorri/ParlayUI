@@ -28,7 +28,7 @@
 </pre></div>
         </div>
 
-		<div flex layout="row" ng-repeat="property in ctrl.item.properties">
+		<div flex class="parlay-property-container" layout="row" ng-repeat="property in ctrl.item.properties">
 			<md-input-container flex ng-switch="property.INPUT">
 				<label>{{property.NAME}}</label>
 				<input ng-switch-when="STRING" type="text" ng-model="property.VALUE" ng-disabled="property.READ_ONLY">

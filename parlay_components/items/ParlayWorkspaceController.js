@@ -165,6 +165,8 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
         fileReader.readAsText(event.target.files[0]);
     };
 
+
+    // Attach reference to $mdMedia to scope so that media queries can be done.
     $scope.$mdMedia = $mdMedia;
 
 }

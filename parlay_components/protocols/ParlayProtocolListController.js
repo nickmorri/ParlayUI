@@ -108,13 +108,9 @@ function ParlayProtocolListController($scope, $mdDialog, $mdMedia, ParlayProtoco
             fullscreen: !$mdMedia("gt-sm")
         });
     };
-    
-    // Watch the size of the screen, if we are on a screen size that's greater than a small screen we should always display labels.
-    $scope.$watch(function () {
-        return $mdMedia("gt-md");
-    }, function (large_screen) {
-        $scope.large_screen = large_screen;
-    });
+
+    // Attach reference to $mdMedia to scope so that media queries can be done.
+    $scope.$mdMedia = $mdMedia;
     
 }
 

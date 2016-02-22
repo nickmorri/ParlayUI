@@ -24,13 +24,13 @@
 	                    <h3>Broker</h3>
 	                    <p>{{ctrl.getBrokerAddress()}}</p>
 	                </div>
-	                <md-button ng-class="{'md-warn' : ctrl.isBrokerConnected(), 'md-primary': !ctrl.isBrokerConnected(), 'md-raised' : large_screen, 'md-icon-button': !large_screen}" ng-click="ctrl.toggleBrokerConnection()" aria-label="Disconnect">
+	                <md-button ng-class="{'md-warn' : ctrl.isBrokerConnected(), 'md-primary': !ctrl.isBrokerConnected(), 'md-raised' : $mdMedia('gt-md'), 'md-icon-button': !$mdMedia('gt-md')}" ng-click="ctrl.toggleBrokerConnection()" aria-label="Disconnect">
 	                	<md-tooltip>Disconnect</md-tooltip>
-	                	<md-icon ng-hide="large_screen">
+	                	<md-icon hide-gt-md>
 	                		<ng-md-icon ng-show="ctrl.isBrokerConnected()" icon="highlight_remove"></ng-md-icon>
 	                		<ng-md-icon ng-hide="ctrl.isBrokerConnected()" icon="input"></ng-md-icon>
 	                	</md-icon>
-	                	<span ng-show="large_screen">
+	                	<span hide show-gt-md>
 	                		<span ng-show="ctrl.isBrokerConnected()">Disconnect</span>
 							<span ng-hide="ctrl.isBrokerConnected()">Connect</span>
 	                	</span>                                                
@@ -45,22 +45,22 @@
 	                
 	                <md-icon hide-xs hide-sm hide-md ng-if="$index === 0"><ng-md-icon icon="settings_ethernet"></ng-md-icon></md-icon>
 	                
-	                <div flex-sm="75" class="md-list-item-text" ng-class="{'md-offset': $index !== 0 && large_screen}">
+	                <div flex-sm="75" class="md-list-item-text" ng-class="{'md-offset': $index !== 0 && $mdMedia('gt-md')}">
 	                    <h3>{{::protocol.getType()}}</h3>
 	                    <p>{{::protocol.getName()}}</p>
 	                </div>
 	                
 	                <div layout="row" flex-sm="25" layout-sm="row" layout-align-sm="center end">
-		                <md-button class="md-primary" ng-class="large_screen ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.viewProtocolDetails($event, protocol)" aria-label="Details">
+		                <md-button class="md-primary" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.viewProtocolDetails($event, protocol)" aria-label="Details">
 		                	<md-tooltip>Details</md-tooltip>
-		                    <span ng-show="large_screen">Details</span>
-		                    <md-icon ng-hide="large_screen"><ng-md-icon icon="info"></ng-md-icon></md-icon>
+		                    <span hide show-gt-md>Details</span>
+		                    <md-icon hide-gt-md><ng-md-icon icon="info"></ng-md-icon></md-icon>
 		                </md-button>
 		                
-		                <md-button class="md-warn" ng-class="large_screen ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.closeProtocol(protocol)" aria-label="Disconnect">
+		                <md-button class="md-warn" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.closeProtocol(protocol)" aria-label="Disconnect">
 		                	<md-tooltip>Disconnect</md-tooltip>
-		                	<span ng-show="large_screen">Disconnect</span>
-		                	<md-icon ng-hide="large_screen"><ng-md-icon icon="highlight_remove"></ng-md-icon></md-icon>
+		                	<span hide show-gt-md>Disconnect</span>
+		                	<md-icon hide-gt-md><ng-md-icon icon="highlight_remove"></ng-md-icon></md-icon>
 		                </md-button>
 	                </div>                
 	                
@@ -76,22 +76,22 @@
 	                
 	                <md-icon hide-sm hide-md ng-if="$index === 0"><ng-md-icon icon="settings_backup_restore"></ng-md-icon></md-icon>
 	                
-	                <div flex-sm="75" class="md-list-item-text" ng-class="{'md-offset': $index !== 0 && large_screen}">
+	                <div flex-sm="75" class="md-list-item-text" ng-class="{'md-offset': $index !== 0 && $mdMedia('gt-md')}">
 	                    <h3>{{::configuration.name}}</h3>
 	                    <p><span ng-repeat="(key, value) in configuration.parameters">{{::value}}</span></p>
 	                    <p title="{{configuration.last_connected}}">Last connected <span am-time-ago="configuration.last_connected"></span></p>
 	                </div>
 	                
 	                <div layout="row" flex-sm="25" layout-sm="row" layout-align-sm="center end">
-		                <md-button class="md-primary" ng-class="large_screen ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.openSavedProtocol(configuration)" aria-label="Connect">
+		                <md-button class="md-primary" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.openSavedProtocol(configuration)" aria-label="Connect">
 		                	<md-tooltip>Connect</md-tooltip>
-		                	<span ng-show="large_screen">Connect</span>
-		                	<md-icon ng-hide="large_screen"><ng-md-icon icon="input"></ng-md-icon></md-icon>
+		                	<span hide show-gt-md>Connect</span>
+		                	<md-icon hide-gt-md><ng-md-icon icon="input"></ng-md-icon></md-icon>
 		                </md-button>
-		                <md-button class="md-warn" ng-class="large_screen ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.deleteSavedProtocol(configuration)" aria-label="Delete">
+		                <md-button class="md-warn" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.deleteSavedProtocol(configuration)" aria-label="Delete">
 		                	<md-tooltip>Delete</md-tooltip>
-		                    <span ng-show="large_screen">Delete</span>
-		                    <md-icon ng-hide="large_screen"><ng-md-icon icon="delete"></ng-md-icon></md-icon>
+		                    <span hide show-gt-md>Delete</span>
+		                    <md-icon hide-gt-md><ng-md-icon icon="delete"></ng-md-icon></md-icon>
 		                </md-button>
 	                </div>
 	                

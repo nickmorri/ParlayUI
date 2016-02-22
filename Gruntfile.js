@@ -57,9 +57,6 @@ module.exports = function (grunt) {
 				'bower_components/angular-aria/angular-aria.js',
 				'bower_components/angular-material-icons/angular-material-icons.js',
 				'bower_components/angular-animate/angular-animate.js',
-				'bower_components/ace-builds/src/ace.js',
-				'bower_components/ace-builds/src/mode-python.js',
-				'bower_components/angular-ui-ace/ui-ace.js',
 				'bower_components/angular-mocks/angular-mocks.js',
 				'bower_components/es6-shim/es6-shim.js',
 				'bower_components/angular-recursion/angular-recursion.js',
@@ -75,7 +72,7 @@ module.exports = function (grunt) {
 			'compiledHtml': '<%= meta.tmp_destination %>/templates.js',
 			'htmlDirectives': getVendorItems(['directives'], ['parlay_components/**/directives/*.html']),
 			'htmlViews': 'parlay_components/**/views/*.html',
-			'commonFiles': ['images/logo.png', 'images/icon.png', 'bower_components/angular-material/angular-material.css', 'bower_components/ace-builds/src/mode-python.js', 'static_components/ng-websocket/ng-websocket.js', 'static_components/smoothie/smoothie.js'],
+			'commonFiles': ['images/logo.png', 'images/icon.png', 'bower_components/angular-material/angular-material.css', 'static_components/ng-websocket/ng-websocket.js', 'static_components/smoothie/smoothie.js'],
 			'stylesheets': getVendorItems(['stylesheets'], ['css/*.css'])
 		},
 		

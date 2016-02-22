@@ -33,6 +33,7 @@ module.exports = function (grunt) {
 	require('load-grunt-tasks')(grunt);
 	
 	// Load this Grunt task individually since it doesn't match the "grunt-*" pattern.
+    var mainBowerFiles = require('main-bower-files');
 	grunt.loadNpmTasks('main-bower-files');
 
 	grunt.initConfig({
@@ -48,31 +49,12 @@ module.exports = function (grunt) {
 			'doc_destination': 'doc',
 			'tmp_destination': 'tmp',
 			'coverage_destination': 'coverage',
-			'bowerComponents': [
-				'bower_components/angular/angular.js',
-				'bower_components/angular-messages/angular-messages.js',
-				'bower_components/angular-material/angular-material.js',
-				'bower_components/angular-material/angular-material-mocks.js',
-				'bower_components/angular-ui-router/release/angular-ui-router.js',
-				'bower_components/angular-aria/angular-aria.js',
-				'bower_components/angular-material-icons/angular-material-icons.js',
-				'bower_components/angular-animate/angular-animate.js',
-				'bower_components/angular-mocks/angular-mocks.js',
-				'bower_components/es6-shim/es6-shim.js',
-				'bower_components/angular-recursion/angular-recursion.js',
-				'bower_components/angular-notification/angular-notification.js',
-				'bower_components/moment/moment.js',
-				'bower_components/angular-moment/angular-moment.js',
-				'bower_components/angular-scroll-glue/src/scrollglue.js',
-				'bower_components/angular-order-object-by/src/ng-order-object-by.js'
-			],
-			'staticComponents': ['static_components/smoothie/smoothie.js'],
 			'mocks': getVendorItems (['mocks'], ['parlay_components/*/mocks/*.js']),
 			'tests': getVendorItems(['test'], ['parlay_components/*/test/*.js']),
 			'compiledHtml': '<%= meta.tmp_destination %>/templates.js',
 			'htmlDirectives': getVendorItems(['directives'], ['parlay_components/**/directives/*.html']),
 			'htmlViews': 'parlay_components/**/views/*.html',
-			'commonFiles': ['images/logo.png', 'images/icon.png', 'bower_components/angular-material/angular-material.css', 'static_components/ng-websocket/ng-websocket.js', 'static_components/smoothie/smoothie.js'],
+			'commonFiles': ['images/logo.png', 'images/icon.png'],
 			'stylesheets': getVendorItems(['stylesheets'], ['css/*.css'])
 		},
 		
@@ -189,7 +171,7 @@ module.exports = function (grunt) {
 			'coverage': {
 				'path': function () {
 					var reports = grunt.file.expand('coverage/PhantomJS*/index.html');
-					return reports[reports.length - 1].toString();
+                    return reports[reports.length - 1].toString();
 				}
 			}
 		},
@@ -202,8 +184,7 @@ module.exports = function (grunt) {
 				'options': {
 					'reporters': ['progress'],
 					'files': [
-			            '<%= meta.bowerComponents %>',
-			            '<%= meta.staticComponents %>',
+                        mainBowerFiles(),
 			            '<%= meta.compiledHtml %>',
 			            '<%= meta.source %>',
 			            '<%= meta.mocks %>',
@@ -216,8 +197,7 @@ module.exports = function (grunt) {
 				'options': {
 					'reporters': ['progress'],					
 					'files': [
-			            '<%= meta.bowerComponents %>',
-			            '<%= meta.staticComponents %>',
+                        mainBowerFiles(),
 			            '<%= meta.dist_destination %>/<%= pkg.namelower %>.min.js',
 			            '<%= meta.mocks %>',
 			            '<%= meta.tests %>'
@@ -237,8 +217,7 @@ module.exports = function (grunt) {
 			            'dir': '<%= meta.coverage_destination %>'
 					},
 					'files': [
-			            '<%= meta.bowerComponents %>',
-			            '<%= meta.staticComponents %>',
+                        mainBowerFiles(),
 			            '<%= meta.compiledHtml %>',
 			            '<%= meta.source %>',
 			            '<%= meta.mocks %>',

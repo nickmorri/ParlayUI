@@ -35,7 +35,7 @@ function ParlayNavigationSidenavController($mdSidenav, $mdDialog, $mdMedia, Prom
 	};
 
 	this.openHelpTab = function () {
-		window.open("http://" + window.location.hostname +  ":" + window.location.port + "/help", '_blank').focus();
+		window.open(window.location.origin + "/docs", '_blank').focus();
 	};
 
 	this.openSettingsDialog = function (event) {

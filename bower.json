@@ -18,5 +18,8 @@
     "angular-order-object-by": "~1.2.1",
     "angular": "^1.5.0",
     "smoothie": "^1.27.0"
+  },
+  "resolutions": {
+    "angular": "^1.5.0"
   }
 }

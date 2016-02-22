@@ -73,8 +73,9 @@ function collectMessage(message, for_statement) {
  */
 function buildPythonCommand(item_name, message) {
 
-    var var_name = "e_" + item_name.replace(" ", "_");
-    var setup = var_name + " = self.get_item_by_name('" + item_name + "')";
+	// Replace all spaces in the item name with underscores.
+    var var_name = "e_" + item_name.replace(/\s+/g, "_");
+    var setup = var_name + " = get_item_by_name('" + item_name + "')";
 
     // If we are given an empty message return only the setup
     if (!message) {

@@ -3,7 +3,7 @@
 	<md-toolbar class="md-hue-2">
 		<div class="md-toolbar-tools">
 
-			<h3>Command Builder</h3>
+			<h5>Command Builder</h5>
 
 			<span flex></span>
 
@@ -42,7 +42,7 @@
     <md-toolbar class="md-hue-2">
         <div class="md-toolbar-tools">
 
-            <h3>Script Builder</h3>
+            <h5>Script Builder</h5>
 
             <span flex></span>
 
@@ -66,7 +66,7 @@
     <md-toolbar class="md-hue-2">
         <div class="md-toolbar-tools">
 
-            <h3>Response Contents</h3>
+            <h5>Response Contents</h5>
 
             <span flex></span>
 
@@ -88,42 +88,27 @@
         <div ng-show="ctrl.responses.length" layout="column">
 
             <div layout="row" layout-align="start center" class="parlay-response-contents-body">
-
                 <p flex="15" class="md-body-2">MSG ID</p>
-
                 <span flex="5"></span>
-
                 <p flex ng-hide="response.received" class="md-body-2">Contents</p>
-
                 <span flex="5"></span>
-
                 <p class="md-body-2">Received</p>
-
             </div>
 
             <div ng-repeat="response in ctrl.responses">
-
                 <div layout="row" layout-align="start center" class="parlay-response-contents-body">
-
                     <p flex="15" class="md-body-1">{{response.MSG_ID}}</p>
-
                     <span flex="5"></span>
-
                     <p flex ng-hide="response.received" class="md-body-1">Waiting for response..</p>
-
                     <p flex ng-show="response.received" class="md-body-1 parlay-response-contents-key-values" ng-repeat="(key, value) in response.message.CONTENTS">
                         {{key}} = {{value}}
                     </p>
-
                     <span flex="5"></span>
-
                     <md-icon ng-md-icon icon="check" ng-show="response.received"></md-icon>
-
                     <md-progress-circular ng-hide="response.received" md-mode="indeterminate" md-diameter="30px"></md-progress-circular>
-
                 </div>
-
             </div>
+
         </div>
 
         <div ng-hide="ctrl.responses.length">

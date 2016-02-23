@@ -132,23 +132,26 @@ module.exports = function (grunt) {
 	    'watch': {
 		    'scripts': {
 			    'options': {
-				    'livereload': true
+				    'livereload': true,
+                    'interrupt': true
 				},
 				'files': ['<%= meta.source %>', '<%= meta.vendorComponents %>'],
 				'tasks': ['newer:jshint:dev', 'karma:dev', 'newer:copy:dev']
 			},
 			'stylesheets': {
 	        	'options': {
-					'debounceDelay': 10,
-					'livereload': true
+					'debounceDelay': 0,
+					'livereload': true,
+                    'spawn': false
 				},
 				'files': '<%= meta.stylesheets %>',
 				'tasks': ['newer:csslint:dev', 'cssmin:dev']
 			},
 			'html': {
 	        	'options': {
-					'debounceDelay': 10,
-					'livereload': true
+					'debounceDelay': 0,
+					'livereload': true,
+                    'spawn': false
 				},
 				'files': ['<%= meta.htmlDirectives %>', '<%= meta.htmlViews %>', 'index.html'],
 				'tasks': ['newer:html2js', 'newer:copy']

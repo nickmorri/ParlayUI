@@ -356,7 +356,7 @@ module.exports = function (grunt) {
 	    'watch'
 	]);
 
-	grunt.registerTask('test', 'Lints and tests JavaScript files.', ['jshint', 'karma:dev']);
+	grunt.registerTask('test', 'Lints and tests JavaScript files.', ['jshint', 'html2js', 'karma:dev']);
 	
 	grunt.registerTask('coverage', 'Generates and opens test coverage.', ['karma:coverage', 'open:coverage'])
 

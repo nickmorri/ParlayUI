@@ -46,7 +46,6 @@ module.exports = function (grunt) {
 			'vendorComponents': getVendorItems(['protocols', 'items']),
 			'dist_destination': 'dist',
 			'dev_destination': 'dev',
-			'doc_destination': 'doc',
 			'tmp_destination': 'tmp',
 			'coverage_destination': 'coverage',
 			'mocks': getVendorItems (['mocks'], ['parlay_components/*/mocks/*.js']),
@@ -262,7 +261,6 @@ module.exports = function (grunt) {
 		'clean': {
 			'dist': '<%= meta.dist_destination %>',
 			'dev': '<%= meta.dev_destination %>',
-			'doc': '<%= meta.doc_destination %>',
 			'tmp': '<%= meta.tmp_destination %>',
 			'coverage': '<%= meta.coverage_destination %>'
 		},

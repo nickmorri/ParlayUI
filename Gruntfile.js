@@ -350,6 +350,7 @@ module.exports = function (grunt) {
 	    'karma:dev',
 	    'processhtml:dev',
 	    'wiredep:dev',
+        'clean:tmp',
 	    'express:dev',
 	    'open:server',
 	    'watch'
@@ -372,7 +373,8 @@ module.exports = function (grunt) {
 	    'copy:dist',
 	    'cssmin:dist',
 	    'processhtml:dist',
-	    'wiredep:dist'
+	    'wiredep:dist',
+        'clean:tmp'
 	]);
 
 	grunt.registerTask('build', ['dist']);

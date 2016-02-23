@@ -14,6 +14,6 @@ function ParlayNavigationContainer () {
     };
 }
 
-angular.module("parlay.navigation.container", ["parlay.navigation.sidenav"])
+angular.module("parlay.navigation.container", ["ngMaterial", "parlay.navigation.sidenav"])
     .controller("ParlayNavigationContainerController", ["$mdSidenav", ParlayNavigationContainerController])
     .directive("parlayNavigationContainer", [ParlayNavigationContainer]);

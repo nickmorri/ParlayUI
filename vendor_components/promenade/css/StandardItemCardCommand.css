@@ -2,7 +2,7 @@
     white-space: pre-line;
     overflow-x: scroll;
 }
-.parlay-response-contents-body > * {
+.parlay-response-contents-body > p, span {
     padding-top: 0;
     padding-bottom: 0;
     margin-top: 0;

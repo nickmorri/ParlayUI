@@ -10,7 +10,7 @@
     "url": "promenade-build:PromenadeCommon/Parlay"
   },
   "scripts": {
-    "postinstall": "grunt build"
+    "postinstall": "bower install && grunt build"
   },
   "devDependencies": {
     "bower": "latest",

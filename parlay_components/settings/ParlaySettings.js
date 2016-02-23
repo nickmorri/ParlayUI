@@ -1,33 +1,30 @@
 function ParlaySettingsFactory (ParlayStore) {
 
     var store = ParlayStore("settings");
-    store.moveItemToSession("autosave");
 
     function ParlaySettings () {
-        if (!store.hasSessionItem("discovery_settings")) {
+        if (!store.has("discovery_settings")) {
             this.setDiscoverySettings({auto_discovery: true});
         }
-        if (!store.hasSessionItem("log_settings")) {
+        if (!store.has("log_settings")) {
             this.setLogSettings({max_size: 10000});
         }
     }
 
     ParlaySettings.prototype.getDiscoverySettings = function () {
-        return store.getSessionItem("discovery_settings");
+        return store.get("discovery_settings");
     };
 
     ParlaySettings.prototype.setDiscoverySettings = function (settings) {
-        store.setSessionItem("discovery_settings", settings);
-        store.moveItemToLocal("autosave");
+        store.set("discovery_settings", settings);
     };
 
     ParlaySettings.prototype.getLogSettings = function () {
-        return store.getSessionItem("log_settings");
+        return store.get("log_settings");
     };
 
     ParlaySettings.prototype.setLogSettings = function (settings) {
-        store.setSessionItem("log_settings", settings);
-        store.moveItemToLocal("autosave");
+        store.set("log_settings", settings);
     };
 
     return new ParlaySettings();

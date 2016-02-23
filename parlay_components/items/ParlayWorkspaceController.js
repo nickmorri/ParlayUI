@@ -1,7 +1,7 @@
 function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, ParlayNotification, ParlayStore, ParlayItemManager, PromenadeBroker) {
 
     function getWorkspaces() {
-        var workspaces = store.getLocalValues();
+        var workspaces = store.values();
         return Object.keys(workspaces).map(function (key) {
             return workspaces[key];
         }).map(function (workspace) {
@@ -60,7 +60,6 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
      */
     this.clearCurrentWorkspace = function () {
         ParlayItemManager.clearActiveItems();
-        store.clearSession();
     };
 
     /**
@@ -68,7 +67,7 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
      * @param {Object} workspace - Workspace container Object.
      */
     this.saveWorkspace = function (workspace) {
-        store.moveItemToLocal(workspace.name);
+        ParlayItemManager.saveWorkspace(workspace);
         saved_workspaces = getWorkspaces();
         ParlayNotification.show({content: "Saved '" + workspace.name + "' workspace."});
     };
@@ -82,7 +81,6 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
         this.clearCurrentWorkspace();
 
         function load() {
-            store.moveItemToSession(workspace.name);
             if (ParlayItemManager.loadWorkspace(workspace))
                 ParlayNotification.show({content: "Restored workspace from " + workspace.name + "."});
             else
@@ -100,7 +98,7 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
      * @param {Object} workspace - Workspace container Object.
      */
     this.deleteWorkspace = function (workspace) {
-        store.removeLocalItem(workspace.name);
+        store.remove(workspace.name);
         saved_workspaces = getWorkspaces();
         ParlayNotification.show({content: "Deleted '" + workspace.name + "' workspace."});
     };
@@ -125,7 +123,7 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
             .ok('Clear all workspaces')
             .cancel('Close');
         $mdDialog.show(confirm).then(function () {
-            store.clearLocal();
+            store.clear();
             saved_workspaces = getWorkspaces();
             ParlayNotification.show({content: "Cleared all saved workspaces."});
         });

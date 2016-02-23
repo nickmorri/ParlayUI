@@ -153,9 +153,18 @@ module.exports = function (grunt) {
 					'livereload': true,
                     'spawn': false
 				},
-				'files': ['<%= meta.htmlDirectives %>', '<%= meta.htmlViews %>', 'index.html'],
+				'files': ['<%= meta.htmlDirectives %>', '<%= meta.htmlViews %>'],
 				'tasks': ['newer:html2js', 'newer:copy']
 			},
+            'index': {
+                'options': {
+                    'debounceDelay': 0,
+                    'livereload': true,
+                    'spawn': false
+                },
+                'files': ['index.html'],
+                'tasks': ['processhtml:dev', 'wiredep:dev']
+            },
 			'tests': {
 	        	'files': '<%= meta.tests %>',
 				'tasks': 'karma:dev'

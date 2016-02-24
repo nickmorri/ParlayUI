@@ -17,7 +17,7 @@ function PromenadeStandardItemCardGraphTabController($scope, $mdDialog, $interva
     var directive_name = 'parlayItemCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
 
     // Persist enabled streams across workspaces.
-    ParlayPersistence(directive_name, "ctrl.enabled_streams", $scope);
+    ParlayPersistence.monitor(directive_name, "ctrl.enabled_streams", $scope);
 
     this.streamColors = [];
 

@@ -151,9 +151,9 @@ function ParlayItemCard($compile, ParlayPersistence) {
 			};
 
             // Using ParlayPersistence we will first attempt to restore these values then we will record them to ParlayStore.
-            ParlayPersistence(directive_name, "$index", scope);
-            ParlayPersistence(directive_name, "active_tab_index", scope);
-            ParlayPersistence(directive_name, "active_directives", scope);
+            ParlayPersistence.monitor(directive_name, "$index", scope);
+            ParlayPersistence.monitor(directive_name, "active_tab_index", scope);
+            ParlayPersistence.monitor(directive_name, "active_directives", scope);
 
             /**
 	         * Compiles the toolbar set on the item.

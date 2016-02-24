@@ -292,7 +292,7 @@ function PromenadeStandardItemCardCommandContainer(RecursionHelper, ParlayPersis
 		    var uuid = 0; // unique index for chip objects so that even chips with the same value will be 'unique'
             var max_safe_int = 9007199254740990; // per the ECMAScript2015 spec
 
-		    ParlayPersistence(directive_name, "wrapper.message", $scope);
+		    ParlayPersistence.monitor(directive_name, "wrapper.message", $scope);
 
 	        /**
 		     * Packages $mdChip object for insertion into message.

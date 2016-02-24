@@ -1,115 +1,191 @@
 function ParlayPersistenceFactory(ParlayStore) {
-	
-	var store = ParlayStore("items");
-	
-	/**
-	 * Returns the attribute from the ParlayStore.
-	 * @param {String} directive - Name of the directive we are interested in.
-	 * @param {String} attribute - Name of the attribute we are interested in.
-	 * @returns {Object} - Requested attribute from ParlayStore.
-	 */
-	function getAttr(directive, attribute) {
-		var container = store.getSessionItem(directive.replace(' ', '_'));
-		return container !== undefined && container.hasOwnProperty(attribute) ? container[attribute] : undefined;
-    }
-	
-	/**
-	 * Given a key that belongs to the given scope search for the parent that belongs to the key.
-	 * Example: 'message.data.speed' returns the data Object on message.
-	 * @param {Object} parent - Object or Angular scope to search for the parent of the key on.
-	 * @param {String} key - Name of a potentially nested attribute whose parent we are looking for.
-	 */
-	function find_parent(key, parent) {
-		var split_key = key.split('.');
-		if (split_key.length === 1 && parent.hasOwnProperty(split_key[0])) return parent;
-		else if (split_key.length > 1 && parent.hasOwnProperty(split_key[0])) return find_parent(split_key.slice(1).join('.'), parent[split_key[0]]);
-		else return undefined;
-	}
-	
-	/**
-	 * Given a key and a base scope we will search up the scope tree looking for the scope that has our scope object.
-	 * @param {String} key - attribute we are searching for on the scope/
-	 * @param {Object} scope - Angular scope to search for the key on.
-	 */
-	function find_scope(key, scope) {
-		var scope_attribute = key.split('.')[0];
-		if (scope === undefined) return undefined;
-		else if (scope.hasOwnProperty(scope_attribute)) return scope;
-		else if (scope.hasOwnProperty("$parent")) return find_scope(key, scope.$parent);
-		else return undefined;
-	}
-	
-	/**
-     * Handles restoring the directive's attribute on the given scope from ParlayStore.
-     * @param {String} directive - Name of the directive we are interested in.
-	 * @param {String} attribute - Name of the attribute we are interested in.
-	 * @param {Object} scope - Angular $scope object relevant to the attributes to restore.
-     */
-	function restoreAttr(directive, attribute, scope) {
-		var split_key = attribute.split('.');
-		var previous_value = getAttr(directive, attribute);
-		if (previous_value) {
-			find_parent(attribute, find_scope(attribute, scope))[split_key[split_key.length - 1]] = previous_value;
-		}
-	}
-	
-	/**
-	 * Returns a function that records the attribute in the ParlayStore.
-	 * @param {String} directive - Name of the directive we are interested in.
-	 * @param {String} attribute - Name of the attribute we are interested in.
-	 * @returns {Function} - A function with with directive and attribute variables in it's closure.
-	 */
-	function setAttr(directive, attribute) {
-        return function setAttr(value) {
-	        var container = store.getSessionItem(directive.replace(' ', '_'));
-	        if (container === undefined) container = {};	
-	        container[attribute] = value;	        
-			store.setSessionItem(directive.replace(' ', '_'), container);            
-        };
-    }
-	
-	/**
-	 * Returns a function that will remove the directive from ParlayStore.
-	 * @param {String} directive - Name of the directive we are interested in.
-	 * @returns {Function} - A function with directive in it's closure. 
-	 */
-    function removeDirective(directive) {
-		return function removeDirective() {
-			store.removeSessionItem(directive.replace(' ', '_'));
-		};
-	}
-	
-	/**
-	 * Restores then monitors the requested attribute to the from and to the given directive on the scope passed in.
-	 * @example
-	 * // ParlayPersistence('parlayItemCard.motor5', 'voltage', $scope); 
-	 * Returns the attribute from the ParlayStore.
-	 * @param {String} directive - Name of the directive we are interested in.
-	 * @param {String} attribute - Name of the attribute we are interested in.
-	 * @param {Object} scope - Angular $scope object relevant to the attributes to persist.
-	 * @returns {Object} - Requested attribute from ParlayStore.
-	 */
-	return function monitor(directive, attribute, scope) {
-			
-		function onChange() {
-			// Once we have been notified that the attribute has appeared we should remove this watcher.
-			initial_watcher();
-			
-			// Attempt to restore a previously saved value.
-			restoreAttr(directive, attribute, scope);
-			
-			// Register our permenant watcher on the attribute.
-			// NOTE: We are using Angular's deep equality $watch here, this may have a performance hit. May want to do some profiling here.
-			scope.$watch(attribute, setAttr(directive, attribute), true);
 
-			// When the scope is destroyed we should ensure that we remove our directive from sessionStorage.
-			scope.$on("$destroy", removeDirective(directive));
-		}
-		
-		// We setup an initial watcher to wait until the attribute appears on the scope.
-		var initial_watcher = scope.$watch(attribute, onChange);
+    /**
+     * Given a key that belongs to the given scope search for the parent that belongs to the key.
+     * Example: 'message.data.speed' returns the data Object on message.
+     * @param {Object} parent - Object or Angular scope to search for the parent of the key on.
+     * @param {String} key - Name of a potentially nested attribute whose parent we are looking for.
+     */
+    function find_parent(key, parent) {
+        var split_key = key.split('.');
+        if (parent === undefined || parent === null) return undefined;
+        else if (split_key.length === 1 && parent.hasOwnProperty(split_key[0])) return parent;
+        else if (split_key.length > 1 && parent.hasOwnProperty(split_key[0])) return find_parent(split_key.slice(1).join('.'), parent[split_key[0]]);
+        else return undefined;
+    }
+
+    /**
+     * Given a key and a base scope we will search up the scope tree looking for the scope that has our scope object.
+     * @param {String} key - attribute we are searching for on the scope/
+     * @param {Object} scope - Angular scope to search for the key on.
+     */
+    function find_scope(key, scope) {
+        var scope_attribute = key.split('.')[0];
+        if (scope === undefined || scope === null) return undefined;
+        else if (scope.hasOwnProperty(scope_attribute)) return scope;
+        else if (scope.hasOwnProperty("$parent")) return find_scope(key, scope.$parent);
+        else return undefined;
+    }
+
+    function ParlayPersistence() {
+
+        // Holds key/value pairs where the value is an Object that contains the directive name, attribute name and
+        // a reference to the $scope object where the attribute resides.
+        this.registrations = {};
+
+        // Reference to items namespace ParlayStore.
+        this.items_store = ParlayStore("items");
+
+    }
+
+    /**
+     * Establishes an registration that will store the requested value when the workspace is saved.
+     * @param {String} directive - Name of the directive where the requested attribute is to persisted.
+     * @param {String} attribute - Name of the attribute that has been requested for persistence.
+     * @param (AngularJS $scope} $scope - $scope Object where the requested attribute resides.
+     * @returns {Function} - Deregistration function, will remove the registration established by the monitor request.
+     */
+    ParlayPersistence.prototype.monitor = function (directive, attribute, $scope) {
+
+        // Register an Object with the directive name, attribute and $scope.
+        this.registrations[directive + "{" + attribute + "}"] = {
+            directive: directive,
+            attribute: attribute,
+            $scope: $scope
+        };
+
+        // On $scope $destroy remove the Object registered.
+        $scope.$on("$destroy", function () {
+            this.remove(directive, attribute);
+        }.bind(this));
+
+        /**
+         * When the directive requests to monitor an attribute we will also attempt to restore any value that has been
+         * store on the container Object from a restored workspace.
+         */
+        function restore() {
+            // Object that may contain values that have been previously stored.
+            var stored_values = find_scope('container', $scope).container.stored_values;
+
+            // If stored values exist and the attribute requested for persistence is available we should attempt to
+            // set the value on the given $scope object to the previously stored value.
+            if (stored_values !== undefined && stored_values[attribute] !== undefined) {
+
+                var split_key = attribute.split(".");
+
+                // Search for the $scope Object where the attribute exists.
+                var relevant_scope = find_parent(attribute, find_scope(attribute, $scope));
+
+                // If a $scope Object exists with the given attribute we should set the value to the stored value.
+                if (relevant_scope) {
+                    relevant_scope[split_key[split_key.length - 1]] = stored_values[attribute];
+                }
+                // If a $scope value doesn't exist we will set the attribute on the given $scope Object.
+                else {
+                    $scope[attribute] = stored_values[attribute];
+                }
+
+                // Remove the stored value since restoration has been attempted.
+                delete stored_values[attribute];
+
+                // If all stored values have been removed then we can remove the stored values Object to tidy things up.
+                if (Object.keys(stored_values).length === 0) {
+                    delete find_scope('container', $scope).container.stored_values;
+                }
+
+            }
+        }
+
+        // Attempt to restore any stored values when the directive requests we monitor an attribute.
+        restore();
+
+        return function () {
+            this.remove(directive, attribute);
+        }.bind(this);
+    };
+
+    /**
+     *
+     * @param {String} directive - Name of the directive where a registration has been made.
+     * @param {String} attribute - Name of the attribute that was been requested for persistence.
+     */
+	ParlayPersistence.prototype.remove = function (directive, attribute) {
+        delete this.registrations[directive + "{" + attribute + "}"];
 	};
-	
+
+    /**
+     * Collects the current values of all attributes that are being monitored.
+     * @returns {Object} - Object that maps directive{attribute} = value
+     */
+    ParlayPersistence.prototype.collect = function () {
+        var directives = [];
+
+        Object.keys(this.registrations).forEach(function (key) {
+            if (directives.indexOf(this.registrations[key].directive) === -1) {
+                directives.push(this.registrations[key].directive);
+            }
+        }, this);
+
+        return directives.reduce(function (accumulator, directive) {
+            accumulator[directive] = this.collectDirective(directive);
+            return accumulator;
+        }.bind(this), {});
+    };
+
+    /**
+     * Collects the monitored attributes of the given directive.
+     * @param {String} directive - Name of the directive where a registration has been made.
+     * @returns {Object} - Object that maps attribute = value
+     */
+    ParlayPersistence.prototype.collectDirective = function (directive) {
+        return this.getRegistration(directive).reduce(function (accumulator, registration) {
+            var relevant_scope = find_parent(registration.attribute, find_scope(registration.attribute, registration.$scope));
+
+            var split_key = registration.attribute.split('.');
+
+            if (relevant_scope) {
+                accumulator[registration.attribute] = angular.copy(relevant_scope[split_key[split_key.length - 1]]);
+            }
+
+            return accumulator;
+        }, {});
+    };
+
+    /**
+     * Returns all attribute registrations for the given directive.
+     * @param {String} directive - Name of the directive where a registration has been made.
+     * @returns {Array} - Array of monitored attribute registrations.
+     */
+    ParlayPersistence.prototype.getRegistration = function (directive) {
+        return Object.keys(this.registrations).filter(function (key) {
+            return key.indexOf(directive) === 0;
+        }).map(function (key) {
+            return {
+                directive: this.registrations[key].directive.replace(' ', '_'),
+                attribute: this.registrations[key].attribute,
+                $scope: this.registrations[key].$scope
+            };
+        }, this);
+    };
+
+    /**
+     * Collects the monitored attributes and store them with ParlayStore using the given name.
+     * @param {String} name - Given workspace name.
+     */
+    ParlayPersistence.prototype.store = function (name) {
+        this.items_store.set(name, {
+            name: name,
+            timestamp: new Date(),
+            data: this.collect()
+        });
+
+    };
+
+    ParlayPersistence.prototype.autoSave = function () {
+        this.store("AutoSave");
+    };
+
+    return new ParlayPersistence();
 }
 
 angular.module('parlay.store.persistence', ['parlay.store'])

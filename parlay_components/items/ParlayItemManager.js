@@ -1,4 +1,4 @@
-function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager, ParlayStore, $window) {
+function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager, ParlayStore, ParlayPersistence, $window) {
 
     // Items currently active in the workspace.
     var active_items = [];
@@ -36,7 +36,7 @@ function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager, Parlay
 	 * Clears reference to active item object.
 	 */
     ParlayItemManager.prototype.clearActiveItems = function () {
-	    active_items = [];
+        active_items = [];
     };
     
     /**
@@ -73,11 +73,20 @@ function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager, Parlay
 	 * @param {ParlayItem} item - Reference to the item object we want to activate.
 	 * @param {Number} uid[optional] - If given a uid we will use the provided one. Otherwise we will randomly generate one.
 	 */
-    ParlayItemManager.prototype.activateItem = function (item, uid) {
-	    active_items.push({
-		    ref: item,
-		    uid: uid !== undefined ? uid : Math.floor(Math.random() * 1500)
-	    });
+    ParlayItemManager.prototype.activateItem = function (item, uid, stored_values, index) {
+
+        var container = {
+            ref: item,
+            uid: uid !== undefined ? uid : Math.floor(Math.random() * 1500),
+            stored_values: stored_values
+        };
+
+        if (index !== undefined) {
+            active_items.splice(index, 0, container);
+        }
+        else {
+            active_items.push(container);
+        }
     };
     
     /**
@@ -89,18 +98,8 @@ function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager, Parlay
 	    var new_uid = container.uid + Math.floor(Math.random() * 1500);
 	    
 	    var old_directive = 'parlayItemCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
-	    var new_directive = 'parlayItemCard.' + container.ref.name.replace(' ', '_') + '_' + new_uid;
-	    
-		// We should remove and Angular $ or $$ variables since they are generated.
-		var session_data = ParlayStore("items").getSessionItem(old_directive);
-		for (var key in session_data) {
-			if (key.indexOf('$') !== -1) {
-				delete session_data[key];
-			}
-		}
-	    
-	    ParlayStore("items").setSessionItem(new_directive, session_data);
-	    this.activateItem(container.ref, new_uid);
+
+        this.activateItem(container.ref, new_uid, ParlayPersistence.collectDirective(old_directive), index + 1);
     };
     
     /**
@@ -110,13 +109,24 @@ function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager, Parlay
     ParlayItemManager.prototype.deactivateItem = function (index) {
 	    active_items.splice(index, 1);
     };
+
+    /**
+     * Saves the items active in the workspace to a workspace with the given name.
+     * @param {Object} workspace - Workspace container Object.
+     */
+    ParlayItemManager.prototype.saveWorkspace = function (workspace) {
+        ParlayPersistence.store(workspace.name);
+    };
     
     /**
 	 * Loads items from the specified workspace.
 	 * @param {Workspace} workspace - Saved workspace to be loaded.
 	 */
 	ParlayItemManager.prototype.loadWorkspace = function (workspace) {
-		
+
+        // Clear the current workspace before attempting to load another.
+        this.clearActiveItems();
+
 		// Sort by the $index recorded from the previous session. This corresponds with the order that the cards will be loaded into the workspace.
 		var containers = Object.keys(workspace.data).sort(function (a, b) {
 			return workspace.data[a].$index > workspace.data[b].$index;
@@ -126,7 +136,8 @@ function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager, Parlay
 			var item_name = split_name.join(' ');			
 			return {
 				name: item_name,
-				uid: uid
+				uid: uid,
+                stored_values: workspace.data[key]
 			};
 		});
 		
@@ -139,7 +150,7 @@ function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager, Parlay
 			});
 			if (item !== undefined) {
 				loaded_items = true;
-				this.activateItem(item, container.uid);
+				this.activateItem(item, container.uid, container.stored_values);
 			}
 		}, this);
 		
@@ -152,12 +163,12 @@ function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager, Parlay
      */
 	ParlayItemManager.prototype.autoSave = function() {
 		if (this.hasActiveItems()) {
-            ParlayStore("items").moveItemToLocal('AutoSave', true);
+            ParlayPersistence.autoSave();
         }
 	};
 
 	return new ParlayItemManager();
 }
 
-angular.module('parlay.items.manager', ['parlay.protocols.manager', 'promenade.broker', 'parlay.store', 'parlay.items.workspaces'])
-	.factory('ParlayItemManager', ['PromenadeBroker', 'ParlayProtocolManager', 'ParlayStore', '$window', ParlayItemManagerFactory]);
+angular.module("parlay.items.manager", ["parlay.protocols.manager", "promenade.broker", "parlay.store", "parlay.store.persistence", "parlay.items.workspaces"])
+	.factory("ParlayItemManager", ["PromenadeBroker", "ParlayProtocolManager", "ParlayStore", "ParlayPersistence", "$window", ParlayItemManagerFactory]);

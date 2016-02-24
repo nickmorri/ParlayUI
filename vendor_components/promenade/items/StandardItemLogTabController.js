@@ -9,7 +9,7 @@ function PromenadeStandardItemCardLogTabController($scope, ParlayPersistence, Pa
 
 	var container = ParlayUtility.relevantScope($scope, 'container').container;
 	var directive_name = 'parlayItemCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
-	ParlayPersistence(directive_name, "filter_text", $scope);
+	ParlayPersistence.monitor(directive_name, "filter_text", $scope);
 }
 
 // Prototypically inherit from ParlayBaseTabController.

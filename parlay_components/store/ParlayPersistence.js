@@ -181,10 +181,6 @@ function ParlayPersistenceFactory(ParlayStore) {
 
     };
 
-    ParlayPersistence.prototype.autoSave = function () {
-        this.store("AutoSave");
-    };
-
     return new ParlayPersistence();
 }
 

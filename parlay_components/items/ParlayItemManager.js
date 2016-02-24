@@ -163,7 +163,7 @@ function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager, Parlay
      */
 	ParlayItemManager.prototype.autoSave = function() {
 		if (this.hasActiveItems()) {
-            ParlayPersistence.autoSave();
+            ParlayPersistence.store("AutoSave");
         }
 	};
 

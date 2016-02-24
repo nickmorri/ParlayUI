@@ -47,44 +47,38 @@
                 });
                 
     		});
+
+			describe("accessors", function () {
+
+                it("type", function () {
+                    expect(ParlayItem.getType()).toBe("ParlayItem");
+                });
+
+                it("get default directives", function () {
+                    expect(ParlayItem.getDefaultDirectives()).toEqual({toolbar:[], tabs:[]});
+                });
+
+                it("get available directives", function () {
+                    expect(ParlayItem.getAvailableDirectives()).toEqual({toolbar:[], tabs:[]});
+                });
+
+            });
+
+            describe("adds directives", function () {
+
+                it("adds available directives", function () {
+                    ParlayItem.addAvailableDirectives("toolbar", ["test1", "test2"]);
+                    expect(ParlayItem.getAvailableDirectives()).toEqual({toolbar:["test1", "test2"], tabs:[]});
+                });
+
+                it("adds default directives", function () {
+                    ParlayItem.addDefaultDirectives("toolbar", ["test1", "test2"]);
+                    expect(ParlayItem.getDefaultDirectives()).toEqual({toolbar:["test1", "test2"], tabs:[]});
+                });
+
+            });
     		
         });
-        
-        xdescribe('<parlay-item-card>', function () {
-        	var element, scope;
-        	
-        	beforeEach(inject(function($compile, $rootScope) {
-            	scope = $rootScope.$new();
-            	scope.container = {
-	            	ref: {
-		            	name: 'mockItem',
-		            	getDefaultDirectives: function () {
-				            return {
-					            toolbar: ["promenadeStandardItemCardToolbar"],
-					            tabs: ["parlayWidgetTab", "promenadeStandardItemCardCommands"]
-				            };
-			            },
-			            getAvailableDirectives: function () {
-				            return {
-					            toolbar: [],
-					            tabs: ["promenadeStandardItemCardCommands", "promenadeStandardItemCardLog", "promenadeStandardItemCardGraph"]
-				            };
-			            }
-			        }
-	            };
-            	element = $compile('<parlay-item-card></parlay-item-card')(scope);
-                $rootScope.$digest();
-        	}));
-        	
-        	it('inserts toolbar', function () {
-            	expect(element.find('promenade-standard-item-card-toolbar').length).toBe(1);
-        	});
-        	
-        	it('inserts tabs', function () {
-            	expect(element.find('promenade-standard-item-card-commands').length).toBe(1);
-        	});
-        	
-    	});
         
     });
     

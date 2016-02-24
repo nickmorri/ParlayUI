@@ -16,3 +16,19 @@
 .parlay-input-container {
 	margin-bottom: 5px;
 }
+
+promenade-standard-item-card-log-item > md-card > md-card-header > md-card-avatar {
+	cursor: pointer;
+}
+
+promenade-standard-item-card-log-item > md-card > md-card-header {
+    padding: 8px;
+}
+
+promenade-standard-item-card-log-item > md-card > md-card-content {
+    padding: 0;
+}
+
+promenade-standard-item-card-log-item > md-card > md-card-content > md-list {
+    padding: 0;
+}

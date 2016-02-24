@@ -38,7 +38,7 @@ function ParlayStoreService() {
          */
         Object.defineProperty(this, "length", {
             get: function () {
-                return this.getKeys().length;
+                return this.keys().length;
             }
         });
 

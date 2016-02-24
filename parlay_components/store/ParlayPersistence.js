@@ -27,6 +27,10 @@ function ParlayPersistenceFactory(ParlayStore) {
         else return undefined;
     }
 
+    /**
+     * Parlay service for persistence of directive $scope attributes to ParlayStore.
+     * @constructor
+     */
     function ParlayPersistence() {
 
         // Holds key/value pairs where the value is an Object that contains the directive name, attribute name and
@@ -99,13 +103,14 @@ function ParlayPersistenceFactory(ParlayStore) {
         // Attempt to restore any stored values when the directive requests we monitor an attribute.
         restore();
 
+		// Return a function that when called will remove the attribute registration.
         return function () {
             this.remove(directive, attribute);
         }.bind(this);
     };
 
     /**
-     *
+     * Removes the attribute registration for the given directive and attribute.
      * @param {String} directive - Name of the directive where a registration has been made.
      * @param {String} attribute - Name of the attribute that was been requested for persistence.
      */
@@ -117,7 +122,7 @@ function ParlayPersistenceFactory(ParlayStore) {
      * Collects the current values of all attributes that are being monitored.
      * @returns {Object} - Object that maps directive{attribute} = value
      */
-    ParlayPersistence.prototype.collect = function () {
+    ParlayPersistence.prototype.collectAll = function () {
         var directives = [];
 
         Object.keys(this.registrations).forEach(function (key) {
@@ -139,10 +144,12 @@ function ParlayPersistenceFactory(ParlayStore) {
      */
     ParlayPersistence.prototype.collectDirective = function (directive) {
         return this.getRegistration(directive).reduce(function (accumulator, registration) {
+            // Search for the $scope Object where the attribute exists.
             var relevant_scope = find_parent(registration.attribute, find_scope(registration.attribute, registration.$scope));
 
             var split_key = registration.attribute.split('.');
 
+            // If a $scope Object exists with the given attribute we should record the value.
             if (relevant_scope) {
                 accumulator[registration.attribute] = angular.copy(relevant_scope[split_key[split_key.length - 1]]);
             }
@@ -158,6 +165,7 @@ function ParlayPersistenceFactory(ParlayStore) {
      */
     ParlayPersistence.prototype.getRegistration = function (directive) {
         return Object.keys(this.registrations).filter(function (key) {
+            // Return only registrations that begin with the given directive name.
             return key.indexOf(directive) === 0;
         }).map(function (key) {
             return {
@@ -176,7 +184,7 @@ function ParlayPersistenceFactory(ParlayStore) {
         this.items_store.set(name, {
             name: name,
             timestamp: new Date(),
-            data: this.collect()
+            data: this.collectAll()
         });
 
     };

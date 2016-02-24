@@ -4,5 +4,5 @@
 <md-content flex layout-fill layout-wrap layout="row" layout-align="space-around start" class="md-padding">
     <parlay-empty-workspace-placeholder ng-hide="itemCtrl.hasItems()"></parlay-empty-workspace-placeholder>
 
-    <parlay-item-card flex-xs="100" flex-sm="100" flex-md="50" flex="33" ng-repeat="container in itemCtrl.filterItems() track by container.uid"></parlay-item-card>
+    <parlay-item-card flex-xs="100" flex-sm="100" flex-md="50" flex="33" draggable="true" ng-repeat="container in itemCtrl.filterItems() track by container.uid"></parlay-item-card>
 </md-content>

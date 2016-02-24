@@ -114,6 +114,16 @@ function ParlayItemCard($compile, ParlayPersistence) {
         templateUrl: "../parlay_components/items/directives/parlay-item-card.html",
         link: function (scope, element, attributes) {
 
+            element.on('dragstart', function () {
+                this.children[0].className = this.children[0].className.replace("md-whiteframe-2dp", "md-whiteframe-10dp");
+                this.children[0].style.opacity = '0.9';
+            });
+
+            element.on('dragend', function () {
+                this.children[0].className = this.children[0].className.replace("md-whiteframe-10dp", "md-whiteframe-2dp");
+                this.children[0].style.opacity = '1.0';
+            });
+
 	        // Grab the item reference from the container for convenience of using scope.item.
 	        scope.item = scope.container.ref;
 

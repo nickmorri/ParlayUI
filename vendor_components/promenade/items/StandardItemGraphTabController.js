@@ -81,26 +81,6 @@ function PromenadeStandardItemCardGraphTabConfigurationController($mdDialog) {
 	// When minValue or maxValue are defined we should initialize their lock to true.
 	this.minimum_locked = this.smoothie.options.minValue !== undefined;
 	this.maximum_locked = this.smoothie.options.maxValue !== undefined;
-	
-	/**
-	 * Launch a $mdDialog modal to configure the given stream Object.
-	 * @param {MouseEvent} $event - Used to create source for $mdDialog opening animation.
-	 * @param {Object} stream - Object that holds stream data and configuration.
-	 */
-	this.configureStream = function($event, stream) {
-		$mdDialog.show({
-			controller: "PromenadeStandardItemCardGraphTabStreamConfigurationController",
-			controllerAs: "ctrl",
-			locals: {
-				item: this.item,
-				stream: stream
-			},
-			bindToController: true,
-			templateUrl: "../vendor_components/promenade/items/directives/promenade-standard-item-card-graph-stream-configuration-dialog.html",
-			targetEvent: $event,
-			clickOutsideToClose: true
-		});
-	};
 
     /**
      * Toggles the streams between enabled and disabled. Requests or cancels stream depending on state.
@@ -132,13 +112,20 @@ function PromenadeStandardItemCardGraphTabConfigurationController($mdDialog) {
             }
         }
     };
+
+	this.updateRate = function(stream) {
+		this.item.requestStream(stream);
+	};
 	
 }
 
 /**
  * Toggles the state of the minimum lock. If we are removing lock we should remove the minValue from Smoothie options.
  */
-PromenadeStandardItemCardGraphTabConfigurationController.prototype.lockMinimum = function () {
+PromenadeStandardItemCardGraphTabConfigurationController.prototype.toggleMinimum = function () {
+
+    this.minimum_locked = !this.minimum_locked;
+
     // Occurs when user enables checkbox.
 	if (this.minimum_locked) {
         // We want to remove the y range function when the user explicitly sets value as these should not automatically
@@ -159,7 +146,10 @@ PromenadeStandardItemCardGraphTabConfigurationController.prototype.lockMinimum =
 /**
  * Toggles the state of the maximum lock. If we are removing lock we should remove the maxValue from Smoothie options.
  */
-PromenadeStandardItemCardGraphTabConfigurationController.prototype.lockMaximum = function () {
+PromenadeStandardItemCardGraphTabConfigurationController.prototype.toggleMaximum = function () {
+
+    this.maximum_locked = !this.maximum_locked;
+
     // Occurs when user enables checkbox.
 	if (this.maximum_locked) {
         // We want to remove the y range function when the user explicitly sets value as these should not automatically
@@ -182,28 +172,6 @@ PromenadeStandardItemCardGraphTabConfigurationController.prototype.isStreamEnabl
 };
 
 /**
- * Controller constructor for the stream configuration dialog.
- * @constructor
- * @param {Material Angular Service} $mdDialog - Dialog modal service.
- */
-function PromenadeStandardItemCardGraphTabStreamConfigurationController($mdDialog) {
-	this.hide = $mdDialog.cancel;
-
-	this.updateRate = function() {
-		this.item.requestStream(this.stream);
-	};
-
-	this.requestStream = function () {
-		this.item.requestStream(this.stream);
-	};
-
-	this.cancelStream = function () {
-		this.item.cancelStream(this.stream);
-	};
-	
-}
-
-/**
  * Constructor for the graph directive.
  * @returns {Object} - AngularJS directive object.
  */
@@ -222,5 +190,4 @@ function PromenadeStandardItemCardGraph() {
 angular.module('promenade.items.standarditem.graph', ["promenade.smoothiechart"])
 	.controller("PromenadeStandardItemCardGraphTabController", ["$scope", "$mdDialog", "$interval", "$mdMedia", "ParlayUtility", "ParlayPersistence", PromenadeStandardItemCardGraphTabController])
 	.controller("PromenadeStandardItemCardGraphTabConfigurationController", ["$mdDialog", "item", "enabled_streams", "smoothie", PromenadeStandardItemCardGraphTabConfigurationController])
-	.controller("PromenadeStandardItemCardGraphTabStreamConfigurationController", ["$mdDialog", "stream", PromenadeStandardItemCardGraphTabStreamConfigurationController])
 	.directive('promenadeStandardItemCardGraph', PromenadeStandardItemCardGraph);

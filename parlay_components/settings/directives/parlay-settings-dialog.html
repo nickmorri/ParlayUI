@@ -21,11 +21,7 @@
                     Automatically discover on startup <b>{{auto_discovery_message}}.</b>
                 </md-switch>
             </md-card-content>
-            <md-card-actions layout="row">
-                <md-button ng-click="ctrl.requestDiscovery()"><md-icon ng-md-icon icon="autorenew"></md-icon>
-                    Request Discovery
-                </md-button>
-                <span flex></span>
+            <md-card-actions layout="row" layout-align="end center">
                 <md-button ng-click="ctrl.saveDiscovery()"><md-icon ng-md-icon icon="file_download"></md-icon>
                     Save Discovery
                 </md-button>
@@ -36,6 +32,21 @@
                     <input id="discoveryInput" type="file" style="display: none;;" custom-on-change="ctrl.fileChanged" />
                 </md-button>
             </md-card-actions>
+        </md-card>
+
+        <md-card>
+            <md-toolbar class="md-hue-1">
+                <h2 class="md-toolbar-tools">Graph settings</h2>
+            </md-toolbar>
+            <md-card-content layout="column">
+                <div layout="row">
+                    <md-input-container flex="20" layout layout-align="center center">
+                        <label>Label size</label>
+                        <input flex type="number" ng-model="label_size" step="1" min="1" max="36" aria-label="Label font size">
+                    </md-input-container>
+                    <md-slider flex md-discrete ng-model="label_size" step="1" min="1" max="36" aria-label="Label font size"></md-slider>
+                </div>
+            </md-card-content>
         </md-card>
 
         <md-card>

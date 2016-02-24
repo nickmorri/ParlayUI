@@ -30,7 +30,7 @@
  * @param {AngularJS $scope} scope - A AngularJS $scope Object.
  * @param {AngularJS Service} $interval - AngularJS interval Service.
  */
-function PromenadeSmoothieChartController(scope, $interval) {
+function PromenadeSmoothieChartController(scope, $interval, ParlaySettings) {
 
     // Easy colors to see on most transparent backgrounds.
     this.colors = ["#000000", "#0433ff", "#aa7942", "#00fdff", "#00f900", "#ff40ff", "#ff9300", "#942192", "#ff2600", "#666633"];
@@ -93,12 +93,16 @@ function PromenadeSmoothieChartController(scope, $interval) {
      */
     this.updateStreamLine = function(stream) {
         // Skip appending an undefined stream value.
-        if (stream.value) {
+        if (stream.value !== undefined) {
             this.lines[stream.NAME].append(new Date().getTime(), stream.value);
         }
     }.bind(this);
 
     this.updateLines = function() {
+
+        // Update label size.
+        scope.smoothie.options.labels.fontSize = ParlaySettings.getGraphSettings().label_size;
+
         // Get an array of currently enabled streams.
         var enabled_streams = this.getEnabledStreams();
 
@@ -127,7 +131,7 @@ function PromenadeSmoothieChartController(scope, $interval) {
  * @param {AngularJS Service} $window - AngularJS Window Service.
  * @returns {Object} - Directive configuration.
  */
-function PromenadeSmoothieChart($window) {
+function PromenadeSmoothieChart($window, ParlaySettings) {
 
     /**
      * Returns Function with canvas element in closure.
@@ -187,7 +191,7 @@ function PromenadeSmoothieChart($window) {
                 },
                 labels: {
                     fillStyle: '#000000',
-                    fontSize: 12
+                    fontSize: ParlaySettings.getGraphSettings().label_size
                 }
             });
 
@@ -223,6 +227,6 @@ function PromenadeSmoothieChart($window) {
     };
 }
 
-angular.module("promenade.smoothiechart", [])
-    .controller("PromenadeSmoothieChartController", ["$scope", "$interval", PromenadeSmoothieChartController])
-    .directive('promenadeSmoothieChart', ['$window', PromenadeSmoothieChart]);
+angular.module("promenade.smoothiechart", ["parlay.settings"])
+    .controller("PromenadeSmoothieChartController", ["$scope", "$interval", "ParlaySettings", PromenadeSmoothieChartController])
+    .directive('promenadeSmoothieChart', ['$window', "ParlaySettings", PromenadeSmoothieChart]);

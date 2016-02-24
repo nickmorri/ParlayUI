@@ -69,35 +69,41 @@ function ParlayPersistenceFactory(ParlayStore) {
          */
         function restore() {
             // Object that may contain values that have been previously stored.
-            var stored_values = find_scope('container', $scope).container.stored_values;
+            var container_scope = find_scope('container', $scope);
 
-            // If stored values exist and the attribute requested for persistence is available we should attempt to
-            // set the value on the given $scope object to the previously stored value.
-            if (stored_values !== undefined && stored_values[attribute] !== undefined) {
+            if (container_scope !== undefined) {
+                var stored_values = container_scope.container.stored_values;
 
-                var split_key = attribute.split(".");
+                // If stored values exist and the attribute requested for persistence is available we should attempt to
+                // set the value on the given $scope object to the previously stored value.
+                if (stored_values !== undefined && stored_values[attribute] !== undefined) {
 
-                // Search for the $scope Object where the attribute exists.
-                var relevant_scope = find_parent(attribute, find_scope(attribute, $scope));
+                    var split_key = attribute.split(".");
 
-                // If a $scope Object exists with the given attribute we should set the value to the stored value.
-                if (relevant_scope) {
-                    relevant_scope[split_key[split_key.length - 1]] = stored_values[attribute];
-                }
-                // If a $scope value doesn't exist we will set the attribute on the given $scope Object.
-                else {
-                    $scope[attribute] = stored_values[attribute];
-                }
+                    // Search for the $scope Object where the attribute exists.
+                    var relevant_scope = find_parent(attribute, find_scope(attribute, $scope));
 
-                // Remove the stored value since restoration has been attempted.
-                delete stored_values[attribute];
+                    // If a $scope Object exists with the given attribute we should set the value to the stored value.
+                    if (relevant_scope) {
+                        relevant_scope[split_key[split_key.length - 1]] = stored_values[attribute];
+                    }
+                    // If a $scope value doesn't exist we will set the attribute on the given $scope Object.
+                    else {
+                        $scope[attribute] = stored_values[attribute];
+                    }
 
-                // If all stored values have been removed then we can remove the stored values Object to tidy things up.
-                if (Object.keys(stored_values).length === 0) {
-                    delete find_scope('container', $scope).container.stored_values;
+                    // Remove the stored value since restoration has been attempted.
+                    delete stored_values[attribute];
+
+                    // If all stored values have been removed then we can remove the stored values Object to tidy things up.
+                    if (Object.keys(stored_values).length === 0) {
+                        delete find_scope('container', $scope).container.stored_values;
+                    }
+
                 }
 
             }
+
         }
 
         // Attempt to restore any stored values when the directive requests we monitor an attribute.

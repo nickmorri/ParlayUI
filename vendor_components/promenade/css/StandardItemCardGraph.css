@@ -10,4 +10,9 @@
 .parlay-graph-configuration-dialog-content > .md-dialog-content > md-list > md-list-item > md-icon {
     margin-top: 0;
     margin-bottom: 0;
+    cursor: pointer;
+}
+
+.parlay-graph-configuration-dialog-content > .md-dialog-content > md-list > md-list-item {
+    cursor: default;
 }

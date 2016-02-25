@@ -138,7 +138,7 @@ function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager, Parlay
 		}).map(function (key) {
 			var split_name = key.split('.')[1].split('_');
 			var uid = parseInt(split_name.splice(split_name.length - 1, 1)[0], 10);
-			var item_name = split_name.join(' ');			
+			var item_name = split_name.join(' ');
 			return {
 				name: item_name,
 				uid: uid,
@@ -146,7 +146,8 @@ function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager, Parlay
 			};
 		});
 		
-		var loaded_items = false;
+		var loaded_items = [];
+        var failed_items = [];
 		
 		// Add each saved card to the workspace if their exists a valid available item.
 		containers.forEach(function (container) {
@@ -154,12 +155,18 @@ function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager, Parlay
 				return container.name === item.name;
 			});
 			if (item !== undefined) {
-				loaded_items = true;
+				loaded_items.push(container);
 				this.activateItem(item, container.uid, container.stored_values);
 			}
+            else {
+                failed_items.push(container);
+            }
 		}, this);
 		
-		return loaded_items;
+		return {
+            loaded_items: loaded_items,
+            failed_items: failed_items
+        };
 		
 	};
 

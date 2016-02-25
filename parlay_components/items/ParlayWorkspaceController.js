@@ -81,10 +81,28 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
         this.clearCurrentWorkspace();
 
         function load() {
-            if (ParlayItemManager.loadWorkspace(workspace))
-                ParlayNotification.show({content: "Restored workspace from " + workspace.name + "."});
-            else
-                ParlayNotification.show({content: "Unable to restore workspace from " + workspace.name + ". Ensure items have been discovered."});
+
+            var result = ParlayItemManager.loadWorkspace(workspace);
+
+            if (result.failed_items.length === 0) {
+                ParlayNotification.show({content: "Restored " + result.loaded_items.length + " items from " + workspace.name + " workspace."});
+            }
+            else {
+
+                var failed_item_names = "{"+ result.failed_items.map(function (container) {
+                    return container.name;
+                }).join(',') + "}";
+
+                var loaded_item_names = "{" + result.loaded_items.map(function (container) {
+                    return container.name;
+                }).join(',') + "}";
+
+                $mdDialog.show($mdDialog.alert({
+                    title: 'Workspace load did not complete successfully',
+                    textContent: loaded_item_names + ' loaded successfully. ' + failed_item_names + ' failed to load. Ensure that all protocols are connected.',
+                    ok: 'Dismiss'
+                }));
+            }
         }
 
         if (ParlayItemManager.hasDiscovered()) load();

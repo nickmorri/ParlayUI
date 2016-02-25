@@ -91,7 +91,7 @@ function PromenadeStandardItemCardGraphTabConfigurationController($mdDialog) {
             this.enabled_streams.push(stream.NAME);
 
             // If stream value currently undefined request the stream automatically.
-            if (!stream.value) {
+            if (stream.value === undefined) {
 				this.item.requestStream(stream);
             }
         }
@@ -99,7 +99,7 @@ function PromenadeStandardItemCardGraphTabConfigurationController($mdDialog) {
             this.enabled_streams.splice(this.enabled_streams.indexOf(stream.NAME), 1);
 
             // If stream value currently defined ask the user if they want to request the stream.
-            if (stream.value) {
+            if (stream.value !== undefined) {
                 // Ask the user if they'd like to cancel the stream as well.
                 $mdDialog.show($mdDialog.confirm()
                     .title("Cancel streaming " + stream.NAME + "?")

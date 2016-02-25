@@ -178,7 +178,7 @@ function PromenadeSmoothieChart($window, ParlaySettings) {
             scope.smoothie = new SmoothieChart(scope.config ? scope.config : {
                 yRangeFunction: function (range) {
                     // We want the minimum and maximum range to have some padding from the actual values.
-                    var padding = (range.min * 0.75);
+                    var padding = range.min !== 0 ? (range.min * 0.75) : 10;
                     return {
                         min: isNaN(range.min) ? range.min : range.min - padding,
                         max: isNaN(range.max) ? range.min : range.max + padding

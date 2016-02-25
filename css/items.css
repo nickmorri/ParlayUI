@@ -31,15 +31,6 @@ md-tab-content > div > md-toolbar {
 	min-height: 48px;
 }
 
-.parlay-command-container {
-	margin-top: 0;
-	margin-bottom: 0;
-}
-
-.parlay-command-container > md-select {
-	margin: inherit;
-}
-
 form > .parlay-item-card-tab-content > promenade-standard-item-card-command-container > span > md-input-container {
 	margin-bottom: 10px;
 }

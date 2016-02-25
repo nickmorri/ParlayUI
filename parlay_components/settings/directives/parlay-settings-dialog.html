@@ -38,14 +38,12 @@
             <md-toolbar class="md-hue-1">
                 <h2 class="md-toolbar-tools">Graph settings</h2>
             </md-toolbar>
-            <md-card-content layout="column">
-                <div layout="row">
-                    <md-input-container flex="20" layout layout-align="center center">
-                        <label>Label size</label>
-                        <input flex type="number" ng-model="label_size" step="1" min="1" max="36" aria-label="Label font size">
-                    </md-input-container>
-                    <md-slider flex md-discrete ng-model="label_size" step="1" min="1" max="36" aria-label="Label font size"></md-slider>
-                </div>
+            <md-card-content layout="row" layout-margin>
+                <md-input-container>
+                    <label>Label size</label>
+                    <input flex type="number" ng-model="label_size" step="1" min="6" max="36" aria-label="Label font size">
+                </md-input-container>
+                <md-slider flex md-discrete ng-model="label_size" step="1" min="6" max="36" aria-label="Label font size"></md-slider>
             </md-card-content>
         </md-card>
 

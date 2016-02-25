@@ -15,6 +15,15 @@
 
                 <md-subheader class="md-no-sticky">Y-Axis Range</md-subheader>
 
+                <md-list-item layout="row">
+                    <md-icon ng-md-icon icon="{{ctrl.maximum_locked ? 'check_box' : 'check_box_outline_blank'}}" options="{'rotation': 'none'}" ng-click="ctrl.toggleMaximum()"></md-icon>
+                    <md-input-container flex ng-switch="ctrl.maximum_locked">
+                        <label>Maximum range</label>
+                        <input ng-switch-when="false" ng-model="ctrl.smoothie.valueRange.max" type="number" disabled="true">
+                        <input ng-switch-when="true" ng-model="ctrl.smoothie.options.maxValue" type="number">
+                    </md-input-container>
+                </md-list-item>
+
 				<md-list-item layout="row">
                     <md-icon ng-md-icon icon="{{ctrl.minimum_locked ? 'check_box' : 'check_box_outline_blank'}}" options="{'rotation': 'none'}" ng-click="ctrl.toggleMinimum()"></md-icon>
                     <md-input-container flex ng-switch="ctrl.minimum_locked">
@@ -23,14 +32,6 @@
                         <input ng-switch-when="true" ng-model="ctrl.smoothie.options.minValue" type="number">
                     </md-input-container>
                 </md-list-item>
-                <md-list-item layout="row">
-                    <md-icon ng-md-icon icon="{{ctrl.maximum_locked ? 'check_box' : 'check_box_outline_blank'}}" options="{'rotation': 'none'}" ng-click="ctrl.toggleMaximum()"></md-icon>
-                    <md-input-container flex ng-switch="ctrl.maximum_locked">
-                        <label>Maximum range</label>
-                        <input ng-switch-when="false" ng-model="ctrl.smoothie.valueRange.max" type="number" disabled="true">
-                        <input ng-switch-when="true" ng-model="ctrl.smoothie.options.maxValue" type="number">
-                    </md-input-container>
-				</md-list-item>
 
             </md-list>
 

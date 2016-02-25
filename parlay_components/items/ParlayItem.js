@@ -221,6 +221,6 @@ function ParlayItemCard($compile, ParlayPersistence) {
     };
 }
 
-angular.module("parlay.items.item", ["ngMaterial", "ngMessages", "ngMdIcons", "templates-main", "parlay.store.persistence", "parlay.utility", "parlay.items.widgettab"])
+angular.module("parlay.items.item", ["ngMaterial", "ngMessages", "ngMdIcons", "templates-main", "parlay.store.persistence", "parlay.utility"])
 	.factory("ParlayItem", ParlayItemFactory)
 	.directive("parlayItemCard", ["$compile", "ParlayPersistence", ParlayItemCard]);

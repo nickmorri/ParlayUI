@@ -28,6 +28,11 @@ md-progress-linear .notification-progress {
 	margin-right: 10px;
 }
 
+/* Prevent outline from appearing on md-icon when used as button */
+md-icon:focus {
+    outline: none;
+}
+
 /* We only need top and bottom padding to align buttons with baseline */
 .md-button .md-icon-button {
     padding: 8px 0 8px 0;

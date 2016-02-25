@@ -1,4 +1,4 @@
-function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, ParlayErrorDialog) {
+function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, ParlayErrorDialog, $window, $mdDialog, ParlaySettings) {
 	"use strict";
 	
 	/**
@@ -171,6 +171,37 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
                 }
             });
 	    }.bind(this));
+
+        $window.addEventListener("beforeunload", function (event) {
+            var confirmation;
+
+            // If the Broker is currently connected we want to prompt the user to shutdown the Broker.
+            if (this.isConnected() && ParlaySettings.getBrokerSettings().show_prompt) {
+                confirmation = "Closing browser will not shut the Broker down. Are you sure you want to leave the page?";
+            }
+            // Otherwise we can just allow the browser windows to close.
+            else {
+                return null;
+            }
+
+            (event || $window.event).returnValue = confirmation;
+
+            // Ensure that a dialog is spawned if the user decides to remain on the page.
+            $timeout(function() {
+                var confirm = $mdDialog.confirm()
+                    .title('Would you like to shutdown the Broker?')
+                    .textContent('Navigating away or closing this webpage will not automatically shut the Broker down. ')
+                    .ok('Shut Broker down and close browser tab')
+                    .cancel('Dismiss');
+                $mdDialog.show(confirm).then(function() {
+                    // Will need to change this to Broker close command.
+                    this.disconnect();
+                    $window.close();
+                }.bind(this));
+            }.bind(this), 500);
+
+            return confirmation;
+        }.bind(this));
 	    
 	}
 	
@@ -259,5 +290,5 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
 	return new PromenadeBroker();
 }
 
-angular.module("promenade.broker", ["parlay.socket", "parlay.notification", "parlay.notification.error", "ngMaterial"])
-	.factory("PromenadeBroker", ["ParlaySocket", "$q", "$timeout", "ParlayNotification", "ParlayErrorDialog", PromenadeBrokerFactory]);
+angular.module("promenade.broker", ["parlay.socket", "parlay.notification", "parlay.notification.error", "parlay.settings", "ngMaterial"])
+	.factory("PromenadeBroker", ["ParlaySocket", "$q", "$timeout", "ParlayNotification", "ParlayErrorDialog", "$window", "$mdDialog", "ParlaySettings", PromenadeBrokerFactory]);

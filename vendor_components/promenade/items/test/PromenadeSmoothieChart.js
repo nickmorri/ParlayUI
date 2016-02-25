@@ -4,7 +4,22 @@
 	beforeEach(module("promenade.smoothiechart"));
 
     describe("<promenade-smoothie-chart>", function() {
-    
+        var mockParlaySettings;
+
+        beforeEach(function () {
+
+            mockParlaySettings = {
+                getGraphSettings: function () {
+                    return {label_size: 12};
+                }
+            };
+
+            module(function ($provide) {
+                $provide.value("ParlaySettings", mockParlaySettings);
+            });
+
+        });
+
     	describe("construction", function () {
 	    	var scope, element, controller, $compile, $controller, $rootScope;
 	    	
@@ -69,7 +84,7 @@
 				    fontFamily: 'monospace',
 				    precision: 2,
 				    fillStyle: '#000000',
-				    fontSize: 12
+				    fontSize: mockParlaySettings.getGraphSettings().label_size
 				});
 	    	});
 	    	

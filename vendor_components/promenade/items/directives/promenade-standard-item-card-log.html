@@ -10,24 +10,18 @@
 	</md-toolbar>
 
 	<md-input-container flex="100" ng-show="ctrl.getLog().length" class="filter-input-container" aria-label="Filter log messages">
-		<label>Filter</label>
+		<label>Filter on any value</label>
 		<input ng-model="ctrl.filter_text" type="text">
 	</md-input-container>
 
 
 	<md-content ng-show="ctrl.getLog().length" class="parlay-item-card-tab-content" layout="column" scroll-glue>
 
-		<!-- Good performance but off behavior on growing repeat source -->
 		<md-virtual-repeat-container style="height: 292px;">
 			<div md-virtual-repeat="message in ctrl.getFilteredLog(ctrl.filter_text)" md-auto-shrink>
                 <promenade-standard-item-card-log-item message="message"></promenade-standard-item-card-log-item>
 			</div>
 		</md-virtual-repeat-container>
-
-		<!-- Extreme performance impact but behvaior is correct -->
-        <!--<md-list>-->
-            <!--<promenade-standard-item-card-log-item ng-repeat="message in ctrl.getFilteredLog(ctrl.filter_text)" message="message"></promenade-standard-item-card-log-item>-->
-        <!--</md-list>-->
 
 	</md-content>
     

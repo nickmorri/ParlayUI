@@ -108,7 +108,8 @@
 		            };
 		            
 		            expect(ParlayItemManager.hasActiveItems()).toBeFalsy();
-		            ParlayItemManager.loadWorkspace(mockWorkspace);
+		            var result = ParlayItemManager.loadWorkspace(mockWorkspace);
+					expect(result.loaded_items.length).toBe(4);
 		            expect(ParlayItemManager.getActiveItemCount()).toBe(4);
 	            });
 	            
@@ -123,9 +124,34 @@
 		            };
 		            
 		            expect(ParlayItemManager.hasActiveItems()).toBeFalsy();
-		            ParlayItemManager.loadWorkspace(mockWorkspace);
+		            var result = ParlayItemManager.loadWorkspace(mockWorkspace);
+					expect(result.failed_items.length).toBe(4);
 		            expect(ParlayItemManager.hasActiveItems()).toBeFalsy();
 	            });
+
+                it("partially fails to load workspace", function () {
+
+                    var mockWorkspace = {
+                        data: {
+                            'test.Item1_1': {$index: 4},
+                            'test.Item2_2': {$index: 3},
+                            'test.Item3_3': {$index: 2},
+                            'test.Item4_4': {$index: 1},
+                            'test.Item5_5': {$index: 4},
+                            'test.Item6_6': {$index: 3},
+                            'test.Item7_7': {$index: 2},
+                            'test.Item8_8': {$index: 1}
+                        }
+                    };
+
+                    expect(ParlayItemManager.hasActiveItems()).toBeFalsy();
+                    var result = ParlayItemManager.loadWorkspace(mockWorkspace);
+                    expect(result.failed_items.length).toBe(4);
+                    expect(result.loaded_items.length).toBe(4);
+                    expect(ParlayItemManager.hasActiveItems()).toBeTruthy();
+                    expect(ParlayItemManager.getActiveItemCount()).toBe(4);
+
+                });
 	            
 	            it("AutoSaves stores values", function () {
 		    		expect(localStorage.length).toBe(0);

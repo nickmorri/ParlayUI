@@ -8,47 +8,44 @@
 			</md-button>
 		</div>
 	</md-toolbar>
-	<md-dialog-content>
-		<div class="md-dialog-content" layout="column">
-			<md-list>
+	<md-dialog-content class="parlay-graph-configuration-dialog-content">
+		<div class="md-dialog-content" layout-gt-sm="row" layout="column">
 
-				<md-subheader class="md-no-sticky">Label Size</md-subheader>
-
-				<md-list-item layout="row" flex>
-					<md-slider flex md-discrete ng-model="ctrl.smoothie.options.labels.fontSize" step="1" min="1" max="36" aria-label="Label font size"></md-slider>
-					<md-input-container flex="10" layout layout-align="center center">
-                        <label>Size</label>
-						<input flex type="number" ng-model="ctrl.smoothie.options.labels.fontSize" step="1" min="1" max="36" aria-label="Label font size">
-					</md-input-container>
-				</md-list-item>
+			<md-list flex flex-order="0" flex-order-gt-sm="1">
 
                 <md-subheader class="md-no-sticky">Y-Axis Range</md-subheader>
 
-				<md-list-item layout="row" flex>
-					<div layout flex="50">
-						<md-checkbox ng-model="ctrl.minimum_locked" ng-change="ctrl.lockMinimum()" aria-label="Lock minimum range"></md-checkbox>
-						<md-input-container flex ng-switch="ctrl.minimum_locked">
-							<label>Minimum range</label>
-							<input ng-switch-when="false" ng-model="ctrl.smoothie.valueRange.min" type="number" disabled="true">
-							<input ng-switch-when="true" ng-model="ctrl.smoothie.options.minValue" type="number">
-						</md-input-container>
-					</div>
-					<div layout flex="50">
-						<md-checkbox ng-model="ctrl.maximum_locked" ng-change="ctrl.lockMaximum()" aria-label="Lock maximum range"></md-checkbox>
-						<md-input-container flex ng-switch="ctrl.maximum_locked">
-							<label>Maximum range</label>
-							<input ng-switch-when="false" ng-model="ctrl.smoothie.valueRange.max" type="number" disabled="true">
-							<input ng-switch-when="true" ng-model="ctrl.smoothie.options.maxValue" type="number">
-						</md-input-container>
-					</div>
-				</md-list-item>
+                <md-list-item layout="row">
+                    <md-icon ng-md-icon icon="{{ctrl.maximum_locked ? 'check_box' : 'check_box_outline_blank'}}" options="{'rotation': 'none'}" ng-click="ctrl.toggleMaximum()"></md-icon>
+                    <md-input-container flex ng-switch="ctrl.maximum_locked">
+                        <label>Maximum range</label>
+                        <input ng-switch-when="false" ng-model="ctrl.smoothie.valueRange.max" type="number" disabled="true">
+                        <input ng-switch-when="true" ng-model="ctrl.smoothie.options.maxValue" type="number">
+                    </md-input-container>
+                </md-list-item>
+
+				<md-list-item layout="row">
+                    <md-icon ng-md-icon icon="{{ctrl.minimum_locked ? 'check_box' : 'check_box_outline_blank'}}" options="{'rotation': 'none'}" ng-click="ctrl.toggleMinimum()"></md-icon>
+                    <md-input-container flex ng-switch="ctrl.minimum_locked">
+                        <label>Minimum range</label>
+                        <input ng-switch-when="false" ng-model="ctrl.smoothie.valueRange.min" type="number" disabled="true">
+                        <input ng-switch-when="true" ng-model="ctrl.smoothie.options.minValue" type="number">
+                    </md-input-container>
+                </md-list-item>
+
+            </md-list>
+
+            <md-list flex flex-order="1" flex-order-gt-sm="0">
 
                 <md-subheader>Streams</md-subheader>
 				
-				<md-list-item ng-repeat="stream in ctrl.item.data_streams | orderObjectBy: 'NAME'" ng-click="ctrl.toggleStream(stream)">
-                    <md-icon ng-md-icon icon="{{ctrl.isStreamEnabled(stream) ? 'check_box' : 'check_box_outline_blank'}}" options="{'rotation': 'none'}"></md-icon>
-					<p>{{stream.NAME}} <span ng-show="stream.value">has value {{stream.value}}</span></p>
-					<md-icon class="md-secondary" ng-click="ctrl.configureStream($event, stream)" aria-label="Stream configuration"><ng-md-icon icon="settings"></ng-md-icon></md-icon>
+				<md-list-item ng-repeat="stream in ctrl.item.data_streams | orderObjectBy: 'NAME'" layout="row">
+                    <md-icon ng-md-icon icon="{{ctrl.isStreamEnabled(stream) ? 'check_box' : 'check_box_outline_blank'}}" options="{'rotation': 'none'}" ng-click="ctrl.toggleStream(stream)"></md-icon>
+					<p>{{stream.NAME}} <span ng-show="stream.value !== undefined">has value {{stream.value}}</span></p>
+                    <md-input-container flex="20">
+                        <label>Rate (Hz)</label>
+                        <input ng-model="stream.rate" type="number" minimum="0" step="1" ng-change="ctrl.updateRate(stream)">
+                    </md-input-container>
 				</md-list-item>
 				
 			</md-list>

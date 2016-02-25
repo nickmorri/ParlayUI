@@ -10,6 +10,13 @@
 	height: 48px;
 }
 
+/* Reduce padding between tabs and font size to allow more tabs to fit in toolbar */
+.parlay-item-card > md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item {
+    font-size: 12px;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
 md-tab-content > div > md-toolbar > .md-toolbar-tools {
 	height: 48px;
 }
@@ -23,15 +30,6 @@ md-tab-content > div > md-toolbar > .md-toolbar-tools {
 md-tab-content > div > md-toolbar {
 	height: 48px;
 	min-height: 48px;
-}
-
-.parlay-command-container {
-	margin-top: 0;
-	margin-bottom: 0;
-}
-
-.parlay-command-container > md-select {
-	margin: inherit;
 }
 
 form > .parlay-item-card-tab-content > promenade-standard-item-card-command-container > span > md-input-container {

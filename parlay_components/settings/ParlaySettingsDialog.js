@@ -4,10 +4,6 @@ function ParlaySettingsDialogController ($scope, $mdDialog, ParlaySettings, Prom
         $mdDialog.hide();
     };
 
-    this.requestDiscovery = function () {
-        PromenadeBroker.requestDiscovery(true);
-    };
-
     this.saveDiscovery = function () {
         var time = new Date();
         PromenadeBroker.getLastDiscovery().download("discovery_" + time.toISOString() + ".txt");
@@ -45,19 +41,30 @@ function ParlaySettingsDialogController ($scope, $mdDialog, ParlaySettings, Prom
 
     var discovery_settings = ParlaySettings.getDiscoverySettings();
     var log_settings = ParlaySettings.getLogSettings();
+    var graph_settings = ParlaySettings.getGraphSettings();
+    var broker_settings = ParlaySettings.getBrokerSettings();
 
-    $scope.auto_discovery = discovery_settings && discovery_settings.auto_discovery ? true : false;
-    $scope.max_log_size = parseInt(log_settings.max_size);
+    $scope.auto_discovery = discovery_settings && discovery_settings.auto_discovery;
+    $scope.max_log_size = log_settings && parseInt(log_settings.max_size);
+    $scope.label_size = graph_settings && parseInt(graph_settings.label_size);
+    $scope.show_prompt = broker_settings && broker_settings.show_prompt;
 
     $scope.notification_permission = !navigator.userAgent.includes("Edge") && Notification.permission === "granted";
 
     $scope.$watch("auto_discovery", function (newValue) {
-        $scope.auto_discovery_message = newValue ? "enabled" : "disabled";
         ParlaySettings.setDiscoverySettings({auto_discovery: newValue});
     });
 
     $scope.$watch("max_log_size", function (newValue) {
         ParlaySettings.setLogSettings({max_size: newValue});
+    });
+
+    $scope.$watch("label_size", function (newValue) {
+        ParlaySettings.setGraphSettings({label_size: newValue});
+    });
+
+    $scope.$watch("show_prompt", function (newValue) {
+        ParlaySettings.setBrokerSettings({show_prompt: newValue});
     });
 
 }

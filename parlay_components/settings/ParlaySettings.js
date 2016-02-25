@@ -12,6 +12,9 @@ function ParlaySettingsFactory (ParlayStore) {
         if (!store.has("graph_settings")) {
             this.setGraphSettings({label_size: 12});
         }
+        if (!store.has("broker_settings")) {
+            this.setGraphSettings({show_prompt: true});
+        }
     }
 
     ParlaySettings.prototype.getDiscoverySettings = function () {
@@ -36,6 +39,14 @@ function ParlaySettingsFactory (ParlayStore) {
 
     ParlaySettings.prototype.setGraphSettings = function (settings) {
         store.set("graph_settings", settings);
+    };
+
+    ParlaySettings.prototype.getBrokerSettings = function () {
+        return store.get("broker_settings");
+    };
+
+    ParlaySettings.prototype.setBrokerSettings = function (settings) {
+        store.set("broker_settings", settings);
     };
 
     return new ParlaySettings();

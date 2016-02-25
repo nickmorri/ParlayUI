@@ -1,11 +1,16 @@
-function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager, ParlayStore, ParlayPersistence, $window) {
+function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager, ParlayUtility, ParlayPersistence, $window) {
 
     // Items currently active in the workspace.
     var active_items = [];
 
     function ParlayItemManager() {
         // Add event handler before window unload to autosave items.
-        $window.onbeforeunload = ParlayItemManager.prototype.autoSave.bind(this);
+
+		$window.addEventListener("beforeunload", function () {
+			ParlayItemManager.prototype.autoSave.bind(this);
+
+            return null;
+        }.bind(this));
     }
     
     /**
@@ -170,5 +175,5 @@ function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager, Parlay
 	return new ParlayItemManager();
 }
 
-angular.module("parlay.items.manager", ["parlay.protocols.manager", "promenade.broker", "parlay.store", "parlay.store.persistence", "parlay.items.workspaces"])
-	.factory("ParlayItemManager", ["PromenadeBroker", "ParlayProtocolManager", "ParlayStore", "ParlayPersistence", "$window", ParlayItemManagerFactory]);
+angular.module("parlay.items.manager", ["parlay.protocols.manager", "promenade.broker", "parlay.store", "parlay.utility", "parlay.store.persistence", "parlay.items.workspaces"])
+	.factory("ParlayItemManager", ["PromenadeBroker", "ParlayProtocolManager", "ParlayUtility", "ParlayPersistence", "$window", ParlayItemManagerFactory]);

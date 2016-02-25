@@ -13,7 +13,7 @@ function ParlaySettingsFactory (ParlayStore) {
             this.setGraphSettings({label_size: 12});
         }
         if (!store.has("broker_settings")) {
-            this.setGraphSettings({show_prompt: true});
+            this.setBrokerSettings({show_prompt: true});
         }
     }
 

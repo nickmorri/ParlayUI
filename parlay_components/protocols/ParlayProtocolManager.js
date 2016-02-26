@@ -183,10 +183,6 @@ function ParlayProtocolManagerFactory($injector, $q, PromenadeBroker, ParlayStor
 
             open_protocols = protocols.map(constructProtocol);
 
-            // Request a fast discovery to see if there's already one there if that is the user preference.
-            if (ParlaySettings.getDiscoverySettings().auto_discovery) {
-                PromenadeBroker.requestDiscovery(false);
-            }
         }
 
         /**

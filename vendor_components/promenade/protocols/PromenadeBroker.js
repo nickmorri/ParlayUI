@@ -146,6 +146,12 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
 	        this.onMessage({'type': "get_protocol_discovery"}, function() {
                 ParlaySocket.sendMessage({type: "get_protocol_discovery_response"}, {discovery: {}});
 	        });
+
+
+            // Request a fast discovery to see if there's already one there if that is the user preference.
+            if (ParlaySettings.getDiscoverySettings().auto_discovery) {
+                this.requestDiscovery(false);
+            }
 	        
 	    }.bind(this));
 	    
@@ -219,7 +225,8 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
 	 * @returns {$q.defer.promise} Resolve when response is received with available items.
 	 */
 	PromenadeBroker.prototype.requestDiscovery = function (is_forced) {
-	    // Check we are connected first, otherwise display ParlayNotification.
+
+		// Check we are connected first, otherwise display ParlayNotification.
 	    if (this.isConnected()) {
 
             // $q Deferred that will be resolved upon discovery response.
@@ -231,14 +238,16 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
                 ParlayNotification.showProgress(deferred);
             }, 500);
 
-			return this.sendMessage({request: "get_discovery"}, {"force": !!is_forced}, {response: "get_discovery_response"}).then(function (response) {
-                // Resolve deferred so that dialog can be hidden once response is received.
-                deferred.resolve(response);
+            return $q.all([this.requestAvailableProtocols(), this.requestOpenProtocols()]).then(function () {
+                return this.sendMessage({request: "get_discovery"}, {"force": !!is_forced}, {response: "get_discovery_response"}).then(function (response) {
+                    // Resolve deferred so that dialog can be hidden once response is received.
+                    deferred.resolve(response);
 
-                // Prevent the dialog from displaying if we receive a quick discovery response.
-                $timeout.cancel(registration);
-                return response;
-            });
+                    // Prevent the dialog from displaying if we receive a quick discovery response.
+                    $timeout.cancel(registration);
+                    return response;
+                });
+            }.bind(this));
 		}
 	    else {
 	        ParlayNotification.show({content: "Cannot discover while not connected to Broker."});

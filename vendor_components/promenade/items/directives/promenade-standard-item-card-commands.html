@@ -83,9 +83,9 @@
         </div>
     </md-toolbar>
 
-    <div layout="column" ng-hide="ctrl.response_contents_collapsed" layout-margin>
+    <div layout="column" ng-hide="ctrl.response_contents_collapsed">
 
-        <div ng-show="ctrl.responses.length" layout="column">
+        <div ng-show="ctrl.responses.length" layout="column" layout-margin>
 
             <div layout="row" layout-align="start center" class="promenade-response-contents-body">
                 <p flex="15" class="md-body-2">MSG ID</p>
@@ -111,7 +111,7 @@
 
         </div>
 
-        <div ng-hide="ctrl.responses.length">
+        <div ng-hide="ctrl.responses.length" layout-margin>
             <p class="md-body-1">No response received.</p>
         </div>
 

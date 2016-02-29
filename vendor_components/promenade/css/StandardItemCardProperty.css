@@ -1,3 +1,11 @@
+.parlay-property-content {
+    max-height: 585px;
+}
+
+.parlay-property-container {
+    min-height: 45px;
+}
+
 .parlay-property-input {
     margin-left: 8px;
     margin-bottom: -30px;

@@ -32,3 +32,8 @@ promenade-standard-item-card-log-item > md-card > md-card-content {
 promenade-standard-item-card-log-item > md-card > md-card-content > md-list {
     padding: 0;
 }
+
+promenade-standard-item-card-log-item > md-card > md-card-content > md-list > md-list-item {
+    min-height: 0;
+	height: 24px;
+}

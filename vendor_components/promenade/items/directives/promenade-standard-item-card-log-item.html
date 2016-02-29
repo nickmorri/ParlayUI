@@ -7,9 +7,10 @@
         </md-card-header-text>
     </md-card-header>
     <md-card-content>
-    <md-list>
-        <md-list-item ng-repeat="(key, value) in ctrl.message.CONTENTS">
-            <pre>{{key}} = {{value}}</pre><span ng-show="!$last">, </span>
-        </md-list-item>
-    </md-list>
+        <md-list>
+            <md-list-item ng-repeat="(key, value) in ctrl.message.CONTENTS">
+                <pre>{{key}} = {{value}}</pre><span ng-show="!$last">, </span>
+            </md-list-item>
+        </md-list>
+    </md-card-content>
 </md-card>

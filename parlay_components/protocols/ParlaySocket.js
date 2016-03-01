@@ -22,51 +22,37 @@ function CallbackContainerFactory() {
          * @return {String} - formatted String containing a stable encoded key and value.
          */
         function get_hash(key, value) {
-            if (key === undefined) {
+            if (key === undefined || key === "undefined") {
                 key = "__undefined__";
             }
-            if (value === undefined) {
+            if (value === undefined || value === "undefined") {
                 value = "__undefined__";
             }
             return 'k=' + key.stableEncode() + ':v=' + value.stableEncode();
         }
 
         /**
-         * Traverse internal_map and delete branches of tree if no longer needed.
-         * @param {Object} topics - Object of key/value pairs.
+         * Traverse tree and delete branches of tree if no longer needed.
          */
-        function prune_topics(topics) {
+        function prune(tree) {
 
-            function traverse(hash, tree) {
-
-                // Continue traversing the tree until hashed_keys is empty which indicates we're at a leaf.
-                if (hashed_keys.length) {
-
-                    // If the size of the sub-tree is 0 we should remove this subtree.
-                    if (!traverse(hashed_keys.shift(), tree.get(hash))) {
-                        tree.delete(hash);
-                    }
-                }
-
-                // If there aren't any callbacks registered to a topic delete the callback key/value pair.
-                if (tree.get(callback_key) && !tree.get(callback_key).length) {
-                    tree.delete(callback_key);
-                }
-
-                // Return the key/value pairs remaining.
-                return tree.size;
+            // Check if entry for callback Array exists, if it does and it is empty we should delete it.
+            if (tree.has(callback_key) && tree.get(callback_key).length === 0) {
+                tree.delete(callback_key);
             }
 
-            var hashed_keys = Object.keys(topics).sort().map(function (key) {
-                return get_hash(key, topics[key]);
-            });
+            // Iterate through the entries in the tree.
+            var iter = tree.entries();
+            for (var current = iter.next(); !current.done; current = iter.next()) {
 
-            var init_hash = hashed_keys.shift();
+                // Recursively prune all sub-trees, if the size of the sub-tree is 0 delete it.
+                if (current.value[0] !== callback_key && prune(current.value[1]) === 0) {
+                    tree.delete(current.value[0]);
+                }
 
-            // If the init_hash sub-tree is empty delete it.
-            if (!traverse(hashed_keys.shift(), internal_map.get(init_hash))) {
-                internal_map.delete(init_hash);
             }
+
+            return tree.size;
         }
 
         /**
@@ -161,7 +147,7 @@ function CallbackContainerFactory() {
             // Otherwise return false if the callback doesn't exist in the array.
             if (index > -1) {
                 callbacks.splice(index, 1);
-                prune_topics(topics);
+                prune(internal_map);
                 return true;
             }
             else {
@@ -277,12 +263,39 @@ function CallbackContainerFactory() {
             return count;
         };
 
+        /**
+         * Traverse the CallbackContainer tree to find the child at the maximum depth.
+         * @returns {Number}
+         */
+        this.maxDepth = function () {
+
+            function traverse(tree) {
+                var max_child_depth = 0;
+
+                // Iterate through the entries in the tree.
+                var iter = tree.entries();
+                for (var current = iter.next(); !current.done; current = iter.next()) {
+                    if (current.value[0] !== callback_key && current.value[1].size !== 0) {
+                        var current_depth = traverse(current.value[1]);
+
+                        if (current_depth > max_child_depth) {
+                            max_child_depth = current_depth;
+                        }
+                    }
+                }
+
+                return max_child_depth + 1;
+            }
+
+            return traverse(internal_map);
+        };
+
     }
 
     return CallbackContainer;
 }
 
-function ParlaySocketFactory(BrokerAddress, $q, CallbackContainer) {
+function ParlaySocketFactory(BrokerAddress, $location, $q, CallbackContainer) {
     "use strict";
 
     /**
@@ -361,11 +374,14 @@ function ParlaySocketFactory(BrokerAddress, $q, CallbackContainer) {
             if (!this.isConnected()) {
                 onOpenPromise = $q.defer();
                 onClosePromise = $q.defer();
-                socket = new WebSocket(BrokerAddress);
+                socket = new WebSocket($location.protocol === 'https:' ? 'wss://' + BrokerAddress + ':8086' : 'ws://' + BrokerAddress + ':8085');
                 // Attach event handlers.
                 socket.onopen = onOpenHandler;
                 socket.onclose = onCloseHandler;
                 socket.onmessage = onMessageHandler;
+            }
+            else {
+                throw new ParlaySocketError("ParlaySocket open was called while the socket was already open.");
             }
             return onOpenPromise.promise;
         };
@@ -374,8 +390,8 @@ function ParlaySocketFactory(BrokerAddress, $q, CallbackContainer) {
          * Closes WebSocket and returns Promise when complete.
          * @returns {$q.defer.promise} Resolved when WebSocket is closed.
          */
-        this.close = function() {
-            socket.close();
+        this.close = function(reason) {
+            socket.close(reason);
             return onClosePromise.promise;
         };
 
@@ -523,7 +539,7 @@ function ParlaySocketFactory(BrokerAddress, $q, CallbackContainer) {
                     container.deferred.resolve();
                 }
                 catch (e) {
-                    container.deferred.reject();
+                    container.deferred.reject(e);
                 }
             });
             sendQueue = [];
@@ -565,16 +581,13 @@ function ParlaySocketFactory(BrokerAddress, $q, CallbackContainer) {
          * @param {MessageEvent} - Event generated by the WebSocket on close.
          */
         function onCloseHandler(event) {
-            // If the onClosePromise exists we should resolve or reject it.
-            if (onClosePromise !== undefined) {
-                // If the close event was clean, we shoud resolve the promise.
-                if (event.wasClean) {
-                    onClosePromise.resolve(event.reason);
-                }
-                // Otherwise this indicates our connection was severed and we shold reject.
-                else {
-                    onClosePromise.reject(event.reason);
-                }
+            // If the close event was clean, we shoud resolve the promise.
+            if (event.wasClean) {
+                onClosePromise.resolve(event.reason);
+            }
+            // Otherwise this indicates our connection was severed and we shold reject.
+            else {
+                onClosePromise.reject(event.reason);
             }
 
             // If a onOpenPromise exists that hasn't been resolved we should reject it now.
@@ -609,6 +622,6 @@ function ParlaySocketFactory(BrokerAddress, $q, CallbackContainer) {
 }
 
 angular.module('parlay.socket', [])
-	.value('BrokerAddress', location.protocol === 'https:' ? 'wss://' + location.hostname + ':8086' : 'ws://' + location.hostname + ':8085')
+	.value('BrokerAddress', location.hostname)
     .factory('CallbackContainer', [CallbackContainerFactory])
-	.factory('ParlaySocket', ['BrokerAddress', '$q', 'CallbackContainer', ParlaySocketFactory]);
+	.factory('ParlaySocket', ['BrokerAddress', '$location', '$q', 'CallbackContainer', ParlaySocketFactory]);

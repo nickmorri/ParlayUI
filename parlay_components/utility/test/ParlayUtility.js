@@ -29,29 +29,6 @@
 	        
         });
 
-        xdescribe("powerset", function() {
-
-            function setEquality(first) {
-
-            }
-
-            it ("equals", function () {
-                var input = new Set([0, 1, 2]);
-
-                var expected = new Set([
-                    new Set(),
-                    new Set([0]), new Set([1]), new Set([2]),
-                    new Set([0, 1]), new Set([0, 2]), new Set([1, 2]),
-                    new Set([0, 1, 2])
-                ]);
-
-                expect(input.powerset().equals(expected)).toBeTruthy();
-            });
-
-		});
-
-        xdescribe("combinations of", function () {});
-
         describe("snake case", function () {
 
             it("outputs correctly", function() {

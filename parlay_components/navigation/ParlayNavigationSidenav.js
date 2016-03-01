@@ -51,5 +51,5 @@ function ParlayNavigationSidenavController($mdSidenav, $mdDialog, $mdMedia, Prom
 	
 }
 
-angular.module("parlay.navigation.sidenav", ["ngMaterial", "parlay.utility", "parlay.items.search", "parlay.protocols.list_controller", "parlay.settings.dialog"])
+angular.module("parlay.navigation.sidenav", ["ngMaterial", "parlay.items.search", "parlay.protocols.list_controller", "parlay.settings.dialog", "parlay.items.workspaces"])
 	.controller("ParlayNavigationSidenavController", ["$mdSidenav", "$mdDialog", "$mdMedia", "PromenadeBroker", ParlayNavigationSidenavController]);

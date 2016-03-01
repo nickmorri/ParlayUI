@@ -1,4 +1,4 @@
-function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager, ParlayUtility, ParlayPersistence, $window) {
+function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager, ParlayPersistence, $window) {
 
     // Items currently active in the workspace.
     var active_items = [];
@@ -182,5 +182,5 @@ function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager, Parlay
 	return new ParlayItemManager();
 }
 
-angular.module("parlay.items.manager", ["parlay.protocols.manager", "promenade.broker", "parlay.store", "parlay.utility", "parlay.store.persistence", "parlay.items.workspaces"])
-	.factory("ParlayItemManager", ["PromenadeBroker", "ParlayProtocolManager", "ParlayUtility", "ParlayPersistence", "$window", ParlayItemManagerFactory]);
+angular.module("parlay.items.manager", ["parlay.protocols.manager", "promenade.broker", "parlay.store.persistence"])
+	.factory("ParlayItemManager", ["PromenadeBroker", "ParlayProtocolManager", "ParlayPersistence", "$window", ParlayItemManagerFactory]);

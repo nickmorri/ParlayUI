@@ -25,20 +25,20 @@
                     $rootScope.$apply();
                 });
                 
-                xit('closes protocol successfully', function () {
+                it('closes protocol successfully', function () {
                     PromenadeBroker.triggerOnOpen();
                     
                     expect(ParlayProtocolManager.getOpenProtocols().length).toBe(1);
                     
                     ParlayProtocolManager.closeProtocol({
-                        NAME: 'TestProtocol'
+                        getName: function () { return 'TestProtocol'; }
                     }).then(function (response) {
                         expect(response.STATUS).toBe('ok');
                     });
-                    
+
                     $rootScope.$apply();
-                    
-                    expect(ParlayProtocolManager.getOpenProtocols().length).toBe(0);                    
+
+                    expect(ParlayProtocolManager.getOpenProtocols().length).toBe(0);
                 });
                 
                 it('fails to close protocol', function () {

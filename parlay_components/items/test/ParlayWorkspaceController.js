@@ -41,11 +41,6 @@
 		    		expect(ParlayWorkspaceManagementController.getSavedWorkspaces().length).toBe(1);
 	    		});
 	    		
-	    		xit('loads a workspace', function () {
-		    		ParlayWorkspaceManagementController.saveWorkspace({name:'test'});
-		    		ParlayWorkspaceManagementController.loadWorkspace({name:'test'});
-	    		});
-	    		
 	    		it('deletes a workspace', function () {
 		    		expect(ParlayWorkspaceManagementController.getSavedWorkspaces().length).toBe(0);
 		    		ParlayWorkspaceManagementController.saveWorkspace({name:'test'});

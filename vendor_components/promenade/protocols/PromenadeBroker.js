@@ -1,3 +1,10 @@
+function PromenadeBrokerRun(ParlaySettings) {
+	ParlaySettings.registerDefault("broker", {show_prompt: true, auto_discovery: true});
+	if (!ParlaySettings.has("broker")) {
+		ParlaySettings.restoreDefault("broker");
+	}
+}
+
 function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, ParlayErrorDialog, $window, $mdDialog, ParlaySettings) {
 	"use strict";
 	
@@ -149,7 +156,7 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
 
 
             // Request a fast discovery to see if there's already one there if that is the user preference.
-            if (ParlaySettings.getDiscoverySettings().auto_discovery) {
+            if (ParlaySettings.get("broker").auto_discovery) {
                 this.requestDiscovery(false);
             }
 	        
@@ -182,7 +189,7 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
             var confirmation;
 
             // If the Broker is currently connected we want to prompt the user to shutdown the Broker.
-            if (this.isConnected() && ParlaySettings.getBrokerSettings().show_prompt) {
+            if (this.isConnected() && ParlaySettings.get("broker").show_prompt) {
                 confirmation = "Closing browser will not shut the Broker down. Are you sure you want to leave the page?";
             }
             // Otherwise we can just allow the browser windows to close.
@@ -300,4 +307,5 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
 }
 
 angular.module("promenade.broker", ["parlay.socket", "parlay.notification", "parlay.notification.error", "parlay.settings", "ngMaterial"])
+	.run(["ParlaySettings", PromenadeBrokerRun])
 	.factory("PromenadeBroker", ["ParlaySocket", "$q", "$timeout", "ParlayNotification", "ParlayErrorDialog", "$window", "$mdDialog", "ParlaySettings", PromenadeBrokerFactory]);

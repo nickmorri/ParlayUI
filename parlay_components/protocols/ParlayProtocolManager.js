@@ -1,4 +1,4 @@
-function ParlayProtocolManagerFactory($injector, $q, PromenadeBroker, ParlayStore, ParlaySettings, ParlayNotification) {
+function ParlayProtocolManagerFactory($injector, $q, PromenadeBroker, ParlayStore, ParlayNotification) {
     "use strict";
 
     function ParlayProtocolManager() {
@@ -269,4 +269,4 @@ function ParlayProtocolManagerFactory($injector, $q, PromenadeBroker, ParlayStor
 }
 
 angular.module("parlay.protocols.manager", ["promenade.broker", "promenade.protocols.directmessage", "parlay.notification", "parlay.settings"])
-	.factory("ParlayProtocolManager", ["$injector", "$q", "PromenadeBroker", "ParlayStore", "ParlaySettings", "ParlayNotification", ParlayProtocolManagerFactory]);
+	.factory("ParlayProtocolManager", ["$injector", "$q", "PromenadeBroker", "ParlayStore", "ParlayNotification", ParlayProtocolManagerFactory]);

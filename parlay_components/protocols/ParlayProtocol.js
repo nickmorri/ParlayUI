@@ -1,5 +1,13 @@
+function ParlayProtocolRun(ParlaySettings) {
+    ParlaySettings.registerDefault("log", {max_size: 10000});
+
+    if (!ParlaySettings.has("log")) {
+        ParlaySettings.restoreDefault("log");
+    }
+}
+
 function ParlayProtocolFactory(ParlaySocket, ParlayItem, ParlaySettings, $q) {
-    
+
     function ParlayProtocol(configuration) {
         "use strict";
         this.id = "UI";
@@ -112,8 +120,8 @@ function ParlayProtocolFactory(ParlaySocket, ParlayItem, ParlaySettings, $q) {
         this.onMessage({}, function (response) {
             // Upon reaching the 1.5 times the maximum specified log size we should remove 0.5
             // the maximum size elements from the beginning of the log.
-            if (this.log.length >= ParlaySettings.getLogSettings().max_size * 1.5) {
-                this.log.splice(0, ParlaySettings.getLogSettings().max_size * 0.5);
+            if (this.log.length >= ParlaySettings.get("log").max_size * 1.5) {
+                this.log.splice(0, ParlaySettings.get("log").max_size * 0.5);
             }
 
 	        this.log.push(response);
@@ -162,4 +170,5 @@ function ParlayProtocolFactory(ParlaySocket, ParlayItem, ParlaySettings, $q) {
 }
 
 angular.module("parlay.protocols.protocol", ["parlay.socket", "parlay.items.item", "promenade.protocols.directmessage", "parlay.settings"])
+    .run(["ParlaySettings", ParlayProtocolRun])
 	.factory("ParlayProtocol", ["ParlaySocket", "ParlayItem", "ParlaySettings", "$q", ParlayProtocolFactory]);

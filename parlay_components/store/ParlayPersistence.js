@@ -186,10 +186,11 @@ function ParlayPersistenceFactory(ParlayStore) {
      * Collects the monitored attributes and store them with ParlayStore using the given name.
      * @param {String} name - Given workspace name.
      */
-    ParlayPersistence.prototype.store = function (name) {
+    ParlayPersistence.prototype.store = function (name, autosave) {
         this.items_store.set(name, {
             name: name,
             timestamp: new Date(),
+            autosave: !!autosave,
             data: this.collectAll()
         });
 

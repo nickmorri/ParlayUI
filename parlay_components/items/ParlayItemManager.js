@@ -7,7 +7,7 @@ function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager, Parlay
         // Add event handler before window unload to autosave items.
 
 		$window.addEventListener("beforeunload", function () {
-			ParlayItemManager.prototype.autoSave.bind(this);
+			ParlayItemManager.prototype.autoSave.apply(this);
 
             return null;
         }.bind(this));
@@ -175,7 +175,7 @@ function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager, Parlay
      */
 	ParlayItemManager.prototype.autoSave = function() {
 		if (this.hasActiveItems()) {
-            ParlayPersistence.store("AutoSave");
+            ParlayPersistence.store("AutoSave", true);
         }
 	};
 

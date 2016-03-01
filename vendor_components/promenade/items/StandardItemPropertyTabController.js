@@ -4,14 +4,10 @@
  * @param {AngularJS $scope} $scope - A AngularJS $scope Object.
  */
 function PromenadeStandardItemCardPropertyTabController($scope) {
-	ParlayBaseTabController.call(this, $scope, "promenadeStandardItemCardProperty");
-	
+
 	// Controller state attribute, true if a request has been sent but the response has not been received. 
 	this.waiting = false;
 }
-
-// Prototypically inherit from ParlayBaseTabController.
-PromenadeStandardItemCardPropertyTabController.prototype = Object.create(ParlayBaseTabController.prototype);
 
 PromenadeStandardItemCardPropertyTabController.prototype.hasProperties = function () {
 	"use strict";

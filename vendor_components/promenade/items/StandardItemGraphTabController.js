@@ -9,7 +9,6 @@
  * @param {Parlay Service} ParlayPersistence - Service that provides automatic persistence of scope variables to localStorage.
  */
 function PromenadeStandardItemCardGraphTabController($scope, $mdDialog, $interval, $mdMedia, ParlayUtility, ParlayPersistence) {
-	ParlayBaseTabController.call(this, $scope, "promenadeStandardItemCardGraph");
 
 	this.enabled_streams = [];
 
@@ -58,9 +57,6 @@ function PromenadeStandardItemCardGraphTabController($scope, $mdDialog, $interva
 	$interval(getStreamColors.bind(this), 1000);
 		
 }
-
-// Prototypically inherit from ParlayBaseTabController.
-PromenadeStandardItemCardGraphTabController.prototype = Object.create(ParlayBaseTabController.prototype);
 
 /**
  * Returns a count of all currently enabled streams.

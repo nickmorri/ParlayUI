@@ -2,8 +2,7 @@
  * Controller constructor for PromenadeStandardItemCardLogTabController.
  */
 function PromenadeStandardItemCardLogTabController($scope, ParlayPersistence, ParlayUtility) {
-	ParlayBaseTabController.call(this, $scope, "promenadeStandardItemCardLog");
-	
+
 	// Initially we don't want to filter logged messages by anything.
 	this.filter_text = null;
 
@@ -11,9 +10,6 @@ function PromenadeStandardItemCardLogTabController($scope, ParlayPersistence, Pa
 	var directive_name = 'parlayItemCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
 	ParlayPersistence.monitor(directive_name, "filter_text", $scope);
 }
-
-// Prototypically inherit from ParlayBaseTabController.
-PromenadeStandardItemCardLogTabController.prototype = Object.create(ParlayBaseTabController.prototype);
 
 /**
  * Applies a filter to the item log and returns the messages that pass.

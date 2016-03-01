@@ -3,7 +3,7 @@
   "private": true,
   "dependencies": {
     "angular-animate": "~1.4.4",
-    "angular-material": "~1.0.5",
+    "angular-material": "~1.0.6",
     "angular-material-icons": "angular-material-icons#0.6.0",
     "angular-messages": "~1.4.1",
     "angular-mocks": "~1.4.1",

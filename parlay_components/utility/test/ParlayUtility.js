@@ -44,12 +44,21 @@
 
 			// NOTE: Encoding is done by sorting topics by comparison of keys in Unicode code point order.
 
+			it('undefined || null', function () {
+				expect([null, undefined].stableEncode()).toBe("[null,null]");
+                expect({key1: null, key2: undefined}.stableEncode()).toBe('{"key1":null,"key2":null}');
+			});
+
 			it('strings', function () {
 				expect({"type": "motor"}.stableEncode()).toBe('{"type":"motor"}');
 			});
 
 			it('numbers', function () {
 				expect({"to_device": 22}.stableEncode()).toBe('{"to_device":22}');
+			});
+
+			it('boolean', function () {
+				expect((Boolean(true).stableEncode())).toBe('true');
 			});
 
 			it('arrays', function () {
@@ -75,9 +84,7 @@
 				expect({"bbb":1, "aaa":0}.stableEncode()).toBe('{"aaa":0,"bbb":1}');
 			});
 
-			it('other type', function () {
-				expect((Boolean(true).stableEncode())).toBe('true');
-			});
+
 
 		});
 

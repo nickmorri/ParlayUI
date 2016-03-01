@@ -6,25 +6,40 @@ Object.defineProperty(Object.prototype, "stableEncode", {
     writable: false,
     enumerable: false,
     value: function() {
-        if (this === undefined || this === null) return "null";
-        else if (typeof this === 'string' || this instanceof String) return '"' + this + '"';
-        else if (typeof this === 'number' || this instanceof Number) return this.toString();
-        else if (typeof this === 'boolean' || this instanceof Boolean) return this.toString();
-        else if (Array.isArray(this)) return this.sort().reduce(function (previous, current, index) {
+        if (typeof this === 'string' || this instanceof String) {
+            return '"' + this + '"';
+        }
+        else if (typeof this === 'number' || this instanceof Number) {
+            return this.toString();
+        }
+        else if (typeof this === 'boolean' || this instanceof Boolean) {
+            return this.toString();
+        }
+        else if (Array.isArray(this)) {
+            return this.sort().reduce(function (previous, current, index) {
                 var currentString = previous;
 
                 if (index > 0) currentString += ",";
 
-                return currentString + current.stableEncode();
+                var current_encoded = current === null || current === undefined ? "null" : current.stableEncode();
+
+                return currentString + current_encoded;
             }, "[") + "]";
-        else if (typeof this === 'object') return Object.keys(this).sort().reduce(function (previous, current, index) {
-                var currentString = previous;
+        }
+        else if (typeof this === 'object') {
+            return Object.keys(this).sort().reduce(function (previous, current, index) {
+                    var currentString = previous;
 
-                if (index > 0) currentString += ",";
+                    if (index > 0) currentString += ",";
 
-                return currentString + '"' + current + '":' + this[current].stableEncode();
-            }.bind(this), "{") + "}";
-        else return this.toString();
+                    var current_encoded = this[current] === null || this[current] === undefined ? "null" : this[current].stableEncode();
+
+                    return currentString + '"' + current + '":' + current_encoded;
+                }.bind(this), "{") + "}";
+        }
+        else {
+            return this.toString();
+        }
     }
 });
 
@@ -47,6 +62,7 @@ Object.defineProperty(String.prototype, "snakeCase", {
  * Copies this String to clipboard and returns outcome.
  * @returns {Boolean} - Status of copy operation.
  */
+/* istanbul ignore next */
 Object.defineProperty(String.prototype, "copyToClipboard", {
 	writable: false,
 	enumerable: false,
@@ -74,6 +90,7 @@ Object.defineProperty(String.prototype, "copyToClipboard", {
  * Downloads this Object in JSON encoded format.
  * @returns {Boolean} - Status of download operation.
  */
+/* istanbul ignore next */
 Object.defineProperty(Object.prototype, "download", {
     writable: false,
     enumerable: false,
@@ -122,7 +139,7 @@ function customOnChange () {
     return {
         restrict: 'A',
         link: function (scope, element, attributes) {
-            element.bind('change', scope.$eval(attributes.customOnChange));
+            element.onchange = scope.$eval(attributes.customOnChange);
         }
     };
 }

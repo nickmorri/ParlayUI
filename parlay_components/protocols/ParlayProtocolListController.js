@@ -18,13 +18,20 @@ function ParlayProtocolListController($scope, $mdDialog, $mdMedia, ParlayProtoco
     this.getBrokerAddress = function () {
         return PromenadeBroker.getBrokerAddress();  
     };
-    
+
     /**
-     * Switches Broker connected and disconnected.
+     * Requests that the Broker shutdown.
      */
-    this.toggleBrokerConnection = function () {
-        if (PromenadeBroker.isConnected()) PromenadeBroker.disconnect();
-        else PromenadeBroker.connect();
+    this.shutdownBroker = function () {
+        if (PromenadeBroker.isConnected()) {
+            PromenadeBroker.requestShutdown();
+        }
+    };
+
+    this.connectBroker = function () {
+        if (!PromenadeBroker.isConnected()) {
+            PromenadeBroker.connect();
+        }
     };
     
     /**

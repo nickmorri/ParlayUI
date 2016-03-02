@@ -185,7 +185,7 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
             });
 	    }.bind(this));
 
-        $window.addEventListener("beforeunload", function (event) {
+        var unload_listener = function (event) {
             var confirmation;
 
             // If the Broker is currently connected we want to prompt the user to shutdown the Broker.
@@ -207,14 +207,17 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
                     .ok('Shut Broker down and close browser tab')
                     .cancel('Dismiss');
                 $mdDialog.show(confirm).then(function() {
-                    // Will need to change this to Broker close command.
-                    this.disconnect();
+                    // Request the Broker shutdown and close the window.
+                    this.requestShutdown();
+                    $window.removeEventListener("beforeunload", unload_listener);
                     $window.close();
                 }.bind(this));
             }.bind(this), 500);
 
             return confirmation;
-        }.bind(this));
+        }.bind(this);
+
+        $window.addEventListener("beforeunload", unload_listener);
 	    
 	}
 	
@@ -225,6 +228,14 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
 	PromenadeBroker.prototype.connect = ParlaySocket.open;
 	PromenadeBroker.prototype.disconnect = ParlaySocket.close;
 	PromenadeBroker.prototype.isConnected = ParlaySocket.isConnected;
+
+	/**
+	 * Request the Broker shutdown.
+	 * @returns {$q.defer.promise} Resolve when response is received shutdown result.
+	 */
+	PromenadeBroker.prototype.requestShutdown = function () {
+		return this.sendMessage({request: "shutdown"}, {}, {response: "shutdown_response"});
+	};
 	
 	/**
 	 * Request the Broker for a discovery.

@@ -23,6 +23,9 @@
                     },
                     connect: function () {
                         this.connected = true;
+                    },
+                    requestShutdown: function () {
+                        this.connected = false;
                     }
                 };
                 
@@ -37,13 +40,19 @@
                     expect(ctrl.isBrokerConnected()).toBeFalsy();
                     expect(ctrl.getBrokerAddress()).toBe('ws://localhost:8080');
                 });
-                
-                it('toggles connection', function () {
+
+                it("shutdown broker connection", function () {
                     expect(ctrl.isBrokerConnected()).toBeFalsy();
-                    ctrl.toggleBrokerConnection();
+                    ctrl.connectBroker();
                     expect(ctrl.isBrokerConnected()).toBeTruthy();
-                    ctrl.toggleBrokerConnection();                        
+                    ctrl.shutdownBroker();
                     expect(ctrl.isBrokerConnected()).toBeFalsy();
+                });
+                
+                it('connects to broker', function () {
+                    expect(ctrl.isBrokerConnected()).toBeFalsy();
+                    ctrl.connectBroker();
+                    expect(ctrl.isBrokerConnected()).toBeTruthy();
                 });
                 
             });

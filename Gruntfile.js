@@ -340,7 +340,8 @@ module.exports = function (grunt) {
             'options': {
                 'files': ['package.json', 'bower.json'],
                 'commitFiles': ['package.json', 'bower.json'],
-                'push': false
+                'push': false,
+                createTag: false
             }
         }
 		
@@ -382,7 +383,7 @@ module.exports = function (grunt) {
 	    'copy:dist',
 	    'cssmin:dist',
 	    'processhtml:dist',
-	    'wiredep:dist',
+	    'wiredep:dist'
 	]);
 
 	grunt.registerTask('build', ['dist']);

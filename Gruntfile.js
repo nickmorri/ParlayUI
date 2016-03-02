@@ -33,8 +33,10 @@ module.exports = function (grunt) {
 	require('load-grunt-tasks')(grunt);
 	
 	// Load this Grunt task individually since it doesn't match the "grunt-*" pattern.
-    var mainBowerFiles = require('main-bower-files');
-	grunt.loadNpmTasks('main-bower-files');
+    grunt.loadNpmTasks('main-bower-files');
+
+	// Array of bower main JS files.
+	var mainBowerFiles = require('main-bower-files');
 
 	grunt.initConfig({
     	'pkg': grunt.file.readJSON('package.json'),

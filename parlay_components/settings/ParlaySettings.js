@@ -12,7 +12,13 @@ function ParlaySettingsFactory(ParlayStore) {
     };
 
     ParlaySettings.prototype.set = function (key, value) {
-        store.set(key, value);
+        var settings = this.get(key);
+
+        for (var item in value) {
+            settings[item] = value[item];
+        }
+
+        store.set(key, settings);
     };
 
     ParlaySettings.prototype.has = function (key) {

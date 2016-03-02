@@ -43,6 +43,7 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
      * Saves current items in workspace to a workspace of the name collected by launching a
      * $mdDialog to allow user to name the saved workspace.
      */
+    /* istanbul ignore next */
     this.saveCurrentWorkspaceAs = function () {
         $mdDialog.show({
             controller: "ParlayWorkspaceSaveAsDialogController",

@@ -30,6 +30,10 @@
 	    		it('does not have items in current workspace', function () {
 		    		expect(ParlayWorkspaceManagementController.currentWorkspaceItemCount()).toBe(0);
 	    		});
+
+				it('gets autosave', function () {
+					expect(ParlayWorkspaceManagementController.getAutosave()).toBeUndefined();
+				});
 	    		
     		});
     		

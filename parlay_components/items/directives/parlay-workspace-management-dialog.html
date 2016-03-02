@@ -5,7 +5,7 @@
 			<h2>Workspaces</h2>
 			<span flex></span>
 			<md-button class="md-icon-button" ng-click="ctrl.hide()" aria-label="Hide dialog">
-				<md-icon><ng-md-icon icon="close" aria-label="Close dialog"></ng-md-icon></md-icon>
+				<md-icon ng-md-icon icon="close" aria-label="Close dialog"></md-icon>
 			</md-button>
 		</div>
 	</md-toolbar>
@@ -17,7 +17,7 @@
             <md-list>
 
 				<md-list-item class="md-2-line" layout="row" layout-align="space-between center">
-	            	<md-icon hide-xs hide-sm hide-md><ng-md-icon icon="home"></ng-md-icon></md-icon>
+	            	<md-icon hide-xs hide-sm hide-md ng-md-icon icon="home"></md-icon>
 	            	<div flex-sm="60" class="md-list-item-text">
 	                    <h3>Current Workspace</h3>
 	                    <p ng-hide="ctrl.currentWorkspaceItemCount()">empty</p>
@@ -28,13 +28,13 @@
 		                <md-button ng-disabled="ctrl.currentWorkspaceItemCount() === 0" class="md-primary" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.saveCurrentWorkspaceAs()" aria-label="Save workspace">
 				            <md-tooltip>Save As</md-tooltip>
                             <span hide show-gt-sm>Save As</span>
-                            <md-icon hide-gt-md><ng-md-icon icon="save"></ng-md-icon></md-icon>
+                            <md-icon hide-gt-md ng-md-icon icon="save"></md-icon>
 				        </md-button>
 
 				        <md-button ng-disabled="ctrl.currentWorkspaceItemCount() === 0" class="md-warn" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.clearCurrentWorkspace()" aria-label="Clear workspace">
 				            <md-tooltip>Clear workspace</md-tooltip>
 						    <span hide show-gt-sm>Clear</span>
-							<md-icon hide-gt-md><ng-md-icon icon="clear"></ng-md-icon></md-icon>
+							<md-icon hide-gt-md ng-md-icon icon="clear"></md-icon>
 				        </md-button>
 	                </div>
 
@@ -42,7 +42,7 @@
 
 	            <md-list-item class="md-3-line" layout="row" layout-align="space-between center" ng-if="ctrl.getAutosave()">
 
-	            	<md-icon hide-xs hide-sm hide-md><ng-md-icon icon="history"></ng-md-icon></md-icon>
+	            	<md-icon hide-xs hide-sm hide-md ng-md-icon icon="history"></md-icon>
 
 	            	<div flex-sm="60"class="md-list-item-text">
 	                    <h3>Autosaved Workspace</h3>
@@ -53,13 +53,13 @@
 		                <md-button class="md-primary" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.loadWorkspace(ctrl.getAutosave())" aria-label="Load workspace">
 		                	<md-tooltip>Load workspace</md-tooltip>
 						    <span hide show-gt-sm>Load</span>
-							<md-icon hide-gt-md><ng-md-icon icon="open_in_browser"></ng-md-icon></md-icon>
+							<md-icon hide-gt-md ng-md-icon icon="open_in_browser"></md-icon>
 				        </md-button>
 
 				        <md-button class="md-warn" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.deleteWorkspace(ctrl.getAutosave())" aria-label="Delete workspace">
 				            <md-tooltip>Delete workspace</md-tooltip>
 						    <span hide show-gt-sm>Delete</span>
-							<md-icon hide-gt-md><ng-md-icon icon="delete"></ng-md-icon></md-icon>
+							<md-icon hide-gt-md ng-md-icon icon="delete"></md-icon>
 				        </md-button>
 	                </div>
 
@@ -71,7 +71,7 @@
 
 				<md-list-item class="md-3-line" layout="row" layout-align="space-between center" ng-repeat="workspace in ctrl.getSavedWorkspaces() | orderBy:'-timestamp'">
 
-	                <md-icon hide-xs hide-sm hide-md ng-if="$index === 0"><ng-md-icon icon="dashboard"></ng-md-icon></md-icon>
+	                <md-icon hide-xs hide-sm hide-md ng-if="$index === 0" ng-md-icon icon="dashboard"></md-icon>
 
 	                <div flex-sm="60" class="md-list-item-text" ng-class="{'md-offset': $index !== 0 && $mdMedia('gt-md')}">
 	                    <h3>{{workspace.name}}</h3>
@@ -83,19 +83,19 @@
 		                <md-button class="md-primary" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.loadWorkspace(workspace)" aria-label="Load workspace">
 				            <md-tooltip>Load workspace</md-tooltip>
 						    <span hide show-gt-sm>Load</span>
-							<md-icon hide-gt-md><ng-md-icon icon="open_in_browser"></ng-md-icon></md-icon>
+							<md-icon hide-gt-md ng-md-icon icon="open_in_browser"></md-icon>
 				        </md-button>
 
 				        <md-button ng-disabled="ctrl.currentWorkspaceItemCount() === 0" class="md-primary" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.saveWorkspace(workspace)" aria-label="Save workspace">
 				            <md-tooltip>Save workspace</md-tooltip>
 						    <span hide show-gt-sm>Save</span>
-							<md-icon hide-gt-md><ng-md-icon icon="save"></ng-md-icon></md-icon>
+							<md-icon hide-gt-md ng-md-icon icon="save"></md-icon>
 				        </md-button>
 
 				        <md-button class="md-warn" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.deleteWorkspace(workspace)" aria-label="Delete workspace">
 				            <md-tooltip>Delete workspace</md-tooltip>
 						    <span hide show-gt-sm>Delete</span>
-							<md-icon hide-gt-md><ng-md-icon icon="delete"></ng-md-icon></md-icon>
+							<md-icon hide-gt-md ng-md-icon icon="delete"></md-icon>
 				        </md-button>
 	                </div>
 

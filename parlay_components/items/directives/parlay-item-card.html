@@ -4,31 +4,27 @@
 			<md-menu>
 				<md-button aria-label="Open overflow menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
                     <md-tooltip>Card menu</md-tooltip>
-					<md-icon md-menu-origin><ng-md-icon icon="more_vert"></ng-md-icon></md-icon>
+					<md-icon md-menu-origin ng-md-icon icon="more_vert"></md-icon>
 				</md-button>
 				<md-menu-content>
 					<md-menu-item>
 						<md-button md-menu-align-target ng-click="itemCtrl.duplicate($index)">
-							<md-icon><ng-md-icon icon="content_copy"></ng-md-icon></md-icon>
+							<md-icon ng-md-icon icon="content_copy"></md-icon>
 							Duplicate
 						</md-button>
 					</md-menu-item>
 					<md-menu-item ng-hide="$first">
 						<md-button md-menu-align-target ng-click="itemCtrl.reorder($index, -1)">
-							<md-icon>
-								<ng-md-icon hide-gt-sm icon="keyboard_arrow_up"></ng-md-icon>
-                                <ng-md-icon hide-sm icon="keyboard_arrow_left"></ng-md-icon>
-                            </md-icon>
+							<md-icon ng-md-icon hide-gt-sm icon="keyboard_arrow_up"></md-icon>
+							<md-icon ng-md-icon hide-sm icon="keyboard_arrow_left"></md-icon>
 							<span hide-sm>Move left</span>
                             <span hide-gt-sm>Move up</span>
 						</md-button>
 					</md-menu-item>
 					<md-menu-item ng-hide="$last">
 						<md-button md-menu-align-target ng-click="itemCtrl.reorder($index, 1)">
-							<md-icon>
-                                <ng-md-icon hide-gt-sm icon="keyboard_arrow_down"></ng-md-icon>
-                                <ng-md-icon hide-sm icon="keyboard_arrow_right"></ng-md-icon>
-                            </md-icon>
+							<md-icon ng-md-icon hide-gt-sm icon="keyboard_arrow_down"></md-icon>
+							<md-icon ng-md-icon hide-sm icon="keyboard_arrow_right"></md-icon>
                             <span hide-sm>Move right</span>
                             <span hide-gt-sm>Move down</span>
 						</md-button>
@@ -37,7 +33,7 @@
 			</md-menu>
 			<md-button aria-label="Close card" class="md-icon-button" ng-click="itemCtrl.deactivate($index)">
                 <md-tooltip>Close card</md-tooltip>
-				<md-icon class="white"><ng-md-icon icon="clear"></ng-md-icon></md-icon>
+				<md-icon class="white" ng-md-icon icon="clear"></md-icon>
 			</md-button>
             <!-- Vendor specific item toolbar-tools directives are automatically inserted here -->
         </div>

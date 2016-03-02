@@ -39,12 +39,11 @@ function ParlaySettingsDialogController ($scope, $mdDialog, ParlaySettings, Prom
         return navigator.userAgent.includes("Edge");
     };
 
-    var discovery_settings = ParlaySettings.get("discovery");
     var log_settings = ParlaySettings.get("log");
     var graph_settings = ParlaySettings.get("graph");
     var broker_settings = ParlaySettings.get("broker");
 
-    $scope.auto_discovery = discovery_settings && discovery_settings.auto_discovery;
+    $scope.auto_discovery = broker_settings && broker_settings.auto_discovery;
     $scope.max_log_size = log_settings && parseInt(log_settings.max_size);
     $scope.label_size = graph_settings && parseInt(graph_settings.label_size);
     $scope.show_prompt = broker_settings && broker_settings.show_prompt;
@@ -52,7 +51,7 @@ function ParlaySettingsDialogController ($scope, $mdDialog, ParlaySettings, Prom
     $scope.notification_permission = !navigator.userAgent.includes("Edge") && Notification.permission === "granted";
 
     $scope.$watch("auto_discovery", function (newValue) {
-        ParlaySettings.set("discovery", {auto_discovery: newValue});
+        ParlaySettings.set("broker", {auto_discovery: newValue});
     });
 
     $scope.$watch("max_log_size", function (newValue) {

@@ -37,7 +37,7 @@
 
             it("registers defaults", function () {
                 ParlaySettings.registerDefault("test", {data:5});
-                expect(ParlaySettings.defaults["test"]).toEqual({data:5});
+                expect(ParlaySettings.defaults.test).toEqual({data:5});
             });
 
             it("restores defaults", function () {

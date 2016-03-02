@@ -1,3 +1,4 @@
+/* istanbul ignore next */
 function ParlayNavigationContainerController($mdSidenav) {
 
     this.toggleSidenav = function () {
@@ -6,6 +7,7 @@ function ParlayNavigationContainerController($mdSidenav) {
 
 }
 
+/* istanbul ignore next */
 function ParlayNavigationContainer () {
     return {
         templateUrl: "../parlay_components/navigation/directives/parlay-navigation-container.html",

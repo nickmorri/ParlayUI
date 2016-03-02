@@ -1,8 +1,8 @@
+/* istanbul ignore next */
 function ParlayNavigationSidenavController($mdSidenav, $mdDialog, $mdMedia, PromenadeBroker) {
     "use strict";
 
 	this.openWorkspaceManagementDialog = function (event) {
-		/* istanbul ignore next */
 		$mdDialog.show({
 			templateUrl: "../parlay_components/items/directives/parlay-workspace-management-dialog.html",
 			targetEvent: event,
@@ -14,7 +14,6 @@ function ParlayNavigationSidenavController($mdSidenav, $mdDialog, $mdMedia, Prom
 	};
 
 	this.openProtocolManagementDialog = function (event) {
-		/* istanbul ignore next */
 		$mdDialog.show({
 			templateUrl: "../parlay_components/protocols/directives/parlay-protocol-list-dialog.html",
 			targetEvent: event,
@@ -30,7 +29,6 @@ function ParlayNavigationSidenavController($mdSidenav, $mdDialog, $mdMedia, Prom
 	};
 
 	this.openNotificationSidenav = function () {
-		/* istanbul ignore next */
 		$mdSidenav("notifications").open();
 	};
 

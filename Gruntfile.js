@@ -334,7 +334,15 @@ module.exports = function (grunt) {
 				'src': ['<%= meta.htmlViews %>', '<%= meta.htmlDirectives %>'],
 				'dest': '<%= meta.compiledHtml %>'
 			}
-		}
+		},
+
+        'bump': {
+            'options': {
+                'files': ['package.json', 'bower.json'],
+                'commitFiles': ['package.json', 'bower.json'],
+                'push': false
+            }
+        }
 		
 	});
 	

@@ -152,7 +152,7 @@ function PromenadeSmoothieChart($window, ParlaySettings) {
             canvas.style.width = "100%";
             canvas.style.height = "100%";
             canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
+            canvas.height = 300;
         };
     }
 

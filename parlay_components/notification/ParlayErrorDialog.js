@@ -1,4 +1,4 @@
-function ParlayErrorDialog($mdDialog, $mdMedia, ParlayNotificationHistory) {
+function ParlayErrorDialog($mdDialog, ParlayNotificationHistory) {
 
     return {
         show: function (from, description, details) {
@@ -16,15 +16,14 @@ function ParlayErrorDialog($mdDialog, $mdMedia, ParlayNotificationHistory) {
                     details: details
                 },
                 bindToController: true,
-                clickOutsideToClose: true,
-                fullscreen: !$mdMedia("gt-sm")
+                clickOutsideToClose: true
             });
         }
     };
 
 }
 
-function ParlayErrorDialogController($mdDialog) {
+function ParlayErrorDialogController($scope, $mdDialog, $mdMedia) {
 
     // Holds state of more detail visibility.
     this.more_hidden = true;
@@ -44,8 +43,11 @@ function ParlayErrorDialogController($mdDialog) {
         $mdDialog.hide();
     };
 
+    // Attach reference to $mdMedia to scope so that media queries can be done.
+    $scope.$mdMedia = $mdMedia;
+
 }
 
 angular.module("parlay.notification.error", ["ngMaterial", "parlay.notification"])
-    .controller("ParlayErrorDialogController", ["$mdDialog", ParlayErrorDialogController])
-    .factory("ParlayErrorDialog", ["$mdDialog", "$mdMedia", "ParlayNotificationHistory", ParlayErrorDialog]);
+    .controller("ParlayErrorDialogController", ["$scope", "$mdDialog", "$mdMedia", ParlayErrorDialogController])
+    .factory("ParlayErrorDialog", ["$mdDialog", "ParlayNotificationHistory", ParlayErrorDialog]);

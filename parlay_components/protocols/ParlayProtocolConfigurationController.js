@@ -1,4 +1,4 @@
-function ParlayProtocolConfigurationController($mdDialog, ParlayProtocolManager) {
+function ParlayProtocolConfigurationController($scope, $mdDialog, $mdMedia, ParlayProtocolManager) {
     
     this.selected_protocol = null;
     
@@ -80,8 +80,11 @@ function ParlayProtocolConfigurationController($mdDialog, ParlayProtocolManager)
             return response;
         }.bind(this));
     };
+
+    // Attach reference to $mdMedia to scope so that media queries can be done.
+    $scope.$mdMedia = $mdMedia
     
 }
 
 angular.module("parlay.protocols.configuration_controller", ["parlay.protocols.manager", "ngMaterial", "ngMessages", "ngMdIcons", "templates-main"])
-	.controller("ParlayProtocolConfigurationController", ["$mdDialog", "ParlayProtocolManager", ParlayProtocolConfigurationController]);
+	.controller("ParlayProtocolConfigurationController", ["$scope", "$mdDialog", "$mdMedia", "ParlayProtocolManager", ParlayProtocolConfigurationController]);

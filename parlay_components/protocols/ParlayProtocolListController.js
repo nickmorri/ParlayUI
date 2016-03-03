@@ -90,10 +90,7 @@ function ParlayProtocolListController($scope, $mdDialog, $mdMedia, ParlayProtoco
             controller: "ParlayProtocolDetailController",
             controllerAs: "ctrl",
             templateUrl: "../parlay_components/protocols/directives/parlay-protocol-details.html",
-            locals: {
-                protocol: protocol
-            },
-            fullscreen: !$mdMedia("gt-sm")
+            locals: { protocol: protocol }
         });
     };
     
@@ -111,8 +108,7 @@ function ParlayProtocolListController($scope, $mdDialog, $mdMedia, ParlayProtoco
             controller: "ParlayProtocolConfigurationController",
             controllerAs: "ctrl",
             bindToController: true,
-            templateUrl: "../parlay_components/protocols/directives/parlay-protocol-configuration-dialog.html",
-            fullscreen: !$mdMedia("gt-sm")
+            templateUrl: "../parlay_components/protocols/directives/parlay-protocol-configuration-dialog.html"
         });
     };
 

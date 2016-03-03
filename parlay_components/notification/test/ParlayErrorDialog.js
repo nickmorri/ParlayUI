@@ -29,8 +29,8 @@
         describe("ParlayErrorDialogController", function () {
             var ctrl;
 
-            beforeEach(inject(function ($controller) {
-                ctrl = $controller("ParlayErrorDialogController");
+            beforeEach(inject(function ($controller, $rootScope) {
+                ctrl = $controller("ParlayErrorDialogController", {$scope: $rootScope.$new()});
             }));
 
             it("has correct initial state", function () {

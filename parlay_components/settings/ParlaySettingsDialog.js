@@ -1,4 +1,4 @@
-function ParlaySettingsDialogController ($scope, $mdDialog, ParlaySettings, PromenadeBroker) {
+function ParlaySettingsDialogController ($scope, $mdDialog, $mdMedia, ParlaySettings, PromenadeBroker) {
 
     this.hide = function () {
         $mdDialog.hide();
@@ -68,7 +68,10 @@ function ParlaySettingsDialogController ($scope, $mdDialog, ParlaySettings, Prom
         ParlaySettings.set("broker", {show_prompt: newValue});
     });
 
+    // Attach reference to $mdMedia to scope so that media queries can be done.
+    $scope.$mdMedia = $mdMedia;
+
 }
 
 angular.module("parlay.settings.dialog", ["parlay.settings", "promenade.broker"])
-    .controller("ParlaySettingsDialogController", ["$scope", "$mdDialog", "ParlaySettings", "PromenadeBroker", ParlaySettingsDialogController]);
+    .controller("ParlaySettingsDialogController", ["$scope", "$mdDialog", "$mdMedia", "ParlaySettings", "PromenadeBroker", ParlaySettingsDialogController]);

@@ -71,7 +71,7 @@ PromenadeStandardItemCardGraphTabController.prototype.streamCount = function() {
  * @constructor
  * @param {Material Angular Service} $mdDialog - Dialog modal service.
  */
-function PromenadeStandardItemCardGraphTabConfigurationController($mdDialog) {
+function PromenadeStandardItemCardGraphTabConfigurationController($scope, $mdDialog, $mdMedia) {
 	this.hide = $mdDialog.hide;
 	
 	// When minValue or maxValue are defined we should initialize their lock to true.
@@ -112,6 +112,9 @@ function PromenadeStandardItemCardGraphTabConfigurationController($mdDialog) {
 	this.updateRate = function(stream) {
 		this.item.requestStream(stream);
 	};
+
+    // Attach reference to $mdMedia to scope so that media queries can be done.
+    $scope.$mdMedia = $mdMedia;
 	
 }
 
@@ -185,5 +188,5 @@ function PromenadeStandardItemCardGraph() {
 
 angular.module('promenade.items.standarditem.graph', ["promenade.smoothiechart"])
 	.controller("PromenadeStandardItemCardGraphTabController", ["$scope", "$mdDialog", "$interval", "$mdMedia", "ParlayUtility", "ParlayPersistence", PromenadeStandardItemCardGraphTabController])
-	.controller("PromenadeStandardItemCardGraphTabConfigurationController", ["$mdDialog", "item", "enabled_streams", "smoothie", PromenadeStandardItemCardGraphTabConfigurationController])
+	.controller("PromenadeStandardItemCardGraphTabConfigurationController", ["$scope", "$mdDialog", "$mdMedia", "item", "enabled_streams", "smoothie", PromenadeStandardItemCardGraphTabConfigurationController])
 	.directive('promenadeStandardItemCardGraph', PromenadeStandardItemCardGraph);

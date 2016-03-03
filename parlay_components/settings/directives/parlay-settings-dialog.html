@@ -10,81 +10,83 @@
         </div>
     </md-toolbar>
 
-    <md-dialog-content layout="column" layout-margin>
+    <md-dialog-content>
 
-        <md-card>
-            <md-toolbar class="md-hue-1">
-                <h2 class="md-toolbar-tools">Discovery settings</h2>
-            </md-toolbar>
-            <md-card-content>
-                <md-switch ng-model="auto_discovery" aria-label="Autodiscover">
-                    Automatically discover on startup <b>{{auto_discovery ? 'enabled' : 'disabled'}}.</b>
-                </md-switch>
-            </md-card-content>
-            <md-card-actions layout="row" layout-align="end center">
-                <md-button ng-click="ctrl.saveDiscovery()"><md-icon ng-md-icon icon="file_download"></md-icon>
-                    Save Discovery
-                </md-button>
-                <md-button ng-click="ctrl.loadDiscovery($event)">
-                    <md-icon ng-md-icon icon="file_upload"></md-icon>
-                    Load Discovery
-                    <!--Hidden file input that is triggered on md-list-item click-->
-                    <input id="discoveryInput" type="file" style="display: none;;" custom-on-change="ctrl.fileChanged" />
-                </md-button>
-            </md-card-actions>
-        </md-card>
+        <md-content layout="column" layout-margin>
+            <md-card>
+                <md-toolbar class="md-hue-1">
+                    <h2 class="md-toolbar-tools">Discovery settings</h2>
+                </md-toolbar>
+                <md-card-content>
+                    <md-switch ng-model="auto_discovery" aria-label="Autodiscover">
+                        Automatically discover on startup <b>{{auto_discovery ? 'enabled' : 'disabled'}}.</b>
+                    </md-switch>
+                </md-card-content>
+                <md-card-actions layout="row" layout-align="end center">
+                    <md-button ng-click="ctrl.saveDiscovery()"><md-icon ng-md-icon icon="file_download"></md-icon>
+                        Save Discovery
+                    </md-button>
+                    <md-button ng-click="ctrl.loadDiscovery($event)">
+                        <md-icon ng-md-icon icon="file_upload"></md-icon>
+                        Load Discovery
+                        <!--Hidden file input that is triggered on md-list-item click-->
+                        <input id="discoveryInput" type="file" style="display: none;;" custom-on-change="ctrl.fileChanged" />
+                    </md-button>
+                </md-card-actions>
+            </md-card>
 
-        <md-card>
-            <md-toolbar class="md-hue-1">
-                <h2 class="md-toolbar-tools">Graph settings</h2>
-            </md-toolbar>
-            <md-card-content layout="row" layout-margin>
-                <md-input-container>
-                    <label>Label size</label>
-                    <input flex type="number" ng-model="label_size" step="1" min="6" max="36" aria-label="Label font size">
-                </md-input-container>
-                <md-slider flex md-discrete ng-model="label_size" step="1" min="6" max="36" aria-label="Label font size"></md-slider>
-            </md-card-content>
-        </md-card>
+            <md-card>
+                <md-toolbar class="md-hue-1">
+                    <h2 class="md-toolbar-tools">Graph settings</h2>
+                </md-toolbar>
+                <md-card-content layout="row" layout-margin>
+                    <md-input-container>
+                        <label>Label size</label>
+                        <input flex type="number" ng-model="label_size" step="1" min="6" max="36" aria-label="Label font size">
+                    </md-input-container>
+                    <md-slider flex md-discrete ng-model="label_size" step="1" min="6" max="36" aria-label="Label font size"></md-slider>
+                </md-card-content>
+            </md-card>
 
-        <md-card>
-            <md-toolbar class="md-hue-1">
-                <h2 class="md-toolbar-tools">Log settings</h2>
-            </md-toolbar>
-            <md-card-content layout="column">
-                <md-input-container flex>
-                    <label>Max log size</label>
-                    <input ng-model="max_log_size" type="number" min="0" max="100000" step="500">
-                </md-input-container>
-            </md-card-content>
-        </md-card>
+            <md-card>
+                <md-toolbar class="md-hue-1">
+                    <h2 class="md-toolbar-tools">Log settings</h2>
+                </md-toolbar>
+                <md-card-content layout="column">
+                    <md-input-container flex>
+                        <label>Max log size</label>
+                        <input ng-model="max_log_size" type="number" min="0" max="100000" step="500">
+                    </md-input-container>
+                </md-card-content>
+            </md-card>
 
-        <md-card>
-            <md-toolbar class="md-hue-1">
-                <h2 class="md-toolbar-tools">Broker settings</h2>
-            </md-toolbar>
-            <md-card-content layout="column">
-                <md-switch ng-model="show_prompt" aria-label="Show prompt">
-                    Prompt to shutdown Broker on tab close <b>{{show_prompt ? 'enabled' : 'disabled'}}.</b>
-                </md-switch>
-            </md-card-content>
-        </md-card>
+            <md-card>
+                <md-toolbar class="md-hue-1">
+                    <h2 class="md-toolbar-tools">Broker settings</h2>
+                </md-toolbar>
+                <md-card-content layout="column">
+                    <md-switch ng-model="show_prompt" aria-label="Show prompt">
+                        Prompt to shutdown Broker on tab close <b>{{show_prompt ? 'enabled' : 'disabled'}}.</b>
+                    </md-switch>
+                </md-card-content>
+            </md-card>
 
-        <md-card>
-            <md-toolbar class="md-hue-1">
-                <h2 class="md-toolbar-tools">Notification settings</h2>
-            </md-toolbar>
-            <md-card-content layout="column">
-                <p ng-show="ctrl.isMSEdge()">Microsoft Edge does not support browser Notifications.</p>
-                <p ng-show="notification_permission">Browser can send notifications when user is away from page.</p>
-                <p ng-hide="notification_permission || ctrl.isMSEdge()">Browser cannot send notifications when user is away from page. Request permissions below.</p>
-            </md-card-content>
-            <md-card-actions layout="row" layout-align="end center" ng-hide="notification_permission || ctrl.isMSEdge()">
-                <md-button ng-click="ctrl.requestNotificationPermission()"><md-icon ng-md-icon icon="notifications"></md-icon>
-                    Request browser notifications
-                </md-button>
-            </md-card-actions>
-        </md-card>
+            <md-card>
+                <md-toolbar class="md-hue-1">
+                    <h2 class="md-toolbar-tools">Notification settings</h2>
+                </md-toolbar>
+                <md-card-content layout="column">
+                    <p ng-show="ctrl.isMSEdge()">Microsoft Edge does not support browser Notifications.</p>
+                    <p ng-show="notification_permission">Browser can send notifications when user is away from page.</p>
+                    <p ng-hide="notification_permission || ctrl.isMSEdge()">Browser cannot send notifications when user is away from page. Request permissions below.</p>
+                </md-card-content>
+                <md-card-actions layout="row" layout-align="end center" ng-hide="notification_permission || ctrl.isMSEdge()">
+                    <md-button ng-click="ctrl.requestNotificationPermission()"><md-icon ng-md-icon icon="notifications"></md-icon>
+                        Request browser notifications
+                    </md-button>
+                </md-card-actions>
+            </md-card>
+        </md-content>
 
     </md-dialog-content>
 

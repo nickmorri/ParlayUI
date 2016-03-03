@@ -25,7 +25,7 @@ function ParlayProtocolDetailController($scope, $mdDialog, $mdMedia, protocol) {
     };
 
     // Attach reference to $mdMedia to scope so that media queries can be done.
-    $scope.$mdMedia = $mdMedia
+    $scope.$mdMedia = $mdMedia;
 
 }
 

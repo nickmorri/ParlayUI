@@ -2,13 +2,14 @@
     "use strict";
 
     describe("parlay.utility", function() {
-        var scope, ParlayUtility;
+        var scope, ParlayUtility, $compile;
         
         beforeEach(module("parlay.utility"));
             
-        beforeEach(inject(function (_$rootScope_, _ParlayUtility_) {
+        beforeEach(inject(function (_$rootScope_, _ParlayUtility_, _$compile_) {
             ParlayUtility = _ParlayUtility_;
             scope = _$rootScope_.$new();
+            $compile = _$compile_;
         }));
         
         describe("ParlayUtility", function () {
@@ -88,6 +89,14 @@
 
 		});
 
+		it('custom-on-change', function () {
+            scope.handler = function () {};
+            spyOn(scope, "handler");
+            var element = $compile('<input ng-model="test" custom-on-change="handler" />"')(scope);
+            element[0].onchange();
+            expect(scope.handler).toHaveBeenCalled();
+        });
+
 	});
-    
+
 }());

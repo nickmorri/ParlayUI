@@ -139,7 +139,7 @@ function customOnChange () {
     return {
         restrict: 'A',
         link: function (scope, element, attributes) {
-            element.onchange = scope.$eval(attributes.customOnChange);
+            element[0].onchange = scope.$eval(attributes.customOnChange);
         }
     };
 }

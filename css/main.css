@@ -38,6 +38,11 @@ md-icon:focus {
     padding: 8px 0 8px 0;
 }
 
+/* Prevent clipping on md-switch label */
+md-switch {
+    white-space: normal;;
+}
+
 /* On Microsoft Edge browser we should disable some animations for a better user experience */
 _:-ms-lang(x), .md-ripple-container, .md-ripple-placed {
     transition: none;

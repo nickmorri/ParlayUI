@@ -18,10 +18,12 @@ function ParlaySettingsDialogController ($scope, $mdDialog, ParlaySettings, Prom
         // Instantiate FileReader object
         var fileReader = new FileReader();
 
-        // After file load pass saved discovery data to the PromenadeBroker
-        fileReader.onload = function (event) {
-            PromenadeBroker.setSavedDiscovery(JSON.parse(event.target.result));
-        };
+        $scope.$apply(function () {
+            // After file load pass saved discovery data to the PromenadeBroker
+            fileReader.onload = function (event) {
+                PromenadeBroker.setSavedDiscovery(JSON.parse(event.target.result));
+            };
+        });
 
         // Read file as text
         fileReader.readAsText(event.target.files[0]);

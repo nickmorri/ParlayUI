@@ -172,11 +172,14 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
         // Instantiate FileReader object
         var fileReader = new FileReader();
 
-        // After file load pass saved discovery data to the PromenadeBroker
-        fileReader.onload = function (event) {
-            store.import(event.target.result);
-            saved_workspaces = getWorkspaces();
-        };
+        $scope.$apply(function () {
+            "use strict";
+            // After file load pass saved discovery data to the PromenadeBroker
+            fileReader.onload = function (event) {
+                store.import(event.target.result);
+                saved_workspaces = getWorkspaces();
+            };
+        });
 
         // Read file as text
         fileReader.readAsText(event.target.files[0]);

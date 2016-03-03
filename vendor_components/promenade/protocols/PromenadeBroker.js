@@ -208,9 +208,10 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
                     .cancel('Dismiss');
                 $mdDialog.show(confirm).then(function() {
                     // Request the Broker shutdown and close the window.
-                    this.requestShutdown();
-                    $window.removeEventListener("beforeunload", unload_listener);
-                    $window.close();
+                    this.requestShutdown().then(function () {
+                        $window.removeEventListener("beforeunload", unload_listener);
+                        $window.close();
+                    });
                 }.bind(this));
             }.bind(this), 500);
 

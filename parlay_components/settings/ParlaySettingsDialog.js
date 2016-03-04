@@ -1,3 +1,4 @@
+/* istanbul ignore next */
 function ParlaySettingsDialogController ($scope, $mdDialog, $mdMedia, ParlaySettings, PromenadeBroker) {
 
     this.hide = function () {

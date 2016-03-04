@@ -9,7 +9,6 @@
     "angular-messages": "^1.5.0",
     "angular-mocks": "^1.5.0",
     "angular-moment": "^0.10.3",
-    "angular-notification": "^1.1.1",
     "angular-recursion": "^1.0.5",
     "angular-scroll-glue": "^2.0.6",
     "es6-shim": "^0.35.0",

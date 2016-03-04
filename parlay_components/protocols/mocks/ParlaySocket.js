@@ -1,18 +1,51 @@
-function ParlaySocket($q) {
+function MockParlaySocketFactory($q) {
+    "use strict";
+
     var connected = false;
-    
-    var Public = {};
-    
-    Public.onOpen = function () {
-	    
+    var on_open_callbacks = [];
+    var on_close_callbacks = [];
+
+    function MockParlaySocket() {}
+
+    MockParlaySocket.prototype.onOpen = function (callback) {
+        on_open_callbacks.push(callback);
     };
-    
-    Public.onMessage = function () {
+
+    MockParlaySocket.prototype.onClose = function (callback) {
+        on_close_callbacks.push(callback);
+    };
+
+    MockParlaySocket.prototype.onMessage = function () {
         return function () {};
     };
-    
-    Public.sendMessage = function (topics, contents, response_topics, response_callback) {
-        if (contents === null) {
+
+    MockParlaySocket.prototype.open = function () {
+        connected = true;
+        on_open_callbacks.forEach(function (callback) {
+            callback();
+        });
+        return $q(function (resolve) { resolve(); });
+    };
+
+    MockParlaySocket.prototype.close = function () {
+        connected = false;
+        on_close_callbacks.forEach(function (callback) {
+            callback();
+        });
+        return $q(function (resolve) { resolve(); });
+    };
+
+    MockParlaySocket.prototype.isConnected = function () {
+        return connected;
+    };
+
+    MockParlaySocket.prototype.getAddress = function () {
+        return 'ws://localhost:8080';
+    };
+
+    MockParlaySocket.prototype.sendMessage = function (topics, contents, response_topics, response_callback) {
+        if (response_callback == null) {}
+        else if (contents == null) {
             response_callback({STATUS: -1});
         }
         else {
@@ -20,35 +53,10 @@ function ParlaySocket($q) {
             response_callback(contents);
         }
     };
-    
-    Public.open = function () {
-		connected = true;
-		return $q(function (resolve) {
-			resolve();
-		});
-    };
-    
-    Public.close = function () {
-        connected = false;
-        return $q(function (resolve) {
-			resolve();
-		});
-    };
-    
-    Public.isConnected = function () {
-        return connected;
-    };
-    
-    Public.onOpen = function () {};
-                
-    Public.onClose = function () {};
-    
-    Public.getAddress = function () {
-        return 'ws://localhost:8080';
-    };
-    
-    return Public;
+
+    return new MockParlaySocket();
+
 }
 
 angular.module('mock.parlay.socket', [])
-	.factory('ParlaySocket', ['$q', ParlaySocket]);
+    .factory('ParlaySocket', ['$q', MockParlaySocketFactory]);

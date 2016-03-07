@@ -181,7 +181,9 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
                 action: {
                     text: "Connect",
 					callback: this.connect.bind(this)
-                }
+                },
+				permanent: true,
+				warning: true
             });
 	    }.bind(this));
 

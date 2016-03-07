@@ -2,6 +2,7 @@ function MockParlaySocketFactory($q) {
     "use strict";
 
     var connected = false;
+    var on_message_callbacks = {};
     var on_open_callbacks = [];
     var on_close_callbacks = [];
 
@@ -15,8 +16,22 @@ function MockParlaySocketFactory($q) {
         on_close_callbacks.push(callback);
     };
 
-    MockParlaySocket.prototype.onMessage = function () {
+    MockParlaySocket.prototype.onMessage = function (topics, callback) {
+        if (on_message_callbacks[JSON.stringify(topics)]) {
+            on_message_callbacks[JSON.stringify(topics)].push(callback);
+        }
+        else {
+            on_message_callbacks[JSON.stringify(topics)] = [callback];
+        }
         return function () {};
+    };
+
+    MockParlaySocket.prototype.triggerOnMessage = function (topics, contents, response_contents) {
+        if (on_message_callbacks[JSON.stringify(topics)] !== undefined) {
+            on_message_callbacks[JSON.stringify(topics)].forEach(function (callback) {
+                callback(response_contents);
+            });
+        }
     };
 
     MockParlaySocket.prototype.open = function () {

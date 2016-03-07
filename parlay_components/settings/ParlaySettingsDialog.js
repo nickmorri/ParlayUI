@@ -22,7 +22,7 @@ function ParlaySettingsDialogController ($scope, $mdDialog, $mdMedia, ParlaySett
         $scope.$apply(function () {
             // After file load pass saved discovery data to the PromenadeBroker
             fileReader.onload = function (event) {
-                PromenadeBroker.setSavedDiscovery(JSON.parse(event.target.result));
+                PromenadeBroker.applySavedDiscovery(JSON.parse(event.target.result));
             };
         });
 

@@ -77,11 +77,6 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
             return last_discovery;
         };
 
-		this.setSavedDiscovery = function(data) {
-			on_discovery_callbacks.forEach(function (callback) {
-				callback({discovery: data});
-			});
-		};
 
 		/**
 		 * Registers a callback on discovery.
@@ -89,6 +84,8 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
 		 */
 		this.onDiscovery = function (callbackFunc) {
 			on_discovery_callbacks.push(callbackFunc);
+		this.applySavedDiscovery = function(data) {
+            this.invokeDiscoveryCallbacks({discovery: data});
 		};
 
 		/**

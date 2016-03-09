@@ -269,7 +269,7 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
 
             // Wait before displaying the discovery progress notification in case of a quick discovery response.
             var registration = $timeout(function () {
-                // Show progress and pass deferred so that we can hide hide dialog when it is resolved.
+                // Show progress and pass deferred so that we can hide dialog when it is resolved.
                 ParlayNotification.showProgress(deferred);
             }, 500);
 

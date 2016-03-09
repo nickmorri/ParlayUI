@@ -15,6 +15,19 @@ function MockParlaySocketFactory($q) {
         },
         '{"request":"get_discovery","type":"broker"}{"force":true,"STATUS":0}{"response":"get_discovery_response","type":"broker"}': {
             STATUS: "ok"
+        },
+        '{"request":"get_open_protocols","type":"broker"}{}{"response":"get_open_protocols_response","type":"broker"}': {
+            status: "ok"
+        },
+        '{"TO":100,"MSG_ID":201,"FROM":"UI"}{}{"FROM":100,"TO":"UI"}': {
+            TOPICS: {
+                MSG_STATUS: "ok"
+            }
+        },
+        '{"TO":100,"MSG_ID":201,"FROM":"UI"}{}{"FROM":200,"TO":"UI"}': {
+            TOPICS: {
+                MSG_STATUS: "ERROR"
+            }
         }
     };
 

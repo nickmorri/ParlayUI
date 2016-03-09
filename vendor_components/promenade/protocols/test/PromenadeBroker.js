@@ -186,17 +186,13 @@
 
                     it("sendMessage", function () {
                         spyOn(ParlaySocket, "sendMessage");
-
                         PromenadeBroker.sendMessage({}, {}, {});
-
                         expect(ParlaySocket.sendMessage).toHaveBeenCalledWith({type: "broker"}, {}, {type: "broker"}, jasmine.any(Function));
                     });
 
                     it("onMessage", function () {
                         spyOn(ParlaySocket, "onMessage");
-
                         PromenadeBroker.onMessage({}, function () {}, false);
-
                         expect(ParlaySocket.onMessage).toHaveBeenCalledWith({}, jasmine.any(Function), false);
                     });
 
@@ -217,9 +213,7 @@
                             PromenadeBroker.connect();
                             PromenadeBroker.requestDiscovery(true).then(done);
 
-                            $rootScope.$apply();
                             $timeout.flush();
-
 
                             expect(ParlayNotification.showProgress).toHaveBeenCalled();
                             expect(PromenadeBroker.requestAvailableProtocols).toHaveBeenCalled();
@@ -231,25 +225,21 @@
                             expect(PromenadeBroker.isConnected()).toBeFalsy();
                             spyOn(ParlayNotification, "show");
                             PromenadeBroker.requestDiscovery();
-                            expect(ParlayNotification.show).toHaveBeenCalledWith({content: "Cannot discover while not connected to Broker."})
+                            expect(ParlayNotification.show).toHaveBeenCalledWith({content: "Cannot discover while not connected to Broker."});
                         });
 
                     });
 
                     it("requestAvailableProtocols", function (done) {
                         spyOn(PromenadeBroker, "sendMessage").and.callThrough();
-                        PromenadeBroker.requestAvailableProtocols().then(function () {
-                            done();
-                        });
+                        PromenadeBroker.requestAvailableProtocols().then(done);
                         $rootScope.$apply();
                         expect(PromenadeBroker.sendMessage).toHaveBeenCalledWith({request: "get_protocols"}, {}, {response: "get_protocols_response"});
                     });
 
                     it("requestOpenProtocols", function (done) {
                         spyOn(PromenadeBroker, "sendMessage").and.callThrough();
-                        PromenadeBroker.requestOpenProtocols().then(function () {
-                            done();
-                        });
+                        PromenadeBroker.requestOpenProtocols().then(done);
                         $rootScope.$apply();
                         expect(PromenadeBroker.sendMessage).toHaveBeenCalledWith({request: "get_open_protocols"}, {}, {response: "get_open_protocols_response"});
                     });

@@ -84,16 +84,29 @@ function MockParlaySocketFactory($q) {
     };
 
     MockParlaySocket.prototype.sendMessage = function (topics, contents, response_topics, response_callback) {
-        if (response_callback == null) {}
+        if (response_callback == null) {
+            return $q(function (resolve, reject) {
+                reject({STATUS: -1});
+            });
+        }
         else if (contents == null) {
             response_callback({STATUS: -1});
+            return $q(function (resolve, reject) {
+                reject({STATUS: -1});
+            });
         }
         else if (sample_responses[JSON.stringify(topics) + JSON.stringify(contents) + JSON.stringify(response_topics)] !== undefined) {
             response_callback(sample_responses[JSON.stringify(topics) + JSON.stringify(contents) + JSON.stringify(response_topics)]);
+            return $q(function (resolve, reject) {
+                resolve(response_callback(sample_responses[JSON.stringify(topics) + JSON.stringify(contents) + JSON.stringify(response_topics)]));
+            });
         }
         else {
             contents.STATUS = 0;
             response_callback(contents);
+            return $q(function (resolve, reject) {
+                resolve(contents);
+            });
         }
     };
 

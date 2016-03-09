@@ -43,6 +43,7 @@ PromenadeStandardItemCardLogTabController.prototype.getLog = function () {
  * Directive constructor for PromenadeStandardItemCardLog.
  * @returns {Object} - Directive configuration.
  */
+/* istanbul ignore next */
 function PromenadeStandardItemCardLog() {
 	return {
         scope: {
@@ -55,30 +56,36 @@ function PromenadeStandardItemCardLog() {
     };
 }
 
-function PromenadeStandardItemCardLogItem(ParlayNotification) {
+/**
+ * Controller for Parlay Card Log Item.
+ * @param {Parlay Service} ParlayNotification - Displays notifications to user.
+ * @constructor
+ */
+function PromenadeStandardItemCardLogItemController (ParlayNotification) {
+    "use strict";
+    this.copy = function () {
+        ParlayNotification.show({content: JSON.stringify(angular.copy(this.message)).copyToClipboard() ?
+            "Message copied to clipboard" : "Copy failed. Check browser compatibility."});
+    };
+}
+/**
+ * Parlay Card Log Item directive.
+ * @returns {AngularJS directive factory}
+ * @constructor
+ */
+/* istanbul ignore next */
+function PromenadeStandardItemCardLogItem() {
     return {
-        scope: {
-            message: "="
-        },
-        controller: function () {
-
-            this.copy = function () {
-                ParlayNotification.show({content: JSON.stringify(angular.copy(this.message)).copyToClipboard() ?
-                    "Message copied to clipboard" : "Copy failed. Check browser compatibility."});
-            };
-
-            this.hasLargeContents = function () {
-                return Object.keys(this.message.CONTENTS).length > 1;
-            };
-
-        },
+        scope: { message: "=" },
+        controller: 'PromenadeStandardItemCardLogItemController',
         controllerAs: "ctrl",
         bindToController: true,
         templateUrl: '../vendor_components/promenade/items/directives/promenade-standard-item-card-log-item.html'
     };
 }
 
-angular.module('promenade.items.standarditem.log', ['parlay.utility', 'parlay.store.persistence', 'luegg.directives'])
+angular.module('promenade.items.standarditem.log', ['parlay.utility', 'parlay.notification', 'parlay.store.persistence', 'luegg.directives'])
 	.controller('PromenadeStandardItemCardLogTabController', ['$scope', 'ParlayPersistence', 'ParlayUtility', PromenadeStandardItemCardLogTabController])
+    .controller('PromenadeStandardItemCardLogItemController', ['ParlayNotification', PromenadeStandardItemCardLogItemController])
 	.directive('promenadeStandardItemCardLog', PromenadeStandardItemCardLog)
 	.directive('promenadeStandardItemCardLogItem', ["ParlayNotification", PromenadeStandardItemCardLogItem]);

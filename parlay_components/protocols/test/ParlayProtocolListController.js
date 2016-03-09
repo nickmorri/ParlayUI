@@ -12,6 +12,7 @@
                 
                 MockPromenadeBroker = {
                     connected: false,
+                    version: '0.0.1',
                     isConnected: function () {
                         return this.connected;
                     },
@@ -39,6 +40,7 @@
                 it('tests connection', function () {
                     expect(ctrl.isBrokerConnected()).toBeFalsy();
                     expect(ctrl.getBrokerAddress()).toBe('ws://localhost:8080');
+                    expect(ctrl.getBrokerVersion()).toBe('0.0.1');
                 });
 
                 it("shutdown broker connection", function () {

@@ -20,6 +20,14 @@ function ParlayProtocolListController($scope, $mdDialog, $mdMedia, ParlayProtoco
     };
 
     /**
+     * Returns Broker version.
+     * @returns {String} current version reported by Broker.
+     */
+    this.getBrokerVersion = function () {
+        return PromenadeBroker.version;
+    };
+
+    /**
      * Requests that the Broker shutdown.
      */
     this.shutdownBroker = function () {

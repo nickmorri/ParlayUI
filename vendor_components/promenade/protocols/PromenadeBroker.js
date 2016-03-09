@@ -121,6 +121,21 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
 
 			ParlayNotification.show({content: content_string});
 
+            if (contents.discovery && contents.discovery.length > 0) {
+                // Record the current Broker version.
+
+                var broker = contents.discovery.find(function (item) { return item.NAME && item.NAME === "Broker"; });
+
+                if (broker !== undefined) {
+                    Object.defineProperty(this, "version", {
+                        writeable: false,
+                        enumerable: true,
+                        value: broker.VERSION
+                    });
+                }
+
+            }
+
 			// Store latest discovery data.
 			this.setLastDiscovery(contents.discovery);
 		}.bind(this));

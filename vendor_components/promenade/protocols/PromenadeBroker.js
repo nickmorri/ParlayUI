@@ -305,7 +305,7 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
 	 */
 	PromenadeBroker.prototype.requestOpenProtocols = function () {
 	    return this.sendMessage({request: "get_open_protocols"}, {}, {response: "get_open_protocols_response"}).then(function (response) {
-	        if (response.status === "ok") return response.protocols;
+            return response.status === "ok" ? $q.resolve(response.protocols) : $q.reject(response);
 	    });
 	};
 	

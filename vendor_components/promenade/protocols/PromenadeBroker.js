@@ -141,8 +141,8 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
                 ParlaySocket.sendMessage({type: "get_protocol_discovery_response"}, {discovery: {}});
 	        });
 
-
             // Request a fast discovery to see if there's already one there if that is the user preference.
+			/* istanbul ignore else */
             if (ParlaySettings.get("broker").auto_discovery) {
                 this.requestDiscovery(false);
             }
@@ -243,8 +243,6 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
      * @returns {Function} - Listener deregistration.
      */
     PromenadeBroker.prototype.onMessage = function(response_topics, response_callback, verbose) {
-        if (response_topics === undefined) response_topics.type = "broker";
-
         return ParlaySocket.onMessage(response_topics, response_callback, verbose);
     };
 

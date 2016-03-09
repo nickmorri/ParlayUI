@@ -6,6 +6,18 @@ function MockParlaySocketFactory($q) {
     var on_open_callbacks = [];
     var on_close_callbacks = [];
 
+    var sample_responses = {
+        '{"request":"open_protocol","type":"broker"}{"protocol_name":"TestProtocol","params":1}{"response":"open_protocol_response","type":"broker"}': {
+            STATUS: "ok"
+        },
+        '{"request":"close_protocol","type":"broker"}{"protocol":"TestProtocol"}{"response":"close_protocol_response","type":"broker"}': {
+            STATUS: "ok"
+        },
+        '{"request":"get_discovery","type":"broker"}{"force":true,"STATUS":0}{"response":"get_discovery_response","type":"broker"}': {
+            STATUS: "ok"
+        }
+    };
+
     function MockParlaySocket() {}
 
     MockParlaySocket.prototype.onOpen = function (callback) {
@@ -62,6 +74,9 @@ function MockParlaySocketFactory($q) {
         if (response_callback == null) {}
         else if (contents == null) {
             response_callback({STATUS: -1});
+        }
+        else if (sample_responses[JSON.stringify(topics) + JSON.stringify(contents) + JSON.stringify(response_topics)] !== undefined) {
+            response_callback(sample_responses[JSON.stringify(topics) + JSON.stringify(contents) + JSON.stringify(response_topics)]);
         }
         else {
             contents.STATUS = 0;

@@ -45,12 +45,13 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
      */
     /* istanbul ignore next */
     this.saveCurrentWorkspaceAs = function () {
-        $mdDialog.show({
-            controller: "ParlayWorkspaceSaveAsDialogController",
-            controllerAs: "ctrl",
-            templateUrl: "../parlay_components/items/directives/parlay-workspace-save-as-dialog.html",
-            onComplete: function (scope, element) { element.find("input").focus(); }
-        }).then(this.saveWorkspace);
+        $mdDialog.show($mdDialog.prompt()
+            .title("Save")
+            .placeholder("Name")
+            .ariaLabel("Name")
+            .ok("Save")
+            .cancel("Cancel"))
+        .then(function (name) { this.saveWorkspace({name: name}); }.bind(this));
     };
 
     /**
@@ -188,27 +189,5 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
 
 }
 
-function ParlayWorkspaceSaveAsDialogController($scope, $mdDialog, $mdMedia) {
-
-    /**
-     * Resolves $mdDialog promise with the name entered in the input.
-     */
-	this.save = function () {
-		$mdDialog.hide({name: $scope.name});
-	};
-
-    /**
-     * Rejects the $mdDialog promise.
-     */
-	this.cancel = function () {
-		$mdDialog.cancel();
-	};
-
-    // Attach reference to $mdMedia to scope so that media queries can be done.
-    $scope.$mdMedia = $mdMedia;
-
-}
-
 angular.module("parlay.items.workspaces", ["parlay.store", "parlay.items.manager", "angularMoment", "parlay.utility"])
-	.controller("ParlayWorkspaceSaveAsDialogController", ["$scope", "$mdDialog", "$mdMedia", ParlayWorkspaceSaveAsDialogController])
 	.controller("ParlayWorkspaceManagementController", ["$scope", "$mdDialog", "$mdMedia", "ParlayNotification", "ParlayStore", "ParlayItemManager", "PromenadeBroker", ParlayWorkspaceManagementController]);

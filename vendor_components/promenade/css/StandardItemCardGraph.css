@@ -1,18 +1,26 @@
-.parlay-graph-configuration-dialog-content > .md-dialog-content > md-list > md-list-item > md-input-container {
-    margin-top: 0;
-    margin-bottom: 0;
+.parlay-graph-configuration-dialog-content > div > md-list {
+    padding-top: 0;
 }
 
-.parlay-graph-configuration-dialog-content > .md-dialog-content > md-list > md-list-item > md-input-container .md-errors-spacer {
-    min-height: 0;
+.parlay-graph-configuration-dialog-content > div > md-list > .md-subheader {
+    margin-bottom: 10px;
 }
 
-.parlay-graph-configuration-dialog-content > .md-dialog-content > md-list > md-list-item > md-icon {
+.parlay-graph-configuration-dialog-content > div > md-list > md-list-item {
+    cursor: default;
+}
+
+.parlay-graph-configuration-dialog-content > div > md-list > md-list-item > md-icon {
     margin-top: 0;
     margin-bottom: 0;
     cursor: pointer;
 }
 
-.parlay-graph-configuration-dialog-content > .md-dialog-content > md-list > md-list-item {
-    cursor: default;
+.parlay-graph-configuration-dialog-content > div > md-list > md-list-item > md-input-container {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.parlay-graph-configuration-dialog-content > div > md-list > md-list-item > md-input-container .md-errors-spacer {
+    min-height: 0;
 }

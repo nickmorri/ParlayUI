@@ -15,6 +15,9 @@ md-list-item > a {
     text-decoration: none;
     color: black;
 }
+.parlay-list-item {
+    padding: 16px 16px 16px 16px;
+}
 .capitalize {
     text-transform: capitalize;
 }

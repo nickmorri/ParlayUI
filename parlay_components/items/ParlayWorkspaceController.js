@@ -157,7 +157,7 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
      * @param event - Mouse click event
      */
     this.importSavedWorkspaces = function (event) {
-        event.target.parentElement.parentElement.parentElement.getElementsByTagName("input")[0].click();
+        event.target.parentElement.parentElement.getElementsByTagName("input")[0].click();
     };
 
     /**

@@ -24,6 +24,7 @@ md-tab-content > div > md-toolbar > .md-toolbar-tools {
 .parlay-item-card > md-toolbar {
 	height: 48px;
 	min-height: 48px;
+	cursor: move;
 }
 
 md-tab-content > div > md-toolbar {

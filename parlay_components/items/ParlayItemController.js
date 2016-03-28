@@ -19,6 +19,10 @@ function ParlayItemController(ParlayItemManager) {
         ParlayItemManager.reorder(parseInt(index, 10), distance);
     };
 
+    this.swap = function (indexA, indexB) {
+        ParlayItemManager.swap(indexA, indexB);
+    };
+
     this.duplicate = function (index, uid) {
         ParlayItemManager.duplicateItem(parseInt(index, 10), uid);
     };
@@ -39,7 +43,7 @@ function ParlayEmptyWorkspacePlaceholderController($mdSidenav) {
 
         // If sidenav is open, on screens gt-sm, focus the element.
         // Otherwise, on screens <= sm, open the sidenav then focus the element.
-        if (sidenav.isOpen()) element.focus();
+        if (sidenav.isLockedOpen()) element.focus();
         else sidenav.open().then(function () { element.focus(); });
     };
 

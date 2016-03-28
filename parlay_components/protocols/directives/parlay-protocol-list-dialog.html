@@ -51,12 +51,6 @@
                 </div>
 
                 <div layout="row" flex-sm="25" layout-sm="row" layout-align-sm="center end">
-                    <md-button class="md-primary" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.viewProtocolDetails($event, protocol)" aria-label="Details">
-                        <md-tooltip>Details</md-tooltip>
-                        <span hide show-gt-md>Details</span>
-                        <md-icon hide-gt-md ng-md-icon icon="info"></md-icon>
-                    </md-button>
-
                     <md-button class="md-warn" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.closeProtocol(protocol)" aria-label="Disconnect">
                         <md-tooltip>Disconnect</md-tooltip>
                         <span hide show-gt-md>Disconnect</span>
@@ -70,9 +64,9 @@
 
             <md-subheader ng-if="ctrl.isBrokerConnected() && ctrl.hasSavedProtocols()" class="md-no-sticky">Saved Protocols</md-subheader>
 
-            <md-list-item ng-if="ctrl.isBrokerConnected() && ctrl.hasSavedProtocols()" class="md-3-line" layout="row" layout-align="space-between center" ng-repeat="configuration in ctrl.getSavedProtocols()">
+            <md-list-item ng-if="ctrl.isBrokerConnected() && ctrl.hasSavedProtocols()" class="md-3-line parlay-list-item" layout="row" layout-align="space-between center" ng-repeat="configuration in ctrl.getSavedProtocols()">
 
-                <md-icon hide-sm hide-md ng-if="$index === 0" ng-md-icon icon="settings_backup_restore"></md-icon>
+                <md-icon hide-xs hide-sm hide-md ng-if="$index === 0" ng-md-icon icon="settings_backup_restore"></md-icon>
 
                 <div flex-sm="75" class="md-list-item-text" ng-class="{'md-offset': $index !== 0 && $mdMedia('gt-md')}">
                     <h3>{{::configuration.name}}</h3>

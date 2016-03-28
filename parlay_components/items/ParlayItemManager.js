@@ -67,6 +67,12 @@ function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager, Parlay
 	    active_items[index + distance] = active_items[index];
 	    active_items[index] = temp;
     };
+
+	ParlayItemManager.prototype.swap = function (indexA, indexB) {
+		var temp = active_items[parseInt(indexA, 10)];
+		active_items[parseInt(indexA, 10)] = active_items[parseInt(indexB, 10)];
+		active_items[parseInt(indexB, 10)] = temp;
+	};
     
     /**
 	 * Activates item. 

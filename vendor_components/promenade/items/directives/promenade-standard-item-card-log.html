@@ -2,23 +2,29 @@
 
 	<md-toolbar class="md-hue-2">
 		<div class="md-toolbar-tools">
-			<h5 ng-if="ctrl.filter_text" ng-pluralize count="ctrl.getFilteredLog(ctrl.filter_text).length" when="{'0': 'No messages match filter', 'one': '1 message matches', 'other': '{} messages match'}"></h5>
-			<h5 ng-if="!ctrl.filter_text" ng-pluralize count="ctrl.getFilteredLog(ctrl.filter_text).length" when="{'0': 'No messages logged', 'one': '1 message logged', 'other': '{} messages logged'}"></h5>
+			<h5 ng-if="ctrl.filter_text" ng-pluralize count="ctrl.getFilteredLog(ctrl.filter_text, ctrl.descending).length" when="{'0': 'No messages match filter', 'one': '1 message matches', 'other': '{} messages match'}"></h5>
+			<h5 ng-if="!ctrl.filter_text" ng-pluralize count="ctrl.getFilteredLog(ctrl.filter_text, ctrl.descending).length" when="{'0': 'No messages logged', 'one': '1 message logged', 'other': '{} messages logged'}"></h5>
 			<span flex></span>
 			
 		</div>
 	</md-toolbar>
 
-	<md-input-container flex="100" ng-show="ctrl.getLog().length" class="filter-input-container" aria-label="Filter log messages">
-		<label>Filter on any value</label>
-		<input ng-model="ctrl.filter_text" type="text">
-	</md-input-container>
+    <div ng-show="ctrl.getLog().length" layout="row" class="log-control-container md-whiteframe-2dp">
+        <md-input-container flex class="filter-input-container" aria-label="Filter log messages">
+            <label>Filter on any value</label>
+            <input ng-model="ctrl.filter_text" type="text">
+        </md-input-container>
 
+        <md-button class="md-primary" ng-click="ctrl.descending = !ctrl.descending">
+            <md-tooltip>Order <span ng-show="ctrl.descending">descending</span><span ng-hide="ctrl.descending">ascending</span></md-tooltip>
+            ID<md-icon ng-md-icon icon="{{ctrl.descending ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}}"></md-icon>
+        </md-button>
+    </div>
 
 	<md-content ng-show="ctrl.getLog().length" class="parlay-item-card-tab-content" layout="column" scroll-glue>
 
 		<md-virtual-repeat-container style="height: 292px;">
-			<div md-virtual-repeat="message in ctrl.getFilteredLog(ctrl.filter_text)" md-auto-shrink>
+			<div md-virtual-repeat="message in ctrl.getFilteredLog(ctrl.filter_text, ctrl.descending)" md-auto-shrink>
                 <promenade-standard-item-card-log-item message="message"></promenade-standard-item-card-log-item>
 			</div>
 		</md-virtual-repeat-container>

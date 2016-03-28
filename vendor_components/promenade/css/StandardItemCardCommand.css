@@ -26,5 +26,7 @@
 }
 
 .promenade-response-contents-key-values {
+    margin-top: 0;
+    margin-bottom: 0;
     overflow-wrap: break-word;
 }

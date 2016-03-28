@@ -43,7 +43,7 @@ function ParlayEmptyWorkspacePlaceholderController($mdSidenav) {
 
         // If sidenav is open, on screens gt-sm, focus the element.
         // Otherwise, on screens <= sm, open the sidenav then focus the element.
-        if (sidenav.isOpen()) element.focus();
+        if (sidenav.isLockedOpen()) element.focus();
         else sidenav.open().then(function () { element.focus(); });
     };
 

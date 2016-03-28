@@ -44,10 +44,6 @@
 				<md-list-item ng-repeat="stream in ctrl.item.data_streams | orderObjectBy: 'NAME'" layout="row">
                     <md-icon ng-md-icon icon="{{ctrl.isStreamEnabled(stream) ? 'check_box' : 'check_box_outline_blank'}}" options="{'rotation': 'none'}" ng-click="ctrl.toggleStream(stream)"></md-icon>
 					<p>{{stream.NAME}} <span ng-show="stream.value !== undefined">has value {{stream.value}}</span></p>
-                    <md-input-container flex="20">
-                        <label>Rate (Hz)</label>
-                        <input ng-model="stream.rate" type="number" minimum="0" step="1" ng-change="ctrl.updateRate(stream)">
-                    </md-input-container>
 				</md-list-item>
 				
 			</md-list>

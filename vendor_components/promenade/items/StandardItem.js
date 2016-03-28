@@ -190,18 +190,14 @@ function PromenadeStandardItemFactory(ParlayItem) {
 	 * @returns {$q.defer.Promise} - Resolved when we receive stream response.
 	 */
     PromenadeStandardItem.prototype.requestStream = function (stream) {
-		if (stream.rate < 1) {
-            stream.rate = 1;
-        }
-	    return this.protocol.sendMessage({
+		return this.protocol.sendMessage({
 		    TX_TYPE: "DIRECT",
 		    MSG_TYPE: "STREAM",
 		    TO: this.id
 		},
 		{
 			STREAM: stream.NAME,
-			RATE: stream.rate,
-			VALUE: null
+			STOP: false
 		},
 		{
 			TX_TYPE: "DIRECT",
@@ -218,7 +214,6 @@ function PromenadeStandardItemFactory(ParlayItem) {
 	 * @returns {$q.defer.Promise} - Resolved when we receive stream cancelation response.
 	 */
     PromenadeStandardItem.prototype.cancelStream = function (stream) {
-	    stream.rate = 0;
         this.data_streams[stream.NAME].value = undefined;
 	    return this.protocol.sendMessage({
 		    TX_TYPE: "DIRECT",
@@ -227,8 +222,7 @@ function PromenadeStandardItemFactory(ParlayItem) {
 		},
 		{
 			STREAM: stream.NAME,
-			RATE: stream.rate,
-			VALUE: null
+			STOP: true
 		},
 		{
 			TX_TYPE: "DIRECT",

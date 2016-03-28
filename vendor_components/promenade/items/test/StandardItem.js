@@ -136,10 +136,7 @@
 	            it("requests", function() {
 		            spyOn(MockProtocol, "sendMessage").and.callThrough();
 
-		            item.requestStream({
-			            NAME: "stream1",
-			            rate: 1
-		            });
+		            item.requestStream({NAME: "stream1"});
 		            
 		            rootScope.$apply();
 		            
@@ -150,8 +147,7 @@
 		            },
 		            {
 			            STREAM: "stream1",
-			            RATE: 1,
-			            VALUE: null
+			            STOP: false
 		            }, {
 			            TX_TYPE: 'DIRECT',
 			            MSG_TYPE: 'STREAM',
@@ -163,9 +159,7 @@
 	            it("cancels", function() {
 		            spyOn(MockProtocol, "sendMessage").and.callThrough();
 
-		            item.cancelStream({
-			            NAME: "stream1"
-		            });
+		            item.cancelStream({NAME: "stream1"});
 		            
 		            rootScope.$apply();
 		            
@@ -176,8 +170,7 @@
 		            },
 		            {
 			            STREAM: "stream1",
-			            RATE: 0,
-			            VALUE: null
+			            STOP: true
 		            }, {
 			            TX_TYPE: 'DIRECT',
 			            MSG_TYPE: 'STREAM',

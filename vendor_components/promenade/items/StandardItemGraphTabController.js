@@ -92,9 +92,10 @@ function PromenadeStandardItemCardGraphTabConfigurationController($scope, $mdDia
             }
         }
         else {
+            // Remove the stream from the Array of enabled streams.
             this.enabled_streams.splice(this.enabled_streams.indexOf(stream.NAME), 1);
 
-            // If stream value currently defined ask the user if they want to request the stream.
+            // If stream value currently defined ask the user if they want to cancel the stream.
             if (stream.value !== undefined) {
                 // Ask the user if they'd like to cancel the stream as well.
                 $mdDialog.show($mdDialog.confirm()
@@ -105,6 +106,10 @@ function PromenadeStandardItemCardGraphTabConfigurationController($scope, $mdDia
                 ).then(function () {
                     this.item.cancelStream(stream);
                 }.bind(this));
+            }
+            // Otherwise silently cancel the stream.
+            else {
+                this.item.cancelStream(stream);
             }
         }
     };

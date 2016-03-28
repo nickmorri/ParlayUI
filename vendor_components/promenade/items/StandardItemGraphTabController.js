@@ -88,7 +88,7 @@ function PromenadeStandardItemCardGraphTabConfigurationController($scope, $mdDia
 
             // If stream value currently undefined request the stream automatically.
             if (stream.value === undefined) {
-				this.item.requestStream(stream);
+                this.item.listenStream(stream, false);
             }
         }
         else {
@@ -104,19 +104,15 @@ function PromenadeStandardItemCardGraphTabConfigurationController($scope, $mdDia
                     .ok("End")
                     .cancel("Dismiss")
                 ).then(function () {
-                    this.item.cancelStream(stream);
+                    this.item.listenStream(stream, true);
                 }.bind(this));
             }
             // Otherwise silently cancel the stream.
             else {
-                this.item.cancelStream(stream);
+                this.item.listenStream(stream, true);
             }
         }
     };
-
-	this.updateRate = function(stream) {
-		this.item.requestStream(stream);
-	};
 
     // Attach reference to $mdMedia to scope so that media queries can be done.
     $scope.$mdMedia = $mdMedia;

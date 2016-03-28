@@ -182,54 +182,29 @@ function PromenadeStandardItemFactory(ParlayItem) {
     PromenadeStandardItem.prototype.sendMessage = function (contents) {
         return this.protocol.sendMessage(this.generateTopics(), contents, {}, true);
     };
-    
+
     /**
-	 * Sends message requesting a data stream. 
-	 * Then sets up a onMessage listener to update the data stream object.
-	 * @param {Object} stream - Data stream object.
-	 * @returns {$q.defer.Promise} - Resolved when we receive stream response.
-	 */
-    PromenadeStandardItem.prototype.requestStream = function (stream) {
-		return this.protocol.sendMessage({
-		    TX_TYPE: "DIRECT",
-		    MSG_TYPE: "STREAM",
-		    TO: this.id
-		},
-		{
-			STREAM: stream.NAME,
-			STOP: false
-		},
-		{
-			TX_TYPE: "DIRECT",
-			MSG_TYPE: "STREAM",
-			TO: "UI",
-			FROM: this.id
-		});
-    };
-    
-    /**
-	 * Sends message canceling a data stream.
-	 * Then removes the onMessage listener that may have been setup during stream request.
-	 * @param {Object} stream - Data stream object.
-	 * @returns {$q.defer.Promise} - Resolved when we receive stream cancelation response.
-	 */
-    PromenadeStandardItem.prototype.cancelStream = function (stream) {
-        this.data_streams[stream.NAME].value = undefined;
-	    return this.protocol.sendMessage({
-		    TX_TYPE: "DIRECT",
-			MSG_TYPE: "STREAM",
-			TO: this.id
-		},
-		{
-			STREAM: stream.NAME,
-			STOP: true
-		},
-		{
-			TX_TYPE: "DIRECT",
-			MSG_TYPE: "STREAM",
-			TO: "UI",
-			FROM: this.id
-		});
+     * Sends message requesting that a stream is listened to or listening is stopped.
+     * @param {Object} stream - Data stream object.
+     * @param {Boolean} stop - If true the listener will be stopped, otherwise begin listening to the stream.
+     * @returns {$q.defer.Promise} - Resolved when we receive stream response. 
+     */
+    PromenadeStandardItem.prototype.listenStream = function (stream, stop) {
+        return this.protocol.sendMessage({
+                TX_TYPE: "DIRECT",
+                MSG_TYPE: "STREAM",
+                TO: this.id
+            },
+            {
+                STREAM: stream.NAME,
+                STOP: stop
+            },
+            {
+                TX_TYPE: "DIRECT",
+                MSG_TYPE: "STREAM",
+                TO: "UI",
+                FROM: this.id
+            });   
     };
     
     /**

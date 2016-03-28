@@ -2,8 +2,8 @@
 
 	<md-toolbar class="md-hue-2">
 		<div class="md-toolbar-tools" layout="row">
-            <h1 ng-hide="ctrl.hasStreamsAvailable()">No datastreams available</h1>
-            <h1 ng-show="ctrl.hasStreamsAvailable()" ng-pluralize count="ctrl.streamCount()" when="{'0': 'No streams graphing', 'one': '1 stream graphing', 'other': '{} streams graphing'}"></h1>
+            <h5 ng-hide="ctrl.hasStreamsAvailable()">No datastreams available</h5>
+            <h5 ng-show="ctrl.hasStreamsAvailable()" ng-pluralize count="ctrl.streamCount()" when="{'0': 'No streams graphing', 'one': '1 stream graphing', 'other': '{} streams graphing'}"></h5>
             <span flex></span>
 
             <md-button ng-show="ctrl.hasStreamsAvailable()" class="md-icon-button" ng-click="ctrl.openConfigurationDialog($event)">

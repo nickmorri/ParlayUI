@@ -32,7 +32,7 @@ function ParlaySettingsDialogController ($scope, $mdDialog, $mdMedia, ParlaySett
 
     this.requestNotificationPermission = function () {
         // Ensure browser has HTML 5 Notification support.
-        if (this.isMSEdge()) {
+        if (!this.isMSEdge()) {
             Notification.requestPermission();
         }
         $scope.notification_permission = this.isMSEdge() && Notification.permission === "granted";

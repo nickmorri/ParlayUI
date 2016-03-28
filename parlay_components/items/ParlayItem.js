@@ -114,15 +114,8 @@ function ParlayItemCard($compile, ParlayPersistence) {
         templateUrl: "../parlay_components/items/directives/parlay-item-card.html",
         link: function (scope, element, attributes) {
 
-            element.on('dragstart', function () {
-                this.children[0].className = this.children[0].className.replace("md-whiteframe-2dp", "md-whiteframe-10dp");
-                this.children[0].style.opacity = '0.9';
-            });
-
-            element.on('dragend', function () {
-                this.children[0].className = this.children[0].className.replace("md-whiteframe-10dp", "md-whiteframe-2dp");
-                this.children[0].style.opacity = '1.0';
-            });
+            // Setup drag handlers for ParlayItemCard drag and drop rearrange functionality.
+            setupDragHandlers(element);
 
 	        // Grab the item reference from the container for convenience of using scope.item.
 	        scope.item = scope.container.ref;
@@ -164,6 +157,44 @@ function ParlayItemCard($compile, ParlayPersistence) {
             ParlayPersistence.monitor(directive_name, "$index", scope);
             ParlayPersistence.monitor(directive_name, "active_tab_index", scope);
             ParlayPersistence.monitor(directive_name, "active_directives", scope);
+
+            /**
+             * Setup drag event handlers to allow cards to by rearranged by dragging.
+             * @param {HTML Element} element - ParlayItemCard HTML element.
+             */
+            function setupDragHandlers(element) {
+
+                // Fired when drag event begins on a ParlayItemCard.
+                element.on('dragstart', function (event) {
+                    // Set the card index in the event.
+                    event.dataTransfer.setData("text/plain", angular.element(element).scope().$index);
+
+                    // Specify the type of drop zone that can accept the event.
+                    event.dataTransfer.effectAllowed = "link";
+                });
+
+                // Fired as a ParlayItemCard is dragged over a ParlayItemCard.
+                element.on('dragover', function (event) {
+                    // Specify the type of draggable this element can accept.
+                    event.dataTransfer.dropEffect = "link";
+                    event.preventDefault();
+                    event.stopPropagation();
+                });
+
+                // Fired when a ParlayItemCard is dropped on a ParlayItemCard.
+                element.on('drop', function (event) {
+                    // Get the card indices of the source and destination of the drag event.
+                    var thisIndex = angular.element(element).scope().$index;
+                    var thatIndex = event.dataTransfer.getData("text/plain");
+
+                    // Swap the cards.
+                    scope.$apply(function () {
+                        scope.$parent.itemCtrl.swap(thisIndex, thatIndex);
+                    });
+
+                });
+
+            }
 
             /**
 	         * Compiles the toolbar set on the item.

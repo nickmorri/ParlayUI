@@ -19,6 +19,10 @@ function ParlayItemController(ParlayItemManager) {
         ParlayItemManager.reorder(parseInt(index, 10), distance);
     };
 
+    this.swap = function (indexA, indexB) {
+        ParlayItemManager.swap(indexA, indexB);
+    };
+
     this.duplicate = function (index, uid) {
         ParlayItemManager.duplicateItem(parseInt(index, 10), uid);
     };

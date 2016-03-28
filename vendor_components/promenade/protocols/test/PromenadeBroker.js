@@ -234,7 +234,7 @@
                         spyOn(PromenadeBroker, "sendMessage").and.callThrough();
                         PromenadeBroker.requestAvailableProtocols().then(done);
                         $rootScope.$apply();
-                        expect(PromenadeBroker.sendMessage).toHaveBeenCalledWith({request: "get_protocols"}, {}, {response: "get_protocols_response"});
+                        expect(PromenadeBroker.sendMessage).toHaveBeenCalledWith({request: "get_protocols", type: "broker"}, {STATUS: 0}, {response: "get_protocols_response", type: "broker"});
                     });
 
                     it("requestOpenProtocols", function (done) {

@@ -51,12 +51,6 @@
                 </div>
 
                 <div layout="row" flex-sm="25" layout-sm="row" layout-align-sm="center end">
-                    <md-button class="md-primary" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.viewProtocolDetails($event, protocol)" aria-label="Details">
-                        <md-tooltip>Details</md-tooltip>
-                        <span hide show-gt-md>Details</span>
-                        <md-icon hide-gt-md ng-md-icon icon="info"></md-icon>
-                    </md-button>
-
                     <md-button class="md-warn" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.closeProtocol(protocol)" aria-label="Disconnect">
                         <md-tooltip>Disconnect</md-tooltip>
                         <span hide show-gt-md>Disconnect</span>

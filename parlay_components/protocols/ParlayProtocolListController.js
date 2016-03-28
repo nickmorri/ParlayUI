@@ -89,19 +89,7 @@ function ParlayProtocolListController($scope, $mdDialog, $mdMedia, ParlayProtoco
     this.closeProtocol = function (protocol) {
         ParlayProtocolManager.closeProtocol(protocol);
     };
-    
-    /* istanbul ignore next */
-    this.viewProtocolDetails = function (event, protocol) {
-        $mdDialog.show({
-            targetEvent: event,
-            clickOutsideToClose: true,
-            controller: "ParlayProtocolDetailController",
-            controllerAs: "ctrl",
-            templateUrl: "../parlay_components/protocols/directives/parlay-protocol-details.html",
-            locals: { protocol: protocol }
-        });
-    };
-    
+
     /**
      * Show protocol configuration dialog and have ParlayProtocolManager open a protocol.
      * @param {Event} - Event generated when button is selected. Allows use to have origin for dialog display animation.
@@ -125,5 +113,5 @@ function ParlayProtocolListController($scope, $mdDialog, $mdMedia, ParlayProtoco
     
 }
 
-angular.module("parlay.protocols.list_controller", ["parlay.protocols.configuration_controller", "parlay.protocols.detail_controller", "parlay.protocols.manager", "promenade.broker", "parlay.notification", "ngMaterial", "ngMessages", "ngMdIcons", "templates-main"])
+angular.module("parlay.protocols.list_controller", ["parlay.protocols.configuration_controller", "parlay.protocols.manager", "promenade.broker", "parlay.notification", "ngMaterial", "ngMessages", "ngMdIcons", "templates-main"])
 	.controller("ParlayProtocolListController", ["$scope", "$mdDialog", "$mdMedia", "ParlayProtocolManager", "PromenadeBroker", ParlayProtocolListController]);

@@ -9,8 +9,8 @@
 		</div>
 	</md-toolbar>
 
-    <div layout="row" class="log-control-container md-whiteframe-2dp">
-        <md-input-container flex ng-show="ctrl.getLog().length" class="filter-input-container" aria-label="Filter log messages">
+    <div ng-show="ctrl.getLog().length" layout="row" class="log-control-container md-whiteframe-2dp">
+        <md-input-container flex class="filter-input-container" aria-label="Filter log messages">
             <label>Filter on any value</label>
             <input ng-model="ctrl.filter_text" type="text">
         </md-input-container>

@@ -64,6 +64,12 @@
 
             });
 
+            it("matchesQuery logs console message", function () {
+                spyOn(console, "warn");
+                ParlayItem.matchesQuery("test");
+                expect(console.warn).toHaveBeenCalledWith("matchesQuery is not implemented for TestProtocol");
+            });
+
             describe("adds directives", function () {
 
                 it("adds available directives", function () {

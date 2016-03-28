@@ -1,4 +1,4 @@
-<md-dialog aria-label="Graph Configuration" flex="90" flex-gt-sm="70" flex-gt-md="50">
+<md-dialog aria-label="Graph Configuration" flex="90" flex-gt-md="70" ng-class="{'md-dialog-fullscreen' : $mdMedia}">
 	<md-toolbar>
 		<div class="md-toolbar-tools">
 			<h2>Graph Configuration</h2>
@@ -8,12 +8,14 @@
 			</md-button>
 		</div>
 	</md-toolbar>
+
 	<md-dialog-content class="parlay-graph-configuration-dialog-content">
-		<div class="md-dialog-content" layout-gt-sm="row" layout="column">
+
+        <div layout-gt-sm="row" layout="column">
 
 			<md-list flex flex-order="0" flex-order-gt-sm="1">
 
-                <md-subheader class="md-no-sticky">Y-Axis Range</md-subheader>
+                <md-subheader>Y-Axis Range</md-subheader>
 
                 <md-list-item layout="row">
                     <md-icon ng-md-icon icon="{{ctrl.maximum_locked ? 'check_box' : 'check_box_outline_blank'}}" options="{'rotation': 'none'}" ng-click="ctrl.toggleMaximum()"></md-icon>
@@ -50,6 +52,7 @@
 				
 			</md-list>
 		</div>
+
 	</md-dialog-content>
 		
 </md-dialog>

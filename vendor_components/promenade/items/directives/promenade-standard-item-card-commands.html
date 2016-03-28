@@ -17,13 +17,12 @@
 
     <form name="commandform" layout="column" ng-submit="ctrl.send($event)" ng-hide="ctrl.command_builder_collapsed">
 
-        <md-content class="promenade-item-card-tab-content md-margin">
-            <promenade-standard-item-card-command-container
-                    commandform="commandform"
-                    wrapper="wrapper"
-                    fields="ctrl.item.content_fields">
-            </promenade-standard-item-card-command-container>
-        </md-content>
+        <promenade-standard-item-card-command-container
+                class="promenade-item-card-tab-content"
+                commandform="commandform"
+                wrapper="wrapper"
+                fields="ctrl.item.content_fields">
+        </promenade-standard-item-card-command-container>
 
         <div flex layout="row">
 
@@ -48,7 +47,7 @@
 
             <md-button ng-click="ctrl.copyCommand($event)" class="md-icon-button" aria-label="Copy command to clipboard">
                 <md-tooltip>Copy command to clipboard</md-tooltip>
-                <md-icon><ng-md-icon icon="content_copy"></ng-md-icon></md-icon>
+                <md-icon ng-md-icon icon="content_copy"></md-icon>
             </md-button>
 
             <md-button ng-click="ctrl.toggleScriptBuilder($event)" class="md-icon-button" aria-label="Toggle script builder">
@@ -72,7 +71,7 @@
 
             <md-button ng-click="ctrl.clearResponses($event)" class="md-icon-button" aria-label="Clear responses">
                 <md-tooltip>Clear responses</md-tooltip>
-                <md-icon><ng-md-icon icon="delete"></ng-md-icon></md-icon>
+                <md-icon ng-md-icon icon="delete"></md-icon>
             </md-button>
 
             <md-button ng-click="ctrl.toggleResponseContents($event)" class="md-icon-button" aria-label="Toggle response contents">
@@ -83,9 +82,9 @@
         </div>
     </md-toolbar>
 
-    <div layout="column" ng-hide="ctrl.response_contents_collapsed" layout-margin>
+    <div layout="column" ng-hide="ctrl.response_contents_collapsed">
 
-        <div ng-show="ctrl.responses.length" layout="column">
+        <div ng-show="ctrl.responses.length" layout="column" layout-margin>
 
             <div layout="row" layout-align="start center" class="promenade-response-contents-body">
                 <p flex="15" class="md-body-2">MSG ID</p>
@@ -100,9 +99,13 @@
                     <p flex="15" class="md-body-1">{{response.MSG_ID}}</p>
                     <span flex="5"></span>
                     <p flex ng-hide="response.received" class="md-body-1">Waiting for response..</p>
-                    <p flex ng-show="response.received" class="md-body-1 promenade-response-contents-key-values" ng-repeat="(key, value) in response.message.CONTENTS">
-                        {{key}} = {{value}}
-                    </p>
+
+                    <div flex ng-show="response.received" layout="column">
+                        <p flex ng-show="response.received" class="md-body-1 promenade-response-contents-key-values" ng-repeat="(key, value) in response.message.CONTENTS">
+                            {{key}} = {{value}}<span ng-show="!$last">,</span>
+                        </p>
+                    </div>
+
                     <span flex="5"></span>
                     <md-icon ng-md-icon icon="check" ng-show="response.received"></md-icon>
                     <md-progress-circular ng-hide="response.received" md-mode="indeterminate" md-diameter="30px"></md-progress-circular>
@@ -111,7 +114,7 @@
 
         </div>
 
-        <div ng-hide="ctrl.responses.length">
+        <div ng-hide="ctrl.responses.length" layout-margin>
             <p class="md-body-1">No response received.</p>
         </div>
 

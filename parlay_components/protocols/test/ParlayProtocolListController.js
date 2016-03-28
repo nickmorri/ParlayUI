@@ -12,6 +12,7 @@
                 
                 MockPromenadeBroker = {
                     connected: false,
+                    version: '0.0.1',
                     isConnected: function () {
                         return this.connected;
                     },
@@ -23,6 +24,9 @@
                     },
                     connect: function () {
                         this.connected = true;
+                    },
+                    requestShutdown: function () {
+                        this.connected = false;
                     }
                 };
                 
@@ -36,14 +40,21 @@
                 it('tests connection', function () {
                     expect(ctrl.isBrokerConnected()).toBeFalsy();
                     expect(ctrl.getBrokerAddress()).toBe('ws://localhost:8080');
+                    expect(ctrl.getBrokerVersion()).toBe('0.0.1');
+                });
+
+                it("shutdown broker connection", function () {
+                    expect(ctrl.isBrokerConnected()).toBeFalsy();
+                    ctrl.connectBroker();
+                    expect(ctrl.isBrokerConnected()).toBeTruthy();
+                    ctrl.shutdownBroker();
+                    expect(ctrl.isBrokerConnected()).toBeFalsy();
                 });
                 
-                it('toggles connection', function () {
+                it('connects to broker', function () {
                     expect(ctrl.isBrokerConnected()).toBeFalsy();
-                    ctrl.toggleBrokerConnection();
+                    ctrl.connectBroker();
                     expect(ctrl.isBrokerConnected()).toBeTruthy();
-                    ctrl.toggleBrokerConnection();                        
-                    expect(ctrl.isBrokerConnected()).toBeFalsy();
                 });
                 
             });

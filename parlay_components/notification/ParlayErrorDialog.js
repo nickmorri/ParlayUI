@@ -1,4 +1,4 @@
-function ParlayErrorDialog($mdDialog, $mdMedia, ParlayNotificationHistory) {
+function ParlayErrorDialog($mdDialog, ParlayNotificationHistory) {
 
     return {
         show: function (from, description, details) {
@@ -16,38 +16,38 @@ function ParlayErrorDialog($mdDialog, $mdMedia, ParlayNotificationHistory) {
                     details: details
                 },
                 bindToController: true,
-                clickOutsideToClose: true,
-                fullscreen: !$mdMedia("gt-sm")
+                clickOutsideToClose: true
             });
         }
     };
 
 }
 
-function ParlayErrorDialogController($mdDialog) {
+function ParlayErrorDialogController($scope, $mdDialog, $mdMedia) {
 
-    // Holds state of more detail visibility and the corresponding icon to indicate this state to the user.
+    // Holds state of more detail visibility.
     this.more_hidden = true;
-    this.more_icon = "arrow_drop_down";
 
     /**
      * Toggles state of more details visibility.
      */
     this.toggleMore = function () {
         this.more_hidden = !this.more_hidden;
-        if (this.more_hidden) this.more_icon = "arrow_drop_down";
-        else this.more_icon = "arrow_drop_up";
     };
 
     /**
      * Hides $mdDialog, this will resolve the function that launched this dialog.
      */
+    /* istanbul ignore next */
     this.close = function () {
         $mdDialog.hide();
     };
 
+    // Attach reference to $mdMedia to scope so that media queries can be done.
+    $scope.$mdMedia = $mdMedia;
+
 }
 
 angular.module("parlay.notification.error", ["ngMaterial", "parlay.notification"])
-    .controller("ParlayErrorDialogController", ["$mdDialog", ParlayErrorDialogController])
-    .factory("ParlayErrorDialog", ["$mdDialog", "$mdMedia", "ParlayNotificationHistory", ParlayErrorDialog]);
+    .controller("ParlayErrorDialogController", ["$scope", "$mdDialog", "$mdMedia", ParlayErrorDialogController])
+    .factory("ParlayErrorDialog", ["$mdDialog", "ParlayNotificationHistory", ParlayErrorDialog]);

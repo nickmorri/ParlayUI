@@ -1,4 +1,4 @@
-function ParlayProtocolDetailController($mdDialog, protocol) {
+function ParlayProtocolDetailController($scope, $mdDialog, $mdMedia, protocol) {
     "use strict";
 
     /**
@@ -24,7 +24,10 @@ function ParlayProtocolDetailController($mdDialog, protocol) {
         $mdDialog.hide();
     };
 
+    // Attach reference to $mdMedia to scope so that media queries can be done.
+    $scope.$mdMedia = $mdMedia;
+
 }
 
 angular.module("parlay.protocols.detail_controller", ["ngMaterial", "ngMessages", "ngMdIcons", "templates-main", "luegg.directives"])
-	.controller("ParlayProtocolDetailController", ["$mdDialog", "protocol", ParlayProtocolDetailController]);
+	.controller("ParlayProtocolDetailController", ["$scope", "$mdDialog", "$mdMedia", "protocol", ParlayProtocolDetailController]);

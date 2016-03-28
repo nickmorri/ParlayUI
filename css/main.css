@@ -15,6 +15,9 @@ md-list-item > a {
     text-decoration: none;
     color: black;
 }
+.parlay-list-item {
+    padding: 16px 16px 16px 16px;
+}
 .capitalize {
     text-transform: capitalize;
 }
@@ -36,6 +39,11 @@ md-icon:focus {
 /* We only need top and bottom padding to align buttons with baseline */
 .md-button .md-icon-button {
     padding: 8px 0 8px 0;
+}
+
+/* Prevent clipping on md-switch label */
+md-switch {
+    white-space: normal;;
 }
 
 /* On Microsoft Edge browser we should disable some animations for a better user experience */

@@ -15,7 +15,7 @@
 		</div>
 	</md-toolbar>
 
-	<md-content layout="column">
+	<md-content layout="column" class="parlay-property-content">
 
 		<div flex layout="column" ng-hide="ctrl.hasProperties()">
 			<p>Here is an example of a local_item with a property called <i>prop1</i></p>
@@ -28,7 +28,7 @@
 </pre></div>
         </div>
 
-		<div flex class="parlay-property-container" layout="row" ng-repeat="property in ctrl.item.properties">
+		<div class="parlay-property-container" layout="row" ng-repeat="property in ctrl.item.properties">
 			<md-input-container class="parlay-property-input" flex ng-switch="property.INPUT">
 				<label>{{property.NAME}}</label>
 				<input ng-switch-when="STRING" type="text" ng-model="property.VALUE" ng-disabled="property.READ_ONLY">

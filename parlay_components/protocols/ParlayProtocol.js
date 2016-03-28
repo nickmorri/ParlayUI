@@ -1,15 +1,21 @@
+function ParlayProtocolRun(ParlaySettings) {
+    ParlaySettings.registerDefault("log", {max_size: 10000});
+
+    if (!ParlaySettings.has("log")) {
+        ParlaySettings.restoreDefault("log");
+    }
+}
+
 function ParlayProtocolFactory(ParlaySocket, ParlayItem, ParlaySettings, $q) {
-    
+
     function ParlayProtocol(configuration) {
         "use strict";
         this.id = "UI";
         this.protocol_name = configuration.name;
         this.type = configuration.protocol_type;
         this.available_items = [];
-        this.active_items = [];
         this.log = [];
-        this.fields = {};
-        
+
         this.listeners = {};
         
         // Objects that inherit from this ParlayProtocol's prototype can set their own item_factory.
@@ -95,12 +101,12 @@ function ParlayProtocolFactory(ParlaySocket, ParlayItem, ParlaySettings, $q) {
     ParlayProtocol.prototype.sendMessage = function (topics, contents, response_topics, verbose) {
         return $q(function(resolve, reject) {
 	        try {
-		    	ParlaySocket.sendMessage(topics, contents, response_topics, resolve, verbose);    
-	        }            
-            catch (error) {
-	            reject(error);
+                ParlaySocket.sendMessage(topics, contents, response_topics, resolve, verbose);
             }
-        }.bind(this));
+            catch (error) {
+                reject(error);
+            }
+        });
     };
     
     /**
@@ -112,12 +118,11 @@ function ParlayProtocolFactory(ParlaySocket, ParlayItem, ParlaySettings, $q) {
         this.onMessage({}, function (response) {
             // Upon reaching the 1.5 times the maximum specified log size we should remove 0.5
             // the maximum size elements from the beginning of the log.
-            if (this.log.length >= ParlaySettings.getLogSettings().max_size * 1.5) {
-                this.log.splice(0, ParlaySettings.getLogSettings().max_size * 0.5);
+            if (this.log.length >= ParlaySettings.get("log").max_size * 1.5) {
+                this.log.splice(0, ParlaySettings.get("log").max_size * 0.5);
             }
 
 	        this.log.push(response);
-            
         }.bind(this), true);
 
     };
@@ -135,19 +140,6 @@ function ParlayProtocolFactory(ParlaySocket, ParlayItem, ParlaySettings, $q) {
 	    this.listeners = {};
 	    
         this.available_items = [];
-        this.active_items = [];
-    };
-    
-    /**
-	 * Adds items to the protocol instance's available items.
-	 * @param {Array} items - Array of the protocol's items.
-	 */
-    ParlayProtocol.prototype.addItems = function (items) {
-        //type check
-        if(!Array.isArray(items)) return;
-        this.available_items = items.map(function (item) {
-            return new this.item_factory(item, this);
-        }, this);
     };
     
     /**
@@ -155,11 +147,14 @@ function ParlayProtocolFactory(ParlaySocket, ParlayItem, ParlaySettings, $q) {
 	 * @param {Object} info - Discovery message
 	 */
     ParlayProtocol.prototype.addDiscoveryInfo = function (info) {
-        this.addItems(info.CHILDREN);
+        this.available_items = Array.isArray(info.CHILDREN)? info.CHILDREN.map(function (item) {
+            return new this.item_factory(item, this);
+        }, this) : [];
     };
     
     return ParlayProtocol;
 }
 
 angular.module("parlay.protocols.protocol", ["parlay.socket", "parlay.items.item", "promenade.protocols.directmessage", "parlay.settings"])
+    .run(["ParlaySettings", ParlayProtocolRun])
 	.factory("ParlayProtocol", ["ParlaySocket", "ParlayItem", "ParlaySettings", "$q", ParlayProtocolFactory]);

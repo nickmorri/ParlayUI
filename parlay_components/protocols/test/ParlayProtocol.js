@@ -66,13 +66,7 @@
             });
             
             describe('adding discovery information', function () {
-                
-                it('adds items', function () {
-                    expect(protocol.getAvailableItems().length).toBe(0);
-                    protocol.addItems(sample_discovery.CHILDREN);
-                    expect(protocol.getAvailableItems().length).toBe(50);
-                });
-                
+
                 it('does full discovery process', function () {
                     expect(protocol.getAvailableItems().length).toBe(0);
                     protocol.addDiscoveryInfo(sample_discovery);

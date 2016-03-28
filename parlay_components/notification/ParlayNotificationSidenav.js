@@ -2,6 +2,7 @@
  * Created by nick on 1/19/16.
  */
 
+/* istanbul ignore next */
 function ParlayNotificationSidenav() {
     return {
         scope: {},
@@ -11,15 +12,14 @@ function ParlayNotificationSidenav() {
     };
 }
 
+/* istanbul ignore next */
 function ParlayNotificationSidenavController($mdSidenav, ParlayNotificationHistory) {
 
     this.close = function () {
-        "use strict";
         $mdSidenav("notifications").close();
     };
 
     this.notificationHistory = function () {
-        "use strict";
         return ParlayNotificationHistory.get();
     };
 

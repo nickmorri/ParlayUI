@@ -2,11 +2,15 @@
 	overflow-wrap: break-word;
 }
 
+.log-control-container {
+    padding: 0;
+    width: 100%;
+    margin-bottom: 2px;
+}
+
 .filter-input-container {
-	padding: 0;
-	width: 100%;
-	margin-bottom: -24px;
-	margin-top: 12px;
+    margin-top: 12px;
+    margin-bottom: -22px;
 }
 
 .md-chips .md-chip-input-container {
@@ -31,4 +35,14 @@ promenade-standard-item-card-log-item > md-card > md-card-content {
 
 promenade-standard-item-card-log-item > md-card > md-card-content > md-list {
     padding: 0;
+    overflow-y: scroll;
+}
+
+promenade-standard-item-card-log-item > md-card > md-card-content > md-list > md-list-item {
+    min-height: 0;
+}
+
+promenade-standard-item-card-log-item > md-card > md-card-content > md-list > md-list-item > pre {
+    margin-top: 4px;
+    margin-bottom: 4px;
 }

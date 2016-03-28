@@ -43,16 +43,15 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
      * Saves current items in workspace to a workspace of the name collected by launching a
      * $mdDialog to allow user to name the saved workspace.
      */
+    /* istanbul ignore next */
     this.saveCurrentWorkspaceAs = function () {
-        $mdDialog.show({
-            controller: "ParlayWorkspaceSaveAsDialogController",
-            controllerAs: "ctrl",
-            templateUrl: "../parlay_components/items/directives/parlay-workspace-save-as-dialog.html",
-            onComplete: function (scope, element) {
-                element.find("input").focus();
-            },
-            fullscreen: !$mdMedia("gt-sm")
-        }).then(this.saveWorkspace);
+        $mdDialog.show($mdDialog.prompt()
+            .title("Save")
+            .placeholder("Name")
+            .ariaLabel("Name")
+            .ok("Save")
+            .cancel("Cancel"))
+        .then(function (name) { this.saveWorkspace({name: name}); }.bind(this));
     };
 
     /**
@@ -159,7 +158,7 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
      * @param event - Mouse click event
      */
     this.importSavedWorkspaces = function (event) {
-        event.target.parentElement.parentElement.parentElement.getElementsByTagName("input")[0].click();
+        event.target.parentElement.parentElement.getElementsByTagName("input")[0].click();
     };
 
     /**
@@ -171,11 +170,14 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
         // Instantiate FileReader object
         var fileReader = new FileReader();
 
-        // After file load pass saved discovery data to the PromenadeBroker
-        fileReader.onload = function (event) {
-            store.import(event.target.result);
-            saved_workspaces = getWorkspaces();
-        };
+        $scope.$apply(function () {
+            "use strict";
+            // After file load pass saved discovery data to the PromenadeBroker
+            fileReader.onload = function (event) {
+                store.import(event.target.result);
+                saved_workspaces = getWorkspaces();
+            };
+        });
 
         // Read file as text
         fileReader.readAsText(event.target.files[0]);
@@ -187,24 +189,5 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
 
 }
 
-function ParlayWorkspaceSaveAsDialogController($scope, $mdDialog) {
-
-    /**
-     * Resolves $mdDialog promise with the name entered in the input.
-     */
-	this.save = function () {
-		$mdDialog.hide({name: $scope.name});
-	};
-
-    /**
-     * Rejects the $mdDialog promise.
-     */
-	this.cancel = function () {
-		$mdDialog.cancel();
-	};
-	
-}
-
 angular.module("parlay.items.workspaces", ["parlay.store", "parlay.items.manager", "angularMoment", "parlay.utility"])
-	.controller("ParlayWorkspaceSaveAsDialogController", ["$scope", "$mdDialog", ParlayWorkspaceSaveAsDialogController])
 	.controller("ParlayWorkspaceManagementController", ["$scope", "$mdDialog", "$mdMedia", "ParlayNotification", "ParlayStore", "ParlayItemManager", "PromenadeBroker", ParlayWorkspaceManagementController]);

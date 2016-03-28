@@ -16,13 +16,21 @@
             it("starts empty", function () {
                 expect(container.size()).toBe(0);
                 expect(container.callbackCount()).toBe(0);
+                expect(container.maxDepth()).toBe(1);
             });
 
             describe("adds topics callbacks", function () {
 
+                it("empty topic", function () {
+                    container.add({}, function () {}, false, false);
+                    expect(container.size()).toBe(1);
+                    expect(container.maxDepth()).toBe(1);
+                });
+
                 it("one topic", function () {
                     container.add({key: 0}, function () {}, false, false);
                     expect(container.size()).toBe(1);
+                    expect(container.maxDepth()).toBe(2);
                 });
 
                 it("multiple callbacks to same topic", function () {
@@ -33,6 +41,7 @@
                     container.add({key: 0}, function () {}, false, false);
                     expect(container.callbackCount()).toBe(5);
                     expect(container.size()).toBe(1);
+                    expect(container.maxDepth()).toBe(2);
                 });
 
                 it("multiple callbacks to separate topics", function () {
@@ -43,11 +52,41 @@
                     container.add({key: 4}, function () {}, false, false);
                     expect(container.callbackCount()).toBe(5);
                     expect(container.size()).toBe(5);
+                    expect(container.maxDepth()).toBe(2);
+                });
+
+                it("callbacks to sub topics", function () {
+                    expect(container.maxDepth()).toBe(1);
+                    container.add({"first": 1}, function () {});
+                    container.add({"test": 1}, function () {});
+                    expect(container.callbackCount()).toBe(2);
+                    expect(container.size()).toBe(2);
+                    expect(container.maxDepth()).toBe(2);
+                    container.add({"first": 1, "second": 2}, function () {});
+                    container.add({"test": 1, "second": 2}, function () {});
+                    expect(container.callbackCount()).toBe(4);
+                    expect(container.size()).toBe(4);
+                    expect(container.maxDepth()).toBe(3);
+
+                    container.add({"a": 1, "really": 2, "deep": 3, "topic": 4, "chain": 5, "that": 6, "should": 7, "be": 8, "depth": 9, "eleven": 10}, function () {});
+                    expect(container.maxDepth()).toBe(11);
+                    expect(container.callbackCount()).toBe(5);
+                    expect(container.size()).toBe(5);
                 });
 
             });
 
             describe("removes topics callbacks", function () {
+
+                it("empty topic", function () {
+                    var reference = function () {};
+                    container.add({}, reference, false, false);
+                    expect(container.size()).toBe(1);
+                    expect(container.maxDepth()).toBe(1);
+                    container.delete({}, reference);
+                    expect(container.size()).toBe(0);
+                    expect(container.maxDepth()).toBe(1);
+                });
 
                 it("one topic callback", function () {
                     var reference = function () {};
@@ -94,6 +133,44 @@
 
                     expect(container.callbackCount()).toBe(0);
                     expect(container.size()).toBe(0);
+                });
+
+                it("prunes unused subtrees", function () {
+
+                    expect(container.maxDepth()).toBe(1);
+
+                    var reference_third = function () {};
+                    container.add({"first": 1, "second": 2, "third": 3}, reference_third);
+
+                    expect(container.maxDepth()).toBe(4);
+
+                    var reference_second = function () {};
+                    container.add({"first": 1, "second": 2}, reference_second);
+
+                    expect(container.maxDepth()).toBe(4);
+
+                    container.delete({"first": 1, "second": 2, "third": 3}, reference_third);
+                    expect(container.maxDepth()).toBe(3);
+                    container.delete({"first": 1, "second": 2}, reference_second);
+                    expect(container.maxDepth()).toBe(1);
+                    expect(container.size()).toBe(0);
+
+                    var reference_deep = function () {};
+                    container.add({"a": 1, "really": 2, "deep": 3, "topic": 4, "chain": 5, "that": 6, "should": 7, "be": 8, "depth": 9, "eleven": 10}, reference_deep);
+                    expect(container.maxDepth()).toBe(11);
+                    expect(container.callbackCount()).toBe(1);
+                    expect(container.size()).toBe(1);
+
+                    container.delete({"a": 1, "really": 2, "deep": 3, "topic": 4, "chain": 5, "that": 6, "should": 7, "be": 8, "depth": 9, "eleven": 10}, reference_deep);
+                    expect(container.maxDepth()).toBe(1);
+                    expect(container.callbackCount()).toBe(0);
+                    expect(container.size()).toBe(0);
+
+                });
+
+                it("fails appropriately", function () {
+                    var reference = function () {};
+                    expect(container.delete({}, reference)).toBeFalsy();
                 });
 
             });
@@ -187,9 +264,27 @@
 
                 });
 
+                it("undefined key/value", function () {
+
+                    var value = 0;
+
+                    container.add({undefined: 1}, function () {
+                        value += 10;
+                    }, false, false);
+
+                    container.add({key: undefined}, function () {
+                        value += 10;
+                    }, false, false);
+
+                    container.invoke({undefined: 1}, {});
+                    container.invoke({key: undefined}, {});
+                    expect(value).toBe(20);
+
+                });
+
             });
 
-            describe("invokes persistant callbacks", function () {
+            describe("invokes persistent callbacks", function () {
 
                 it("one topic one callback", function () {
 
@@ -313,7 +408,7 @@
 
             });
 
-            describe("invokes mixed (temporary and persistant) callbacks", function () {
+            describe("invokes mixed (temporary and persistent) callbacks", function () {
 
                 it("one topic multiple callbacks", function () {
 
@@ -432,9 +527,10 @@
         });
 
     	describe('ParlaySocket', function () {
-    		var ParlaySocket, MockSocket;
+    		var ParlaySocket, MockSocket, $rootScope;
 
             MockSocket = {
+                url: "karma_test",
                 readyState: 3,
                 CONNECTING: 0,
                 OPEN: 1,
@@ -449,19 +545,21 @@
 
             MockSocket.close = function (reason) {
                 this.readyState = this.CLOSED;
-                this.onclose({wasClean: false});
+                this.onclose({wasClean: reason && reason.wasClean});
             };
 
             MockSocket.send = function (message_string) {
                 this.onmessage({data: message_string});
             };
 
-            WebSocket = function () {
+            WebSocket = function (address) {
+                MockSocket.url = address;
                 return MockSocket;
             };
 
-    		beforeEach(inject(function(_$timeout_, _ParlaySocket_) {
+    		beforeEach(inject(function(_ParlaySocket_, _$rootScope_) {
                 ParlaySocket = _ParlaySocket_;
+                $rootScope = _$rootScope_;
     		}));
 
     		describe('initialization', function () {
@@ -476,7 +574,13 @@
                     MockSocket.force_open();
 
                 });
-        
+
+                it('opens only once', function () {
+                    expect(function () {
+                        ParlaySocket.open();
+                    }).toThrow();
+                });
+
             });
                         
             describe('destructs', function () {
@@ -487,7 +591,7 @@
                             expect(ParlaySocket.isConnected()).toBeFalsy();
                             done();
                         });
-                        ParlaySocket.close();
+                        ParlaySocket.close({wasClean: true});
                     });
 
                     MockSocket.force_open();
@@ -510,12 +614,30 @@
                             MockSocket.force_open();
                         });
 
-                        if (!has_closed) ParlaySocket.close();
+                        if (!has_closed) ParlaySocket.close(false);
                         
                     });
 
                     MockSocket.force_open();
 
+                });
+
+                it('was clean close', function (done) {
+                    ParlaySocket.onOpen(function () {
+                        ParlaySocket.close({wasClean: true}).then(done);
+                        $rootScope.$apply();
+                    });
+
+                    MockSocket.force_open();
+                });
+
+                it('was not clean close', function (done) {
+                    ParlaySocket.onOpen(function () {
+                        ParlaySocket.close({wasClean: false}).catch(done);
+                        $rootScope.$apply();
+                    });
+
+                    MockSocket.force_open();
                 });
                 
             });
@@ -532,7 +654,14 @@
                         done();
                     });
                 });
-                
+
+                it('a message with a verbose callback', function (done) {
+                    ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"}, {"type":"motor"}, function (response) {
+                        expect(response).toEqual({TOPICS: { type: 'motor' }, CONTENTS: { data: 'test' }});
+                        done();
+                    }, true);
+                });
+
                 it('a message with topics but without contents', function (done) {
                     ParlaySocket.sendMessage({"type":"motor"}, undefined, {"type":"motor"}, function (response) {
                         expect(response).toEqual({});
@@ -587,6 +716,22 @@
                     expect(function () {
                         ParlaySocket.sendMessage({"type":"motor"}, 0, {"type":"motor"}, function (response) {});
                     }).toThrowError(TypeError);
+                });
+
+                it('rejects promise on exception thrown', function (done) {
+
+                    var saved_send = MockSocket.send;
+
+                    MockSocket.send = function (message) { throw new Error("Arbitrary error."); };
+
+                    ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"}).catch(function (result) {
+                        expect(result).toEqual(jasmine.any(Error));
+                        done();
+                    });
+
+                    MockSocket.send = saved_send;
+
+                    $rootScope.$apply();
                 });
                 
             });
@@ -679,6 +824,25 @@
                     MockSocket.force_open();
 
                 });
+
+                it('rejects promise on exception', function (done) {
+
+                    var saved_send = MockSocket.send;
+
+                    MockSocket.send = function (message) { throw new Error("Arbitrary error."); };
+
+                    ParlaySocket.sendMessage({type: "motor"}, {data: "queue"});
+
+                    ParlaySocket.sendMessage({"type":"motor"}, {"data":"queue"}).catch(function (result) {
+                        expect(result).toEqual(jasmine.any(Error));
+                        done();
+                    });
+
+                    MockSocket.force_open();
+                    $rootScope.$apply();
+                    MockSocket.send = saved_send;
+
+                });
                 
             });
             
@@ -754,9 +918,43 @@
                 });
                 
             });
-        		
+
         });
-        
+
+        describe('protocol resolution', function () {
+
+            describe('http', function () {
+                beforeEach(inject(function (_$location_) {
+                    _$location_.protocol = "http:";
+                }));
+
+                it('gets address', inject(function (_ParlaySocket_) {
+                    var ParlaySocket = _ParlaySocket_;
+
+                    expect(ParlaySocket.getAddress()).toBe('ws://localhost:8085');
+
+                }));
+            });
+
+            describe('https', function () {
+                beforeEach(inject(function (_$location_) {
+                    _$location_.protocol = "https:";
+                }));
+
+                it('gets address https', inject(function (_ParlaySocket_) {
+                    var ParlaySocket = _ParlaySocket_;
+
+                    expect(ParlaySocket.getAddress()).toBe('wss://localhost:8086');
+
+                }));
+            });
+
+        });
+
+        it('BrokerAddress', inject(function (_BrokerAddress_) {
+            expect(_BrokerAddress_).toBe('localhost');
+        }));
+
     });
         
 }());

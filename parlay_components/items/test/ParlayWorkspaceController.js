@@ -30,6 +30,10 @@
 	    		it('does not have items in current workspace', function () {
 		    		expect(ParlayWorkspaceManagementController.currentWorkspaceItemCount()).toBe(0);
 	    		});
+
+				it('gets autosave', function () {
+					expect(ParlayWorkspaceManagementController.getAutosave()).toBeUndefined();
+				});
 	    		
     		});
     		
@@ -39,11 +43,6 @@
 		    		expect(ParlayWorkspaceManagementController.getSavedWorkspaces().length).toBe(0);
 		    		ParlayWorkspaceManagementController.saveWorkspace({name:'test'});
 		    		expect(ParlayWorkspaceManagementController.getSavedWorkspaces().length).toBe(1);
-	    		});
-	    		
-	    		xit('loads a workspace', function () {
-		    		ParlayWorkspaceManagementController.saveWorkspace({name:'test'});
-		    		ParlayWorkspaceManagementController.loadWorkspace({name:'test'});
 	    		});
 	    		
 	    		it('deletes a workspace', function () {

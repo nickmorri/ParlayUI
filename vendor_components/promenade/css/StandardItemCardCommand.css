@@ -1,6 +1,12 @@
+.promenade-item-card-tab-content {
+    padding-top: 16px;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
 .promenade-command-container {
     margin-top: 0;
-    margin-bottom: -15px;
+    margin-bottom: -10px;
 }
 
 .promenade-command-container > md-select {
@@ -20,5 +26,7 @@
 }
 
 .promenade-response-contents-key-values {
+    margin-top: 0;
+    margin-bottom: 0;
     overflow-wrap: break-word;
 }

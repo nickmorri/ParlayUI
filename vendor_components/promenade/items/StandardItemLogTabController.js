@@ -2,25 +2,24 @@
  * Controller constructor for PromenadeStandardItemCardLogTabController.
  */
 function PromenadeStandardItemCardLogTabController($scope, ParlayPersistence, ParlayUtility) {
-	ParlayBaseTabController.call(this, $scope, "promenadeStandardItemCardLog");
-	
+
 	// Initially we don't want to filter logged messages by anything.
 	this.filter_text = null;
+    
+    // Initially we want an ascending list.
+    this.descending = false;
 
 	var container = ParlayUtility.relevantScope($scope, 'container').container;
 	var directive_name = 'parlayItemCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
 	ParlayPersistence.monitor(directive_name, "filter_text", $scope);
 }
 
-// Prototypically inherit from ParlayBaseTabController.
-PromenadeStandardItemCardLogTabController.prototype = Object.create(ParlayBaseTabController.prototype);
-
 /**
  * Applies a filter to the item log and returns the messages that pass.
  * @param {String} query - text to filter the log by.
  * @returns {Array} - If query is undefined return the full item log, otherwise return the messages that pass the filter.
  */
-PromenadeStandardItemCardLogTabController.prototype.getFilteredLog = function(query) {
+PromenadeStandardItemCardLogTabController.prototype.getFilteredLog = function(query, reverse) {
 
 	function messageFilterFn(message) {
 		// Look through message topics and contents for a match on the query.
@@ -31,8 +30,10 @@ PromenadeStandardItemCardLogTabController.prototype.getFilteredLog = function(qu
 		}, this);
 	}
 
-	// If the filter_text isn't null or undefined return the messages that match the query.
-    return query ? this.getLog().filter(messageFilterFn, angular.lowercase(query)) : this.getLog();
+    // If the filter_text isn't null or undefined return the messages that match the query.
+    var log = query ? this.getLog().filter(messageFilterFn, angular.lowercase(query)) : this.getLog();
+
+    return !!reverse ? log.reverse() : log;
 };
 
 /**
@@ -47,6 +48,7 @@ PromenadeStandardItemCardLogTabController.prototype.getLog = function () {
  * Directive constructor for PromenadeStandardItemCardLog.
  * @returns {Object} - Directive configuration.
  */
+/* istanbul ignore next */
 function PromenadeStandardItemCardLog() {
 	return {
         scope: {
@@ -59,30 +61,36 @@ function PromenadeStandardItemCardLog() {
     };
 }
 
-function PromenadeStandardItemCardLogItem(ParlayNotification) {
+/**
+ * Controller for Parlay Card Log Item.
+ * @param {Parlay Service} ParlayNotification - Displays notifications to user.
+ * @constructor
+ */
+function PromenadeStandardItemCardLogItemController (ParlayNotification) {
+    "use strict";
+    this.copy = function () {
+        ParlayNotification.show({content: JSON.stringify(angular.copy(this.message)).copyToClipboard() ?
+            "Message copied to clipboard" : "Copy failed. Check browser compatibility."});
+    };
+}
+/**
+ * Parlay Card Log Item directive.
+ * @returns {AngularJS directive factory}
+ * @constructor
+ */
+/* istanbul ignore next */
+function PromenadeStandardItemCardLogItem() {
     return {
-        scope: {
-            message: "="
-        },
-        controller: function () {
-
-            this.copy = function () {
-                ParlayNotification.show({content: JSON.stringify(angular.copy(this.message)).copyToClipboard() ?
-                    "Message copied to clipboard" : "Copy failed. Check browser compatibility."});
-            };
-
-            this.hasLargeContents = function () {
-                return Object.keys(this.message.CONTENTS).length > 1;
-            };
-
-        },
+        scope: { message: "=" },
+        controller: 'PromenadeStandardItemCardLogItemController',
         controllerAs: "ctrl",
         bindToController: true,
         templateUrl: '../vendor_components/promenade/items/directives/promenade-standard-item-card-log-item.html'
     };
 }
 
-angular.module('promenade.items.standarditem.log', ['parlay.utility', 'parlay.store.persistence', 'luegg.directives'])
+angular.module('promenade.items.standarditem.log', ['parlay.utility', 'parlay.notification', 'parlay.store.persistence', 'luegg.directives'])
 	.controller('PromenadeStandardItemCardLogTabController', ['$scope', 'ParlayPersistence', 'ParlayUtility', PromenadeStandardItemCardLogTabController])
+    .controller('PromenadeStandardItemCardLogItemController', ['ParlayNotification', PromenadeStandardItemCardLogItemController])
 	.directive('promenadeStandardItemCardLog', PromenadeStandardItemCardLog)
 	.directive('promenadeStandardItemCardLogItem', ["ParlayNotification", PromenadeStandardItemCardLogItem]);

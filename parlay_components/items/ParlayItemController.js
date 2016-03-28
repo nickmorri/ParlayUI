@@ -53,7 +53,7 @@ function ParlayEmptyWorkspacePlaceholder () {
     };
 }
 
-angular.module("parlay.items.controller", ["parlay.items.manager"])
+angular.module("parlay.items.controller", ["ngMaterial", "parlay.items.manager"])
     .controller("ParlayEmptyWorkspacePlaceholderController", ["$mdSidenav", ParlayEmptyWorkspacePlaceholderController])
     .directive("parlayEmptyWorkspacePlaceholder", [ParlayEmptyWorkspacePlaceholder])
     .controller("ParlayItemController", ["ParlayItemManager", ParlayItemController]);

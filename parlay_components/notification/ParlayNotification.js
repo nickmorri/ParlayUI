@@ -15,13 +15,13 @@
  *  });
  */
 
-function RunNotification($notification) {
+/* istanbul ignore next */
+function RunNotification() {
     // Microsoft Edge does not have support for HTML 5 Notifications.
     if (!navigator.userAgent.includes("Edge")) {
         // Request permissions as soon as possible.
-        $notification.requestPermission();
+        Notification.requestPermission();
     }
-
 }
 
 /**
@@ -53,7 +53,7 @@ function ParlayNotificationHistory() {
     };
 }
 
-function ParlayNotificationFactory($mdToast, $mdSidenav, $mdDialog, $notification, $interval, NotificationDisplayDuration, NotificationLocation, ParlayNotificationHistory) {
+function ParlayNotificationFactory($mdToast, $mdSidenav, $mdDialog, $interval, NotificationDisplayDuration, NotificationLocation, ParlayNotificationHistory) {
 	"use strict";
 
     // True if a toast is currently being displayed.
@@ -66,6 +66,7 @@ function ParlayNotificationFactory($mdToast, $mdSidenav, $mdDialog, $notificatio
 	var active_browser_notifications = [];
 	
 	// Clear browser notifications if visibility of the document changes.
+    /* istanbul ignore next */
     document.addEventListener("visibilitychange", function clearNotifications() {
         active_browser_notifications.forEach(function (notification) {
             notification.close();
@@ -140,11 +141,11 @@ function ParlayNotificationFactory($mdToast, $mdSidenav, $mdDialog, $notificatio
     }
     
     /**
-	 * Creates $notification (HTML5 Notifications API) and stores a reference that can be cleared later.
+	 * Creates Notification (HTML5 Notifications API) and stores a reference that can be cleared later.
 	 * @param {Object} configuration - Notification configuration object.
 	 */
-    function prepBrowserNotification(configuration) { 
-        active_browser_notifications.push($notification(configuration.content, {
+    function prepBrowserNotification(configuration) {
+        active_browser_notifications.push(new Notification(configuration.content, {
 	        delay: NotificationDisplayDuration
         }));
     }
@@ -235,9 +236,9 @@ function ParlayNotificationFactory($mdToast, $mdSidenav, $mdDialog, $notificatio
     };
 }
 
-angular.module("parlay.notification", ["ngMaterial", "notification", "templates-main"])
-	.run(["$notification", RunNotification])
+angular.module("parlay.notification", ["ngMaterial", "templates-main"])
+	.run(RunNotification)
 	.value("NotificationDisplayDuration", 4000)
     .value("NotificationLocation", "bottom right")
 	.factory("ParlayNotificationHistory", ParlayNotificationHistory)
-	.factory("ParlayNotification", ["$mdToast", "$mdSidenav", "$mdDialog", "$notification", "$interval", "NotificationDisplayDuration", "NotificationLocation", "ParlayNotificationHistory", ParlayNotificationFactory]);
+	.factory("ParlayNotification", ["$mdToast", "$mdSidenav", "$mdDialog", "$interval", "NotificationDisplayDuration", "NotificationLocation", "ParlayNotificationHistory", ParlayNotificationFactory]);

@@ -1,55 +1,71 @@
-function ParlaySettingsFactory (ParlayStore) {
+function ParlaySettingsFactory(ParlayStore) {
+    "use strict";
 
+    // Reference to namespace settings ParlayStore.
     var store = ParlayStore("settings");
 
+    /**
+     * Parlay service which manages access and modification of user configurable settings.
+     * @constructor
+     */
     function ParlaySettings () {
-        if (!store.has("discovery_settings")) {
-            this.setDiscoverySettings({auto_discovery: true});
-        }
-        if (!store.has("log_settings")) {
-            this.setLogSettings({max_size: 10000});
-        }
-        if (!store.has("graph_settings")) {
-            this.setGraphSettings({label_size: 12});
-        }
-        if (!store.has("broker_settings")) {
-            this.setBrokerSettings({show_prompt: true});
-        }
+
+        // Stores default values for settings.
+        this.defaults = {};
     }
 
-    ParlaySettings.prototype.getDiscoverySettings = function () {
-        return store.get("discovery_settings");
+    /**
+     * Retrieves stored setting value from ParlayStore for given key.
+     * @param {String} key - Name of setting.
+     * @returns {*} - Stored setting value.
+     */
+    ParlaySettings.prototype.get = function (key) {
+        return store.get(key);
     };
 
-    ParlaySettings.prototype.setDiscoverySettings = function (settings) {
-        store.set("discovery_settings", settings);
+    /**
+     * Stores given setting key/value in ParlayStore.
+     * @param {String} key - Name of setting.
+     * @param value - Value to be stored.
+     */
+    ParlaySettings.prototype.set = function (key, value) {
+        var settings = this.get(key);
+
+        for (var item in value) {
+            settings[item] = value[item];
+        }
+
+        store.set(key, settings);
     };
 
-    ParlaySettings.prototype.getLogSettings = function () {
-        return store.get("log_settings");
+    /**
+     * Checks if given key exists in ParlayStore.
+     * @param {String} key - Name of setting.
+     * @returns {Boolean} - True if key exists, false otherwise.
+     */
+    ParlaySettings.prototype.has = function (key) {
+        return store.has(key);
     };
 
-    ParlaySettings.prototype.setLogSettings = function (settings) {
-        store.set("log_settings", settings);
+    /**
+     * Stores the default values for the given key.
+     * @param {String} key - Name of setting.
+     * @param value - Default values associated with the given key.
+     */
+    ParlaySettings.prototype.registerDefault = function (key, value) {
+        this.defaults[key] = value;
     };
 
-    ParlaySettings.prototype.getGraphSettings = function () {
-        return store.get("graph_settings");
-    };
-
-    ParlaySettings.prototype.setGraphSettings = function (settings) {
-        store.set("graph_settings", settings);
-    };
-
-    ParlaySettings.prototype.getBrokerSettings = function () {
-        return store.get("broker_settings");
-    };
-
-    ParlaySettings.prototype.setBrokerSettings = function (settings) {
-        store.set("broker_settings", settings);
+    /**
+     * Restores the value of the given key to the default values if they were registered.
+     * @param {String} key - Name of setting.
+     */
+    ParlaySettings.prototype.restoreDefault = function (key) {
+        store.set(key, this.defaults[key]);
     };
 
     return new ParlaySettings();
+
 }
 
 angular.module("parlay.settings", ["parlay.store"])

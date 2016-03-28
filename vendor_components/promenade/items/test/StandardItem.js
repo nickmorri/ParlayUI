@@ -4,8 +4,7 @@
     describe('promenade.items.standarditem', function() {
     
         beforeEach(module('parlay.items'));
-        beforeEach(module('RecursionHelper'));
-        
+
         describe('PromenadeStandardItem', function() {
             var rootScope, item, MockProtocol;
             

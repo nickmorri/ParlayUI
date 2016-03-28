@@ -1,7 +1,7 @@
 {
   "name": "ParlayUI",
   "namelower": "parlayui",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A web client for the Parlay broker system",
   "author": "Nick Morris <nick@promenadesoftware.com>",
   "main": "app/app.js",
@@ -16,6 +16,7 @@
     "bower": "latest",
     "grunt": "^0.4.5",
     "grunt-bower-install-simple": "^1.1.3",
+    "grunt-bump": "^0.7.0",
     "grunt-cli": "latest",
     "grunt-contrib-clean": "latest",
     "grunt-contrib-concat": "latest",

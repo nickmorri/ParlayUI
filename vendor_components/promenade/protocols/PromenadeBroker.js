@@ -1,3 +1,10 @@
+function PromenadeBrokerRun(ParlaySettings) {
+	ParlaySettings.registerDefault("broker", {show_prompt: true, auto_discovery: true});
+	if (!ParlaySettings.has("broker")) {
+		ParlaySettings.restoreDefault("broker");
+	}
+}
+
 function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, ParlayErrorDialog, $window, $mdDialog, ParlaySettings) {
 	"use strict";
 	
@@ -8,36 +15,32 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
 	function PromenadeBroker() {
 	
 	    var connected_previously = false;
+
+        // Cached copy of the most recent discovery Object received from the Broker.
 		var last_discovery;
 
+        // Container for registered on_discovery callbacks.
 		var on_discovery_callbacks = [];
-	    
-	    /**
-	     * Sends message to the Broker adding relevant topic fields.
-	     * @param {Object} topics - Map of key/value topic pairs.
-	     * @param {Object} contents - Map of key/value content pairs.
-	     * @param {response_topics} - Map of key/value response topic pairs.
-	     * @returns {$q.defer.promise} Resolve when response is received.
-	     */
-	    this.sendMessage = function(topics, contents, response_topics) {
-	        topics.type = "broker";
-	        response_topics.type = "broker";
-	        
-	        return $q(function (resolve) { ParlaySocket.sendMessage(topics, contents, response_topics, resolve); });
-	    };
-	    
-	    /**
-		 * Listens for message with relevant response topics from Broker.
-		 * @param {Object} response_topics - Map of key/value response topic pairs.
-		 * @param {Function} response_callback - Function callback to be called on message receipt.
-         * @param {Boolean} verbose - If true we should invoke callback with full message. If false or undefined invoke with only contents for simplicity.
-		 * @returns {Function} - Listener deregistration.
-		 */
-	    this.onMessage = function(response_topics, response_callback, verbose) {
-	        if (response_topics === undefined) response_topics.type = "broker";
-	        
-	        return ParlaySocket.onMessage(response_topics, response_callback, verbose);
-	    };
+
+        /**
+         * Registers a callback on discovery.
+         * @param {Function} callbackFunc - Callback function to be called on message receipt.
+         */
+        this.onDiscovery = function (callbackFunc) {
+            on_discovery_callbacks.push(callbackFunc);
+        };
+
+        /**
+         * Call all callbacks registered onDiscovery with the given discovery Object.
+         * @param {Object} discovery - Object that contains discovery information.
+         * @returns {Number} - Count of callbacks invoked.
+         */
+        this.invokeDiscoveryCallbacks = function (discovery) {
+            on_discovery_callbacks.forEach(function (callback) {
+                callback(discovery);
+            });
+            return on_discovery_callbacks.length;
+        };
 	    
 	    /**
 	     * Checks if we have connected successfully in the past.
@@ -55,6 +58,14 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
 	    };
 
         /**
+         * Retrieves latest private discovery data.
+         * @returns {Object} - Latest discovery data object
+         */
+        this.getLastDiscovery = function() {
+            return last_discovery;
+        };
+
+        /**
          * Stores discovery data in private variable.
          * @param {Object} data - Discovery data.
          */
@@ -63,35 +74,19 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
         };
 
         /**
-         * Retrieves latest private discovery data.
-         * @returns {Object} - Latest discovery data object
+         * Invoke the registered on_discovery callbacks with the given Object of saved discovery data.
+         * @param {Object} data - previously saved discovery Object.
          */
-        this.getLastDiscovery = function() {
-            return last_discovery;
-        };
-
-		this.setSavedDiscovery = function(data) {
-			on_discovery_callbacks.forEach(function (callback) {
-				callback({discovery: data});
-			});
-		};
-
-		/**
-		 * Registers a callback on discovery.
-		 * @param {Function} callbackFunc - Callback function to be called on message receipt.
-		 */
-		this.onDiscovery = function (callbackFunc) {
-			on_discovery_callbacks.push(callbackFunc);
+		this.applySavedDiscovery = function(data) {
+            this.invokeDiscoveryCallbacks({discovery: data});
 		};
 
 		/**
 		 * Register a callback on get_discovery_response. Call all registered discovery callbacks.
 		 */
 		this.onMessage({"response": "get_discovery_response"}, function (response) {
-			on_discovery_callbacks.forEach(function (callback) {
-				callback(response);
-			});
-		});
+			this.invokeDiscoveryCallbacks(response);
+        }.bind(this));
 
         /**
          * Register a callback on MSG_STATUS == 'ERROR' so that we can display a dialog.
@@ -126,12 +121,26 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
 
 			ParlayNotification.show({content: content_string});
 
+            if (contents.discovery && contents.discovery.length > 0) {
+                // Record the current Broker version.
+
+                var broker = contents.discovery.find(function (item) { return item.NAME && item.NAME === "Broker"; });
+
+                if (broker !== undefined) {
+                    Object.defineProperty(this, "version", {
+                        writeable: false,
+                        enumerable: true,
+                        value: broker.VERSION
+                    });
+                }
+
+            }
+
 			// Store latest discovery data.
 			this.setLastDiscovery(contents.discovery);
 		}.bind(this));
 
 	    // Actions that PromenadeBroker needs to perform on ParlaySocket open.
-	    // TODO: Could run into issues if registration occurs after ParlaySocket has been opened.
 		ParlaySocket.onOpen(function () {
 		    
 		    // Request a subscription from the Broker for this protocol.	    
@@ -146,11 +155,16 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
 	        this.onMessage({'type': "get_protocol_discovery"}, function() {
                 ParlaySocket.sendMessage({type: "get_protocol_discovery_response"}, {discovery: {}});
 	        });
+
+            // Request a fast discovery to see if there's already one there if that is the user preference.
+			/* istanbul ignore else */
+            if (ParlaySettings.get("broker").auto_discovery) {
+                this.requestDiscovery(false);
+            }
 	        
 	    }.bind(this));
 	    
 	    // Actions that PromenadeBroker needs to perform on ParlaySocket close.
-	    // NOTE: Could run into issues if registration occurs after ParlaySocket has been opened. Should investiate solutions.
 	    ParlaySocket.onClose(function () {
 		    
 		    // When socket is closed we should show a notification giving the user the option to reconnect.
@@ -168,15 +182,20 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
                 action: {
                     text: "Connect",
 					callback: this.connect.bind(this)
-                }
+                },
+				permanent: true,
+				warning: true
             });
 	    }.bind(this));
 
-        $window.addEventListener("beforeunload", function (event) {
+        /**
+         * Before allowing window unload, prompt the user to ensure that they don't want to first shutdown the Broker.
+         */
+        var unload_listener = function (event) {
             var confirmation;
 
             // If the Broker is currently connected we want to prompt the user to shutdown the Broker.
-            if (this.isConnected() && ParlaySettings.getBrokerSettings().show_prompt) {
+            if (this.isConnected() && ParlaySettings.get("broker").show_prompt) {
                 confirmation = "Closing browser will not shut the Broker down. Are you sure you want to leave the page?";
             }
             // Otherwise we can just allow the browser windows to close.
@@ -194,15 +213,19 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
                     .ok('Shut Broker down and close browser tab')
                     .cancel('Dismiss');
                 $mdDialog.show(confirm).then(function() {
-                    // Will need to change this to Broker close command.
-                    this.disconnect();
-                    $window.close();
+                    // Request the Broker shutdown and close the window.
+                    this.requestShutdown().then(function () {
+                        $window.removeEventListener("beforeunload", unload_listener);
+                        $window.close();
+                    });
                 }.bind(this));
             }.bind(this), 500);
 
             return confirmation;
-        }.bind(this));
-	    
+        }.bind(this);
+
+        $window.addEventListener("beforeunload", unload_listener);
+
 	}
 	
 	// Bind ParlaySocket methods to PromenadeBroker.
@@ -212,6 +235,39 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
 	PromenadeBroker.prototype.connect = ParlaySocket.open;
 	PromenadeBroker.prototype.disconnect = ParlaySocket.close;
 	PromenadeBroker.prototype.isConnected = ParlaySocket.isConnected;
+
+    /**
+     * Sends message to the Broker adding relevant topic fields.
+     * @param {Object} topics - Map of key/value topic pairs.
+     * @param {Object} contents - Map of key/value content pairs.
+     * @param {Object} response_topics - Map of key/value response topic pairs.
+     * @returns {$q.defer.promise} Resolve when response is received.
+     */
+    PromenadeBroker.prototype.sendMessage = function(topics, contents, response_topics) {
+        topics.type = "broker";
+        response_topics.type = "broker";
+
+        return $q(function (resolve) { ParlaySocket.sendMessage(topics, contents, response_topics, resolve); });
+    };
+
+    /**
+     * Listens for message with relevant response topics from Broker.
+     * @param {Object} response_topics - Map of key/value response topic pairs.
+     * @param {Function} response_callback - Function callback to be called on message receipt.
+     * @param {Boolean} verbose - If true we should invoke callback with full message. If false or undefined invoke with only contents for simplicity.
+     * @returns {Function} - Listener deregistration.
+     */
+    PromenadeBroker.prototype.onMessage = function(response_topics, response_callback, verbose) {
+        return ParlaySocket.onMessage(response_topics, response_callback, verbose);
+    };
+
+	/**
+	 * Request the Broker shutdown.
+	 * @returns {$q.defer.promise} Resolve when response is received shutdown result.
+	 */
+	PromenadeBroker.prototype.requestShutdown = function () {
+		return this.sendMessage({request: "shutdown"}, {}, {response: "shutdown_response"});
+	};
 	
 	/**
 	 * Request the Broker for a discovery.
@@ -219,7 +275,8 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
 	 * @returns {$q.defer.promise} Resolve when response is received with available items.
 	 */
 	PromenadeBroker.prototype.requestDiscovery = function (is_forced) {
-	    // Check we are connected first, otherwise display ParlayNotification.
+
+		// Check we are connected first, otherwise display ParlayNotification.
 	    if (this.isConnected()) {
 
             // $q Deferred that will be resolved upon discovery response.
@@ -227,18 +284,20 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
 
             // Wait before displaying the discovery progress notification in case of a quick discovery response.
             var registration = $timeout(function () {
-                // Show progress and pass deferred so that we can hide hide dialog when it is resolved.
+                // Show progress and pass deferred so that we can hide dialog when it is resolved.
                 ParlayNotification.showProgress(deferred);
             }, 500);
 
-			return this.sendMessage({request: "get_discovery"}, {"force": !!is_forced}, {response: "get_discovery_response"}).then(function (response) {
-                // Resolve deferred so that dialog can be hidden once response is received.
-                deferred.resolve(response);
+            return $q.all([this.requestAvailableProtocols(), this.requestOpenProtocols()]).then(function () {
+                return this.sendMessage({request: "get_discovery"}, {"force": !!is_forced}, {response: "get_discovery_response"}).then(function (response) {
+                    // Resolve deferred so that dialog can be hidden once response is received.
+                    deferred.resolve(response);
 
-                // Prevent the dialog from displaying if we receive a quick discovery response.
-                $timeout.cancel(registration);
-                return response;
-            });
+                    // Prevent the dialog from displaying if we receive a quick discovery response.
+                    $timeout.cancel(registration);
+                    return response;
+                });
+            }.bind(this));
 		}
 	    else {
 	        ParlayNotification.show({content: "Cannot discover while not connected to Broker."});
@@ -261,7 +320,7 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
 	 */
 	PromenadeBroker.prototype.requestOpenProtocols = function () {
 	    return this.sendMessage({request: "get_open_protocols"}, {}, {response: "get_open_protocols_response"}).then(function (response) {
-	        if (response.status === "ok") return response.protocols;
+            return response.status === "ok" ? $q.resolve(response.protocols) : $q.reject(response);
 	    });
 	};
 	
@@ -291,4 +350,5 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
 }
 
 angular.module("promenade.broker", ["parlay.socket", "parlay.notification", "parlay.notification.error", "parlay.settings", "ngMaterial"])
+	.run(["ParlaySettings", PromenadeBrokerRun])
 	.factory("PromenadeBroker", ["ParlaySocket", "$q", "$timeout", "ParlayNotification", "ParlayErrorDialog", "$window", "$mdDialog", "ParlaySettings", PromenadeBrokerFactory]);

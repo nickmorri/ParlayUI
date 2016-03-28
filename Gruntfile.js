@@ -33,8 +33,10 @@ module.exports = function (grunt) {
 	require('load-grunt-tasks')(grunt);
 	
 	// Load this Grunt task individually since it doesn't match the "grunt-*" pattern.
-    var mainBowerFiles = require('main-bower-files');
-	grunt.loadNpmTasks('main-bower-files');
+    grunt.loadNpmTasks('main-bower-files');
+
+	// Array of bower main JS files.
+	var mainBowerFiles = require('main-bower-files');
 
 	grunt.initConfig({
     	'pkg': grunt.file.readJSON('package.json'),
@@ -332,7 +334,16 @@ module.exports = function (grunt) {
 				'src': ['<%= meta.htmlViews %>', '<%= meta.htmlDirectives %>'],
 				'dest': '<%= meta.compiledHtml %>'
 			}
-		}
+		},
+
+        'bump': {
+            'options': {
+                'files': ['package.json', 'bower.json'],
+                'commitFiles': ['package.json', 'bower.json'],
+                'push': false,
+                createTag: false
+            }
+        }
 		
 	});
 	
@@ -372,7 +383,7 @@ module.exports = function (grunt) {
 	    'copy:dist',
 	    'cssmin:dist',
 	    'processhtml:dist',
-	    'wiredep:dist',
+	    'wiredep:dist'
 	]);
 
 	grunt.registerTask('build', ['dist']);

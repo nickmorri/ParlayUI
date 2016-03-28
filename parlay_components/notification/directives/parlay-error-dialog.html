@@ -1,4 +1,4 @@
-<md-dialog aria-label="Error dialog" flex="90" flex-gt-sm="70" flex-gt-md="50">
+<md-dialog aria-label="Error dialog" flex="90" flex-gt-md="70" ng-class="{'md-dialog-fullscreen' : $mdMedia}">
 
     <md-toolbar class="md-accent">
         <div class="md-toolbar-tools">
@@ -22,7 +22,7 @@
             <md-card>
                 <md-card-contents>
                     <md-toolbar ng-click="ctrl.toggleMore()" class="parlay-error-dialog-toolbar">
-                        <div class="md-toolbar-tools"><h3>More</h3><span flex></span><md-icon><ng-md-icon icon="{{ctrl.more_icon}}"></ng-md-icon></md-icon></div>
+                        <div class="md-toolbar-tools"><h3>More</h3><span flex></span><md-icon ng-md-icon icon="{{ctrl.more_hidden ? 'arrow_drop_down' : 'arrow_drop_up'}}"></md-icon></div>
                     </md-toolbar>
 
                     <span ng-hide="ctrl.more_hidden" ng-repeat="(key, value) in ctrl.details">

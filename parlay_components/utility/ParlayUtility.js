@@ -1,64 +1,4 @@
 /**
- * Returns the power set of the key / value pairs.
- * TODO: Write test cases!
- * @returns {Set} power set of strings
- */
-Object.defineProperty(Set.prototype, "powerset", {
-    writable: false,
-    enumerable: false,
-    value: function () {
-        "use strict";
-
-        var sets = new Set();
-
-        if (this.size < 1) {
-            sets.add(new Set());
-            return sets;
-        }
-
-        var values = this.values();
-        var head = values.next().value;
-        var rest = new Set(values);
-
-        rest.powerset().forEach(function (set) {
-            var newSet = new Set();
-            newSet.add(head);
-            set.forEach(function (item) { newSet.add(item); });
-            sets.add(newSet);
-            sets.add(set);
-        });
-
-        return sets;
-    }
-});
-
-/**
- * Returns an array of a all possible combinations of key / value pairs.
- * * TODO: Write test cases!
- * @returns {Array} all possible encoded topic stings
- */
-Object.defineProperty(Object.prototype, "combinationsOf", {
-    writable: false,
-    enumerable: false,
-    value: function() {
-
-        var initial_set = new Set(Object.keys(this).map(function (key) { return key; }));
-
-        var combinations = [];
-
-        initial_set.powerset().forEach(function (set) {
-            var topics_combination = {};
-            set.forEach(function (key) {
-                topics_combination[key] = this[key];
-            }.bind(this));
-            combinations.push(topics_combination.stableEncode());
-        }.bind(this));
-
-        return combinations;
-    }
-});
-
-/**
  * Encodes Object by sorting comparing keys in Unicode code point order.
  * @returns {String} Translation of key, values to String.
  */
@@ -66,25 +6,40 @@ Object.defineProperty(Object.prototype, "stableEncode", {
     writable: false,
     enumerable: false,
     value: function() {
-        if (this === undefined || this === null) return "null";
-        else if (typeof this === 'string' || this instanceof String) return '"' + this + '"';
-        else if (typeof this === 'number' || this instanceof Number) return this.toString();
-        else if (typeof this === 'boolean' || this instanceof Boolean) return this.toString();
-        else if (Array.isArray(this)) return this.sort().reduce(function (previous, current, index) {
+        if (typeof this === 'string' || this instanceof String) {
+            return '"' + this + '"';
+        }
+        else if (typeof this === 'number' || this instanceof Number) {
+            return this.toString();
+        }
+        else if (typeof this === 'boolean' || this instanceof Boolean) {
+            return this.toString();
+        }
+        else if (Array.isArray(this)) {
+            return this.sort().reduce(function (previous, current, index) {
                 var currentString = previous;
 
                 if (index > 0) currentString += ",";
 
-                return currentString + current.stableEncode();
+                var current_encoded = current === null || current === undefined ? "null" : current.stableEncode();
+
+                return currentString + current_encoded;
             }, "[") + "]";
-        else if (typeof this === 'object') return Object.keys(this).sort().reduce(function (previous, current, index) {
-                var currentString = previous;
+        }
+        else if (typeof this === 'object') {
+            return Object.keys(this).sort().reduce(function (previous, current, index) {
+                    var currentString = previous;
 
-                if (index > 0) currentString += ",";
+                    if (index > 0) currentString += ",";
 
-                return currentString + '"' + current + '":' + this[current].stableEncode();
-            }.bind(this), "{") + "}";
-        else return this.toString();
+                    var current_encoded = this[current] === null || this[current] === undefined ? "null" : this[current].stableEncode();
+
+                    return currentString + '"' + current + '":' + current_encoded;
+                }.bind(this), "{") + "}";
+        }
+        else {
+            return this.toString();
+        }
     }
 });
 
@@ -107,6 +62,7 @@ Object.defineProperty(String.prototype, "snakeCase", {
  * Copies this String to clipboard and returns outcome.
  * @returns {Boolean} - Status of copy operation.
  */
+/* istanbul ignore next */
 Object.defineProperty(String.prototype, "copyToClipboard", {
 	writable: false,
 	enumerable: false,
@@ -134,6 +90,7 @@ Object.defineProperty(String.prototype, "copyToClipboard", {
  * Downloads this Object in JSON encoded format.
  * @returns {Boolean} - Status of download operation.
  */
+/* istanbul ignore next */
 Object.defineProperty(Object.prototype, "download", {
     writable: false,
     enumerable: false,
@@ -182,7 +139,7 @@ function customOnChange () {
     return {
         restrict: 'A',
         link: function (scope, element, attributes) {
-            element.bind('change', scope.$eval(attributes.customOnChange));
+            element[0].onchange = scope.$eval(attributes.customOnChange);
         }
     };
 }

@@ -4,30 +4,16 @@
 	beforeEach(module("promenade.smoothiechart"));
 
     describe("<promenade-smoothie-chart>", function() {
-        var mockParlaySettings;
-
-        beforeEach(function () {
-
-            mockParlaySettings = {
-                getGraphSettings: function () {
-                    return {label_size: 12};
-                }
-            };
-
-            module(function ($provide) {
-                $provide.value("ParlaySettings", mockParlaySettings);
-            });
-
-        });
 
     	describe("construction", function () {
-	    	var scope, element, controller, $compile, $controller, $rootScope;
+	    	var scope, element, controller, $compile, $controller, $rootScope, ParlaySettings;
 	    	
-	    	beforeEach(inject(function(_$rootScope_, _$compile_, _$controller_) {
+	    	beforeEach(inject(function(_$rootScope_, _$compile_, _$controller_, _ParlaySettings_) {
                 /*jshint newcap: false */
 				$compile = _$compile_;
 				$controller = _$controller_;
 				$rootScope = _$rootScope_;
+				ParlaySettings = _ParlaySettings_;
 				
                 scope = $rootScope.$new();
                 
@@ -84,7 +70,7 @@
 				    fontFamily: 'monospace',
 				    precision: 2,
 				    fillStyle: '#000000',
-				    fontSize: mockParlaySettings.getGraphSettings().label_size
+				    fontSize: ParlaySettings.get("graph").label_size
 				});
 	    	});
 	    	

@@ -104,8 +104,7 @@ function buildPythonCommand(item_name, message) {
  * @param {Parlay Service} ParlayUtility - Parlay Utlity Service.
  */
 function PromenadeStandardItemCardCommandTabController($scope, $timeout, ParlayNotification) {
-	ParlayBaseTabController.call(this, $scope, "promenadeStandardItemCardCommands");
-	
+
 	// Due to the way JavaScript prototypical inheritance works and AngularJS scoping we want to enclose the message Object within another object.
 	// Reference AngularJS "dot rule": http://jimhoskins.com/2012/12/14/nested-scopes-in-angularjs.html
 	$scope.wrapper = {
@@ -249,9 +248,6 @@ function PromenadeStandardItemCardCommandTabController($scope, $timeout, ParlayN
     });
 	
 }
-
-// Prototypically inherit from ParlayBaseTabController.
-PromenadeStandardItemCardCommandTabController.prototype = Object.create(ParlayBaseTabController.prototype);
 
 /**
  * Directive constructor for PromenadeStandardItemCardCommands.

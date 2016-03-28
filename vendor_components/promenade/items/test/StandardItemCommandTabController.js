@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    describe("promenade.items.standarditem", function() {
+    describe("promenade.items.standarditem.commands", function() {
     
         beforeEach(module("promenade.items.standarditem.commands"));
         beforeEach(module("RecursionHelper"));

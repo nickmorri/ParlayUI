@@ -2,11 +2,15 @@
 	overflow-wrap: break-word;
 }
 
+.log-control-container {
+    padding: 0;
+    width: 100%;
+    margin-bottom: 2px;
+}
+
 .filter-input-container {
-	padding: 0;
-	width: 100%;
-	margin-bottom: -24px;
-	margin-top: 12px;
+    margin-top: 12px;
+    margin-bottom: -22px;
 }
 
 .md-chips .md-chip-input-container {

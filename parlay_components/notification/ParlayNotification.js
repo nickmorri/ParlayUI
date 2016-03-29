@@ -31,6 +31,20 @@ function ParlayNotificationHistory() {
 
 	var history = [];
 
+    function ParlayNotificationHistoryItem(contents, action) {
+        this.time = new Date();
+        this.contents = contents;
+        this.action = action;
+        if (this.action) {
+            this.action.called = false;
+        }
+    }
+
+    ParlayNotificationHistoryItem.prototype.invokeCallback = function () {
+        this.action.callback();
+        this.action.called = true;
+    };
+
     return {
         /**
          * Records toast contents and action. Notes time it has been displayed.
@@ -38,11 +52,7 @@ function ParlayNotificationHistory() {
          * @param {Object} action - Contains text of action button as well as a callback function.
          */
         add: function (contents, action) {
-            history.push({
-                time: new Date(),
-                contents: contents,
-                action: action
-            });
+            history.push(new ParlayNotificationHistoryItem(contents, action));
         },
         get: function () {
             return history;
@@ -121,7 +131,10 @@ function ParlayNotificationFactory($mdToast, $mdSidenav, $mdDialog, $interval, N
 	        
 	        pending_toasts.push({
 		        toast: toast,
-		        callback: configuration.action.callback
+		        callback: function () {
+                    configuration.action.called = true;
+                    configuration.action.callback();
+                }
 	        });
         }
 		else if (could_overflow) {

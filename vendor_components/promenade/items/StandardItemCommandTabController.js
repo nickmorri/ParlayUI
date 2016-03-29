@@ -20,7 +20,9 @@ function pushChipBuffer (chipElements) {
  */    
 function collectMessage(message, for_statement) {
 
-	if (!Object.keys(message).length) return undefined;
+	if (Object.keys(message).length < 1) {
+		return undefined;
+	}
 	
 	// Find root most field.
 	// TODO: Should rethink this so that we don't have to hard code these values.
@@ -36,9 +38,11 @@ function collectMessage(message, for_statement) {
 			return field.msg_key + "_" + field.input;
 		}));
 	}
-	
+
 	// Reduce these fields and their data to a Object.
-	return relevant_fields.reduce(function(accumulator, field) {
+	return relevant_fields.filter(function (field) {
+        return !!message[field] && Object.getOwnPropertyNames(message[field]).length > 0;
+    }).reduce(function(accumulator, field) {
 		var param_name, field_type;
         
         if (field.indexOf('_') > -1) {
@@ -53,12 +57,22 @@ function collectMessage(message, for_statement) {
 	    }	    
 	    
 	    // If type is Object or Array then turn the JSON string into an actual Object.
-	    if (field_type === "ARRAY") accumulator[param_name] = message[field].map(function (chip) {
-		    return !Number.isNaN(chip.value) ? parseInt(chip.value) : chip.value;
-		});
-	    else if (field_type === "NUMBERS") accumulator[param_name] = message[field].map(function(field) { return parseFloat(field.value); });
-	    else if (angular.isObject(message[field])) accumulator[param_name] = for_statement ? message[field].name : message[field].value;
-        else accumulator[param_name] = message[field];
+	    if (field_type === "ARRAY") {
+            accumulator[param_name] = message[field].map(function (chip) {
+                return !Number.isNaN(chip.value) ? parseInt(chip.value) : chip.value;
+            });
+        }
+	    else if (field_type === "NUMBERS") {
+            accumulator[param_name] = message[field].map(function(field) {
+                return parseFloat(field.value);
+            });
+        }
+	    else if (angular.isObject(message[field])) {
+            accumulator[param_name] = for_statement ? message[field].name : message[field].value;
+        }
+        else {
+            accumulator[param_name] = message[field];
+        }
         
         return accumulator;
 	}, {});
@@ -67,7 +81,7 @@ function collectMessage(message, for_statement) {
 
 /**
  * Constructs Python statement from the given message.
- * @param {String} item_id - name of the item
+ * @param {String} item_name - name of the item
  * @param {Object} message - message we're converting to a Python statement
  * @returns {String} - Python statement
  */
@@ -77,8 +91,8 @@ function buildPythonCommand(item_name, message) {
     var var_name = "e_" + item_name.replace(/\s+/g, "_");
     var setup = var_name + " = get_item_by_name('" + item_name + "')";
 
-    // If we are given an empty message return only the setup
-    if (!message) {
+    // If we are given an empty message return only the setup.
+    if (!message || Object.getOwnPropertyNames(message).length === 0) {
         return setup;
     }
 

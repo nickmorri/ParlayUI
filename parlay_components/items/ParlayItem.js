@@ -177,19 +177,22 @@ function ParlayItemCard($compile, ParlayPersistence) {
                 element.on('dragover', function (event) {
                     // Specify the type of draggable this element can accept.
                     event.dataTransfer.dropEffect = "link";
+                    
+                    // Indicates the element is a valid drop zone.
                     event.preventDefault();
                     event.stopPropagation();
+                    return false;
                 });
 
                 // Fired when a ParlayItemCard is dropped on a ParlayItemCard.
                 element.on('drop', function (event) {
-                    // Get the card indices of the source and destination of the drag event.
+                    // Indices of the source and destination ParlayItemCard of the drag event.
                     var thisIndex = angular.element(element).scope().$index;
                     var thatIndex = event.dataTransfer.getData("text/plain");
 
-                    // Swap the cards.
+                    // Swap the ParlayItemCards.
                     scope.$apply(function () {
-                        scope.$parent.itemCtrl.swap(thisIndex, thatIndex);
+                        scope.itemCtrl.swap(thisIndex, thatIndex);
                     });
 
                 });

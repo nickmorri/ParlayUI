@@ -25,7 +25,7 @@
                     <h3 class="parlay-notification-content">{{notification.contents}}</h3>
                     <p am-time-ago="notification.time" title="{{notification.time}}"></p>
                 </div>
-                <md-button ng-show="notification.action" class="md-secondary" ng-click="notification.action.callback()" aria-label="Notification action">
+                <md-button ng-show="notification.action" ng-disabled="notification.action.called" class="md-secondary" ng-click="notification.invokeCallback()" aria-label="Notification action">
                     {{notification.action.text}}
                 </md-button>
             </md-list-item>

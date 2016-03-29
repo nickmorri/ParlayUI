@@ -22,22 +22,32 @@
                 var base = new Date();
                 jasmine.clock().mockDate(base);
                 ParlayNotificationHistory.add("hey", function () {});
-                expect(ParlayNotificationHistory.get()).toEqual([{time: base, contents: "hey", action:jasmine.any(Function)}]);
+
+                var history_item = ParlayNotificationHistory.get()[0];
+
+                expect(history_item.time).toEqual(base);
+                expect(history_item.contents).toEqual("hey");
+                expect(history_item.action).toEqual(jasmine.any(Function));
             });
 
-            it("clears histroy", function () {
+            it("clears history", function () {
                 expect(ParlayNotificationHistory.get()).toEqual([]);
                 var base = new Date();
                 jasmine.clock().mockDate(base);
                 ParlayNotificationHistory.add("hey", function () {});
-                expect(ParlayNotificationHistory.get()).toEqual([{time: base, contents: "hey", action:jasmine.any(Function)}]);
+                var history_item = ParlayNotificationHistory.get()[0];
+
+                expect(history_item.time).toEqual(base);
+                expect(history_item.contents).toEqual("hey");
+                expect(history_item.action).toEqual(jasmine.any(Function));
+                
                 ParlayNotificationHistory.clear();
                 expect(ParlayNotificationHistory.get()).toEqual([]);
             });
 
         });
 
-        describe("ParlayNotification", function () {
+        xdescribe("ParlayNotification", function () {
 
             it("shows a notification", function () {});
 

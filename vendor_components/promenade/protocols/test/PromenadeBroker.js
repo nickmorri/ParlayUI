@@ -211,14 +211,16 @@
                             spyOn(PromenadeBroker, "requestOpenProtocols").and.callThrough();
 
                             PromenadeBroker.connect();
-                            PromenadeBroker.requestDiscovery(true).then(done);
+                            PromenadeBroker.requestDiscovery(true).then(function () {
+                                done();
+                                expect(ParlayNotification.showProgress).toHaveBeenCalled();
+                                expect(PromenadeBroker.requestAvailableProtocols).toHaveBeenCalled();
+                                expect(PromenadeBroker.requestOpenProtocols).toHaveBeenCalled();
+                                expect(PromenadeBroker.sendMessage).toHaveBeenCalledWith({request: "get_discovery", type: "broker"}, {"force": true, STATUS: 0}, {response: "get_discovery_response", type: "broker"});
+                            });
 
                             $timeout.flush();
 
-                            expect(ParlayNotification.showProgress).toHaveBeenCalled();
-                            expect(PromenadeBroker.requestAvailableProtocols).toHaveBeenCalled();
-                            expect(PromenadeBroker.requestOpenProtocols).toHaveBeenCalled();
-                            expect(PromenadeBroker.sendMessage).toHaveBeenCalledWith({request: "get_discovery", type: "broker"}, {"force": true, STATUS: 0}, {response: "get_discovery_response", type: "broker"});
                         });
 
                         it("while disconnected", function () {
@@ -230,33 +232,40 @@
 
                     });
 
-                    it("requestAvailableProtocols", function (done) {
-                        spyOn(PromenadeBroker, "sendMessage").and.callThrough();
-                        PromenadeBroker.requestAvailableProtocols().then(done);
-                        $rootScope.$apply();
-                        expect(PromenadeBroker.sendMessage).toHaveBeenCalledWith({request: "get_protocols", type: "broker"}, {STATUS: 0}, {response: "get_protocols_response", type: "broker"});
-                    });
-
-                    it("requestOpenProtocols", function (done) {
-                        spyOn(PromenadeBroker, "sendMessage").and.callThrough();
-                        PromenadeBroker.requestOpenProtocols().then(done);
-                        $rootScope.$apply();
-                        expect(PromenadeBroker.sendMessage).toHaveBeenCalledWith({request: "get_open_protocols"}, {}, {response: "get_open_protocols_response"});
-                    });
-
                     it("openProtocol", function (done) {
                         spyOn(PromenadeBroker, "sendMessage").and.callThrough();
-                        PromenadeBroker.openProtocol({name: "TestProtocol", parameters: 1}).then(done);
+                        PromenadeBroker.openProtocol({name: "TestProtocol", parameters: 1}).then(function () {
+                            expect(PromenadeBroker.sendMessage).toHaveBeenCalledWith({request: "open_protocol", type: "broker"}, {"protocol_name": "TestProtocol", "params": 1}, {response: "open_protocol_response", type: "broker"});
+                            done();
+                        });
                         $rootScope.$apply();
-                        expect(PromenadeBroker.sendMessage).toHaveBeenCalledWith({request: "open_protocol", type: "broker"}, {"protocol_name": "TestProtocol", "params": 1}, {response: "open_protocol_response", type: "broker"});
-
                     });
 
                     it("closeProtocol", function (done) {
                         spyOn(PromenadeBroker, "sendMessage").and.callThrough();
-                        PromenadeBroker.closeProtocol("TestProtocol").then(done);
+                        PromenadeBroker.closeProtocol("TestProtocol").then(function () {
+                            expect(PromenadeBroker.sendMessage).toHaveBeenCalledWith({request: "close_protocol", type: "broker"}, {"protocol": "TestProtocol"}, {response: "close_protocol_response", type: "broker"});
+                            done();
+                        });
                         $rootScope.$apply();
-                        expect(PromenadeBroker.sendMessage).toHaveBeenCalledWith({request: "close_protocol", type: "broker"}, {"protocol": "TestProtocol"}, {response: "close_protocol_response", type: "broker"});
+                    });
+
+                    it("requestAvailableProtocols", function (done) {
+                        spyOn(PromenadeBroker, "sendMessage").and.callThrough();
+                        PromenadeBroker.requestAvailableProtocols().then(function () {
+                            expect(PromenadeBroker.sendMessage).toHaveBeenCalledWith({request: "get_protocols", type: "broker"}, {STATUS: 0}, {response: "get_protocols_response", type: "broker"});
+                            done();
+                        });
+                        $rootScope.$apply();
+                    });
+
+                    it("requestOpenProtocols", function (done) {
+                        spyOn(PromenadeBroker, "sendMessage").and.callThrough();
+                        PromenadeBroker.requestOpenProtocols().then(function () {
+                            expect(PromenadeBroker.sendMessage).toHaveBeenCalledWith({request: "get_open_protocols", type: "broker"}, {}, {response: "get_open_protocols_response", type: "broker"});
+                            done();
+                        });
+                        $rootScope.$apply();
                     });
 
                 });

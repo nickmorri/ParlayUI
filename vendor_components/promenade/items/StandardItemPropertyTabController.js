@@ -4,7 +4,6 @@
  * @param {AngularJS $scope} $scope - A AngularJS $scope Object.
  */
 function PromenadeStandardItemCardPropertyTabController($scope) {
-
 	// Controller state attribute, true if a request has been sent but the response has not been received. 
 	this.waiting = false;
 }
@@ -18,18 +17,18 @@ PromenadeStandardItemCardPropertyTabController.prototype.hasProperties = functio
  * Gets all property values from an item.
  */
 PromenadeStandardItemCardPropertyTabController.prototype.getAllProperties = function () {
-	Object.keys(this.item.properties).map(function(key) {
-		return this.item.properties[key];
-	}, this).forEach(this.getProperty.bind(this));
+    Object.keys(this.item.properties).forEach(function (key) {
+        this.item.properties[key].get();
+    }, this);
 };
 
 /**
  * Sets all property values from an item.
  */
 PromenadeStandardItemCardPropertyTabController.prototype.setAllProperties = function () {
-	Object.keys(this.item.properties).map(function(key) {
-		return this.item.properties[key];
-	}, this).forEach(this.setProperty.bind(this));
+    Object.keys(this.item.properties).forEach(function (key) {
+        this.item.properties[key].set();
+    }, this);
 };
 
 /**
@@ -38,7 +37,9 @@ PromenadeStandardItemCardPropertyTabController.prototype.setAllProperties = func
  */
 PromenadeStandardItemCardPropertyTabController.prototype.getProperty = function (property) {
 	this.waiting = true;
-	this.item.getProperty(property).then(function () { this.waiting = false; }.bind(this));
+    property.get().then(function () {
+        this.waiting = false;
+    }.bind(this));
 };
 
 /**
@@ -47,7 +48,9 @@ PromenadeStandardItemCardPropertyTabController.prototype.getProperty = function 
  */
 PromenadeStandardItemCardPropertyTabController.prototype.setProperty = function (property) {
 	this.waiting = true;
-	this.item.setProperty(property).then(function () { this.waiting = false; }.bind(this));
+    property.set().then(function () {
+        this.waiting = false;
+    }.bind(this));
 };
 
 /**

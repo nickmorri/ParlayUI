@@ -13,86 +13,24 @@ function pushChipBuffer (chipElements) {
 	}
 }
 
-/**
- * Collects and formats the fields available on the given message object.
- * @param {Object} message - message container from the scope.
- * @returns {Object} - parsed and formatted StandardItem data.
- */    
-function collectMessage(message, for_statement) {
-
-	if (Object.keys(message).length < 1) {
-		return undefined;
-	}
-	
-	// Find root most field.
-	// TODO: Should rethink this so that we don't have to hard code these values.
-	var root_field = Object.keys(message).find(function (field) {
-		return field.indexOf("COMMAND") > -1 || field.indexOf("FUNC") > -1;
-	});
-	
-	// Build Array of relevant fields, relevant meaning a sub field of the root field.
-	var relevant_fields = [root_field];
-	
-	if (message[root_field].sub_fields) {
-		relevant_fields = relevant_fields.concat(message[root_field].sub_fields.map(function (field) {
-			return field.msg_key + "_" + field.input;
-		}));
-	}
-
-	// Reduce these fields and their data to a Object.
-	return relevant_fields.filter(function (field) {
-        return !!message[field] && Object.getOwnPropertyNames(message[field]).length > 0;
-    }).reduce(function(accumulator, field) {
-		var param_name, field_type;
-        
-        if (field.indexOf('_') > -1) {
-	        var split_field = field.split('_');
-
-            field_type = split_field[split_field.length - 1];
-
-            param_name = split_field.slice(0, split_field.length - 1).join('_');
-	    }
-	    else {
-		    param_name = field;
-	    }	    
-	    
-	    // If type is Object or Array then turn the JSON string into an actual Object.
-	    if (field_type === "ARRAY") {
-            accumulator[param_name] = message[field].map(function (chip) {
-                return !Number.isNaN(chip.value) ? parseInt(chip.value) : chip.value;
-            });
-        }
-	    else if (field_type === "NUMBERS") {
-            accumulator[param_name] = message[field].map(function(field) {
-                return parseFloat(field.value);
-            });
-        }
-	    else if (angular.isObject(message[field])) {
-            accumulator[param_name] = for_statement ? message[field].name : message[field].value;
-        }
-        else {
-            accumulator[param_name] = message[field];
-        }
-        
-        return accumulator;
-	}, {});
-
+function PromenadeStandardCommandMessage(item_name) {
+    this.item_name = item_name;
 }
 
 /**
- * Constructs Python statement from the given message.
- * @param {String} item_name - name of the item
- * @param {Object} message - message we're converting to a Python statement
- * @returns {String} - Python statement
+ * Transforms the fields available into an equivalent Python statement.
+ * @returns {String} - Python statement.
  */
-function buildPythonCommand(item_name, message) {
+PromenadeStandardCommandMessage.prototype.toPythonStatement = function () {
 
-	// Replace all spaces in the item name with underscores.
-    var var_name = "e_" + item_name.replace(/\s+/g, "_");
-    var setup = var_name + " = get_item_by_name('" + item_name + "')";
+    var message = this.collect(true);
+
+    // Replace all spaces in the item name with underscores.
+    var var_name = "e_" + this.item_name.replace(/\s+/g, "_");
+    var setup = var_name + " = get_item_by_name('" + this.item_name + "')";
 
     // If we are given an empty message return only the setup.
-    if (!message || Object.getOwnPropertyNames(message).length === 0) {
+    if (Object.getOwnPropertyNames(message).length === 0) {
         return setup;
     }
 
@@ -108,21 +46,84 @@ function buildPythonCommand(item_name, message) {
         if (value === undefined) value = "None";
         return key + "=" + value;
     }).join(", ") + ")";
-}
+};
+
+/**
+ * Collects and formats the fields available on the given message object.
+ * @param {Boolean} for_statement - If true we should collect the message for a Python statement, otherwise collect
+ * if for a message.
+ * @returns {Object} - parsed and formatted StandardItem data.
+ */
+PromenadeStandardCommandMessage.prototype.collect = function (for_statement) {
+    if (Object.keys(this).length < 1) {
+        return undefined;
+    }
+
+    // Find root most field.
+    // TODO: Should rethink this so that we don't have to hard code these values.
+    var root_field = Object.keys(this).find(function (field) {
+        return field.indexOf("COMMAND") > -1 || field.indexOf("FUNC") > -1;
+    });
+
+    // Build Array of relevant fields, relevant meaning a sub field of the root field.
+    var relevant_fields = [root_field];
+
+    if (this[root_field].sub_fields) {
+        relevant_fields = relevant_fields.concat(this[root_field].sub_fields.map(function (field) {
+            return field.msg_key + "_" + field.input;
+        }));
+    }
+
+    // Reduce these fields and their data to a Object.
+    return relevant_fields.reduce(function(accumulator, field) {
+        var param_name, field_type;
+
+        if (field.indexOf('_') > -1) {
+            var split_field = field.split('_');
+
+            field_type = split_field[split_field.length - 1];
+
+            param_name = split_field.slice(0, split_field.length - 1).join('_');
+        }
+        else {
+            param_name = field;
+        }
+
+        // If type is Object or Array then turn the JSON string into an actual Object.
+        if (field_type === "ARRAY") {
+            accumulator[param_name] = this[field].map(function (chip) {
+                return !Number.isNaN(chip.value) ? parseInt(chip.value) : chip.value;
+            });
+        }
+        else if (field_type === "NUMBERS") {
+            accumulator[param_name] = this[field].map(function(field) {
+                return parseFloat(field.value);
+            });
+        }
+        else if (angular.isObject(this[field])) {
+            accumulator[param_name] = for_statement ? this[field].name : this[field].value;
+        }
+        else {
+            accumulator[param_name] = this[field];
+        }
+
+        return accumulator;
+    }.bind(this), {});
+};
 
 /**
  * Controller constructor for the command tab.
  * @constructor
  * @param {AngularJS $scope} $scope - A AngularJS $scope Object.
- * @param {AngularJS Service} $timeout - AngularJS timeout service.
- * @param {Parlay Service} ParlayUtility - Parlay Utlity Service.
+ * @param {AngularJS Service} $timeout - AngularJS timeout Service.
+ * @param {Parlay Service} ParlayNotification - ParlayNotification Service.
  */
 function PromenadeStandardItemCardCommandTabController($scope, $timeout, ParlayNotification) {
 
 	// Due to the way JavaScript prototypical inheritance works and AngularJS scoping we want to enclose the message Object within another object.
 	// Reference AngularJS "dot rule": http://jimhoskins.com/2012/12/14/nested-scopes-in-angularjs.html
 	$scope.wrapper = {
-		message: {}
+		message: new PromenadeStandardCommandMessage(this.item.name)
 	};
 
     // If there is only one field we should automatically assign it's default.
@@ -150,7 +151,9 @@ function PromenadeStandardItemCardCommandTabController($scope, $timeout, ParlayN
 	 */
 	this.send = function ($event) {
 		// Push the buffer into the md-chips ng-model
-		if ($event) pushChipBuffer($event.target.querySelectorAll('md-chips'));
+		if ($event) {
+            pushChipBuffer($event.target.querySelectorAll('md-chips'));
+        }
 			    
 	    this.sending = true;
 
@@ -165,7 +168,7 @@ function PromenadeStandardItemCardCommandTabController($scope, $timeout, ParlayN
         });
 
 	    try {
-	    	this.item.sendMessage(collectMessage($scope.wrapper.message, false)).then(function (response) {
+	    	this.item.sendMessage($scope.wrapper.message.collect(false)).then(function (response) {
 
                 var pending_response = this.responses.find(function (pending_response) {
                     return pending_response.MSG_ID === response.TOPICS.MSG_ID;
@@ -177,7 +180,9 @@ function PromenadeStandardItemCardCommandTabController($scope, $timeout, ParlayN
                 }
 
                 // If we still have an outstanding timeout we should cancel it to prevent the send button from flickering.
-	            if (sending_timeout !== null) $timeout.cancel(sending_timeout);
+	            if (sending_timeout !== null) {
+                    $timeout.cancel(sending_timeout);
+                }
 
 	            // Setup a timeout to reset the button to it's default state after a brief period of time.
 	        	sending_timeout = $timeout(function () {
@@ -185,7 +190,7 @@ function PromenadeStandardItemCardCommandTabController($scope, $timeout, ParlayN
 	                this.sending = false;
 	            }.bind(this), 500);
 	            
-	        }.bind(this)).catch(function (response) {
+	        }.bind(this)).catch(function () {
 		        this.sending = false;
 		    }.bind(this));
 	    }
@@ -193,20 +198,12 @@ function PromenadeStandardItemCardCommandTabController($scope, $timeout, ParlayN
 		    this.sending = false;
 	    }
 	};
-	
-	/**
-	 * Generate the Python statements from the command form.
-	 * @returns {String} - equivalent Python statements
-	 */
-	this.generatePythonCommand = function() {
-        return buildPythonCommand(this.item.name, collectMessage($scope.wrapper.message, true));
-	};
-	
+
 	/**
 	 * Copy the Python command generated by the form to the clipboard.
 	 */
 	this.copyCommand = function() {
-        var command = this.generatePythonCommand();
+        var command = $scope.wrapper.message.toPythonStatement();
 
         if (command) ParlayNotification.show({content: command.copyToClipboard() ?
 			"Command copied to clipboard." : "Copy failed. Check browser compatibility."});

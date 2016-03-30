@@ -41,16 +41,16 @@
 
                 <md-subheader>Streams</md-subheader>
 
-				<md-list-item ng-repeat="stream in ctrl.item.data_streams | orderObjectBy: 'NAME'" layout="row" ng-click="ctrl.toggleGraphing(stream)" title="Click to toggle graphing">
+				<md-list-item ng-repeat="stream in ctrl.item.data_streams | orderObjectBy: 'name'" layout="row" ng-click="ctrl.toggleGraphing(stream)" title="Click to toggle graphing">
                     <md-icon ng-md-icon icon="{{ctrl.isStreamEnabled(stream) ? 'check_box' : 'check_box_outline_blank'}}" options="{'rotation': 'none'}" ></md-icon>
-					<p>{{stream.NAME}} <span ng-show="stream.value !== undefined">has value {{stream.value}}</span></p>
+					<p>{{stream.name}} <span ng-show="stream.value !== undefined">has value {{stream.value}}</span></p>
 
-                    <md-button class="md-secondary md-icon-button md-primary" ng-click="ctrl.listenStream(stream)">
+                    <md-button class="md-secondary md-icon-button md-primary" ng-click="stream.listen(false)">
                         <md-tooltip>Listen to stream</md-tooltip>
                         <md-icon ng-md-icon icon="play_arrow"></md-icon>
                     </md-button>
 
-                    <md-button class="md-secondary md-icon-button md-accent" ng-click="ctrl.stopStream(stream)">
+                    <md-button class="md-secondary md-icon-button md-accent" ng-click="stream.listen(true)">
                         <md-tooltip>Stop listening to stream</md-tooltip>
                         <md-icon ng-md-icon icon="stop"></md-icon>
                     </md-button>

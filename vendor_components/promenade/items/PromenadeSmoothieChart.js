@@ -53,7 +53,7 @@ function PromenadeSmoothieChartController(scope, $interval, ParlaySettings) {
         return Object.keys(scope.stream_data).map(function (key) {
             return scope.stream_data[key];
         }).filter(function (stream) {
-            return scope.enabled_streams.indexOf(stream.NAME) > -1;
+            return scope.enabled_streams.indexOf(stream.name) > -1;
         });
     }.bind(this);
 
@@ -63,14 +63,14 @@ function PromenadeSmoothieChartController(scope, $interval, ParlaySettings) {
      */
     this.createTimeSeries = function(streams) {
         streams.filter(function (stream) {
-            return !this.lines[stream.NAME];
+            return !this.lines[stream.name];
         }, this).forEach(function(stream) {
-            this.lines[stream.NAME] = new TimeSeries();
+            this.lines[stream.name] = new TimeSeries();
 
-            scope.smoothie.addTimeSeries(this.lines[stream.NAME], {
+            scope.smoothie.addTimeSeries(this.lines[stream.name], {
                 strokeStyle: this.colors.pop(),
                 lineWidth: 2,
-                streamName: stream.NAME
+                streamName: stream.name
             });
         }, this);
     }.bind(this);
@@ -81,7 +81,7 @@ function PromenadeSmoothieChartController(scope, $interval, ParlaySettings) {
      */
     this.pruneTimeSeries = function(streams) {
         Object.keys(this.lines).filter(function(key) {
-            return !streams.some(function(stream) { return stream.NAME === key; });
+            return !streams.some(function(stream) { return stream.name === key; });
         }, this).forEach(function (key) {
 
             // Re-add the now unused color to available list of colors.
@@ -101,7 +101,7 @@ function PromenadeSmoothieChartController(scope, $interval, ParlaySettings) {
     this.updateStreamLine = function(stream) {
         // Skip appending an undefined stream value.
         if (stream.value !== undefined) {
-            this.lines[stream.NAME].append(new Date().getTime(), stream.value);
+            this.lines[stream.name].append(new Date().getTime(), stream.value);
         }
     }.bind(this);
 
@@ -136,6 +136,7 @@ function PromenadeSmoothieChartController(scope, $interval, ParlaySettings) {
 /**
  * Directive constructor for PromenadeStandardItemCardProperty.
  * @param {AngularJS Service} $window - AngularJS Window Service.
+ * @param {Parlay Service} ParlaySettings - ParlaySettings Service.
  * @returns {Object} - Directive configuration.
  */
 function PromenadeSmoothieChart($window, ParlaySettings) {

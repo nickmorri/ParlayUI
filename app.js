@@ -1,12 +1,12 @@
-function ParlayConfig($stateProvider, $urlRouterProvider, $mdThemingProvider) {
+function ParlayConfig($urlRouterProvider, $mdThemingProvider) {
         
-    // Theme configuration
+    // Theme configuration.
     $mdThemingProvider.theme("default").primaryPalette("blue-grey").accentPalette("red");
 
     // Needed for warning toast.
     $mdThemingProvider.theme("warning-toast").primaryPalette("amber");
 
-    // Default state for unmatched URLs
+    // Default state for unmatched URLs.
     $urlRouterProvider.otherwise("/items");
     
 }

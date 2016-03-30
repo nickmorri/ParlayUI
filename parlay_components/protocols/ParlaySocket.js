@@ -33,26 +33,27 @@ function CallbackContainerFactory() {
 
         /**
          * Traverse tree and delete branches of tree if no longer needed.
+         * @param {Map} map - Tree-like structure that contains topic registrations.
          */
-        function prune(tree) {
+        function prune(map) {
 
             // Check if entry for callback Array exists, if it does and it is empty we should delete it.
-            if (tree.has(callback_key) && tree.get(callback_key).length === 0) {
-                tree.delete(callback_key);
+            if (map.has(callback_key) && map.get(callback_key).length === 0) {
+                map.delete(callback_key);
             }
 
-            // Iterate through the entries in the tree.
-            var iter = tree.entries();
+            // Iterate through the entries in the map.
+            var iter = map.entries();
             for (var current = iter.next(); !current.done; current = iter.next()) {
 
                 // Recursively prune all sub-trees, if the size of the sub-tree is 0 delete it.
                 if (current.value[0] !== callback_key && prune(current.value[1]) === 0) {
-                    tree.delete(current.value[0]);
+                    map.delete(current.value[0]);
                 }
 
             }
 
-            return tree.size;
+            return map.size;
         }
 
         /**
@@ -106,6 +107,50 @@ function CallbackContainerFactory() {
             return callbacks;
         }
 
+        /**
+         * Invoke all registered callbacks and recursively traverse the hash list start at start_index in the hash list.
+         * @param {Object} topics - Object of key/value pairs.
+         * @param {Object} contents - Object of key/value pairs.
+         * @param {Array} hash_list -
+         * @param {Number} start_index -
+         * @param {Map} map - Tree-like structure that contains topic registrations.
+         */
+        function invoke_all_with_hashes(topics, contents, hash_list, start_index, map) {
+
+            // If map is not given we are done with our traversal.
+            if (map === undefined) {
+                return;
+            }
+
+            var callbacks = map.get(callback_key);
+
+            if (callbacks !== undefined) {
+
+                // Invoke all applicable callbacks, retain only persistent callbacks.
+                var remaining_callbacks = callbacks.filter(function (callback) {
+
+                    // If during registration a verbose callback was requested pass topics and contents,
+                    // otherwise pass only contents.
+                    callback.func(callback.verbose ? {TOPICS: topics, CONTENTS: contents} : contents);
+
+                    // If during registration callback persistence was requested we should keep the callback.
+                    return callback.persist;
+                });
+
+                // Set the updated message callbacks if some still exist.
+                if (remaining_callbacks.length > 0) {
+                    map.set(callback_key, remaining_callbacks);
+                }
+                else {
+                    map.delete(callback_key);
+                }
+            }
+
+            // Now go down the list from start_index and try with that key.
+            for (var i = start_index; i < hash_list.length; i++) {
+                invoke_all_with_hashes(topics, contents, hash_list, start_index + 1, map.get(hash_list[i]));
+            }
+        }
 
         /**
          * Adds callback registration for the given topics.
@@ -156,51 +201,6 @@ function CallbackContainerFactory() {
         };
 
         /**
-         * Invoke all registered callbacks and recursively traverse the hash list start at start_index in the hash list.
-         * @param {Object} topics - Object of key/value pairs.
-         * @param {Object} contents - Object of key/value pairs.
-         * @param {Array} hash_list -
-         * @param {Number} start_index -
-         * @param {Map} map -
-         */
-        function invoke_all_with_hashes(topics, contents, hash_list, start_index, map) {
-
-            // If no map then we're done.
-            if (map === undefined) {
-                return;
-            }
-
-            var callbacks = map.get(callback_key);
-
-            if (callbacks !== undefined) {
-
-                // Invoke all applicable callbacks, retain only persistent callbacks.
-                var remaining_callbacks = callbacks.filter(function (callback) {
-
-                    // If during registration a verbose callback was requested pass topics and contents,
-                    // otherwise pass only contents.
-                    callback.func(callback.verbose ? {TOPICS: topics, CONTENTS: contents} : contents);
-
-                    // If during registration callback persistence was requested we should keep the callback.
-                    return callback.persist;
-                });
-
-                // Set the updated message callbacks if some still exist.
-                if (remaining_callbacks.length > 0) {
-                    map.set(callback_key, remaining_callbacks);
-                }
-                else {
-                    map.delete(callback_key);
-                }
-            }
-
-            // Now go down the list from start_index and try with that key.
-            for (var i = start_index; i < hash_list.length; i++) {
-                invoke_all_with_hashes(topics, contents, hash_list, start_index + 1, map.get(hash_list[i]));
-            }
-        }
-
-        /**
          * Calls all applicable callbacks for the given topics Object.
          * Will remove any invoked callback that is not persistent.
          * @param {Object} topics - Object of key/value pairs.
@@ -219,6 +219,7 @@ function CallbackContainerFactory() {
 
         /**
          * Returns number of unique topic keys.
+         * @param {Map} map - Tree-like structure that contains topic registrations.
          * @returns {Number} - Count of topics keys.
          */
         this.size = function (map) {
@@ -242,6 +243,7 @@ function CallbackContainerFactory() {
 
         /**
          * Returns number of registered callback functions.
+         * @param {Map} map - Tree-like structure that contains topic registrations.
          * @returns {Number} - Count of registered callback functions.
          */
         this.callbackCount = function (map) {
@@ -331,7 +333,7 @@ function ParlaySocketFactory(BrokerAddress, $location, $q, CallbackContainer) {
      */
     function ContentsError(type) {
         ParlaySocketError.call(this, "Invalid type for contents, accepts Object or undefined but was type " + type + ".");
-        this.name = "TopicsError";
+        this.name = "ContentsError";
     }
 
     // Prototypically inherit from ParlaySocketError class.
@@ -368,20 +370,24 @@ function ParlaySocketFactory(BrokerAddress, $location, $q, CallbackContainer) {
 
         /**
          * Opens WebSocket and returns Promise when complete.
+         * @param {String} url - Location the WebSocket instance should connect to.
          * @returns {$q.defer.promise} Resolved after WebSocket is opened.
          */
-        this.open = function() {
-            if (!this.isConnected()) {
+        this.open = function(url) {
+            if (typeof url !== "string") {
+                throw new ParlaySocketError("ParlaySocket.open(url) requires a url string.");
+            }
+            else if (this.isConnected()) {
+                throw new ParlaySocketError("ParlaySocket open was called while the socket was already open.");
+            }
+            else {
                 onOpenPromise = $q.defer();
                 onClosePromise = $q.defer();
-                socket = new WebSocket($location.protocol === 'https:' ? 'wss://' + BrokerAddress + ':8086' : 'ws://' + BrokerAddress + ':8085');
+                socket = new WebSocket(url);
                 // Attach event handlers.
                 socket.onopen = onOpenHandler;
                 socket.onclose = onCloseHandler;
                 socket.onmessage = onMessageHandler;
-            }
-            else {
-                throw new ParlaySocketError("ParlaySocket open was called while the socket was already open.");
             }
             return onOpenPromise.promise;
         };
@@ -406,7 +412,6 @@ function ParlaySocketFactory(BrokerAddress, $location, $q, CallbackContainer) {
          * @returns {$q.defer.Promise} Resolves once message has been passed to socket.
          */
         this.sendMessage = function(topics, contents, response_topics, response_callback, verbose) {
-
             // If verbose is not passed default to false.
             var verbosity = verbose === undefined ? false : verbose;
 
@@ -424,17 +429,11 @@ function ParlaySocketFactory(BrokerAddress, $location, $q, CallbackContainer) {
 
             // Ensure that topics is an Object.
             if (typeof topics === 'object') {
-
                 // If contents is an Object send both topics and contents.
                 if (typeof contents === 'object') {
-                    return send(topics, contents);
+                    send(topics, contents);
                 }
-                // If contents is undefined send only topics and an empty contents Object as a convenience.
-                // TODO: Ensure this is desired behavior.
-                else if (contents === undefined) {
-                    return send(topics, {});
-                }
-                // If contents is another type throw error.
+                // Otherwise throw error.
                 else {
                     throw new ContentsError(typeof contents);
                 }
@@ -453,12 +452,9 @@ function ParlaySocketFactory(BrokerAddress, $location, $q, CallbackContainer) {
          * @returns {Function} Deregistration function for this message listener.
          */
         this.onMessage = function(topics, callback, verbose) {
-            // If verbose is not passed default to false.
-            var verbosity = verbose === undefined ? false : verbose;
-
             // Ensure that topics is an Object.
             if (typeof topics === 'object') {
-                return onMessageCallbacks.add(topics, callback, true, verbosity);
+                return onMessageCallbacks.add(topics, callback, true, !!verbose);
             }
             // Otherwise throw an error.
             else {
@@ -505,42 +501,25 @@ function ParlaySocketFactory(BrokerAddress, $location, $q, CallbackContainer) {
          * @returns {$q.defer.Promise} - Resolved if send completed without exception, rejected otherwise.
          */
         function send(topics, contents) {
-
             // Stringify the message Object before sending.
             var message = JSON.stringify({TOPICS: topics, CONTENTS: contents});
 
-            var deferred = $q.defer();
-
             // If socket is open send messages normally.
             if (socket.readyState === socket.OPEN) {
-                try {
-                    socket.send(message);
-                    deferred.resolve();
-                }
-                catch (e) {
-                    deferred.reject(e);
-                }
+                socket.send(message);
             }
             // Otherwise queue them until the socket opens.
             else {
-                sendQueue.push({ message: message, deferred: deferred });
+                sendQueue.push(message);
             }
-
-            return deferred.promise;
         }
 
         /**
          * Attempt to send all messages that were queued while the socket was closed.
          */
         function processSendQueue() {
-            sendQueue.forEach(function (container) {
-                try {
-                    socket.send(container.message);
-                    container.deferred.resolve();
-                }
-                catch (e) {
-                    container.deferred.reject(e);
-                }
+            sendQueue.forEach(function (message) {
+                socket.send(message);
             });
             sendQueue = [];
         }
@@ -550,7 +529,6 @@ function ParlaySocketFactory(BrokerAddress, $location, $q, CallbackContainer) {
          * If the callback is not persistent it will be removed after invocation.
          * @param {Object} topics - Map of key/value pairs.
          * @param {Object} contents - Map of key/value pairs.
-         * TODO: Suspected bottleneck potential. Might need to investigate alternatives.
          * As this function is called per message received and the topics may result in a high number of combinations,
          * this could potentially cause slowdown.
          */
@@ -560,7 +538,7 @@ function ParlaySocketFactory(BrokerAddress, $location, $q, CallbackContainer) {
 
         /**
          * Called when WebSocket is opened.
-         * @param {MessageEvent} - Event generated by the WebSocket on open.
+         * @param {MessageEvent} event - Event generated by the WebSocket on open.
          */
         function onOpenHandler(event) {
             // If the onOpenPromise exists we should resolve it.
@@ -573,19 +551,21 @@ function ParlaySocketFactory(BrokerAddress, $location, $q, CallbackContainer) {
             processSendQueue();
 
             // Process each onOpenCallback
-            onOpenCallbacks.forEach(function(callback) { callback(event); });
+            onOpenCallbacks.forEach(function(callback) {
+                callback(event);
+            });
         }
 
         /**
          * Called when WebSocket is closed.
-         * @param {MessageEvent} - Event generated by the WebSocket on close.
+         * @param {MessageEvent} event - Event generated by the WebSocket on close.
          */
         function onCloseHandler(event) {
-            // If the close event was clean, we shoud resolve the promise.
+            // If the close event was clean, we should resolve the promise.
             if (event.wasClean) {
                 onClosePromise.resolve(event.reason);
             }
-            // Otherwise this indicates our connection was severed and we shold reject.
+            // Otherwise our connection was severed and we should reject.
             else {
                 onClosePromise.reject(event.reason);
             }
@@ -600,7 +580,9 @@ function ParlaySocketFactory(BrokerAddress, $location, $q, CallbackContainer) {
             sendQueue = [];
 
             // Process each onCloseCallback
-            onCloseCallbacks.forEach(function(callback) { callback(event); });
+            onCloseCallbacks.forEach(function(callback) {
+                callback(event);
+            });
         }
 
         /**
@@ -613,7 +595,7 @@ function ParlaySocketFactory(BrokerAddress, $location, $q, CallbackContainer) {
         }
 
         // Opens ParlaySocket as soon as possible.
-        this.open();
+        this.open($location.protocol === 'https:' ? 'wss://' + BrokerAddress + ':8086' : 'ws://' + BrokerAddress + ':8085');
 
     }
 

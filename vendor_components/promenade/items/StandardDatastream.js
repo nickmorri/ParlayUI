@@ -4,21 +4,18 @@ function PromenadeStandardDatastreamFactory() {
         this.name = data.NAME;
         this.value = undefined;
 
+        this.item_name = item_name;
+        this.protocol = protocol;
+
         this.listener = protocol.onMessage({
             TX_TYPE: "DIRECT",
             MSG_TYPE: "STREAM",
             TO: "UI",
             FROM: this.item_name,
             STREAM: this.name
-        }, function streamUpdater(response) {
+        }, function(response) {
             this.value = response.VALUE;
-            Object.keys(this.onChangeListeners).forEach(function (uid) {
-                this.onChangeListeners[uid](this.value);
-            }, this);
         }.bind(this));
-
-        this.item_name = item_name;
-        this.protocol = protocol;
 
         this.listen = function (stop) {
             return protocol.sendMessage({

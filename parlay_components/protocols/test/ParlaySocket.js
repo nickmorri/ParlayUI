@@ -597,6 +597,14 @@
                     MockSocket.force_open();
 
                 });
+
+                it('throws error if url not provided on open', function () {
+                    ParlaySocket.close();
+
+                    expect(function () {
+                        ParlaySocket.open();
+                    }).toThrowError(Error);
+                });
                 
                 it('closes and reopens', function (done) {
                     var has_closed = false;
@@ -610,7 +618,7 @@
                         ParlaySocket.onClose(function () {
                             has_closed = true;
                             expect(ParlaySocket.isConnected()).toBeFalsy();
-                            ParlaySocket.open();
+                            ParlaySocket.open("karma_test");
                             MockSocket.force_open();
                         });
 
@@ -662,11 +670,10 @@
                     }, true);
                 });
 
-                it('a message with topics but without contents', function (done) {
-                    ParlaySocket.sendMessage({"type":"motor"}, undefined, {"type":"motor"}, function (response) {
-                        expect(response).toEqual({});
-                        done();    
-                    });
+                it('a message with topics but without contents', function () {
+                    expect(function () {
+                        ParlaySocket.sendMessage({"type":"motor"}, undefined, {"type":"motor"});
+                    }).toThrowError(TypeError);
                 });
                 
                 it('multiple messages', function (done) {
@@ -718,22 +725,6 @@
                     }).toThrowError(TypeError);
                 });
 
-                it('rejects promise on exception thrown', function (done) {
-
-                    var saved_send = MockSocket.send;
-
-                    MockSocket.send = function (message) { throw new Error("Arbitrary error."); };
-
-                    ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"}).catch(function (result) {
-                        expect(result).toEqual(jasmine.any(Error));
-                        done();
-                    });
-
-                    MockSocket.send = saved_send;
-
-                    $rootScope.$apply();
-                });
-                
             });
             
             describe('listens for', function () {
@@ -824,25 +815,6 @@
                     MockSocket.force_open();
 
                 });
-
-                it('rejects promise on exception', function (done) {
-
-                    var saved_send = MockSocket.send;
-
-                    MockSocket.send = function (message) { throw new Error("Arbitrary error."); };
-
-                    ParlaySocket.sendMessage({type: "motor"}, {data: "queue"});
-
-                    ParlaySocket.sendMessage({"type":"motor"}, {"data":"queue"}).catch(function (result) {
-                        expect(result).toEqual(jasmine.any(Error));
-                        done();
-                    });
-
-                    MockSocket.force_open();
-                    $rootScope.$apply();
-                    MockSocket.send = saved_send;
-
-                });
                 
             });
             
@@ -860,7 +832,7 @@
                         update = true;
                     })();
 
-                    ParlaySocket.sendMessage({type: "motor"});
+                    ParlaySocket.sendMessage({type: "motor"}, {});
                     
                     setTimeout(function () {
                         expect(update).toBeFalsy();
@@ -884,7 +856,7 @@
 
                     registrations.pop()();
 
-                    ParlaySocket.sendMessage({type: "motor"});
+                    ParlaySocket.sendMessage({type: "motor"}, {});
                     
                     setTimeout(function () {
                         expect(update_count).toBe(1);
@@ -908,7 +880,7 @@
 
                     while (registrations.length) registrations.pop()();
 
-                    ParlaySocket.sendMessage({"type":"motor"});
+                    ParlaySocket.sendMessage({"type":"motor"}, {});
                     
                     setTimeout(function () {
                         expect(update_count).toBe(0);

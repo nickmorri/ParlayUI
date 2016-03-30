@@ -133,13 +133,10 @@
             
             describe("streams", function() {
 	            	            
-	            it("requests", function() {
+	            it("listens", function() {
 		            spyOn(MockProtocol, "sendMessage").and.callThrough();
 
-		            item.requestStream({
-			            NAME: "stream1",
-			            rate: 1
-		            });
+		            item.listenStream({NAME: "stream1"}, false);
 		            
 		            rootScope.$apply();
 		            
@@ -150,8 +147,7 @@
 		            },
 		            {
 			            STREAM: "stream1",
-			            RATE: 1,
-			            VALUE: null
+			            STOP: false
 		            }, {
 			            TX_TYPE: 'DIRECT',
 			            MSG_TYPE: 'STREAM',
@@ -160,12 +156,10 @@
 		            });
 	            });
 	            
-	            it("cancels", function() {
+	            it("stops", function() {
 		            spyOn(MockProtocol, "sendMessage").and.callThrough();
 
-		            item.cancelStream({
-			            NAME: "stream1"
-		            });
+                    item.listenStream({NAME: "stream1"}, true);
 		            
 		            rootScope.$apply();
 		            
@@ -176,8 +170,7 @@
 		            },
 		            {
 			            STREAM: "stream1",
-			            RATE: 0,
-			            VALUE: null
+			            STOP: true
 		            }, {
 			            TX_TYPE: 'DIRECT',
 			            MSG_TYPE: 'STREAM',

@@ -81,37 +81,40 @@ function PromenadeStandardItemCardGraphTabConfigurationController($scope, $mdDia
     /**
      * Toggles the streams between enabled and disabled. Requests or cancels stream depending on state.
      */
-    this.toggleStream = function(stream) {
-
+    this.toggleGraphing = function(stream) {
         if (this.enabled_streams.indexOf(stream.NAME) == -1) {
             this.enabled_streams.push(stream.NAME);
-
-            // If stream value currently undefined request the stream automatically.
-            if (stream.value === undefined) {
-				this.item.requestStream(stream);
-            }
+            this.listenStream(stream, false);
         }
         else {
+            // Remove the stream from the Array of enabled streams.
             this.enabled_streams.splice(this.enabled_streams.indexOf(stream.NAME), 1);
-
-            // If stream value currently defined ask the user if they want to request the stream.
-            if (stream.value !== undefined) {
-                // Ask the user if they'd like to cancel the stream as well.
-                $mdDialog.show($mdDialog.confirm()
-                    .title("Cancel streaming " + stream.NAME + "?")
-                    .content("End the current stream request.")
-                    .ok("End")
-                    .cancel("Dismiss")
-                ).then(function () {
-                    this.item.cancelStream(stream);
-                }.bind(this));
-            }
+            this.stopStream(stream);
         }
     };
 
-	this.updateRate = function(stream) {
-		this.item.requestStream(stream);
-	};
+    this.listenStream = function (stream) {
+        this.item.listenStream(stream, false);
+    };
+
+    this.stopStream = function (stream) {
+        // If stream value currently defined ask the user if they want to cancel the stream.
+        if (stream.value !== undefined) {
+            // Ask the user if they'd like to cancel the stream as well.
+            $mdDialog.show($mdDialog.confirm()
+                .title("Cancel streaming " + stream.NAME + "?")
+                .content("End the current stream request.")
+                .ok("End")
+                .cancel("Dismiss")
+            ).then(function () {
+                this.item.listenStream(stream, true);
+            }.bind(this));
+        }
+        // Otherwise silently cancel the stream.
+        else {
+            this.item.listenStream(stream, true);
+        }
+    };
 
     // Attach reference to $mdMedia to scope so that media queries can be done.
     $scope.$mdMedia = $mdMedia;

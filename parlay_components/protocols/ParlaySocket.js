@@ -33,26 +33,27 @@ function CallbackContainerFactory() {
 
         /**
          * Traverse tree and delete branches of tree if no longer needed.
+         * @param {Map} map - Tree-like structure that contains topic registrations.
          */
-        function prune(tree) {
+        function prune(map) {
 
             // Check if entry for callback Array exists, if it does and it is empty we should delete it.
-            if (tree.has(callback_key) && tree.get(callback_key).length === 0) {
-                tree.delete(callback_key);
+            if (map.has(callback_key) && map.get(callback_key).length === 0) {
+                map.delete(callback_key);
             }
 
-            // Iterate through the entries in the tree.
-            var iter = tree.entries();
+            // Iterate through the entries in the map.
+            var iter = map.entries();
             for (var current = iter.next(); !current.done; current = iter.next()) {
 
                 // Recursively prune all sub-trees, if the size of the sub-tree is 0 delete it.
                 if (current.value[0] !== callback_key && prune(current.value[1]) === 0) {
-                    tree.delete(current.value[0]);
+                    map.delete(current.value[0]);
                 }
 
             }
 
-            return tree.size;
+            return map.size;
         }
 
         /**
@@ -106,6 +107,50 @@ function CallbackContainerFactory() {
             return callbacks;
         }
 
+        /**
+         * Invoke all registered callbacks and recursively traverse the hash list start at start_index in the hash list.
+         * @param {Object} topics - Object of key/value pairs.
+         * @param {Object} contents - Object of key/value pairs.
+         * @param {Array} hash_list -
+         * @param {Number} start_index -
+         * @param {Map} map - Tree-like structure that contains topic registrations.
+         */
+        function invoke_all_with_hashes(topics, contents, hash_list, start_index, map) {
+
+            // If map is not given we are done with our traversal.
+            if (map === undefined) {
+                return;
+            }
+
+            var callbacks = map.get(callback_key);
+
+            if (callbacks !== undefined) {
+
+                // Invoke all applicable callbacks, retain only persistent callbacks.
+                var remaining_callbacks = callbacks.filter(function (callback) {
+
+                    // If during registration a verbose callback was requested pass topics and contents,
+                    // otherwise pass only contents.
+                    callback.func(callback.verbose ? {TOPICS: topics, CONTENTS: contents} : contents);
+
+                    // If during registration callback persistence was requested we should keep the callback.
+                    return callback.persist;
+                });
+
+                // Set the updated message callbacks if some still exist.
+                if (remaining_callbacks.length > 0) {
+                    map.set(callback_key, remaining_callbacks);
+                }
+                else {
+                    map.delete(callback_key);
+                }
+            }
+
+            // Now go down the list from start_index and try with that key.
+            for (var i = start_index; i < hash_list.length; i++) {
+                invoke_all_with_hashes(topics, contents, hash_list, start_index + 1, map.get(hash_list[i]));
+            }
+        }
 
         /**
          * Adds callback registration for the given topics.
@@ -156,51 +201,6 @@ function CallbackContainerFactory() {
         };
 
         /**
-         * Invoke all registered callbacks and recursively traverse the hash list start at start_index in the hash list.
-         * @param {Object} topics - Object of key/value pairs.
-         * @param {Object} contents - Object of key/value pairs.
-         * @param {Array} hash_list -
-         * @param {Number} start_index -
-         * @param {Map} map -
-         */
-        function invoke_all_with_hashes(topics, contents, hash_list, start_index, map) {
-
-            // If no map then we're done.
-            if (map === undefined) {
-                return;
-            }
-
-            var callbacks = map.get(callback_key);
-
-            if (callbacks !== undefined) {
-
-                // Invoke all applicable callbacks, retain only persistent callbacks.
-                var remaining_callbacks = callbacks.filter(function (callback) {
-
-                    // If during registration a verbose callback was requested pass topics and contents,
-                    // otherwise pass only contents.
-                    callback.func(callback.verbose ? {TOPICS: topics, CONTENTS: contents} : contents);
-
-                    // If during registration callback persistence was requested we should keep the callback.
-                    return callback.persist;
-                });
-
-                // Set the updated message callbacks if some still exist.
-                if (remaining_callbacks.length > 0) {
-                    map.set(callback_key, remaining_callbacks);
-                }
-                else {
-                    map.delete(callback_key);
-                }
-            }
-
-            // Now go down the list from start_index and try with that key.
-            for (var i = start_index; i < hash_list.length; i++) {
-                invoke_all_with_hashes(topics, contents, hash_list, start_index + 1, map.get(hash_list[i]));
-            }
-        }
-
-        /**
          * Calls all applicable callbacks for the given topics Object.
          * Will remove any invoked callback that is not persistent.
          * @param {Object} topics - Object of key/value pairs.
@@ -219,6 +219,7 @@ function CallbackContainerFactory() {
 
         /**
          * Returns number of unique topic keys.
+         * @param {Map} map - Tree-like structure that contains topic registrations.
          * @returns {Number} - Count of topics keys.
          */
         this.size = function (map) {
@@ -242,6 +243,7 @@ function CallbackContainerFactory() {
 
         /**
          * Returns number of registered callback functions.
+         * @param {Map} map - Tree-like structure that contains topic registrations.
          * @returns {Number} - Count of registered callback functions.
          */
         this.callbackCount = function (map) {

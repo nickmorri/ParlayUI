@@ -1,40 +1,4 @@
-/**
- * Formats and parses a given field. Recursively parses dropdown options fields.
- * @param {Object} field - Field object to be parsed.
- * @returns {Object} - Parsed and formatted field Object.
- */
-function parseField(field) {
-	            
-    var fieldObject = {
-        msg_key: field.MSG_KEY,
-        input: field.INPUT,
-        label: field.LABEL !== undefined ? field.LABEL : field.MSG_KEY,
-        required: field.REQUIRED !== undefined ? field.REQUIRED : false,
-        default: field.DEFAULT !== undefined ? field.DEFAULT : undefined,
-        hidden: field.HIDDEN !== undefined ? field.HIDDEN : false
-    };
-    
-    // If a field has dropdown options we should process them.
-    if (field.DROPDOWN_OPTIONS !== undefined) {
-        
-        fieldObject.options = field.DROPDOWN_OPTIONS.map(function (option, index) {
-            return typeof option === "string" ? {
-                name: option,
-                value: option,
-                sub_fields: undefined
-            } : {
-              	name: option[0],
-              	value: option[1],
-              	sub_fields: field.DROPDOWN_SUB_FIELDS !== undefined ? field.DROPDOWN_SUB_FIELDS[index].map(parseField) : undefined
-            };
-        });
-        
-    }
-    
-    return fieldObject;
-}
-
-function PromenadeStandardItemFactory(ParlayItem, PromenadeStandardDatastream) {
+function PromenadeStandardItemFactory(ParlayItem, PromenadeStandardDatastream, PromenadeStandardProperty, PromenadeStandardCommand) {
     
     /**
 	 * PromenadeStandardItem constructor.
@@ -46,11 +10,12 @@ function PromenadeStandardItemFactory(ParlayItem, PromenadeStandardDatastream) {
         ParlayItem.call(this, data, protocol);
         
         this.type = "StandardItem";
-        
         this.id = data.ID;
         
 	    Object.defineProperty(this, 'data_types', {
-	        get: function () { return protocol.data_types; }
+	        get: function () {
+                return protocol.data_types;
+            }
 	    });
 	    
 	    Object.defineProperty(this, 'log', {
@@ -69,7 +34,6 @@ function PromenadeStandardItemFactory(ParlayItem, PromenadeStandardDatastream) {
             "promenadeStandardItemCardGraph",
             "promenadeStandardItemCardLog"
         ]);
-
         this.addAvailableDirectives("tabs", [
             "promenadeStandardItemCardCommands",
             "promenadeStandardItemCardProperty",
@@ -78,26 +42,24 @@ function PromenadeStandardItemFactory(ParlayItem, PromenadeStandardDatastream) {
         ]);
 
         if (data.CONTENT_FIELDS) {
-			this.content_fields = data.CONTENT_FIELDS.reduce(function (accumulator, field) {
-				var parsed_field = parseField(field);
-				accumulator[parsed_field.label] = parsed_field;
+			this.content_fields = data.CONTENT_FIELDS.reduce(function (accumulator, current) {
+                accumulator[current.LABEL] = new PromenadeStandardCommand(current, this.id, protocol);
 				return accumulator;
 			}, {});
         }
 
         if (data.PROPERTIES) {
 	        this.properties = data.PROPERTIES.reduce(function (accumulator, current) {
-		        current.value = current.INPUT === "STRINGS" || current.INPUT === "NUMBERS" ? [] : undefined;
-		        accumulator[current.NAME] = current;
+                accumulator[current.NAME] = new PromenadeStandardProperty(current, this.id, protocol);
 		        return accumulator;
-	        }, {});
+	        }.bind(this), {});
         }
 
 		if (data.DATASTREAMS) {
 			this.data_streams = data.DATASTREAMS.reduce(function (accumulator, current) {
-				accumulator[current.NAME] = new PromenadeStandardDatastream(current.NAME, this.id, this.protocol);
+				accumulator[current.NAME] = new PromenadeStandardDatastream(current, this.id, protocol);
 				return accumulator;
-			});
+			}.bind(this), {});
         }
         
     }
@@ -170,84 +132,6 @@ function PromenadeStandardItemFactory(ParlayItem, PromenadeStandardDatastream) {
         return this.protocol.sendMessage(this.generateTopics(), contents, {}, true);
     };
 
-    /**
-     * Sends message requesting that a stream is listened to or listening is stopped.
-     * @param {Object} stream - Data stream object.
-     * @param {Boolean} stop - If true the listener will be stopped, otherwise begin listening to the stream.
-     * @returns {$q.defer.Promise} - Resolved when we receive stream response. 
-     */
-    PromenadeStandardItem.prototype.listenStream = function (stream, stop) {
-        return this.protocol.sendMessage({
-                TX_TYPE: "DIRECT",
-                MSG_TYPE: "STREAM",
-                TO: this.id
-            },
-            {
-                STREAM: stream.NAME,
-                STOP: stop
-            },
-            {
-                TX_TYPE: "DIRECT",
-                MSG_TYPE: "STREAM",
-                TO: "UI",
-                FROM: this.id
-            });   
-    };
-    
-    /**
-	 * Sends message requesting to get a property.
-	 * Then updates the value of the property stored on the item.
-	 * @param {Object} property - Property object.
-	 * @returns {$q.defer.Promise} - Resolved when we receive a response with property value.
-	 */
-    PromenadeStandardItem.prototype.getProperty = function (property) {
-	    return this.protocol.sendMessage({
-		    TX_TYPE: "DIRECT",
-		    MSG_TYPE: "PROPERTY",
-		    TO: this.id
-		},
-		{
-			PROPERTY: property.NAME,
-			ACTION: "GET",
-			VALUE: null
-		},
-		{
-			TX_TYPE: "DIRECT",
-			MSG_TYPE: "RESPONSE",
-			FROM: this.id,
-			TO: "UI"
-		}, true).then(function(response) {
-			this.properties[response.CONTENTS.PROPERTY].VALUE = response.CONTENTS.VALUE;
-			return response;
-		}.bind(this));
-    };
-    
-    /**
-	 * Sends message requesting to set a property.
-	 * @param {Object} property - Property object.
-	 * @returns {$q.defer.Promise} - Resolved when we receive a response with confirmation of property set.
-	 */
-    PromenadeStandardItem.prototype.setProperty = function (property) {
-	    return this.protocol.sendMessage({
-		    TX_TYPE: "DIRECT",
-		    MSG_TYPE: "PROPERTY",
-		    TO: this.id
-		},
-		{
-			PROPERTY: property.NAME,
-			ACTION: "SET",
-			VALUE: property.VALUE
-	    },
-		{
-			TX_TYPE: "DIRECT",
-			MSG_TYPE: "RESPONSE",
-			FROM: this.id,
-			TO: "UI"
-		}, true).then(function(response) {
-			return response;
-		}.bind(this));
-    };
-
     return PromenadeStandardItem;
         
 }
@@ -261,6 +145,6 @@ function PromenadeStandardItemCardToolbar() {
     };
 }
 
-angular.module("promenade.items.standarditem", ["parlay.items", "promenade.items.datastream", "promenade.items.standarditem.commands", "promenade.items.standarditem.log", "promenade.items.standarditem.graph", "promenade.items.standarditem.property", "ngOrderObjectBy"])
-	.factory("PromenadeStandardItem", ["ParlayItem", "PromenadeStandardDatastream", PromenadeStandardItemFactory])
+angular.module("promenade.items.standarditem", ["parlay.items", "promenade.items.datastream", "promenade.items.property", "promenade.items.command", "promenade.items.standarditem.commands", "promenade.items.standarditem.log", "promenade.items.standarditem.graph", "promenade.items.standarditem.property", "ngOrderObjectBy"])
+	.factory("PromenadeStandardItem", ["ParlayItem", "PromenadeStandardDatastream", "PromenadeStandardProperty", "PromenadeStandardCommand", PromenadeStandardItemFactory])
 	.directive("promenadeStandardItemCardToolbar", PromenadeStandardItemCardToolbar);

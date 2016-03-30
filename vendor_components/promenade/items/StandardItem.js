@@ -34,7 +34,7 @@ function parseField(field) {
     return fieldObject;
 }
 
-function PromenadeStandardItemFactory(ParlayItem) {
+function PromenadeStandardItemFactory(ParlayItem, PromenadeStandardDatastream) {
     
     /**
 	 * PromenadeStandardItem constructor.
@@ -94,23 +94,10 @@ function PromenadeStandardItemFactory(ParlayItem) {
         }
 
 		if (data.DATASTREAMS) {
-	        this.data_streams = data.DATASTREAMS.reduce(function (accumulator, current) {
-		        accumulator[current.NAME] = current;
-		        accumulator[current.NAME].value = undefined;
-                accumulator[current.NAME].rate = 0;
-
-		        accumulator[current.NAME].listener = this.protocol.onMessage({
-                    TX_TYPE: "DIRECT",
-                    MSG_TYPE: "STREAM",
-                    TO: "UI",
-                    FROM: this.id,
-                    STREAM: current.NAME
-                }, function streamUpdater(response) {
-                    this.data_streams[current.NAME].value = response.VALUE;
-                }.bind(this));
-
-		        return accumulator;
-            }.bind(this), {});
+			this.data_streams = data.DATASTREAMS.reduce(function (accumulator, current) {
+				accumulator[current.NAME] = new PromenadeStandardDatastream(current.NAME, this.id, this.protocol);
+				return accumulator;
+			});
         }
         
     }
@@ -305,6 +292,6 @@ function PromenadeStandardItemCardToolbar() {
     };
 }
 
-angular.module("promenade.items.standarditem", ["parlay.items", "promenade.items.standarditem.commands", "promenade.items.standarditem.log", "promenade.items.standarditem.graph", "promenade.items.standarditem.property", "ngOrderObjectBy"])
-	.factory("PromenadeStandardItem", ["ParlayItem", PromenadeStandardItemFactory])
+angular.module("promenade.items.standarditem", ["parlay.items", "promenade.items.datastream", "promenade.items.standarditem.commands", "promenade.items.standarditem.log", "promenade.items.standarditem.graph", "promenade.items.standarditem.property", "ngOrderObjectBy"])
+	.factory("PromenadeStandardItem", ["ParlayItem", "PromenadeStandardDatastream", PromenadeStandardItemFactory])
 	.directive("promenadeStandardItemCardToolbar", PromenadeStandardItemCardToolbar);

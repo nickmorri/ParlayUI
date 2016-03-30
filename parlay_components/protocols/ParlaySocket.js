@@ -333,7 +333,7 @@ function ParlaySocketFactory(BrokerAddress, $location, $q, CallbackContainer) {
      */
     function ContentsError(type) {
         ParlaySocketError.call(this, "Invalid type for contents, accepts Object or undefined but was type " + type + ".");
-        this.name = "TopicsError";
+        this.name = "ContentsError";
     }
 
     // Prototypically inherit from ParlaySocketError class.

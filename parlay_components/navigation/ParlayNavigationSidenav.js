@@ -1,5 +1,5 @@
 /* istanbul ignore next */
-function ParlayNavigationSidenavController($mdSidenav, $mdDialog, PromenadeBroker) {
+function ParlayNavigationSidenavController($mdSidenav, $mdDialog, $state, PromenadeBroker) {
     "use strict";
 
 	this.requestDiscovery = function () {
@@ -13,6 +13,14 @@ function ParlayNavigationSidenavController($mdSidenav, $mdDialog, PromenadeBroke
 	this.openHelpTab = function () {
 		window.open(window.location.origin + "/docs", '_blank').focus();
 	};
+
+    this.openWorkspace = function () {
+        $state.go("items");
+    };
+
+    this.openEditor = function () {
+        $state.go("editor");
+    };
 
     this.openProtocolManagementDialog = function (event) {
         $mdDialog.show({
@@ -47,4 +55,4 @@ function ParlayNavigationSidenavController($mdSidenav, $mdDialog, PromenadeBroke
 }
 
 angular.module("parlay.navigation.sidenav", ["ngMaterial", "parlay.items.search", "parlay.protocols.list_controller", "parlay.settings.dialog", "parlay.items.workspaces"])
-	.controller("ParlayNavigationSidenavController", ["$mdSidenav", "$mdDialog", "PromenadeBroker", ParlayNavigationSidenavController]);
+	.controller("ParlayNavigationSidenavController", ["$mdSidenav", "$mdDialog", "$state", "PromenadeBroker", ParlayNavigationSidenavController]);

@@ -1,0 +1,26 @@
+<md-dialog aria-label="Editor" flex="90" flex-gt-md="70" ng-class="{'md-dialog-fullscreen' : $mdMedia}">
+
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h1>Editor</h1>
+            <span flex></span>
+            <md-button class="md-icon-button" ng-click="ctrl.hide()" aria-label="Hide dialog">
+                <md-icon ng-md-icon icon="close" aria-label="Close dialog"></md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content layout="row">
+
+        <md-tabs layout-fill md-dynamic-height md-border-bottom>
+            <md-tab label="mousedown">
+                <div ui-ace="{mode: 'javascript'}" ng-model="click" style="height: 200px"></div>
+            </md-tab>
+            <md-tab label="mouseup">
+                <div ui-ace="{mode: 'javascript'}" ng-model="click" style="height: 200px"></div>
+            </md-tab>
+        </md-tabs>
+
+    </md-dialog-content>
+
+</md-dialog>

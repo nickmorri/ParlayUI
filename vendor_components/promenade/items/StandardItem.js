@@ -133,9 +133,9 @@ function PromenadeStandardItemFactory(ParlayItem, PromenadeStandardDatastream, P
     };
 
     return PromenadeStandardItem;
-        
 }
 
+/* istanbul ignore next */
 function PromenadeStandardItemCardToolbar() {
     return {
         scope: {

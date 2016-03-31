@@ -217,14 +217,15 @@
 
                             PromenadeBroker.connect();
                             PromenadeBroker.requestDiscovery(true).then(function () {
-                                done();
-                                expect(ParlayNotification.showProgress).toHaveBeenCalled();
                                 expect(PromenadeBroker.requestAvailableProtocols).toHaveBeenCalled();
                                 expect(PromenadeBroker.requestOpenProtocols).toHaveBeenCalled();
                                 expect(PromenadeBroker.sendMessage).toHaveBeenCalledWith({request: "get_discovery", type: "broker"}, {"force": true, STATUS: 0}, {response: "get_discovery_response", type: "broker"});
+                                done();
                             });
 
                             $timeout.flush();
+                            expect(ParlayNotification.showProgress).toHaveBeenCalled();
+                            $rootScope.$apply();
 
                         });
 

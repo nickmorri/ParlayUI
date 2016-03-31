@@ -61,6 +61,13 @@
                             MSG_KEY: 'event'
                         }
                     ],
+                    PROPERTIES: [
+                        {
+                            NAME: "test_property",
+                            INPUT: "STRING",
+                            READ_ONLY: false
+                        }
+                    ],
                     DATASTREAMS: [
 	                    {
 		                    ATTR_NAME: "stream1",

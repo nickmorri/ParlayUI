@@ -56,23 +56,6 @@
 
         });
 
-        describe("ParlayEmptyWorkspacePlaceholderController", function () {
-            var ctrl;
-
-            beforeEach(inject(function($rootScope, $controller) {
-                ctrl = $controller("ParlayEmptyWorkspacePlaceholderController", {scope: $rootScope.$new()});
-            }));
-
-            it("focus targets correct element", function () {
-
-                spyOn(document, "getElementById");
-
-                ctrl.focusItemSearch();
-                expect(document.getElementById).toHaveBeenCalledWith("item-search");
-            });
-
-        });
-
     });
 
 }());

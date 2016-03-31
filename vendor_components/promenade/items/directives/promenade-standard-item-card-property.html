@@ -5,8 +5,8 @@
 
             <h1 ng-hide="ctrl.hasProperties()">No properties available</h1>
 
-			<md-button ng-show="ctrl.hasProperties()" aria-label="Get all" ng-click="ctrl.getAllProperties()">Get All</md-button>
-			<md-button ng-show="ctrl.hasProperties()" aria-label="Set all" ng-click="ctrl.setAllProperties()">Set All</md-button>
+			<md-button ng-show="ctrl.hasProperties()" class="md-primary md-hue-3" aria-label="Get all" ng-click="ctrl.getAllProperties()">Get All</md-button>
+			<md-button ng-show="ctrl.hasProperties()" class="md-primary md-hue-3" aria-label="Set all" ng-click="ctrl.setAllProperties()">Set All</md-button>
 			
 			<md-progress-linear md-mode="indeterminate" ng-show="ctrl.waiting"></md-progress-linear>
 			

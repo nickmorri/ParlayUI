@@ -25,16 +25,16 @@
                     <p>{{ctrl.getBrokerAddress()}}</p>
                 </div>
 
-                <md-button ng-show="ctrl.isBrokerConnected()" class="md-warn" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.shutdownBroker()" aria-label="Shutdown">
+                <md-button ng-show="ctrl.isBrokerConnected()" class="md-secondary md-warn" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.shutdownBroker()" aria-label="Shutdown">
                     <md-tooltip>Shutdown</md-tooltip>
-                    <md-icon hide-gt-md ng-md-icon icon="highlight_remove"></md-icon>
                     <span hide show-gt-md>Shutdown</span>
+                    <md-icon hide-gt-md ng-md-icon icon="highlight_remove"></md-icon>
                 </md-button>
 
-                <md-button ng-hide="ctrl.isBrokerConnected()" class="md-primary" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.connectBroker()" aria-label="Connect">
+                <md-button ng-hide="ctrl.isBrokerConnected()" class="md-secondary md-primary" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.connectBroker()" aria-label="Connect">
                     <md-tooltip>Connect</md-tooltip>
-                    <md-icon hide-gt-md ng-md-icon icon="input"></md-icon>
                     <span hide show-gt-md>Connect</span>
+                    <md-icon hide-gt-md ng-md-icon icon="input"></md-icon>
                 </md-button>
 
             </md-list-item>
@@ -45,18 +45,16 @@
 
                 <md-icon hide-xs hide-sm hide-md ng-if="$index === 0" ng-md-icon icon="settings_ethernet"></md-icon>
 
-                <div flex-sm="75" class="md-list-item-text" ng-class="{'md-offset': $index !== 0 && $mdMedia('gt-md')}">
+                <div class="md-list-item-text" ng-class="{'md-offset': $index !== 0 && $mdMedia('gt-md')}">
                     <h3>{{::protocol.getType()}}</h3>
                     <p>{{::protocol.getName()}}</p>
                 </div>
 
-                <div layout="row" flex-sm="25" layout-sm="row" layout-align-sm="center end">
-                    <md-button class="md-warn" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.closeProtocol(protocol)" aria-label="Disconnect">
-                        <md-tooltip>Disconnect</md-tooltip>
-                        <span hide show-gt-md>Disconnect</span>
-                        <md-icon hide-gt-md ng-md-icon icon="highlight_remove"></md-icon>
-                    </md-button>
-                </div>
+                <md-button class="md-secondary md-warn" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.closeProtocol(protocol)" aria-label="Disconnect">
+                    <md-tooltip>Disconnect</md-tooltip>
+                    <span hide show-gt-md>Disconnect</span>
+                    <md-icon hide-gt-md ng-md-icon icon="highlight_remove"></md-icon>
+                </md-button>
 
             </md-list-item>
 

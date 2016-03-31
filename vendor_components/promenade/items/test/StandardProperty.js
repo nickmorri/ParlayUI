@@ -6,11 +6,12 @@
         beforeEach(module('promenade.items.property'));
 
         describe('PromenadeStandardProperty', function () {
-            var PromenadeStandardProperty, $q;
+            var PromenadeStandardProperty, $q, $rootScope;
 
-            beforeEach(inject(function(_PromenadeStandardProperty_, _$q_) {
+            beforeEach(inject(function(_PromenadeStandardProperty_, _$q_, _$rootScope_) {
                 PromenadeStandardProperty = _PromenadeStandardProperty_;
                 $q = _$q_;
+                $rootScope = _$rootScope_;
             }));
 
             it("creates PromenadeStandardProperty", function () {
@@ -30,7 +31,8 @@
                 expect(property.item_name).toBe("TestItem");
             });
             
-            it("gets", function () {
+            it("gets", function (done) {
+
                 var data = {
                     NAME: "test_property",
                     INPUT: "STRING",
@@ -38,7 +40,9 @@
                 };
 
                 var protocol = {sendMessage: function () {
-                    return $q(function (resolve) { resolve({CONTENTS: {VALUE: 10}}); });
+                    return $q(function (resolve) {
+                        resolve({CONTENTS: {VALUE: 10}});
+                    });
                 }, onMessage: function () {}};
                 
                 var property = new PromenadeStandardProperty(data, "TestItem", protocol);
@@ -46,26 +50,29 @@
                 spyOn(protocol, "sendMessage").and.callThrough();
 
                 property.get().then(function (result) {
-                    expect(result).toBe(10);
+                    expect(result).toEqual({CONTENTS: {VALUE: 10}});
                     expect(property.value).toBe(10);
+                    done();
                 });
 
+                $rootScope.$apply();
+
                 expect(protocol.sendMessage).toHaveBeenCalledWith({
-                        TX_TYPE: "DIRECT",
-                        MSG_TYPE: "PROPERTY",
-                        TO: "TestItem"
-                    },
-                    {
-                        PROPERTY: data.NAME,
-                        ACTION: "GET",
-                        VALUE: null
-                    },
-                    {
-                        TX_TYPE: "DIRECT",
-                        MSG_TYPE: "RESPONSE",
-                        FROM: "TestItem",
-                        TO: "UI"
-                    }, true);
+                    TX_TYPE: "DIRECT",
+                    MSG_TYPE: "PROPERTY",
+                    TO: "TestItem"
+                },
+                {
+                    PROPERTY: data.NAME,
+                    ACTION: "GET",
+                    VALUE: null
+                },
+                {
+                    TX_TYPE: "DIRECT",
+                    MSG_TYPE: "RESPONSE",
+                    FROM: "TestItem",
+                    TO: "UI"
+                }, true);
                 
             });
 

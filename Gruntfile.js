@@ -266,9 +266,12 @@ module.exports = function (grunt) {
 				'src': '<%= meta.stylesheets %>',
 				'options': {
 					'important': false,
-					'adjoining-classes': false,
 					'known-properties': false
-				},
+				}
+			},
+			'options': {
+				'adjoining-classes': false,
+				'outline-none': false
 			}
 		},
 		

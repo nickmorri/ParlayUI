@@ -1,41 +1,30 @@
-/* Truncates contents of span rather than allowing awkward overflowing to occur */
+/* Add padding to ensure there is space for the action button. */
+.parlay-notification-list-item { padding-right: 100px; }
+
+/* Style toolbar to indicate to user that it's clickable. */
+.parlay-error-dialog-toolbar { cursor: pointer; }
+
+/* Reduce min-height to allow more content to fit in card. */
+.parlay-error-dialog-list-item { min-height: 24px; }
+
+/* Reduce padding to allow more content to fit in dialog. */
+md-dialog > md-dialog-content > .parlay-error-dialog-content { padding: 0; }
+
+/* Style toast action button as a deep orange so it is visible on the warning toast. */
+md-toast.md-warning-toast-theme .md-toast-content .md-button.md-highlight { color: #FF5722; }
+
+/* Prevent truncation of notification content. */
+.parlay-notification-list-item .md-list-item-text .parlay-notification-content { white-space: normal; }
+
+/* Truncates contents of span rather than allowing awkward overflowing to occur. */
 .md-toast-content > span {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-/* Prevent truncation of notification content */
-.parlay-notification-list-item .md-list-item-text .parlay-notification-content {
-    white-space: normal;
-}
-
-/* Add padding to ensure there is space for the action button */
-.parlay-notification-list-item {
-    padding-right: 100px;
-}
-
-.parlay-error-dialog-toolbar {
-    cursor: pointer;
-}
-
-/* Reduce min-height to allow more content to fit in card */
-.parlay-error-dialog-list-item {
-    min-height: 24px;
-}
-
-/* Reduce padding to allow more content to fit in dialog */
-md-dialog > md-dialog-content > .parlay-error-dialog-content {
-    padding: 0;
-}
-
-/* Style toast as a amber yellow to indicate to the user that a warning has occurred */
+/* Style toast as a amber yellow to indicate to the user that a warning has occurred. */
 md-toast.md-warning-toast-theme .md-toast-content {
     background-color: #FFC107;
     color: black;
-}
-
-/* Style toast action button as a deep orange so it is visible on the toast */
-md-toast.md-warning-toast-theme .md-toast-content .md-button.md-highlight {
-    color: #FF5722;
 }

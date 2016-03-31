@@ -1,47 +1,34 @@
-.message-text {
-	overflow-wrap: break-word;
-}
+/* Provide clear separation between controls and log contents area. */
+.log-control-container { margin-bottom: 2px; }
 
-.log-control-container {
-    padding: 0;
-    width: 100%;
-    margin-bottom: 2px;
-}
+/* Since we're using the md-avatar as a button we want to indicate to the user that it is clickable. */
+promenade-standard-item-card-log-item > md-card > md-card-header > md-card-avatar { cursor: pointer; }
 
+/* Since we're using the md-avatar as a button, we don't want the ugly blue outline. */
+promenade-standard-item-card-log-item > md-card > md-card-header > md-card-avatar:focus { outline: none; }
+
+/* Tighten padding to provide better information density. */
+promenade-standard-item-card-log-item > md-card > md-card-header { padding: 8px; }
+
+/* Tighten padding to provide better information density. */
+promenade-standard-item-card-log-item > md-card > md-card-content { padding: 0; }
+
+/* Reduce minimum height to provide better information density. */
+promenade-standard-item-card-log-item > md-card > md-card-content > md-list > md-list-item { min-height: 0; }
+
+/* Style so input container looks nice above log content. */
 .filter-input-container {
     margin-top: 12px;
     margin-bottom: -22px;
 }
 
-.md-chips .md-chip-input-container {
-    float: none;
-}
-
-.parlay-input-container {
-	margin-bottom: 5px;
-}
-
-promenade-standard-item-card-log-item > md-card > md-card-header > md-card-avatar {
-	cursor: pointer;
-}
-
-promenade-standard-item-card-log-item > md-card > md-card-header {
-    padding: 8px;
-}
-
-promenade-standard-item-card-log-item > md-card > md-card-content {
-    padding: 0;
-}
-
+/* Reduce padding for information density and allow scrolling if content overflows container. */
 promenade-standard-item-card-log-item > md-card > md-card-content > md-list {
     padding: 0;
     overflow-y: scroll;
 }
 
-promenade-standard-item-card-log-item > md-card > md-card-content > md-list > md-list-item {
-    min-height: 0;
-}
-
+/* Reduce margins to provide better information density. */
 promenade-standard-item-card-log-item > md-card > md-card-content > md-list > md-list-item > pre {
     margin-top: 4px;
     margin-bottom: 4px;

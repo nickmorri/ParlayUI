@@ -1,64 +1,23 @@
-body {
-	overflow: hidden;
-}
-/*Prevents jumpy veritical scrollbar*/
-html {
-    overflow-x: hidden;
-}
-md-toast .md-action {
-    line-height: 36px;
-}
-md-list-item > a {
-    text-decoration: none;
-    color: black;
-}
-.parlay-list-item {
-    padding: 16px 16px 16px 16px;
-}
-.capitalize {
-    text-transform: capitalize;
-}
-/* Allow views to scroll on the y-axis */
+/* Allow views to scroll on the y-axis. */
 .view-container { overflow-y: scroll; }
 
-md-progress-linear .notification-progress {
-    top: 0;
-}
+/* Prevent clipping on md-switch label. */
+md-switch { white-space: normal; }
 
-.logo {
-	width: 125px;
-	margin-right: 10px;
-}
+/* On Microsoft Edge browser we should disable some animations for a better user experience. */
+_:-ms-lang(x), .md-ripple-container, .md-ripple-placed { transition: none; }
 
-/* Prevent outline from appearing on md-icon when used as button */
-md-icon:focus {
-    outline: none;
-}
+_:-ms-lang(x), md-sidenav { transition: none; }
 
-/* We only need top and bottom padding to align buttons with baseline */
-.md-button .md-icon-button {
-    padding: 8px 0 8px 0;
-}
-
-/* Prevent clipping on md-switch label */
-md-switch {
-    white-space: normal;;
-}
-
-/* On Microsoft Edge browser we should disable some animations for a better user experience */
-_:-ms-lang(x), .md-ripple-container, .md-ripple-placed {
-    transition: none;
-}
+_:-ms-lang(x), md-toast { transition: none; }
 
 _:-ms-lang(x), .md-transition-in, .md-transition-out {
     transition: none;
     transform: none;
 }
 
-_:-ms-lang(x), md-sidenav {
-    transition: none;
-}
-
-_:-ms-lang(x), md-toast {
-    transition: none;
+/* Positions logo in sidenav. */
+.logo {
+    width: 125px;
+    margin-right: 10px;
 }

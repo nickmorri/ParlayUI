@@ -16,7 +16,7 @@
 
         <md-list>
 
-            <md-list-item class="md-2-line parlay-list-item" layout="row">
+            <md-list-item class="md-2-line" layout="row">
 
                 <md-icon hide-xs hide-sm hide-md ng-md-icon icon="group_work"></md-icon>
 
@@ -41,7 +41,7 @@
 
             <md-subheader ng-if="ctrl.isBrokerConnected() && ctrl.hasOpenProtocols()" class="md-no-sticky">Connected Protocols</md-subheader>
 
-            <md-list-item ng-if="ctrl.isBrokerConnected() && ctrl.hasOpenProtocols()" class="md-2-line parlay-list-item" layout="row" layout-align="space-between center" ng-repeat="protocol in ctrl.getOpenProtocols()">
+            <md-list-item ng-if="ctrl.isBrokerConnected() && ctrl.hasOpenProtocols()" class="md-2-line" layout="row" layout-align="space-between center" ng-repeat="protocol in ctrl.getOpenProtocols()">
 
                 <md-icon hide-xs hide-sm hide-md ng-if="$index === 0" ng-md-icon icon="settings_ethernet"></md-icon>
 
@@ -62,7 +62,7 @@
 
             <md-subheader ng-if="ctrl.isBrokerConnected() && ctrl.hasSavedProtocols()" class="md-no-sticky">Saved Protocols</md-subheader>
 
-            <md-list-item ng-if="ctrl.isBrokerConnected() && ctrl.hasSavedProtocols()" class="md-3-line parlay-list-item" layout="row" layout-align="space-between center" ng-repeat="configuration in ctrl.getSavedProtocols()">
+            <md-list-item ng-if="ctrl.isBrokerConnected() && ctrl.hasSavedProtocols()" class="md-3-line" layout="row" layout-align="space-between center" ng-repeat="configuration in ctrl.getSavedProtocols()">
 
                 <md-icon hide-xs hide-sm hide-md ng-if="$index === 0" ng-md-icon icon="settings_backup_restore"></md-icon>
 

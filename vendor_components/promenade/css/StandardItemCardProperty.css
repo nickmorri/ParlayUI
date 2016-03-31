@@ -1,18 +1,11 @@
-.parlay-property-content {
-    max-height: 585px;
-}
+/* Limit the height of the property container to improve information density. */
+.promenade-property-container { min-height: 45px; }
 
-.parlay-property-container {
-    min-height: 45px;
-}
+/* Style property input to provide better user experience. */
+.promenade-property-input { margin-left: 8px; }
 
-.parlay-property-input {
-    margin-left: 8px;
-    margin-bottom: -30px;
-}
-
-.parlay-property-button {
-    height: 30px;
+/* Limit height of button to provide better information density. */
+.promenade-property-button {
     min-width: 50px;
     margin: 10px 8px 5px 8px;
 }

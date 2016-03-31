@@ -87,14 +87,13 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
                 ParlayNotification.show({content: "Restored " + result.loaded_items.length + " items from " + workspace.name + " workspace."});
             }
             else {
-
-                var failed_item_names = "{"+ result.failed_items.map(function (container) {
+                var loaded_item_names = result.loaded_items.length > 0 ? result.loaded_items.map(function (container) {
                     return container.name;
-                }).join(',') + "}";
+                }).join(', ') : "No items";
 
-                var loaded_item_names = "{" + result.loaded_items.map(function (container) {
+                var failed_item_names = result.failed_items.length > 0 ? result.failed_items.map(function (container) {
                     return container.name;
-                }).join(',') + "}";
+                }).join(', ') : "No items";
 
                 $mdDialog.show($mdDialog.alert({
                     title: 'Workspace load did not complete successfully',
@@ -104,8 +103,12 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
             }
         }
 
-        if (ParlayItemManager.hasDiscovered()) load();
-        else PromenadeBroker.requestDiscovery().then(load);
+        if (ParlayItemManager.hasDiscovered()) {
+            load();
+        }
+        else {
+            PromenadeBroker.requestDiscovery().then(load);
+        }
 
         $mdDialog.hide();
     };

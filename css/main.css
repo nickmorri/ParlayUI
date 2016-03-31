@@ -21,6 +21,8 @@ md-list-item > a {
 .capitalize {
     text-transform: capitalize;
 }
+/* Allow views to scroll on the y-axis */
+.view-container { overflow-y: scroll; }
 
 md-progress-linear .notification-progress {
     top: 0;

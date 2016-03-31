@@ -1,5 +1,8 @@
 /* Allow views to scroll on the y-axis. */
-.view-container { overflow-y: scroll; }
+.view-container { overflow-y: scroll;}
+
+/* Consistent background color. */
+.view-container > md-content { background-color: #FAFAFA; }
 
 /* Prevent clipping on md-switch label. */
 md-switch { white-space: normal; }

@@ -179,9 +179,14 @@
                         expect(PromenadeBroker.onOpen).toBe(ParlaySocket.onOpen);
                         expect(PromenadeBroker.onClose).toBe(ParlaySocket.onClose);
                         expect(PromenadeBroker.getBrokerAddress).toBe(ParlaySocket.getAddress);
-                        expect(PromenadeBroker.connect).toBe(ParlaySocket.open);
                         expect(PromenadeBroker.disconnect).toBe(ParlaySocket.close);
                         expect(PromenadeBroker.isConnected).toBe(ParlaySocket.isConnected);
+                    });
+                    
+                    it("connect opens ParlaySocket", function () {
+                        spyOn(ParlaySocket, "open");
+                        PromenadeBroker.connect();
+                        expect(ParlaySocket.open).toHaveBeenCalledWith("ws://localhost:8085");
                     });
 
                     it("sendMessage", function () {

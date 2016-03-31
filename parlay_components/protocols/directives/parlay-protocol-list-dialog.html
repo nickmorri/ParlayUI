@@ -72,18 +72,17 @@
                     <p title="{{configuration.last_connected}}">Last connected <span am-time-ago="configuration.last_connected"></span></p>
                 </div>
 
-                <div layout="row" flex-sm="25" layout-sm="row" layout-align-sm="center end">
-                    <md-button class="md-primary" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.openSavedProtocol(configuration)" aria-label="Connect">
-                        <md-tooltip>Connect</md-tooltip>
-                        <span hide show-gt-md>Connect</span>
-                        <md-icon hide-gt-md ng-md-icon icon="input"></md-icon>
-                    </md-button>
-                    <md-button class="md-warn" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.deleteSavedProtocol(configuration)" aria-label="Delete">
-                        <md-tooltip>Delete</md-tooltip>
-                        <span hide show-gt-md>Delete</span>
-                        <md-icon hide-gt-md ng-md-icon icon="delete"></md-icon>
-                    </md-button>
-                </div>
+                <md-button class="md-secondary md-primary" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.openSavedProtocol(configuration)" aria-label="Connect">
+                    <md-tooltip>Connect</md-tooltip>
+                    <span hide show-gt-md>Connect</span>
+                    <md-icon hide-gt-md ng-md-icon icon="input"></md-icon>
+                </md-button>
+
+                <md-button class="md-secondary md-warn" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.deleteSavedProtocol(configuration)" aria-label="Delete">
+                    <md-tooltip>Delete</md-tooltip>
+                    <span hide show-gt-md>Delete</span>
+                    <md-icon hide-gt-md ng-md-icon icon="delete"></md-icon>
+                </md-button>
 
             </md-list-item>
 

@@ -8,9 +8,6 @@ html {
 md-toast .md-action {
     line-height: 36px;
 }
-md-icon .white {
-    fill: white;
-}
 md-list-item > a {
     text-decoration: none;
     color: black;

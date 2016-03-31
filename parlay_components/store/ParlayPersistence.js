@@ -47,7 +47,7 @@ function ParlayPersistenceFactory(ParlayStore) {
      * @param {String} directive - Name of the directive where the requested attribute is to persisted.
      * @param {String} attribute - Name of the attribute that has been requested for persistence.
      * @param (AngularJS $scope} $scope - $scope Object where the requested attribute resides.
-     * @parma {Function} custom_restore - Function that will perform the $scope variable restoration.
+     * @param {Function} custom_restore - Function that will perform the $scope variable restoration.
      * @returns {Function} - Deregistration function, will remove the registration established by the monitor request.
      */
     ParlayPersistence.prototype.monitor = function (directive, attribute, $scope, custom_restore) {
@@ -186,6 +186,8 @@ function ParlayPersistenceFactory(ParlayStore) {
     /**
      * Collects the monitored attributes and store them with ParlayStore using the given name.
      * @param {String} name - Given workspace name.
+     * @param {Boolean} autosave - If true this save was triggered automatically by the browser. Otherwise the user
+     * requested it.
      */
     ParlayPersistence.prototype.store = function (name, autosave) {
         this.items_store.set(name, {

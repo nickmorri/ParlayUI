@@ -27,7 +27,7 @@ function ParlayProtocolManager($q, ParlayProtocol) {
     };
     
     Public.closeProtocol = function () {
-        return $q(function (resolve, reject) {
+        return $q(function (resolve) {
             resolve(Public.open.pop());
         });
     };

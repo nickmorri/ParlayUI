@@ -8,7 +8,7 @@
         describe('ParlayProtocolListController', function () {
             var rootScope, scope, ctrl, MockPromenadeBroker;                
             
-            beforeEach(inject(function ($rootScope, $controller, $q) {
+            beforeEach(inject(function ($rootScope, $controller) {
                 
                 MockPromenadeBroker = {
                     connected: false,

@@ -19,7 +19,7 @@
  * }
  *
  * @param {Object} config - Contains configuration data. Please reference the SmoothieChart constructor for options. http://smoothiecharts.org/tutorial.html#mycanvas6
- * @param {Number} [delay=1000] delay - Add delay so uncoming values are known before we need to plot the value.
+ * @param {Number} [delay=1000] delay - Add delay so upcoming values are known before we need to plot the value.
  * @param {Function} smoothieFn - Configuration retrieval function.
  */
 
@@ -36,6 +36,7 @@ function PromenadeSmoothieChartRun(ParlaySettings) {
  * @constructor
  * @param {AngularJS $scope} scope - A AngularJS $scope Object.
  * @param {AngularJS Service} $interval - AngularJS interval Service.
+ * @param {Parlay Service} ParlaySettings - ParlaySettings Service.
  */
 function PromenadeSmoothieChartController(scope, $interval, ParlaySettings) {
 

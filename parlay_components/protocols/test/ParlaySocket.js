@@ -290,9 +290,7 @@
 
                     var called = 0;
 
-                    container.add({key: 0}, function (contents) {
-                        called++;
-                    }, true, false);
+                    container.add({key: 0}, function () { called++; }, true, false);
 
                     expect(container.size()).toBe(1);
                     container.invoke({key: 0}, {data: 100});
@@ -901,10 +899,7 @@
                 }));
 
                 it('gets address', inject(function (_ParlaySocket_) {
-                    var ParlaySocket = _ParlaySocket_;
-
-                    expect(ParlaySocket.getAddress()).toBe('ws://localhost:8085');
-
+                    expect(_ParlaySocket_.getAddress()).toBe('ws://localhost:8085');
                 }));
             });
 
@@ -914,10 +909,7 @@
                 }));
 
                 it('gets address https', inject(function (_ParlaySocket_) {
-                    var ParlaySocket = _ParlaySocket_;
-
-                    expect(ParlaySocket.getAddress()).toBe('wss://localhost:8086');
-
+                    expect(_ParlaySocket_.getAddress()).toBe('wss://localhost:8086');
                 }));
             });
 

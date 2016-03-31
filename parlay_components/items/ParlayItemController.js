@@ -1,6 +1,7 @@
 /**
  * @name ParlayItemController
- * @param ParlayItemManager - Service that manages the available items.
+ * @param {Parlay Service} ParlayItemManager - Service that manages the available items.
+ * @param {Angular Material Service} $mdSidenav - Angular Material Service for $mdSidenav.  
  * @description
  * The ParlayItemController is a controller that manages the items currently active in the workspace.
  *

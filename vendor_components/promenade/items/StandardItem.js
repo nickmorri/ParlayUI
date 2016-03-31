@@ -45,7 +45,7 @@ function PromenadeStandardItemFactory(ParlayItem, PromenadeStandardDatastream, P
 			this.content_fields = data.CONTENT_FIELDS.reduce(function (accumulator, current) {
                 accumulator[current.LABEL] = new PromenadeStandardCommand(current, this.id, protocol);
 				return accumulator;
-			}, {});
+			}.bind(this), {});
         }
 
         if (data.PROPERTIES) {

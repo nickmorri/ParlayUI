@@ -14,7 +14,7 @@
                 
                 MockProtocol = {
                     data_types: ['int', 'float'],
-                    sendMessage: function (message) {
+                    sendMessage: function () {
 	                    return $q(function (resolve) {
 		                    resolve("");
 	                    });

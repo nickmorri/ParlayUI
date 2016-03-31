@@ -132,7 +132,7 @@ function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, Parlay
 
     /**
      * Clears all saved workspaces if the user confirms the $mdDialog.
-     * @param {event} - Used to set source of dialog animation.
+     * @param {Event} event - Used to set source of dialog animation.
      */
     this.clearSavedWorkspaces = function (event) {
         var confirm = $mdDialog.confirm()

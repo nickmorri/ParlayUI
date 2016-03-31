@@ -91,9 +91,8 @@ function ParlayItemFactory() {
 
     /**
      * Abstract method that should be overwritten by those that prototypically inherit from ParlayItem.
-     * @param {String} query - Given query that would be matched to the item's properties.
      */
-    ParlayItem.prototype.matchesQuery = function (query) {
+    ParlayItem.prototype.matchesQuery = function () {
 	    console.warn("matchesQuery is not implemented for " + this.name);
     };
     
@@ -112,7 +111,7 @@ function ParlayItemFactory() {
 function ParlayItemCard($compile, ParlayPersistence) {
     return {
         templateUrl: "../parlay_components/items/directives/parlay-item-card.html",
-        link: function (scope, element, attributes) {
+        link: function (scope, element) {
 
             // Setup drag handlers for ParlayItemCard drag and drop rearrange functionality.
             setupDragHandlers(element);

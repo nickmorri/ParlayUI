@@ -1,4 +1,4 @@
-angular.module('mock.parlay.items.manager', []).factory('ParlayItemManager', ['$q', function ($q) {
+angular.module('mock.parlay.items.manager', []).factory('ParlayItemManager', [function () {
     return {
 		getActiveItems: function () {
 			return [];
@@ -7,7 +7,7 @@ angular.module('mock.parlay.items.manager', []).factory('ParlayItemManager', ['$
 		hasActiveItems: function () {
 			return false;
 		},
-		getAvailableItems: function(query) {
+		getAvailableItems: function() {
 			return [
 		    	{
 		        	matchesQuery: function () {

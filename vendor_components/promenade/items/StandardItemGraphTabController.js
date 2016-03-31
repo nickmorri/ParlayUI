@@ -3,7 +3,7 @@
  * @constructor
  * @param {AngularJS $scope} $scope - A AngularJS $scope Object.
  * @param {Material Angular Service} $mdDialog - Dialog modal service.
- * @param {AnguarJS $interval} $interval - A AngularJS service that is analogous to setInterval.
+ * @param {AngularJS $interval} $interval - A AngularJS service that is analogous to setInterval.
  * @param {Material Angular Service} $mdMedia - Media size detection service.
  * @param {Parlay Service} ParlayUtility - Service that provides utility functions.
  * @param {Parlay Service} ParlayPersistence - Service that provides automatic persistence of scope variables to localStorage.
@@ -49,8 +49,7 @@ function PromenadeStandardItemCardGraphTabController($scope, $mdDialog, $interva
 			bindToController: true,
 			templateUrl: "../vendor_components/promenade/items/directives/promenade-standard-item-card-graph-configuration-dialog.html",
 			targetEvent: $event,
-			clickOutsideToClose: true,
-			fullscreen: !$mdMedia("gt-sm")
+			clickOutsideToClose: true
 		}).finally(getStreamColors.bind(this));
 	};
 
@@ -69,7 +68,9 @@ PromenadeStandardItemCardGraphTabController.prototype.streamCount = function() {
 /**
  * Controller constructor for the graph configuration dialog.
  * @constructor
+ * @param {AngularJS $scope} $scope - AngularJS $scope Object.
  * @param {Material Angular Service} $mdDialog - Dialog modal service.
+ * @param {Material Angular Service} $mdMedia - Media size detection service.
  */
 function PromenadeStandardItemCardGraphTabConfigurationController($scope, $mdDialog, $mdMedia) {
 	this.hide = $mdDialog.hide;

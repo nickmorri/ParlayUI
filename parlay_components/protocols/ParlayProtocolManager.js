@@ -160,7 +160,7 @@ function ParlayProtocolManagerFactory($injector, $q, PromenadeBroker, ParlayStor
 
         /**
          * Instantiates and opens the given Array of protocol configurations.
-         * @param {Array} protocols - Array of open protocols.
+         * @param {Object} response - Contains Array of open protocols.
          */
         function setOpenProtocols(response) {
 

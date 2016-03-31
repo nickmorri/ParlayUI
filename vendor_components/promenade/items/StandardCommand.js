@@ -8,21 +8,19 @@ function PromenadeStandardCommandFactory() {
         this.default =  !!data.DEFAULT ? data.DEFAULT : undefined;
         this.hidden =  !!data.HIDDEN ? data.HIDDEN : false;
 
-        if (!!data.DROPDOWN_OPTIONS) {
-            this.options = data.DROPDOWN_OPTIONS.map(function (option, index) {
-                return typeof option === "string" ? {
-                    name: option,
-                    value: option,
-                    sub_fields: undefined
-                } : {
-                    name: option[0],
-                    value: option[1],
-                    sub_fields: !!data.DROPDOWN_SUB_FIELDS ? data.DROPDOWN_SUB_FIELDS[index].map(function (sub_field) {
-                        return new PromenadeStandardCommand(sub_field);
-                    }) : undefined
-                };
-            });
-        }
+        this.options = !!data.DROPDOWN_OPTIONS ? data.DROPDOWN_OPTIONS.map(function (option, index) {
+            return typeof option === "string" ? {
+                name: option,
+                value: option,
+                sub_fields: undefined
+            } : {
+                name: option[0],
+                value: option[1],
+                sub_fields: !!data.DROPDOWN_SUB_FIELDS ? data.DROPDOWN_SUB_FIELDS[index].map(function (sub_field) {
+                    return new PromenadeStandardCommand(sub_field);
+                }) : undefined
+            };
+        }) : undefined;
 
         this.item_name = item_name;
         this.protocol = protocol;

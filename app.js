@@ -11,5 +11,5 @@ function ParlayConfig($urlRouterProvider, $mdThemingProvider) {
     
 }
 
-angular.module("parlay.main", ["ui.router", "ngMaterial", "parlay.items", "parlay.editor", "parlay.navigation.container", "parlay.notification.sidenav"])
+angular.module("parlay.main", ["ui.router", "ngMaterial", "parlay.items", "parlay.widgets", "parlay.navigation.container", "parlay.notification.sidenav"])
 	.config(ParlayConfig);

@@ -16,14 +16,6 @@ function ParlayNavigationSidenavController($mdSidenav, $mdDialog, $state, Promen
         $state.go(state);
     };
 
-    this.openWorkspace = function () {
-        $state.go("items");
-    };
-
-    this.openEditor = function () {
-        $state.go("editor");
-    };
-
     this.openProtocolManagementDialog = function (event) {
         $mdDialog.show({
             templateUrl: "../parlay_components/protocols/directives/parlay-protocol-list-dialog.html",

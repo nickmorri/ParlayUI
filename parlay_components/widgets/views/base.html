@@ -5,7 +5,7 @@
         <md-toolbar><div class="md-toolbar-tools" layout="row" layout-align="center center">Active</div></md-toolbar>
 
         <div layout="row" layout-align="space-around center" layout-wrap>
-            <md-button ng-repeat="item in items" class="md-fab md-primary" ng-click="item.click()" ng-right-click="editorCtrl.edit(item)">
+            <md-button ng-repeat="item in items" class="md-fab md-primary" ng-click="item.click()" ng-right-click="widgetsCtrl.edit(item)">
                 <md-tooltip>Right click to edit</md-tooltip>
                 <md-icon ng-md-icon icon="{{item.icon}}"></md-icon>
             </md-button>
@@ -18,9 +18,9 @@
         <md-toolbar><div class="md-toolbar-tools" layout="row" layout-align="center center">Available</div></md-toolbar>
 
         <div layout="column" layout-align="center center">
-            <md-button class="md-fab md-accent" ng-click="editorCtrl.add('send')"><md-icon ng-md-icon icon="send"></md-icon></md-button>
-            <md-button class="md-fab md-accent" ng-click="editorCtrl.add('create')"><md-icon ng-md-icon icon="create"></md-icon></md-button>
-            <md-button class="md-fab md-accent" ng-click="editorCtrl.add('delete')"><md-icon ng-md-icon icon="delete"></md-icon></md-button>
+            <md-button class="md-fab md-accent" ng-click="widgetsCtrl.add('send')"><md-icon ng-md-icon icon="send"></md-icon></md-button>
+            <md-button class="md-fab md-accent" ng-click="widgetsCtrl.add('create')"><md-icon ng-md-icon icon="create"></md-icon></md-button>
+            <md-button class="md-fab md-accent" ng-click="widgetsCtrl.add('delete')"><md-icon ng-md-icon icon="delete"></md-icon></md-button>
         </div>
 
     </md-card>

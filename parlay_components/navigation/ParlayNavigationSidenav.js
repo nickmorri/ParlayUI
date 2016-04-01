@@ -2,17 +2,19 @@
 function ParlayNavigationSidenavController($mdSidenav, $mdDialog, $state, PromenadeBroker) {
     "use strict";
 
-	this.requestDiscovery = function () {
-		PromenadeBroker.requestDiscovery(true);
-	};
+    this.getCurrentState = function () {
+        return $state.current;
+    };
 
-	this.openNotificationSidenav = function () {
-		$mdSidenav("notifications").open();
-	};
+    this.getAllStates = function () {
+        return $state.get().filter(function (state) {
+            return !state.abstract;
+        });
+    };
 
-	this.openHelpTab = function () {
-		window.open(window.location.origin + "/docs", '_blank').focus();
-	};
+    this.navigateState = function (state) {
+        $state.go(state);
+    };
 
     this.openWorkspace = function () {
         $state.go("items");
@@ -32,6 +34,10 @@ function ParlayNavigationSidenavController($mdSidenav, $mdDialog, $state, Promen
         });
     };
 
+    this.requestDiscovery = function () {
+        PromenadeBroker.requestDiscovery(true);
+    };
+
     this.openWorkspaceManagementDialog = function (event) {
         $mdDialog.show({
             templateUrl: "../parlay_components/items/directives/parlay-workspace-management-dialog.html",
@@ -42,15 +48,23 @@ function ParlayNavigationSidenavController($mdSidenav, $mdDialog, $state, Promen
         });
     };
 
-	this.openSettingsDialog = function (event) {
-		$mdDialog.show({
-			templateUrl: "../parlay_components/settings/directives/parlay-settings-dialog.html",
-			targetEvent: event,
+	this.openNotificationSidenav = function () {
+		$mdSidenav("notifications").open();
+	};
+
+	this.openHelpTab = function () {
+		window.open(window.location.origin + "/docs", '_blank').focus();
+	};
+
+    this.openSettingsDialog = function (event) {
+        $mdDialog.show({
+            templateUrl: "../parlay_components/settings/directives/parlay-settings-dialog.html",
+            targetEvent: event,
             controller: "ParlaySettingsDialogController",
             controllerAs: "ctrl",
             clickOutsideToClose: true
-		});
-	};
+        });
+    };
 	
 }
 

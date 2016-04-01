@@ -29,6 +29,27 @@
 
     <md-list layout="column" flex class="parlay-navigation-list" ng-controller="ParlayNavigationSidenavController as ctrl">
 
+        <md-menu class="parlay-navigation-menu">
+
+            <md-list-item ng-click="$mdOpenMenu($event)">
+                <md-icon ng-md-icon class="parlay-nav-icon" icon="apps"></md-icon>
+                <p style="text-transform: capitalize">{{ctrl.getCurrentState().data.displayName}}</p>
+                <md-icon ng-md-icon class="parlay-nav-icon" icon="keyboard_arrow_down"></md-icon>
+            </md-list-item>
+
+            <md-menu-content width="4">
+                <md-menu-item ng-repeat="state in ctrl.getAllStates()">
+                    <md-button ng-click="ctrl.navigateState(state)">
+                        <md-icon ng-md-icon icon="{{state.data.displayIcon}}"></md-icon>
+                        {{state.data.displayName}}
+                    </md-button>
+                </md-menu-item>
+            </md-menu-content>
+
+        </md-menu>
+
+        <md-divider></md-divider>
+
         <md-list-item ng-click="ctrl.openProtocolManagementDialog($event)">
             <md-icon ng-md-icon class="parlay-nav-icon" icon="settings_ethernet"></md-icon>
             <p>Protocols</p>
@@ -44,7 +65,7 @@
             <p>Workspaces</p>
         </md-list-item>
 
-        <parlay-item-search style="padding-left: 25px; padding-right: 25px; padding-top: 10px;" layout="row"></parlay-item-search>
+        <parlay-item-search layout="row"></parlay-item-search>
 
         <span flex></span>
 

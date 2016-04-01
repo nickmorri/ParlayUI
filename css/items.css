@@ -8,6 +8,12 @@
     padding-right: 8px;
 }
 
+parlay-item-search {
+	padding-left: 25px;
+	padding-right: 25px;
+	padding-top: 10px;
+}
+
 /* Limit height of toolbars in ParlayItemCard to allow for greater information density. */
 .parlay-item-card > md-toolbar {
 	height: 48px;

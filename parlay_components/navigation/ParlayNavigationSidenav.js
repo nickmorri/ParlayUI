@@ -1,18 +1,20 @@
 /* istanbul ignore next */
-function ParlayNavigationSidenavController($mdSidenav, $mdDialog, PromenadeBroker) {
+function ParlayNavigationSidenavController($mdSidenav, $mdDialog, $state, PromenadeBroker) {
     "use strict";
 
-	this.requestDiscovery = function () {
-		PromenadeBroker.requestDiscovery(true);
-	};
+    this.getCurrentState = function () {
+        return $state.current;
+    };
 
-	this.openNotificationSidenav = function () {
-		$mdSidenav("notifications").open();
-	};
+    this.getAllStates = function () {
+        return $state.get().filter(function (state) {
+            return !state.abstract;
+        });
+    };
 
-	this.openHelpTab = function () {
-		window.open(window.location.origin + "/docs", '_blank').focus();
-	};
+    this.navigateState = function (state) {
+        $state.go(state);
+    };
 
     this.openProtocolManagementDialog = function (event) {
         $mdDialog.show({
@@ -22,6 +24,10 @@ function ParlayNavigationSidenavController($mdSidenav, $mdDialog, PromenadeBroke
             controllerAs: "ctrl",
             clickOutsideToClose: true
         });
+    };
+
+    this.requestDiscovery = function () {
+        PromenadeBroker.requestDiscovery(true);
     };
 
     this.openWorkspaceManagementDialog = function (event) {
@@ -34,17 +40,25 @@ function ParlayNavigationSidenavController($mdSidenav, $mdDialog, PromenadeBroke
         });
     };
 
-	this.openSettingsDialog = function (event) {
-		$mdDialog.show({
-			templateUrl: "../parlay_components/settings/directives/parlay-settings-dialog.html",
-			targetEvent: event,
+	this.openNotificationSidenav = function () {
+		$mdSidenav("notifications").open();
+	};
+
+	this.openHelpTab = function () {
+		window.open(window.location.origin + "/docs", '_blank').focus();
+	};
+
+    this.openSettingsDialog = function (event) {
+        $mdDialog.show({
+            templateUrl: "../parlay_components/settings/directives/parlay-settings-dialog.html",
+            targetEvent: event,
             controller: "ParlaySettingsDialogController",
             controllerAs: "ctrl",
             clickOutsideToClose: true
-		});
-	};
+        });
+    };
 	
 }
 
 angular.module("parlay.navigation.sidenav", ["ngMaterial", "parlay.items.search", "parlay.protocols.list_controller", "parlay.settings.dialog", "parlay.items.workspaces"])
-	.controller("ParlayNavigationSidenavController", ["$mdSidenav", "$mdDialog", "PromenadeBroker", ParlayNavigationSidenavController]);
+	.controller("ParlayNavigationSidenavController", ["$mdSidenav", "$mdDialog", "$state", "PromenadeBroker", ParlayNavigationSidenavController]);

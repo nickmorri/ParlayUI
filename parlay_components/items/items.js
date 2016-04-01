@@ -8,7 +8,11 @@ function ItemsConfiguration($stateProvider) {
         url: "/items",
         templateUrl: "../parlay_components/items/views/base.html",
         controller: "ParlayItemController",
-        controllerAs: "itemCtrl"
+        controllerAs: "itemCtrl",
+        data: {
+            displayName: "Items",
+            displayIcon: "extension"
+        }
     });
 }
 

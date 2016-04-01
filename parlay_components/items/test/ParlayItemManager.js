@@ -8,7 +8,7 @@
         beforeEach(module('mock.parlay.protocols.manager'));
         
         describe('ParlayItemManager', function () {
-            var scope, ParlayItemManager, PromenadeBroker, $rootScope;
+            var ParlayItemManager, PromenadeBroker, $rootScope;
             
             beforeEach(inject(function (_ParlayItemManager_, _PromenadeBroker_, _$rootScope_) {
                 PromenadeBroker = _PromenadeBroker_;
@@ -175,9 +175,7 @@
 				});
 
                 it('requestDiscovery', function (done) {
-                    PromenadeBroker.requestDiscovery(true).then(function (response) {
-	                    done();
-                    });
+                    PromenadeBroker.requestDiscovery(true).then(done);
                     $rootScope.$digest();
                 });
                 

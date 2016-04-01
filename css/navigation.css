@@ -1,10 +1,11 @@
+/* Styles and aligns navigation item icons in the navigation sidenav. */
 .parlay-nav-icon {
     fill: white;
     margin: 10px;
 }
 
+/* Styles the md-list inside the navigation sidenav. */
 .parlay-navigation-list {
     background-color: rgb(96,125,139);
     color: white;
-    fill: white;
 }

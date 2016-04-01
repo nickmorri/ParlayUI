@@ -65,7 +65,8 @@ function ParlayStoreService() {
 	
 	/**
 	 * Retrieves the requested key from localStorage.
-	 * @param {String} key - Key of the item we are looking for in localStorage.
+	 * @param {String} key - Key of the item we are storing in localStorage.
+	 * @param {Object} value - Object that we storing in localStorage.
 	 * @returns {Object|undefined} - Return the requested Object if available, undefined otherwise.
 	 */
 	ParlayStore.prototype.set = function (key, value) {

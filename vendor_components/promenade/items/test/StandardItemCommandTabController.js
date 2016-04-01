@@ -43,11 +43,11 @@
         		it("successfully", function () {
 	        		
 	        		scope.wrapper = {
-		        		message: {
-			        		COMMAND: "send",
-			        		test: {}
-		        		}
+		        		message: new PromenadeStandardCommandMessage()
 	        		};
+
+					scope.wrapper.message.COMMAND = "send";
+					scope.wrapper.message.test = {};
 	        		
 	        		expect(ctrl.sending).toBeFalsy();
 
@@ -63,13 +63,13 @@
         		});
         		
         		it("unsuccessfully", function () {
-	        		
-            		scope.wrapper = {
-		        		message: {
-			        		COMMAND: "fail",
-			        		test: {}
-		        		}
-	        		};
+
+                    scope.wrapper = {
+                        message: new PromenadeStandardCommandMessage()
+                    };
+
+                    scope.wrapper.message.COMMAND = "fail";
+                    scope.wrapper.message.test = {};
 	        		
 	        		expect(ctrl.sending).toBeFalsy();
 

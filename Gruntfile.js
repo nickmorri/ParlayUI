@@ -191,7 +191,7 @@ module.exports = function (grunt) {
 
 		'karma': {
 			'options': {
-				'configFile': 'karma.conf.js',
+				'configFile': 'karma.conf.js'
 			},
 			'dev': {
 				'options': {
@@ -203,7 +203,7 @@ module.exports = function (grunt) {
 			            '<%= meta.mocks %>',
 			            '<%= meta.vendorComponents %>',
 			            '<%= meta.tests %>'
-					],
+					]
 				}
 			},
 			'dist': {
@@ -214,7 +214,7 @@ module.exports = function (grunt) {
 			            '<%= meta.dist_destination %>/<%= pkg.namelower %>.min.js',
 			            '<%= meta.mocks %>',
 			            '<%= meta.tests %>'
-					],
+					]
 				}
 			},
 			'coverage': {
@@ -236,7 +236,7 @@ module.exports = function (grunt) {
 			            '<%= meta.mocks %>',
 			            '<%= meta.vendorComponents %>',
 			            '<%= meta.tests %>'
-					],
+					]
 				}
 			}
 		},
@@ -266,9 +266,12 @@ module.exports = function (grunt) {
 				'src': '<%= meta.stylesheets %>',
 				'options': {
 					'important': false,
-					'adjoining-classes': false,
 					'known-properties': false
-				},
+				}
+			},
+			'options': {
+				'adjoining-classes': false,
+				'outline-none': false
 			}
 		},
 		
@@ -307,7 +310,7 @@ module.exports = function (grunt) {
 				'mangle': false,
 				'compress': true,
 				'sourceMap': true,
-				'preserveComments': false,
+				'preserveComments': false
 			},
 			'dist': {
 				'files': {
@@ -368,7 +371,7 @@ module.exports = function (grunt) {
 
 	grunt.registerTask('test', 'Lints and tests JavaScript files.', ['jshint', 'html2js', 'karma:dev']);
 	
-	grunt.registerTask('coverage', 'Generates and opens test coverage.', ['karma:coverage', 'open:coverage'])
+	grunt.registerTask('coverage', 'Generates and opens test coverage.', ['karma:coverage', 'open:coverage']);
 
 	grunt.registerTask('dist', 'Generates tested and linted minified JavaScript and CSS files with HTML templates included in JavaScript.', [
 	    'jshint:dist',

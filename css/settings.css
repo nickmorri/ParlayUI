@@ -1,7 +1,10 @@
+/* Hide number increment/decrement selector. */
 input[type="number"] {
     -webkit-appearance: textfield !important;
     -moz-appearance: textfield !important;
 }
+
+/* Hide number increment/decrement selector. */
 ::-webkit-inner-spin-button, ::-webkit-outer-spin-button  {
     -webkit-appearance: none;
     -moz-appearance: none;

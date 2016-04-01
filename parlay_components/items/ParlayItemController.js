@@ -1,11 +1,12 @@
 /**
  * @name ParlayItemController
- * @param ParlayItemManager - Service that manages the available items.
+ * @param {Parlay Service} ParlayItemManager - Service that manages the available items.
+ * @param {Angular Material Service} $mdSidenav - Angular Material Service for $mdSidenav.  
  * @description
  * The ParlayItemController is a controller that manages the items currently active in the workspace.
  *
  */
-function ParlayItemController(ParlayItemManager) {
+function ParlayItemController(ParlayItemManager, $mdSidenav) {
 
     this.filterItems = function () {
         return ParlayItemManager.getActiveItems();
@@ -31,10 +32,6 @@ function ParlayItemController(ParlayItemManager) {
         ParlayItemManager.deactivateItem(parseInt(index, 10));
     };
 
-}
-
-function ParlayEmptyWorkspacePlaceholderController($mdSidenav) {
-
     this.focusItemSearch = function () {
         var sidenav = $mdSidenav("navigation");
 
@@ -43,21 +40,22 @@ function ParlayEmptyWorkspacePlaceholderController($mdSidenav) {
 
         // If sidenav is open, on screens gt-sm, focus the element.
         // Otherwise, on screens <= sm, open the sidenav then focus the element.
-        if (sidenav.isLockedOpen()) element.focus();
-        else sidenav.open().then(function () { element.focus(); });
+        if (sidenav.isLockedOpen()) {
+            element.focus();
+        }
+        else {
+            sidenav.open().then(function () {
+                element.focus();
+            });
+        }
     };
 
 }
 
 function ParlayEmptyWorkspacePlaceholder () {
-    return {
-        templateUrl: '../parlay_components/items/directives/parlay-empty-workspace-placeholder.html',
-        controller: "ParlayEmptyWorkspacePlaceholderController",
-        controllerAs: "ctrl"
-    };
+    return { templateUrl: '../parlay_components/items/directives/parlay-empty-workspace-placeholder.html' };
 }
 
 angular.module("parlay.items.controller", ["ngMaterial", "parlay.items.manager"])
-    .controller("ParlayEmptyWorkspacePlaceholderController", ["$mdSidenav", ParlayEmptyWorkspacePlaceholderController])
     .directive("parlayEmptyWorkspacePlaceholder", [ParlayEmptyWorkspacePlaceholder])
-    .controller("ParlayItemController", ["ParlayItemManager", ParlayItemController]);
+    .controller("ParlayItemController", ["ParlayItemManager", "$mdSidenav", ParlayItemController]);

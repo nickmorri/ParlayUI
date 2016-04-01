@@ -31,9 +31,9 @@ function ParlaySettingsFactory(ParlayStore) {
     ParlaySettings.prototype.set = function (key, value) {
         var settings = this.get(key);
 
-        for (var item in value) {
-            settings[item] = value[item];
-        }
+        Object.keys(value).forEach(function (key) {
+            settings[key] = value[key];
+        });
 
         store.set(key, settings);
     };

@@ -14,7 +14,7 @@
                 
                 MockProtocol = {
                     data_types: ['int', 'float'],
-                    sendMessage: function (message) {
+                    sendMessage: function () {
 	                    return $q(function (resolve) {
 		                    resolve("");
 	                    });
@@ -59,6 +59,13 @@
                                 ['key3', 300]
                             ],
                             MSG_KEY: 'event'
+                        }
+                    ],
+                    PROPERTIES: [
+                        {
+                            NAME: "test_property",
+                            INPUT: "STRING",
+                            READ_ONLY: false
                         }
                     ],
                     DATASTREAMS: [
@@ -129,120 +136,6 @@
                     type: 'int'
                 }, {}, true);
 
-            });
-            
-            describe("streams", function() {
-	            	            
-	            it("requests", function() {
-		            spyOn(MockProtocol, "sendMessage").and.callThrough();
-
-		            item.requestStream({
-			            NAME: "stream1",
-			            rate: 1
-		            });
-		            
-		            rootScope.$apply();
-		            
-		            expect(MockProtocol.sendMessage).toHaveBeenCalledWith({
-			            TX_TYPE: 'DIRECT',
-			            MSG_TYPE: 'STREAM',
-			            TO: 100
-		            },
-		            {
-			            STREAM: "stream1",
-			            RATE: 1,
-			            VALUE: null
-		            }, {
-			            TX_TYPE: 'DIRECT',
-			            MSG_TYPE: 'STREAM',
-			            TO: 'UI',
-			            FROM: 100
-		            });
-	            });
-	            
-	            it("cancels", function() {
-		            spyOn(MockProtocol, "sendMessage").and.callThrough();
-
-		            item.cancelStream({
-			            NAME: "stream1"
-		            });
-		            
-		            rootScope.$apply();
-		            
-		            expect(MockProtocol.sendMessage).toHaveBeenCalledWith({
-			            TX_TYPE: 'DIRECT',
-			            MSG_TYPE: 'STREAM',
-			            TO: 100
-		            },
-		            {
-			            STREAM: "stream1",
-			            RATE: 0,
-			            VALUE: null
-		            }, {
-			            TX_TYPE: 'DIRECT',
-			            MSG_TYPE: 'STREAM',
-			            TO: 'UI',
-			            FROM: 100
-		            });
-	            });
-	            
-            });
-            
-            // NOTE: Weird bug happening here if this test suite is executed. Likely will happen on other tests suites too.
-            // Seems like toHaveBeenCalled is not being cleared between test suites causing expectations to creep into other test suites.
-            
-            describe("properties", function() {
-	            
-	            it("gets", function() {
-		            
-		            spyOn(MockProtocol, "sendMessage").and.callThrough();
-		            
-		            item.getProperty({
-			            NAME: "property1"
-		            });
-		            
-		            expect(MockProtocol.sendMessage).toHaveBeenCalledWith({
-			            TX_TYPE: 'DIRECT',
-			            MSG_TYPE: 'PROPERTY',
-			            TO: 100
-		            },
-		            {
-			            PROPERTY: "property1",
-			            ACTION: "GET",
-			            VALUE: null
-		            }, {
-			            TX_TYPE: 'DIRECT',
-			            MSG_TYPE: 'RESPONSE',
-			            TO: 'UI',
-			            FROM: 100
-		            }, true);
-	            });
-	            
-	            it("sets", function() {
-		            spyOn(MockProtocol, "sendMessage").and.callThrough();
-		            
-		            item.setProperty({
-			            NAME: "property1",
-			            VALUE: 100
-		            });
-		            
-		            expect(MockProtocol.sendMessage).toHaveBeenCalledWith({
-			            TX_TYPE: 'DIRECT',
-			            MSG_TYPE: 'PROPERTY',
-			            TO: 100
-		            },
-		            {
-			            PROPERTY: "property1",
-			            ACTION: "SET",
-			            VALUE: 100
-		            }, {
-			            TX_TYPE: 'DIRECT',
-			            MSG_TYPE: 'RESPONSE',
-			            TO: 'UI',
-			            FROM: 100
-		            }, true);
-	            });
-	            
             });
 
         });

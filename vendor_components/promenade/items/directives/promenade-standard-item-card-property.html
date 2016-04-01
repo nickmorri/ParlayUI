@@ -5,8 +5,8 @@
 
             <h1 ng-hide="ctrl.hasProperties()">No properties available</h1>
 
-			<md-button ng-show="ctrl.hasProperties()" class="md-primary" aria-label="Get all" ng-click="ctrl.getAllProperties()">Get All</md-button>
-			<md-button ng-show="ctrl.hasProperties()" class="md-primary" aria-label="Set all" ng-click="ctrl.setAllProperties()">Set All</md-button>
+			<md-button ng-show="ctrl.hasProperties()" class="md-primary md-hue-3" aria-label="Get all" ng-click="ctrl.getAllProperties()">Get All</md-button>
+			<md-button ng-show="ctrl.hasProperties()" class="md-primary md-hue-3" aria-label="Set all" ng-click="ctrl.setAllProperties()">Set All</md-button>
 			
 			<md-progress-linear md-mode="indeterminate" ng-show="ctrl.waiting"></md-progress-linear>
 			
@@ -15,7 +15,7 @@
 		</div>
 	</md-toolbar>
 
-	<md-content layout="column" class="parlay-property-content">
+	<md-content layout="column" class="parlay-item-card-tab-content">
 
 		<div flex layout="column" ng-hide="ctrl.hasProperties()">
 			<p>Here is an example of a local_item with a property called <i>prop1</i></p>
@@ -28,16 +28,16 @@
 </pre></div>
         </div>
 
-		<div class="parlay-property-container" layout="row" ng-repeat="property in ctrl.item.properties">
-			<md-input-container class="parlay-property-input" flex ng-switch="property.INPUT">
-				<label>{{property.NAME}}</label>
-				<input ng-switch-when="STRING" type="text" ng-model="property.VALUE" ng-disabled="property.READ_ONLY">
-				<input ng-switch-when="NUMBER" type="number" ng-model="property.VALUE" ng-disabled="property.READ_ONLY">
-				<md-chips ng-switch-when="STRINGS" ng-model="property.VALUE" readonly="property.READ_ONLY"></md-chips>
-				<md-chips ng-switch-when="NUMBERS" ng-model="property.VALUE" readonly="property.READ_ONLY"></md-chips>
+		<div class="promenade-property-container" layout="row" ng-repeat="property in ctrl.item.properties">
+			<md-input-container class="promenade-property-input" flex ng-switch="property.input">
+				<label>{{property.name}}</label>
+				<input ng-switch-when="STRING" type="text" ng-model="property.value" ng-disabled="property.read_only">
+				<input ng-switch-when="NUMBER" type="number" ng-model="property.value" ng-disabled="property.read_only">
+				<md-chips ng-switch-when="STRINGS" ng-model="property.value" readonly="property.read_only"></md-chips>
+				<md-chips ng-switch-when="NUMBERS" ng-model="property.value" readonly="property.read_only"></md-chips>
 			</md-input-container>
-			<md-button class="md-primary parlay-property-button" ng-click="ctrl.getProperty(property)">Get</md-button>
-			<md-button class="md-primary parlay-property-button" ng-click="ctrl.setProperty(property)">Set</md-button>
+			<md-button class="md-primary promenade-property-button" ng-click="property.get()">Get</md-button>
+			<md-button class="md-primary promenade-property-button" ng-click="property.set()">Set</md-button>
 		</div>
 	</md-content>
 	

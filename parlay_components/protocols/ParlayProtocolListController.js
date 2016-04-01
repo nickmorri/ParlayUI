@@ -31,12 +31,14 @@ function ParlayProtocolListController($scope, $mdDialog, $mdMedia, ParlayProtoco
      * Requests that the Broker shutdown.
      */
     this.shutdownBroker = function () {
+        /* istanbul ignore else */
         if (PromenadeBroker.isConnected()) {
             PromenadeBroker.requestShutdown();
         }
     };
 
     this.connectBroker = function () {
+        /* istanbul ignore else */
         if (!PromenadeBroker.isConnected()) {
             PromenadeBroker.connect();
         }
@@ -48,6 +50,14 @@ function ParlayProtocolListController($scope, $mdDialog, $mdMedia, ParlayProtoco
      */
     this.getOpenProtocols = function () {
         return ParlayProtocolManager.getOpenProtocols();
+    };
+
+    /**
+     * Check if ParlayProtocolManager has open protocols.
+     * @returns {Boolean} true if open protocols exist, false otherwise.
+     */
+    this.hasOpenProtocols = function () {
+        return this.getOpenProtocols().length !== 0;
     };
     
 	this.getSavedProtocols = function () {
@@ -64,7 +74,7 @@ function ParlayProtocolListController($scope, $mdDialog, $mdMedia, ParlayProtoco
 	
 	this.openSavedProtocol = function (configuration) {
 		this.connecting = true;
-	    ParlayProtocolManager.openProtocol(configuration).finally(function () {
+	    ParlayProtocolManager.openProtocol(configuration).then(function () {
 		    this.connecting = false;
 	    }.bind(this));
     };
@@ -74,18 +84,9 @@ function ParlayProtocolListController($scope, $mdDialog, $mdMedia, ParlayProtoco
     };
     
     /**
-     * Check if ParlayProtocolManager has open protocols.
-     * @returns {Boolean} true if open protocols exist, false otherwise.
-     */
-    this.hasOpenProtocols = function () {
-        return this.getOpenProtocols().length !== 0;
-    };
-    
-    /**
      * Closes protocol then spawns toast notifying user.
      * @param {Object} protocol - Protocol configuration object.
      */
-    /* istanbul ignore next */
     this.closeProtocol = function (protocol) {
         ParlayProtocolManager.closeProtocol(protocol);
     };

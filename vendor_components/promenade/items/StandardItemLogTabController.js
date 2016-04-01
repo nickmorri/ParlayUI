@@ -16,7 +16,8 @@ function PromenadeStandardItemCardLogTabController($scope, ParlayPersistence, Pa
 
 /**
  * Applies a filter to the item log and returns the messages that pass.
- * @param {String} query - text to filter the log by.
+ * @param {String} query - Query to filter the log by.
+ * @param {Boolean} reverse - Reverse the filter log if true, otherwise return in original order.
  * @returns {Array} - If query is undefined return the full item log, otherwise return the messages that pass the filter.
  */
 PromenadeStandardItemCardLogTabController.prototype.getFilteredLog = function(query, reverse) {

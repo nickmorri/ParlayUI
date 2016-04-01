@@ -15,9 +15,7 @@
     			sessionStorage.clear();
     			localStorage.clear();
     			ParlayWorkspaceManagementController = $controller('ParlayWorkspaceManagementController', {$scope: scope, ParlayStore: ParlayStore, ParlayItemManager: ParlayItemManager, $mdDialog: {show: function () {
-			    		return $q(function (resolve, reject) {
-				    		resolve('test');
-			    		});
+			    		return $q(function (resolve) { resolve('test'); });
 		    		}}});
     		}));
     		

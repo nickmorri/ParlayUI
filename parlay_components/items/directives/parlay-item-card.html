@@ -1,6 +1,7 @@
 <md-card class="md-whiteframe-2dp parlay-item-card">
     <md-toolbar class="md-primary" draggable="true">
-        <div class="md-toolbar-tools">
+        <div class="md-toolbar-tools" layout="row">
+			<!-- Vendor specific item toolbar-tools directives are automatically inserted here -->
 			<md-menu>
 				<md-button aria-label="Open overflow menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
                     <md-tooltip>Card menu</md-tooltip>
@@ -33,9 +34,8 @@
 			</md-menu>
 			<md-button aria-label="Close card" class="md-icon-button" ng-click="itemCtrl.deactivate($index)">
                 <md-tooltip>Close card</md-tooltip>
-				<md-icon class="white" ng-md-icon icon="clear"></md-icon>
+				<md-icon ng-md-icon icon="clear"></md-icon>
 			</md-button>
-            <!-- Vendor specific item toolbar-tools directives are automatically inserted here -->
         </div>
     </md-toolbar>
     

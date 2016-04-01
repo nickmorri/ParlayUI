@@ -26,7 +26,7 @@
 
         <div flex layout="row">
 
-            <md-button flex class="md-raised md-primary" type="submit" class="md-primary" ng-disabled="commandform.$invalid" aria-label="Sends command to a Promenade Standard Item.">
+            <md-button flex class="md-raised md-primary" type="submit" ng-disabled="commandform.$invalid" aria-label="Sends command to a Promenade Standard Item.">
                 Send
             </md-button>
 
@@ -59,7 +59,7 @@
     </md-toolbar>
 
     <div layout="column" layout-margin ng-hide="ctrl.script_builder_collapsed">
-        <pre class="promenade-script-builder-text">{{ctrl.generatePythonCommand()}}</pre>
+        <pre class="promenade-script-builder-text">{{wrapper.message.toPythonStatement()}}</pre>
     </div>
 
     <md-toolbar class="md-hue-2">

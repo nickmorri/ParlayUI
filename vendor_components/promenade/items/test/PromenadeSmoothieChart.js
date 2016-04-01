@@ -150,8 +150,8 @@
 	            
 	            scope.data.stream2 = {
 		            value: 5,
-		            ATTR_NAME: "stream2",
-					NAME: "stream2",
+		            ATTR_name: "stream2",
+					name: "stream2",
 					UNITS: "ms"
 	            };
 
@@ -170,8 +170,8 @@
 	            
 	            scope.data.stream2 = {
 		            value: 5,
-		            ATTR_NAME: "stream2",
-					NAME: "stream2",
+		            ATTR_name: "stream2",
+					name: "stream2",
 					UNITS: "ms"
 	            };
 
@@ -200,8 +200,8 @@
 	            for (var i = 0; i < 10; i++) {
 		        	scope.data["stream" + i] = {
 			            value: i * 2,
-			            ATTR_NAME: "stream" + i,
-						NAME: "stream" + i,
+			            ATTR_name: "stream" + i,
+						name: "stream" + i,
 						UNITS: "ms"
 		            };
                     scope.enabled_streams.push("stream" + i);
@@ -220,8 +220,8 @@
 	            for (var i = 0; i < 10; i++) {
 		        	scope.data["stream" + i] = {
 			            value: i * 2,
-			            ATTR_NAME: "stream" + i,
-						NAME: "stream" + i,
+			            ATTR_name: "stream" + i,
+						name: "stream" + i,
 						UNITS: "ms"
 		            };
                     scope.enabled_streams.push("stream" + i);
@@ -248,8 +248,8 @@
 	           
 	           scope.data.stream = {
 		            value: 5,
-		            ATTR_NAME: "stream",
-					NAME: "stream",
+		            ATTR_name: "stream",
+					name: "stream",
 					UNITS: "ms"
 	            };
 	            
@@ -282,8 +282,8 @@
 	            
 	            scope.data.stream = {
 		            value: 5,
-		            ATTR_NAME: "stream",
-					NAME: "stream",
+		            ATTR_name: "stream",
+					name: "stream",
 					UNITS: "ms"
 	            };
 

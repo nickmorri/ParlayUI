@@ -5,7 +5,7 @@ function PromenadeBrokerRun(ParlaySettings) {
 	}
 }
 
-function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, ParlayErrorDialog, $window, $mdDialog, ParlaySettings) {
+function PromenadeBrokerFactory(ParlaySocket, BrokerAddress, ParlayNotification, ParlayErrorDialog, ParlaySettings, $q, $location, $timeout, $window, $mdDialog) {
 	"use strict";
 	
 	/**
@@ -22,6 +22,13 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
         // Container for registered on_discovery callbacks.
 		var on_discovery_callbacks = [];
 
+        /**
+         * Requests ParlaySocket to open a WebSocket connection.
+         */
+		this.connect = function () {
+			ParlaySocket.open($location.protocol === 'https:' ? 'wss://' + BrokerAddress + ':8086' : 'ws://' + BrokerAddress + ':8085');
+		};
+		
         /**
          * Registers a callback on discovery.
          * @param {Function} callbackFunc - Callback function to be called on message receipt.
@@ -232,7 +239,6 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
     PromenadeBroker.prototype.onOpen = ParlaySocket.onOpen;
     PromenadeBroker.prototype.onClose = ParlaySocket.onClose;
     PromenadeBroker.prototype.getBrokerAddress = ParlaySocket.getAddress;
-	PromenadeBroker.prototype.connect = ParlaySocket.open;
 	PromenadeBroker.prototype.disconnect = ParlaySocket.close;
 	PromenadeBroker.prototype.isConnected = ParlaySocket.isConnected;
 
@@ -351,4 +357,4 @@ function PromenadeBrokerFactory(ParlaySocket, $q, $timeout, ParlayNotification, 
 
 angular.module("promenade.broker", ["parlay.socket", "parlay.notification", "parlay.notification.error", "parlay.settings", "ngMaterial"])
 	.run(["ParlaySettings", PromenadeBrokerRun])
-	.factory("PromenadeBroker", ["ParlaySocket", "$q", "$timeout", "ParlayNotification", "ParlayErrorDialog", "$window", "$mdDialog", "ParlaySettings", PromenadeBrokerFactory]);
+	.factory("PromenadeBroker", ["ParlaySocket", "BrokerAddress", "ParlayNotification", "ParlayErrorDialog", "ParlaySettings", "$q", "$location", "$timeout", "$window", "$mdDialog", PromenadeBrokerFactory]);

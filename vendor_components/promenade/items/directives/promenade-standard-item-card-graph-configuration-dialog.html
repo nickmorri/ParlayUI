@@ -21,7 +21,7 @@
                     <md-icon ng-md-icon icon="{{ctrl.maximum_locked ? 'check_box' : 'check_box_outline_blank'}}" options="{'rotation': 'none'}" ng-click="ctrl.toggleMaximum()"></md-icon>
                     <md-input-container flex ng-switch="ctrl.maximum_locked">
                         <label>Maximum range</label>
-                        <input ng-switch-when="false" ng-model="ctrl.smoothie.valueRange.max" type="number" disabled="true">
+                        <input ng-switch-when="false" ng-model="ctrl.smoothie.valueRange.max" type="number" disabled>
                         <input ng-switch-when="true" ng-model="ctrl.smoothie.options.maxValue" type="number">
                     </md-input-container>
                 </md-list-item>
@@ -30,7 +30,7 @@
                     <md-icon ng-md-icon icon="{{ctrl.minimum_locked ? 'check_box' : 'check_box_outline_blank'}}" options="{'rotation': 'none'}" ng-click="ctrl.toggleMinimum()"></md-icon>
                     <md-input-container flex ng-switch="ctrl.minimum_locked">
                         <label>Minimum range</label>
-                        <input ng-switch-when="false" ng-model="ctrl.smoothie.valueRange.min" type="number" disabled="true">
+                        <input ng-switch-when="false" ng-model="ctrl.smoothie.valueRange.min" type="number" disabled>
                         <input ng-switch-when="true" ng-model="ctrl.smoothie.options.minValue" type="number">
                     </md-input-container>
                 </md-list-item>
@@ -40,14 +40,20 @@
             <md-list flex flex-order="1" flex-order-gt-sm="0">
 
                 <md-subheader>Streams</md-subheader>
-				
-				<md-list-item ng-repeat="stream in ctrl.item.data_streams | orderObjectBy: 'NAME'" layout="row">
-                    <md-icon ng-md-icon icon="{{ctrl.isStreamEnabled(stream) ? 'check_box' : 'check_box_outline_blank'}}" options="{'rotation': 'none'}" ng-click="ctrl.toggleStream(stream)"></md-icon>
-					<p>{{stream.NAME}} <span ng-show="stream.value !== undefined">has value {{stream.value}}</span></p>
-                    <md-input-container flex="20">
-                        <label>Rate (Hz)</label>
-                        <input ng-model="stream.rate" type="number" minimum="0" step="1" ng-change="ctrl.updateRate(stream)">
-                    </md-input-container>
+
+				<md-list-item ng-repeat="stream in ctrl.item.data_streams | orderObjectBy: 'name'" layout="row" ng-click="ctrl.toggleGraphing(stream)" title="Click to toggle graphing">
+                    <md-icon ng-md-icon icon="{{ctrl.isStreamEnabled(stream) ? 'check_box' : 'check_box_outline_blank'}}" options="{'rotation': 'none'}" ></md-icon>
+					<p>{{stream.name}} <span ng-show="stream.value !== undefined">has value {{stream.value}}</span></p>
+
+                    <md-button class="md-secondary md-icon-button md-primary" ng-click="stream.listen(false)">
+                        <md-tooltip>Listen to stream</md-tooltip>
+                        <md-icon ng-md-icon icon="play_arrow"></md-icon>
+                    </md-button>
+
+                    <md-button class="md-secondary md-icon-button md-accent" ng-click="stream.listen(true)">
+                        <md-tooltip>Stop listening to stream</md-tooltip>
+                        <md-icon ng-md-icon icon="stop"></md-icon>
+                    </md-button>
 				</md-list-item>
 				
 			</md-list>

@@ -29,25 +29,25 @@ angular.module('mock.promenade.broker', []).factory('PromenadeBroker', ['$q', fu
     };
     
     PromenadeBroker.requestAvailableProtocols = function () {
-        return $q(function (resolve, reject) {
+        return $q(function (resolve) {
             resolve([]);
         });
     };
     
     PromenadeBroker.requestOpenProtocols = function () {
-        return $q(function (resolve, reject) {
+        return $q(function (resolve) {
             resolve([]);
         });
     };
     
     PromenadeBroker.sendSubscribe = function () {
-        return $q(function (resolve, reject) {
+        return $q(function (resolve) {
             resolve(true);
         });
     };
     
     PromenadeBroker.sendUnsubscribe = function () {
-        return $q(function (resolve, reject) {
+        return $q(function (resolve) {
             resolve(true);
         });
     };
@@ -56,10 +56,10 @@ angular.module('mock.promenade.broker', []).factory('PromenadeBroker', ['$q', fu
         PromenadeBroker.onDiscoveryCallbacks.forEach(function (callback) {
             callback({discovery: [sample_discovery]});
         });
-        return $q(function (resolve, reject) {
+        this.discovered = true;
+        return $q(function (resolve) {
 	        resolve({discovery: sample_discovery});
         });
-        this.discovered = true;
     };
     
     PromenadeBroker.onDiscovery = function (callback) {
@@ -105,14 +105,14 @@ angular.module('mock.promenade.broker', []).factory('PromenadeBroker', ['$q', fu
         });
     };
     
-    PromenadeBroker.openProtocol = function (configuration) {
-        return $q(function (resolve, reject) {
+    PromenadeBroker.openProtocol = function () {
+        return $q(function (resolve) {
             resolve(true);
         });
     };
     
     PromenadeBroker.closeProtocol = function (protocol) {
-        return $q(function (resolve, reject) {
+        return $q(function (resolve) {
             if (protocol === 'TestProtocol') resolve({STATUS: 'ok'});
             else resolve({STATUS: 'error'});
         });

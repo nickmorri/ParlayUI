@@ -1,59 +1,46 @@
 /**
  * Controller constructor for the property tab.
  * @constructor
- * @param {AngularJS $scope} $scope - A AngularJS $scope Object.
+ * @param {AngularJS Service} $q - AngularJS $q Service.
  */
-function PromenadeStandardItemCardPropertyTabController($scope) {
-
+function PromenadeStandardItemCardPropertyTabController($q) {
 	// Controller state attribute, true if a request has been sent but the response has not been received. 
 	this.waiting = false;
+
+    this.hasProperties = function () {
+        return Object.keys(this.item.properties).length > 0;
+    };
+
+    /**
+     * Gets all property values from an item.
+     */
+    this.getAllProperties = function () {
+        this.waiting = true;
+        return $q.all(Object.keys(this.item.properties).map(function (key) {
+            return this.item.properties[key].get();
+        }, this)).then(function () {
+            this.waiting = false;
+        }.bind(this));
+    };
+
+    /**
+     * Sets all property values from an item.
+     */
+    this.setAllProperties = function () {
+        this.waiting = true;
+        return $q.all(Object.keys(this.item.properties).map(function (key) {
+            return this.item.properties[key].set();
+        }, this)).then(function () {
+            this.waiting = false;
+        }.bind(this));
+    };
 }
-
-PromenadeStandardItemCardPropertyTabController.prototype.hasProperties = function () {
-	"use strict";
-	return Object.keys(this.item.properties).length > 0;
-};
-
-/**
- * Gets all property values from an item.
- */
-PromenadeStandardItemCardPropertyTabController.prototype.getAllProperties = function () {
-	Object.keys(this.item.properties).map(function(key) {
-		return this.item.properties[key];
-	}, this).forEach(this.getProperty.bind(this));
-};
-
-/**
- * Sets all property values from an item.
- */
-PromenadeStandardItemCardPropertyTabController.prototype.setAllProperties = function () {
-	Object.keys(this.item.properties).map(function(key) {
-		return this.item.properties[key];
-	}, this).forEach(this.setProperty.bind(this));
-};
-
-/**
- * Gets the given property from the item.
- * @param {Object} property - Property object we want to get from an item.
- */
-PromenadeStandardItemCardPropertyTabController.prototype.getProperty = function (property) {
-	this.waiting = true;
-	this.item.getProperty(property).then(function () { this.waiting = false; }.bind(this));
-};
-
-/**
- * Sets the given property on the item.
- * @param {Object} property - Property object we want to set on an item.
- */
-PromenadeStandardItemCardPropertyTabController.prototype.setProperty = function (property) {
-	this.waiting = true;
-	this.item.setProperty(property).then(function () { this.waiting = false; }.bind(this));
-};
 
 /**
  * Directive constructor for PromenadeStandardItemCardProperty.
  * @returns {Object} - Directive configuration.
  */
+/* istanbul ignore next */
 function PromenadeStandardItemCardProperty() {
 	return {
         scope: {
@@ -67,5 +54,5 @@ function PromenadeStandardItemCardProperty() {
 }
 
 angular.module("promenade.items.standarditem.property", [])
-	.controller("PromenadeStandardItemCardPropertyTabController", ["$scope", PromenadeStandardItemCardPropertyTabController])
+	.controller("PromenadeStandardItemCardPropertyTabController", ["$q", PromenadeStandardItemCardPropertyTabController])
 	.directive("promenadeStandardItemCardProperty", PromenadeStandardItemCardProperty);

@@ -1,42 +1,22 @@
-.md-left .align-with-text {
-    left: 7px;
-}
+/* Limit maximum height of ParlayItemCard. */
+.parlay-item-card-tab-content { max-height: 600px; }
 
-.parlay-item-card-tab-content {
-	max-height: 600px;
-}
-
-.parlay-item-card > md-toolbar > .md-toolbar-tools {
-	height: 48px;
-}
-
-/* Reduce padding between tabs and font size to allow more tabs to fit in toolbar */
+/* Reduce padding between tabs and font size to allow more tabs to fit in toolbar. */
 .parlay-item-card > md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item {
     font-size: 12px;
     padding-left: 8px;
     padding-right: 8px;
 }
 
-md-tab-content > div > md-toolbar > .md-toolbar-tools {
-	height: 48px;
-}
-
+/* Limit height of toolbars in ParlayItemCard to allow for greater information density. */
 .parlay-item-card > md-toolbar {
 	height: 48px;
 	min-height: 48px;
 	cursor: move;
 }
 
+/* Limit height of toolbars in ParlayItemCard to allow for greater information density. */
 md-tab-content > div > md-toolbar {
 	height: 48px;
 	min-height: 48px;
-}
-
-form > .parlay-item-card-tab-content > promenade-standard-item-card-command-container > span > md-input-container {
-	margin-bottom: 10px;
-}
-
-/* Allow autocomplete to shrink on smaller screen sizes */
-parlay-item-search > md-autocomplete {
-	min-width: 0;
 }

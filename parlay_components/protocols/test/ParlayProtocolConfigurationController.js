@@ -9,7 +9,7 @@
         describe("ProtocolConfigurationController", function () {
                 var rootScope, scope, ctrl;                
                 
-                beforeEach(inject(function ($rootScope, $controller, $q) {
+                beforeEach(inject(function ($rootScope, $controller) {
                     rootScope = $rootScope;
                     scope = $rootScope.$new();
                     ctrl = $controller("ParlayProtocolConfigurationController", {$scope: scope});

@@ -47,9 +47,10 @@ function ParlayPersistenceFactory(ParlayStore) {
      * @param {String} directive - Name of the directive where the requested attribute is to persisted.
      * @param {String} attribute - Name of the attribute that has been requested for persistence.
      * @param (AngularJS $scope} $scope - $scope Object where the requested attribute resides.
+     * @param {Function} custom_restore - Function that will perform the $scope variable restoration.
      * @returns {Function} - Deregistration function, will remove the registration established by the monitor request.
      */
-    ParlayPersistence.prototype.monitor = function (directive, attribute, $scope) {
+    ParlayPersistence.prototype.monitor = function (directive, attribute, $scope, custom_restore) {
 
         // Register an Object with the directive name, attribute and $scope.
         this.registrations[directive + "{" + attribute + "}"] = {
@@ -85,11 +86,11 @@ function ParlayPersistenceFactory(ParlayStore) {
 
                     // If a $scope Object exists with the given attribute we should set the value to the stored value.
                     if (relevant_scope) {
-                        relevant_scope[split_key[split_key.length - 1]] = stored_values[attribute];
+                        relevant_scope[split_key[split_key.length - 1]] = !!custom_restore ? custom_restore(stored_values[attribute]) : stored_values[attribute];
                     }
                     // If a $scope value doesn't exist we will set the attribute on the given $scope Object.
                     else {
-                        $scope[attribute] = stored_values[attribute];
+                        $scope[attribute] = !!custom_restore ? custom_restore(stored_values[attribute]) : stored_values[attribute];
                     }
 
                     // Remove the stored value since restoration has been attempted.
@@ -185,6 +186,8 @@ function ParlayPersistenceFactory(ParlayStore) {
     /**
      * Collects the monitored attributes and store them with ParlayStore using the given name.
      * @param {String} name - Given workspace name.
+     * @param {Boolean} autosave - If true this save was triggered automatically by the browser. Otherwise the user
+     * requested it.
      */
     ParlayPersistence.prototype.store = function (name, autosave) {
         this.items_store.set(name, {

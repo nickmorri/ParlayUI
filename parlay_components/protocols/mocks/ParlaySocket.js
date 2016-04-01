@@ -97,14 +97,14 @@ function MockParlaySocketFactory($q) {
         }
         else if (sample_responses[JSON.stringify(topics) + JSON.stringify(contents) + JSON.stringify(response_topics)] !== undefined) {
             response_callback(sample_responses[JSON.stringify(topics) + JSON.stringify(contents) + JSON.stringify(response_topics)]);
-            return $q(function (resolve, reject) {
+            return $q(function (resolve) {
                 resolve(response_callback(sample_responses[JSON.stringify(topics) + JSON.stringify(contents) + JSON.stringify(response_topics)]));
             });
         }
         else {
             contents.STATUS = 0;
             response_callback(contents);
-            return $q(function (resolve, reject) {
+            return $q(function (resolve) {
                 resolve(contents);
             });
         }

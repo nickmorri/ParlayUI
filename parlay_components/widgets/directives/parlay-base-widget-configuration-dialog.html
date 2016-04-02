@@ -1,0 +1,59 @@
+<md-dialog aria-label="Parlay Widget Configuration Dialog" flex="90" flex-gt-md="70" ng-class="{'md-dialog-fullscreen' : $mdMedia}">
+    <md-dialog-content>
+        <md-tabs md-stretch-tabs="always" md-dynamic-height="true" md-selected="dialogCtrl.currentTab" class="md-primary">
+            <md-tab ng-disabled="!dialogCtrl.stageAccessible('source')">
+                <md-tab-label>
+                    Source
+                    <md-icon ng-show="dialogCtrl.stageComplete['source']" ng-md-icon icon="check"></md-icon>
+                </md-tab-label>
+                <md-tab-body>
+                    <div ng-controller="ParlayBaseWidgetConfigurationSourceController as sourceCtrl">
+                        <md-autocomplete
+                                md-min-length="0"
+                                md-select-on-match="true"
+                                md-autofocus="true"
+                                md-no-cache="true"
+                                md-selected-item="dialogCtrl.configuration.selectedItem"
+                                md-selected-item-change="sourceCtrl.selectedItemChange(dialogCtrl.configuration.selectedItem, dialogCtrl.markStage)"
+                                md-search-text="sourceCtrl.searchText"
+                                md-items="item in sourceCtrl.querySearch(sourceCtrl.searchText)"
+                                md-item-text="item.name"
+                                placeholder="Search for a property, data stream or command"
+                                md-menu-class="autocomplete-custom-template">
+                            <md-item-template>
+                                <span class="item-title">
+                                    <md-icon ng-show="item.type == 'property'" ng-md-icon icon="description"></md-icon>
+                                    <md-icon ng-show="item.type == 'datastream'" ng-md-icon icon="group_work"></md-icon>
+                                    <md-icon ng-show="item.type == 'command'" ng-md-icon icon="code"></md-icon>
+                                    <span md-highlight-text="sourceCtrl.searchText">{{item.name}}</span>
+                                </span>
+                                <span class="item-metadata">
+                                    <span class="item-metastat">{{item.item_name}}</span>
+                                    <span class="item-metastat" ng-show="!!item.value">value<strong>{{item.value}}</strong></span>
+                                </span>
+                            </md-item-template>
+                        </md-autocomplete>
+                    </div>
+                </md-tab-body>
+            </md-tab>
+            <md-tab ng-disabled="!dialogCtrl.stageAccessible('transform')">
+                <md-tab-label>
+                    Transform
+                    <md-icon ng-show="dialogCtrl.stageComplete['transform']" ng-md-icon icon="check"></md-icon>
+                </md-tab-label>
+                <md-tab-body>
+                    <div ng-controller="ParlayBaseWidgetConfigurationTransformController as transformCtrl">
+                        <div ui-ace="{mode: js}" class="transform-edit" ng-model="dialogCtrl.configuration.transform"></div>
+                    </div>
+                </md-tab-body>
+            </md-tab>
+        </md-tabs>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button ng-click="dialogCtrl.cancel()" class="md-warn">Cancel</md-button>
+        <span flex></span>
+        <md-button ng-hide="dialogCtrl.currentTab == 0" ng-click="dialogCtrl.previous()" class="md-primary">Previous</md-button>
+        <md-button ng-hide="dialogCtrl.currentTab == 1" ng-disabled="!dialogCtrl.stageComplete[dialogCtrl.currentStage]" ng-click="dialogCtrl.next()" class="md-primary">Next</md-button>
+        <md-button ng-show="dialogCtrl.currentTab == 1 || dialogCtrl.isConfigurationComplete()" ng-click="dialogCtrl.hide()" class="md-primary">Ok</md-button>
+    </md-dialog-actions>
+</md-dialog>

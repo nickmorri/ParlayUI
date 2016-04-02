@@ -1,6 +1,9 @@
 function PromenadeStandardCommandFactory() {
 
     function PromenadeStandardCommand(data, item_name, protocol) {
+        
+        this.type = "command";
+        
         this.msg_key = data.MSG_KEY;
         this.input = data.INPUT;
         this.label =  !!data.LABEL ? data.LABEL : data.MSG_KEY;

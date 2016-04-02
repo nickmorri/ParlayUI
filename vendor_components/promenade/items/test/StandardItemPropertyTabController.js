@@ -14,7 +14,7 @@
     			scope = $rootScope.$new();
 
                 protocol = {sendMessage: function () {
-                    return $q(function (resolve) { resolve({CONTENTS: {VALUE: 10}}); })
+                    return $q(function (resolve) { resolve({CONTENTS: {VALUE: 10}}); });
                 }, onMessage: function () {}};
 
                 property = new _PromenadeStandardProperty_({

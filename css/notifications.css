@@ -1,6 +1,13 @@
 /* Add padding to ensure there is space for the action button. */
 .parlay-notification-list-item { padding-right: 100px; }
 
+/* Prevent overflow in the description heading. */
+.parlay-error-dialog-description-heading {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 /* Style toolbar to indicate to user that it's clickable. */
 .parlay-error-dialog-toolbar { cursor: pointer; }
 

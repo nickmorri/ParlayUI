@@ -7,8 +7,8 @@
 
 			<span flex></span>
 
-            <md-button ng-click="ctrl.toggleCommandBuilder($event)" class="md-icon-button" aria-label="Toggle command builder">
-                <md-tooltip>Toggle command builder</md-tooltip>
+            <md-button ng-click="ctrl.toggleCommandBuilder($event)" class="md-icon-button" aria-label="Collapse command builder">
+                <md-tooltip>Collapse command builder</md-tooltip>
                 <md-icon ng-md-icon icon="{{ctrl.collapsible_state.command_builder ? 'expand_less' : 'expand_more'}}"></md-icon>
             </md-button>
 
@@ -50,8 +50,8 @@
                 <md-icon ng-md-icon icon="content_copy"></md-icon>
             </md-button>
 
-            <md-button ng-click="ctrl.toggleScriptBuilder($event)" class="md-icon-button" aria-label="Toggle script builder">
-                <md-tooltip>Toggle script builder</md-tooltip>
+            <md-button ng-click="ctrl.toggleScriptBuilder($event)" class="md-icon-button" aria-label="Collapse script builder">
+                <md-tooltip>Collapse script builder</md-tooltip>
                 <md-icon ng-md-icon icon="{{ctrl.collapsible_state.script_builder ? 'expand_less' : 'expand_more'}}"></md-icon>
             </md-button>
 
@@ -69,13 +69,13 @@
 
             <span flex></span>
 
-            <md-button ng-click="ctrl.clearResponses($event)" class="md-icon-button" aria-label="Clear responses">
+            <md-button ng-click="ctrl.clearResponses($event)" ng-disabled="ctrl.responses.length == 0" class="md-icon-button" aria-label="Clear responses">
                 <md-tooltip>Clear responses</md-tooltip>
                 <md-icon ng-md-icon icon="delete"></md-icon>
             </md-button>
 
-            <md-button ng-click="ctrl.toggleResponseContents($event)" class="md-icon-button" aria-label="Toggle response contents">
-                <md-tooltip>Toggle response contents</md-tooltip>
+            <md-button ng-click="ctrl.toggleResponseContents($event)" class="md-icon-button" aria-label="Collapse response contents">
+                <md-tooltip>Collapse response contents</md-tooltip>
                 <md-icon ng-md-icon icon="{{ctrl.collapsible_state.response_contents ? 'expand_less' : 'expand_more'}}"></md-icon>
             </md-button>
 

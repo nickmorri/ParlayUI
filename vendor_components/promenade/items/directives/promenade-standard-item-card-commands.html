@@ -7,15 +7,15 @@
 
 			<span flex></span>
 
-            <md-button ng-click="ctrl.toggleCommandBuilder($event)" class="md-icon-button" aria-label="Toggle command builder">
-                <md-tooltip>Toggle command builder</md-tooltip>
-                <md-icon ng-md-icon icon="{{ctrl.command_builder_collapsed ? 'expand_less' : 'expand_more'}}"></md-icon>
+            <md-button ng-click="ctrl.toggleCommandBuilder($event)" class="md-icon-button" aria-label="Collapse command builder">
+                <md-tooltip>Collapse command builder</md-tooltip>
+                <md-icon ng-md-icon icon="{{ctrl.collapsible_state.command_builder ? 'expand_less' : 'expand_more'}}"></md-icon>
             </md-button>
 
 		</div>
 	</md-toolbar>
 
-    <form name="commandform" layout="column" ng-submit="ctrl.send($event)" ng-hide="ctrl.command_builder_collapsed">
+    <form name="commandform" layout="column" ng-submit="ctrl.send($event)" ng-hide="ctrl.collapsible_state.command_builder">
 
         <promenade-standard-item-card-command-container
                 class="promenade-item-card-tab-content"
@@ -50,15 +50,15 @@
                 <md-icon ng-md-icon icon="content_copy"></md-icon>
             </md-button>
 
-            <md-button ng-click="ctrl.toggleScriptBuilder($event)" class="md-icon-button" aria-label="Toggle script builder">
-                <md-tooltip>Toggle script builder</md-tooltip>
-                <md-icon ng-md-icon icon="{{ctrl.script_builder_collapsed ? 'expand_less' : 'expand_more'}}"></md-icon>
+            <md-button ng-click="ctrl.toggleScriptBuilder($event)" class="md-icon-button" aria-label="Collapse script builder">
+                <md-tooltip>Collapse script builder</md-tooltip>
+                <md-icon ng-md-icon icon="{{ctrl.collapsible_state.script_builder ? 'expand_less' : 'expand_more'}}"></md-icon>
             </md-button>
 
         </div>
     </md-toolbar>
 
-    <div layout="column" layout-margin ng-hide="ctrl.script_builder_collapsed">
+    <div layout="column" layout-margin ng-hide="ctrl.collapsible_state.script_builder">
         <pre class="promenade-script-builder-text">{{wrapper.message.toPythonStatement()}}</pre>
     </div>
 
@@ -69,46 +69,45 @@
 
             <span flex></span>
 
-            <md-button ng-click="ctrl.clearResponses($event)" class="md-icon-button" aria-label="Clear responses">
+            <md-button ng-click="ctrl.clearResponses($event)" ng-disabled="ctrl.responses.length == 0" class="md-icon-button" aria-label="Clear responses">
                 <md-tooltip>Clear responses</md-tooltip>
                 <md-icon ng-md-icon icon="delete"></md-icon>
             </md-button>
 
-            <md-button ng-click="ctrl.toggleResponseContents($event)" class="md-icon-button" aria-label="Toggle response contents">
-                <md-tooltip>Toggle response contents</md-tooltip>
-                <md-icon ng-md-icon icon="{{ctrl.response_contents_collapsed ? 'expand_less' : 'expand_more'}}"></md-icon>
+            <md-button ng-click="ctrl.toggleResponseContents($event)" class="md-icon-button" aria-label="Collapse response contents">
+                <md-tooltip>Collapse response contents</md-tooltip>
+                <md-icon ng-md-icon icon="{{ctrl.collapsible_state.response_contents ? 'expand_less' : 'expand_more'}}"></md-icon>
             </md-button>
 
         </div>
     </md-toolbar>
 
-    <div layout="column" ng-hide="ctrl.response_contents_collapsed">
+    <div layout="column" ng-hide="ctrl.collapsible_state.response_contents">
 
         <div ng-show="ctrl.responses.length" layout="column" layout-margin>
 
             <div layout="row" layout-align="start center" class="promenade-response-contents-body">
-                <p flex="15" class="md-body-2">MSG ID</p>
-                <span flex="5"></span>
-                <p flex ng-hide="response.received" class="md-body-2">Contents</p>
-                <span flex="5"></span>
-                <p class="md-body-2">Received</p>
+                <p flex="15" class="md-body-2">ID</p>
+                <p flex flex-offset="5" ng-hide="response.received" class="md-body-2">Contents</p>
+                <p flex="10" flex-offset="5" class="md-body-2">Received</p>
+                <p flex="10" flex-offset="5" class="md-body-2">Success</p>
             </div>
 
             <div ng-repeat="response in ctrl.responses">
                 <div layout="row" layout-align="start center" class="promenade-response-contents-body">
                     <p flex="15" class="md-body-1">{{response.MSG_ID}}</p>
-                    <span flex="5"></span>
-                    <p flex ng-hide="response.received" class="md-body-1">Waiting for response..</p>
+                    <p flex flex-offset="5" ng-hide="response.received" class="md-body-1">Waiting for response..</p>
 
-                    <div flex ng-show="response.received" layout="column">
+                    <div flex flex-offset="5" ng-show="response.received" layout="column">
                         <p flex ng-show="response.received" class="md-body-1 promenade-response-contents-key-values" ng-repeat="(key, value) in response.message.CONTENTS">
                             {{key}} = {{value}}<span ng-show="!$last">,</span>
                         </p>
                     </div>
 
-                    <span flex="5"></span>
-                    <md-icon ng-md-icon icon="check" ng-show="response.received"></md-icon>
-                    <md-progress-circular ng-hide="response.received" md-mode="indeterminate" md-diameter="30px"></md-progress-circular>
+                    <md-icon flex="10" flex-offset="5" ng-md-icon icon="check" ng-show="response.received"></md-icon>
+                    <md-progress-circular flex="10" flex-offset="5" ng-hide="response.received" md-mode="indeterminate" md-diameter="30px"></md-progress-circular>
+
+                    <md-icon flex="10" flex-offset="5" ng-md-icon icon="{{response.success ? 'check' : 'clear'}}" options='{"rotation": "none"}'></md-icon>
                 </div>
             </div>
 

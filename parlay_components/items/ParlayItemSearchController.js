@@ -10,7 +10,7 @@ function createFilterFor(query) {
     };
 }
 
-function ParlayItemSearchController($scope, ParlayItemManager) {
+function ParlayItemSearchController($scope, $mdSidenav, ParlayItemManager) {
             
     $scope.selected_item = null;
     $scope.search_text = null;
@@ -21,6 +21,11 @@ function ParlayItemSearchController($scope, ParlayItemManager) {
         ParlayItemManager.activateItem(item);
         $scope.selected_item = null;
         $scope.search_text = null;
+
+        // Hide sidenav after selecting item on smaller screen sizes where the sidenav is initially hidden.
+        if (!$mdSidenav("navigation").isLockedOpen()) {
+            $mdSidenav("navigation").close();
+        }
     };
 
     /**
@@ -47,5 +52,5 @@ function ParlayItemSearch() {
 }
 
 angular.module('parlay.items.search', ['templates-main', 'parlay.items.manager'])
-	.controller('ParlayItemSearchController', ['$scope', 'ParlayItemManager', ParlayItemSearchController])
+	.controller('ParlayItemSearchController', ['$scope', '$mdSidenav', 'ParlayItemManager', ParlayItemSearchController])
 	.directive('parlayItemSearch', [ParlayItemSearch]);

@@ -13,36 +13,42 @@
 
         <div layout-gt-sm="row" layout="column">
 
-			<md-list flex flex-order="0" flex-order-gt-sm="1">
+            <div flex flex-order="0" flex-order-gt-sm="1">
 
-                <md-subheader>Y-Axis Range</md-subheader>
+                <md-list><md-subheader>Y-Axis Range</md-subheader></md-list>
 
-                <md-list-item layout="row">
-                    <md-icon ng-md-icon icon="{{ctrl.maximum_locked ? 'check_box' : 'check_box_outline_blank'}}" options="{'rotation': 'none'}" ng-click="ctrl.toggleMaximum()"></md-icon>
-                    <md-input-container flex ng-switch="ctrl.maximum_locked">
-                        <label>Maximum range</label>
-                        <input ng-switch-when="false" ng-model="ctrl.smoothie.valueRange.max" type="number" disabled>
-                        <input ng-switch-when="true" ng-model="ctrl.smoothie.options.maxValue" type="number">
-                    </md-input-container>
-                </md-list-item>
+                <div layout="column">
 
-				<md-list-item layout="row">
-                    <md-icon ng-md-icon icon="{{ctrl.minimum_locked ? 'check_box' : 'check_box_outline_blank'}}" options="{'rotation': 'none'}" ng-click="ctrl.toggleMinimum()"></md-icon>
-                    <md-input-container flex ng-switch="ctrl.minimum_locked">
-                        <label>Minimum range</label>
-                        <input ng-switch-when="false" ng-model="ctrl.smoothie.valueRange.min" type="number" disabled>
-                        <input ng-switch-when="true" ng-model="ctrl.smoothie.options.minValue" type="number">
-                    </md-input-container>
-                </md-list-item>
+                    <div layout="row" class="graph-axis-control">
+                        <md-checkbox ng-checked="ctrl.maximum_locked " ng-click="ctrl.toggleMaximum()"></md-checkbox>
+                        <md-input-container flex ng-switch="ctrl.maximum_locked">
+                            <label>Maximum range</label>
+                            <input ng-switch-when="false" ng-model="ctrl.smoothie.valueRange.max" type="number" disabled>
+                            <input ng-switch-when="true" ng-model="ctrl.smoothie.options.maxValue" type="number">
+                        </md-input-container>
+                    </div>
 
-            </md-list>
+                    <div layout="row">
+                        <md-checkbox ng-checked="ctrl.minimum_locked" ng-click="ctrl.toggleMinimum()"></md-checkbox>
+                        <md-input-container flex ng-switch="ctrl.minimum_locked">
+                            <label>Minimum range</label>
+                            <input ng-switch-when="false" ng-model="ctrl.smoothie.valueRange.min" type="number" disabled>
+                            <input ng-switch-when="true" ng-model="ctrl.smoothie.options.minValue" type="number">
+                        </md-input-container>
+                    </div>
+
+                </div>
+
+            </div>
 
             <md-list flex flex-order="1" flex-order-gt-sm="0">
 
                 <md-subheader>Streams</md-subheader>
 
 				<md-list-item ng-repeat="stream in ctrl.item.data_streams | orderObjectBy: 'name'" layout="row" ng-click="ctrl.toggleGraphing(stream)" title="Click to toggle graphing">
-                    <md-icon ng-md-icon icon="{{ctrl.isStreamEnabled(stream) ? 'check_box' : 'check_box_outline_blank'}}" options="{'rotation': 'none'}" ></md-icon>
+
+                    <md-checkbox ng-checked="ctrl.isStreamEnabled(stream)" ng-click="ctrl.toggleGraphing(stream)"></md-checkbox>
+
 					<p>{{stream.name}} <span ng-show="stream.value !== undefined">has value {{stream.value}}</span></p>
 
                     <md-button class="md-secondary md-icon-button md-primary" ng-click="stream.listen(false)">

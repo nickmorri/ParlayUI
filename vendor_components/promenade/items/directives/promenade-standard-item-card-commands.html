@@ -98,7 +98,7 @@
                     <p flex="15" class="md-body-1">{{response.MSG_ID}}</p>
                     <p flex flex-offset="5" ng-hide="response.received" class="md-body-1">Waiting for response..</p>
 
-                    <div flex ng-show="response.received" layout="column">
+                    <div flex flex-offset="5" ng-show="response.received" layout="column">
                         <p flex ng-show="response.received" class="md-body-1 promenade-response-contents-key-values" ng-repeat="(key, value) in response.message.CONTENTS">
                             {{key}} = {{value}}<span ng-show="!$last">,</span>
                         </p>

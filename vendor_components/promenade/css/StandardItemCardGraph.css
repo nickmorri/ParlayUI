@@ -1,21 +1,19 @@
 /* Set padding-top to 0 so that the list sits directly underneath the dialog toolbar. */
 .parlay-graph-configuration-dialog-content > div > md-list { padding-top: 0; }
+.parlay-graph-configuration-dialog-content > div > div > md-list { padding-top: 0; }
 
 /* Reduce list sub header margin bottom for better information density. */
 .parlay-graph-configuration-dialog-content > div > md-list > .md-subheader { margin-bottom: 0; }
-
-/* Prevent outline from appearing on md-icon when used as button. */
-.parlay-graph-configuration-dialog-content > div > md-list > md-list-item > md-icon:focus { outline: none; }
+.parlay-graph-configuration-dialog-content > div > div > md-list > .md-subheader { margin-bottom: 0; }
 
 /* Hide errors spacer to line up md-input-container with the md-icon in md-list-item. */
 .parlay-graph-configuration-dialog-content > div > md-list > md-list-item > md-input-container .md-errors-spacer { display: none; }
 
-/* Since we're using md-icon as a button in the list we should style it to indicate to the user that it's clickable. */
-.parlay-graph-configuration-dialog-content > div > md-list > md-list-item > md-icon {
-    margin-top: 0;
-    margin-bottom: 0;
-    cursor: pointer;
-}
+/* Reduce md-checkbox margin bottom for better information density. */
+.graph-axis-control > md-checkbox { margin-bottom: 0; }
+
+/* Reduce md-input-container margin bottom for better information density. */
+.graph-axis-control > md-input-container { margin-bottom: 0; }
 
 /* Reduce md-input-container margin bottom for better information density. */
 .parlay-graph-configuration-dialog-content > div > md-list > md-list-item > md-input-container {

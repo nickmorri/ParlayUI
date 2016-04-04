@@ -50,26 +50,26 @@
 
         <md-divider></md-divider>
 
-        <md-list-item ng-click="ctrl.openProtocolManagementDialog($event)" title="Open protocols dialog">
-            <md-icon ng-md-icon class="parlay-nav-icon" icon="settings_ethernet"></md-icon>
-            <p>Protocols</p>
-        </md-list-item>
-
-        <md-list-item ng-click="ctrl.requestDiscovery()" title="Request discovery">
+        <md-list-item ng-show="ctrl.getCurrentState().name == 'items'" ng-click="ctrl.requestDiscovery()" title="Request discovery">
             <md-icon ng-md-icon class="parlay-nav-icon" icon="autorenew"></md-icon>
             <p>Discovery</p>
         </md-list-item>
 
-        <md-list-item ng-click="ctrl.openWorkspaceManagementDialog($event)" title="Open workspaces dialog">
+        <md-list-item ng-show="ctrl.getCurrentState().name == 'items'" ng-click="ctrl.openWorkspaceManagementDialog($event)" title="Open workspaces dialog">
             <md-icon ng-md-icon class="parlay-nav-icon" icon="dashboard"></md-icon>
             <p>Workspaces</p>
         </md-list-item>
 
-        <parlay-item-search layout="row"></parlay-item-search>
+        <parlay-item-search ng-show="ctrl.getCurrentState().name == 'items'" layout="row"></parlay-item-search>
 
         <span flex></span>
 
         <md-divider></md-divider>
+
+        <md-list-item ng-click="ctrl.openProtocolManagementDialog($event)" title="Open protocols dialog">
+            <md-icon ng-md-icon class="parlay-nav-icon" icon="settings_ethernet"></md-icon>
+            <p>Protocols</p>
+        </md-list-item>
 
         <md-list-item ng-click="ctrl.openNotificationSidenav()" title="Open notifications sidenav">
             <md-icon ng-md-icon class="parlay-nav-icon" icon="notifications"></md-icon>

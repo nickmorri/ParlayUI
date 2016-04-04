@@ -136,9 +136,11 @@ function PromenadeStandardItemCardCommandTabController($scope, ParlayNotificatio
     }
 
     // Hold state of command section collapsibles.
-    this.command_builder_collapsed = false;
-    this.script_builder_collapsed = false;
-    this.response_contents_collapsed = false;
+    this.collapsible_state = {
+        command_builder: false,
+        script_builder: false,
+        response_contents: false
+    };
 
     // Container for pending responses.
     this.responses = [];
@@ -215,15 +217,15 @@ function PromenadeStandardItemCardCommandTabController($scope, ParlayNotificatio
     };
 
     this.toggleCommandBuilder = function () {
-		this.command_builder_collapsed = !this.command_builder_collapsed;
+        this.collapsible_state.command_builder = !this.collapsible_state.command_builder;
 	};
 
     this.toggleScriptBuilder = function () {
-        this.script_builder_collapsed = !this.script_builder_collapsed;
+        this.collapsible_state.script_builder = !this.collapsible_state.script_builder;
     };
 
     this.toggleResponseContents = function () {
-        this.response_contents_collapsed = !this.response_contents_collapsed ;
+        this.collapsible_state.response_contents = !this.collapsible_state.response_contents;
     };
 	
 	// Watch for new fields to fill with defaults.

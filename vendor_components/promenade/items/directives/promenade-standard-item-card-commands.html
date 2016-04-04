@@ -9,13 +9,13 @@
 
             <md-button ng-click="ctrl.toggleCommandBuilder($event)" class="md-icon-button" aria-label="Toggle command builder">
                 <md-tooltip>Toggle command builder</md-tooltip>
-                <md-icon ng-md-icon icon="{{ctrl.command_builder_collapsed ? 'expand_less' : 'expand_more'}}"></md-icon>
+                <md-icon ng-md-icon icon="{{ctrl.collapsible_state.command_builder ? 'expand_less' : 'expand_more'}}"></md-icon>
             </md-button>
 
 		</div>
 	</md-toolbar>
 
-    <form name="commandform" layout="column" ng-submit="ctrl.send($event)" ng-hide="ctrl.command_builder_collapsed">
+    <form name="commandform" layout="column" ng-submit="ctrl.send($event)" ng-hide="ctrl.collapsible_state.command_builder">
 
         <promenade-standard-item-card-command-container
                 class="promenade-item-card-tab-content"
@@ -52,13 +52,13 @@
 
             <md-button ng-click="ctrl.toggleScriptBuilder($event)" class="md-icon-button" aria-label="Toggle script builder">
                 <md-tooltip>Toggle script builder</md-tooltip>
-                <md-icon ng-md-icon icon="{{ctrl.script_builder_collapsed ? 'expand_less' : 'expand_more'}}"></md-icon>
+                <md-icon ng-md-icon icon="{{ctrl.collapsible_state.script_builder ? 'expand_less' : 'expand_more'}}"></md-icon>
             </md-button>
 
         </div>
     </md-toolbar>
 
-    <div layout="column" layout-margin ng-hide="ctrl.script_builder_collapsed">
+    <div layout="column" layout-margin ng-hide="ctrl.collapsible_state.script_builder">
         <pre class="promenade-script-builder-text">{{wrapper.message.toPythonStatement()}}</pre>
     </div>
 
@@ -76,13 +76,13 @@
 
             <md-button ng-click="ctrl.toggleResponseContents($event)" class="md-icon-button" aria-label="Toggle response contents">
                 <md-tooltip>Toggle response contents</md-tooltip>
-                <md-icon ng-md-icon icon="{{ctrl.response_contents_collapsed ? 'expand_less' : 'expand_more'}}"></md-icon>
+                <md-icon ng-md-icon icon="{{ctrl.collapsible_state.response_contents ? 'expand_less' : 'expand_more'}}"></md-icon>
             </md-button>
 
         </div>
     </md-toolbar>
 
-    <div layout="column" ng-hide="ctrl.response_contents_collapsed">
+    <div layout="column" ng-hide="ctrl.collapsible_state.response_contents">
 
         <div ng-show="ctrl.responses.length" layout="column" layout-margin>
 

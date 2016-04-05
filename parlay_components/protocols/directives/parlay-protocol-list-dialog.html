@@ -16,7 +16,7 @@
 
         <md-list>
 
-            <md-list-item class="md-2-line" layout="row">
+            <md-list-item class="md-2-line" layout="row" layout-align="space-between center">
 
                 <md-icon hide-xs hide-sm hide-md ng-md-icon icon="group_work"></md-icon>
 
@@ -25,13 +25,13 @@
                     <p>{{ctrl.getBrokerAddress()}}</p>
                 </div>
 
-                <md-button ng-show="ctrl.isBrokerConnected()" class="md-secondary md-warn" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.shutdownBroker()" aria-label="Shutdown">
+                <md-button ng-if="ctrl.isBrokerConnected()" class="md-secondary md-warn" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.shutdownBroker()" aria-label="Shutdown">
                     <md-tooltip>Shutdown</md-tooltip>
                     <span hide show-gt-md>Shutdown</span>
-                    <md-icon hide-gt-md ng-md-icon icon="highlight_remove"></md-icon>
+                    <md-icon hide-gt-md ng-md-icon icon="clear"></md-icon>
                 </md-button>
 
-                <md-button ng-hide="ctrl.isBrokerConnected()" class="md-secondary md-primary" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.connectBroker()" aria-label="Connect">
+                <md-button ng-if="!ctrl.isBrokerConnected()" class="md-secondary md-primary" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.connectBroker()" aria-label="Connect">
                     <md-tooltip>Connect</md-tooltip>
                     <span hide show-gt-md>Connect</span>
                     <md-icon hide-gt-md ng-md-icon icon="input"></md-icon>
@@ -53,7 +53,7 @@
                 <md-button class="md-secondary md-warn" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.closeProtocol(protocol)" aria-label="Disconnect">
                     <md-tooltip>Disconnect</md-tooltip>
                     <span hide show-gt-md>Disconnect</span>
-                    <md-icon hide-gt-md ng-md-icon icon="highlight_remove"></md-icon>
+                    <md-icon hide-gt-md ng-md-icon icon="clear"></md-icon>
                 </md-button>
 
             </md-list-item>

@@ -318,7 +318,7 @@ module.exports = function (grunt) {
 			'options': {
 				'mangle': false,
 				'compress': true,
-				'sourceMap': true,
+				'sourceMap': false,
 				'preserveComments': false
 			},
 			'dist': {

@@ -1,6 +1,66 @@
-function ParlayBaseWidget() {
+function ParlayBaseWidget($mdDialog) {
     return {
-        restrict: "E"
+        scope: true,
+        restrict: "E",
+        link: function (scope, element, attributes) {
+
+            function showDialog(configuration) {
+                $mdDialog.show({
+                    templateUrl: "../parlay_components/widgets/directives/parlay-base-widget-configuration-dialog.html",
+                    clickOutsideToClose: true,
+                    controller: "ParlayBaseWidgetConfigurationDialogController",
+                    controllerAs: "dialogCtrl",
+                    locals: { configuration: configuration },
+                    bindToController: true
+                }).then(function (result) {
+                    scope.info = result.selectedItem;
+                    scope.transform = eval("(" + result.transform + ")");
+                });
+            }
+
+            showDialog({
+                selectedItem: undefined,
+                transform: function (input) { return input; }.toString()
+            });
+
+            scope.edit = function () {
+                showDialog({
+                    selectedItem: scope.info,
+                    transform: scope.transform.toString()
+                });
+            };
+
+        }
+    };
+}
+
+function ParlayDemoWidget() {
+    return {
+        scope: {
+            info: "=",
+            transform: "&",
+            edit: "&"
+        },
+        templateUrl: "../parlay_components/widgets/directives/parlay-demo-widget.html",
+        link: function (scope, element, attributes) {
+
+            function watcher() {
+                scope.$digest();
+            }
+
+            var reg;
+
+            scope.$watch("info", function (newValue, oldValue) {
+                if (!!newValue) {
+
+                    if (!!reg && newValue != oldValue) {
+                        reg();
+                    }
+
+                    reg = newValue.onChange(watcher);
+                }
+            });
+        }
     };
 }
 
@@ -90,4 +150,5 @@ angular.module("parlay.widgets.base", ["parlay.data", "ngMaterial", "ui.ace"])
     .controller("ParlayBaseWidgetConfigurationSourceController", ["ParlayData", ParlayBaseWidgetConfigurationSourceController])
     .controller("ParlayBaseWidgetConfigurationTransformController", [ParlayBaseWidgetConfigurationTransformController])
     .controller("ParlayBaseWidgetConfigurationDialogController", ["$mdDialog", ParlayBaseWidgetConfigurationDialogController])
-    .directive("parlayBaseWidget", [ParlayBaseWidget]);
+    .directive("parlayDemoWidget", [ParlayDemoWidget])
+    .directive("parlayBaseWidget", ["$mdDialog", ParlayBaseWidget]);

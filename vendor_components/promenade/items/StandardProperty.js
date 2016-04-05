@@ -49,6 +49,18 @@ function PromenadeStandardPropertyFactory(ParlayData) {
         this.item_name = item_name;
         this.protocol = protocol;
 
+        this.listener = protocol.onMessage({
+            TX_TYPE: "DIRECT",
+            MSG_TYPE: "RESPONSE",
+            FROM: this.item_name,
+            TO: "UI"
+        }, function(response) {
+            // TODO: Talk with Daniel about refactoring property API to require property name in topics.
+            if (this.name == response.PROPERTY && response.VALUE) {
+                this.value = response.VALUE;
+            }
+        }.bind(this));
+
         this.get = function () {
             return protocol.sendMessage({
                 TX_TYPE: "DIRECT",
@@ -65,10 +77,7 @@ function PromenadeStandardPropertyFactory(ParlayData) {
                 MSG_TYPE: "RESPONSE",
                 FROM: this.item_name,
                 TO: "UI"
-            }, true).then(function(response) {
-                this.value = response.CONTENTS.VALUE;
-                return response;
-            }.bind(this));
+            }, true);
         };
 
         this.set = function () {

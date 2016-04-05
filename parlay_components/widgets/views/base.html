@@ -1,21 +1,6 @@
 <div layout="row">
     <parlay-base-widget ng-repeat="item in widgetsCtrl.items">
-        <md-card>
-            <md-toolbar>
-                <div class="md-toolbar-tools">
-                    <h2>{{item.data.name}}</h2>
-
-                    <span flex></span>
-
-                    <md-button class="md-icon-button" ng-click="widgetsCtrl.edit(item)">
-                        <md-icon ng-md-icon icon="edit"></md-icon>
-                    </md-button>
-                </div>
-            </md-toolbar>
-            <md-card-contents>
-                <p>{{item.transform(item.data.value)}}</p>
-            </md-card-contents>
-        </md-card>
+        <parlay-demo-widget info="info" transform="transform()" edit="edit()"></parlay-demo-widget>
     </parlay-base-widget>
 </div>
 

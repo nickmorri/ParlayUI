@@ -122,6 +122,15 @@ module.exports = function (grunt) {
 			}
 		},
 
+		'bower_concat': {
+			'dist': {
+				'dest': {
+					'js': '<%= meta.dist_destination %>/lib.js',
+                    'css': '<%= meta.dist_destination %>/lib.css'
+				}
+			}
+		},
+
 		'wiredep': {
 			'dist': {
 				'src': '<%= meta.dist_destination %>/index.html'
@@ -314,7 +323,8 @@ module.exports = function (grunt) {
 			},
 			'dist': {
 				'files': {
-					'<%= meta.dist_destination %>/<%= pkg.namelower %>.min.js': ['<%= meta.source %>', '<%= meta.vendorComponents %>', '<%= meta.compiledHtml %>']
+					'<%= meta.dist_destination %>/<%= pkg.namelower %>.min.js': ['<%= meta.source %>', '<%= meta.vendorComponents %>', '<%= meta.compiledHtml %>'],
+                    '<%= meta.dist_destination %>/lib.min.js': '<%= meta.dist_destination %>/lib.js'
 				}
 			}
 		},
@@ -325,7 +335,10 @@ module.exports = function (grunt) {
 				'roundingPrecision': -1
 			},
 			'dist': {
-				'files': {'<%= meta.dist_destination %>/<%= pkg.namelower %>.min.css': '<%= meta.stylesheets %>'}
+				'files': {
+                    '<%= meta.dist_destination %>/<%= pkg.namelower %>.min.css': '<%= meta.stylesheets %>',
+                    '<%= meta.dist_destination %>/lib.min.css': '<%= meta.dist_destination %>/lib.css'
+                }
 			},
 			'dev': {
 				'files': {'<%= meta.dev_destination %>/<%= pkg.namelower %>.min.css': '<%= meta.stylesheets %>'}
@@ -378,7 +391,7 @@ module.exports = function (grunt) {
 	    'csslint:dist',
 	    'clean:dist',
 	    'bower-install-simple:dist',
-	    'bower:dist',
+        'bower_concat:dist',
 	    'html2js',
 	    'karma:dev',
 	    'uglify:dist',

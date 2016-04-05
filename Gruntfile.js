@@ -125,8 +125,8 @@ module.exports = function (grunt) {
 		'bower_concat': {
 			'dist': {
 				'dest': {
-					'js': '<%= meta.dist_destination %>/lib.js',
-                    'css': '<%= meta.dist_destination %>/lib.css'
+					'js': '<%= meta.tmp_destination %>/lib.js',
+                    'css': '<%= meta.tmp_destination %>/lib.css'
 				}
 			}
 		},
@@ -324,7 +324,7 @@ module.exports = function (grunt) {
 			'dist': {
 				'files': {
 					'<%= meta.dist_destination %>/<%= pkg.namelower %>.min.js': ['<%= meta.source %>', '<%= meta.vendorComponents %>', '<%= meta.compiledHtml %>'],
-                    '<%= meta.dist_destination %>/lib.min.js': '<%= meta.dist_destination %>/lib.js'
+                    '<%= meta.dist_destination %>/lib.min.js': '<%= meta.tmp_destination %>/lib.js'
 				}
 			}
 		},
@@ -337,7 +337,7 @@ module.exports = function (grunt) {
 			'dist': {
 				'files': {
                     '<%= meta.dist_destination %>/<%= pkg.namelower %>.min.css': '<%= meta.stylesheets %>',
-                    '<%= meta.dist_destination %>/lib.min.css': '<%= meta.dist_destination %>/lib.css'
+                    '<%= meta.dist_destination %>/lib.min.css': '<%= meta.tmp_destination %>/lib.css'
                 }
 			},
 			'dev': {

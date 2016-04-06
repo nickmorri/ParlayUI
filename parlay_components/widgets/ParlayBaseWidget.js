@@ -122,7 +122,6 @@ function ParlayBaseWidgetController() {
 
     var inputs = [];
     var buttons = [];
-    var selects = [];
 
     this.registerInput = function (element) {
         inputs.push(element);
@@ -132,20 +131,12 @@ function ParlayBaseWidgetController() {
         buttons.push(element);
     };
 
-    this.registerSelect = function (element) {
-        selects.push(element);
-    };
-
     this.getInputs = function () {
         return inputs;
     };
 
     this.getButtons = function () {
         return buttons;
-    };
-
-    this.getSelects = function () {
-        return selects;
     };
 
 }
@@ -157,7 +148,6 @@ function ParlayDemoWidget() {
         link: function (scope, element, attributes, controller) {
             Array.prototype.slice.call(element.find("input")).forEach(controller.registerInput);
             Array.prototype.slice.call(element.find("button")).forEach(controller.registerButton);
-            Array.prototype.slice.call(element.find("select")).forEach(controller.registerSelect);
         },
         controller: function ($scope) {
 

@@ -2,10 +2,7 @@
     <md-dialog-content>
         <md-tabs md-stretch-tabs="always" md-dynamic-height="true" md-selected="dialogCtrl.currentTab" class="md-primary">
             <md-tab ng-disabled="!dialogCtrl.stageAccessible('source')">
-                <md-tab-label>
-                    Source
-                    <md-icon ng-show="dialogCtrl.stageComplete['source']" ng-md-icon icon="check"></md-icon>
-                </md-tab-label>
+                <md-tab-label>Source</md-tab-label>
                 <md-tab-body>
                     <div ng-controller="ParlayBaseWidgetConfigurationSourceController as sourceCtrl">
 
@@ -47,10 +44,7 @@
                 </md-tab-body>
             </md-tab>
             <md-tab ng-disabled="!dialogCtrl.stageAccessible('transform')">
-                <md-tab-label>
-                    Transform
-                    <md-icon ng-show="dialogCtrl.stageComplete['transform']" ng-md-icon icon="check"></md-icon>
-                </md-tab-label>
+                <md-tab-label>Transform</md-tab-label>
                 <md-tab-body>
 
                     <div layout="column">

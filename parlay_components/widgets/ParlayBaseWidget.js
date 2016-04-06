@@ -229,8 +229,11 @@ function ParlayBaseWidgetConfigurationSourceController($scope, ParlayData) {
     };
 
     this.change = function (item) {
-        if (item.type == "datastream") {
+        if (!!item && item.type == "datastream") {
             item.listen(false);
+        }
+        else if (!!item && item.type == "property") {
+            item.get();
         }
     };
     

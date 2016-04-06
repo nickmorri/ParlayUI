@@ -1,12 +1,18 @@
-function constructInterpreter(functionString, items) {
+function constructInterpreter(functionString, items, elements) {
     "use strict";
-    if (!!items && !!items && items.length > 0) {
-        return new Interpreter(functionString, function(interpreter, scope) {
+    return new Interpreter(functionString, function(interpreter, scope) {
+        if (!!items && items.length > 0) {
             items.forEach(function (item) {
                 interpreter.setProperty(scope, item.name + "_value", interpreter.createPrimitive(item.value));
             });
-        });
-    }
+        }
+        if (!!elements && elements.length > 0) {
+            elements.forEach(function (element) {
+                var primitive = interpreter.createPrimitive(element.type == "number" ? parseInt(element.value, 10) : element.value);
+                interpreter.setProperty(scope, "ID" + element.id + "_" + element.tagName.toLowerCase() + "_" + element.type, primitive);
+            });
+        }
+    });
 }
 
 function evaluateInterpreter(interpreter) {
@@ -15,11 +21,11 @@ function evaluateInterpreter(interpreter) {
     return interpreter.value.data;
 }
 
-function interpret(functionString, items) {
+function interpret(functionString, items, elements) {
     "use strict";
     if (!!items && !!items && items.length > 0) {
         try {
-            return evaluateInterpreter(constructInterpreter(functionString, items));
+            return evaluateInterpreter(constructInterpreter(functionString, items, elements));
         }
         catch (e) {
             return e.toString();
@@ -27,29 +33,34 @@ function interpret(functionString, items) {
     }
 }
 
-function buildTemplate(items) {
-    var declaration, body, parameters, actuals;
+function buildTemplate(items, elements) {
 
-    declaration = "function ";
+    function buildActuals(items, elements) {
 
-    if (!!items && items.length > 0) {
-        parameters = items.reduce(function (previous, current, index, arr) {
-            return previous + "var" + index + (index < arr.length - 1 ? ", " : "");
-        }, "(") + ")";
-        actuals = items.reduce(function (previous, current, index, arr) {
-            return previous + current.name + "_value" + (index < arr.length - 1 ? ", " : "");
-        }, "(") + ")";
-        body = items.reduce(function (previous, current, index, arr) {
-            return previous + "var" + index + (index < arr.length - 1 ? " + " : "");
-        }, "{ return ") + "; }";
-    }
-    else {
-        parameters = "() ";
-        actuals = "()";
-        body = "{ return undefined; }";
+        var item_actuals = !!items && items.length > 0 ? items.map(function (current) {
+            return current.name + "_value";
+        }) : [];
+
+        var element_actuals = !!elements && elements.length > 0 ? elements.map(function (current) {
+            return "ID" + current.id + "_" + current.tagName.toLowerCase() + "_" + current.type;
+        }) : [];
+
+        return "(" + [].concat(item_actuals).concat(element_actuals).join(", ") + ")";
     }
 
-    return "(" + declaration + parameters + body + actuals + ")";
+    function buildParameters(items, elements) {
+        var variable_count = (!!items ? items.length : 0) + (!!elements ? elements.length : 0);
+
+        var parameters = [];
+
+        for (var i = 0; i < variable_count; i++) {
+            parameters.push("var" + i);
+        }
+
+        return "(" + parameters.join(", ") + ")";
+    }
+
+    return "(function " + buildParameters(items, elements) + "{ return undefined; }" + buildActuals(items, elements) + ")";
 }
 
 function ParlayBaseWidget($mdDialog) {
@@ -62,22 +73,24 @@ function ParlayBaseWidget($mdDialog) {
             var handlers = [];
 
             function updateTransformedValue() {
-                scope.transformedValue = interpret(scope.transform, scope.selectedItems);
+                scope.transformedValue = interpret(scope.transform, scope.selectedItems, controller.getInputs());
             }
 
             // Establish a watcher that will manage onChange handlers for the selected values.
-            scope.$watchCollection("selectedItems", function (newValue) {
+            scope.$watchCollection("selectedItems", function (selectedItems) {
                 if (!!handlers && handlers.length > 0) {
                     handlers.forEach(function (handler) { handler(); });
                 }
-                if (!!newValue && newValue.length > 0) {
-                    handlers = newValue.map(function (item) {
+                if (!!selectedItems && selectedItems.length > 0) {
+                    handlers = selectedItems.map(function (item) {
                         return item.onChange(function () {
                             scope.$apply(updateTransformedValue);
                         });
                     });
                 }
             });
+
+            scope.$watchCollection("inputs", updateTransformedValue);
 
             scope.edit = function () {
                 $mdDialog.show({
@@ -157,7 +170,7 @@ function ParlayBaseWidgetConfigurationDialogController($scope, $mdDialog, select
 
     $scope.$watchCollection("selectedItems", function (newValue, oldValue) {
         if ($scope.transform === undefined || newValue.length !== oldValue.length) {
-            $scope.transform = buildTemplate(newValue);
+            $scope.transform = buildTemplate(newValue, $scope.baseWidgetCtrl.getInputs());
         }
     });
     
@@ -195,7 +208,7 @@ function ParlayBaseWidgetConfigurationDialogController($scope, $mdDialog, select
     };
 
     this.interpret = function() {
-        $scope.transformedValue = interpret($scope.transform, $scope.selectedItems); 
+        $scope.transformedValue = interpret($scope.transform, $scope.selectedItems, $scope.baseWidgetCtrl.getInputs());
     };
 
     if ($scope.selectedItems !== undefined) {

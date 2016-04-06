@@ -17,6 +17,7 @@ function WidgetsConfiguration($stateProvider) {
 }
 
 function ParlayWidgetsController() {
+    
     this.items = [];
 
     this.add = function () {

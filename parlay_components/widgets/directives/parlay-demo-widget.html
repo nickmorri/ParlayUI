@@ -2,11 +2,9 @@
     <md-toolbar>
         <div class="md-toolbar-tools">
             <h2>
-
-                <span ng-repeat="item in info">
-                    {{item.name}}
+                <span ng-repeat="item in selectedItems">
+                    {{item.name}}<span ng-show="!$last">, </span>
                 </span>
-
             </h2>
 
             <span flex></span>
@@ -17,6 +15,14 @@
         </div>
     </md-toolbar>
     <md-card-content>
+
         <p>{{transformedValue}}</p>
+        <input id="1" />
+        <input id="2" />
+        <select ng-model="select_test">
+            <option>Hey</option>
+            <option>You</option>
+        </select>
+
     </md-card-content>
 </md-card>

@@ -9,7 +9,7 @@ function constructInterpreter(functionString, items, elements) {
         if (!!elements && elements.length > 0) {
             elements.forEach(function (element) {
                 var primitive = interpreter.createPrimitive(element.type == "number" ? parseInt(element.value, 10) : element.value);
-                interpreter.setProperty(scope, "ID" + element.id + "_" + element.tagName.toLowerCase() + "_" + element.type, primitive);
+                interpreter.setProperty(scope, element.id + "_" + element.tagName.toLowerCase() + "_" + element.type, primitive);
             });
         }
     });
@@ -42,7 +42,7 @@ function buildTemplate(items, elements) {
         }) : [];
 
         var element_actuals = !!elements && elements.length > 0 ? elements.map(function (current) {
-            return "ID" + current.id + "_" + current.tagName.toLowerCase() + "_" + current.type;
+            return current.id + "_" + current.tagName.toLowerCase() + "_" + current.type;
         }) : [];
 
         return "(" + [].concat(item_actuals).concat(element_actuals).join(", ") + ")";

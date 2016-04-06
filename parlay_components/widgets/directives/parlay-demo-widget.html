@@ -1,6 +1,7 @@
 <md-card>
     <md-toolbar>
         <div class="md-toolbar-tools">
+
             <h2>
                 <span ng-repeat="item in selectedItems">
                     {{item.name}}<span ng-show="!$last">, </span>
@@ -9,20 +10,29 @@
 
             <span flex></span>
 
+            <md-button class="md-icon-button" ng-click="widgetsCtrl.remove($index)">
+                <md-icon ng-md-icon icon="delete"></md-icon>
+            </md-button>
+
             <md-button class="md-icon-button" ng-click="edit()">
                 <md-icon ng-md-icon icon="edit"></md-icon>
             </md-button>
+
         </div>
     </md-toolbar>
     <md-card-content>
 
         <p>{{transformedValue}}</p>
-        <input id="1" />
-        <input id="2" />
-        <select ng-model="select_test">
-            <option>Hey</option>
-            <option>You</option>
-        </select>
+
+        <md-input-container>
+            <label>test1</label>
+            <input type="number" id="1" ng-model="inputs.test1"  />
+        </md-input-container>
+
+        <md-input-container>
+            <label>test2</label>
+            <input type="number" id="2" ng-model="inputs.test2" />
+        </md-input-container>
 
     </md-card-content>
 </md-card>

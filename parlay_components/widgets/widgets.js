@@ -23,6 +23,10 @@ function ParlayWidgetsController() {
     this.add = function () {
         this.items.push({});
     };
+
+    this.remove = function (index) {
+        this.items.splice(index, 1);
+    };
     
 }
 

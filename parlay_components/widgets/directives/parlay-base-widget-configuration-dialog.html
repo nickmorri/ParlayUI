@@ -13,6 +13,7 @@
                             <md-autocomplete
                                     md-min-length="0"
                                     md-select-on-match="true"
+                                    md-match-case-insensitive="true"
                                     md-autofocus="true"
                                     md-no-cache="true"
                                     md-search-text="sourceCtrl.searchText"
@@ -54,16 +55,14 @@
                     <div layout="column">
 
                         <md-card flex="80">
-                            <md-toolbar><div class="md-toolbar-tools">Editor</div></md-toolbar>
                             <md-card-contents>
-                                <div ui-ace="{mode: 'javascript'}" class="transform-edit" ng-model="transform"></div>
+                                <div ui-ace="{mode: 'javascript', onChange: dialogCtrl.interpret}" class="transform-edit" ng-model="transform"></div>
                             </md-card-contents>
                         </md-card>
 
                         <md-card flex="20">
-                            <md-toolbar><div class="md-toolbar-tools">Preview</div></md-toolbar>
                             <md-card-content>
-                                <p>{{dialogCtrl.interpret(selectedItems)}}</p>
+                                <p>{{transformedValue}}</p>
                             </md-card-content>
                         </md-card>
 

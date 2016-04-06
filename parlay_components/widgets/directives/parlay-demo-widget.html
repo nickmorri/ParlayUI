@@ -1,7 +1,13 @@
 <md-card>
     <md-toolbar>
         <div class="md-toolbar-tools">
-            <h2>{{info.name}}</h2>
+            <h2>
+
+                <span ng-repeat="item in info">
+                    {{item.name}}
+                </span>
+
+            </h2>
 
             <span flex></span>
 
@@ -10,7 +16,7 @@
             </md-button>
         </div>
     </md-toolbar>
-    <md-card-contents>
-        {{info.value}}
-    </md-card-contents>
+    <md-card-content>
+        <p>{{transformedValue}}</p>
+    </md-card-content>
 </md-card>

@@ -158,7 +158,11 @@ function ParlayDemoWidget() {
             Array.prototype.slice.call(element.find("input")).forEach(controller.registerInput);
             Array.prototype.slice.call(element.find("button")).forEach(controller.registerButton);
             Array.prototype.slice.call(element.find("select")).forEach(controller.registerSelect);
-        }
+        },
+        controller: function ($scope) {
+
+        },
+        controllerAs: "demoWidgetCtrl"
     };
 }
 
@@ -232,6 +236,12 @@ function ParlayBaseWidgetConfigurationSourceController($scope, ParlayData) {
         return this.items().filter(function (item) {
             return item.name.indexOf(query) > -1 && $scope.selectedItems.indexOf(item) === -1;
         });
+    };
+
+    this.change = function (item) {
+        if (item.type == "datastream") {
+            item.listen(false);
+        }
     };
     
 }

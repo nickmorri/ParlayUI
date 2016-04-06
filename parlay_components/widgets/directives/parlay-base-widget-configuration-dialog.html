@@ -20,7 +20,8 @@
                                     md-items="item in sourceCtrl.querySearch(sourceCtrl.searchText)"
                                     md-item-text="item.name"
                                     placeholder="Search for a property, data stream or command"
-                                    md-menu-class="autocomplete-custom-template">
+                                    md-menu-class="autocomplete-custom-template"
+                                    md-selected-item-change="sourceCtrl.change(item)">
                                 <md-item-template>
                                 <span class="item-title">
                                     <md-icon ng-show="item.type == 'property'" ng-md-icon icon="description"></md-icon>

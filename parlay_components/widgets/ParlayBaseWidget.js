@@ -1,15 +1,19 @@
-function constructInterpreter(functionString, items, elements) {
+function constructInterpreter(functionString, items) {
     "use strict";
     return new Interpreter(functionString, function(interpreter, scope) {
         if (!!items && items.length > 0) {
             items.forEach(function (item) {
-                interpreter.setProperty(scope, item.name + "_value", interpreter.createPrimitive(item.value));
-            });
-        }
-        if (!!elements && elements.length > 0) {
-            elements.forEach(function (element) {
-                var primitive = interpreter.createPrimitive(element.type == "number" ? parseInt(element.value, 10) : element.value);
-                interpreter.setProperty(scope, element.id + "_" + element.tagName.toLowerCase() + "_" + element.type, primitive);
+
+                var primitive;
+
+                if (item.type == "input") {
+                    primitive = interpreter.createPrimitive(item.element.type == "number" ? parseInt(item.element.value, 10) : item.element.value);
+                }
+                else {
+                    primitive = interpreter.createPrimitive(item.value);
+                }
+
+                interpreter.setProperty(scope, item.name + "_value", primitive);
             });
         }
     });
@@ -21,11 +25,11 @@ function evaluateInterpreter(interpreter) {
     return interpreter.value.data;
 }
 
-function interpret(functionString, items, elements) {
+function interpret(functionString, items) {
     "use strict";
     if (!!items && !!items && items.length > 0) {
         try {
-            return evaluateInterpreter(constructInterpreter(functionString, items, elements));
+            return evaluateInterpreter(constructInterpreter(functionString, items));
         }
         catch (e) {
             return e.toString();
@@ -33,34 +37,70 @@ function interpret(functionString, items, elements) {
     }
 }
 
-function buildTemplate(items, elements) {
+function buildTemplate(items) {
+    "use strict";
 
-    function buildActuals(items, elements) {
+    function buildActuals(items) {
 
         var item_actuals = !!items && items.length > 0 ? items.map(function (current) {
             return current.name + "_value";
         }) : [];
 
-        var element_actuals = !!elements && elements.length > 0 ? elements.map(function (current) {
-            return current.id + "_" + current.tagName.toLowerCase() + "_" + current.type;
-        }) : [];
-
-        return "(" + [].concat(item_actuals).concat(element_actuals).join(", ") + ")";
+        return "(" + item_actuals.join(", ") + ")";
     }
 
-    function buildParameters(items, elements) {
-        var variable_count = (!!items ? items.length : 0) + (!!elements ? elements.length : 0);
-
+    function buildParameters(items) {
         var parameters = [];
 
-        for (var i = 0; i < variable_count; i++) {
+        for (var i = 0; i < (!!items ? items.length : 0); i++) {
             parameters.push("var" + i);
         }
 
         return "(" + parameters.join(", ") + ")";
     }
 
-    return "(function " + buildParameters(items, elements) + "{ return undefined; }" + buildActuals(items, elements) + ")";
+    return "(function " + buildParameters(items) + "{ return undefined; }" + buildActuals(items) + ")";
+}
+
+function ParlayWidgetInputManagerFactory() {
+
+    function ParlayWidgetInputManager() {
+        "use strict";
+        this.widgets = {};
+    }
+
+    ParlayWidgetInputManager.prototype.registerInputs = function (element, scope) {
+        "use strict";
+        var tag_name = element[0].tagName.toLowerCase().split("-").join("_");
+
+        if (!this.widgets[tag_name + "_" + scope.$index]) {
+            this.widgets[tag_name + "_" + scope.$index] = [];
+        }
+
+        Array.prototype.slice.call(element.find("input")).forEach(function (input) {
+            this.widgets[tag_name + "_" + scope.$index].push(input);
+        }, this);
+
+        scope.$on("$destroy", function () {
+            "use strict";
+            delete this.widgets[tag_name + "_" + scope.$index];
+        }.bind(this));
+
+    };
+
+    ParlayWidgetInputManager.prototype.getInputs = function () {
+        return Object.keys(this.widgets).reduce(function (previous, current) {
+            return previous.concat(this.widgets[current].map(function (input) {
+                return {
+                    name: current + "_" + input.id,
+                    type: "input",
+                    element: input
+                };
+            }));
+        }.bind(this), []);
+    };
+
+    return new ParlayWidgetInputManager();
 }
 
 function ParlayBaseWidget($mdDialog) {
@@ -69,13 +109,13 @@ function ParlayBaseWidget($mdDialog) {
         restrict: "E",
         link: function (scope, element, attributes, controller) {
 
-            scope.item.controller = controller;
+            scope.initialized = false;
 
-            // Holds onChange deregistration functions.
+            // Holds change listener deregistration functions.
             var handlers = [];
 
             function updateTransformedValue() {
-                scope.transformedValue = interpret(scope.transform, scope.selectedItems, controller.getInputs());
+                scope.transformedValue = interpret(scope.transform, scope.selectedItems);
             }
 
             // Establish a watcher that will manage onChange handlers for the selected values.
@@ -85,14 +125,30 @@ function ParlayBaseWidget($mdDialog) {
                 }
                 if (!!selectedItems && selectedItems.length > 0) {
                     handlers = selectedItems.map(function (item) {
-                        return item.onChange(function () {
-                            scope.$apply(updateTransformedValue);
-                        });
+                        if (item.type == "input") {
+
+                            var callbackRef = function () {
+                                scope.$apply(updateTransformedValue);
+                            };
+
+                            item.element.addEventListener("change", callbackRef);
+
+                            return function () {
+                                item.element.removeEventListener("change", callbackRef);
+                            };
+                        }
+                        else {
+                            return item.onChange(function () {
+                                scope.$apply(updateTransformedValue);
+                            });
+                        }
+
                     });
                 }
             });
 
-            scope.$watchCollection("inputs", updateTransformedValue);
+            // When the scope is destroyed we want to ensure we remove all listeners to prevent memory leaks.
+            scope.$on("$destroy", function () { handlers.forEach(function (handler) { handler(); }) });
 
             scope.edit = function (initialize) {
                 $mdDialog.show({
@@ -102,10 +158,10 @@ function ParlayBaseWidget($mdDialog) {
                     controllerAs: "dialogCtrl",
                     locals: {
                         selectedItems: !!scope.selectedItems && scope.selectedItems.length >= 0 ? scope.selectedItems : [],
-                        transform: scope.transform,
-                        baseWidgetCtrl: controller
+                        transform: scope.transform
                     }
                 }).then(function (result) {
+                    scope.initialized = true;
                     scope.selectedItems = result.selectedItems;
                     scope.transform = result.transform;
                     updateTransformedValue();
@@ -124,45 +180,18 @@ function ParlayBaseWidget($mdDialog) {
     };
 }
 
-function ParlayBaseWidgetController() {
+function ParlayBaseWidgetController() {}
 
-    var inputs = [];
-
-    this.registerInput = function (element) {
-        inputs.push(element);
-    };
-
-    this.getInputs = function () {
-        return inputs;
-    };
-
-}
-
-function ParlayBaseWidgetConfigurationDialogController($scope, $mdDialog, selectedItems, transform, baseWidgetCtrl) {
+function ParlayBaseWidgetConfigurationDialogController($scope, $mdDialog, ParlayWidgetInputManagerFactory, selectedItems, transform) {
 
     $scope.selectedItems = selectedItems;
     $scope.transform = transform;
-    $scope.baseWidgetCtrl = baseWidgetCtrl;
 
     $scope.$watchCollection("selectedItems", function (newValue, oldValue) {
         if ($scope.transform === undefined || newValue.length !== oldValue.length) {
-            $scope.transform = buildTemplate(newValue, $scope.baseWidgetCtrl.getInputs());
+            $scope.transform = buildTemplate(newValue);
         }
     });
-    
-    this.markStage = function (stage, state) {
-        this.stageComplete[stage] = state;
-    }.bind(this);
-    
-    this.stageAccessible = function (stage) {
-        return stage == "source" || this.stageComplete[stage];
-    };
-    
-    this.isConfigurationComplete = function () {
-        return Object.keys(this.stageComplete).every(function (key) {
-            return this.stageComplete[key];
-        }, this);
-    };
 
     this.cancel = function () {
         $mdDialog.cancel();
@@ -172,40 +201,39 @@ function ParlayBaseWidgetConfigurationDialogController($scope, $mdDialog, select
         $mdDialog.hide({transform: $scope.transform, selectedItems: $scope.selectedItems});
     };
 
-    $scope.$watchCollection("selectedItems", function (newValue) {
-        this.markStage("transform", newValue.length > 0);
-    }.bind(this));
-
-    this.stageComplete= {
-        source: false,
-        transform: false
-    };
-
     this.interpret = function() {
-        $scope.transformedValue = interpret($scope.transform, $scope.selectedItems, $scope.baseWidgetCtrl.getInputs());
+        $scope.transformedValue = interpret($scope.transform, $scope.selectedItems, ParlayWidgetInputManagerFactory.getInputs());
     };
-
-    if ($scope.selectedItems !== undefined) {
-        this.markStage("source", true);
-    }
 
 }
 
-function ParlayBaseWidgetConfigurationSourceController($scope, ParlayData) {
+function ParlayBaseWidgetConfigurationSourceController($scope, ParlayData, ParlayWidgetInputManager) {
 
-    this.items = function () {
+    function inputs() {
+        return ParlayWidgetInputManager.getInputs();
+    }
+
+    function items() {
         var iterator = ParlayData.values();
         var values = [];
         for (var current = iterator.next(); !current.done; current = iterator.next()) {
             values.push(current.value);
         }
         return values;
-    };
+    }
     
     this.querySearch = function (query) {
-        return this.items().filter(function (item) {
+
+        var filtered_items = items().filter(function (item) {
             return item.name.indexOf(query) > -1 && $scope.selectedItems.indexOf(item) === -1;
         });
+
+        var filter_inputs = inputs().filter(function (input) {
+            return input.name.indexOf(query) > -1 && $scope.selectedItems.indexOf(input) === -1;
+        });
+
+        return filtered_items.concat(filter_inputs);
+
     };
 
     this.change = function (item) {
@@ -219,8 +247,18 @@ function ParlayBaseWidgetConfigurationSourceController($scope, ParlayData) {
     
 }
 
+function ParlayBaseWidgetConfigurationTransformController($scope) {
+
+    this.onEditorLoad = function (editor) {
+        editor.$blockScrolling = Infinity;
+    };
+
+}
+
 angular.module("parlay.widgets.base", ["parlay.data", "ngMaterial", "ui.ace"])
+    .factory("ParlayWidgetInputManager", [ParlayWidgetInputManagerFactory])
     .controller("ParlayBaseWidgetController", [ParlayBaseWidgetController])
-    .controller("ParlayBaseWidgetConfigurationSourceController", ["$scope", "ParlayData", ParlayBaseWidgetConfigurationSourceController])
-    .controller("ParlayBaseWidgetConfigurationDialogController", ["$scope", "$mdDialog", "selectedItems", "transform", "baseWidgetCtrl", ParlayBaseWidgetConfigurationDialogController])
+    .controller("ParlayBaseWidgetConfigurationSourceController", ["$scope", "ParlayData", "ParlayWidgetInputManager", ParlayBaseWidgetConfigurationSourceController])
+    .controller("ParlayBaseWidgetConfigurationTransformController", ["$scope", ParlayBaseWidgetConfigurationTransformController])
+    .controller("ParlayBaseWidgetConfigurationDialogController", ["$scope", "$mdDialog", "ParlayWidgetInputManager", "selectedItems", "transform", ParlayBaseWidgetConfigurationDialogController])
     .directive("parlayBaseWidget", ["$mdDialog", ParlayBaseWidget]);

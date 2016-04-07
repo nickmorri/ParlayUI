@@ -1,23 +1,11 @@
-<md-card>
+<md-card ng-show="initialized">
     <md-toolbar>
         <div class="md-toolbar-tools">
-
             <h2>
                 <span ng-repeat="item in selectedItems">
                     {{item.name}}<span ng-show="!$last">, </span>
                 </span>
             </h2>
-
-            <span flex></span>
-
-            <md-button class="md-icon-button" ng-click="widgetsCtrl.remove($index)">
-                <md-icon ng-md-icon icon="delete"></md-icon>
-            </md-button>
-
-            <md-button class="md-icon-button" ng-click="edit(false)">
-                <md-icon ng-md-icon icon="edit"></md-icon>
-            </md-button>
-
         </div>
     </md-toolbar>
     <md-card-content>
@@ -32,4 +20,9 @@
         <canvas width="400" height="100"></canvas>
 
     </md-card-content>
+
+    <md-card-actions>
+        <md-button ng-click="widgetsCtrl.remove($index)">Delete</md-button>
+        <md-button ng-click="edit(false)">Edit</md-button>
+    </md-card-actions>
 </md-card>

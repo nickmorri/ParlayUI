@@ -1,7 +1,7 @@
 <md-dialog aria-label="Parlay Widget Configuration Dialog" flex="90" flex-gt-md="70" ng-class="{'md-dialog-fullscreen' : $mdMedia}">
     <md-dialog-content>
-        <md-tabs md-stretch-tabs="always" md-dynamic-height="true" md-selected="dialogCtrl.currentTab" class="md-primary">
-            <md-tab ng-disabled="!dialogCtrl.stageAccessible('source')">
+        <md-tabs md-stretch-tabs="always" md-dynamic-height="true" class="md-primary">
+            <md-tab>
                 <md-tab-label>Source</md-tab-label>
                 <md-tab-body>
                     <div ng-controller="ParlayBaseWidgetConfigurationSourceController as sourceCtrl">
@@ -24,7 +24,8 @@
                                     <md-icon ng-show="item.type == 'property'" ng-md-icon icon="description"></md-icon>
                                     <md-icon ng-show="item.type == 'datastream'" ng-md-icon icon="group_work"></md-icon>
                                     <md-icon ng-show="item.type == 'command'" ng-md-icon icon="code"></md-icon>
-                                    <span md-highlight-text="sourceCtrl.searchText">{{item.name}}</span>
+                                    <md-icon ng-show="item.type == 'input'" ng-md-icon icon="text_fields"></md-icon>
+                                    <span md-highlight-text="sourceCtrl.searchText">{{item.name}}</span> <i>({{item.type}})</i>
                                 </span>
                                 <span class="item-metadata">
                                     <span class="item-metastat">{{item.item_name}}</span>
@@ -43,7 +44,7 @@
                     </div>
                 </md-tab-body>
             </md-tab>
-            <md-tab ng-disabled="!dialogCtrl.stageAccessible('transform')">
+            <md-tab>
                 <md-tab-label>Transform</md-tab-label>
                 <md-tab-body>
 
@@ -70,6 +71,6 @@
     <md-dialog-actions layout="row">
         <md-button ng-click="dialogCtrl.cancel()" class="md-warn">Cancel</md-button>
         <span flex></span>
-        <md-button ng-show="dialogCtrl.currentTab == 1 || dialogCtrl.isConfigurationComplete()" ng-click="dialogCtrl.hide()" class="md-primary">Ok</md-button>
+        <md-button ng-click="dialogCtrl.hide()" class="md-primary">Ok</md-button>
     </md-dialog-actions>
 </md-dialog>

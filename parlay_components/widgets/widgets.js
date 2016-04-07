@@ -30,12 +30,12 @@ function ParlayWidgetsController() {
 
     this.getAllInputs = function () {
         return this.items.reduce(function (previous, current) {
-            return previous.concat(current.controller.getInputs())
+            return previous.concat(current.controller.getInputs());
         }, []);
     };
     
 }
 
-angular.module("parlay.widgets", ["ui.router", "ui.ace", "ngMaterial", "parlay.widgets.base", "parlay.widgets.demo"])
+angular.module("parlay.widgets", ["ui.router", "ui.ace", "ngMaterial", "parlay.widgets.base", "promenade.widgets.demo"])
     .config(WidgetsConfiguration)
     .controller("ParlayWidgetsController", [ParlayWidgetsController]);

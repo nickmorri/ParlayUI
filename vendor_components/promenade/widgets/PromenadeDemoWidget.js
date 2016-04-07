@@ -1,6 +1,7 @@
-function ParlayDemoWidget() {
+function PromenadeDemoWidget() {
     return {
-        templateUrl: "../parlay_components/widgets/directives/parlay-demo-widget.html",
+        restrict: "E",
+        templateUrl: "../vendor_components/promenade/widgets/directives/promenade-demo-widget.html",
         require: "^parlayBaseWidget",
         link: function (scope, element, attributes, controller) {
             Array.prototype.slice.call(element.find("input")).forEach(controller.registerInput);
@@ -33,5 +34,5 @@ function ParlayDemoWidget() {
     };
 }
 
-angular.module("parlay.widgets.demo", ["parlay.widgets.base"])
-    .directive("parlayDemoWidget", [ParlayDemoWidget]);
+angular.module("promenade.widgets.demo", ["parlay.widgets.base"])
+    .directive("promenadeDemoWidget", [PromenadeDemoWidget]);

@@ -21,11 +21,17 @@ module.exports = function (grunt) {
 	 */
 	function getVendorItems (items, initial) {
 		var vendors = getVendors();
-		if (initial === undefined) initial = [];
+		if (initial === undefined) {
+			initial = [];
+		}
 		return initial.concat(Object.keys(vendors).reduce(function (accumulator, vendor)  {
 			return accumulator.concat(Object.keys(vendors[vendor]).filter(function (key) {
-				return items.some(function (item) { return key.indexOf(item) > -1; });
-	        }).map(function (key) { return '<%= vendor.' + vendor + '.' + key + ' %>'; }));
+				return items.some(function (item) {
+					return key.indexOf(item) > -1;
+				});
+	        }).map(function (key) {
+				return '<%= vendor.' + vendor + '.' + key + ' %>';
+			}));
 	    }, []));
 	}
 
@@ -45,7 +51,7 @@ module.exports = function (grunt) {
 
 		'meta': {
 			'source': ['app.js', 'parlay_components/*/*.js'],
-			'vendorComponents': getVendorItems(['protocols', 'items']),
+			'vendorComponents': getVendorItems(['protocols', 'items', 'widgets'], []),
 			'dist_destination': 'dist',
 			'dev_destination': 'dev',
 			'tmp_destination': 'tmp',

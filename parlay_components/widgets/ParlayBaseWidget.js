@@ -94,7 +94,7 @@ function ParlayBaseWidget($mdDialog) {
 
             scope.$watchCollection("inputs", updateTransformedValue);
 
-            scope.edit = function () {
+            scope.edit = function (initialize) {
                 $mdDialog.show({
                     templateUrl: "../parlay_components/widgets/directives/parlay-base-widget-configuration-dialog.html",
                     clickOutsideToClose: false,
@@ -109,10 +109,14 @@ function ParlayBaseWidget($mdDialog) {
                     scope.selectedItems = result.selectedItems;
                     scope.transform = result.transform;
                     updateTransformedValue();
+                }).catch(function () {
+                    if (initialize) {
+                        scope.widgetsCtrl.remove(scope.$index);
+                    }
                 });
             };
 
-            scope.edit();
+            scope.edit(true);
 
         },
         controller: "ParlayBaseWidgetController",

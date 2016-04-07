@@ -30,6 +30,6 @@ function ParlayWidgetsController() {
     
 }
 
-angular.module("parlay.widgets", ["ui.router", "ui.ace", "ngMaterial", "parlay.widgets.base"])
+angular.module("parlay.widgets", ["ui.router", "ui.ace", "ngMaterial", "parlay.widgets.base", "parlay.widgets.demo"])
     .config(WidgetsConfiguration)
     .controller("ParlayWidgetsController", [ParlayWidgetsController]);

@@ -69,6 +69,8 @@ function ParlayBaseWidget($mdDialog) {
         restrict: "E",
         link: function (scope, element, attributes, controller) {
 
+            scope.item.controller = controller;
+
             // Holds onChange deregistration functions.
             var handlers = [];
 
@@ -121,64 +123,15 @@ function ParlayBaseWidget($mdDialog) {
 function ParlayBaseWidgetController() {
 
     var inputs = [];
-    var buttons = [];
 
     this.registerInput = function (element) {
         inputs.push(element);
-    };
-
-    this.registerButton = function (element) {
-        buttons.push(element);
     };
 
     this.getInputs = function () {
         return inputs;
     };
 
-    this.getButtons = function () {
-        return buttons;
-    };
-
-}
-
-function ParlayDemoWidget() {
-    return {
-        templateUrl: "../parlay_components/widgets/directives/parlay-demo-widget.html",
-        require: "^parlayBaseWidget",
-        link: function (scope, element, attributes, controller) {
-            Array.prototype.slice.call(element.find("input")).forEach(controller.registerInput);
-            Array.prototype.slice.call(element.find("button")).forEach(controller.registerButton);
-
-            this.smoothie = new SmoothieChart({
-                grid: {
-                    strokeStyle:'rgb(125, 0, 0)',
-                    fillStyle:'rgb(60, 0, 0)',
-                    lineWidth: 1,
-                    millisPerLine: 250,
-                    verticalSections: 6
-                },
-                labels: {
-                    fillStyle:'rgb(60, 0, 0)'
-                }
-            });
-
-            this.smoothie.streamTo(element.find("canvas")[0], 1000);
-
-            var line = new TimeSeries();
-            this.smoothie.addTimeSeries(line);
-
-            scope.$watch("transformedValue", function (newValue) {
-                if (!!newValue) {
-                    line.append(new Date().getTime(), newValue);
-                }
-            });
-
-        },
-        controller: function ($scope) {
-
-        },
-        controllerAs: "demoWidgetCtrl"
-    };
 }
 
 function ParlayBaseWidgetConfigurationDialogController($scope, $mdDialog, selectedItems, transform, baseWidgetCtrl) {
@@ -218,8 +171,6 @@ function ParlayBaseWidgetConfigurationDialogController($scope, $mdDialog, select
     $scope.$watchCollection("selectedItems", function (newValue) {
         this.markStage("transform", newValue.length > 0);
     }.bind(this));
-
-    this.currentStage = "source";
 
     this.stageComplete= {
         source: false,
@@ -268,5 +219,4 @@ angular.module("parlay.widgets.base", ["parlay.data", "ngMaterial", "ui.ace"])
     .controller("ParlayBaseWidgetController", [ParlayBaseWidgetController])
     .controller("ParlayBaseWidgetConfigurationSourceController", ["$scope", "ParlayData", ParlayBaseWidgetConfigurationSourceController])
     .controller("ParlayBaseWidgetConfigurationDialogController", ["$scope", "$mdDialog", "selectedItems", "transform", "baseWidgetCtrl", ParlayBaseWidgetConfigurationDialogController])
-    .directive("parlayDemoWidget", [ParlayDemoWidget])
     .directive("parlayBaseWidget", ["$mdDialog", ParlayBaseWidget]);

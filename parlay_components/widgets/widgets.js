@@ -27,6 +27,12 @@ function ParlayWidgetsController() {
     this.remove = function (index) {
         this.items.splice(index, 1);
     };
+
+    this.getAllInputs = function () {
+        return this.items.reduce(function (previous, current) {
+            return previous.concat(current.controller.getInputs())
+        }, []);
+    };
     
 }
 

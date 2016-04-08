@@ -4,16 +4,19 @@ function constructInterpreter(functionString, items) {
         if (!!items && items.length > 0) {
             items.forEach(function (item) {
 
-                var primitive;
+                var property_value;
 
                 if (item.type == "input") {
-                    primitive = interpreter.createPrimitive(item.element.type == "number" ? parseInt(item.element.value, 10) : item.element.value);
+                    property_value = interpreter.createPrimitive(item.element.type == "number" ? parseInt(item.element.value, 10) : item.element.value);
+                }
+                else if (item.type == "button") {
+                    // Do something?
                 }
                 else {
-                    primitive = interpreter.createPrimitive(item.value);
+                    property_value = interpreter.createPrimitive(item.value);
                 }
 
-                interpreter.setProperty(scope, item.name + "_value", primitive);
+                interpreter.setProperty(scope, item.name + "_value", property_value);
             });
         }
     });
@@ -265,6 +268,10 @@ function ParlayBaseWidgetConfigurationSourceController($scope, ParlayData, Parla
         return ParlayWidgetInputManager.getInputs();
     }
 
+    function buttons() {
+        return ParlayWidgetInputManager.getButtons();
+    }
+
     function items() {
         var iterator = ParlayData.values();
         var values = [];
@@ -276,15 +283,21 @@ function ParlayBaseWidgetConfigurationSourceController($scope, ParlayData, Parla
     
     this.querySearch = function (query) {
 
+        var lowercase_query = query.toLowerCase();
+
         var filtered_items = items().filter(function (item) {
-            return item.name.indexOf(query) > -1 && $scope.selectedItems.indexOf(item) === -1;
+            return item.name.indexOf(lowercase_query) > -1 && $scope.selectedItems.indexOf(item) === -1;
         });
 
         var filter_inputs = inputs().filter(function (input) {
-            return input.name.indexOf(query) > -1 && $scope.selectedItems.indexOf(input) === -1;
+            return input.name.indexOf(lowercase_query) > -1 && $scope.selectedItems.indexOf(input) === -1;
         });
 
-        return filtered_items.concat(filter_inputs);
+        var filtered_buttons = buttons().filter(function (button) {
+            return button.name.indexOf(lowercase_query) > -1 && $scope.selectedItems.indexOf(button) === -1;
+        });
+
+        return filtered_items.concat(filter_inputs).concat(filtered_buttons);
 
     };
 

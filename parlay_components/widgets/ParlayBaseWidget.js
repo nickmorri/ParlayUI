@@ -149,6 +149,22 @@ function ParlayBaseWidget($mdDialog, $compile) {
             // When the scope is destroyed we want to ensure we remove all listeners to prevent memory leaks.
             scope.$on("$destroy", function () { handlers.forEach(function (handler) { handler(); }); });
 
+            function compileWrapper() {
+                var scopeRef = scope;
+                var elementRef = element;
+
+                return function (template) {
+                    if (scopeRef.template != template) {
+                        while (elementRef[0].firstChild) {
+                            elementRef[0].removeChild(elementRef[0].firstChild);
+                        }
+
+                        elementRef[0].appendChild($compile(template)(scopeRef)[0]);
+                        scope.template = template;
+                    }
+                };
+            }
+
             scope.edit = function (initialize) {
                 $mdDialog.show({
                     templateUrl: "../parlay_components/widgets/directives/parlay-base-widget-configuration-dialog.html",
@@ -157,22 +173,12 @@ function ParlayBaseWidget($mdDialog, $compile) {
                     controllerAs: "dialogCtrl",
                     locals: {
                         selectedItems: !!scope.selectedItems && scope.selectedItems.length >= 0 ? scope.selectedItems : [],
-                        transform: scope.transform
+                        transform: scope.transform,
+                        widgetCompiler: compileWrapper()
                     }
                 }).then(function (result) {
                     scope.selectedItems = result.selectedItems;
                     scope.transform = result.transform;
-
-                    if (scope.template != result.template) {
-
-                        while (scope.initialized && element[0].firstChild) {
-                            element[0].removeChild(element[0].firstChild);
-                        }
-
-                        element[0].appendChild($compile(result.template)(scope)[0]);
-                    }
-                    scope.template = result.template;
-
                     updateTransformedValue();
                     scope.initialized = true;
                 }).catch(function () {
@@ -192,7 +198,7 @@ function ParlayBaseWidget($mdDialog, $compile) {
 
 function ParlayBaseWidgetController() {}
 
-function ParlayBaseWidgetConfigurationDialogController($scope, $mdDialog, ParlayWidgetInputManager, ParlayWidgetsCollection, selectedItems, transform) {
+function ParlayBaseWidgetConfigurationDialogController($scope, $mdDialog, ParlayWidgetInputManager, ParlayWidgetsCollection, selectedItems, transform, widgetCompiler) {
 
     $scope.selectedItems = selectedItems;
     $scope.template = ParlayWidgetsCollection.getAvailableWidgets()[0];
@@ -202,6 +208,10 @@ function ParlayBaseWidgetConfigurationDialogController($scope, $mdDialog, Parlay
         if ($scope.transform === undefined || newValue.length !== oldValue.length) {
             $scope.transform = buildTemplate(newValue);
         }
+    });
+
+    $scope.$watch("template", function (newValue, oldValue) {
+        widgetCompiler(newValue);
     });
 
     this.cancel = function () {
@@ -265,6 +275,6 @@ function ParlayBaseWidgetConfigurationSourceController($scope, ParlayData, Parla
 angular.module("parlay.widgets.base", ["ngMaterial", "ui.ace", "parlay.widgets.collection", "parlay.data"])
     .factory("ParlayWidgetInputManager", [ParlayWidgetInputManagerFactory])
     .controller("ParlayBaseWidgetController", [ParlayBaseWidgetController])
-    .controller("ParlayBaseWidgetConfigurationDialogController", ["$scope", "$mdDialog", "ParlayWidgetInputManager", "ParlayWidgetsCollection", "selectedItems", "transform", ParlayBaseWidgetConfigurationDialogController])
+    .controller("ParlayBaseWidgetConfigurationDialogController", ["$scope", "$mdDialog", "ParlayWidgetInputManager", "ParlayWidgetsCollection", "selectedItems", "transform", "widgetCompiler", ParlayBaseWidgetConfigurationDialogController])
     .controller("ParlayBaseWidgetConfigurationSourceController", ["$scope", "ParlayData", "ParlayWidgetInputManager", ParlayBaseWidgetConfigurationSourceController])
     .directive("parlayBaseWidget", ["$mdDialog", "$compile", ParlayBaseWidget]);

@@ -65,47 +65,6 @@ function buildTemplate(items) {
     return "(function " + buildParameters(items) + "{ return undefined; }" + buildActuals(items) + ")";
 }
 
-function ParlayWidgetInputManagerFactory() {
-
-    function ParlayWidgetInputManager() {
-        "use strict";
-        this.widgets = {};
-    }
-
-    ParlayWidgetInputManager.prototype.registerInputs = function (element, scope) {
-        "use strict";
-        var tag_name = element[0].tagName.toLowerCase().split("-").join("_") + "_" + scope.$index;
-
-        if (!this.widgets[tag_name]) {
-            this.widgets[tag_name] = [];
-        }
-
-        Array.prototype.slice.call(element.find("input")).forEach(function (input) {
-            this.widgets[tag_name].push(input);
-        }, this);
-
-        scope.$on("$destroy", function () {
-            delete this.widgets[tag_name];
-        }.bind(this));
-        
-        return tag_name;
-    };
-
-    ParlayWidgetInputManager.prototype.getInputs = function () {
-        return Object.keys(this.widgets).reduce(function (previous, current) {
-            return previous.concat(this.widgets[current].map(function (input) {
-                return {
-                    name: current + "_" + input.id,
-                    type: "input",
-                    element: input
-                };
-            }));
-        }.bind(this), []);
-    };
-
-    return new ParlayWidgetInputManager();
-}
-
 function ParlayBaseWidget($mdDialog, $compile) {
     return {
         scope: true,
@@ -312,8 +271,7 @@ function ParlayBaseWidgetConfigurationSourceController($scope, ParlayData, Parla
     
 }
 
-angular.module("parlay.widgets.base", ["ngMaterial", "ui.ace", "parlay.widgets.collection", "parlay.data"])
-    .factory("ParlayWidgetInputManager", [ParlayWidgetInputManagerFactory])
+angular.module("parlay.widgets.base", ["ngMaterial", "ui.ace", "parlay.widgets.collection", "parlay.widgets.inputmanager", "parlay.data"])
     .controller("ParlayBaseWidgetController", [ParlayBaseWidgetController])
     .controller("ParlayBaseWidgetConfigurationDialogController", ["$scope", "$mdDialog", "ParlayWidgetInputManager", "ParlayWidgetsCollection", "selectedItems", "transform", "template", "widgetCompiler", ParlayBaseWidgetConfigurationDialogController])
     .controller("ParlayBaseWidgetConfigurationSourceController", ["$scope", "ParlayData", "ParlayWidgetInputManager", ParlayBaseWidgetConfigurationSourceController])

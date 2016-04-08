@@ -2,6 +2,22 @@
     <md-dialog-content>
         <md-tabs md-stretch-tabs="always" md-dynamic-height="true" class="md-primary">
             <md-tab>
+                <md-tab-label>Template</md-tab-label>
+                <md-tab-body>
+                    <div layout="row">
+
+                        <md-input-container flex>
+                            <md-select ng-model="template" placeholder="Select a template">
+                                <md-option ng-value="template_option" ng-repeat="template_option in dialogCtrl.getTemplates()">
+                                    {{template_option}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+
+                    </div>
+                </md-tab-body>
+            </md-tab>
+            <md-tab>
                 <md-tab-label>Source</md-tab-label>
                 <md-tab-body>
                     <div ng-controller="ParlayBaseWidgetConfigurationSourceController as sourceCtrl">
@@ -11,7 +27,6 @@
                                     md-min-length="0"
                                     md-select-on-match="true"
                                     md-match-case-insensitive="true"
-                                    md-autofocus="true"
                                     md-no-cache="true"
                                     md-search-text="sourceCtrl.searchText"
                                     md-items="item in sourceCtrl.querySearch(sourceCtrl.searchText)"
@@ -40,22 +55,6 @@
                                 </span>
                             </md-chip-template>
                         </md-chips>
-
-                    </div>
-                </md-tab-body>
-            </md-tab>
-            <md-tab>
-                <md-tab-label>Template</md-tab-label>
-                <md-tab-body>
-                    <div layout="row">
-
-                        <md-input-container flex>
-                            <md-select ng-model="template" placeholder="Select a template">
-                                <md-option ng-value="template_option" ng-repeat="template_option in dialogCtrl.getTemplates()">
-                                    {{template_option}}
-                                </md-option>
-                            </md-select>
-                        </md-input-container>
 
                     </div>
                 </md-tab-body>

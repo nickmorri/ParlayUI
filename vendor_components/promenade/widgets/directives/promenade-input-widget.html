@@ -1,0 +1,24 @@
+<md-card class="parlay-item-card" ng-show="initialized">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>
+                <span ng-repeat="item in selectedItems">
+                    {{item.name}}<span ng-show="!$last">, </span>
+                </span>
+            </h2>
+        </div>
+    </md-toolbar>
+    <md-card-content>
+
+        <md-input-container>
+            <label>add</label>
+            <input type="number" id="add"/>
+        </md-input-container>
+
+    </md-card-content>
+
+    <md-card-actions>
+        <md-button ng-click="widgetsCtrl.remove($index)">Delete</md-button>
+        <md-button ng-click="edit(false)">Edit</md-button>
+    </md-card-actions>
+</md-card>

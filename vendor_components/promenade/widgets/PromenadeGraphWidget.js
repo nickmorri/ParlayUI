@@ -1,11 +1,12 @@
-function PromenadeDemoWidget(ParlayWidgetInputManager) {
+function PromenadeGraphWidgetRun(ParlayWidgetsCollection) {
+    ParlayWidgetsCollection.registerWidget("promenadeGraphWidget");
+}
+
+function PromenadeGraphWidget() {
     return {
         restrict: "E",
-        templateUrl: "../vendor_components/promenade/widgets/directives/promenade-demo-widget.html",
-        require: "^parlayBaseWidget",
+        templateUrl: "../vendor_components/promenade/widgets/directives/promenade-graph-widget.html",
         link: function (scope, element) {
-
-            ParlayWidgetInputManager.registerInputs(element, scope);
 
             this.smoothie = new SmoothieChart({
                 grid: {
@@ -35,5 +36,6 @@ function PromenadeDemoWidget(ParlayWidgetInputManager) {
     };
 }
 
-angular.module("promenade.widgets.demo", ["parlay.widgets.base"])
-    .directive("promenadeDemoWidget", ["ParlayWidgetInputManager", PromenadeDemoWidget]);
+angular.module("promenade.widgets.graph", ["parlay.widgets.base", "parlay.widgets.collection"])
+    .run(["ParlayWidgetsCollection", PromenadeGraphWidgetRun])
+    .directive("promenadeGraphWidget", [PromenadeGraphWidget]);

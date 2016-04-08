@@ -1,4 +1,4 @@
-<md-card ng-show="initialized">
+<md-card class="parlay-item-card" ng-show="initialized">
     <md-toolbar>
         <div class="md-toolbar-tools">
             <h2>
@@ -9,16 +9,7 @@
         </div>
     </md-toolbar>
     <md-card-content>
-
-        <p>{{transformedValue}}</p>
-
-        <md-input-container>
-            <label>add</label>
-            <input type="number" id="add" ng-model="inputs.add"  />
-        </md-input-container>
-
         <canvas width="400" height="100"></canvas>
-
     </md-card-content>
 
     <md-card-actions>

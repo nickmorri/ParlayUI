@@ -156,10 +156,11 @@ function ParlayBaseWidget($mdDialog, $compile) {
                 return function (template) {
                     if (scopeRef.template != template) {
                         while (elementRef[0].firstChild) {
+                            angular.element(elementRef[0].firstChild).scope().$destroy();
                             elementRef[0].removeChild(elementRef[0].firstChild);
                         }
 
-                        elementRef[0].appendChild($compile(template)(scopeRef)[0]);
+                        elementRef[0].appendChild($compile(template)(scopeRef.$new())[0]);
                         scope.template = template;
                     }
                 };
@@ -174,6 +175,7 @@ function ParlayBaseWidget($mdDialog, $compile) {
                     locals: {
                         selectedItems: !!scope.selectedItems && scope.selectedItems.length >= 0 ? scope.selectedItems : [],
                         transform: scope.transform,
+                        template: scope.template,
                         widgetCompiler: compileWrapper()
                     }
                 }).then(function (result) {
@@ -198,10 +200,11 @@ function ParlayBaseWidget($mdDialog, $compile) {
 
 function ParlayBaseWidgetController() {}
 
-function ParlayBaseWidgetConfigurationDialogController($scope, $mdDialog, ParlayWidgetInputManager, ParlayWidgetsCollection, selectedItems, transform, widgetCompiler) {
+function ParlayBaseWidgetConfigurationDialogController($scope, $mdDialog, ParlayWidgetInputManager, ParlayWidgetsCollection, selectedItems, transform, template, widgetCompiler) {
 
     $scope.selectedItems = selectedItems;
     $scope.template = ParlayWidgetsCollection.getAvailableWidgets()[0];
+    $scope.template = template;
     $scope.transform = transform;
 
     $scope.$watchCollection("selectedItems", function (newValue, oldValue) {
@@ -275,6 +278,6 @@ function ParlayBaseWidgetConfigurationSourceController($scope, ParlayData, Parla
 angular.module("parlay.widgets.base", ["ngMaterial", "ui.ace", "parlay.widgets.collection", "parlay.data"])
     .factory("ParlayWidgetInputManager", [ParlayWidgetInputManagerFactory])
     .controller("ParlayBaseWidgetController", [ParlayBaseWidgetController])
-    .controller("ParlayBaseWidgetConfigurationDialogController", ["$scope", "$mdDialog", "ParlayWidgetInputManager", "ParlayWidgetsCollection", "selectedItems", "transform", "widgetCompiler", ParlayBaseWidgetConfigurationDialogController])
+    .controller("ParlayBaseWidgetConfigurationDialogController", ["$scope", "$mdDialog", "ParlayWidgetInputManager", "ParlayWidgetsCollection", "selectedItems", "transform", "template", "widgetCompiler", ParlayBaseWidgetConfigurationDialogController])
     .controller("ParlayBaseWidgetConfigurationSourceController", ["$scope", "ParlayData", "ParlayWidgetInputManager", ParlayBaseWidgetConfigurationSourceController])
     .directive("parlayBaseWidget", ["$mdDialog", "$compile", ParlayBaseWidget]);

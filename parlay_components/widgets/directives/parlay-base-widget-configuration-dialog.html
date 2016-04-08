@@ -8,8 +8,8 @@
 
                         <md-input-container flex>
                             <md-select ng-model="template" placeholder="Select a template">
-                                <md-option ng-value="template_option" ng-repeat="template_option in dialogCtrl.getTemplates()">
-                                    {{template_option}}
+                                <md-option ng-value="template_option.template" ng-repeat="template_option in dialogCtrl.getTemplates()">
+                                    {{template_option.template}} ({{template_option.type}})
                                 </md-option>
                             </md-select>
                         </md-input-container>

@@ -1,5 +1,5 @@
 function PromenadeDisplayWidgetRun(ParlayWidgetsCollection) {
-    ParlayWidgetsCollection.registerWidget("promenadeDisplayWidget");
+    ParlayWidgetsCollection.registerWidget("promenadeDisplayWidget", "display");
 }
 
 function PromenadeDisplayWidget() {

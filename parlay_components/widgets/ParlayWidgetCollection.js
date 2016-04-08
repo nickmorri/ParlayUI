@@ -4,11 +4,14 @@ function ParlayWidgetsCollectionFactory() {
         this.available_widgets = [];
     }
 
-    ParlayWidgetsCollection.prototype.registerWidget = function (element) {
+    ParlayWidgetsCollection.prototype.registerWidget = function (element, type) {
 
         var snake_case = element.snakeCase();
 
-        this.available_widgets.push("<" + snake_case + "></" + snake_case + ">");
+        this.available_widgets.push({
+            template: "<" + snake_case + "></" + snake_case + ">",
+            type: type
+        });
     };
 
     ParlayWidgetsCollection.prototype.getAvailableWidgets = function () {

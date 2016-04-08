@@ -1,5 +1,5 @@
 function PromenadeInputWidgetRun(ParlayWidgetsCollection) {
-    ParlayWidgetsCollection.registerWidget("promenadeInputWidget");
+    ParlayWidgetsCollection.registerWidget("promenadeInputWidget", "input");
 }
 
 function PromenadeInputWidget(ParlayWidgetInputManager) {

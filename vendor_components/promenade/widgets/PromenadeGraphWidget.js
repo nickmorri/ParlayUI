@@ -1,5 +1,5 @@
 function PromenadeGraphWidgetRun(ParlayWidgetsCollection) {
-    ParlayWidgetsCollection.registerWidget("promenadeGraphWidget");
+    ParlayWidgetsCollection.registerWidget("promenadeGraphWidget", "display");
 }
 
 function PromenadeGraphWidget() {

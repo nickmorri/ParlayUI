@@ -2,13 +2,10 @@ function PromenadeDisplayWidgetRun(ParlayWidgetsCollection) {
     ParlayWidgetsCollection.registerWidget("promenadeDisplayWidget");
 }
 
-function PromenadeDisplayWidget(ParlayWidgetInputManager) {
+function PromenadeDisplayWidget() {
     return {
         restrict: "E",
-        templateUrl: "../vendor_components/promenade/widgets/directives/promenade-display-widget.html",
-        link: function (scope, element) {
-            ParlayWidgetInputManager.registerInputs(element, scope);
-        }
+        templateUrl: "../vendor_components/promenade/widgets/directives/promenade-display-widget.html"
     };
 }
 

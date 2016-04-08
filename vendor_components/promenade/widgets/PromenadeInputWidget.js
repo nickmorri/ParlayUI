@@ -7,7 +7,7 @@ function PromenadeInputWidget(ParlayWidgetInputManager) {
         restrict: "E",
         templateUrl: "../vendor_components/promenade/widgets/directives/promenade-input-widget.html",
         link: function (scope, element) {
-            ParlayWidgetInputManager.registerInputs(element, scope);
+            scope.tag_name = ParlayWidgetInputManager.registerInputs(element, scope);
         }
     };
 }

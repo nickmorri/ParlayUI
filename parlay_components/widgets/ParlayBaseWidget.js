@@ -71,20 +71,21 @@ function ParlayWidgetInputManagerFactory() {
 
     ParlayWidgetInputManager.prototype.registerInputs = function (element, scope) {
         "use strict";
-        var tag_name = element[0].tagName.toLowerCase().split("-").join("_");
+        var tag_name = element[0].tagName.toLowerCase().split("-").join("_") + "_" + scope.$index;
 
-        if (!this.widgets[tag_name + "_" + scope.$index]) {
-            this.widgets[tag_name + "_" + scope.$index] = [];
+        if (!this.widgets[tag_name]) {
+            this.widgets[tag_name] = [];
         }
 
         Array.prototype.slice.call(element.find("input")).forEach(function (input) {
-            this.widgets[tag_name + "_" + scope.$index].push(input);
+            this.widgets[tag_name].push(input);
         }, this);
 
         scope.$on("$destroy", function () {
-            delete this.widgets[tag_name + "_" + scope.$index];
+            delete this.widgets[tag_name];
         }.bind(this));
-
+        
+        return tag_name;
     };
 
     ParlayWidgetInputManager.prototype.getInputs = function () {

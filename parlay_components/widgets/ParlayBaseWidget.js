@@ -155,13 +155,13 @@ function ParlayBaseWidget($mdDialog, $compile) {
                 var elementRef = element;
 
                 return function (template) {
-                    if (scopeRef.template != template) {
+                    if (scopeRef.template != template.template) {
                         while (elementRef[0].firstChild) {
                             angular.element(elementRef[0].firstChild).scope().$destroy();
                             elementRef[0].removeChild(elementRef[0].firstChild);
                         }
 
-                        elementRef[0].appendChild($compile(template)(scopeRef.$new())[0]);
+                        elementRef[0].appendChild($compile(template.template)(scopeRef.$new())[0]);
                         scope.template = template;
                     }
                 };
@@ -214,24 +214,47 @@ function ParlayBaseWidgetConfigurationDialogController($scope, $mdDialog, Parlay
         }
     });
 
-    $scope.$watch("template", function (newValue, oldValue) {
-        widgetCompiler(newValue);
-    });
-
     this.cancel = function () {
         $mdDialog.cancel();
     };
 
     this.hide = function () {
-        $mdDialog.hide({transform: $scope.transform, selectedItems: $scope.selectedItems, template: $scope.template});
+        $mdDialog.hide({transform: $scope.transform, selectedItems: $scope.selectedItems, template: $scope.template.template});
     };
 
     this.interpret = function() {
         $scope.transformedValue = interpret($scope.transform, $scope.selectedItems, ParlayWidgetInputManager.getInputs());
     };
+    
+    this.onTemplateSelectClose = function () {
+        if (this.validTemplate()) {
+            widgetCompiler($scope.template);
+            
+            if ($scope.template.type != "input") {
+                $scope.currentTabIndex++;
+            }
+            
+        }
+    };
 
     this.getTemplates = function () {
         return ParlayWidgetsCollection.getAvailableWidgets();
+    };
+
+    this.validTemplate = function () {
+        return !!$scope.template;
+    };
+
+    this.validSource = function () {
+        return $scope.template.type == "input" || $scope.selectedItems.length > 0;
+    };
+
+    this.validTransformation = function () {
+        return true;
+    };
+
+    this.validConfiguration = function () {
+        return this.validTemplate() && this.validSource() && this.validTransformation();
     };
 
 }

@@ -1,14 +1,14 @@
 <md-dialog aria-label="Parlay Widget Configuration Dialog" flex="90" flex-gt-md="70" ng-class="{'md-dialog-fullscreen' : $mdMedia}">
     <md-dialog-content>
-        <md-tabs md-stretch-tabs="always" md-dynamic-height="true" class="md-primary">
+        <md-tabs md-stretch-tabs="always" md-dynamic-height="true" class="md-primary" md-selected="currentTabIndex">
             <md-tab>
                 <md-tab-label>Template</md-tab-label>
                 <md-tab-body>
                     <div layout="row">
 
                         <md-input-container flex>
-                            <md-select ng-model="template" placeholder="Select a template">
-                                <md-option ng-value="template_option.template" ng-repeat="template_option in dialogCtrl.getTemplates()">
+                            <md-select ng-model="template" placeholder="Select a template" md-on-close="dialogCtrl.onTemplateSelectClose()">
+                                <md-option ng-value="template_option" ng-repeat="template_option in dialogCtrl.getTemplates()">
                                     {{template_option.template}} ({{template_option.type}})
                                 </md-option>
                             </md-select>
@@ -17,8 +17,8 @@
                     </div>
                 </md-tab-body>
             </md-tab>
-            <md-tab>
-                <md-tab-label>Source</md-tab-label>
+            <md-tab ng-disabled="!template || template.type == 'input'">
+                <md-tab-label>Sources</md-tab-label>
                 <md-tab-body>
                     <div ng-controller="ParlayBaseWidgetConfigurationSourceController as sourceCtrl">
 
@@ -59,7 +59,7 @@
                     </div>
                 </md-tab-body>
             </md-tab>
-            <md-tab>
+            <md-tab ng-disabled="!template || template.type == 'input'">
                 <md-tab-label>Transform</md-tab-label>
                 <md-tab-body>
 
@@ -86,6 +86,6 @@
     <md-dialog-actions layout="row">
         <md-button ng-click="dialogCtrl.cancel()" class="md-warn">Cancel</md-button>
         <span flex></span>
-        <md-button ng-click="dialogCtrl.hide()" class="md-primary">Ok</md-button>
+        <md-button ng-disabled="!dialogCtrl.validConfiguration()" ng-click="dialogCtrl.hide()" class="md-primary">Add</md-button>
     </md-dialog-actions>
 </md-dialog>

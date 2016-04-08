@@ -2,19 +2,34 @@
     <md-toolbar>
         <div class="md-toolbar-tools">
             <h2>{{tag_name}}</h2>
+            <span flex></span>
+            <md-menu>
+                <md-button aria-label="Open widget menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
+                    <md-icon ng-md-icon icon="more_vert"></md-icon>
+                </md-button>
+                <md-menu-content width="2">
+                    <md-menu-item>
+                        <md-button ng-click="widgetsCtrl.remove($index)">
+                            <md-icon ng-md-icon icon="delete"></md-icon>
+                            Delete
+                        </md-button>
+                    </md-menu-item>
+                    <md-menu-item>
+                        <md-button ng-click="edit(false)">
+                            <md-icon ng-md-icon icon="edit"></md-icon>
+                            Edit
+                        </md-button>
+                    </md-menu-item>
+                </md-menu-content>
+            </md-menu>
         </div>
     </md-toolbar>
-    <md-card-content>
+    <md-card-content layout="row">
 
-        <md-input-container>
+        <md-input-container flex>
             <label>add</label>
             <input type="number" id="add"/>
         </md-input-container>
 
     </md-card-content>
-
-    <md-card-actions>
-        <md-button ng-click="widgetsCtrl.remove($index)">Delete</md-button>
-        <md-button ng-click="edit(false)">Edit</md-button>
-    </md-card-actions>
 </md-card>

@@ -163,9 +163,15 @@ function ParlayBaseWidget($mdDialog, $compile) {
                     scope.selectedItems = result.selectedItems;
                     scope.transform = result.transform;
 
-                    if (!scope.initialized) {
+                    if (scope.template != result.template) {
+
+                        while (scope.initialized && element[0].firstChild) {
+                            element[0].removeChild(element[0].firstChild);
+                        }
+
                         element[0].appendChild($compile(result.template)(scope)[0]);
                     }
+                    scope.template = result.template;
 
                     updateTransformedValue();
                     scope.initialized = true;

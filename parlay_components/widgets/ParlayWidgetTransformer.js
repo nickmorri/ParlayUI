@@ -75,10 +75,15 @@ function ParlayWidgetTransformerFactory() {
         Object.defineProperty(this, "functionString", {
             set: function (value) {
                 functionString = value;
-                this.updateTransformedValue();
             },
             get: function () {
                 return functionString;
+            }
+        });
+
+        Object.defineProperty(this, "value", {
+            get: function () {
+                return interpret(this.functionString, $scope.selectedItems);
             }
         });
 
@@ -91,10 +96,6 @@ function ParlayWidgetTransformerFactory() {
         // Holds change listener deregistration functions.
         var handlers = [];
 
-        this.updateTransformedValue = function() {
-            $scope.transformedValue = interpret(this.functionString, $scope.selectedItems);
-        };
-
         // Establish a watcher that will manage onChange handlers for the selected values.
         $scope.$watchCollection("selectedItems", function (selectedItems) {
             if (!!handlers && handlers.length > 0) {
@@ -104,21 +105,20 @@ function ParlayWidgetTransformerFactory() {
                 handlers = selectedItems.map(function (item) {
                     if (item.type == "input") {
 
-                        item.element.addEventListener("change", this.updateTransformedValue.bind(this));
+                        var ref = function() {
+                            $scope.$digest();
+                        };
 
-                        this.updateTransformedValue();
+                        item.element.addEventListener("change", ref);
 
                         return function () {
-                            item.element.removeEventListener("change", this.updateTransformedValue.bind(this));
+                            item.element.removeEventListener("change", ref);
                         }.bind(this);
                     }
                     else {
-                        this.updateTransformedValue();
-                        return item.onChange(function () {
-                            $scope.$apply(function() {
-                                this.updateTransformedValue();
-                            }.bind(this));
-                        }.bind(this));
+                        return item.onChange(function() {
+                            $scope.$digest();
+                        });
                     }
 
                 }, this);
@@ -126,13 +126,7 @@ function ParlayWidgetTransformerFactory() {
         }.bind(this));
 
         // When the scope is destroyed we want to ensure we remove all listeners to prevent memory leaks.
-        $scope.$on("$destroy", function () {
-            handlers.forEach(function (handler) {
-                handler();
-            });
-        });
-
-        this.updateTransformedValue();
+        $scope.$on("$destroy", function () { handlers.forEach(function (handler) { handler(); }); });
 
     }
 

@@ -26,7 +26,7 @@ function PromenadeGraphWidget() {
             var line = new TimeSeries();
             this.smoothie.addTimeSeries(line);
 
-            scope.$watch("transformedValue", function (newValue) {
+            scope.$watch("transformer.value", function (newValue) {
                 if (!!newValue) {
                     line.append(new Date().getTime(), newValue);
                 }

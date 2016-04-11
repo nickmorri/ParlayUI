@@ -81,6 +81,10 @@ function ParlayBaseWidgetConfigurationDialogController($scope, $mdDialog, Parlay
         }
     };
 
+    this.onEditorLoad = function (editor) {
+        editor.$blockScrolling = Infinity;
+    };
+
     this.getTemplates = function () {
         return ParlayWidgetsCollection.getAvailableWidgets();
     };

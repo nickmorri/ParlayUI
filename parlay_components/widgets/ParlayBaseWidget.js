@@ -71,7 +71,10 @@ function ParlayBaseWidgetConfigurationDialogController($scope, $mdDialog, Parlay
         if (this.validTemplate()) {
             widgetCompiler($scope.template);
             
-            if ($scope.template.type != "input") {
+            if ($scope.template.type == "input") {
+                $scope.selectedItems = [];
+            }
+            else {
                 $scope.currentTabIndex++;
             }
             

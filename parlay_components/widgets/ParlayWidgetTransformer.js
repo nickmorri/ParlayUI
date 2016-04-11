@@ -28,19 +28,19 @@ function ParlayWidgetTransformerFactory() {
     }
 
     function runInterpreter(interpreter) {
-        try {
-            interpreter.run();
-            return interpreter.value.data;
-        }
-        catch (error) {
-            return error.toString();
-        }
+        interpreter.run();
+        return interpreter.value.data;
     }
 
     function evaluate(functionString, items) {
         "use strict";
-        var interpreter = constructInterpreter(functionString, items);
-        return runInterpreter(interpreter);
+        try {
+            var interpreter = constructInterpreter(functionString, items);
+            return runInterpreter(interpreter);
+        }
+        catch (error) {
+            return error.toString();
+        }
     }
 
     function buildTemplate(items) {

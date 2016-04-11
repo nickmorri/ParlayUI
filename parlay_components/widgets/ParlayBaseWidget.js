@@ -6,6 +6,8 @@ function ParlayBaseWidget($mdDialog, $compile, ParlayWidgetTransformer) {
 
             scope.initialized = false;
 
+            scope.configuration = {};
+
             function compileWrapper() {
                 var scopeRef = scope;
                 var elementRef = element;
@@ -36,9 +38,10 @@ function ParlayBaseWidget($mdDialog, $compile, ParlayWidgetTransformer) {
                         widgetCompiler: compileWrapper()
                     }
                 }).then(function (result) {
-                    scope.selectedItems = result.selectedItems;
                     scope.initialized = true;
-                    scope.transformer = new ParlayWidgetTransformer(scope, result.transform);
+
+                    scope.configuration.selectedItems = result.selectedItems;
+                    scope.configuration.transformer = new ParlayWidgetTransformer(scope, result.transform);
                 }).catch(function () {
                     if (initialize) {
                         scope.widgetsCtrl.remove(scope.$index);
@@ -54,38 +57,130 @@ function ParlayBaseWidget($mdDialog, $compile, ParlayWidgetTransformer) {
 
 function ParlayBaseWidgetConfigurationDialogController($scope, $mdDialog, ParlayWidgetsCollection, ParlayWidgetTransformer, selectedItems, transform, template, widgetCompiler) {
 
-    $scope.selectedItems = selectedItems;
-    $scope.template = template;
-
-    $scope.transformer = new ParlayWidgetTransformer($scope, transform);
+    $scope.configuration = {
+        selectedItems: selectedItems,
+        selectedEvents: [],
+        template: template,
+        transformer: new ParlayWidgetTransformer($scope, transform)
+    };
 
     this.cancel = function () {
         $mdDialog.cancel();
     };
 
     this.hide = function () {
-        $mdDialog.hide({transform: $scope.transformer.functionString, selectedItems: $scope.selectedItems, template: $scope.template.template});
+        $mdDialog.hide({transform: $scope.configuration.transformer.functionString, selectedItems: $scope.configuration.selectedItems, template: $scope.configuration.template.template});
+    };
+
+    this.validTemplate = function () {
+        return !!$scope.configuration.template;
+    };
+
+    this.validSource = function () {
+        return $scope.configuration.template.type == "input" || $scope.configuration.selectedItems.length > 0;
+    };
+
+    this.validTransformation = function () {
+        return true;
+    };
+
+    this.validConfiguration = function () {
+        return this.validTemplate() && this.validSource() && this.validTransformation();
+    };
+
+    $scope.$watch("configuration.template", function () {
+        if (this.validTemplate()) {
+            widgetCompiler($scope.configuration.template);
+
+            if ($scope.configuration.template.type == "input") {
+                $scope.configuration.selectedItems = [];
+            }
+            else if ($scope.configuration.template.type == "display") {
+                $scope.configuration.selectedEvents = [];
+            }
+
+        }
+    }.bind(this));
+    
+}
+
+function ParlayBaseWidgetConfigurationTemplateController($scope, ParlayWidgetsCollection) {
+
+    this.getTemplates = function () {
+        return ParlayWidgetsCollection.getAvailableWidgets();
     };
     
-    this.onTemplateSelectClose = function () {
-        if (this.validTemplate()) {
-            widgetCompiler($scope.template);
-            
-            if ($scope.template.type == "input") {
-                $scope.selectedItems = [];
-            }
-            else {
-                $scope.currentTabIndex++;
-            }
-            
+    
+    
+}
+
+function ParlayBaseWidgetConfigurationEventController($scope, ParlayWidgetInputManager) {
+
+    this.querySearch = function (query) {
+        var lowercase_query = query.toLowerCase();
+
+        return ParlayWidgetInputManager.getElements().find(function (element) {
+            return element.name.indexOf($scope.configuration.template.name) > -1;
+        }).events.filter(function (event) {
+            return event.indexOf(lowercase_query) > -1 && $scope.configuration.selectedEvents.indexOf(event) === -1;
+        });
+    };
+
+}
+
+function ParlayBaseWidgetConfigurationHandlerController($scope) {
+    
+    $scope.$watchCollection("configuration.selectedEvents", function (newValue, oldValue) {
+
+    });
+
+}
+
+function ParlayBaseWidgetConfigurationSourceController($scope, ParlayData, ParlayWidgetInputManager) {
+
+    function items() {
+        var iterator = ParlayData.values();
+        var values = [];
+        for (var current = iterator.next(); !current.done; current = iterator.next()) {
+            values.push(current.value);
+        }
+        return values;
+    }
+    
+    this.querySearch = function (query) {
+
+        var lowercase_query = query.toLowerCase();
+
+        var filtered_items = items().filter(function (item) {
+            return item.name.indexOf(lowercase_query) > -1 && $scope.configuration.selectedItems.indexOf(item) === -1;
+        });
+
+        var filtered_elements = ParlayWidgetInputManager.getElements().filter(function (element) {
+            return element.name.indexOf(lowercase_query) > -1 && $scope.configuration.selectedItems.indexOf(element) === -1;
+        });
+
+        return filtered_items.concat(filtered_elements);
+
+    };
+
+    this.change = function (item) {
+        if (!!item && item.type == "datastream") {
+            item.listen(false);
+        }
+        else if (!!item && item.type == "property") {
+            item.get();
         }
     };
+    
+}
+
+function ParlayBaseWidgetConfigurationTransformController() {
 
     function generateCompleter() {
         return {
             getCompletions: function (editor, session, pos, prefix, callback) {
 
-                var wordList = $scope.selectedItems.map(function (item) {
+                var wordList = $scope.configuration.selectedItems.map(function (item) {
                     return item.name + "_value";
                 });
 
@@ -106,68 +201,14 @@ function ParlayBaseWidgetConfigurationDialogController($scope, $mdDialog, Parlay
         editor.setOptions({enableBasicAutocompletion: true, enableLiveAutocompletion: true});
         // editor.completers.push(generateCompleter());
     };
-
-    this.getTemplates = function () {
-        return ParlayWidgetsCollection.getAvailableWidgets();
-    };
-
-    this.validTemplate = function () {
-        return !!$scope.template;
-    };
-
-    this.validSource = function () {
-        return $scope.template.type == "input" || $scope.selectedItems.length > 0;
-    };
-
-    this.validTransformation = function () {
-        return true;
-    };
-
-    this.validConfiguration = function () {
-        return this.validTemplate() && this.validSource() && this.validTransformation();
-    };
-
-}
-
-function ParlayBaseWidgetConfigurationSourceController($scope, ParlayData, ParlayWidgetInputManager) {
-
-    function items() {
-        var iterator = ParlayData.values();
-        var values = [];
-        for (var current = iterator.next(); !current.done; current = iterator.next()) {
-            values.push(current.value);
-        }
-        return values;
-    }
-    
-    this.querySearch = function (query) {
-
-        var lowercase_query = query.toLowerCase();
-
-        var filtered_items = items().filter(function (item) {
-            return item.name.indexOf(lowercase_query) > -1 && $scope.selectedItems.indexOf(item) === -1;
-        });
-
-        var filtered_elements = ParlayWidgetInputManager.getElements().filter(function (element) {
-            return element.name.indexOf(lowercase_query) > -1 && $scope.selectedItems.indexOf(element) === -1;
-        });
-
-        return filtered_items.concat(filtered_elements);
-
-    };
-
-    this.change = function (item) {
-        if (!!item && item.type == "datastream") {
-            item.listen(false);
-        }
-        else if (!!item && item.type == "property") {
-            item.get();
-        }
-    };
     
 }
 
 angular.module("parlay.widgets.base", ["ngMaterial", "ui.ace", "parlay.widgets.collection", "parlay.widgets.inputmanager", "parlay.widget.transformer", "parlay.data"])
     .controller("ParlayBaseWidgetConfigurationDialogController", ["$scope", "$mdDialog", "ParlayWidgetsCollection", "ParlayWidgetTransformer", "selectedItems", "transform", "template", "widgetCompiler", ParlayBaseWidgetConfigurationDialogController])
+    .controller("ParlayBaseWidgetConfigurationTemplateController", ["$scope", "ParlayWidgetsCollection", ParlayBaseWidgetConfigurationTemplateController])
+    .controller("ParlayBaseWidgetConfigurationEventController", ["$scope", "ParlayWidgetInputManager", ParlayBaseWidgetConfigurationEventController])
+    .controller("ParlayBaseWidgetConfigurationHandlerController", ["$scope", ParlayBaseWidgetConfigurationHandlerController])
     .controller("ParlayBaseWidgetConfigurationSourceController", ["$scope", "ParlayData", "ParlayWidgetInputManager", ParlayBaseWidgetConfigurationSourceController])
+    .controller("ParlayBaseWidgetConfigurationTransformController", ["$scope", ParlayBaseWidgetConfigurationTransformController])
     .directive("parlayBaseWidget", ["$mdDialog", "$compile", "ParlayWidgetTransformer", ParlayBaseWidget]);

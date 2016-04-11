@@ -7,7 +7,7 @@ function PromenadeInputWidget(ParlayWidgetInputManager) {
         restrict: "E",
         templateUrl: "../vendor_components/promenade/widgets/directives/promenade-input-widget.html",
         link: function (scope, element) {
-            var widgetName = element[0].tagName.toLowerCase().split("-").join("_");
+            var widgetName = "promenadeInputWidget";
             var parentElement = element.find("md-card-content");
             var targetTag = "input";
             var events = ["change"];

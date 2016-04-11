@@ -9,6 +9,7 @@ function ParlayWidgetsCollectionFactory() {
         var snake_case = element.snakeCase();
 
         this.available_widgets.push({
+            name: element,
             template: "<" + snake_case + "></" + snake_case + ">",
             type: type
         });

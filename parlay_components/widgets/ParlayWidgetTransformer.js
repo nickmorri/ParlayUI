@@ -64,20 +64,10 @@ function ParlayWidgetTransformerFactory() {
 
             return "(" + parameters.join(", ") + ")";
         }
-        
-        function buildEventHandlers(items) {
-            return items.reduce(function (previous, item) {
-                return previous.concat(item.events.map(function (event) {
-                    return item.name + ".on('" + event + "', function () { return undefined; });";
-                }));
-            }, []).join("\n");
-        }
-
-        var event_handlers = buildEventHandlers(items);
 
         var main_function = "(function " + buildParameters(items) + "{ return undefined; }" + buildActuals(items) + ")";
 
-        return event_handlers + "\n\n" + main_function;
+        return main_function;
     }
 
     function ParlayWidgetTransformer($scope, initialFunctionString) {
@@ -89,7 +79,7 @@ function ParlayWidgetTransformerFactory() {
         Object.defineProperty(this, "functionString", {
             set: function (value) {
                 functionString = value;
-                cached_value = evaluate(functionString, $scope.selectedItems);
+                cached_value = evaluate(functionString, $scope.configuration.selectedItems);
             },
             get: function () {
                 return functionString;
@@ -114,7 +104,7 @@ function ParlayWidgetTransformerFactory() {
         }
 
         // Establish a watcher that will manage onChange handlers for the selected values.
-        $scope.$watchCollection("selectedItems", function (newValue, oldValue) {
+        $scope.$watchCollection("configuration.selectedItems", function (newValue, oldValue) {
 
             if (this.functionString === undefined || newValue.length !== oldValue.length) {
                 this.functionString = buildTemplate(newValue);

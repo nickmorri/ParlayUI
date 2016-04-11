@@ -7,7 +7,7 @@ function PromenadeButtonWidget(ParlayWidgetInputManager) {
         restrict: "E",
         templateUrl: "../vendor_components/promenade/widgets/directives/promenade-button-widget.html",
         link: function (scope, element) {
-            var widgetName = element[0].tagName.toLowerCase().split("-").join("_");
+            var widgetName = "promenadeButtonWidget";
             var parentElement = element.find("md-card-content");
             var targetTag = "button";
             var events = ["click"];

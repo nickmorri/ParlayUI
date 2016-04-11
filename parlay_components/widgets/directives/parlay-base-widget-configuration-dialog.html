@@ -4,11 +4,11 @@
             <md-tab>
                 <md-tab-label>Template</md-tab-label>
                 <md-tab-body>
-                    <div layout="row">
+                    <div layout="row" ng-controller="ParlayBaseWidgetConfigurationTemplateController as templateCtrl">
 
                         <md-input-container flex>
-                            <md-select ng-model="template" placeholder="Select a template" md-on-close="dialogCtrl.onTemplateSelectClose()">
-                                <md-option ng-value="template_option" ng-repeat="template_option in dialogCtrl.getTemplates()">
+                            <md-select ng-model="configuration.template" placeholder="Select a template">
+                                <md-option ng-value="template_option" ng-repeat="template_option in templateCtrl.getTemplates()">
                                     {{template_option.template}} ({{template_option.type}})
                                 </md-option>
                             </md-select>
@@ -17,12 +17,47 @@
                     </div>
                 </md-tab-body>
             </md-tab>
-            <md-tab ng-disabled="!template || template.type == 'input'">
+            <md-tab ng-disabled="!configuration.template || configuration.template.type == 'display'">
+                <md-tab-label>Events</md-tab-label>
+                <md-tab-body>
+                    <div ng-controller="ParlayBaseWidgetConfigurationEventController as eventCtrl">
+
+                        <md-chips ng-model="configuration.selectedEvents" md-require-match="true">
+                            <md-autocomplete
+                                    md-min-length="0"
+                                    md-select-on-match="true"
+                                    md-match-case-insensitive="true"
+                                    md-no-cache="true"
+                                    md-search-text="eventCtrl.searchText"
+                                    md-items="item in eventCtrl.querySearch(eventCtrl.searchText)"
+                                    md-item-text="item"
+                                    placeholder="Search for an event">
+                                <md-item-template>
+                                    <span md-highlight-text="eventCtrl.searchText">{{item}}</span>
+                                </md-item-template>
+                            </md-autocomplete>
+                            <md-chip-template>
+                                <strong>{{$chip}}</strong>
+                            </md-chip-template>
+                        </md-chips>
+
+                    </div>
+                </md-tab-body>
+            </md-tab>
+            <md-tab ng-disabled="!configuration.template || configuration.template.type == 'display'">
+                <md-tab-label>Handlers</md-tab-label>
+                <md-tab-body>
+                    <div ng-controller="ParlayBaseWidgetConfigurationHandlerController as handlerCtrl">
+                        {{configuration.selectedEvents}}
+                    </div>
+                </md-tab-body>
+            </md-tab>
+            <md-tab ng-disabled="!configuration.template || configuration.template.type == 'input'">
                 <md-tab-label>Sources</md-tab-label>
                 <md-tab-body>
                     <div ng-controller="ParlayBaseWidgetConfigurationSourceController as sourceCtrl">
 
-                        <md-chips ng-model="selectedItems" md-autocomplete-snap="" md-require-match="true">
+                        <md-chips ng-model="configuration.selectedItems" md-autocomplete-snap="" md-require-match="true">
                             <md-autocomplete
                                     md-min-length="0"
                                     md-select-on-match="true"
@@ -60,21 +95,21 @@
                     </div>
                 </md-tab-body>
             </md-tab>
-            <md-tab ng-disabled="!template || template.type == 'input'">
+            <md-tab ng-disabled="!configuration.template || configuration.template.type == 'input'">
                 <md-tab-label>Transform</md-tab-label>
                 <md-tab-body>
 
-                    <div layout="column">
+                    <div layout="column" ng-controller="ParlayBaseWidgetConfigurationTransformController as transformCtrl">
 
                         <md-card flex="80">
                             <md-card-contents>
-                                <div ui-ace="{mode: 'javascript', onLoad: dialogCtrl.onEditorLoad}" class="transform-edit" ng-model="transformer.functionString"></div>
+                                <div ui-ace="{mode: 'javascript', onLoad: transformCtrl.onEditorLoad}" class="transform-edit" ng-model="configuration.transformer.functionString"></div>
                             </md-card-contents>
                         </md-card>
 
                         <md-card flex="20">
                             <md-card-content>
-                                <p>{{transformer.value}}</p>
+                                <p>{{configuration.transformer.value}}</p>
                             </md-card-content>
                         </md-card>
 

@@ -81,8 +81,30 @@ function ParlayBaseWidgetConfigurationDialogController($scope, $mdDialog, Parlay
         }
     };
 
+    function generateCompleter() {
+        return {
+            getCompletions: function (editor, session, pos, prefix, callback) {
+
+                var wordList = $scope.selectedItems.map(function (item) {
+                    return item.name + "_value";
+                });
+
+                callback(null, wordList.map(function (word) {
+                    return {
+                        caption: word,
+                        value: word,
+                        meta: "static"
+                    };
+                }));
+            }
+        };
+    }
+
     this.onEditorLoad = function (editor) {
         editor.$blockScrolling = Infinity;
+        ace.require("ace/ext/language_tools");
+        editor.setOptions({enableBasicAutocompletion: true, enableLiveAutocompletion: true});
+        // editor.completers.push(generateCompleter());
     };
 
     this.getTemplates = function () {
@@ -109,14 +131,6 @@ function ParlayBaseWidgetConfigurationDialogController($scope, $mdDialog, Parlay
 
 function ParlayBaseWidgetConfigurationSourceController($scope, ParlayData, ParlayWidgetInputManager) {
 
-    function inputs() {
-        return ParlayWidgetInputManager.getInputs();
-    }
-
-    function buttons() {
-        return ParlayWidgetInputManager.getButtons();
-    }
-
     function items() {
         var iterator = ParlayData.values();
         var values = [];
@@ -134,15 +148,11 @@ function ParlayBaseWidgetConfigurationSourceController($scope, ParlayData, Parla
             return item.name.indexOf(lowercase_query) > -1 && $scope.selectedItems.indexOf(item) === -1;
         });
 
-        var filter_inputs = inputs().filter(function (input) {
-            return input.name.indexOf(lowercase_query) > -1 && $scope.selectedItems.indexOf(input) === -1;
+        var filtered_elements = ParlayWidgetInputManager.getElements().filter(function (element) {
+            return element.name.indexOf(lowercase_query) > -1 && $scope.selectedItems.indexOf(element) === -1;
         });
 
-        var filtered_buttons = buttons().filter(function (button) {
-            return button.name.indexOf(lowercase_query) > -1 && $scope.selectedItems.indexOf(button) === -1;
-        });
-
-        return filtered_items.concat(filter_inputs).concat(filtered_buttons);
+        return filtered_items.concat(filtered_elements);
 
     };
 

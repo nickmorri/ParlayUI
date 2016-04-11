@@ -27,7 +27,7 @@
   },
   "overrides": {
     "ace-builds": {
-      "main": ["src-noconflict/ace.js", "src-noconflict/mode-javascript.js", "src-noconflict/mode-python.js"]
+      "main": ["src-noconflict/ace.js", "src-noconflict/mode-javascript.js", "src-noconflict/ext-language_tools.js"]
     },
     "jsinterpreter": {
       "main": ["acorn_interpreter.js"]

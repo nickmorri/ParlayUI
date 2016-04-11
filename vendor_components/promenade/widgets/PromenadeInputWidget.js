@@ -7,7 +7,12 @@ function PromenadeInputWidget(ParlayWidgetInputManager) {
         restrict: "E",
         templateUrl: "../vendor_components/promenade/widgets/directives/promenade-input-widget.html",
         link: function (scope, element) {
-            scope.tag_name = ParlayWidgetInputManager.registerInputs(element, scope);
+            var widgetName = element[0].tagName.toLowerCase().split("-").join("_");
+            var parentElement = element.find("md-card-content");
+            var targetTag = "input";
+            var events = ["change"];
+
+            scope.tag_name = ParlayWidgetInputManager.registerElements(widgetName, parentElement, targetTag, scope, events);
         }
     };
 }

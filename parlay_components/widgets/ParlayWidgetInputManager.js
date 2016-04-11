@@ -1,81 +1,37 @@
 function ParlayWidgetInputManagerFactory() {
+    "use strict";
 
     function ParlayWidgetInputManager() {
-        "use strict";
         this.widgets = {};
     }
 
-    ParlayWidgetInputManager.prototype.registerInputs = function (element, scope) {
-        "use strict";
-        var tag_name = element[0].tagName.toLowerCase().split("-").join("_") + "_" + scope.$index;
+    ParlayWidgetInputManager.prototype.registerElements = function (widgetName, parentElement, targetTag, scope, events) {
+        var parent_tag_name = widgetName + scope.$index;
 
-        if (!this.widgets[tag_name]) {
-            this.widgets[tag_name] = [];
+        if (!this.widgets[parent_tag_name]) {
+            this.widgets[parent_tag_name] = [];
         }
 
-        var card_content = element.find("md-card-content");
-
-        Array.prototype.slice.call(card_content.find("input")).forEach(function (input) {
-            this.widgets[tag_name].push({
-                type: "input",
-                element: input
+        Array.prototype.slice.call(parentElement.find(targetTag)).forEach(function (element) {
+            this.widgets[parent_tag_name].push({
+                name: parent_tag_name + "_" + element.id,
+                type: targetTag,
+                element: element,
+                events: events
             });
         }, this);
 
         scope.$on("$destroy", function () {
-            delete this.widgets[tag_name];
+            delete this.widgets[parent_tag_name];
         }.bind(this));
 
-        return tag_name;
+        return parent_tag_name;
     };
 
-    ParlayWidgetInputManager.prototype.registerButtons = function (element, scope) {
-        "use strict";
-
-        var tag_name = element[0].tagName.toLowerCase().split("-").join("_") + "_" + scope.$index;
-
-        if (!this.widgets[tag_name]) {
-            this.widgets[tag_name] = [];
-        }
-
-        var card_content = element.find("md-card-content");
-
-        Array.prototype.slice.call(card_content.find("button")).forEach(function (button) {
-            this.widgets[tag_name].push({
-                type: "button",
-                element: button
-            });
-        }, this);
-
-        scope.$on("$destroy", function () {
-            delete this.widgets[tag_name];
-        }.bind(this));
-
-        return tag_name;
-    };
-
-    function collectWidgets() {
+    ParlayWidgetInputManager.prototype.getElements = function () {
         return Object.keys(this.widgets).reduce(function (previous, current) {
-            return previous.concat(this.widgets[current].map(function (item) {
-                return {
-                    name: current + "_" + item.element.id,
-                    type: item.type,
-                    element: item.element
-                };
-            }));
+            return previous.concat(this.widgets[current]);
         }.bind(this), []);
-    }
-
-    ParlayWidgetInputManager.prototype.getInputs = function () {
-        return collectWidgets.call(this).filter(function (item) {
-            return item.type == "input";
-        });
-    };
-
-    ParlayWidgetInputManager.prototype.getButtons = function () {
-        return collectWidgets.call(this).filter(function (item) {
-            return item.type == "button";
-        });
     };
 
     return new ParlayWidgetInputManager();

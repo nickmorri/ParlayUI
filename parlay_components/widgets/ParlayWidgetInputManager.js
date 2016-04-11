@@ -49,7 +49,7 @@ function ParlayWidgetInputManagerFactory() {
 
         scope.$on("$destroy", function () {
             delete this.widgets[tag_name];
-        });
+        }.bind(this));
 
         return tag_name;
     };

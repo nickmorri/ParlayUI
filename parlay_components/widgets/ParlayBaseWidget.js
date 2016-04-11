@@ -55,7 +55,7 @@ function ParlayBaseWidget($mdDialog, $compile, ParlayWidgetTransformer) {
 function ParlayBaseWidgetConfigurationDialogController($scope, $mdDialog, ParlayWidgetsCollection, ParlayWidgetTransformer, selectedItems, transform, template, widgetCompiler) {
 
     $scope.selectedItems = selectedItems;
-    $scope.template = !!template ? template : ParlayWidgetsCollection.getAvailableWidgets()[0];
+    $scope.template = template;
 
     $scope.transformer = new ParlayWidgetTransformer($scope, transform);
 

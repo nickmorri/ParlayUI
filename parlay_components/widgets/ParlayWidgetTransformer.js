@@ -108,8 +108,10 @@ function ParlayWidgetTransformerFactory() {
                 this.functionString = buildTemplate(newValue);
             }
 
+            cleanHandlers();
+            cached_value = evaluate(functionString, newValue);
+
             if (!!newValue && newValue.length > 0) {
-                cleanHandlers();
 
                 handlers = newValue.map(function (item) {
 

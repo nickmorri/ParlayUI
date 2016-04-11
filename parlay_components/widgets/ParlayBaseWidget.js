@@ -18,7 +18,7 @@ function ParlayBaseWidget($mdDialog, $compile, ParlayWidgetTransformer) {
                         }
 
                         elementRef[0].appendChild($compile(template.template)(scopeRef.$new())[0]);
-                        scope.template = template;
+                        scopeRef.template = template;
                     }
                 };
             }

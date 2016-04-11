@@ -48,7 +48,7 @@
                 <md-tab-label>Handlers</md-tab-label>
                 <md-tab-body>
                     <div ng-controller="ParlayBaseWidgetConfigurationHandlerController as handlerCtrl">
-                        {{configuration.selectedEvents}}
+                        <div ui-ace="{mode: 'javascript', onLoad: transformCtrl.onEditorLoad}" class="transform-edit" ng-model="configuration.handler.functionString"></div>
                     </div>
                 </md-tab-body>
             </md-tab>

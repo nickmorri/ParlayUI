@@ -14,7 +14,7 @@ function ParlayWidgetInputManagerFactory() {
 
         Array.prototype.slice.call(parentElement.find(targetTag)).forEach(function (element) {
             this.widgets[parent_tag_name].push({
-                name: parent_tag_name + "_" + element.id,
+                name: parent_tag_name + "_" + element.name,
                 type: targetTag,
                 element: element,
                 events: events

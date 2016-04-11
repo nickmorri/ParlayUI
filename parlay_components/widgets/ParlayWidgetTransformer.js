@@ -2,7 +2,8 @@ function ParlayWidgetTransformerFactory() {
 
     function constructInterpreter(functionString, items) {
         "use strict";
-        return new Interpreter(functionString, function(interpreter, scope) {
+
+        var initFunc = function (interpreter, scope) {
             if (!!items && items.length > 0) {
                 items.forEach(function (item) {
 
@@ -21,25 +22,25 @@ function ParlayWidgetTransformerFactory() {
                     interpreter.setProperty(scope, item.name + "_value", property_value);
                 });
             }
-        });
+        };
+
+        return new Interpreter(functionString, initFunc);
     }
 
-    function evaluateInterpreter(interpreter) {
-        "use strict";
-        interpreter.run();
-        return interpreter.value.data;
-    }
-
-    function interpret(functionString, items) {
-        "use strict";
-        if (!!items && !!items && items.length > 0) {
-            try {
-                return evaluateInterpreter(constructInterpreter(functionString, items));
-            }
-            catch (e) {
-                return e.toString();
-            }
+    function runInterpreter(interpreter) {
+        try {
+            interpreter.run();
+            return interpreter.value.data;
         }
+        catch (error) {
+            return error.toString();
+        }
+    }
+
+    function evaluate(functionString, items) {
+        "use strict";
+        var interpreter = constructInterpreter(functionString, items);
+        return runInterpreter(interpreter);
     }
 
     function buildTemplate(items) {
@@ -71,10 +72,12 @@ function ParlayWidgetTransformerFactory() {
         "use strict";
 
         var functionString = initialFunctionString;
+        var cached_value;
 
         Object.defineProperty(this, "functionString", {
             set: function (value) {
                 functionString = value;
+                cached_value = evaluate(functionString, $scope.selectedItems);
             },
             get: function () {
                 return functionString;
@@ -83,50 +86,57 @@ function ParlayWidgetTransformerFactory() {
 
         Object.defineProperty(this, "value", {
             get: function () {
-                return interpret(this.functionString, $scope.selectedItems);
+                return cached_value;
             }
         });
-
-        $scope.$watchCollection("selectedItems", function (newValue, oldValue) {
-            if (this.functionString === undefined || newValue.length !== oldValue.length) {
-                this.functionString = buildTemplate(newValue);
-            }
-        }.bind(this));
 
         // Holds change listener deregistration functions.
         var handlers = [];
 
-        // Establish a watcher that will manage onChange handlers for the selected values.
-        $scope.$watchCollection("selectedItems", function (selectedItems) {
+        function cleanHandlers() {
             if (!!handlers && handlers.length > 0) {
-                handlers.forEach(function (handler) { handler(); });
+                while (handlers.length > 0) {
+                    handlers.shift().call();
+                }
             }
-            if (!!selectedItems && selectedItems.length > 0) {
-                handlers = selectedItems.map(function (item) {
+        }
+
+        // Establish a watcher that will manage onChange handlers for the selected values.
+        $scope.$watchCollection("selectedItems", function (newValue, oldValue) {
+
+            if (this.functionString === undefined || newValue.length !== oldValue.length) {
+                this.functionString = buildTemplate(newValue);
+            }
+
+            if (!!newValue && newValue.length > 0) {
+                cleanHandlers();
+
+                handlers = newValue.map(function (item) {
+
+                    var handler = function() {
+                        cached_value = evaluate(functionString, newValue);
+                        $scope.$digest();
+                    };
+
                     if (item.type == "input") {
 
-                        var ref = function() {
-                            $scope.$digest();
-                        };
-
-                        item.element.addEventListener("change", ref);
+                        item.element.addEventListener("change", handler);
 
                         return function () {
-                            item.element.removeEventListener("change", ref);
-                        }.bind(this);
+                            item.element.removeEventListener("change", handler);
+                        };
                     }
                     else {
-                        return item.onChange(function() {
-                            $scope.$digest();
-                        });
+                        return item.onChange(handler);
                     }
 
-                }, this);
+                });
             }
+
         }.bind(this));
 
         // When the scope is destroyed we want to ensure we remove all listeners to prevent memory leaks.
-        $scope.$on("$destroy", function () { handlers.forEach(function (handler) { handler(); }); });
+        $scope.$on("$destroy", cleanHandlers);
 
     }
 

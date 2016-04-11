@@ -64,8 +64,20 @@ function ParlayWidgetTransformerFactory() {
 
             return "(" + parameters.join(", ") + ")";
         }
+        
+        function buildEventHandlers(items) {
+            return items.reduce(function (previous, item) {
+                return previous.concat(item.events.map(function (event) {
+                    return item.name + ".on('" + event + "', function () { return undefined; });";
+                }));
+            }, []).join("\n");
+        }
 
-        return "(function " + buildParameters(items) + "{ return undefined; }" + buildActuals(items) + ")";
+        var event_handlers = buildEventHandlers(items);
+
+        var main_function = "(function " + buildParameters(items) + "{ return undefined; }" + buildActuals(items) + ")";
+
+        return event_handlers + "\n\n" + main_function;
     }
 
     function ParlayWidgetTransformer($scope, initialFunctionString) {

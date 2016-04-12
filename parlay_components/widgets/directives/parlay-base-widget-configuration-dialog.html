@@ -30,14 +30,14 @@
                                     md-no-cache="true"
                                     md-search-text="eventCtrl.searchText"
                                     md-items="item in eventCtrl.querySearch(eventCtrl.searchText)"
-                                    md-item-text="item"
+                                    md-item-text="item.event"
                                     placeholder="Search for an event">
                                 <md-item-template>
-                                    <span md-highlight-text="eventCtrl.searchText">{{item}}</span>
+                                    <span md-highlight-text="eventCtrl.searchText">{{item.event}}</span>
                                 </md-item-template>
                             </md-autocomplete>
                             <md-chip-template>
-                                <strong>{{$chip}}</strong>
+                                <strong>{{$chip.event}}</strong>
                             </md-chip-template>
                         </md-chips>
 

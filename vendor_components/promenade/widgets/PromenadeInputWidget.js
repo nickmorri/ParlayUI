@@ -12,7 +12,9 @@ function PromenadeInputWidget(ParlayWidgetInputManager) {
             var targetTag = "input";
             var events = ["change"];
 
-            scope.tag_name = ParlayWidgetInputManager.registerElements(widgetName, parentElement, targetTag, scope, events);
+            var registration = ParlayWidgetInputManager.registerElements(widgetName, parentElement, targetTag, scope, events);
+
+            scope.tag_name = registration.parent_tag_name;
         }
     };
 }

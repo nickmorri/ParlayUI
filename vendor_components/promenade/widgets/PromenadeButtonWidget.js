@@ -10,7 +10,7 @@ function PromenadeButtonWidget(ParlayWidgetInputManager) {
             var widgetName = "promenadeButtonWidget";
             var parentElement = element.find("md-card-content");
             var targetTag = "button";
-            var events = ["click"];
+            var events = ["click", "hover"];
 
             scope.tag_name = ParlayWidgetInputManager.registerElements(widgetName, parentElement, targetTag, scope, events);
         }

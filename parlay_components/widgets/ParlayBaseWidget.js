@@ -28,6 +28,10 @@ function ParlayBaseWidget($mdDialog, $compile, ParlayWidgetTransformer) {
                 };
             }
 
+            function attachEventListeners(handler) {
+                var elementRef = element;
+            }
+
             scope.edit = function (initialize) {
                 $mdDialog.show({
                     templateUrl: "../parlay_components/widgets/directives/parlay-base-widget-configuration-dialog.html",
@@ -45,6 +49,8 @@ function ParlayBaseWidget($mdDialog, $compile, ParlayWidgetTransformer) {
 
                     scope.configuration.selectedItems = result.selectedItems;
                     scope.configuration.transformer = new ParlayWidgetTransformer(scope, result.transformer.functionString);
+
+                    attachEventListeners(result.handler);
                 }).catch(function () {
                     if (initialize) {
                         scope.widgetsCtrl.remove(scope.$index);
@@ -142,6 +148,10 @@ function ParlayBaseWidgetConfigurationHandlerController($scope, ParlayWidgetInpu
             return item.name + ".on('" + event + "', function () { return undefined; });";
         }).join("\n\n");
 
+    });
+
+    $scope.$watch("configuration.handler.functionString", function (newValue) {
+        var expressions = $scope.configuration.handler.extractEventHandlers();
     });
 
 }

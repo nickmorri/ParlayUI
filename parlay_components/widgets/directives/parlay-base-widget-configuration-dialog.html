@@ -20,26 +20,13 @@
             <md-tab ng-disabled="!configuration.template || configuration.template.type == 'display'">
                 <md-tab-label>Events</md-tab-label>
                 <md-tab-body>
-                    <div ng-controller="ParlayBaseWidgetConfigurationEventController as eventCtrl">
+                    <div ng-controller="ParlayBaseWidgetConfigurationEventController as eventCtrl" layout="row">
 
-                        <md-chips ng-model="configuration.selectedEvents" md-require-match="true">
-                            <md-autocomplete
-                                    md-min-length="0"
-                                    md-select-on-match="true"
-                                    md-match-case-insensitive="true"
-                                    md-no-cache="true"
-                                    md-search-text="eventCtrl.searchText"
-                                    md-items="item in eventCtrl.querySearch(eventCtrl.searchText)"
-                                    md-item-text="item.event"
-                                    placeholder="Search for an event">
-                                <md-item-template>
-                                    <span md-highlight-text="eventCtrl.searchText">{{item.event}}</span>
-                                </md-item-template>
-                            </md-autocomplete>
-                            <md-chip-template>
-                                <strong>{{$chip.event}}</strong>
-                            </md-chip-template>
-                        </md-chips>
+                        <md-input-container flex>
+                            <md-select ng-model="configuration.selectedEvent" placeholder="Select an event">
+                                <md-option ng-value="event" ng-repeat="event in eventCtrl.getEvents()">{{event.event}}</md-option>
+                            </md-select>
+                        </md-input-container>
 
                     </div>
                 </md-tab-body>

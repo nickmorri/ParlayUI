@@ -1,21 +1,33 @@
 function ParlayWidgetEventHandlerFactory() {
 
-    function ParlayWidgetEventHandler() {
-        this.scope = undefined;
-        this.functionString = undefined;
+    function ParlayWidgetEventHandler(event, initialFunctionString) {
+        this.event = event;
+        this.functionString = initialFunctionString;
+
+        event.addListener(function () {
+            this.evaluate();
+        }.bind(this));
     }
 
-    ParlayWidgetEventHandler.prototype.parse = function () {
-        return acorn.parse(this.functionString);
-    };
 
-    ParlayWidgetEventHandler.prototype.extractEventHandlers = function () {
-        return this.parse().body.map(function (ExpressionStatement) {
-            return {
-                event: ExpressionStatement.expression.arguments[0].value,
-                func: ExpressionStatement.expression.arguments[1].body
-            };
-        });
+    ParlayWidgetEventHandler.prototype.evaluate = function () {
+
+        var wrapper = function (text) {
+            return interpreter.createPrimitive(alert(text));
+        };
+
+        var initFunc = function (interpreter, scope) {
+            interpreter.setProperty(scope, "x", interpreter.createPrimitive(10));
+            interpreter.setProperty(scope, "y", interpreter.createPrimitive(20));
+
+            interpreter.setProperty(scope, 'alert', interpreter.createNativeFunction(function(text) {
+                return interpreter.createPrimitive(wrapper(text));
+            }));
+        };
+
+        var interpreter = new Interpreter(this.functionString, initFunc);
+        interpreter.run();
+
     };
 
     return ParlayWidgetEventHandler;

@@ -40,8 +40,10 @@ function ParlayBaseWidget($mdDialog, $compile, ParlayWidgetTransformer) {
                     controller: "ParlayBaseWidgetConfigurationDialogController",
                     controllerAs: "dialogCtrl",
                     locals: {
-                        selectedItems: !!scope.selectedItems && scope.selectedItems.length >= 0 ? scope.selectedItems : [],
-                        transform: !!scope.transformer ? scope.transformer.functionString : "",
+                        selectedItems: !!scope.configuration.selectedItems && scope.configuration.selectedItems.length >= 0 ? scope.configuration.selectedItems : [],
+                        selectedEvent: !!scope.configuration.selectedEvent ? angular.copy(scope.configuration.selectedEvent) : undefined,
+                        transform: !!scope.configuration.transformer ? scope.configuration.transformer.functionString : "",
+                        handler: scope.configuration.handler,
                         template: scope.template,
                         widgetCompiler: compileWrapper()
                     }
@@ -49,7 +51,9 @@ function ParlayBaseWidget($mdDialog, $compile, ParlayWidgetTransformer) {
                     scope.initialized = true;
 
                     scope.configuration.selectedItems = result.selectedItems;
+                    scope.configuration.selectedEvent = result.selectedEvent;
                     scope.configuration.transformer = new ParlayWidgetTransformer(scope, result.transformer.functionString);
+                    scope.configuration.handler = result.handler;
 
                 }).catch(function () {
                     if (initialize) {

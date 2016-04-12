@@ -1,11 +1,11 @@
-function ParlayBaseWidgetConfigurationDialogController($scope, $mdDialog, ParlayWidgetTransformer, ParlayWidgetEventHandler, selectedItems, transform, template, widgetCompiler) {
+function ParlayBaseWidgetConfigurationDialogController($scope, $mdDialog, ParlayWidgetTransformer, ParlayWidgetEventHandler, selectedItems, selectedEvent, transform, handler, template, widgetCompiler) {
 
     $scope.configuration = {
         selectedItems: selectedItems,
-        selectedEvent: undefined,
+        selectedEvent: selectedEvent,
         template: template,
         transformer: new ParlayWidgetTransformer($scope, transform),
-        handler: undefined
+        handler: handler
     };
 
     this.cancel = function () {
@@ -85,7 +85,7 @@ function ParlayBaseWidgetConfigurationHandlerController($scope, ParlayWidgetEven
 
     $scope.$watch("configuration.selectedEvent", function (newValue, oldValue) {
 
-        if (!!oldValue) {
+        if (!!oldValue && oldValue.length > 0 && !!newValue) {
             oldValue.clearAllListeners();
         }
         if (!!newValue) {
@@ -93,10 +93,6 @@ function ParlayBaseWidgetConfigurationHandlerController($scope, ParlayWidgetEven
         }
 
     });
-
-    // $scope.$watch("configuration.handler.functionString", function (newValue) {
-    //     var expressions = $scope.configuration.handler.extractEventHandlers();
-    // });
 
 }
 
@@ -169,7 +165,7 @@ function ParlayBaseWidgetConfigurationTransformController($scope) {
 }
 
 angular.module("parlay.widgets.base.configuration", ["ui.ace", "parlay.widgets.collection", "parlay.widgets.inputmanager", "parlay.widget.transformer", "parlay.widgets.eventhandler", "parlay.data"])
-    .controller("ParlayBaseWidgetConfigurationDialogController", ["$scope", "$mdDialog", "ParlayWidgetTransformer", "ParlayWidgetEventHandler", "selectedItems", "transform", "template", "widgetCompiler", ParlayBaseWidgetConfigurationDialogController])
+    .controller("ParlayBaseWidgetConfigurationDialogController", ["$scope", "$mdDialog", "ParlayWidgetTransformer", "ParlayWidgetEventHandler", "selectedItems", "selectedEvent", "transform", "handler", "template", "widgetCompiler", ParlayBaseWidgetConfigurationDialogController])
     .controller("ParlayBaseWidgetConfigurationTemplateController", ["$scope", "ParlayWidgetsCollection", ParlayBaseWidgetConfigurationTemplateController])
     .controller("ParlayBaseWidgetConfigurationEventController", ["$scope", "ParlayWidgetInputManager", ParlayBaseWidgetConfigurationEventController])
     .controller("ParlayBaseWidgetConfigurationHandlerController", ["$scope", "ParlayWidgetEventHandler", ParlayBaseWidgetConfigurationHandlerController])

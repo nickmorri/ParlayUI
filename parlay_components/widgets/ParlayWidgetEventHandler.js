@@ -3,12 +3,18 @@ function ParlayWidgetEventHandlerFactory() {
     function ParlayWidgetEventHandler(event, initialFunctionString) {
         this.event = event;
         this.functionString = initialFunctionString;
+        this.callback = undefined;
 
-        event.addListener(function () {
-            this.evaluate();
-        }.bind(this));
+        this.attach();
     }
 
+    ParlayWidgetEventHandler.prototype.attach = function () {
+        this.event.addListener(this.evaluate.bind(this));
+    };
+
+    ParlayWidgetEventHandler.prototype.deattach = function () {
+        this.event.removeListener(this.evaluate);
+    };
 
     ParlayWidgetEventHandler.prototype.evaluate = function () {
 

@@ -61,7 +61,7 @@ function ParlayWidgetInputManagerFactory() {
 
             this.widgets[parent_tag_name].forEach(function (element) {
                 Object.keys(element.events).forEach(function (key) {
-                    element.events[key].clearAllEventListeners();
+                    element.events[key].clearAllListeners();
                 });
             });
 

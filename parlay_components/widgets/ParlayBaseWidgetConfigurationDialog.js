@@ -68,6 +68,30 @@ function ParlayBaseWidgetConfigurationEventController($scope, ParlayWidgetInputM
 
 function ParlayBaseWidgetConfigurationHandlerController($scope, ParlayWidgetEventHandler) {
 
+    function generateCompleter() {
+        return {
+            getCompletions: function (editor, session, pos, prefix, callback) {
+
+                var wordList = ["foo", "bar", "baz"];
+
+                callback(null, wordList.map(function (word) {
+                    return {
+                        caption: word,
+                        value: word,
+                        meta: "Parlay"
+                    };
+                }));
+            }
+        };
+    }
+
+    this.onEditorLoad = function (editor) {
+        editor.$blockScrolling = Infinity;
+        ace.require("ace/ext/language_tools");
+        editor.setOptions({enableBasicAutocompletion: true, enableLiveAutocompletion: true});
+        editor.completers.push(generateCompleter());
+    };
+
     $scope.$watch("configuration.selectedEvent", function (newValue, oldValue) {
 
         if (oldValue != newValue) {
@@ -124,13 +148,28 @@ function ParlayBaseWidgetConfigurationSourceController($scope, ParlayData, Parla
 
 }
 
-function ParlayBaseWidgetConfigurationTransformController($scope, ParlayWidgetTransformer) {
+function ParlayBaseWidgetConfigurationTransformController($scope, ParlayData, ParlayWidgetTransformer) {
     "use strict";
+
+    function generateCompleter() {
+        return {
+            getCompletions: function (editor, session, pos, prefix, callback) {
+                callback(null, $scope.configuration.selectedItems.map(function (item) {
+                    return {
+                        caption: item.name,
+                        value: item.name,
+                        meta: "Parlay{" + item.type + "}"
+                    };
+                }));
+            }
+        };
+    }
 
     this.onEditorLoad = function (editor) {
         editor.$blockScrolling = Infinity;
         ace.require("ace/ext/language_tools");
         editor.setOptions({enableBasicAutocompletion: true, enableLiveAutocompletion: true});
+        editor.completers = [generateCompleter()];
     };
 
 }
@@ -141,4 +180,4 @@ angular.module("parlay.widgets.base.configuration", ["ui.ace", "parlay.widgets.c
     .controller("ParlayBaseWidgetConfigurationEventController", ["$scope", "ParlayWidgetInputManager", ParlayBaseWidgetConfigurationEventController])
     .controller("ParlayBaseWidgetConfigurationHandlerController", ["$scope", "ParlayWidgetEventHandler", ParlayBaseWidgetConfigurationHandlerController])
     .controller("ParlayBaseWidgetConfigurationSourceController", ["$scope", "ParlayData", "ParlayWidgetInputManager", ParlayBaseWidgetConfigurationSourceController])
-    .controller("ParlayBaseWidgetConfigurationTransformController", ["$scope", "ParlayWidgetTransformer", ParlayBaseWidgetConfigurationTransformController]);
+    .controller("ParlayBaseWidgetConfigurationTransformController", ["$scope", "ParlayData", "ParlayWidgetTransformer", ParlayBaseWidgetConfigurationTransformController]);

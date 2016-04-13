@@ -19,7 +19,7 @@ function ParlayWidgetTransformerFactory() {
                         property_value = interpreter.createPrimitive(item.value);
                     }
 
-                    interpreter.setProperty(scope, item.name + "_value", property_value);
+                    interpreter.setProperty(scope, item.name, property_value);
                 });
             }
         };
@@ -41,35 +41,6 @@ function ParlayWidgetTransformerFactory() {
         catch (error) {
             return error.toString();
         }
-    }
-
-    function buildTemplate(items, actuals, parameters, body) {
-        "use strict";
-
-        function buildActuals(items) {
-
-            var item_actuals = !!items && items.length > 0 ? items.map(function (current) {
-                return current.name + "_value";
-            }) : [];
-
-            return "(" + item_actuals.join(", ") + ")";
-        }
-
-        function buildParameters(items) {
-            var parameters = [];
-
-            for (var i = 0; i < (!!items ? items.length : 0); i++) {
-                parameters.push("var" + i);
-            }
-
-            return "(" + parameters.join(", ") + ")";
-        }
-
-        parameters = !!parameters ? parameters : buildParameters(items);
-        body = !!body ? body : "{ return undefined; }";
-        actuals = !!actuals ? actuals : buildActuals(items);
-
-        return "(function " + parameters + body + actuals + ")";
     }
 
     function ParlayWidgetTransformer(initialItems) {
@@ -109,12 +80,6 @@ function ParlayWidgetTransformerFactory() {
         
     }
 
-    ParlayWidgetTransformer.prototype.updateFunctionString = function () {
-        this.functionString = buildTemplate(this.items.map(function (container) {
-            return container.item;
-        }));
-    };
-
     ParlayWidgetTransformer.prototype.cleanHandlers = function () {
         while (!!this.items && this.items.length > 0) {
             this.items.shift().handler();
@@ -140,8 +105,6 @@ function ParlayWidgetTransformerFactory() {
             item: item,
             handler: this.registerHandler(item)
         });
-
-        this.updateFunctionString();
     };
 
     ParlayWidgetTransformer.prototype.removeItem = function (item) {
@@ -153,9 +116,6 @@ function ParlayWidgetTransformerFactory() {
             this.items[index].handler();
             this.items.splice(index, 1);
         }
-
-        this.updateFunctionString();
-
     };
 
     return ParlayWidgetTransformer;

@@ -2,7 +2,7 @@
     <md-toolbar>
         <div class="md-toolbar-tools">
             <h2>
-                <span ng-repeat="item in configuration.selectedItems">
+                <span ng-repeat="item in configuration.transformer.items">
                     {{item.name}}<span ng-show="!$last">, </span>
                 </span>
             </h2>

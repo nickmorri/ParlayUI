@@ -1,10 +1,10 @@
-function ParlayBaseWidgetConfigurationDialogController($scope, $mdDialog, ParlayWidgetTransformer, ParlayWidgetEventHandler, selectedItems, selectedEvent, transform, handler, template, widgetCompiler) {
+function ParlayBaseWidgetConfigurationDialogController($scope, $mdDialog, ParlayWidgetTransformer, ParlayWidgetEventHandler, selectedEvent, transformer, handler, template, widgetCompiler) {
 
     $scope.configuration = {
-        selectedItems: selectedItems,
+        selectedItems: !!transformer && transformer.items.length > 0 ? transformer.items : [],
         selectedEvent: selectedEvent,
         template: template,
-        transformer: new ParlayWidgetTransformer($scope, transform),
+        transformer: transformer,
         handler: handler
     };
 
@@ -35,7 +35,7 @@ function ParlayBaseWidgetConfigurationDialogController($scope, $mdDialog, Parlay
     $scope.$watch("configuration.template", function () {
         if (this.validTemplate()) {
 
-            var result = widgetCompiler($scope.configuration.template);
+            widgetCompiler($scope.configuration.template);
 
             if ($scope.configuration.template.type == "input") {
                 $scope.configuration.selectedItems = [];
@@ -134,40 +134,64 @@ function ParlayBaseWidgetConfigurationSourceController($scope, ParlayData, Parla
 
 }
 
-function ParlayBaseWidgetConfigurationTransformController($scope) {
+function ParlayBaseWidgetConfigurationTransformController($scope, ParlayWidgetTransformer) {
 
-    function generateCompleter() {
-        return {
-            getCompletions: function (editor, session, pos, prefix, callback) {
+    function buildTemplate(items, actuals, parameters, body) {
+        "use strict";
 
-                var wordList = $scope.configuration.selectedItems.map(function (item) {
-                    return item.name + "_value";
-                });
+        function buildActuals(items) {
 
-                callback(null, wordList.map(function (word) {
-                    return {
-                        caption: word,
-                        value: word,
-                        meta: "static"
-                    };
-                }));
+            var item_actuals = !!items && items.length > 0 ? items.map(function (current) {
+                return current.name + "_value";
+            }) : [];
+
+            return "(" + item_actuals.join(", ") + ")";
+        }
+
+        function buildParameters(items) {
+            var parameters = [];
+
+            for (var i = 0; i < (!!items ? items.length : 0); i++) {
+                parameters.push("var" + i);
             }
-        };
+
+            return "(" + parameters.join(", ") + ")";
+        }
+
+        parameters = !!parameters ? parameters : buildParameters(items);
+        body = !!body ? body : "{ return undefined; }";
+        actuals = !!actuals ? actuals : buildActuals(items);
+
+        return "(function " + parameters + body + actuals + ")";
     }
+
+    // Establish a watcher that will manage onChange handlers for the selected values.
+    $scope.$watchCollection("configuration.selectedItems", function (newValue, oldValue) {
+        "use strict";
+
+        if (newValue.some(function (item) { return oldValue.indexOf(item) === -1; })) {
+
+            if (!!$scope.configuration.transformer) {
+                $scope.configuration.transformer.cleanHandlers();
+            }
+
+            $scope.configuration.transformer = new ParlayWidgetTransformer(buildTemplate(newValue), newValue);
+        }
+        
+    });
 
     this.onEditorLoad = function (editor) {
         editor.$blockScrolling = Infinity;
         ace.require("ace/ext/language_tools");
         editor.setOptions({enableBasicAutocompletion: true, enableLiveAutocompletion: true});
-        // editor.completers.push(generateCompleter());
     };
 
 }
 
 angular.module("parlay.widgets.base.configuration", ["ui.ace", "parlay.widgets.collection", "parlay.widgets.inputmanager", "parlay.widget.transformer", "parlay.widgets.eventhandler", "parlay.data"])
-    .controller("ParlayBaseWidgetConfigurationDialogController", ["$scope", "$mdDialog", "ParlayWidgetTransformer", "ParlayWidgetEventHandler", "selectedItems", "selectedEvent", "transform", "handler", "template", "widgetCompiler", ParlayBaseWidgetConfigurationDialogController])
+    .controller("ParlayBaseWidgetConfigurationDialogController", ["$scope", "$mdDialog", "ParlayWidgetTransformer", "ParlayWidgetEventHandler", "selectedEvent", "transformer", "handler", "template", "widgetCompiler", ParlayBaseWidgetConfigurationDialogController])
     .controller("ParlayBaseWidgetConfigurationTemplateController", ["$scope", "ParlayWidgetsCollection", ParlayBaseWidgetConfigurationTemplateController])
     .controller("ParlayBaseWidgetConfigurationEventController", ["$scope", "ParlayWidgetInputManager", ParlayBaseWidgetConfigurationEventController])
     .controller("ParlayBaseWidgetConfigurationHandlerController", ["$scope", "ParlayWidgetEventHandler", ParlayBaseWidgetConfigurationHandlerController])
     .controller("ParlayBaseWidgetConfigurationSourceController", ["$scope", "ParlayData", "ParlayWidgetInputManager", ParlayBaseWidgetConfigurationSourceController])
-    .controller("ParlayBaseWidgetConfigurationTransformController", ["$scope", ParlayBaseWidgetConfigurationTransformController]);
+    .controller("ParlayBaseWidgetConfigurationTransformController", ["$scope", "ParlayWidgetTransformer", ParlayBaseWidgetConfigurationTransformController]);

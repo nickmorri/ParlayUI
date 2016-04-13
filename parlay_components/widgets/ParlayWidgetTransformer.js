@@ -1,4 +1,4 @@
-function ParlayWidgetTransformerFactory() {
+function ParlayWidgetTransformerFactory($rootScope) {
 
     function constructInterpreter(functionString, items) {
         "use strict";
@@ -43,109 +43,74 @@ function ParlayWidgetTransformerFactory() {
         }
     }
 
-    function buildTemplate(items) {
+    function ParlayWidgetTransformer(intialFunctionString, items) {
         "use strict";
 
-        function buildActuals(items) {
-
-            var item_actuals = !!items && items.length > 0 ? items.map(function (current) {
-                return current.name + "_value";
-            }) : [];
-
-            return "(" + item_actuals.join(", ") + ")";
-        }
-
-        function buildParameters(items) {
-            var parameters = [];
-
-            for (var i = 0; i < (!!items ? items.length : 0); i++) {
-                parameters.push("var" + i);
-            }
-
-            return "(" + parameters.join(", ") + ")";
-        }
-
-        var main_function = "(function " + buildParameters(items) + "{ return undefined; }" + buildActuals(items) + ")";
-
-        return main_function;
-    }
-
-    function ParlayWidgetTransformer($scope, initialFunctionString) {
-        "use strict";
-
-        var functionString = initialFunctionString;
+        // Cache the evaluated value so we aren't creating an Interpreter instance for every access.
+        // The cached value will be updated whenever the state of the transformer is altered.
         var cached_value;
-
-        Object.defineProperty(this, "functionString", {
-            set: function (value) {
-                functionString = value;
-                cached_value = evaluate(functionString, $scope.configuration.selectedItems);
-            },
-            get: function () {
-                return functionString;
-            }
-        });
-
         Object.defineProperty(this, "value", {
             get: function () {
                 return cached_value;
             }
         });
 
-        // Holds change listener deregistration functions.
-        var handlers = [];
+        this.updateCachedValue = function () {
+            cached_value = evaluate(this.functionString, this.items);
+        };
 
-        function cleanHandlers() {
-            if (!!handlers && handlers.length > 0) {
-                while (handlers.length > 0) {
-                    handlers.shift().call();
-                }
+        var cached_functionString;
+        Object.defineProperty(this, "functionString", {
+            get: function () {
+                return cached_functionString;
+            },
+            set: function (value) {
+                cached_functionString = value;
+                this.updateCachedValue();
+            }.bind(this)
+        });
+
+        // Holds change listener deregistration functions.
+        this.handlers = [];
+
+        this.functionString = intialFunctionString;
+        this.items = items;
+
+        this.registerHandlers();
+    }
+
+    ParlayWidgetTransformer.prototype.registerHandlers = function () {
+        this.handlers = this.items.map(function (item) {
+
+            var ref = function () {
+                $rootScope.$apply(this.updateCachedValue.bind(this));
+            };
+
+            if (item.type == "input") {
+
+                item.element.addEventListener("change", ref.bind(this));
+
+                return function () {
+                    item.element.removeEventListener("change", ref);
+                }.bind(this);
+            }
+            else {
+                return item.onChange(ref.bind(this));
+            }
+
+        }, this);
+    };
+
+    ParlayWidgetTransformer.prototype.cleanHandlers = function () {
+        if (!!this.handlers && this.handlers.length > 0) {
+            while (this.handlers.length > 0) {
+                this.handlers.shift().call();
             }
         }
-
-        // Establish a watcher that will manage onChange handlers for the selected values.
-        $scope.$watchCollection("configuration.selectedItems", function (newValue, oldValue) {
-
-            if (this.functionString === undefined || newValue.length !== oldValue.length) {
-                this.functionString = buildTemplate(newValue);
-            }
-
-            cleanHandlers();
-            cached_value = evaluate(functionString, newValue);
-
-            if (!!newValue && newValue.length > 0) {
-
-                handlers = newValue.map(function (item) {
-
-                    var handler = function() {
-                        cached_value = evaluate(functionString, newValue);
-                        $scope.$digest();
-                    };
-
-                    if (item.type == "input") {
-
-                        item.element.addEventListener("change", handler);
-
-                        return function () {
-                            item.element.removeEventListener("change", handler);
-                        };
-                    }
-                    else {
-                        return item.onChange(handler);
-                    }
-
-                });
-            }
-
-        }.bind(this));
-
-        // When the scope is destroyed we want to ensure we remove all listeners to prevent memory leaks.
-        $scope.$on("$destroy", cleanHandlers);
-
-    }
+    };
 
     return ParlayWidgetTransformer;
 }
 
 angular.module("parlay.widget.transformer", [])
-    .factory("ParlayWidgetTransformer", [ParlayWidgetTransformerFactory]);
+    .factory("ParlayWidgetTransformer", ["$rootScope", ParlayWidgetTransformerFactory]);

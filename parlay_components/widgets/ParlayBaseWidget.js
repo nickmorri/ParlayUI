@@ -40,9 +40,8 @@ function ParlayBaseWidget($mdDialog, $compile, ParlayWidgetTransformer) {
                     controller: "ParlayBaseWidgetConfigurationDialogController",
                     controllerAs: "dialogCtrl",
                     locals: {
-                        selectedItems: !!scope.configuration.selectedItems && scope.configuration.selectedItems.length >= 0 ? scope.configuration.selectedItems : [],
-                        selectedEvent: !!scope.configuration.selectedEvent ? angular.copy(scope.configuration.selectedEvent) : undefined,
-                        transform: !!scope.configuration.transformer ? scope.configuration.transformer.functionString : "",
+                        selectedEvent: !!scope.configuration.selectedEvent ? scope.configuration.selectedEvent : undefined,
+                        transformer: !!scope.configuration.transformer ? scope.configuration.transformer : undefined,
                         handler: scope.configuration.handler,
                         template: scope.template,
                         widgetCompiler: compileWrapper()
@@ -50,9 +49,8 @@ function ParlayBaseWidget($mdDialog, $compile, ParlayWidgetTransformer) {
                 }).then(function (result) {
                     scope.initialized = true;
 
-                    scope.configuration.selectedItems = result.selectedItems;
                     scope.configuration.selectedEvent = result.selectedEvent;
-                    scope.configuration.transformer = new ParlayWidgetTransformer(scope, result.transformer.functionString);
+                    scope.configuration.transformer = result.transformer;
                     scope.configuration.handler = result.handler;
 
                 }).catch(function () {
@@ -63,6 +61,12 @@ function ParlayBaseWidget($mdDialog, $compile, ParlayWidgetTransformer) {
             };
 
             scope.edit(true);
+
+            scope.$on("$destroy", function () {
+                if (scope.initialized) {
+                    scope.configuration.transformer.cleanHandlers();
+                }
+            });
 
         }
     };

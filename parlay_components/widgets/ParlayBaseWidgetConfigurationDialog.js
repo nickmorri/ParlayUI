@@ -136,48 +136,10 @@ function ParlayBaseWidgetConfigurationSourceController($scope, ParlayData, Parla
 
 function ParlayBaseWidgetConfigurationTransformController($scope, ParlayWidgetTransformer) {
 
-    function buildTemplate(items, actuals, parameters, body) {
-        "use strict";
-
-        function buildActuals(items) {
-
-            var item_actuals = !!items && items.length > 0 ? items.map(function (current) {
-                return current.name + "_value";
-            }) : [];
-
-            return "(" + item_actuals.join(", ") + ")";
-        }
-
-        function buildParameters(items) {
-            var parameters = [];
-
-            for (var i = 0; i < (!!items ? items.length : 0); i++) {
-                parameters.push("var" + i);
-            }
-
-            return "(" + parameters.join(", ") + ")";
-        }
-
-        parameters = !!parameters ? parameters : buildParameters(items);
-        body = !!body ? body : "{ return undefined; }";
-        actuals = !!actuals ? actuals : buildActuals(items);
-
-        return "(function " + parameters + body + actuals + ")";
-    }
-
     // Establish a watcher that will manage onChange handlers for the selected values.
-    $scope.$watchCollection("configuration.selectedItems", function (newValue, oldValue) {
+    $scope.$watchCollection("configuration.selectedItems", function (newValue) {
         "use strict";
-
-        if (newValue.some(function (item) { return oldValue.indexOf(item) === -1; })) {
-
-            if (!!$scope.configuration.transformer) {
-                $scope.configuration.transformer.cleanHandlers();
-            }
-
-            $scope.configuration.transformer = new ParlayWidgetTransformer(buildTemplate(newValue), newValue);
-        }
-        
+        $scope.configuration.transformer = new ParlayWidgetTransformer(newValue);
     });
 
     this.onEditorLoad = function (editor) {

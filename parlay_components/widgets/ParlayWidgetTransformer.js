@@ -43,7 +43,36 @@ function ParlayWidgetTransformerFactory() {
         }
     }
 
-    function ParlayWidgetTransformer(intialFunctionString, items) {
+    function buildTemplate(items, actuals, parameters, body) {
+        "use strict";
+
+        function buildActuals(items) {
+
+            var item_actuals = !!items && items.length > 0 ? items.map(function (current) {
+                return current.name + "_value";
+            }) : [];
+
+            return "(" + item_actuals.join(", ") + ")";
+        }
+
+        function buildParameters(items) {
+            var parameters = [];
+
+            for (var i = 0; i < (!!items ? items.length : 0); i++) {
+                parameters.push("var" + i);
+            }
+
+            return "(" + parameters.join(", ") + ")";
+        }
+
+        parameters = !!parameters ? parameters : buildParameters(items);
+        body = !!body ? body : "{ return undefined; }";
+        actuals = !!actuals ? actuals : buildActuals(items);
+
+        return "(function " + parameters + body + actuals + ")";
+    }
+
+    function ParlayWidgetTransformer(initialItems) {
         "use strict";
 
         // Cache the evaluated value so we aren't creating an Interpreter instance for every access.
@@ -70,11 +99,25 @@ function ParlayWidgetTransformerFactory() {
             }.bind(this)
         });
 
+        var cached_items = [];
+        Object.defineProperty(this, "items", {
+            get: function () {
+                return cached_items;
+            },
+            set: function(value) {
+                if (value.some(function (item) { return cached_items.indexOf(item) === -1; })) {
+                    this.cleanHandlers();
+                    cached_items = value;
+                    this.registerHandlers();
+                    this.functionString = buildTemplate(this.items);
+                }
+            }.bind(this)
+        });
+
         // Holds change listener deregistration functions.
         this.handlers = [];
 
-        this.functionString = intialFunctionString;
-        this.items = items;
+        this.items = initialItems;
 
         this.registerHandlers();
     }

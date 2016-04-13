@@ -7,7 +7,7 @@
                     <div layout="row" ng-controller="ParlayBaseWidgetConfigurationTemplateController as templateCtrl">
 
                         <md-input-container flex>
-                            <md-select ng-model="configuration.template" placeholder="Select a template">
+                            <md-select ng-model="wrapper.template" placeholder="Select a template">
                                 <md-option ng-value="template_option" ng-repeat="template_option in templateCtrl.getTemplates()">
                                     {{template_option.template}} ({{template_option.type}})
                                 </md-option>
@@ -17,8 +17,8 @@
                     </div>
                 </md-tab-body>
             </md-tab>
-            <md-tab ng-disabled="!configuration.template || configuration.template.type == 'display'">
-                <md-tab-label>Events</md-tab-label>
+            <md-tab ng-disabled="!wrapper.template || wrapper.template.type == 'display'">
+                <md-tab-label>Event</md-tab-label>
                 <md-tab-body>
                     <div ng-controller="ParlayBaseWidgetConfigurationEventController as eventCtrl" layout="row">
 
@@ -31,20 +31,20 @@
                     </div>
                 </md-tab-body>
             </md-tab>
-            <md-tab ng-disabled="!configuration.template || configuration.template.type == 'display'">
-                <md-tab-label>Handlers</md-tab-label>
+            <md-tab ng-disabled="!wrapper.template || wrapper.template.type == 'display'">
+                <md-tab-label>Handler</md-tab-label>
                 <md-tab-body>
                     <div ng-controller="ParlayBaseWidgetConfigurationHandlerController as handlerCtrl">
                         <div ui-ace="{mode: 'javascript', onLoad: transformCtrl.onEditorLoad}" class="transform-edit" ng-model="configuration.handler.functionString"></div>
                     </div>
                 </md-tab-body>
             </md-tab>
-            <md-tab ng-disabled="!configuration.template || configuration.template.type == 'input'">
+            <md-tab ng-disabled="!wrapper.template || wrapper.template.type == 'input'">
                 <md-tab-label>Sources</md-tab-label>
                 <md-tab-body>
                     <div ng-controller="ParlayBaseWidgetConfigurationSourceController as sourceCtrl">
 
-                        <md-chips ng-model="configuration.selectedItems" md-autocomplete-snap="" md-require-match="true">
+                        <md-chips ng-model="configuration.selectedItems" md-on-add="sourceCtrl.onAdd($chip, $index)" md-on-remove="sourceCtrl.onRemove($chip, $index)" md-require-match="true">
                             <md-autocomplete
                                     md-min-length="0"
                                     md-select-on-match="true"
@@ -82,7 +82,7 @@
                     </div>
                 </md-tab-body>
             </md-tab>
-            <md-tab ng-disabled="!configuration.template || configuration.template.type == 'input'">
+            <md-tab ng-disabled="!wrapper.template || wrapper.template.type == 'input'">
                 <md-tab-label>Transform</md-tab-label>
                 <md-tab-body>
 
@@ -106,9 +106,8 @@
             </md-tab>
         </md-tabs>
     </md-dialog-content>
-    <md-dialog-actions layout="row">
+    <md-dialog-actions layout="row" layout-align="space-between center">
         <md-button ng-click="dialogCtrl.cancel()" class="md-warn">Cancel</md-button>
-        <span flex></span>
-        <md-button ng-disabled="!dialogCtrl.validConfiguration()" ng-click="dialogCtrl.hide()" class="md-primary">Add</md-button>
+        <md-button ng-click="dialogCtrl.hide()" class="md-primary">Ok</md-button>
     </md-dialog-actions>
 </md-dialog>

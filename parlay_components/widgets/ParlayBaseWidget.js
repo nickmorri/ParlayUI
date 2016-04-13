@@ -1,4 +1,4 @@
-function ParlayBaseWidget($mdDialog, $compile, ParlayWidgetTransformer) {
+function ParlayBaseWidget($mdDialog, $compile) {
     return {
         scope: true,
         restrict: "E",
@@ -40,19 +40,12 @@ function ParlayBaseWidget($mdDialog, $compile, ParlayWidgetTransformer) {
                     controller: "ParlayBaseWidgetConfigurationDialogController",
                     controllerAs: "dialogCtrl",
                     locals: {
-                        selectedEvent: !!scope.configuration.selectedEvent ? scope.configuration.selectedEvent : undefined,
-                        transformer: !!scope.configuration.transformer ? scope.configuration.transformer : undefined,
-                        handler: scope.configuration.handler,
+                        configuration: scope.configuration,
                         template: scope.template,
                         widgetCompiler: compileWrapper()
                     }
-                }).then(function (result) {
+                }).then(function () {
                     scope.initialized = true;
-
-                    scope.configuration.selectedEvent = result.selectedEvent;
-                    scope.configuration.transformer = result.transformer;
-                    scope.configuration.handler = result.handler;
-
                 }).catch(function () {
                     if (initialize) {
                         scope.widgetsCtrl.remove(scope.$index);
@@ -64,7 +57,12 @@ function ParlayBaseWidget($mdDialog, $compile, ParlayWidgetTransformer) {
 
             scope.$on("$destroy", function () {
                 if (scope.initialized) {
-                    scope.configuration.transformer.cleanHandlers();
+                    if (!!scope.configuration.transformer) {
+                        scope.configuration.transformer.cleanHandlers();
+                    }
+                    if (!!scope.configuration.handler) {
+                        scope.configuration.handler.detach();
+                    }
                 }
             });
 
@@ -73,4 +71,4 @@ function ParlayBaseWidget($mdDialog, $compile, ParlayWidgetTransformer) {
 }
 
 angular.module("parlay.widgets.base", ["ngMaterial", "parlay.widget.transformer", "parlay.widgets.base.configuration"])
-    .directive("parlayBaseWidget", ["$mdDialog", "$compile", "ParlayWidgetTransformer", ParlayBaseWidget]);
+    .directive("parlayBaseWidget", ["$mdDialog", "$compile", ParlayBaseWidget]);

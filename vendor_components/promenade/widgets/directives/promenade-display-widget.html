@@ -1,9 +1,9 @@
-<md-card class="parlay-item-card" ng-show="initialized">
+<md-card class="parlay-item-card">
     <md-toolbar>
         <div class="md-toolbar-tools">
             <h2>
-                <span ng-repeat="item in configuration.transformer.items">
-                    {{item.name}}<span ng-show="!$last">, </span>
+                <span ng-repeat="container in configuration.transformer.items">
+                    {{container.item.name}}<span ng-show="!$last">, </span>
                 </span>
             </h2>
             <span flex></span>

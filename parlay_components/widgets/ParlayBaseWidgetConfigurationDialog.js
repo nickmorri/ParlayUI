@@ -1,11 +1,9 @@
-function ParlayBaseWidgetConfigurationDialogController($scope, $mdDialog, ParlayWidgetTransformer, ParlayWidgetEventHandler, selectedEvent, transformer, handler, template, widgetCompiler) {
+function ParlayBaseWidgetConfigurationDialogController($scope, $mdDialog, ParlayWidgetTransformer, ParlayWidgetEventHandler, configuration, template, widgetCompiler) {
 
-    $scope.configuration = {
-        selectedItems: !!transformer && transformer.items.length > 0 ? transformer.items : [],
-        selectedEvent: selectedEvent,
-        template: template,
-        transformer: transformer,
-        handler: handler
+    $scope.configuration = configuration;
+    
+    $scope.wrapper = {
+        template: template
     };
 
     this.cancel = function () {
@@ -16,32 +14,31 @@ function ParlayBaseWidgetConfigurationDialogController($scope, $mdDialog, Parlay
         $mdDialog.hide($scope.configuration);
     };
 
-    this.validTemplate = function () {
-        return !!$scope.configuration.template;
-    };
+    $scope.$watch("wrapper.template", function (newValue, oldValue) {
+        if (newValue != oldValue) {
 
-    this.validSource = function () {
-        return $scope.configuration.template.type == "input" || $scope.configuration.selectedItems.length > 0;
-    };
+            widgetCompiler($scope.wrapper.template);
 
-    this.validTransformation = function () {
-        return true;
-    };
+            if (!oldValue || newValue.type != oldValue.type) {
+                if ($scope.wrapper.template.type == "display") {
+                    $scope.configuration.selectedItems = [];
+                    $scope.configuration.transformer = new ParlayWidgetTransformer();
 
-    this.validConfiguration = function () {
-        return this.validTemplate() && this.validSource() && this.validTransformation();
-    };
+                    if (!!$scope.configuration.handler) {
+                        $scope.configuration.handler.detach();
+                        $scope.configuration.handler = undefined;
+                    }
 
-    $scope.$watch("configuration.template", function () {
-        if (this.validTemplate()) {
+                }
+                else if ($scope.wrapper.template.type == "input") {
+                    $scope.configuration.selectedEvent = undefined;
 
-            widgetCompiler($scope.configuration.template);
+                    if (!!$scope.configuration.transformer) {
+                        $scope.configuration.transformer.cleanHandlers();
+                    }
 
-            if ($scope.configuration.template.type == "input") {
-                $scope.configuration.selectedItems = [];
-            }
-            else if ($scope.configuration.template.type == "display") {
-                $scope.configuration.selectedEvents = [];
+                    $scope.configuration.selectedItems = [];
+                }
             }
 
         }
@@ -61,22 +58,10 @@ function ParlayBaseWidgetConfigurationEventController($scope, ParlayWidgetInputM
 
     this.getEvents = function () {
         var element = ParlayWidgetInputManager.getElements().find(function (element) {
-            return element.name.indexOf($scope.configuration.template.name) > -1;
+            return element.name.indexOf($scope.wrapper.template.name) > -1;
         });
 
         return !!element ? element.events : [];
-    };
-
-    this.querySearch = function (query) {
-        var lowercase_query = query.toLowerCase();
-
-        var events = this.getEvents();
-
-        return Object.keys(events).filter(function (key) {
-            return key.indexOf(lowercase_query) > -1 && $scope.configuration.selectedEvents.indexOf(events[key]) === -1;
-        }).map(function (key) {
-            return events[key];
-        });
     };
 
 }
@@ -85,10 +70,7 @@ function ParlayBaseWidgetConfigurationHandlerController($scope, ParlayWidgetEven
 
     $scope.$watch("configuration.selectedEvent", function (newValue, oldValue) {
 
-        if (!!oldValue && oldValue.length > 0 && !!newValue) {
-            oldValue.clearAllListeners();
-        }
-        if (!!newValue) {
+        if (oldValue != newValue) {
             $scope.configuration.handler = new ParlayWidgetEventHandler(newValue);
         }
 
@@ -131,16 +113,19 @@ function ParlayBaseWidgetConfigurationSourceController($scope, ParlayData, Parla
             item.get();
         }
     };
+    
+    this.onAdd = function ($chip) {
+        $scope.configuration.transformer.addItem($chip);
+    };
+    
+    this.onRemove = function ($chip) {
+        $scope.configuration.transformer.removeItem($chip);
+    };
 
 }
 
 function ParlayBaseWidgetConfigurationTransformController($scope, ParlayWidgetTransformer) {
-
-    // Establish a watcher that will manage onChange handlers for the selected values.
-    $scope.$watchCollection("configuration.selectedItems", function (newValue) {
-        "use strict";
-        $scope.configuration.transformer = new ParlayWidgetTransformer(newValue);
-    });
+    "use strict";
 
     this.onEditorLoad = function (editor) {
         editor.$blockScrolling = Infinity;
@@ -151,7 +136,7 @@ function ParlayBaseWidgetConfigurationTransformController($scope, ParlayWidgetTr
 }
 
 angular.module("parlay.widgets.base.configuration", ["ui.ace", "parlay.widgets.collection", "parlay.widgets.inputmanager", "parlay.widget.transformer", "parlay.widgets.eventhandler", "parlay.data"])
-    .controller("ParlayBaseWidgetConfigurationDialogController", ["$scope", "$mdDialog", "ParlayWidgetTransformer", "ParlayWidgetEventHandler", "selectedEvent", "transformer", "handler", "template", "widgetCompiler", ParlayBaseWidgetConfigurationDialogController])
+    .controller("ParlayBaseWidgetConfigurationDialogController", ["$scope", "$mdDialog", "ParlayWidgetTransformer", "ParlayWidgetEventHandler", "configuration", "template", "widgetCompiler", ParlayBaseWidgetConfigurationDialogController])
     .controller("ParlayBaseWidgetConfigurationTemplateController", ["$scope", "ParlayWidgetsCollection", ParlayBaseWidgetConfigurationTemplateController])
     .controller("ParlayBaseWidgetConfigurationEventController", ["$scope", "ParlayWidgetInputManager", ParlayBaseWidgetConfigurationEventController])
     .controller("ParlayBaseWidgetConfigurationHandlerController", ["$scope", "ParlayWidgetEventHandler", ParlayBaseWidgetConfigurationHandlerController])

@@ -1,19 +1,30 @@
 function ParlayWidgetEventHandlerFactory() {
 
-    function ParlayWidgetEventHandler(event, initialFunctionString) {
-        this.event = event;
-        this.functionString = initialFunctionString;
-        this.callback = undefined;
+    function ParlayWidgetEventHandler(initialEvent, initialFunctionString) {
 
-        this.attach();
+        var event;
+        Object.defineProperty(this, "event", {
+            get: function () {
+                return event;
+            },
+            set: function (value) {
+                if (!!event) {
+                    event.removeListener(this.evaluate);
+                    event = undefined;
+                }
+                if (!!value) {
+                    event = value;
+                    event.addListener(this.evaluate.bind(this));
+                }
+            }
+        });
+
+        this.functionString = initialFunctionString;
+        this.event = initialEvent;
     }
 
-    ParlayWidgetEventHandler.prototype.attach = function () {
-        this.event.addListener(this.evaluate.bind(this));
-    };
-
-    ParlayWidgetEventHandler.prototype.deattach = function () {
-        this.event.removeListener(this.evaluate);
+    ParlayWidgetEventHandler.prototype.detach = function () {
+        this.event = undefined;
     };
 
     ParlayWidgetEventHandler.prototype.evaluate = function () {
@@ -23,9 +34,6 @@ function ParlayWidgetEventHandlerFactory() {
         };
 
         var initFunc = function (interpreter, scope) {
-            interpreter.setProperty(scope, "x", interpreter.createPrimitive(10));
-            interpreter.setProperty(scope, "y", interpreter.createPrimitive(20));
-
             interpreter.setProperty(scope, 'alert', interpreter.createNativeFunction(function(text) {
                 return interpreter.createPrimitive(wrapper(text));
             }));

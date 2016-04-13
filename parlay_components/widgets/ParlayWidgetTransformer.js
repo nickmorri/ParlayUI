@@ -85,7 +85,9 @@ function ParlayWidgetTransformerFactory() {
         });
 
         this.updateCachedValue = function () {
-            cached_value = evaluate(this.functionString, this.items);
+            cached_value = evaluate(this.functionString, this.items.map(function (container) {
+                return container.item;
+            }));
         };
 
         var cached_functionString;
@@ -99,51 +101,61 @@ function ParlayWidgetTransformerFactory() {
             }.bind(this)
         });
 
-        var cached_items = [];
-        Object.defineProperty(this, "items", {
-            get: function () {
-                return cached_items;
-            },
-            set: function(value) {
-                if (value.some(function (item) { return cached_items.indexOf(item) === -1; })) {
-                    this.cleanHandlers();
-                    cached_items = value;
-                    this.registerHandlers();
-                    this.functionString = buildTemplate(this.items);
-                }
-            }.bind(this)
-        });
+        this.items = [];
 
-        // Holds change listener deregistration functions.
-        this.handlers = [];
-
-        this.items = initialItems;
-
-        this.registerHandlers();
+        if (!!initialItems) {
+            initialItems.forEach(this.addItem);
+        }
+        
     }
 
-    ParlayWidgetTransformer.prototype.registerHandlers = function () {
-        this.handlers = this.items.map(function (item) {
-
-            if (item.type == "input") {
-
-                item.element.addEventListener("change", this.updateCachedValue.bind(this));
-
-                return function () {
-                    item.element.removeEventListener("change", this.updateCachedValue);
-                }.bind(this);
-            }
-            else {
-                return item.onChange(this.updateCachedValue.bind(this));
-            }
-
-        }, this);
+    ParlayWidgetTransformer.prototype.updateFunctionString = function () {
+        this.functionString = buildTemplate(this.items.map(function (container) {
+            return container.item;
+        }));
     };
 
     ParlayWidgetTransformer.prototype.cleanHandlers = function () {
-        while (!!this.handlers && this.handlers.length > 0) {
-            this.handlers.shift().call();
+        while (!!this.items && this.items.length > 0) {
+            this.items.shift().handler();
         }
+    };
+
+    ParlayWidgetTransformer.prototype.registerHandler = function (item) {
+        if (item.type == "input") {
+
+            item.element.addEventListener("change", this.updateCachedValue.bind(this));
+
+            return function () {
+                item.element.removeEventListener("change", this.updateCachedValue);
+            }.bind(this);
+        }
+        else {
+            return item.onChange(this.updateCachedValue.bind(this));
+        }
+    };
+
+    ParlayWidgetTransformer.prototype.addItem = function (item) {
+        this.items.push({
+            item: item,
+            handler: this.registerHandler(item)
+        });
+
+        this.updateFunctionString();
+    };
+
+    ParlayWidgetTransformer.prototype.removeItem = function (item) {
+        var index = this.items.findIndex(function (candidate) {
+            return item == candidate.item;
+        });
+
+        if (index >= 0) {
+            this.items[index].handler();
+            this.items.splice(index, 1);
+        }
+
+        this.updateFunctionString();
+
     };
 
     return ParlayWidgetTransformer;

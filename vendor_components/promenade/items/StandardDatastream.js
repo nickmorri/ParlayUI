@@ -1,4 +1,4 @@
-function PromenadeStandardDatastreamFactory(ParlayData) {
+function PromenadeStandardDatastreamFactory(ParlayData, $rootScope) {
 
     function PromenadeStandardDatastream(data, item_name, protocol) {
 
@@ -54,7 +54,9 @@ function PromenadeStandardDatastreamFactory(ParlayData) {
             FROM: this.item_name,
             STREAM: this.name
         }, function(response) {
-            this.value = response.VALUE;
+            $rootScope.$apply(function () {
+                this.value = response.VALUE;
+            }.bind(this));
         }.bind(this));
 
         this.listen = function (stop) {
@@ -83,4 +85,4 @@ function PromenadeStandardDatastreamFactory(ParlayData) {
 }
 
 angular.module("promenade.items.datastream", ["parlay.data"])
-    .factory("PromenadeStandardDatastream", ["ParlayData", PromenadeStandardDatastreamFactory]);
+    .factory("PromenadeStandardDatastream", ["ParlayData", "$rootScope", PromenadeStandardDatastreamFactory]);

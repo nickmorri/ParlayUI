@@ -1,4 +1,4 @@
-function PromenadeStandardPropertyFactory(ParlayData) {
+function PromenadeStandardPropertyFactory(ParlayData, $rootScope) {
     
     function PromenadeStandardProperty(data, item_name, protocol) {
         
@@ -57,7 +57,9 @@ function PromenadeStandardPropertyFactory(ParlayData) {
         }, function(response) {
             // TODO: Talk with Daniel about refactoring property API to require property name in topics.
             if (this.name == response.PROPERTY && response.VALUE) {
-                this.value = response.VALUE;
+                $rootScope.$apply(function () {
+                    this.value = response.VALUE;
+                }.bind(this));
             }
         }.bind(this));
 
@@ -107,4 +109,4 @@ function PromenadeStandardPropertyFactory(ParlayData) {
 }
 
 angular.module("promenade.items.property", ["parlay.data"])
-    .factory("PromenadeStandardProperty", ["ParlayData", PromenadeStandardPropertyFactory]);
+    .factory("PromenadeStandardProperty", ["ParlayData", "$rootScope", PromenadeStandardPropertyFactory]);

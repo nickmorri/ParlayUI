@@ -1,4 +1,4 @@
-function ParlayWidgetTransformerFactory($rootScope) {
+function ParlayWidgetTransformerFactory() {
 
     function constructInterpreter(functionString, items) {
         "use strict";
@@ -82,30 +82,24 @@ function ParlayWidgetTransformerFactory($rootScope) {
     ParlayWidgetTransformer.prototype.registerHandlers = function () {
         this.handlers = this.items.map(function (item) {
 
-            var ref = function () {
-                $rootScope.$apply(this.updateCachedValue.bind(this));
-            };
-
             if (item.type == "input") {
 
-                item.element.addEventListener("change", ref.bind(this));
+                item.element.addEventListener("change", this.updateCachedValue.bind(this));
 
                 return function () {
-                    item.element.removeEventListener("change", ref);
+                    item.element.removeEventListener("change", this.updateCachedValue);
                 }.bind(this);
             }
             else {
-                return item.onChange(ref.bind(this));
+                return item.onChange(this.updateCachedValue.bind(this));
             }
 
         }, this);
     };
 
     ParlayWidgetTransformer.prototype.cleanHandlers = function () {
-        if (!!this.handlers && this.handlers.length > 0) {
-            while (this.handlers.length > 0) {
-                this.handlers.shift().call();
-            }
+        while (!!this.handlers && this.handlers.length > 0) {
+            this.handlers.shift().call();
         }
     };
 
@@ -113,4 +107,4 @@ function ParlayWidgetTransformerFactory($rootScope) {
 }
 
 angular.module("parlay.widget.transformer", [])
-    .factory("ParlayWidgetTransformer", ["$rootScope", ParlayWidgetTransformerFactory]);
+    .factory("ParlayWidgetTransformer", [ParlayWidgetTransformerFactory]);

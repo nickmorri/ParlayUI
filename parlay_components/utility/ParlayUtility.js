@@ -1,49 +1,4 @@
 /**
- * Encodes Object by sorting comparing keys in Unicode code point order.
- * @returns {String} Translation of key, values to String.
- */
-Object.defineProperty(Object.prototype, "stableEncode", {
-    writable: false,
-    enumerable: false,
-    value: function() {
-        if (typeof this === 'string' || this instanceof String) {
-            return '"' + this + '"';
-        }
-        else if (typeof this === 'number' || this instanceof Number) {
-            return this.toString();
-        }
-        else if (typeof this === 'boolean' || this instanceof Boolean) {
-            return this.toString();
-        }
-        else if (Array.isArray(this)) {
-            return this.sort().reduce(function (previous, current, index) {
-                var currentString = previous;
-
-                if (index > 0) currentString += ",";
-
-                var current_encoded = current === null || current === undefined ? "null" : current.stableEncode();
-
-                return currentString + current_encoded;
-            }, "[") + "]";
-        }
-        else if (typeof this === 'object') {
-            return Object.keys(this).sort().reduce(function (previous, current, index) {
-                    var currentString = previous;
-
-                    if (index > 0) currentString += ",";
-
-                    var current_encoded = this[current] === null || this[current] === undefined ? "null" : this[current].stableEncode();
-
-                    return currentString + '"' + current + '":' + current_encoded;
-                }.bind(this), "{") + "}";
-        }
-        else {
-            return this.toString();
-        }
-    }
-});
-
-/**
  * Converts this String to snake-case.
  * @param {String} name - Any cased String.
  * @returns {String} - snake-cased String.

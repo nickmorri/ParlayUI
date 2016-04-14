@@ -7,12 +7,19 @@
         beforeEach(module("mock.parlay.items.manager"));
     	
     	describe("ParlayItemSearchController", function () {
-        	var scope, ParlayItemSearchController, ParlayItemManager;
+        	var scope, ParlayItemSearchController, ParlayItemManager, mockSidenav;
+
+            mockSidenav = function () {
+                return {
+                    isLockedOpen: function () { return true; },
+                    close: function () {}
+                };
+            };
         	
         	beforeEach(inject(function ($rootScope, $controller, _ParlayItemManager_) {
 	        	ParlayItemManager = _ParlayItemManager_;
             	scope = $rootScope.$new();
-            	ParlayItemSearchController = $controller("ParlayItemSearchController", {$scope: scope});
+            	ParlayItemSearchController = $controller("ParlayItemSearchController", {$scope: scope, $mdSidenav: mockSidenav});
         	}));
         	
         	describe("search state", function () {

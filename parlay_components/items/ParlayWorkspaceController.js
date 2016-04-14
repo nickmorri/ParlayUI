@@ -1,7 +1,14 @@
 (function () {
     "use strict";
 
-    function ParlayWorkspaceManagementController($scope, $mdDialog, $mdMedia, ParlayNotification, ParlayStore, ParlayItemManager, PromenadeBroker) {
+    var module_dependencies = ["parlay.store", "parlay.items.manager", "angularMoment", "parlay.utility"];
+
+    angular
+        .module("parlay.items.workspaces", module_dependencies)
+        .controller("ParlayWorkspaceManagementController", ParlayWorkspaceManagementController);
+
+    ParlayWorkspaceManagementController.$inject = ["$scope", "$mdDialog", "$mdMedia", "ParlayNotification", "ParlayStore", "ParlayItemManager", "PromenadeBroker"];
+    function ParlayWorkspaceManagementController ($scope, $mdDialog, $mdMedia, ParlayNotification, ParlayStore, ParlayItemManager, PromenadeBroker) {
 
         function getWorkspaces() {
             var workspaces = store.values();
@@ -193,8 +200,5 @@
         $scope.$mdMedia = $mdMedia;
 
     }
-
-    angular.module("parlay.items.workspaces", ["parlay.store", "parlay.items.manager", "angularMoment", "parlay.utility"])
-        .controller("ParlayWorkspaceManagementController", ["$scope", "$mdDialog", "$mdMedia", "ParlayNotification", "ParlayStore", "ParlayItemManager", "PromenadeBroker", ParlayWorkspaceManagementController]);
 
 }());

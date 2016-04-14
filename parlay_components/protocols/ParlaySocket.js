@@ -1,6 +1,14 @@
 (function () {
     "use strict";
 
+    var module_dependencies = [];
+
+    angular
+        .module('parlay.socket', module_dependencies)
+        .value('BrokerAddress', location.hostname)
+        .factory('CallbackContainer', CallbackContainerFactory)
+        .factory('ParlaySocket', ParlaySocketFactory);
+
     /**
      * Encodes Object by sorting comparing keys in Unicode code point order.
      * @returns {String} Translation of key, values to String.
@@ -344,7 +352,8 @@
         return CallbackContainer;
     }
 
-    function ParlaySocketFactory(BrokerAddress, $location, $q, CallbackContainer) {
+    ParlaySocketFactory.$inject = ['BrokerAddress', '$location', '$q', 'CallbackContainer'];
+    function ParlaySocketFactory (BrokerAddress, $location, $q, CallbackContainer) {
 
         /**
          * ParlaySocket specific Error type that is thrown on invalid messages.
@@ -648,10 +657,5 @@
         return new ParlaySocket();
 
     }
-
-    angular.module('parlay.socket', [])
-        .value('BrokerAddress', location.hostname)
-        .factory('CallbackContainer', [CallbackContainerFactory])
-        .factory('ParlaySocket', ['BrokerAddress', '$location', '$q', 'CallbackContainer', ParlaySocketFactory]);
 
 }());

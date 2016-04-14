@@ -1,6 +1,13 @@
 (function () {
 	"use strict";
 
+	var module_dependencies = [];
+
+	angular
+		.module('parlay.utility', module_dependencies)
+		.directive("customOnChange", customOnChange)
+		.factory('ParlayUtility', ParlayUtilityFactory);
+
 	/**
 	 * Converts this String to snake-case.
 	 * @param {String} name - Any cased String.
@@ -100,9 +107,5 @@
 			}
 		};
 	}
-
-	angular.module('parlay.utility', [])
-		.directive("customOnChange", customOnChange)
-		.factory('ParlayUtility', ParlayUtilityFactory);
 
 }());

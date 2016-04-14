@@ -1,7 +1,14 @@
 (function () {
     "use strict";
 
-    function ParlaySettingsFactory(ParlayStore) {
+    var module_dependencies = ["parlay.store"];
+
+    angular
+        .module("parlay.settings", module_dependencies)
+        .factory("ParlaySettings", ParlaySettingsFactory);
+
+    ParlaySettingsFactory.$inject = ["ParlayStore"];
+    function ParlaySettingsFactory (ParlayStore) {
 
         // Reference to namespace settings ParlayStore.
         var store = ParlayStore("settings");
@@ -69,8 +76,5 @@
         return new ParlaySettings();
 
     }
-
-    angular.module("parlay.settings", ["parlay.store"])
-        .factory("ParlaySettings", ["ParlayStore", ParlaySettingsFactory]);
 
 }());

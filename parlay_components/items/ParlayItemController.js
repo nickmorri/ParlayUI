@@ -1,6 +1,13 @@
 (function () {
     "use strict";
 
+    var module_dependencies = ["ngMaterial", "parlay.items.manager"];
+
+    angular
+        .module("parlay.items.controller", module_dependencies)
+        .directive("parlayEmptyWorkspacePlaceholder", ParlayEmptyWorkspacePlaceholder)
+        .controller("ParlayItemController", ParlayItemController);
+
     /**
      * @name ParlayItemController
      * @param {Parlay Service} ParlayItemManager - Service that manages the available items.
@@ -9,7 +16,8 @@
      * The ParlayItemController is a controller that manages the items currently active in the workspace.
      *
      */
-    function ParlayItemController(ParlayItemManager, $mdSidenav) {
+    ParlayItemController.$inject = ["ParlayItemManager", "$mdSidenav"];
+    function ParlayItemController (ParlayItemManager, $mdSidenav) {
 
         this.filterItems = function () {
             return ParlayItemManager.getActiveItems();
@@ -58,9 +66,5 @@
     function ParlayEmptyWorkspacePlaceholder () {
         return { templateUrl: '../parlay_components/items/directives/parlay-empty-workspace-placeholder.html' };
     }
-
-    angular.module("parlay.items.controller", ["ngMaterial", "parlay.items.manager"])
-        .directive("parlayEmptyWorkspacePlaceholder", [ParlayEmptyWorkspacePlaceholder])
-        .controller("ParlayItemController", ["ParlayItemManager", "$mdSidenav", ParlayItemController]);
 
 }());

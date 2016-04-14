@@ -1,7 +1,14 @@
 (function () {
     "use strict";
 
-    function PromenadeDirectMessageProtocolFactory(ParlayProtocol, PromenadeStandardItem, $q) {
+    var module_dependencies = ["parlay.protocols.protocol", "promenade.items.standarditem"];
+
+    angular
+        .module("promenade.protocols.directmessage", module_dependencies)
+        .factory("PromenadeDirectMessageProtocol", PromenadeDirectMessageProtocolFactory);
+
+    PromenadeDirectMessageProtocolFactory.$inject = ["ParlayProtocol", "PromenadeStandardItem", "$q"];
+    function PromenadeDirectMessageProtocolFactory (ParlayProtocol, PromenadeStandardItem, $q) {
 
         /**
          * PromenadeDirectMessageProtocol constructor.
@@ -112,8 +119,5 @@
 
         return PromenadeDirectMessageProtocol;
     }
-
-    angular.module("promenade.protocols.directmessage", ["parlay.protocols.protocol", "promenade.items.standarditem"])
-        .factory("PromenadeDirectMessageProtocol", ["ParlayProtocol", "PromenadeStandardItem", "$q", PromenadeDirectMessageProtocolFactory]);
 
 }());

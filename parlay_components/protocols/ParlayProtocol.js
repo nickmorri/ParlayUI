@@ -1,7 +1,15 @@
 (function () {
     "use strict";
 
-    function ParlayProtocolRun(ParlaySettings) {
+    var module_dependencies = ["parlay.socket", "parlay.items.item", "promenade.protocols.directmessage", "parlay.settings"];
+
+    angular
+        .module("parlay.protocols.protocol", module_dependencies)
+        .run(ParlayProtocolRun)
+        .factory("ParlayProtocol", ParlayProtocolFactory);
+
+    ParlayProtocolRun.$inject = ["ParlaySettings"];
+    function ParlayProtocolRun (ParlaySettings) {
         ParlaySettings.registerDefault("log", {max_size: 10000});
 
         if (!ParlaySettings.has("log")) {
@@ -9,7 +17,8 @@
         }
     }
 
-    function ParlayProtocolFactory(ParlaySocket, ParlayItem, ParlaySettings, $q) {
+    ParlayProtocolFactory.$inject = ["ParlaySocket", "ParlayItem", "ParlaySettings", "$q"];
+    function ParlayProtocolFactory (ParlaySocket, ParlayItem, ParlaySettings, $q) {
 
         function ParlayProtocol(configuration) {
             this.id = "UI";
@@ -156,9 +165,5 @@
 
         return ParlayProtocol;
     }
-
-    angular.module("parlay.protocols.protocol", ["parlay.socket", "parlay.items.item", "promenade.protocols.directmessage", "parlay.settings"])
-        .run(["ParlaySettings", ParlayProtocolRun])
-        .factory("ParlayProtocol", ["ParlaySocket", "ParlayItem", "ParlaySettings", "$q", ParlayProtocolFactory]);
 
 }());

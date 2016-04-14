@@ -1,6 +1,14 @@
 (function () {
     "use strict";
 
+    var module_dependencies = ["parlay.settings"];
+
+    angular
+        .module("promenade.smoothiechart", module_dependencies)
+        .run(PromenadeSmoothieChartRun)
+        .controller("PromenadeSmoothieChartController", PromenadeSmoothieChartController)
+        .directive('promenadeSmoothieChart', PromenadeSmoothieChart);
+
     /**
      * @name promenadeSmoothieChart
      * @restrict E
@@ -15,17 +23,17 @@
      *
      * @param {Object} stream_data - Contains references to the stream data.
      * {
- *	 stream1: {
- *	 	value: 10,
- *		rate: 5
- * 	 }
- * }
+     *	 stream1: {
+     *	 	value: 10,
+     *		rate: 5
+     * 	 }
+     * }
      *
      * @param {Object} config - Contains configuration data. Please reference the SmoothieChart constructor for options. http://smoothiecharts.org/tutorial.html#mycanvas6
      * @param {Number} [delay=1000] delay - Add delay so upcoming values are known before we need to plot the value.
      * @param {Function} smoothieFn - Configuration retrieval function.
      */
-
+    PromenadeSmoothieChartRun.$inject = ["ParlaySettings"];
     function PromenadeSmoothieChartRun(ParlaySettings) {
         ParlaySettings.registerDefault("graph", {label_size: 12});
 
@@ -41,7 +49,8 @@
      * @param {AngularJS Service} $interval - AngularJS interval Service.
      * @param {Parlay Service} ParlaySettings - ParlaySettings Service.
      */
-    function PromenadeSmoothieChartController(scope, $interval, ParlaySettings) {
+    PromenadeSmoothieChartController.$inject = ["$scope", "$interval", "ParlaySettings"];
+    function PromenadeSmoothieChartController (scope, $interval, ParlaySettings) {
 
         // Easy colors to see on most transparent backgrounds.
         this.colors = ["#000000", "#0433ff", "#aa7942", "#00fdff", "#00f900", "#ff40ff", "#ff9300", "#942192", "#ff2600", "#666633"];
@@ -143,7 +152,8 @@
      * @param {Parlay Service} ParlaySettings - ParlaySettings Service.
      * @returns {Object} - Directive configuration.
      */
-    function PromenadeSmoothieChart($window, ParlaySettings) {
+    PromenadeSmoothieChart.$inject = ['$window', "ParlaySettings"];
+    function PromenadeSmoothieChart ($window, ParlaySettings) {
 
         /**
          * Returns Function with canvas element in closure.
@@ -238,10 +248,5 @@
             }
         };
     }
-
-    angular.module("promenade.smoothiechart", ["parlay.settings"])
-        .run(["ParlaySettings", PromenadeSmoothieChartRun])
-        .controller("PromenadeSmoothieChartController", ["$scope", "$interval", "ParlaySettings", PromenadeSmoothieChartController])
-        .directive('promenadeSmoothieChart', ['$window', "ParlaySettings", PromenadeSmoothieChart]);
 
 }());

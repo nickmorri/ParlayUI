@@ -1,6 +1,14 @@
 (function () {
     "use strict";
 
+    var module_dependencies = ["parlay.items", "promenade.items.datastream", "promenade.items.property", "promenade.items.command", "promenade.items.standarditem.commands", "promenade.items.standarditem.log", "promenade.items.standarditem.graph", "promenade.items.standarditem.property", "ngOrderObjectBy"];
+
+    angular
+        .module("promenade.items.standarditem", module_dependencies)
+        .factory("PromenadeStandardItem", PromenadeStandardItemFactory)
+        .directive("promenadeStandardItemCardToolbar", PromenadeStandardItemCardToolbar);
+
+    PromenadeStandardItemFactory.$inject = ["ParlayItem", "PromenadeStandardDatastream", "PromenadeStandardProperty", "PromenadeStandardCommand"];
     function PromenadeStandardItemFactory(ParlayItem, PromenadeStandardDatastream, PromenadeStandardProperty, PromenadeStandardCommand) {
 
         /**
@@ -147,9 +155,5 @@
             templateUrl: "../vendor_components/promenade/items/directives/promenade-standard-item-card-toolbar.html"
         };
     }
-
-    angular.module("promenade.items.standarditem", ["parlay.items", "promenade.items.datastream", "promenade.items.property", "promenade.items.command", "promenade.items.standarditem.commands", "promenade.items.standarditem.log", "promenade.items.standarditem.graph", "promenade.items.standarditem.property", "ngOrderObjectBy"])
-        .factory("PromenadeStandardItem", ["ParlayItem", "PromenadeStandardDatastream", "PromenadeStandardProperty", "PromenadeStandardCommand", PromenadeStandardItemFactory])
-        .directive("promenadeStandardItemCardToolbar", PromenadeStandardItemCardToolbar);
 
 }());

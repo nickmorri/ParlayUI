@@ -1,6 +1,13 @@
 (function () {
     "use strict";
 
+    var module_dependencies = [];
+
+    angular
+        .module('mock.parlay.socket', module_dependencies)
+        .factory('ParlaySocket', MockParlaySocketFactory);
+
+    MockParlaySocketFactory.$inject = ["$q"];
     function MockParlaySocketFactory($q) {
 
         var connected = false;
@@ -115,8 +122,5 @@
         return new MockParlaySocket();
 
     }
-
-    angular.module('mock.parlay.socket', [])
-        .factory('ParlaySocket', ['$q', MockParlaySocketFactory]);
 
 }());

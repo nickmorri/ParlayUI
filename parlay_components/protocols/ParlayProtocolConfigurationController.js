@@ -1,7 +1,14 @@
 (function () {
     "use strict";
 
-    function ParlayProtocolConfigurationController($scope, $mdDialog, $mdMedia, ParlayProtocolManager) {
+    var module_dependencies = ["parlay.protocols.manager", "ngMaterial", "ngMessages", "ngMdIcons", "templates-main"];
+
+    angular
+        .module("parlay.protocols.configuration_controller", module_dependencies)
+        .controller("ParlayProtocolConfigurationController", ParlayProtocolConfigurationController);
+
+    ParlayProtocolConfigurationController.$inject = ["$scope", "$mdDialog", "$mdMedia", "ParlayProtocolManager"];
+    function ParlayProtocolConfigurationController ($scope, $mdDialog, $mdMedia, ParlayProtocolManager) {
 
         this.selected_protocol = null;
 
@@ -88,8 +95,5 @@
         $scope.$mdMedia = $mdMedia;
 
     }
-
-    angular.module("parlay.protocols.configuration_controller", ["parlay.protocols.manager", "ngMaterial", "ngMessages", "ngMdIcons", "templates-main"])
-        .controller("ParlayProtocolConfigurationController", ["$scope", "$mdDialog", "$mdMedia", "ParlayProtocolManager", ParlayProtocolConfigurationController]);
 
 }());

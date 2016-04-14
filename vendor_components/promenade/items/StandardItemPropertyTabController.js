@@ -1,11 +1,19 @@
 (function () {
     "use strict";
 
+    var module_dependencies = [];
+
+    angular
+        .module("promenade.items.standarditem.property", module_dependencies)
+        .controller("PromenadeStandardItemCardPropertyTabController", PromenadeStandardItemCardPropertyTabController)
+        .directive("promenadeStandardItemCardProperty", PromenadeStandardItemCardProperty);
+
     /**
      * Controller constructor for the property tab.
      * @constructor
      * @param {AngularJS Service} $q - AngularJS $q Service.
      */
+    PromenadeStandardItemCardPropertyTabController.$inject = ["$q"];
     function PromenadeStandardItemCardPropertyTabController($q) {
         // Controller state attribute, true if a request has been sent but the response has not been received.
         this.waiting = false;
@@ -55,9 +63,5 @@
             bindToController: true
         };
     }
-
-    angular.module("promenade.items.standarditem.property", [])
-        .controller("PromenadeStandardItemCardPropertyTabController", ["$q", PromenadeStandardItemCardPropertyTabController])
-        .directive("promenadeStandardItemCardProperty", PromenadeStandardItemCardProperty);
 
 }());

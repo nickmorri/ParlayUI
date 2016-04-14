@@ -1,6 +1,13 @@
 (function () {
     "use strict";
 
+    var module_dependencies = ["promenade.broker", "promenade.protocols.directmessage", "parlay.notification", "parlay.settings"];
+
+    angular
+        .module("parlay.protocols.manager", module_dependencies)
+        .factory("ParlayProtocolManager", ParlayProtocolManagerFactory);
+
+    ParlayProtocolManagerFactory.$inject = ["$injector", "$q", "PromenadeBroker", "ParlayStore", "ParlayNotification"];
     function ParlayProtocolManagerFactory($injector, $q, PromenadeBroker, ParlayStore, ParlayNotification) {
 
         function ParlayProtocolManager() {
@@ -270,8 +277,5 @@
         return new ParlayProtocolManager();
 
     }
-
-    angular.module("parlay.protocols.manager", ["promenade.broker", "promenade.protocols.directmessage", "parlay.notification", "parlay.settings"])
-        .factory("ParlayProtocolManager", ["$injector", "$q", "PromenadeBroker", "ParlayStore", "ParlayNotification", ParlayProtocolManagerFactory]);
 
 }());

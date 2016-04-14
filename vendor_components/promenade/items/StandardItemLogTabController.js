@@ -1,9 +1,19 @@
 (function () {
     "use strict";
 
+    var module_dependencies = ['parlay.utility', 'parlay.notification', 'parlay.store.persistence', 'luegg.directives'];
+
+    angular
+        .module('promenade.items.standarditem.log', module_dependencies)
+        .controller('PromenadeStandardItemCardLogTabController', PromenadeStandardItemCardLogTabController)
+        .controller('PromenadeStandardItemCardLogItemController', PromenadeStandardItemCardLogItemController)
+        .directive('promenadeStandardItemCardLog', PromenadeStandardItemCardLog)
+        .directive('promenadeStandardItemCardLogItem', PromenadeStandardItemCardLogItem);
+
     /**
      * Controller constructor for PromenadeStandardItemCardLogTabController.
      */
+    PromenadeStandardItemCardLogTabController.$inject = ['$scope', 'ParlayPersistence', 'ParlayUtility'];
     function PromenadeStandardItemCardLogTabController($scope, ParlayPersistence, ParlayUtility) {
 
         // Initially we don't want to filter logged messages by anything.
@@ -58,6 +68,19 @@
     };
 
     /**
+     * Controller for Parlay Card Log Item.
+     * @param {Parlay Service} ParlayNotification - Displays notifications to user.
+     * @constructor
+     */
+    PromenadeStandardItemCardLogItemController.$inject = ['ParlayNotification'];
+    function PromenadeStandardItemCardLogItemController (ParlayNotification) {
+        this.copy = function () {
+            ParlayNotification.show({content: JSON.stringify(angular.copy(this.message)).copyToClipboard() ?
+                "Message copied to clipboard" : "Copy failed. Check browser compatibility."});
+        };
+    }
+
+    /**
      * Directive constructor for PromenadeStandardItemCardLog.
      * @returns {Object} - Directive configuration.
      */
@@ -75,22 +98,12 @@
     }
 
     /**
-     * Controller for Parlay Card Log Item.
-     * @param {Parlay Service} ParlayNotification - Displays notifications to user.
-     * @constructor
-     */
-    function PromenadeStandardItemCardLogItemController (ParlayNotification) {
-        this.copy = function () {
-            ParlayNotification.show({content: JSON.stringify(angular.copy(this.message)).copyToClipboard() ?
-                "Message copied to clipboard" : "Copy failed. Check browser compatibility."});
-        };
-    }
-    /**
      * Parlay Card Log Item directive.
      * @returns {AngularJS directive factory}
      * @constructor
      */
     /* istanbul ignore next */
+    PromenadeStandardItemCardLogItem.$inject = ["ParlayNotification"];
     function PromenadeStandardItemCardLogItem() {
         return {
             scope: { message: "=" },
@@ -100,11 +113,5 @@
             templateUrl: '../vendor_components/promenade/items/directives/promenade-standard-item-card-log-item.html'
         };
     }
-
-    angular.module('promenade.items.standarditem.log', ['parlay.utility', 'parlay.notification', 'parlay.store.persistence', 'luegg.directives'])
-        .controller('PromenadeStandardItemCardLogTabController', ['$scope', 'ParlayPersistence', 'ParlayUtility', PromenadeStandardItemCardLogTabController])
-        .controller('PromenadeStandardItemCardLogItemController', ['ParlayNotification', PromenadeStandardItemCardLogItemController])
-        .directive('promenadeStandardItemCardLog', PromenadeStandardItemCardLog)
-        .directive('promenadeStandardItemCardLogItem', ["ParlayNotification", PromenadeStandardItemCardLogItem]);
 
 }());

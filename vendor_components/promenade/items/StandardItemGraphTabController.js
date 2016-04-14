@@ -1,6 +1,14 @@
 (function () {
     "use strict";
 
+    var module_dependencies = ["promenade.smoothiechart"];
+
+    angular
+        .module('promenade.items.standarditem.graph', module_dependencies)
+        .controller("PromenadeStandardItemCardGraphTabController", PromenadeStandardItemCardGraphTabController)
+        .controller("PromenadeStandardItemCardGraphTabConfigurationController", PromenadeStandardItemCardGraphTabConfigurationController)
+        .directive('promenadeStandardItemCardGraph', PromenadeStandardItemCardGraph);
+
     /**
      * Controller constructor for the graph tab.
      * @constructor
@@ -11,6 +19,7 @@
      * @param {Parlay Service} ParlayUtility - Service that provides utility functions.
      * @param {Parlay Service} ParlayPersistence - Service that provides automatic persistence of scope variables to localStorage.
      */
+    PromenadeStandardItemCardGraphTabController.$inject = ["$scope", "$mdDialog", "$interval", "$mdMedia", "ParlayUtility", "ParlayPersistence"];
     function PromenadeStandardItemCardGraphTabController($scope, $mdDialog, $interval, $mdMedia, ParlayUtility, ParlayPersistence) {
 
         this.enabled_streams = [];
@@ -75,6 +84,7 @@
      * @param {Material Angular Service} $mdDialog - Dialog modal service.
      * @param {Material Angular Service} $mdMedia - Media size detection service.
      */
+    PromenadeStandardItemCardGraphTabConfigurationController.$inject = ["$scope", "$mdDialog", "$mdMedia", "item", "enabled_streams", "smoothie"];
     function PromenadeStandardItemCardGraphTabConfigurationController($scope, $mdDialog, $mdMedia) {
         this.hide = $mdDialog.hide;
 
@@ -184,10 +194,5 @@
             bindToController: true
         };
     }
-
-    angular.module('promenade.items.standarditem.graph', ["promenade.smoothiechart"])
-        .controller("PromenadeStandardItemCardGraphTabController", ["$scope", "$mdDialog", "$interval", "$mdMedia", "ParlayUtility", "ParlayPersistence", PromenadeStandardItemCardGraphTabController])
-        .controller("PromenadeStandardItemCardGraphTabConfigurationController", ["$scope", "$mdDialog", "$mdMedia", "item", "enabled_streams", "smoothie", PromenadeStandardItemCardGraphTabConfigurationController])
-        .directive('promenadeStandardItemCardGraph', PromenadeStandardItemCardGraph);
 
 }());

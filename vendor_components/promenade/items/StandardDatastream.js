@@ -1,6 +1,12 @@
 (function () {
     "use strict";
 
+    var module_dependencies = [];
+
+    angular
+        .module("promenade.items.datastream", module_dependencies)
+        .factory("PromenadeStandardDatastream", PromenadeStandardDatastreamFactory);
+
     function PromenadeStandardDatastreamFactory() {
 
         function PromenadeStandardDatastream(data, item_name, protocol) {
@@ -42,8 +48,5 @@
 
         return PromenadeStandardDatastream;
     }
-
-    angular.module("promenade.items.datastream", [])
-        .factory("PromenadeStandardDatastream", [PromenadeStandardDatastreamFactory]);
 
 }());

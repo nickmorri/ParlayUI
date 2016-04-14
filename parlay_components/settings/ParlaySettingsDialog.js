@@ -1,7 +1,14 @@
 (function () {
     "use strict";
 
+    var module_dependencies = ["parlay.settings", "promenade.broker"];
+
+    angular
+        .module("parlay.settings.dialog", module_dependencies)
+        .controller("ParlaySettingsDialogController", ParlaySettingsDialogController);
+
     /* istanbul ignore next */
+    ParlaySettingsDialogController.$inject = ["$scope", "$mdDialog", "$mdMedia", "ParlaySettings", "PromenadeBroker"];
     function ParlaySettingsDialogController ($scope, $mdDialog, $mdMedia, ParlaySettings, PromenadeBroker) {
 
         this.hide = function () {
@@ -76,8 +83,5 @@
         $scope.$mdMedia = $mdMedia;
 
     }
-
-    angular.module("parlay.settings.dialog", ["parlay.settings", "promenade.broker"])
-        .controller("ParlaySettingsDialogController", ["$scope", "$mdDialog", "$mdMedia", "ParlaySettings", "PromenadeBroker", ParlaySettingsDialogController]);
 
 }());

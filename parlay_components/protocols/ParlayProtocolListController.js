@@ -1,6 +1,13 @@
 (function () {
     "use strict";
 
+    var modules_dependencies = ["parlay.protocols.configuration_controller", "parlay.protocols.manager", "promenade.broker", "parlay.notification", "ngMaterial", "ngMessages", "ngMdIcons", "templates-main"];
+
+    angular
+        .module("parlay.protocols.list_controller", modules_dependencies)
+        .controller("ParlayProtocolListController", ParlayProtocolListController);
+
+    ParlayProtocolListController.$inject = ["$scope", "$mdDialog", "$mdMedia", "ParlayProtocolManager", "PromenadeBroker"];
     function ParlayProtocolListController($scope, $mdDialog, $mdMedia, ParlayProtocolManager, PromenadeBroker) {
 
         this.hide = $mdDialog.hide;
@@ -116,8 +123,5 @@
         $scope.$mdMedia = $mdMedia;
 
     }
-
-    angular.module("parlay.protocols.list_controller", ["parlay.protocols.configuration_controller", "parlay.protocols.manager", "promenade.broker", "parlay.notification", "ngMaterial", "ngMessages", "ngMdIcons", "templates-main"])
-        .controller("ParlayProtocolListController", ["$scope", "$mdDialog", "$mdMedia", "ParlayProtocolManager", "PromenadeBroker", ParlayProtocolListController]);
 
 }());

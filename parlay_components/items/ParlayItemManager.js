@@ -1,6 +1,13 @@
 (function () {
 	"use strict";
 
+    var module_dependencies = ["parlay.protocols.manager", "promenade.broker", "parlay.store.persistence"];
+
+    angular
+        .module("parlay.items.manager", module_dependencies)
+        .factory("ParlayItemManager", ParlayItemManagerFactory);
+
+    ParlayItemManagerFactory.$inject = ["PromenadeBroker", "ParlayProtocolManager", "ParlayPersistence", "$window"];
 	function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager, ParlayPersistence, $window) {
 
 		// Items currently active in the workspace.
@@ -190,8 +197,5 @@
 
 		return new ParlayItemManager();
 	}
-
-	angular.module("parlay.items.manager", ["parlay.protocols.manager", "promenade.broker", "parlay.store.persistence"])
-		.factory("ParlayItemManager", ["PromenadeBroker", "ParlayProtocolManager", "ParlayPersistence", "$window", ParlayItemManagerFactory]);
 
 }());

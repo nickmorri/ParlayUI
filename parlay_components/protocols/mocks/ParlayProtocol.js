@@ -1,6 +1,12 @@
 (function () {
     "use strict";
 
+    var module_dependencies = [];
+
+    angular
+        .module('mock.parlay.protocols.protocol', module_dependencies)
+        .factory('ParlayProtocol', ParlayProtocol);
+
     function ParlayProtocol() {
         return {
             has_subscription: false,
@@ -26,8 +32,5 @@
             }
         };
     }
-
-    angular.module('mock.parlay.protocols.protocol', [])
-        .factory('ParlayProtocol', ParlayProtocol);
 
 }());

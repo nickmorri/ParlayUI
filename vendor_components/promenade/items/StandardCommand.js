@@ -1,6 +1,12 @@
 (function () {
     "use strict";
 
+    var module_dependencies = [];
+
+    angular
+        .module("promenade.items.command", module_dependencies)
+        .factory("PromenadeStandardCommand", PromenadeStandardCommandFactory);
+
     function PromenadeStandardCommandFactory() {
 
         function PromenadeStandardCommand(data, item_name, protocol) {
@@ -31,8 +37,5 @@
 
         return PromenadeStandardCommand;
     }
-
-    angular.module("promenade.items.command", [])
-        .factory("PromenadeStandardCommand", [PromenadeStandardCommandFactory]);
 
 }());

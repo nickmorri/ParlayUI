@@ -1,7 +1,14 @@
 (function () {
     "use strict";
 
-    function ParlayPersistenceFactory(ParlayStore) {
+    var module_dependencies = ['parlay.store'];
+
+    angular
+        .module('parlay.store.persistence', module_dependencies)
+        .factory('ParlayPersistence', ParlayPersistenceFactory);
+
+    ParlayPersistenceFactory.$inject = ["ParlayStore"];
+    function ParlayPersistenceFactory (ParlayStore) {
 
         /**
          * Given a key that belongs to the given scope search for the parent that belongs to the key.
@@ -204,8 +211,5 @@
 
         return new ParlayPersistence();
     }
-
-    angular.module('parlay.store.persistence', ['parlay.store'])
-        .factory('ParlayPersistence', ['ParlayStore', ParlayPersistenceFactory]);
 
 }());

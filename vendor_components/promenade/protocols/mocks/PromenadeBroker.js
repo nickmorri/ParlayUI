@@ -1,6 +1,12 @@
 (function () {
     "use strict";
 
+    var module_dependencies = [];
+
+    angular
+        .module('mock.promenade.broker', module_dependencies)
+        .factory('PromenadeBroker', MockPromenadeBroker);
+
     var sample_items = function () {
         var items = [];
 
@@ -22,7 +28,8 @@
         TEMPLATE: 'Protocol'
     };
 
-    angular.module('mock.promenade.broker', []).factory('PromenadeBroker', ['$q', function($q) {
+    MockPromenadeBroker.$inject = ["$q"];
+    function MockPromenadeBroker($q) {
         var PromenadeBroker = {
             connected: false,
             onDiscoveryCallbacks: [],
@@ -126,6 +133,6 @@
         };
 
         return PromenadeBroker;
-    }]);
+    }
 
 }());

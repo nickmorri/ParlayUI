@@ -1,6 +1,13 @@
 (function () {
     "use strict";
 
+    var module_dependencies = ["ngMaterial", "ngMessages", "ngMdIcons", "templates-main", "parlay.store.persistence", "parlay.utility"];
+
+    angular
+        .module("parlay.items.item", module_dependencies)
+        .factory("ParlayItem", ParlayItemFactory)
+        .directive("parlayItemCard", ParlayItemCard);
+
     function ParlayItemFactory() {
 
         function ParlayItem(data, protocol) {
@@ -111,7 +118,8 @@
      * Directive that displays data from a particular ParlayItem.
      * @returns AngularJS directive
      */
-    function ParlayItemCard($compile, ParlayPersistence) {
+    ParlayItemCard.$inject = ["$compile", "ParlayPersistence"];
+    function ParlayItemCard ($compile, ParlayPersistence) {
         return {
             templateUrl: "../parlay_components/items/directives/parlay-item-card.html",
             link: function (scope, element) {
@@ -266,9 +274,5 @@
             }
         };
     }
-
-    angular.module("parlay.items.item", ["ngMaterial", "ngMessages", "ngMdIcons", "templates-main", "parlay.store.persistence", "parlay.utility"])
-        .factory("ParlayItem", ParlayItemFactory)
-        .directive("parlayItemCard", ["$compile", "ParlayPersistence", ParlayItemCard]);
 
 }());

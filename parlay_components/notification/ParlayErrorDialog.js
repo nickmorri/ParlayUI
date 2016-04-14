@@ -1,31 +1,14 @@
 (function () {
     "use strict";
 
-    function ParlayErrorDialog($mdDialog, ParlayNotificationHistory) {
+    var module_dependencies = ["ngMaterial", "parlay.notification"];
 
-        return {
-            show: function (from, description, details) {
-                // Record message given to the dialog in the notification history.
-                ParlayNotificationHistory.add({from: from, description: description, details: details});
+    angular
+        .module("parlay.notification.error", module_dependencies)
+        .controller("ParlayErrorDialogController", ParlayErrorDialogController)
+        .factory("ParlayErrorDialog", ParlayErrorDialog);
 
-                // Display the error dialog.
-                $mdDialog.show({
-                    controller: "ParlayErrorDialogController",
-                    controllerAs: "ctrl",
-                    templateUrl: "../parlay_components/notification/directives/parlay-error-dialog.html",
-                    locals: {
-                        from: from,
-                        description: description,
-                        details: details
-                    },
-                    bindToController: true,
-                    clickOutsideToClose: true
-                });
-            }
-        };
-
-    }
-
+    ParlayErrorDialogController.$inject = ["$scope", "$mdDialog", "$mdMedia"];
     function ParlayErrorDialogController($scope, $mdDialog, $mdMedia) {
 
         // Holds state of more detail visibility.
@@ -51,8 +34,30 @@
 
     }
 
-    angular.module("parlay.notification.error", ["ngMaterial", "parlay.notification"])
-        .controller("ParlayErrorDialogController", ["$scope", "$mdDialog", "$mdMedia", ParlayErrorDialogController])
-        .factory("ParlayErrorDialog", ["$mdDialog", "ParlayNotificationHistory", ParlayErrorDialog]);
+    ParlayErrorDialog.$inject = ["$mdDialog", "ParlayNotificationHistory"];
+    function ParlayErrorDialog($mdDialog, ParlayNotificationHistory) {
+
+        return {
+            show: function (from, description, details) {
+                // Record message given to the dialog in the notification history.
+                ParlayNotificationHistory.add({from: from, description: description, details: details});
+
+                // Display the error dialog.
+                $mdDialog.show({
+                    controller: "ParlayErrorDialogController",
+                    controllerAs: "ctrl",
+                    templateUrl: "../parlay_components/notification/directives/parlay-error-dialog.html",
+                    locals: {
+                        from: from,
+                        description: description,
+                        details: details
+                    },
+                    bindToController: true,
+                    clickOutsideToClose: true
+                });
+            }
+        };
+
+    }
 
 }());

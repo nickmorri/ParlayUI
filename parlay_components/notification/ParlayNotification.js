@@ -1,6 +1,16 @@
 (function () {
     "use strict";
 
+    var module_dependencies = ["ngMaterial", "templates-main"];
+
+    angular
+        .module("parlay.notification", module_dependencies)
+        .run(RunNotification)
+        .value("NotificationDisplayDuration", 4000)
+        .value("NotificationLocation", "bottom right")
+        .factory("ParlayNotificationHistory", ParlayNotificationHistory)
+        .factory("ParlayNotification", ParlayNotificationFactory);
+
     /**
      * General use of ParlayNotification.
      *
@@ -9,13 +19,13 @@
      * With action button.
      *
      * ParlayNotification.show({
- *      content: "Text you want to display.",
- *	    action: {
- *		    text: "Text that the action button displays.",
- *		    callback: "Function to invoke when Toast action is clicked."
- *	    },
- *	    warning: True // Only true if the given notification is a warning and should be styled as such.
- *  });
+     *      content: "Text you want to display.",
+     *	    action: {
+     *		    text: "Text that the action button displays.",
+     *		    callback: "Function to invoke when Toast action is clicked."
+     *	    },
+     *	    warning: True // Only true if the given notification is a warning and should be styled as such.
+     *  });
      */
 
     /* istanbul ignore next */
@@ -66,7 +76,8 @@
         };
     }
 
-    function ParlayNotificationFactory($mdToast, $mdSidenav, $mdDialog, $interval, NotificationDisplayDuration, NotificationLocation, ParlayNotificationHistory) {
+    ParlayNotificationFactory.$inject = ["$mdToast", "$mdSidenav", "$mdDialog", "$interval", "NotificationDisplayDuration", "NotificationLocation", "ParlayNotificationHistory"];
+    function ParlayNotificationFactory ($mdToast, $mdSidenav, $mdDialog, $interval, NotificationDisplayDuration, NotificationLocation, ParlayNotificationHistory) {
 
         // True if a toast is currently being displayed.
         var toast_active = false;
@@ -250,12 +261,5 @@
             }
         };
     }
-
-    angular.module("parlay.notification", ["ngMaterial", "templates-main"])
-        .run(RunNotification)
-        .value("NotificationDisplayDuration", 4000)
-        .value("NotificationLocation", "bottom right")
-        .factory("ParlayNotificationHistory", ParlayNotificationHistory)
-        .factory("ParlayNotification", ["$mdToast", "$mdSidenav", "$mdDialog", "$interval", "NotificationDisplayDuration", "NotificationLocation", "ParlayNotificationHistory", ParlayNotificationFactory]);
 
 }());

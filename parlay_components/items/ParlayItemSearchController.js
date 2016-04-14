@@ -1,7 +1,15 @@
 (function () {
     "use strict";
 
-    function ParlayItemSearchController($scope, $mdSidenav, ParlayItemManager) {
+    var module_dependencies = ['templates-main', 'parlay.items.manager'];
+
+    angular
+        .module('parlay.items.search', module_dependencies)
+        .controller('ParlayItemSearchController', ParlayItemSearchController)
+        .directive('parlayItemSearch', ParlayItemSearch);
+
+    ParlayItemSearchController.$inject = ['$scope', '$mdSidenav', 'ParlayItemManager'];
+    function ParlayItemSearchController ($scope, $mdSidenav, ParlayItemManager) {
 
         /**
          * Create filter function for a query string
@@ -54,8 +62,4 @@
         };
     }
 
-    angular.module('parlay.items.search', ['templates-main', 'parlay.items.manager'])
-        .controller('ParlayItemSearchController', ['$scope', '$mdSidenav', 'ParlayItemManager', ParlayItemSearchController])
-        .directive('parlayItemSearch', [ParlayItemSearch]);
-    
 }());

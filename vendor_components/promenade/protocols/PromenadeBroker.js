@@ -1,14 +1,22 @@
 (function () {
 	"use strict";
 
-	function PromenadeBrokerRun(ParlaySettings) {
+	var module_dependencies = ["parlay.socket", "parlay.notification", "parlay.notification.error", "parlay.settings", "ngMaterial"];
+
+	angular.module("promenade.broker", module_dependencies)
+		.run(PromenadeBrokerRun)
+		.factory("PromenadeBroker", PromenadeBrokerFactory);
+
+    PromenadeBrokerRun.$inject = ["ParlaySettings"];
+	function PromenadeBrokerRun (ParlaySettings) {
 		ParlaySettings.registerDefault("broker", {show_prompt: true, auto_discovery: true});
 		if (!ParlaySettings.has("broker")) {
 			ParlaySettings.restoreDefault("broker");
 		}
 	}
 
-	function PromenadeBrokerFactory(ParlaySocket, BrokerAddress, ParlayNotification, ParlayErrorDialog, ParlaySettings, $q, $location, $timeout, $window, $mdDialog) {
+    PromenadeBrokerFactory.$inject = ["ParlaySocket", "BrokerAddress", "ParlayNotification", "ParlayErrorDialog", "ParlaySettings", "$q", "$location", "$timeout", "$window", "$mdDialog"];
+	function PromenadeBrokerFactory (ParlaySocket, BrokerAddress, ParlayNotification, ParlayErrorDialog, ParlaySettings, $q, $location, $timeout, $window, $mdDialog) {
 
 		/**
 		 * PromenadeBroker constructor.
@@ -356,9 +364,5 @@
 
 		return new PromenadeBroker();
 	}
-
-	angular.module("promenade.broker", ["parlay.socket", "parlay.notification", "parlay.notification.error", "parlay.settings", "ngMaterial"])
-		.run(["ParlaySettings", PromenadeBrokerRun])
-		.factory("PromenadeBroker", ["ParlaySocket", "BrokerAddress", "ParlayNotification", "ParlayErrorDialog", "ParlaySettings", "$q", "$location", "$timeout", "$window", "$mdDialog", PromenadeBrokerFactory]);
 
 }());

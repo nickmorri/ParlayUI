@@ -1,6 +1,15 @@
 (function () {
     "use strict";
 
+    var module_dependencies = ["ngMaterial", "RecursionHelper", "parlay.store", "parlay.utility", "parlay.notification"];
+
+    angular
+        .module("promenade.items.standarditem.commands", module_dependencies)
+        .factory("PromenadeStandardCommandMessage", PromenadeStandardCommandMessageFactory)
+        .controller("PromenadeStandardItemCardCommandTabController", PromenadeStandardItemCardCommandTabController)
+        .directive("promenadeStandardItemCardCommands", PromenadeStandardItemCardCommands)
+        .directive("promenadeStandardItemCardCommandContainer", PromenadeStandardItemCardCommandContainer);
+
     /**
      * If the buffer is valid and available we should force the md-chips controller to push it to the ng-model.
      * @param {NodeList} chipElements - List of HTMLElements mapping to each md-chip.
@@ -127,6 +136,7 @@
      * @param {AngularJS Service} $timeout - AngularJS timeout Service.
      * @param {Parlay Service} ParlayNotification - ParlayNotification Service.
      */
+    PromenadeStandardItemCardCommandTabController.$inject = ["$scope", "ParlayNotification", "PromenadeStandardCommandMessage"];
     function PromenadeStandardItemCardCommandTabController($scope, ParlayNotification, PromenadeStandardCommandMessage) {
 
         // Due to the way JavaScript prototypical inheritance works and AngularJS scoping we want to enclose the message Object within another object.
@@ -292,6 +302,7 @@
      * @param {Parlay Service} ParlayUtility - Parlay Utility Service.
      * @returns {Object} - Directive configuration.
      */
+    PromenadeStandardItemCardCommandContainer.$inject = ["RecursionHelper", "ParlayPersistence", "ParlayUtility"];
     function PromenadeStandardItemCardCommandContainer(RecursionHelper, ParlayPersistence, ParlayUtility) {
         return {
             scope: {
@@ -351,11 +362,5 @@
             }
         };
     }
-
-    angular.module("promenade.items.standarditem.commands", ["ngMaterial", "RecursionHelper", "parlay.store", "parlay.utility", "parlay.notification"])
-        .factory("PromenadeStandardCommandMessage", [PromenadeStandardCommandMessageFactory])
-        .controller("PromenadeStandardItemCardCommandTabController", ["$scope", "ParlayNotification", "PromenadeStandardCommandMessage", PromenadeStandardItemCardCommandTabController])
-        .directive("promenadeStandardItemCardCommands", PromenadeStandardItemCardCommands)
-        .directive("promenadeStandardItemCardCommandContainer", ["RecursionHelper", "ParlayPersistence", "ParlayUtility", PromenadeStandardItemCardCommandContainer]);
 
 }());

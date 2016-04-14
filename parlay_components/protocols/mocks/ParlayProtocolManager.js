@@ -1,7 +1,14 @@
 (function () {
     "use strict";
 
-    function ParlayProtocolManager($q, ParlayProtocol) {
+    var module_dependencies = ['mock.parlay.protocols.protocol'];
+
+    angular
+        .module('mock.parlay.protocols.manager', module_dependencies)
+        .factory('ParlayProtocolManager', ParlayProtocolManager);
+
+    ParlayProtocolManager.$inject = ["$q", "ParlayProtocol"];
+    function ParlayProtocolManager ($q, ParlayProtocol) {
 
         var Public = {};
 
@@ -37,8 +44,5 @@
 
         return Public;
     }
-
-    angular.module('mock.parlay.protocols.manager', ['mock.parlay.protocols.protocol'])
-        .factory('ParlayProtocolManager', ['$q', 'ParlayProtocol', ParlayProtocolManager]);
 
 }());

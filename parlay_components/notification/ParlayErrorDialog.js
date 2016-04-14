@@ -1,53 +1,58 @@
-function ParlayErrorDialog($mdDialog, ParlayNotificationHistory) {
+(function () {
+    "use strict";
 
-    return {
-        show: function (from, description, details) {
-            // Record message given to the dialog in the notification history.
-            ParlayNotificationHistory.add({from: from, description: description, details: details});
+    function ParlayErrorDialog($mdDialog, ParlayNotificationHistory) {
 
-            // Display the error dialog.
-            $mdDialog.show({
-                controller: "ParlayErrorDialogController",
-                controllerAs: "ctrl",
-                templateUrl: "../parlay_components/notification/directives/parlay-error-dialog.html",
-                locals: {
-                    from: from,
-                    description: description,
-                    details: details
-                },
-                bindToController: true,
-                clickOutsideToClose: true
-            });
-        }
-    };
+        return {
+            show: function (from, description, details) {
+                // Record message given to the dialog in the notification history.
+                ParlayNotificationHistory.add({from: from, description: description, details: details});
 
-}
+                // Display the error dialog.
+                $mdDialog.show({
+                    controller: "ParlayErrorDialogController",
+                    controllerAs: "ctrl",
+                    templateUrl: "../parlay_components/notification/directives/parlay-error-dialog.html",
+                    locals: {
+                        from: from,
+                        description: description,
+                        details: details
+                    },
+                    bindToController: true,
+                    clickOutsideToClose: true
+                });
+            }
+        };
 
-function ParlayErrorDialogController($scope, $mdDialog, $mdMedia) {
+    }
 
-    // Holds state of more detail visibility.
-    this.more_hidden = true;
+    function ParlayErrorDialogController($scope, $mdDialog, $mdMedia) {
 
-    /**
-     * Toggles state of more details visibility.
-     */
-    this.toggleMore = function () {
-        this.more_hidden = !this.more_hidden;
-    };
+        // Holds state of more detail visibility.
+        this.more_hidden = true;
 
-    /**
-     * Hides $mdDialog, this will resolve the function that launched this dialog.
-     */
-    /* istanbul ignore next */
-    this.close = function () {
-        $mdDialog.hide();
-    };
+        /**
+         * Toggles state of more details visibility.
+         */
+        this.toggleMore = function () {
+            this.more_hidden = !this.more_hidden;
+        };
 
-    // Attach reference to $mdMedia to scope so that media queries can be done.
-    $scope.$mdMedia = $mdMedia;
+        /**
+         * Hides $mdDialog, this will resolve the function that launched this dialog.
+         */
+        /* istanbul ignore next */
+        this.close = function () {
+            $mdDialog.hide();
+        };
 
-}
+        // Attach reference to $mdMedia to scope so that media queries can be done.
+        $scope.$mdMedia = $mdMedia;
 
-angular.module("parlay.notification.error", ["ngMaterial", "parlay.notification"])
-    .controller("ParlayErrorDialogController", ["$scope", "$mdDialog", "$mdMedia", ParlayErrorDialogController])
-    .factory("ParlayErrorDialog", ["$mdDialog", "ParlayNotificationHistory", ParlayErrorDialog]);
+    }
+
+    angular.module("parlay.notification.error", ["ngMaterial", "parlay.notification"])
+        .controller("ParlayErrorDialogController", ["$scope", "$mdDialog", "$mdMedia", ParlayErrorDialogController])
+        .factory("ParlayErrorDialog", ["$mdDialog", "ParlayNotificationHistory", ParlayErrorDialog]);
+
+}());

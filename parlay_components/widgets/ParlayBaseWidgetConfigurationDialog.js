@@ -42,7 +42,7 @@ function ParlayBaseWidgetConfigurationDialogController($scope, $mdDialog, Parlay
             }
 
         }
-    }.bind(this));
+    });
 
 }
 
@@ -57,30 +57,66 @@ function ParlayBaseWidgetConfigurationTemplateController($scope, ParlayWidgetsCo
 function ParlayBaseWidgetConfigurationEventController($scope, ParlayWidgetInputManager) {
 
     this.getEvents = function () {
-        var element = ParlayWidgetInputManager.getElements().find(function (element) {
-            return element.name.indexOf($scope.wrapper.template.name) > -1;
-        });
+
+        var element;
+
+        if ($scope.wrapper.template) {
+            element = ParlayWidgetInputManager.getElements().find(function (element) {
+                return element.name.indexOf($scope.wrapper.template.name) > -1;
+            });
+        }
 
         return !!element ? element.events : [];
     };
 
 }
 
-function ParlayBaseWidgetConfigurationHandlerController($scope, ParlayWidgetEventHandler) {
+function ParlayBaseWidgetConfigurationHandlerController($scope, ParlayData, ParlayWidgetEventHandler) {
+
+    function items() {
+        var iterator = ParlayData.values();
+        var values = [];
+        for (var current = iterator.next(); !current.done; current = iterator.next()) {
+            values.push(current.value);
+        }
+        return values;
+    }
 
     function generateCompleter() {
         return {
             getCompletions: function (editor, session, pos, prefix, callback) {
+                callback(null, items().reduce(function (accumulator, item) {
 
-                var wordList = ["foo", "bar", "baz"];
+                    var entries = [];
 
-                callback(null, wordList.map(function (word) {
-                    return {
-                        caption: word,
-                        value: word,
-                        meta: "Parlay"
-                    };
-                }));
+                    entries.push({
+                        caption: item.name + ".value",
+                        value: item.name + ".value",
+                        meta: "Parlay{" + item.type + "} value"
+                    });
+
+                    if (item.type == "datastream") {
+                        entries.push({
+                            caption: item.name + ".listen()",
+                            value: item.name + ".listen()",
+                            meta: "Parlay{" + item.type + "} method"
+                        });
+                    }
+                    else {
+                        entries.push({
+                            caption: item.name + ".get()",
+                            value: item.name + ".get()",
+                            meta: "Parlay{" + item.type + "} method"
+                        });
+                        entries.push({
+                            caption: item.name + ".set()",
+                            value: item.name + ".set(undefined)",
+                            meta: "Parlay{" + item.type + "} method"
+                        });
+                    }
+
+                    return accumulator.concat(entries);
+                }, []));
             }
         };
     }
@@ -89,7 +125,7 @@ function ParlayBaseWidgetConfigurationHandlerController($scope, ParlayWidgetEven
         editor.$blockScrolling = Infinity;
         ace.require("ace/ext/language_tools");
         editor.setOptions({enableBasicAutocompletion: true, enableLiveAutocompletion: true});
-        editor.completers.push(generateCompleter());
+        editor.completers = [generateCompleter()];
     };
 
     $scope.$watch("configuration.selectedEvent", function (newValue, oldValue) {
@@ -154,13 +190,13 @@ function ParlayBaseWidgetConfigurationTransformController($scope, ParlayData, Pa
     function generateCompleter() {
         return {
             getCompletions: function (editor, session, pos, prefix, callback) {
-                callback(null, $scope.configuration.selectedItems.map(function (item) {
-                    return {
-                        caption: item.name,
-                        value: item.name,
-                        meta: "Parlay{" + item.type + "}"
-                    };
-                }));
+                callback(null, $scope.configuration.selectedItems.reduce(function (accumulator, item) {
+                    return accumulator.concat([{
+                        caption: item.name + ".value",
+                        value: item.name + ".value",
+                        meta: "Parlay{" + item.type + "} value"
+                    }]);
+                }, []));
             }
         };
     }
@@ -178,6 +214,6 @@ angular.module("parlay.widgets.base.configuration", ["ui.ace", "parlay.widgets.c
     .controller("ParlayBaseWidgetConfigurationDialogController", ["$scope", "$mdDialog", "ParlayWidgetTransformer", "ParlayWidgetEventHandler", "configuration", "template", "widgetCompiler", ParlayBaseWidgetConfigurationDialogController])
     .controller("ParlayBaseWidgetConfigurationTemplateController", ["$scope", "ParlayWidgetsCollection", ParlayBaseWidgetConfigurationTemplateController])
     .controller("ParlayBaseWidgetConfigurationEventController", ["$scope", "ParlayWidgetInputManager", ParlayBaseWidgetConfigurationEventController])
-    .controller("ParlayBaseWidgetConfigurationHandlerController", ["$scope", "ParlayWidgetEventHandler", ParlayBaseWidgetConfigurationHandlerController])
+    .controller("ParlayBaseWidgetConfigurationHandlerController", ["$scope", "ParlayData", "ParlayWidgetEventHandler", ParlayBaseWidgetConfigurationHandlerController])
     .controller("ParlayBaseWidgetConfigurationSourceController", ["$scope", "ParlayData", "ParlayWidgetInputManager", ParlayBaseWidgetConfigurationSourceController])
     .controller("ParlayBaseWidgetConfigurationTransformController", ["$scope", "ParlayData", "ParlayWidgetTransformer", ParlayBaseWidgetConfigurationTransformController]);

@@ -2,24 +2,28 @@ function ParlayWidgetTransformerFactory() {
 
     function constructInterpreter(functionString, items) {
         "use strict";
+        
+        function makeObject(interpreter, item) {
+            
+            var obj = interpreter.createObject();
+
+            if (item.type == "input") {
+                interpreter.setProperty(obj, "value", interpreter.createPrimitive(item.element.type == "number" ? parseInt(item.element.value, 10) : item.element.value));
+            }
+            else if (item.type == "button") {
+                // Do something?
+            }
+            else {
+                interpreter.setProperty(obj, "value", interpreter.createPrimitive(item.value));
+            }
+
+            return obj;
+        }
 
         var initFunc = function (interpreter, scope) {
             if (!!items && items.length > 0) {
                 items.forEach(function (item) {
-
-                    var property_value;
-
-                    if (item.type == "input") {
-                        property_value = interpreter.createPrimitive(item.element.type == "number" ? parseInt(item.element.value, 10) : item.element.value);
-                    }
-                    else if (item.type == "button") {
-                        // Do something?
-                    }
-                    else {
-                        property_value = interpreter.createPrimitive(item.value);
-                    }
-
-                    interpreter.setProperty(scope, item.name, property_value);
+                    interpreter.setProperty(scope, item.name, makeObject(interpreter, item));
                 });
             }
         };

@@ -18,8 +18,10 @@ parlay-item-search {
 .parlay-item-card > md-toolbar {
 	height: 48px;
 	min-height: 48px;
-	cursor: move;
 }
+
+/* Indicate to the user that the card is moveable. */
+.moveable-parlay-item-card > md-toolbar { cursor: move; }
 
 /* Limit height of toolbars in ParlayItemCard to allow for greater information density. */
 md-tab-content > div > md-toolbar {

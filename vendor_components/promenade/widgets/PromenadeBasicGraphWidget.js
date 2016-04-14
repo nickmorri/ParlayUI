@@ -1,10 +1,18 @@
 (function () {
 
-    function PromenadeBasicGraphWidgetRun(ParlayWidgetsCollection) {
+    var module_dependencies = ["parlay.widgets.base", "parlay.widgets.collection"];
+
+    angular
+        .module("promenade.widgets.basicgraph", module_dependencies)
+        .run(PromenadeBasicGraphWidgetRun)
+        .directive("promenadeBasicGraphWidget", PromenadeBasicGraphWidget);
+
+    PromenadeBasicGraphWidgetRun.$inject = ["ParlayWidgetsCollection"];
+    function PromenadeBasicGraphWidgetRun (ParlayWidgetsCollection) {
         ParlayWidgetsCollection.registerWidget("promenadeBasicGraphWidget", "display");
     }
 
-    function PromenadeBasicGraphWidget() {
+    function PromenadeBasicGraphWidget () {
         return {
             restrict: "E",
             templateUrl: "../vendor_components/promenade/widgets/directives/promenade-basic-graph-widget.html",
@@ -37,9 +45,5 @@
             }
         };
     }
-
-    angular.module("promenade.widgets.basicgraph", ["parlay.widgets.base", "parlay.widgets.collection"])
-        .run(["ParlayWidgetsCollection", PromenadeBasicGraphWidgetRun])
-        .directive("promenadeBasicGraphWidget", [PromenadeBasicGraphWidget]);
 
 }());

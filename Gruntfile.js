@@ -57,7 +57,7 @@ module.exports = function (grunt) {
 			'tmp_destination': 'tmp',
 			'coverage_destination': 'coverage',
 			'mocks': getVendorItems (['mocks'], ['parlay_components/*/mocks/*.js']),
-			'tests': getVendorItems(['test'], ['parlay_components/*/test/*.js']),
+			'tests': getVendorItems(['test'], ['parlay_components/*/test/*.spec.js']),
 			'compiledHtml': '<%= meta.tmp_destination %>/templates.js',
 			'htmlDirectives': getVendorItems(['directives'], ['parlay_components/**/directives/*.html']),
 			'htmlViews': 'parlay_components/**/views/*.html',

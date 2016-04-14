@@ -1,16 +1,16 @@
-/**
- * Create filter function for a query string
- * @param {String} query - Name of item to query by.
- */
-function createFilterFor(query) {
-    var lowercase_query = angular.lowercase(query);
-
-    return function filterFn(item) {
-        return item.matchesQuery(lowercase_query);
-    };
-}
-
 function ParlayItemSearchController($scope, $mdSidenav, ParlayItemManager) {
+
+    /**
+     * Create filter function for a query string
+     * @param {String} query - Name of item to query by.
+     */
+    function createFilterFor(query) {
+        var lowercase_query = angular.lowercase(query);
+
+        return function filterFn(item) {
+            return item.matchesQuery(lowercase_query);
+        };
+    }
             
     $scope.selected_item = null;
     $scope.search_text = null;

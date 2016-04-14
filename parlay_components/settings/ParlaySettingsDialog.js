@@ -1,78 +1,87 @@
-/* istanbul ignore next */
-function ParlaySettingsDialogController ($scope, $mdDialog, $mdMedia, ParlaySettings, PromenadeBroker) {
+(function () {
+    "use strict";
 
-    this.hide = function () {
-        $mdDialog.hide();
-    };
+    var module_dependencies = ["parlay.settings", "promenade.broker"];
 
-    this.saveDiscovery = function () {
-        var time = new Date();
-        PromenadeBroker.getLastDiscovery().download("discovery_" + time.toISOString() + ".txt");
-    };
+    angular
+        .module("parlay.settings.dialog", module_dependencies)
+        .controller("ParlaySettingsDialogController", ParlaySettingsDialogController);
 
-    this.loadDiscovery = function (event) {
-        event.target.parentElement.getElementsByTagName("input")[0].click();
-    };
+    /* istanbul ignore next */
+    ParlaySettingsDialogController.$inject = ["$scope", "$mdDialog", "$mdMedia", "ParlaySettings", "PromenadeBroker"];
+    function ParlaySettingsDialogController ($scope, $mdDialog, $mdMedia, ParlaySettings, PromenadeBroker) {
 
-    this.fileChanged = function (event) {
+        this.hide = function () {
+            $mdDialog.hide();
+        };
 
-        // Instantiate FileReader object
-        var fileReader = new FileReader();
+        this.saveDiscovery = function () {
+            var time = new Date();
+            PromenadeBroker.getLastDiscovery().download("discovery_" + time.toISOString() + ".txt");
+        };
 
-        $scope.$apply(function () {
-            // After file load pass saved discovery data to the PromenadeBroker
-            fileReader.onload = function (event) {
-                PromenadeBroker.applySavedDiscovery(JSON.parse(event.target.result));
-            };
+        this.loadDiscovery = function (event) {
+            event.target.parentElement.getElementsByTagName("input")[0].click();
+        };
+
+        this.fileChanged = function (event) {
+
+            // Instantiate FileReader object
+            var fileReader = new FileReader();
+
+            $scope.$apply(function () {
+                // After file load pass saved discovery data to the PromenadeBroker
+                fileReader.onload = function (event) {
+                    PromenadeBroker.applySavedDiscovery(JSON.parse(event.target.result));
+                };
+            });
+
+            // Read file as text
+            fileReader.readAsText(event.target.files[0]);
+        };
+
+        this.requestNotificationPermission = function () {
+            // Ensure browser has HTML 5 Notification support.
+            if (!this.isMSEdge()) {
+                Notification.requestPermission();
+            }
+            $scope.notification_permission = this.isMSEdge() && Notification.permission === "granted";
+        };
+
+        this.isMSEdge = function () {
+            return navigator.userAgent.includes("Edge");
+        };
+
+        var log_settings = ParlaySettings.get("log");
+        var graph_settings = ParlaySettings.get("graph");
+        var broker_settings = ParlaySettings.get("broker");
+
+        $scope.auto_discovery = broker_settings && broker_settings.auto_discovery;
+        $scope.max_log_size = log_settings && parseInt(log_settings.max_size);
+        $scope.label_size = graph_settings && parseInt(graph_settings.label_size);
+        $scope.show_prompt = broker_settings && broker_settings.show_prompt;
+
+        $scope.notification_permission = !navigator.userAgent.includes("Edge") && Notification.permission === "granted";
+
+        $scope.$watch("auto_discovery", function (newValue) {
+            ParlaySettings.set("broker", {auto_discovery: newValue});
         });
 
-        // Read file as text
-        fileReader.readAsText(event.target.files[0]);
-    };
+        $scope.$watch("max_log_size", function (newValue) {
+            ParlaySettings.set("log", {max_size: newValue});
+        });
 
-    this.requestNotificationPermission = function () {
-        // Ensure browser has HTML 5 Notification support.
-        if (!this.isMSEdge()) {
-            Notification.requestPermission();
-        }
-        $scope.notification_permission = this.isMSEdge() && Notification.permission === "granted";
-    };
+        $scope.$watch("label_size", function (newValue) {
+            ParlaySettings.set("graph", {label_size: newValue});
+        });
 
-    this.isMSEdge = function () {
-        return navigator.userAgent.includes("Edge");
-    };
+        $scope.$watch("show_prompt", function (newValue) {
+            ParlaySettings.set("broker", {show_prompt: newValue});
+        });
 
-    var log_settings = ParlaySettings.get("log");
-    var graph_settings = ParlaySettings.get("graph");
-    var broker_settings = ParlaySettings.get("broker");
+        // Attach reference to $mdMedia to scope so that media queries can be done.
+        $scope.$mdMedia = $mdMedia;
 
-    $scope.auto_discovery = broker_settings && broker_settings.auto_discovery;
-    $scope.max_log_size = log_settings && parseInt(log_settings.max_size);
-    $scope.label_size = graph_settings && parseInt(graph_settings.label_size);
-    $scope.show_prompt = broker_settings && broker_settings.show_prompt;
+    }
 
-    $scope.notification_permission = !navigator.userAgent.includes("Edge") && Notification.permission === "granted";
-
-    $scope.$watch("auto_discovery", function (newValue) {
-        ParlaySettings.set("broker", {auto_discovery: newValue});
-    });
-
-    $scope.$watch("max_log_size", function (newValue) {
-        ParlaySettings.set("log", {max_size: newValue});
-    });
-
-    $scope.$watch("label_size", function (newValue) {
-        ParlaySettings.set("graph", {label_size: newValue});
-    });
-
-    $scope.$watch("show_prompt", function (newValue) {
-        ParlaySettings.set("broker", {show_prompt: newValue});
-    });
-
-    // Attach reference to $mdMedia to scope so that media queries can be done.
-    $scope.$mdMedia = $mdMedia;
-
-}
-
-angular.module("parlay.settings.dialog", ["parlay.settings", "promenade.broker"])
-    .controller("ParlaySettingsDialogController", ["$scope", "$mdDialog", "$mdMedia", "ParlaySettings", "PromenadeBroker", ParlaySettingsDialogController]);
+}());

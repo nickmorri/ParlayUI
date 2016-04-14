@@ -1,30 +1,35 @@
-/**
- * Created by nick on 1/19/16.
- */
+(function () {
+    "use strict";
 
-/* istanbul ignore next */
-function ParlayNotificationSidenav() {
-    return {
-        scope: {},
-        templateUrl: "../parlay_components/notification/directives/parlay-notification-sidenav.html",
-        controller: "ParlayNotificationSidenavController",
-        controllerAs: "ctrl"
-    };
-}
+    var module_dependencies = ["ngMaterial", "parlay.notification"];
 
-/* istanbul ignore next */
-function ParlayNotificationSidenavController($mdSidenav, ParlayNotificationHistory) {
+    angular
+        .module("parlay.notification.sidenav", module_dependencies)
+        .controller("ParlayNotificationSidenavController", ParlayNotificationSidenavController)
+        .directive("parlayNotificationSidenav", ParlayNotificationSidenav);
 
-    this.close = function () {
-        $mdSidenav("notifications").close();
-    };
+    /* istanbul ignore next */
+    ParlayNotificationSidenavController.$inject = ["$mdSidenav", "ParlayNotificationHistory"];
+    function ParlayNotificationSidenavController ($mdSidenav, ParlayNotificationHistory) {
 
-    this.notificationHistory = function () {
-        return ParlayNotificationHistory.get();
-    };
+        this.close = function () {
+            $mdSidenav("notifications").close();
+        };
 
-}
+        this.notificationHistory = function () {
+            return ParlayNotificationHistory.get();
+        };
 
-angular.module("parlay.notification.sidenav", ["ngMaterial", "parlay.notification"])
-    .controller("ParlayNotificationSidenavController", ["$mdSidenav", "ParlayNotificationHistory", ParlayNotificationSidenavController])
-    .directive("parlayNotificationSidenav", ParlayNotificationSidenav);
+    }
+
+    /* istanbul ignore next */
+    function ParlayNotificationSidenav() {
+        return {
+            scope: {},
+            templateUrl: "../parlay_components/notification/directives/parlay-notification-sidenav.html",
+            controller: "ParlayNotificationSidenavController",
+            controllerAs: "ctrl"
+        };
+    }
+
+}());

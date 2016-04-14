@@ -1,15 +1,24 @@
-function ParlayConfig($urlRouterProvider, $mdThemingProvider) {
-        
-    // Theme configuration.
-    $mdThemingProvider.theme("default").primaryPalette("blue-grey").accentPalette("red");
+(function () {
+    "use strict";
 
-    // Needed for warning toast.
-    $mdThemingProvider.theme("warning-toast").primaryPalette("amber");
+    var module_dependencies = ["ui.router", "ngMaterial", "parlay.items", "parlay.widgets", "parlay.navigation.container", "parlay.notification.sidenav"];
 
-    // Default state for unmatched URLs.
-    $urlRouterProvider.otherwise("/items");
-    
-}
+    angular
+        .module("parlay.main", module_dependencies)
+        .config(ParlayConfig);
 
-angular.module("parlay.main", ["ui.router", "ngMaterial", "parlay.items", "parlay.widgets", "parlay.navigation.container", "parlay.notification.sidenav"])
-	.config(ParlayConfig);
+    ParlayConfig.$inject = ["$urlRouterProvider", "$mdThemingProvider"];
+    function ParlayConfig ($urlRouterProvider, $mdThemingProvider) {
+
+        // Theme configuration.
+        $mdThemingProvider.theme("default").primaryPalette("blue-grey").accentPalette("red");
+
+        // Needed for warning toast.
+        $mdThemingProvider.theme("warning-toast").primaryPalette("amber");
+
+        // Default state for unmatched URLs.
+        $urlRouterProvider.otherwise("/items");
+
+    }
+
+}());

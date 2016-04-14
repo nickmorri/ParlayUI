@@ -1,88 +1,97 @@
-function PromenadeStandardDatastreamFactory(ParlayData, $rootScope) {
+(function () {
+    "use strict";
 
-    function PromenadeStandardDatastream(data, item_name, protocol) {
+    var module_dependencies = ["parlay.data"];
 
-        this.type = "datastream";
+    angular
+        .module("promenade.items.datastream", module_dependencies)
+        .factory("PromenadeStandardDatastream", PromenadeStandardDatastreamFactory);
 
-        this.name = data.NAME;
+    PromenadeStandardDatastreamFactory.$inject = ["ParlayData", "$rootScope"];
+    function PromenadeStandardDatastreamFactory (ParlayData, $rootScope) {
 
-        // Holds internal value in the constructor closure scope.
-        var internal_value;
-        
-        // Holds callbacks that are invoked on every value change.
-        var onChangeCallbacks = {};
+        function PromenadeStandardDatastream(data, item_name, protocol) {
 
-        // defineProperty so that we can define a custom setter to allow us to do the onChange callbacks.
-        Object.defineProperty(this, "value", {
-            writeable: true,
-            get: function () {
-                return internal_value;
-            },
-            set: function (new_value) {
-                internal_value = new_value;
-                Object.keys(onChangeCallbacks).forEach(function (key) {
-                    onChangeCallbacks[key](internal_value);
-                });
-            }
-        });
+            this.type = "datastream";
 
-        /**
-         * Allows for callbacks to be registered, these will be invoked on change of value.
-         * @param {Function} callback - Function to be invoked whenever the value attribute changes.
-         * @returns {Function} - onChange deregistration function.
-         */
-        this.onChange = function (callback) {
-            var UID = 0;
-            var keys = Object.keys(onChangeCallbacks).map(function (key) { return parseInt(key, 10); });
-            while (keys.indexOf(UID) !== -1) {
-                UID++;
-            }
-            onChangeCallbacks[UID] = callback;
+            this.name = data.NAME;
 
-            return function deregister() {
-                delete onChangeCallbacks[UID];
+            // Holds internal value in the constructor closure scope.
+            var internal_value;
+
+            // Holds callbacks that are invoked on every value change.
+            var onChangeCallbacks = {};
+
+            // defineProperty so that we can define a custom setter to allow us to do the onChange callbacks.
+            Object.defineProperty(this, "value", {
+                writeable: true,
+                get: function () {
+                    return internal_value;
+                },
+                set: function (new_value) {
+                    internal_value = new_value;
+                    Object.keys(onChangeCallbacks).forEach(function (key) {
+                        onChangeCallbacks[key](internal_value);
+                    });
+                }
+            });
+
+            /**
+             * Allows for callbacks to be registered, these will be invoked on change of value.
+             * @param {Function} callback - Function to be invoked whenever the value attribute changes.
+             * @returns {Function} - onChange deregistration function.
+             */
+            this.onChange = function (callback) {
+                var UID = 0;
+                var keys = Object.keys(onChangeCallbacks).map(function (key) { return parseInt(key, 10); });
+                while (keys.indexOf(UID) !== -1) {
+                    UID++;
+                }
+                onChangeCallbacks[UID] = callback;
+
+                return function deregister() {
+                    delete onChangeCallbacks[UID];
+                };
             };
-        };
 
-        this.item_name = item_name;
-        this.protocol = protocol;
+            this.item_name = item_name;
+            this.protocol = protocol;
 
-        this.listener = protocol.onMessage({
-            TX_TYPE: "DIRECT",
-            MSG_TYPE: "STREAM",
-            TO: "UI",
-            FROM: this.item_name,
-            STREAM: this.name
-        }, function(response) {
-            $rootScope.$apply(function () {
-                this.value = response.VALUE;
-            }.bind(this));
-        }.bind(this));
-
-        this.listen = function (stop) {
-            return protocol.sendMessage({
-                TX_TYPE: "DIRECT",
-                MSG_TYPE: "STREAM",
-                TO: this.item_name
-            },
-            {
-                STREAM: this.name,
-                STOP: stop
-            },
-            {
+            this.listener = protocol.onMessage({
                 TX_TYPE: "DIRECT",
                 MSG_TYPE: "STREAM",
                 TO: "UI",
-                FROM: this.item_name
-            });
-        };
+                FROM: this.item_name,
+                STREAM: this.name
+            }, function(response) {
+                $rootScope.$apply(function () {
+                    this.value = response.VALUE;
+                }.bind(this));
+            }.bind(this));
 
-        ParlayData.set(this.name, this);
+            this.listen = function (stop) {
+                return protocol.sendMessage({
+                        TX_TYPE: "DIRECT",
+                        MSG_TYPE: "STREAM",
+                        TO: this.item_name
+                    },
+                    {
+                        STREAM: this.name,
+                        STOP: stop
+                    },
+                    {
+                        TX_TYPE: "DIRECT",
+                        MSG_TYPE: "STREAM",
+                        TO: "UI",
+                        FROM: this.item_name
+                    });
+            };
 
+            ParlayData.set(this.name, this);
+
+        }
+
+        return PromenadeStandardDatastream;
     }
 
-    return PromenadeStandardDatastream;
-}
-
-angular.module("promenade.items.datastream", ["parlay.data"])
-    .factory("PromenadeStandardDatastream", ["ParlayData", "$rootScope", PromenadeStandardDatastreamFactory]);
+}());

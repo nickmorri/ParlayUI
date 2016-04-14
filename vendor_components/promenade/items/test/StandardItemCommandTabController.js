@@ -7,12 +7,13 @@
         beforeEach(module("RecursionHelper"));
 
 		describe("PromenadeStandardItemCommandController", function () {
-            var scope, rootScope, ctrl, $timeout;
+            var scope, rootScope, ctrl, $timeout, PromenadeStandardCommandMessage;
     
-            beforeEach(inject(function($rootScope, $controller, $q, _$timeout_) {
+            beforeEach(inject(function($rootScope, $controller, $q, _$timeout_, _PromenadeStandardCommandMessage_) {
                 rootScope = $rootScope;
     			scope = $rootScope.$new();
     			$timeout = _$timeout_;
+                PromenadeStandardCommandMessage = _PromenadeStandardCommandMessage_;
 
 				var messageID = 100;
 

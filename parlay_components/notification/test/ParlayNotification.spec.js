@@ -47,14 +47,6 @@
 
         });
 
-        xdescribe("ParlayNotification", function () {
-
-            it("shows a notification", function () {});
-
-            it("shows a progress bar", function () {});
-
-        });
-
     });
 
 }());

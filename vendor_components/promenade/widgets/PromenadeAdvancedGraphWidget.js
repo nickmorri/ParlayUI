@@ -17,6 +17,6 @@ function PromenadeAdvancedGraphWidget() {
     };
 }
 
-angular.module("promenade.widgets.advancedgraph", ["parlay.widgets.base", "parlay.widgets.collection"])
+angular.module("promenade.widgets.advancedgraph", ["parlay.widgets.base", "parlay.widgets.collection", "angular-rickshaw"])
     .run(["ParlayWidgetsCollection", PromenadeAdvancedGraphWidgetRun])
     .directive("promenadeAdvancedGraphWidget", [PromenadeAdvancedGraphWidget]);

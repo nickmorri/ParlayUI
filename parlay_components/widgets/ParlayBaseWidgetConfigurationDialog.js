@@ -12,13 +12,14 @@
         .controller("ParlayBaseWidgetConfigurationSourceController", ParlayBaseWidgetConfigurationSourceController)
         .controller("ParlayBaseWidgetConfigurationTransformController", ParlayBaseWidgetConfigurationTransformController);
 
-    ParlayBaseWidgetConfigurationDialogController.$inject = ["$scope", "$mdDialog", "ParlayWidgetTransformer", "ParlayWidgetEventHandler", "configuration", "template", "widgetCompiler"];
-    function ParlayBaseWidgetConfigurationDialogController ($scope, $mdDialog, ParlayWidgetTransformer, ParlayWidgetEventHandler, configuration, template, widgetCompiler) {
+    ParlayBaseWidgetConfigurationDialogController.$inject = ["$scope", "$mdDialog", "ParlayWidgetTransformer", "ParlayWidgetEventHandler", "configuration", "template", "container", "widgetCompiler"];
+    function ParlayBaseWidgetConfigurationDialogController ($scope, $mdDialog, ParlayWidgetTransformer, ParlayWidgetEventHandler, configuration, template, container, widgetCompiler) {
 
         $scope.configuration = configuration;
 
         $scope.wrapper = {
-            template: template
+            template: template,
+            container: container
         };
 
         this.cancel = function () {
@@ -32,7 +33,7 @@
         $scope.$watch("wrapper.template", function (newValue, oldValue) {
             if (newValue != oldValue) {
 
-                widgetCompiler($scope.wrapper.template);
+                $scope.wrapper.container = widgetCompiler($scope.wrapper.template);
 
                 if (!oldValue || newValue.type != oldValue.type) {
                     if ($scope.wrapper.template.type == "display") {
@@ -79,7 +80,7 @@
 
             if ($scope.wrapper.template) {
                 element = ParlayWidgetInputManager.getElements().find(function (element) {
-                    return element.name.indexOf($scope.wrapper.template.name) > -1;
+                    return element.name.indexOf($scope.wrapper.container.childScope.tag_name) > -1;
                 });
             }
 

@@ -52,6 +52,7 @@
                         locals: {
                             configuration: scope.configuration,
                             template: scope.template,
+                            container: {childScope: scope, childElement: element},
                             widgetCompiler: compileWrapper()
                         }
                     }).then(function () {

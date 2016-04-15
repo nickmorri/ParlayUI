@@ -11,50 +11,102 @@
     PromenadeAdvancedGraphWidgetRun.$inject = ["ParlayWidgetsCollection"];
     function PromenadeAdvancedGraphWidgetRun (ParlayWidgetsCollection) {
         ParlayWidgetsCollection.registerWidget("promenadeAdvancedGraphWidget", "display");
+        Chart.defaults.global.animation = false;
     }
 
-    PromenadeAdvancedGraphWidget.$inject = ["$interval"];
-    function PromenadeAdvancedGraphWidget ($interval) {
+    PromenadeAdvancedGraphWidget.$inject = ["$interval", "$window"];
+    function PromenadeAdvancedGraphWidget ($interval, $window) {
         return {
             restrict: "E",
             templateUrl: "../vendor_components/promenade/widgets/directives/promenade-advanced-graph-widget.html",
             link: function (scope, element) {
 
-                scope.series = [];
+                var start, chart;
 
-                var graph = new Rickshaw.Graph({
-                    width: 580,
-                    height: 250,
-                    element: element.find("md-card-contents")[0],
-                    series: scope.series
-                });
+                scope.paused = false;
+                
+                scope.togglePause = function () {
+                    scope.paused = !scope.paused;
+                };
 
                 function values() {
-                    return scope.configuration.transformer.items.map(function (container) {
+
+                    var items = scope.configuration.transformer.items.map(function (container) {
                         return {
                             name: container.item.name,
                             value: container.item.value
                         };
                     });
+
+                    var transformed = {
+                        name: "transformed_value",
+                        value: scope.configuration.transformer.value
+                    };
+
+                    items.push(transformed);
+
+                    return items;
                 }
 
                 $interval(function () {
 
-                    values().forEach(function (item) {
-                        scope.series.find(function (series) {
-                            return series.name == item.name;
-                        }).data.push(item.value);
-                    });
+                    var items = values();
 
-                    graph.render();
+                    if (!!items && items.length > 0) {
+                        items.forEach(function (item) {
 
-                }, 1000);
+                            var data = chart.data.datasets.find(function (dataset) {
+                                return dataset.label == item.name;
+                            }).data;
+
+                            data.push(item.value);
+
+                            if (data.length > 20) {
+                                data.shift();
+                            }
+
+                        });
+
+                        chart.data.labels.push("");
+
+                        if (chart.data.labels.length > 20) {
+                            chart.data.labels.shift();
+                        }
+                    }
+
+                    if (!scope.paused) {
+                        chart.update();
+                    }
+
+                }, 500);
 
                 scope.$watchCollection("configuration.transformer.items", function (newValue) {
                     if (!!newValue) {
-                        scope.series = newValue.map(function (container) {
-                            return { name: container.item.name, data: [container.item.value] };
+
+                        start = (new Date()).getSeconds();
+
+                        var datasets = newValue.map(function (container) {
+                            return {
+                                label: container.item.name,
+                                data: []
+                            };
                         });
+
+                        var transformed = {
+                            label: "transformed_value",
+                            data: []
+                        };
+
+                        datasets.push(transformed);
+
+                        chart = new Chart(element.find("canvas")[0].getContext("2d"), {
+                            type: "line",
+                            data: {
+                                labels: [""],
+                                datasets: datasets
+                            }
+                        });
+
                     }
                 });
 

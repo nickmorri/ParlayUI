@@ -1,16 +1,18 @@
 <md-card class="parlay-item-card">
     <md-toolbar>
         <div class="md-toolbar-tools">
+
+            <md-button class="md-fab md-mini" ng-click="togglePause()">
+                <md-icon ng-md-icon icon="{{paused ? 'play_arrow' : 'pause'}}"></md-icon>
+            </md-button>
+
             <h2>
                 <span ng-repeat="container in configuration.transformer.items">
                     {{container.item.name}}<span ng-show="!$last">, </span>
                 </span>
             </h2>
-            <span flex></span>
 
-            <md-button class="md-icon-button" ng-click="togglePause()">
-                <md-icon ng-md-icon icon="{{paused ? 'play_arrow' : 'pause'}}"></md-icon>
-            </md-button>
+            <span flex></span>
 
             <md-menu>
                 <md-button aria-label="Open widget menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">

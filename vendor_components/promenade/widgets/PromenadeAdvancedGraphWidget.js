@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["parlay.widgets.base", "parlay.widgets.collection"];
+    var module_dependencies = ["parlay.widgets.base", "parlay.widgets.collection", "parlay.utility"];
 
     angular
         .module("promenade.widgets.advancedgraph", module_dependencies)
@@ -11,17 +11,20 @@
     PromenadeAdvancedGraphWidgetRun.$inject = ["ParlayWidgetsCollection"];
     function PromenadeAdvancedGraphWidgetRun (ParlayWidgetsCollection) {
         ParlayWidgetsCollection.registerWidget("promenadeAdvancedGraphWidget", "display");
-        Chart.defaults.global.animation = false;
+        Chart.defaults.global.elements.point.radius = 10;
+        Chart.defaults.global.elements.point.hoverRadius = 30;
     }
 
-    PromenadeAdvancedGraphWidget.$inject = ["$interval"];
-    function PromenadeAdvancedGraphWidget ($interval) {
+    PromenadeAdvancedGraphWidget.$inject = ["$interval", "RandColor"];
+    function PromenadeAdvancedGraphWidget ($interval, RandColor) {
         return {
             restrict: "E",
             templateUrl: "../vendor_components/promenade/widgets/directives/promenade-advanced-graph-widget.html",
             link: function (scope, element) {
 
-                var start, chart;
+                var chart, randColor;
+
+                randColor = new RandColor();
 
                 scope.paused = false;
                 
@@ -67,22 +70,30 @@
 
                 }, 500);
 
-                scope.$watchCollection("configuration.transformer.items", function (newValue) {
-                    if (!!newValue) {
+                scope.$watchCollection("configuration.transformer.items", function (newValue, oldValue) {
 
-                        start = (new Date()).getSeconds();
-
-                        chart = new Chart(element.find("canvas")[0].getContext("2d"), {
-                            type: "line",
-                            data: {
-                                labels: [""],
-                                datasets: newValue.map(function (container) {
-                                    return {label: container.item.name, data: []};
-                                }).concat([{label: "transformed_value", data: []}])
-                            }
+                    if (!!oldValue && !!chart) {
+                        chart.data.datasets.map(function (dataset) {
+                            return dataset.backgroundColor;
+                        }).forEach(function (color) {
+                            randColor.push(color);
                         });
-
                     }
+
+                    chart = new Chart(element.find("canvas")[0].getContext("2d"), {
+                        type: "line",
+                        options: {
+                            stacked: true,
+                            xAxes: [{display: false}]
+                        },
+                        data: {
+                            labels: [""],
+                            datasets: newValue.map(function (container) {
+                                return {label: container.item.name, data: [], backgroundColor: randColor.pop().code};
+                            }).concat([{label: "transformed_value", data: [], backgroundColor: randColor.pop().code}])
+                        }
+                    });
+
                 });
 
             }

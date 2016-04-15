@@ -14,7 +14,6 @@
     }
 
     function PromenadeAdvancedGraphWidget() {
-        "use strict";
         return {
             restrict: "E",
             templateUrl: "../vendor_components/promenade/widgets/directives/promenade-advanced-graph-widget.html",

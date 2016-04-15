@@ -19,7 +19,8 @@
     "smoothie": "^1.27.0",
     "angular-ui-router": "^0.2.18",
     "angular-ui-ace": "bower",
-    "jsinterpreter": "*"
+    "jsinterpreter": "*",
+    "Chart.js": "^2.0.0"
   },
   "resolutions": {
     "angular": "^1.5.0",
@@ -27,10 +28,21 @@
   },
   "overrides": {
     "ace-builds": {
-      "main": ["src-noconflict/ace.js", "src-noconflict/mode-javascript.js", "src-noconflict/ext-language_tools.js"]
+      "main": [
+        "src-noconflict/ace.js",
+        "src-noconflict/mode-javascript.js",
+        "src-noconflict/ext-language_tools.js"
+      ]
     },
     "jsinterpreter": {
-      "main": ["acorn_interpreter.js"]
+      "main": [
+        "acorn_interpreter.js"
+      ]
+    },
+    "Chart.js" : {
+      "main": [
+        "dist/Chart.bundle.min.js"
+      ]
     }
   }
 }

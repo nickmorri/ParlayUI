@@ -19,8 +19,8 @@
      * @param {Parlay Service} ParlayUtility - Service that provides utility functions.
      * @param {Parlay Service} ParlayPersistence - Service that provides automatic persistence of scope variables to localStorage.
      */
-    PromenadeStandardItemCardGraphTabController.$inject = ["$scope", "$mdDialog", "$interval", "$mdMedia", "ParlayUtility", "ParlayPersistence"];
-    function PromenadeStandardItemCardGraphTabController($scope, $mdDialog, $interval, $mdMedia, ParlayUtility, ParlayPersistence) {
+    PromenadeStandardItemCardGraphTabController.$inject = ["$scope", "$mdDialog", "$interval", "ParlayUtility", "ParlayPersistence"];
+    function PromenadeStandardItemCardGraphTabController($scope, $mdDialog, $interval, ParlayUtility, ParlayPersistence) {
 
         this.enabled_streams = [];
 
@@ -65,7 +65,7 @@
             }).finally(this.updateStreamColors);
         };
 
-        $interval(this.updateStreamColors, 1000);
+        $interval(this.updateStreamColors.bind(this), 1000);
 
     }
 

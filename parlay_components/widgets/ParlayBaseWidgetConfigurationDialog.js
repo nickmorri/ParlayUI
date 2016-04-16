@@ -102,6 +102,12 @@
         }
 
         function generateCompleter() {
+
+            var ParlaySocketEntry = {
+                caption: "ParlaySocket.sendMessage",
+                value: "ParlaySocket.sendMessage({}, {})"
+            };
+
             return {
                 getCompletions: function (editor, session, pos, prefix, callback) {
                     callback(null, items().reduce(function (accumulator, item) {
@@ -135,7 +141,7 @@
                         }
 
                         return accumulator.concat(entries);
-                    }, []));
+                    }, [ParlaySocketEntry]));
                 }
             };
         }

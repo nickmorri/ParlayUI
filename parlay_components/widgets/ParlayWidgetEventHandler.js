@@ -1,14 +1,14 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["parlay.data"];
+    var module_dependencies = ["parlay.data", "parlay.socket"];
 
     angular
         .module("parlay.widgets.eventhandler", module_dependencies)
         .factory("ParlayWidgetEventHandler", ParlayWidgetEventHandlerFactory);
 
-    ParlayWidgetEventHandlerFactory.$inject = ["ParlayData"];
-    function ParlayWidgetEventHandlerFactory(ParlayData) {
+    ParlayWidgetEventHandlerFactory.$inject = ["ParlayData", "ParlaySocket"];
+    function ParlayWidgetEventHandlerFactory(ParlayData, ParlaySocket) {
 
         function ParlayWidgetEventHandler (initialEvent) {
 
@@ -75,12 +75,31 @@
                 return obj;
             }
 
+            function makeSocket(interpreter) {
+                var obj = interpreter.createObject();
+
+                interpreter.setProperty(obj, "sendMessage", interpreter.createNativeFunction(function (topics, contents) {
+                    ParlaySocket.sendMessage(extract(topics), extract(contents));
+                }));
+
+                return obj;
+            }
+
+            function extract(item) {
+                return item.isPrimitive ? item.data : Object.keys(item.properties).reduce(function (accumulator, key) {
+                    accumulator[key] = extract(item.properties[key]);
+                    return accumulator;
+                }, {});
+            }
+
             var items = getItems();
             var functionString = this.functionString;
 
             var initFunc = function (interpreter, scope) {
 
-                interpreter.setProperty(scope, 'alert', interpreter.createNativeFunction(function(text) {
+                interpreter.setProperty(scope, "ParlaySocket", makeSocket(interpreter));
+
+                interpreter.setProperty(scope, "alert", interpreter.createNativeFunction(function(text) {
                     return interpreter.createPrimitive(alert(text));
                 }));
 

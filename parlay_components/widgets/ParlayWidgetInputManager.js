@@ -1,87 +1,94 @@
-function ParlayWidgetInputManagerFactory() {
+(function () {
     "use strict";
 
-    function ParlayWidgetInputManager() {
-        this.widgets = {};
-    }
+    var module_dependencies = [];
 
-    function setupEventListeners(element, events) {
-        return events.reduce(function (previous, current) {
+    angular
+        .module("parlay.widgets.inputmanager", module_dependencies)
+        .factory("ParlayWidgetInputManager", ParlayWidgetInputManagerFactory);
 
-            var callbacks = [];
+    function ParlayWidgetInputManagerFactory() {
 
-            function listenerCallbackRef() {
-                callbacks.forEach(function (callback) {
-                    callback();
-                });
-            }
-
-            function registerListener(callback) {
-                callbacks.push(callback);
-            }
-
-            function removeListener(callback) {
-                callbacks.splice(callbacks.indexOf(callback), 1);
-            }
-
-            function clearAllListeners() {
-                callbacks = [];
-                element.removeEventListener(current, listenerCallbackRef);
-            }
-
-            previous[current] = {
-                event: current,
-                addListener: registerListener,
-                removeListener: removeListener,
-                clearAllListeners: clearAllListeners
-            };
-
-            element.addEventListener(current, listenerCallbackRef);
-            return previous;
-        }, {});
-    }
-
-    ParlayWidgetInputManager.prototype.registerElements = function (widgetName, parentElement, targetTag, scope, events) {
-        var parent_tag_name = widgetName + scope.$index;
-
-        if (!this.widgets[parent_tag_name]) {
-            this.widgets[parent_tag_name] = [];
+        function ParlayWidgetInputManager() {
+            this.widgets = {};
         }
 
-        Array.prototype.slice.call(parentElement.find(targetTag)).forEach(function (element) {
-            this.widgets[parent_tag_name].push({
-                name: parent_tag_name + "_" + element.name,
-                type: targetTag,
-                element: element,
-                events: setupEventListeners(element, events)
-            });
-        }, this);
+        function setupEventListeners(element, events) {
+            return events.reduce(function (previous, current) {
 
-        scope.$on("$destroy", function () {
+                var callbacks = [];
 
-            this.widgets[parent_tag_name].forEach(function (element) {
-                Object.keys(element.events).forEach(function (key) {
-                    element.events[key].clearAllListeners();
+                function listenerCallbackRef() {
+                    callbacks.forEach(function (callback) {
+                        callback();
+                    });
+                }
+
+                function registerListener(callback) {
+                    callbacks.push(callback);
+                }
+
+                function removeListener(callback) {
+                    callbacks.splice(callbacks.indexOf(callback), 1);
+                }
+
+                function clearAllListeners() {
+                    callbacks = [];
+                    element.removeEventListener(current, listenerCallbackRef);
+                }
+
+                previous[current] = {
+                    event: current,
+                    addListener: registerListener,
+                    removeListener: removeListener,
+                    clearAllListeners: clearAllListeners
+                };
+
+                element.addEventListener(current, listenerCallbackRef);
+                return previous;
+            }, {});
+        }
+
+        ParlayWidgetInputManager.prototype.registerElements = function (widgetName, parentElement, targetTag, scope, events) {
+            var parent_tag_name = widgetName + scope.$index;
+
+            if (!this.widgets[parent_tag_name]) {
+                this.widgets[parent_tag_name] = [];
+            }
+
+            Array.prototype.slice.call(parentElement.find(targetTag)).forEach(function (element) {
+                this.widgets[parent_tag_name].push({
+                    name: parent_tag_name + "_" + element.name,
+                    type: targetTag,
+                    element: element,
+                    events: setupEventListeners(element, events)
                 });
-            });
+            }, this);
 
-            delete this.widgets[parent_tag_name];
-        }.bind(this));
+            scope.$on("$destroy", function () {
 
-        return {
-            parent_tag_name: parent_tag_name,
-            elements: this.widgets[parent_tag_name]
+                this.widgets[parent_tag_name].forEach(function (element) {
+                    Object.keys(element.events).forEach(function (key) {
+                        element.events[key].clearAllListeners();
+                    });
+                });
+
+                delete this.widgets[parent_tag_name];
+            }.bind(this));
+
+            return {
+                parent_tag_name: parent_tag_name,
+                elements: this.widgets[parent_tag_name]
+            };
         };
-    };
 
-    ParlayWidgetInputManager.prototype.getElements = function () {
-        return Object.keys(this.widgets).reduce(function (previous, current) {
-            return previous.concat(this.widgets[current]);
-        }.bind(this), []);
-    };
+        ParlayWidgetInputManager.prototype.getElements = function () {
+            return Object.keys(this.widgets).reduce(function (previous, current) {
+                return previous.concat(this.widgets[current]);
+            }.bind(this), []);
+        };
 
-    return new ParlayWidgetInputManager();
-}
+        return new ParlayWidgetInputManager();
+    }
 
-angular.module("parlay.widgets.inputmanager", [])
-    .factory("ParlayWidgetInputManager", ParlayWidgetInputManagerFactory);
+}());

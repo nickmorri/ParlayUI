@@ -2,19 +2,19 @@
     "use strict";
 
     var module_dependencies = ["parlay.widgets.collection", "parlay.utility"];
-
     var module_name = "promenade.widgets.chartjs";
+    var directive_name = "promenadeChartJsWidget";
 
     widget_dependencies.push(module_name);
 
     angular
         .module(module_name, module_dependencies)
         .run(PromenadeAdvancedGraphWidgetRun)
-        .directive("promenadeChartJsWidget", PromenadeAdvancedGraphWidget);
+        .directive(directive_name, PromenadeAdvancedGraphWidget);
 
     PromenadeAdvancedGraphWidgetRun.$inject = ["ParlayWidgetsCollection"];
     function PromenadeAdvancedGraphWidgetRun (ParlayWidgetsCollection) {
-        ParlayWidgetsCollection.registerWidget("promenadeChartJsWidget", "display");
+        ParlayWidgetsCollection.registerWidget(directive_name, "display");
         Chart.defaults.global.elements.point.radius = 10;
         Chart.defaults.global.elements.point.hoverRadius = 30;
     }

@@ -2,19 +2,19 @@
     "use strict";
 
     var module_dependencies = ["parlay.widgets.collection"];
-
     var module_name = "promenade.widgets.smoothiechart";
+    var directive_name = "promenadeSmoothieChartWidget";
 
     widget_dependencies.push(module_name);
 
     angular
         .module(module_name, module_dependencies)
         .run(PromenadeBasicGraphWidgetRun)
-        .directive("promenadeSmoothieChartWidget", PromenadeBasicGraphWidget);
+        .directive(directive_name, PromenadeBasicGraphWidget);
 
     PromenadeBasicGraphWidgetRun.$inject = ["ParlayWidgetsCollection"];
     function PromenadeBasicGraphWidgetRun (ParlayWidgetsCollection) {
-        ParlayWidgetsCollection.registerWidget("promenadeSmoothieChartWidget", "display");
+        ParlayWidgetsCollection.registerWidget(module_name, directive_name, "display");
     }
 
     function PromenadeBasicGraphWidget () {

@@ -80,7 +80,7 @@
 
             if ($scope.wrapper.template) {
                 element = ParlayWidgetInputManager.getElements().find(function (element) {
-                    return element.name.indexOf($scope.wrapper.container.childScope.tag_name) > -1;
+                    return element.rootElement[0] === $scope.wrapper.container.childElement;
                 });
             }
 

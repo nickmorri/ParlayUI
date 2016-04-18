@@ -2,15 +2,15 @@
     "use strict";
 
     var module_dependencies = ["parlay.widgets.collection"];
-
     var module_name = "promenade.widgets.button";
+    var directive_name = "promenadeButtonWidget";
 
     widget_dependencies.push(module_name);
 
     angular
         .module(module_name, module_dependencies)
         .run(PromenadeButtonWidgetRun)
-        .directive("promenadeButtonWidget", PromenadeButtonWidget);
+        .directive(directive_name, PromenadeButtonWidget);
 
     PromenadeButtonWidgetRun.$inject = ["ParlayWidgetsCollection"];
     function PromenadeButtonWidgetRun (ParlayWidgetsCollection) {
@@ -30,11 +30,11 @@
             },
             templateUrl: "../vendor_components/promenade/widgets/directives/promenade-button-widget.html",
             link: function (scope, element) {
-                var parentElement = element.find("md-card-content");
-                var targetTag = "button";
+                var parent_tag = "md-card-content";
+                var target_tag = "button";
                 var events = ["click"];
 
-                var registration = ParlayWidgetInputManager.registerElements("promenadeButtonWidget", parentElement, targetTag, scope, events);
+                var registration = ParlayWidgetInputManager.registerElements(directive_name, element, parent_tag, target_tag, scope, events);
 
                 scope.tag_name = registration.parent_tag_name;
             }

@@ -49,7 +49,8 @@
             }, {});
         }
 
-        ParlayWidgetInputManager.prototype.registerElements = function (widgetName, parentElement, targetTag, scope, events) {
+        ParlayWidgetInputManager.prototype.registerElements = function (widgetName, rootElement, parentTag, targetTag, scope, events) {
+            var parentElement = rootElement.find(parentTag);
             var parent_tag_name = widgetName + scope.index;
 
             if (!this.widgets[parent_tag_name]) {
@@ -58,6 +59,7 @@
 
             Array.prototype.slice.call(parentElement.find(targetTag)).forEach(function (element) {
                 this.widgets[parent_tag_name].push({
+                    rootElement: rootElement,
                     name: parent_tag_name + "_" + element.name,
                     type: targetTag,
                     element: element,

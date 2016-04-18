@@ -1,10 +1,14 @@
 (function () {
     "use strict";
 
+    var module_name = "promenade.items.standarditem.property";
+
+    standard_item_dependencies.push(module_name);
+
     var module_dependencies = [];
 
     angular
-        .module("promenade.items.standarditem.property", module_dependencies)
+        .module(module_name, module_dependencies)
         .controller("PromenadeStandardItemCardPropertyTabController", PromenadeStandardItemCardPropertyTabController)
         .directive("promenadeStandardItemCardProperty", PromenadeStandardItemCardProperty);
 

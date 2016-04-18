@@ -1,7 +1,9 @@
-(function () {
-    "use strict";
+// Holds the module dependencies for StandardItem. Creating this Array on the Global scope allows for other modules,
+// such as tabs to include themselves as StandardItem dependencies.
+var standard_item_dependencies = ["parlay.items", "promenade.items.datastream", "promenade.items.property", "promenade.items.command", "ngOrderObjectBy"];
 
-    var module_dependencies = ["parlay.items", "promenade.items.datastream", "promenade.items.property", "promenade.items.command", "promenade.items.standarditem.commands", "promenade.items.standarditem.log", "promenade.items.standarditem.graph", "promenade.items.standarditem.property", "ngOrderObjectBy"];
+(function (module_dependencies) {
+    "use strict";
 
     angular
         .module("promenade.items.standarditem", module_dependencies)
@@ -156,4 +158,4 @@
         };
     }
 
-}());
+}(standard_item_dependencies));

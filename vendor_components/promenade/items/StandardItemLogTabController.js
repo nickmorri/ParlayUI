@@ -1,10 +1,14 @@
 (function () {
     "use strict";
 
+    var module_name = "promenade.items.standarditem.log";
+
+    standard_item_dependencies.push(module_name);
+
     var module_dependencies = ['parlay.utility', 'parlay.notification', 'parlay.store.persistence', 'luegg.directives'];
 
     angular
-        .module('promenade.items.standarditem.log', module_dependencies)
+        .module(module_name, module_dependencies)
         .controller('PromenadeStandardItemCardLogTabController', PromenadeStandardItemCardLogTabController)
         .controller('PromenadeStandardItemCardLogItemController', PromenadeStandardItemCardLogItemController)
         .directive('promenadeStandardItemCardLog', PromenadeStandardItemCardLog)

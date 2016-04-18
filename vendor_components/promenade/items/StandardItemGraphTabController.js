@@ -1,10 +1,14 @@
 (function () {
     "use strict";
 
+    var module_name = "promenade.items.standarditem.graph";
+
+    standard_item_dependencies.push(module_name);
+
     var module_dependencies = ["promenade.smoothiechart"];
 
     angular
-        .module('promenade.items.standarditem.graph', module_dependencies)
+        .module(module_name, module_dependencies)
         .controller("PromenadeStandardItemCardGraphTabController", PromenadeStandardItemCardGraphTabController)
         .controller("PromenadeStandardItemCardGraphTabConfigurationController", PromenadeStandardItemCardGraphTabConfigurationController)
         .directive('promenadeStandardItemCardGraph', PromenadeStandardItemCardGraph);

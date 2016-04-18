@@ -14,7 +14,7 @@
 
     PromenadeBasicGraphWidgetRun.$inject = ["ParlayWidgetsCollection"];
     function PromenadeBasicGraphWidgetRun (ParlayWidgetsCollection) {
-        ParlayWidgetsCollection.registerWidget(module_name, directive_name, "display");
+        ParlayWidgetsCollection.registerWidget(directive_name, directive_name, "display");
     }
 
     function PromenadeBasicGraphWidget () {

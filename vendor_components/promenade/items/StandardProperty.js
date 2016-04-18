@@ -43,7 +43,7 @@
              * @param {Function} callback - Function to be invoked whenever the value attribute changes.
              * @returns {Function} - onChange deregistration function.
              */
-            this.onChange = function (callback) {
+            this.onChange = function onChange(callback) {
                 var UID = 0;
                 var keys = Object.keys(onChangeCallbacks);
                 while (keys.indexOf(UID) !== -1) {
@@ -73,7 +73,7 @@
                 }
             }.bind(this));
 
-            this.get = function () {
+            this.get = function get() {
                 return protocol.sendMessage({
                         TX_TYPE: "DIRECT",
                         MSG_TYPE: "PROPERTY",
@@ -92,7 +92,10 @@
                     }, true);
             };
 
-            this.set = function () {
+            this.set = function set(value) {
+                if (!!value) {
+                    this.value = value;
+                }
                 return protocol.sendMessage({
                         TX_TYPE: "DIRECT",
                         MSG_TYPE: "PROPERTY",

@@ -41,7 +41,7 @@
              * @param {Function} callback - Function to be invoked whenever the value attribute changes.
              * @returns {Function} - onChange deregistration function.
              */
-            this.onChange = function (callback) {
+            this.onChange = function onChange(callback) {
                 var UID = 0;
                 var keys = Object.keys(onChangeCallbacks).map(function (key) { return parseInt(key, 10); });
                 while (keys.indexOf(UID) !== -1) {
@@ -69,7 +69,7 @@
                 }.bind(this));
             }.bind(this));
 
-            this.listen = function (stop) {
+            this.listen = function listen(stop) {
                 return protocol.sendMessage({
                         TX_TYPE: "DIRECT",
                         MSG_TYPE: "STREAM",

@@ -1,16 +1,21 @@
 (function () {
     "use strict";
 
+    var module_name = "promenade.widgets.display";
+    var directive_name = "promenadeDisplayWidget";
+
+    widget_modules.push(module_name);
+
     var module_dependencies = ["parlay.widgets.base", "parlay.widgets.collection"];
 
     angular
-        .module("promenade.widgets.display", module_dependencies)
+        .module(module_name, module_dependencies)
         .run(PromenadeDisplayWidgetRun)
-        .directive("promenadeDisplayWidget", PromenadeDisplayWidget);
+        .directive(directive_name, PromenadeDisplayWidget);
 
     PromenadeDisplayWidgetRun.$inject = ["ParlayWidgetsCollection"];
     function PromenadeDisplayWidgetRun (ParlayWidgetsCollection) {
-        ParlayWidgetsCollection.registerWidget("promenadeDisplayWidget", "display");
+        ParlayWidgetsCollection.registerWidget(directive_name, "display");
     }
 
     PromenadeDisplayWidget.$inject = ["ParlayWidgetInputManager"];
@@ -20,6 +25,5 @@
             templateUrl: "../vendor_components/promenade/widgets/directives/promenade-display-widget.html"
         };
     }
-
 
 }());

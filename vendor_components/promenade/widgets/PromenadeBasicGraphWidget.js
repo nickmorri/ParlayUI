@@ -1,15 +1,21 @@
 (function () {
+    "use strict";
+
+    var module_name = "promenade.widgets.basicgraph";
+    var directive_name = "promenadeBasicGraphWidget";
+
+    widget_modules.push(module_name);
 
     var module_dependencies = ["parlay.widgets.base", "parlay.widgets.collection"];
 
     angular
-        .module("promenade.widgets.basicgraph", module_dependencies)
+        .module(module_name, module_dependencies)
         .run(PromenadeBasicGraphWidgetRun)
-        .directive("promenadeBasicGraphWidget", PromenadeBasicGraphWidget);
+        .directive(directive_name, PromenadeBasicGraphWidget);
 
     PromenadeBasicGraphWidgetRun.$inject = ["ParlayWidgetsCollection"];
     function PromenadeBasicGraphWidgetRun (ParlayWidgetsCollection) {
-        ParlayWidgetsCollection.registerWidget("promenadeBasicGraphWidget", "display");
+        ParlayWidgetsCollection.registerWidget(directive_name, "display");
     }
 
     function PromenadeBasicGraphWidget () {

@@ -2,10 +2,10 @@
     "use strict";
 
     var module_name = "promenade.items.standarditem.graph";
-
-    standard_item_dependencies.push(module_name);
-
     var module_dependencies = ["promenade.smoothiechart"];
+
+    // Register this module as a StandardItem dependency.
+    standard_item_dependencies.push(module_name);
 
     angular
         .module(module_name, module_dependencies)

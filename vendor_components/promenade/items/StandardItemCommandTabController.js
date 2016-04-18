@@ -2,10 +2,10 @@
     "use strict";
 
     var module_name = "promenade.items.standarditem.commands";
-
-    standard_item_dependencies.push(module_name);
-
     var module_dependencies = ["ngMaterial", "RecursionHelper", "parlay.store", "parlay.utility", "parlay.notification"];
+
+    // Register this module as a StandardItem dependency.
+    standard_item_dependencies.push(module_name);
 
     angular
         .module(module_name, module_dependencies)

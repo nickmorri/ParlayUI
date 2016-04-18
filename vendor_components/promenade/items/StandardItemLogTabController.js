@@ -2,10 +2,10 @@
     "use strict";
 
     var module_name = "promenade.items.standarditem.log";
-
-    standard_item_dependencies.push(module_name);
-
     var module_dependencies = ['parlay.utility', 'parlay.notification', 'parlay.store.persistence', 'luegg.directives'];
+
+    // Register this module as a StandardItem dependency.
+    standard_item_dependencies.push(module_name);
 
     angular
         .module(module_name, module_dependencies)

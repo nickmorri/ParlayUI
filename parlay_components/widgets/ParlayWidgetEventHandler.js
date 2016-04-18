@@ -47,42 +47,26 @@
                 return values;
             }
 
-            function makeObject(interpreter, item) {
-
-                var obj = interpreter.createObject();
-
-                if (item.type == "datastream") {
-                    item.listen();
-                    interpreter.setProperty(obj, "listen", interpreter.createNativeFunction(function () {
-                        item.listen();
-                    }));
-                }
-                else {
-                    item.get();
-
-                    interpreter.setProperty(obj, "get", interpreter.createNativeFunction(function () {
-                        item.get();
-                    }));
-
-                    interpreter.setProperty(obj, "set", interpreter.createNativeFunction(function (value) {
-                        item.value = value.data;
-                        item.set();
-                    }));
-                }
-
-                interpreter.setProperty(obj, "value", interpreter.createPrimitive(item.value));
-
-                return obj;
+            function attachFunction (scope, interpreter, funcRef) {
+                interpreter.setProperty(scope, funcRef.name, interpreter.createNativeFunction(function () {
+                    funcRef.apply(null, Array.prototype.slice.call(arguments).map(extract));
+                }));
             }
 
-            function makeSocket(interpreter) {
+            function attachObject (scope, interpreter, objectRef, optionalName) {
                 var obj = interpreter.createObject();
 
-                interpreter.setProperty(obj, "sendMessage", interpreter.createNativeFunction(function (topics, contents) {
-                    ParlaySocket.sendMessage(extract(topics), extract(contents));
-                }));
+                Object.getOwnPropertyNames(objectRef).filter(function(prop) {
+                    return typeof objectRef[prop] === "function";
+                }).map(function (prop) {
+                    return objectRef[prop];
+                }).forEach(function (method) {
+                    interpreter.setProperty(obj, method.name, interpreter.createNativeFunction(function () {
+                        method.apply(objectRef, Array.prototype.slice.call(arguments).map(extract));
+                    }));
+                });
 
-                return obj;
+                interpreter.setProperty(scope, optionalName ? optionalName : objectRef.constructor.name, obj);
             }
 
             function extract(item) {
@@ -97,16 +81,13 @@
 
             var initFunc = function (interpreter, scope) {
 
-                interpreter.setProperty(scope, "ParlaySocket", makeSocket(interpreter));
-
-                interpreter.setProperty(scope, "alert", interpreter.createNativeFunction(function(text) {
-                    return interpreter.createPrimitive(alert(text));
-                }));
+                attachObject(scope, interpreter, ParlaySocket);
+                attachFunction(scope, interpreter, alert);
 
                 items.filter(function (item) {
                     return functionString.indexOf(item.name) !== -1;
                 }).forEach(function (item) {
-                    interpreter.setProperty(scope, item.name, makeObject(interpreter, item));
+                    attachObject(scope, interpreter, item, item.name);
                 });
 
             };

@@ -112,33 +112,25 @@
                 getCompletions: function (editor, session, pos, prefix, callback) {
                     callback(null, items().reduce(function (accumulator, item) {
 
-                        var entries = [];
+                        var methods = Object.getOwnPropertyNames(item).filter(function (prop) {
+                            return typeof item[prop] == 'function' && item[prop].name != "bound ";
+                        }).map(function (prop) {
+                            return item[prop];
+                        });
+
+                        var entries = methods.map(function (method) {
+                            return {
+                                caption: item.name + "." + method.name + "()",
+                                value: item.name + "." + method.name + "()",
+                                meta: "Parlay{" + item.type + "} method"
+                            };
+                        });
 
                         entries.push({
                             caption: item.name + ".value",
                             value: item.name + ".value",
                             meta: "Parlay{" + item.type + "} value"
                         });
-
-                        if (item.type == "datastream") {
-                            entries.push({
-                                caption: item.name + ".listen()",
-                                value: item.name + ".listen()",
-                                meta: "Parlay{" + item.type + "} method"
-                            });
-                        }
-                        else {
-                            entries.push({
-                                caption: item.name + ".get()",
-                                value: item.name + ".get()",
-                                meta: "Parlay{" + item.type + "} method"
-                            });
-                            entries.push({
-                                caption: item.name + ".set()",
-                                value: item.name + ".set(undefined)",
-                                meta: "Parlay{" + item.type + "} method"
-                            });
-                        }
 
                         return accumulator.concat(entries);
                     }, [ParlaySocketEntry]));

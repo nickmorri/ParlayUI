@@ -2,7 +2,7 @@
     <md-toolbar>
         <div class="md-toolbar-tools">
             <h2>
-                <span ng-repeat="container in configuration.transformer.items">
+                <span ng-repeat="container in items">
                     {{container.item.name}}<span ng-show="!$last">, </span>
                 </span>
             </h2>
@@ -30,6 +30,6 @@
         </div>
     </md-toolbar>
     <md-card-content>
-        {{configuration.transformer.value}}
+        {{transformedValue}}
     </md-card-content>
 </md-card>

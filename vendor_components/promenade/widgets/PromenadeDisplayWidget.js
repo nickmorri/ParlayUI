@@ -1,27 +1,32 @@
 (function () {
     "use strict";
 
+    var module_dependencies = ["parlay.widgets.collection"];
+
     var module_name = "promenade.widgets.display";
-    var directive_name = "promenadeDisplayWidget";
 
-    widget_modules.push(module_name);
-
-    var module_dependencies = ["parlay.widgets.base", "parlay.widgets.collection"];
+    widget_dependencies.push(module_name);
 
     angular
         .module(module_name, module_dependencies)
         .run(PromenadeDisplayWidgetRun)
-        .directive(directive_name, PromenadeDisplayWidget);
+        .directive("promenadeDisplayWidget", PromenadeDisplayWidget);
 
     PromenadeDisplayWidgetRun.$inject = ["ParlayWidgetsCollection"];
     function PromenadeDisplayWidgetRun (ParlayWidgetsCollection) {
-        ParlayWidgetsCollection.registerWidget(directive_name, "display");
+        ParlayWidgetsCollection.registerWidget("promenadeDisplayWidget", "display");
     }
 
-    PromenadeDisplayWidget.$inject = ["ParlayWidgetInputManager"];
     function PromenadeDisplayWidget () {
         return {
             restrict: "E",
+            scope: {
+                index: "=",
+                items: "=",
+                transformedValue: "=",
+                widgetsCtrl: "=",
+                edit: "="
+            },
             templateUrl: "../vendor_components/promenade/widgets/directives/promenade-display-widget.html"
         };
     }

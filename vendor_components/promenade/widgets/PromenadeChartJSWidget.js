@@ -1,21 +1,20 @@
 (function () {
     "use strict";
 
-    var module_name = "promenade.widgets.advancedgraph";
-    var directive_name = "promenadeAdvancedGraphWidget";
+    var module_dependencies = ["parlay.widgets.collection", "parlay.utility"];
 
-    widget_modules.push(module_name);
+    var module_name = "promenade.widgets.chartjs";
 
-    var module_dependencies = ["parlay.widgets.base", "parlay.widgets.collection", "parlay.utility"];
+    widget_dependencies.push(module_name);
 
     angular
         .module(module_name, module_dependencies)
         .run(PromenadeAdvancedGraphWidgetRun)
-        .directive(directive_name, PromenadeAdvancedGraphWidget);
+        .directive("promenadeChartJsWidget", PromenadeAdvancedGraphWidget);
 
     PromenadeAdvancedGraphWidgetRun.$inject = ["ParlayWidgetsCollection"];
     function PromenadeAdvancedGraphWidgetRun (ParlayWidgetsCollection) {
-        ParlayWidgetsCollection.registerWidget(directive_name, "display");
+        ParlayWidgetsCollection.registerWidget("promenadeChartJsWidget", "display");
         Chart.defaults.global.elements.point.radius = 10;
         Chart.defaults.global.elements.point.hoverRadius = 30;
     }
@@ -24,7 +23,14 @@
     function PromenadeAdvancedGraphWidget ($interval, RandColor) {
         return {
             restrict: "E",
-            templateUrl: "../vendor_components/promenade/widgets/directives/promenade-advanced-graph-widget.html",
+            scope: {
+                index: "=",
+                items: "=",
+                transformedValue: "=",
+                widgetsCtrl: "=",
+                edit: "="
+            },
+            templateUrl: "../vendor_components/promenade/widgets/directives/promenade-chart-js-widget.html",
             link: function (scope, element) {
 
                 var chart, randColor;
@@ -38,9 +44,9 @@
                 };
 
                 function values() {
-                    return scope.configuration.transformer.items.map(function (container) {
+                    return scope.items.map(function (container) {
                         return {name: container.item.name, value: container.item.value};
-                    }).concat([{name: "transformed_value", value: scope.configuration.transformer.value}]);
+                    }).concat([{name: "transformed_value", value: scope.value}]);
                 }
 
                 $interval(function () {
@@ -75,7 +81,7 @@
 
                 }, 500);
 
-                scope.$watchCollection("configuration.transformer.items", function (newValue, oldValue) {
+                scope.$watchCollection("items", function (newValue, oldValue) {
 
                     if (!!oldValue && !!chart) {
                         chart.data.datasets.map(function (dataset) {

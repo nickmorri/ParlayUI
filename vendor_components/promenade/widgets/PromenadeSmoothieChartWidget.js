@@ -1,30 +1,36 @@
 (function () {
     "use strict";
 
-    var module_name = "promenade.widgets.basicgraph";
-    var directive_name = "promenadeBasicGraphWidget";
+    var module_dependencies = ["parlay.widgets.collection"];
 
-    widget_modules.push(module_name);
+    var module_name = "promenade.widgets.smoothiechart";
 
-    var module_dependencies = ["parlay.widgets.base", "parlay.widgets.collection"];
+    widget_dependencies.push(module_name);
 
     angular
         .module(module_name, module_dependencies)
         .run(PromenadeBasicGraphWidgetRun)
-        .directive(directive_name, PromenadeBasicGraphWidget);
+        .directive("promenadeSmoothieChartWidget", PromenadeBasicGraphWidget);
 
     PromenadeBasicGraphWidgetRun.$inject = ["ParlayWidgetsCollection"];
     function PromenadeBasicGraphWidgetRun (ParlayWidgetsCollection) {
-        ParlayWidgetsCollection.registerWidget(directive_name, "display");
+        ParlayWidgetsCollection.registerWidget("promenadeSmoothieChartWidget", "display");
     }
 
     function PromenadeBasicGraphWidget () {
         return {
             restrict: "E",
-            templateUrl: "../vendor_components/promenade/widgets/directives/promenade-basic-graph-widget.html",
+            scope: {
+                index: "=",
+                items: "=",
+                transformedValue: "=",
+                widgetsCtrl: "=",
+                edit: "="
+            },
+            templateUrl: "../vendor_components/promenade/widgets/directives/promenade-smoothie-chart-widget.html",
             link: function (scope, element) {
 
-                this.smoothie = new SmoothieChart({
+                var smoothie = new SmoothieChart({
                     grid: {
                         strokeStyle:'rgb(125, 0, 0)',
                         fillStyle:'rgb(60, 0, 0)',
@@ -37,12 +43,12 @@
                     }
                 });
 
-                this.smoothie.streamTo(element.find("canvas")[0], 1000);
+                smoothie.streamTo(element.find("canvas")[0], 1000);
 
                 var line = new TimeSeries();
-                this.smoothie.addTimeSeries(line);
+                smoothie.addTimeSeries(line);
 
-                scope.$watch("configuration.transformer.value", function (newValue) {
+                scope.$watch("transformedValue", function (newValue) {
                     if (!!newValue) {
                         line.append(new Date().getTime(), newValue);
                     }

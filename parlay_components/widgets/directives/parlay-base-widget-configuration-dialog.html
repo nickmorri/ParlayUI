@@ -9,7 +9,7 @@
                         <md-input-container flex>
                             <md-select ng-model="wrapper.template" placeholder="Select a template">
                                 <md-option ng-value="template_option" ng-repeat="template_option in templateCtrl.getTemplates()">
-                                    {{template_option.template}} ({{template_option.type}})
+                                    {{template_option.name}} ({{template_option.type}})
                                 </md-option>
                             </md-select>
                         </md-input-container>

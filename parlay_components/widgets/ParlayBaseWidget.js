@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["ngMaterial", "parlay.widget.transformer", "parlay.widgets.base.configuration"];
+    var module_dependencies = ["parlay.widgets.base.configuration"];
 
     angular
         .module("parlay.widgets.base", module_dependencies)
@@ -18,19 +18,23 @@
 
                 scope.configuration = {};
 
-                function compileWrapper() {
+                function compileWrapper(attributes) {
                     var scopeRef = scope;
                     var elementRef = element;
 
                     return function (template) {
-                        if (scopeRef.template != template.template) {
+                        if (scopeRef.template != template.name) {
                             while (elementRef[0].firstChild) {
                                 angular.element(elementRef[0].firstChild).scope().$destroy();
                                 elementRef[0].removeChild(elementRef[0].firstChild);
                             }
 
+                            var snake_case = template.name.snakeCase();
+
+                            var element_template = "<" + snake_case + " " + attributes + "></" + snake_case + ">";
+
                             var childScope = scopeRef.$new();
-                            var childElement = $compile(template.template)(childScope)[0];
+                            var childElement = $compile(element_template)(childScope)[0];
 
                             elementRef[0].appendChild(childElement);
                             scopeRef.template = template;
@@ -44,6 +48,15 @@
                 }
 
                 scope.edit = function (initialize) {
+
+                    var attributes = [
+                        ["items", "configuration.transformer.items"],
+                        ["transformed-value", "configuration.transformer.value"],
+                        ["widgets-ctrl", "widgetsCtrl"],
+                        ["edit", "edit"],
+                        ["index", "$index"]
+                    ];
+
                     $mdDialog.show({
                         templateUrl: "../parlay_components/widgets/directives/parlay-base-widget-configuration-dialog.html",
                         clickOutsideToClose: false,
@@ -53,7 +66,9 @@
                             configuration: scope.configuration,
                             template: scope.template,
                             container: {childScope: scope, childElement: element},
-                            widgetCompiler: compileWrapper()
+                            widgetCompiler: compileWrapper(attributes.map(function (attribute) {
+                                return attribute[0] + "='" + attribute[1] + "'";
+                            }).join(" "))
                         }
                     }).then(function () {
                         scope.initialized = true;

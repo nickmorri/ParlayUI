@@ -9,18 +9,18 @@
 
     angular
         .module(module_name, module_dependencies)
-        .run(PromenadeAdvancedGraphWidgetRun)
-        .directive(directive_name, PromenadeAdvancedGraphWidget);
+        .run(PromenadeChartJsWidgetRun)
+        .directive(directive_name, PromenadeChartJsWidget);
 
-    PromenadeAdvancedGraphWidgetRun.$inject = ["ParlayWidgetsCollection"];
-    function PromenadeAdvancedGraphWidgetRun (ParlayWidgetsCollection) {
+    PromenadeChartJsWidgetRun.$inject = ["ParlayWidgetsCollection"];
+    function PromenadeChartJsWidgetRun (ParlayWidgetsCollection) {
         ParlayWidgetsCollection.registerWidget(directive_name, "display");
         Chart.defaults.global.elements.point.radius = 10;
         Chart.defaults.global.elements.point.hoverRadius = 30;
     }
 
-    PromenadeAdvancedGraphWidget.$inject = ["$interval", "RandColor"];
-    function PromenadeAdvancedGraphWidget ($interval, RandColor) {
+    PromenadeChartJsWidget.$inject = ["$interval", "RandColor"];
+    function PromenadeChartJsWidget ($interval, RandColor) {
         return {
             restrict: "E",
             scope: {
@@ -30,12 +30,10 @@
                 widgetsCtrl: "=",
                 edit: "="
             },
-            templateUrl: "../vendor_components/promenade/widgets/directives/promenade-chart-js-widget.html",
+            templateUrl: "../vendor_components/promenade/widgets/directives/promenade-chart-canvas-widget.html",
             link: function (scope, element) {
 
                 var chart, randColor;
-
-                randColor = new RandColor();
 
                 scope.paused = false;
                 
@@ -46,7 +44,7 @@
                 function values() {
                     return scope.items.map(function (container) {
                         return {name: container.item.name, value: container.item.value};
-                    }).concat([{name: "transformed_value", value: scope.value}]);
+                    }).concat([{name: "transformed_value", value: scope.transformedValue}]);
                 }
 
                 $interval(function () {
@@ -81,15 +79,9 @@
 
                 }, 500);
 
-                scope.$watchCollection("items", function (newValue, oldValue) {
-
-                    if (!!oldValue && !!chart) {
-                        chart.data.datasets.map(function (dataset) {
-                            return dataset.backgroundColor;
-                        }).forEach(function (color) {
-                            randColor.push(color);
-                        });
-                    }
+                scope.$watchCollection("items", function (newValue) {
+                    
+                    randColor = new RandColor();
 
                     chart = new Chart(element.find("canvas")[0].getContext("2d"), {
                         type: "line",
@@ -100,8 +92,8 @@
                         data: {
                             labels: [""],
                             datasets: newValue.map(function (container) {
-                                return {label: container.item.name, data: [], backgroundColor: randColor.pop().code};
-                            }).concat([{label: "transformed_value", data: [], backgroundColor: randColor.pop().code}])
+                                return {label: container.item.name, data: [], backgroundColor: randColor.pop().hex()};
+                            }).concat([{label: "transformed_value", data: [], backgroundColor: randColor.pop().hex()}])
                         }
                     });
 

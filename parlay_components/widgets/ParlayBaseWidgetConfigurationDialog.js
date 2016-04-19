@@ -103,10 +103,27 @@
 
         function generateCompleter() {
 
-            var ParlaySocketEntry = {
-                caption: "ParlaySocket.sendMessage",
-                value: "ParlaySocket.sendMessage({}, {})"
-            };
+            var static_entries = [
+                {
+                    caption: "ParlaySocket.sendMessage",
+                    value: "ParlaySocket.sendMessage({}, {})"
+                },
+                {
+                    caption: "log",
+                    value: 'log("hello world")',
+                    meta: "console.log"
+                },
+                {
+                    caption: "alert",
+                    value: 'alert("hello world")',
+                    meta: "window.alert"
+                },
+                {
+                    caption: "event",
+                    value: "event",
+                    meta: "JavaScript event"
+                }
+            ];
 
             return {
                 getCompletions: function (editor, session, pos, prefix, callback) {
@@ -133,7 +150,7 @@
                         });
 
                         return accumulator.concat(entries);
-                    }, [ParlaySocketEntry]));
+                    }, static_entries));
                 }
             };
         }

@@ -71,91 +71,112 @@
 
 	function RandColorFactory() {
 
-		function RandColor() {
+		// Grabbed from http://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
+		function hexToRgb(hex) {
+			// Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+			var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+			hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+				return r + r + g + g + b + b;
+			});
 
-			this.names = {
-				aqua: "#00ffff",
-				azure: "#f0ffff",
-				beige: "#f5f5dc",
-				blue: "#0000ff",
-				brown: "#a52a2a",
-				cyan: "#00ffff",
-				darkblue: "#00008b",
-				darkcyan: "#008b8b",
-				darkgrey: "#a9a9a9",
-				darkgreen: "#006400",
-				darkkhaki: "#bdb76b",
-				darkmagenta: "#8b008b",
-				darkolivegreen: "#556b2f",
-				darkorange: "#ff8c00",
-				darkorchid: "#9932cc",
-				darkred: "#8b0000",
-				darksalmon: "#e9967a",
-				darkviolet: "#9400d3",
-				fuchsia: "#ff00ff",
-				gold: "#ffd700",
-				green: "#008000",
-				indigo: "#4b0082",
-				khaki: "#f0e68c",
-				lightblue: "#add8e6",
-				lightcyan: "#e0ffff",
-				lightgreen: "#90ee90",
-				lightgrey: "#d3d3d3",
-				lightpink: "#ffb6c1",
-				lightyellow: "#ffffe0",
-				lime: "#00ff00",
-				magenta: "#ff00ff",
-				maroon: "#800000",
-				navy: "#000080",
-				olive: "#808000",
-				orange: "#ffa500",
-				pink: "#ffc0cb",
-				purple: "#800080",
-				violet: "#800080",
-				red: "#ff0000",
-				silver: "#c0c0c0",
-				yellow: "#ffff00"
-			};
-
-			this.used = {};
-
+			var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+			return result ? {
+				r: parseInt(result[1], 16),
+				g: parseInt(result[2], 16),
+				b: parseInt(result[3], 16)
+			} : null;
 		}
 
-		RandColor.prototype.push = function (color_code) {
-			var target_name;
+		function RandColorItem(name, hex) {
 
-			for (var color_name in this.used) {
-				if (this.used[color_name] == color_code) {
-					target_name = color_name;
-					break;
-				}
-			}
+            this.name = function () {
+                return name;  
+            };
+            
+            this.hex = function () {
+                return hex;
+            };
+            
+            this.rgb = function () {
+                return hexToRgb(hex);
+            };
+            
+		}
 
-			if (!!target_name) {
-				delete this.used[target_name];
-			}
-		};
+		function RandColor() {
+            
+			var colors = [
+                new RandColorItem("aqua", "#00ffff"),
+				new RandColorItem("azure", "#f0ffff"),
+				new RandColorItem("beige", "#f5f5dc"),
+				new RandColorItem("blue", "#0000ff"),
+				new RandColorItem("brown", "#a52a2a"),
+				new RandColorItem("cyan", "#00ffff"),
+				new RandColorItem("darkblue", "#00008b"),
+				new RandColorItem("darkcyan", "#008b8b"),
+				new RandColorItem("darkgrey", "#a9a9a9"),
+				new RandColorItem("darkgreen", "#006400"),
+				new RandColorItem("darkkhaki", "#bdb76b"),
+				new RandColorItem("darkmagenta", "#8b008b"),
+				new RandColorItem("darkolivegreen", "#556b2f"),
+				new RandColorItem("darkorange", "#ff8c00"),
+				new RandColorItem("darkorchid", "#9932cc"),
+				new RandColorItem("darkred", "#8b0000"),
+				new RandColorItem("darksalmon", "#e9967a"),
+				new RandColorItem("darkviolet", "#9400d3"),
+				new RandColorItem("fuchsia", "#ff00ff"),
+				new RandColorItem("gold", "#ffd700"),
+				new RandColorItem("green", "#008000"),
+				new RandColorItem("indigo", "#4b0082"),
+				new RandColorItem("khaki", "#f0e68c"),
+				new RandColorItem("lightblue", "#add8e6"),
+				new RandColorItem("lightcyan", "#e0ffff"),
+				new RandColorItem("lightgreen", "#90ee90"),
+				new RandColorItem("lightgrey", "#d3d3d3"),
+				new RandColorItem("lightpink", "#ffb6c1"),
+				new RandColorItem("lightyellow", "#ffffe0"),
+				new RandColorItem("lime", "#00ff00"),
+				new RandColorItem("magenta", "#ff00ff"),
+				new RandColorItem("maroon", "#800000"),
+				new RandColorItem("navy", "#000080"),
+				new RandColorItem("olive", "#808000"),
+				new RandColorItem("orange", "#ffa500"),
+				new RandColorItem("pink", "#ffc0cb"),
+				new RandColorItem("purple", "#800080"),
+				new RandColorItem("violet", "#800080"),
+				new RandColorItem("red", "#ff0000"),
+				new RandColorItem("silver", "#c0c0c0"),
+				new RandColorItem("yellow", "#ffff00)")
+			];
 
-		RandColor.prototype.pop = function () {
+			var used = [];
 
-			function getRandomIntInclusive(min, max) {
-				return Math.floor(Math.random() * (max - min + 1)) + min;
-			}
+            this.push = function (color) {
+                used.splice(used.indexOf(color), 1);                
+            };
 
-			var names = Object.keys(this.names).filter(function (name) {
-				return !this.used[name];
-			}, this);
+            this.pop = function () {
 
-			var color_name = names[getRandomIntInclusive(0, names.length)];
+                function getRandomIntInclusive(min, max) {
+                    return Math.floor(Math.random() * (max - min + 1)) + min;
+                }
+                
+                var available = colors.filter(function (color) {
+                    return used.indexOf(color) === -1;
+                });
+                
+                var selected_color = available[getRandomIntInclusive(0, available.length)];
+                
+                used.push(selected_color);
+                
+                return selected_color;
+            };
 
-			this.used[color_name] = this.names[color_name];
+            this.reset = function () {
+                used = [];
+            };
 
-			return {name: color_name, code: this.names[color_name]};
-		};
-
-		RandColor.prototype.reset = function () {
-			this.used = {};
-		};
+		}
 
 		return RandColor;
 	}

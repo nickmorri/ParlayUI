@@ -72,7 +72,7 @@
                     else if (["string", "number", "boolean"].indexOf(typeof objectRef[prop]) > -1) {
                         interpreter.setProperty(obj, prop, interpreter.createPrimitive(objectRef[prop]));
                     }
-                    else if (objectRef[prop] == null) {
+                    else if (objectRef[prop] === null) {
                         interpreter.setProperty(obj, prop, interpreter.createPrimitive(null));
                     }
                 }

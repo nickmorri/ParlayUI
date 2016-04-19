@@ -36,7 +36,7 @@
             this.event = undefined;
         };
 
-        ParlayWidgetEventHandler.prototype.evaluate = function () {
+        ParlayWidgetEventHandler.prototype.evaluate = function (event) {
 
             function getItems() {
                 var iterator = ParlayData.values();
@@ -47,33 +47,72 @@
                 return values;
             }
 
-            function attachFunction (scope, interpreter, funcRef) {
-                interpreter.setProperty(scope, funcRef.name, interpreter.createNativeFunction(function () {
-                    funcRef.apply(null, Array.prototype.slice.call(arguments).map(extract));
-                }));
-            }
-
-            function attachObject (scope, interpreter, objectRef, optionalName) {
-                var obj = interpreter.createObject();
-
-                Object.getOwnPropertyNames(objectRef).filter(function(prop) {
-                    return typeof objectRef[prop] === "function";
-                }).map(function (prop) {
-                    return objectRef[prop];
-                }).forEach(function (method) {
-                    interpreter.setProperty(obj, method.name, interpreter.createNativeFunction(function () {
-                        method.apply(objectRef, Array.prototype.slice.call(arguments).map(extract));
-                    }));
-                });
-
-                interpreter.setProperty(scope, optionalName ? optionalName : objectRef.constructor.name, obj);
-            }
-
             function extract(item) {
                 return item.isPrimitive ? item.data : Object.keys(item.properties).reduce(function (accumulator, key) {
                     accumulator[key] = extract(item.properties[key]);
                     return accumulator;
                 }, {});
+            }
+
+            function makeFunction(interpreter, funcRef) {
+                return interpreter.createNativeFunction(function () {
+                    funcRef.apply(null, Array.prototype.slice.call(arguments).map(extract));
+                });
+            }
+
+            function makeObject(interpreter, objectRef) {
+                var obj = interpreter.createObject();
+
+                for (var prop in objectRef) {
+                    if (typeof objectRef[prop] == "function") {
+                        interpreter.setProperty(obj, objectRef[prop].name, interpreter.createNativeFunction(function () {
+                            objectRef[prop].apply(objectRef, Array.prototype.slice.call(arguments).map(extract));
+                        }));
+                    }
+                    else if (["string", "number", "boolean"].indexOf(typeof objectRef[prop]) > -1) {
+                        interpreter.setProperty(obj, prop, interpreter.createPrimitive(objectRef[prop]));
+                    }
+                    else if (objectRef[prop] == null) {
+                        interpreter.setProperty(obj, prop, interpreter.createPrimitive(null));
+                    }
+                }
+                return obj;
+            }
+
+            function makeEvent(interpreter, eventRef) {
+                var evt = makeObject(interpreter, eventRef);
+
+                if (eventRef.type == "change") {
+                    var val = interpreter.createPrimitive(eventRef.currentTarget.type == "number" ? parseInt(eventRef.currentTarget.value, 10) : eventRef.currentTarget.value);
+                    interpreter.setProperty(evt, "newValue", val);
+                }
+                else if (eventRef.type == "click") {
+
+                }
+
+                return evt;
+            }
+
+            function attach(scope, interpreter, name, ref) {
+                interpreter.setProperty(scope, name, ref);
+            }
+
+            function attachFunction (scope, interpreter, funcRef, optionalName) {
+                var fn = makeFunction(interpreter, funcRef);
+                var name = !!optionalName ? optionalName : funcRef.name;
+                attach(scope, interpreter, name, fn);
+            }
+
+            function attachObject (scope, interpreter, objectRef, optionalName) {
+                var obj = makeObject(interpreter, objectRef);
+                var name = !!optionalName ? optionalName : objectRef.constructor.name;
+                attach(scope, interpreter, name, obj);
+            }
+
+            function attachEvent(scope, interpreter, eventRef, optionalName) {
+                var evt = makeEvent(interpreter, eventRef);
+                var name = !!optionalName ? optionalName : "event";
+                attach(scope, interpreter, name, evt);
             }
 
             var items = getItems();
@@ -83,6 +122,8 @@
 
                 attachObject(scope, interpreter, ParlaySocket);
                 attachFunction(scope, interpreter, alert);
+                attachFunction(scope, interpreter, console.log.bind(console), "log");
+                attachEvent(scope, interpreter, event);
 
                 items.filter(function (item) {
                     return functionString.indexOf(item.name) !== -1;

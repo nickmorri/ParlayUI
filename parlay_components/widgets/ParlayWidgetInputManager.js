@@ -18,9 +18,9 @@
 
                 var callbacks = [];
 
-                function listenerCallbackRef() {
+                function listenerCallbackRef(event) {
                     callbacks.forEach(function (callback) {
-                        callback();
+                        callback(event);
                     });
                 }
 

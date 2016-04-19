@@ -75,16 +75,12 @@
     function ParlayBaseWidgetConfigurationEventController ($scope, ParlayWidgetInputManager) {
 
         this.getEvents = function () {
-
-            var element;
-
-            if ($scope.wrapper.template) {
-                element = ParlayWidgetInputManager.getElements().find(function (element) {
-                    return element.rootElement[0] === $scope.wrapper.container.childElement;
-                });
-            }
-
-            return !!element ? element.events : [];
+            return $scope.wrapper.template ? ParlayWidgetInputManager.getElements().reduce(function (accumulator, current) {
+                return accumulator.concat(Object.keys(current.events).map(function (key) {
+                    current.events[key].element = current.name;
+                    return current.events[key];
+                }));
+            }, []) : [];
         };
 
     }
@@ -164,7 +160,7 @@
 
         $scope.$watch("configuration.selectedEvent", function (newValue, oldValue) {
 
-            if (oldValue != newValue) {
+            if (oldValue !== newValue) {
                 $scope.configuration.handler = new ParlayWidgetEventHandler(newValue);
             }
 

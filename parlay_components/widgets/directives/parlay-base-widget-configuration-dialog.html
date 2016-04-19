@@ -24,7 +24,7 @@
 
                         <md-input-container flex>
                             <md-select ng-model="configuration.selectedEvent" placeholder="Select an event">
-                                <md-option ng-value="event" ng-repeat="event in eventCtrl.getEvents()">{{event.event}}</md-option>
+                                <md-option ng-value="event" ng-repeat="event in eventCtrl.getEvents()">{{event.event}} ({{event.element}})</md-option>
                             </md-select>
                         </md-input-container>
 

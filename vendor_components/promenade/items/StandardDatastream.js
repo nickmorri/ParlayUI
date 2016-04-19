@@ -25,6 +25,7 @@
             // defineProperty so that we can define a custom setter to allow us to do the onChange callbacks.
             Object.defineProperty(this, "value", {
                 writeable: true,
+                enumerable: true,
                 get: function () {
                     return internal_value;
                 },

@@ -1,74 +1,21 @@
 (function () {
     "use strict";
 
-    var module_dependencies = [];
+    var module_dependencies = ["parlay.widget.interpreter"];
 
     angular
         .module("parlay.widget.transformer", module_dependencies)
         .factory("ParlayWidgetTransformer", ParlayWidgetTransformerFactory);
 
-    function ParlayWidgetTransformerFactory() {
-
-        function constructInterpreter(functionString, items) {
-
-            function makeObject(interpreter, item) {
-
-                var obj = interpreter.createObject();
-
-                if (item.type == "input") {
-                    interpreter.setProperty(obj, "value", interpreter.createPrimitive(item.element.type == "number" ? parseInt(item.element.value, 10) : item.element.value));
-                }
-                else if (item.type == "button") {
-                    // Do something?
-                }
-                else {
-                    interpreter.setProperty(obj, "value", interpreter.createPrimitive(item.value));
-                }
-
-                return obj;
-            }
-
-            var initFunc = function (interpreter, scope) {
-                if (!!items && items.length > 0) {
-                    items.forEach(function (item) {
-                        interpreter.setProperty(scope, item.name, makeObject(interpreter, item));
-                    });
-                }
-            };
-
-            return new Interpreter(functionString, initFunc);
-        }
-
-        function runInterpreter(interpreter) {
-            interpreter.run();
-            return interpreter.value.data;
-        }
-
-        function evaluate(functionString, items) {
-            try {
-                var interpreter = constructInterpreter(functionString, items);
-                return runInterpreter(interpreter);
-            }
-            catch (error) {
-                return error.toString();
-            }
-        }
+    ParlayWidgetTransformerFactory.$inject = ["ParlayInterpreter"];
+    function ParlayWidgetTransformerFactory (ParlayInterpreter) {
 
         function ParlayWidgetTransformer(initialItems) {
 
-            // Cache the evaluated value so we aren't creating an Interpreter instance for every access.
-            // The cached value will be updated whenever the state of the transformer is altered.
-            var cached_value;
-            Object.defineProperty(this, "value", {
-                get: function () {
-                    return cached_value;
-                }
-            });
+            ParlayInterpreter.call(this);
 
-            this.updateCachedValue = function () {
-                cached_value = evaluate(this.functionString, this.items.map(function (container) {
-                    return container.item;
-                }));
+            this.updateValue = function () {
+                this.value = this.run();
             };
 
             var cached_functionString;
@@ -78,7 +25,7 @@
                 },
                 set: function (value) {
                     cached_functionString = value;
-                    this.updateCachedValue();
+                    this.updateValue();
                 }.bind(this)
             });
 
@@ -90,6 +37,20 @@
 
         }
 
+        ParlayWidgetTransformer.prototype = Object.create(ParlayInterpreter.prototype);
+
+        ParlayWidgetTransformer.prototype.run = function () {
+            try {
+                var items = this.items.map(function (container) { return container.item; });
+                return ParlayInterpreter.prototype.run.call(this, function initFunc(interpreter, scope) {
+                    this.attachItems(scope, interpreter, items);
+                });
+            }
+            catch (error) {
+                return error.toString();
+            }
+        };
+
         ParlayWidgetTransformer.prototype.cleanHandlers = function () {
             while (!!this.items && this.items.length > 0) {
                 this.items.shift().handler();
@@ -99,14 +60,14 @@
         ParlayWidgetTransformer.prototype.registerHandler = function (item) {
             if (item.type == "input") {
 
-                item.element.addEventListener("change", this.updateCachedValue.bind(this));
+                item.element.addEventListener("change", this.updateValue.bind(this));
 
                 return function () {
-                    item.element.removeEventListener("change", this.updateCachedValue);
+                    item.element.removeEventListener("change", this.updateValue);
                 }.bind(this);
             }
             else {
-                return item.onChange(this.updateCachedValue.bind(this));
+                return item.onChange(this.updateValue.bind(this));
             }
         };
 

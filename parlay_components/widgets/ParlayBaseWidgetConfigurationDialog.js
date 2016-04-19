@@ -40,14 +40,17 @@
                         $scope.configuration.selectedItems = [];
                         $scope.configuration.transformer = new ParlayWidgetTransformer();
 
-                        if (!!$scope.configuration.handler) {
-                            $scope.configuration.handler.detach();
-                            $scope.configuration.handler = undefined;
+                        if (!!$scope.configuration.handlers) {
+                            $scope.configuration.handlers.forEach(function (handler) {
+                                handler.detach();
+                            });
+                            $scope.configuration.handlers = [];
                         }
 
                     }
                     else if ($scope.wrapper.template.type == "input") {
-                        $scope.configuration.selectedEvent = undefined;
+                        $scope.configuration.selectedEvents = [];
+                        $scope.configuration.handlers = [];
 
                         if (!!$scope.configuration.transformer) {
                             $scope.configuration.transformer.cleanHandlers();
@@ -71,8 +74,8 @@
 
     }
 
-    ParlayBaseWidgetConfigurationEventController.$inject = ["$scope", "ParlayWidgetInputManager"];
-    function ParlayBaseWidgetConfigurationEventController ($scope, ParlayWidgetInputManager) {
+    ParlayBaseWidgetConfigurationEventController.$inject = ["$scope", "ParlayWidgetInputManager", "ParlayWidgetEventHandler"];
+    function ParlayBaseWidgetConfigurationEventController ($scope, ParlayWidgetInputManager, ParlayWidgetEventHandler) {
 
         this.getEvents = function () {
             return $scope.wrapper.template ? ParlayWidgetInputManager.getElements().reduce(function (accumulator, current) {
@@ -83,10 +86,37 @@
             }, []) : [];
         };
 
+        $scope.$watchCollection("configuration.selectedEvents", function (newValue, oldValue) {
+
+            if (!!newValue && newValue.length > 0) {
+
+                var newEvent = newValue.find(function (newEvent) {
+                    return !oldValue.some(function (oldEvent) {
+                        return newEvent === oldEvent;
+                    });
+                });
+
+                $scope.configuration.handlers.push(new ParlayWidgetEventHandler(newEvent));
+
+                var old_handlers = $scope.configuration.handlers.filter(function (handler) {
+                    return !newValue.some(function (event) { return handler.event === event; });
+                });
+
+                old_handlers.forEach(function (handler) {
+                    handler.detach();
+                });
+
+                $scope.configuration.handlers = $scope.configuration.handlers.filter(function (handler) {
+                    return old_handlers.indexOf(handler) === -1;
+                });
+            }
+
+        });
+
     }
 
-    ParlayBaseWidgetConfigurationHandlerController.$inject = ["$scope", "ParlayData", "ParlayWidgetEventHandler"];
-    function ParlayBaseWidgetConfigurationHandlerController ($scope, ParlayData, ParlayWidgetEventHandler) {
+    ParlayBaseWidgetConfigurationHandlerController.$inject = ["$scope", "ParlayData"];
+    function ParlayBaseWidgetConfigurationHandlerController ($scope, ParlayData) {
 
         function items() {
             var iterator = ParlayData.values();
@@ -157,14 +187,6 @@
             editor.setOptions({enableBasicAutocompletion: true, enableLiveAutocompletion: true});
             editor.completers = [generateCompleter()];
         };
-
-        $scope.$watch("configuration.selectedEvent", function (newValue, oldValue) {
-
-            if (oldValue !== newValue) {
-                $scope.configuration.handler = new ParlayWidgetEventHandler(newValue);
-            }
-
-        });
 
     }
 

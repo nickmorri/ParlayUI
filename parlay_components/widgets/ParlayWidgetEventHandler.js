@@ -57,13 +57,20 @@
 
         ParlayWidgetEventHandler.prototype.makeEvent = function (interpreter, eventRef) {
             var evt = this.makeObject(interpreter, eventRef);
+            var tag = eventRef.target.tagName.toLowerCase();
 
-            if (eventRef.type == "change") {
-                var currentTarget = event.currentTarget;
+            if (tag.includes("input")) {
+
+                var element = interpreter.createObject();
+
+                var currentTarget = event.target;
                 var val = currentTarget.type == "number" ? parseInt(currentTarget.value, 10) : currentTarget.value;
-                interpreter.setProperty(evt, "newValue", interpreter.createPrimitive(val));
+                interpreter.setProperty(element, "name", interpreter.createPrimitive(currentTarget.name));
+                interpreter.setProperty(element, "type", interpreter.createPrimitive(currentTarget.type));
+                interpreter.setProperty(element, "value", interpreter.createPrimitive(val));
+                interpreter.setProperty(evt, "element", element);
             }
-            else if (eventRef.type == "click") {
+            else if (tag.includes("button")) {
 
             }
 

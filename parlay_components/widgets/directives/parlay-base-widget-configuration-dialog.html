@@ -23,7 +23,7 @@
                     <div ng-controller="ParlayBaseWidgetConfigurationEventController as eventCtrl" layout="row">
 
                         <md-input-container flex>
-                            <md-select ng-model="configuration.selectedEvent" placeholder="Select an event">
+                            <md-select ng-model="configuration.selectedEvents" placeholder="Select an event" multiple="true">
                                 <md-option ng-value="event" ng-repeat="event in eventCtrl.getEvents()">{{event.event}} ({{event.element}})</md-option>
                             </md-select>
                         </md-input-container>
@@ -34,9 +34,16 @@
             <md-tab ng-disabled="!wrapper.template || wrapper.template.type == 'display'">
                 <md-tab-label>Handler</md-tab-label>
                 <md-tab-body>
-                    <div ng-controller="ParlayBaseWidgetConfigurationHandlerController as handlerCtrl">
-                        <div ui-ace="{mode: 'javascript', onLoad: handlerCtrl.onEditorLoad}" class="transform-edit" ng-model="configuration.handler.functionString"></div>
-                    </div>
+                    <md-tabs md-stretch-tabs="always" md-dynamic-height="true" class="md-primary md-hue-2">
+                        <md-tab ng-repeat="handler in configuration.handlers">
+                            <md-tab-label>{{handler.event.event}} ({{handler.event.element}})</md-tab-label>
+                            <md-tab-body>
+                                <div ng-controller="ParlayBaseWidgetConfigurationHandlerController as handlerCtrl">
+                                    <div ui-ace="{mode: 'javascript', onLoad: handlerCtrl.onEditorLoad}" class="transform-edit" ng-model="handler.functionString"></div>
+                                </div>
+                            </md-tab-body>
+                        </md-tab>
+                    </md-tabs>
                 </md-tab-body>
             </md-tab>
             <md-tab ng-disabled="!wrapper.template || wrapper.template.type == 'input'">

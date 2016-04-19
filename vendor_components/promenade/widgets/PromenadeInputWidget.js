@@ -32,7 +32,7 @@
             link: function (scope, element) {
                 var parent_tag = "md-card-content";
                 var target_tag = "input";
-                var events = ["change"];
+                var events = ["change", "click"];
 
                 var registration = ParlayWidgetInputManager.registerElements(directive_name, element, parent_tag, target_tag, scope, events);
 

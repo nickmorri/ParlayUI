@@ -28,7 +28,8 @@
                 items: "=",
                 transformedValue: "=",
                 widgetsCtrl: "=",
-                edit: "="
+                edit: "=",
+                editing: "="
             },
             templateUrl: "../vendor_components/promenade/widgets/directives/promenade-chart-canvas-widget.html",
             link: function (scope, element) {

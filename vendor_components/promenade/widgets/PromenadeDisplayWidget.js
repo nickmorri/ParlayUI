@@ -25,7 +25,8 @@
                 items: "=",
                 transformedValue: "=",
                 widgetsCtrl: "=",
-                edit: "="
+                edit: "=",
+                editing: "="
             },
             templateUrl: "../vendor_components/promenade/widgets/directives/promenade-display-widget.html"
         };

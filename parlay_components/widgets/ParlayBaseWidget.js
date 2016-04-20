@@ -54,7 +54,8 @@
                         ["transformed-value", "configuration.transformer.value"],
                         ["widgets-ctrl", "widgetsCtrl"],
                         ["edit", "edit"],
-                        ["index", "$index"]
+                        ["index", "$index"],
+                        ["editing", "editing"]
                     ];
 
                     $mdDialog.show({
@@ -72,10 +73,11 @@
                         }
                     }).then(function () {
                         scope.initialized = true;
-                    }).catch(function () {
+                    }).catch(function (configuration) {
                         if (initialize) {
                             scope.widgetsCtrl.remove(scope.$index);
                         }
+                        scope.item.configuration = configuration;
                     });
                 };
 

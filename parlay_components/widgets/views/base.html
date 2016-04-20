@@ -1,8 +1,23 @@
-<div layout="row" layout-wrap>
-    <parlay-base-widget ng-repeat="item in widgetsCtrl.items"></parlay-base-widget>
+<div layout="column">
+
+    <md-toolbar class="md-hue-2">
+        <div class="md-toolbar-tools" layout="row">
+            <h5>Widget Canvas</h5>
+            <span flex></span>
+            <md-switch ng-model="editing" aria-label="Editing">
+                {{editing ? "Editing" : "Viewing"}}
+            </md-switch>
+        </div>
+    </md-toolbar>
+
+    <div>
+        <parlay-base-widget ng-repeat="item in widgetsCtrl.items"></parlay-base-widget>
+    </div>
+
+    <md-button ng-show="editing" class="md-fab md-fab-bottom-right" ng-click="widgetsCtrl.add()">
+        <md-tooltip>Add widget</md-tooltip>
+        <md-icon ng-md-icon icon="add"></md-icon>
+    </md-button>
+
 </div>
 
-<md-button class="md-fab md-fab-bottom-right" ng-click="widgetsCtrl.add()">
-    <md-tooltip>Add widget</md-tooltip>
-    <md-icon ng-md-icon icon="add"></md-icon>
-</md-button>

@@ -26,7 +26,8 @@
                 items: "=",
                 transformedValue: "=",
                 widgetsCtrl: "=",
-                edit: "="
+                edit: "=",
+                editing: "="
             },
             templateUrl: "../vendor_components/promenade/widgets/directives/promenade-input-widget.html",
             link: function (scope, element) {

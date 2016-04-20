@@ -15,10 +15,11 @@
 
             ParlayInterpreter.call(this);
 
-            this.updateValue = function () {
-                this.construct();
-                this.value = this.run();
-            };
+            Object.defineProperty(this, "value", {
+                get: function () {
+                    return this.run();
+                }
+            });
 
             var cached_functionString;
             Object.defineProperty(this, "functionString", {
@@ -27,7 +28,7 @@
                 },
                 set: function (value) {
                     cached_functionString = value;
-                    this.updateValue();
+                    this.construct();
                 }.bind(this)
             });
 
@@ -37,7 +38,7 @@
                 initialItems.forEach(this.addItem);
             }
 
-            this.updateValue();
+            this.construct();
 
         }
 
@@ -49,10 +50,10 @@
                 return;
             }
 
-            var items = this.items.map(function (container) { return container.item; });
-
             ParlayInterpreter.prototype.construct.call(this, function initFunc(interpreter, scope) {
-                this.attachItems(scope, interpreter, items);
+                this.attachItems(scope, interpreter, this.items.map(function (container) {
+                    return container.item;
+                }));
             });
         };
 
@@ -81,14 +82,14 @@
         ParlayWidgetTransformer.prototype.registerHandler = function (item) {
             if (item.type == "input") {
 
-                item.element.addEventListener("change", this.updateValue.bind(this));
+                item.element.addEventListener("change", this.construct.bind(this));
 
                 return function () {
-                    item.element.removeEventListener("change", this.updateValue);
+                    item.element.removeEventListener("change", this.construct);
                 }.bind(this);
             }
             else {
-                return item.onChange(this.updateValue.bind(this));
+                return item.onChange(this.construct.bind(this));
             }
         };
 

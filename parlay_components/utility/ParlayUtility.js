@@ -146,7 +146,7 @@
 				new RandColorItem("violet", "#800080"),
 				new RandColorItem("red", "#ff0000"),
 				new RandColorItem("silver", "#c0c0c0"),
-				new RandColorItem("yellow", "#ffff00)")
+				new RandColorItem("yellow", "#ffff00")
 			];
 
 			var used = [];

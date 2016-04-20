@@ -31,9 +31,8 @@
                                     md-no-cache="true"
                                     md-search-text="eventCtrl.searchText"
                                     md-items="event in eventCtrl.queryEvents(eventCtrl.searchText)"
-                                    md-item-text="item.name"
-                                    placeholder="Search for events"
-                                    md-selected-item-change="eventCtrl.change(item)">
+                                    md-item-text="event.event"
+                                    placeholder="Search for events">
                                 <md-item-template>
                                     <span md-highlight-text="eventCtrl.searchText">{{event.event}}</span> <i>({{event.element}})</i>
                                 </md-item-template>

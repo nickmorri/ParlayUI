@@ -80,13 +80,23 @@
     ParlayBaseWidgetConfigurationEventController.$inject = ["$scope", "ParlayWidgetInputManager", "ParlayWidgetEventHandler"];
     function ParlayBaseWidgetConfigurationEventController ($scope, ParlayWidgetInputManager, ParlayWidgetEventHandler) {
 
-        this.getEvents = function () {
+        function getEvents () {
             return $scope.wrapper.template ? ParlayWidgetInputManager.getElements().reduce(function (accumulator, current) {
                 return accumulator.concat(Object.keys(current.events).map(function (key) {
                     current.events[key].element = current.name;
                     return current.events[key];
                 }));
             }, []) : [];
+        }
+        
+        this.queryEvents = function (query) {
+            var lowercase_query = angular.lowercase(query);
+            
+            var events = getEvents().filter(function (event) {
+                return (angular.lowercase(event.event) + angular.lowercase(event.element)).includes(lowercase_query);
+            });
+
+            return !!events && events.length > 0 ? events : getEvents();
         };
 
         $scope.$watchCollection("configuration.selectedEvents", function (newValue, oldValue) {

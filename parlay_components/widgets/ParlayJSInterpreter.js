@@ -19,6 +19,7 @@
 
         function ParlayInterpreter () {
             this.functionString = undefined;
+            this.namespace = {};
         }
 
         ParlayInterpreter.prototype.run = function (initFunc) {
@@ -68,7 +69,9 @@
             var name = !!optionalName ? optionalName : funcRef.name;
             
             if (this.functionString.includes(name)) {
-                interpreter.setProperty(scope, name, this.makeFunction(interpreter, funcRef));
+                var func = this.makeFunction(interpreter, funcRef);
+                this.registerOnNamespace(name, func.type);
+                interpreter.setProperty(scope, name, func);
             }
         };
 
@@ -76,7 +79,17 @@
             var name = !!optionalName ? optionalName : objectRef.constructor.name;
 
             if (this.functionString.includes(name)) {
-                interpreter.setProperty(scope, name, this.makeObject(interpreter, objectRef));
+                var obj = this.makeObject(interpreter, objectRef);
+
+                this.registerOnNamespace(name, obj.type);
+
+                Object.keys(obj.properties).map(function (key) {
+                    return {name: key, type: obj.properties[key].type};
+                }).forEach(function (property) {
+                    this.registerOnNamespace(property.name, property.type, name);
+                }, this);
+
+                interpreter.setProperty(scope, name, obj);
             }
         };
 
@@ -84,6 +97,11 @@
             items.forEach(function (item) {
                 this.attachObject(scope, interpreter, item, item.name);
             }, this);
+        };
+
+        ParlayInterpreter.prototype.registerOnNamespace = function (name, type, parentName) {
+            var container = !!this.namespace[parentName] ? this.namespace[parentName] : this.namespace;
+            container[name] = type === "object" ? {} : type;
         };
         
         return ParlayInterpreter;

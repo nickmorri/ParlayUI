@@ -46,7 +46,9 @@
              */
             this.onChange = function onChange(callback) {
                 var UID = 0;
-                var keys = Object.keys(onChangeCallbacks);
+                var keys = Object.keys(onChangeCallbacks).map(function (key) {
+                    return parseInt(key, 10);
+                });
                 while (keys.indexOf(UID) !== -1) {
                     UID++;
                 }

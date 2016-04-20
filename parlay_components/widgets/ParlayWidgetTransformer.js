@@ -47,6 +47,11 @@
                 });
             }
             catch (error) {
+
+                if (!this.functionString) {
+                    return "Editor is empty. Please enter a valid statement.";
+                }
+
                 return error.toString();
             }
         };

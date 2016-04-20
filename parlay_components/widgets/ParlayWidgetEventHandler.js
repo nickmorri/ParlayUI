@@ -36,15 +36,20 @@
 
         ParlayWidgetEventHandler.prototype = Object.create(ParlayInterpreter.prototype);
 
+        ParlayWidgetEventHandler.prototype.construct = function () {
+            ParlayInterpreter.prototype.construct.call(this, function initFunc(interpreter, scope) {
+                this.attachObject(scope, interpreter, ParlaySocket);
+                this.attachFunction(scope, interpreter, alert);
+                this.attachFunction(scope, interpreter, console.log.bind(console), "log");
+                this.attachEvent(scope, interpreter, event);
+                this.attachItems(scope, interpreter, this.getItems());
+            });
+        };
+
         ParlayWidgetEventHandler.prototype.run = function (event) {
             try {
-                return ParlayInterpreter.prototype.run.call(this, function initFunc(interpreter, scope) {
-                    this.attachObject(scope, interpreter, ParlaySocket);
-                    this.attachFunction(scope, interpreter, alert);
-                    this.attachFunction(scope, interpreter, console.log.bind(console), "log");
-                    this.attachEvent(scope, interpreter, event);
-                    this.attachItems(scope, interpreter, this.getItems());
-                });
+                this.construct(event);
+                return ParlayInterpreter.prototype.run.call(this);
             }
             catch (error) {
                 return error.toString();

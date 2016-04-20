@@ -20,12 +20,16 @@
         function ParlayInterpreter () {
             this.functionString = undefined;
             this.namespace = {};
+            this.interpreter = undefined;
         }
 
-        ParlayInterpreter.prototype.run = function (initFunc) {
-            var interpreter = new Interpreter(this.functionString, !!initFunc ? initFunc.bind(this) : undefined);
-            interpreter.run();
-            return interpreter.value.data;
+        ParlayInterpreter.prototype.construct = function (initFunc) {
+            this.interpreter = new Interpreter(this.functionString, !!initFunc ? initFunc.bind(this) : undefined);
+        };
+
+        ParlayInterpreter.prototype.run = function () {
+            this.interpreter.run();
+            return this.interpreter.value.data;
         };
 
         ParlayInterpreter.prototype.getItems = function () {

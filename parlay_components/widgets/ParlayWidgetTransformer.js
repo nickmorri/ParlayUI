@@ -16,6 +16,7 @@
             ParlayInterpreter.call(this);
 
             this.updateValue = function () {
+                this.construct();
                 this.value = this.run();
             };
 
@@ -42,13 +43,22 @@
 
         ParlayWidgetTransformer.prototype = Object.create(ParlayInterpreter.prototype);
 
+        ParlayWidgetTransformer.prototype.construct = function () {
+
+            if (!this.functionString) {
+                return;
+            }
+
+            var items = this.items.map(function (container) { return container.item; });
+
+            ParlayInterpreter.prototype.construct.call(this, function initFunc(interpreter, scope) {
+                this.attachItems(scope, interpreter, items);
+            });
+        };
+
         ParlayWidgetTransformer.prototype.run = function () {
             try {
-                var items = this.items.map(function (container) { return container.item; });
-
-                var result = ParlayInterpreter.prototype.run.call(this, function initFunc(interpreter, scope) {
-                    this.attachItems(scope, interpreter, items);
-                });
+                var result = ParlayInterpreter.prototype.run.call(this);
 
                 return !!result ? result : "Editor is empty. Please enter a valid statement.";
             }
@@ -87,6 +97,7 @@
                 item: item,
                 handler: this.registerHandler(item)
             });
+            this.construct();
         };
 
         ParlayWidgetTransformer.prototype.removeItem = function (item) {
@@ -98,6 +109,7 @@
                 this.items[index].handler();
                 this.items.splice(index, 1);
             }
+            this.construct();
         };
 
         return ParlayWidgetTransformer;

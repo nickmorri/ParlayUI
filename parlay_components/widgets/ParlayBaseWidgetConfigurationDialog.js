@@ -47,6 +47,8 @@
                             $scope.configuration.handlers = [];
                         }
 
+                        $scope.currentTabIndex = 2;
+
                     }
                     else if ($scope.wrapper.template.type == "input") {
                         $scope.configuration.selectedEvents = [];
@@ -57,6 +59,7 @@
                         }
 
                         $scope.configuration.selectedItems = [];
+                        $scope.currentTabIndex = 1;
                     }
                 }
 

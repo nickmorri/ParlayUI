@@ -10,6 +10,7 @@
     ParlayWidgetTransformerFactory.$inject = ["ParlayInterpreter"];
     function ParlayWidgetTransformerFactory (ParlayInterpreter) {
 
+
         function ParlayWidgetTransformer(initialItems) {
 
             ParlayInterpreter.call(this);
@@ -35,6 +36,8 @@
                 initialItems.forEach(this.addItem);
             }
 
+            this.updateValue();
+
         }
 
         ParlayWidgetTransformer.prototype = Object.create(ParlayInterpreter.prototype);
@@ -42,9 +45,12 @@
         ParlayWidgetTransformer.prototype.run = function () {
             try {
                 var items = this.items.map(function (container) { return container.item; });
-                return ParlayInterpreter.prototype.run.call(this, function initFunc(interpreter, scope) {
+
+                var result = ParlayInterpreter.prototype.run.call(this, function initFunc(interpreter, scope) {
                     this.attachItems(scope, interpreter, items);
                 });
+
+                return !!result ? result : "Editor is empty. Please enter a valid statement.";
             }
             catch (error) {
 

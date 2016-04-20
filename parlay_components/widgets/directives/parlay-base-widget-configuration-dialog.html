@@ -18,7 +18,7 @@
                 </md-tab-body>
             </md-tab>
             <md-tab ng-disabled="!wrapper.template || wrapper.template.type == 'display'">
-                <md-tab-label>Event</md-tab-label>
+                <md-tab-label>Handlers</md-tab-label>
                 <md-tab-body>
                     <div ng-controller="ParlayBaseWidgetConfigurationEventController as eventCtrl" layout="row">
 
@@ -29,12 +29,7 @@
                         </md-input-container>
 
                     </div>
-                </md-tab-body>
-            </md-tab>
-            <md-tab ng-disabled="!wrapper.template || wrapper.template.type == 'display'">
-                <md-tab-label>Handler</md-tab-label>
-                <md-tab-body>
-                    <md-tabs md-stretch-tabs="always" md-dynamic-height="true" class="md-primary md-hue-2">
+                    <md-tabs ng-hide="configuration.selectedEvents.length === 0" md-stretch-tabs="always" md-dynamic-height="true" class="md-primary md-hue-2">
                         <md-tab ng-repeat="handler in configuration.handlers">
                             <md-tab-label>{{handler.event.event}} ({{handler.event.element}})</md-tab-label>
                             <md-tab-body>
@@ -47,8 +42,9 @@
                 </md-tab-body>
             </md-tab>
             <md-tab ng-disabled="!wrapper.template || wrapper.template.type == 'input'">
-                <md-tab-label>Sources</md-tab-label>
+                <md-tab-label>Transform</md-tab-label>
                 <md-tab-body>
+
                     <div ng-controller="ParlayBaseWidgetConfigurationSourceController as sourceCtrl">
 
                         <md-chips ng-model="configuration.selectedItems" md-on-add="sourceCtrl.onAdd($chip, $index)" md-on-remove="sourceCtrl.onRemove($chip, $index)" md-require-match="true">
@@ -87,11 +83,6 @@
                         </md-chips>
 
                     </div>
-                </md-tab-body>
-            </md-tab>
-            <md-tab ng-disabled="!wrapper.template || wrapper.template.type == 'input'">
-                <md-tab-label>Transform</md-tab-label>
-                <md-tab-body>
 
                     <div layout="column" ng-controller="ParlayBaseWidgetConfigurationTransformController as transformCtrl">
 

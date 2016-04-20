@@ -20,25 +20,28 @@
             <md-tab ng-disabled="!wrapper.template || wrapper.template.type == 'display'">
                 <md-tab-label>Handlers</md-tab-label>
                 <md-tab-body>
-                    <div ng-controller="ParlayBaseWidgetConfigurationEventController as eventCtrl" layout="row">
-
+                    
+                    <md-card ng-controller="ParlayBaseWidgetConfigurationEventController as eventCtrl" layout="row">
                         <md-input-container flex>
                             <md-select ng-model="configuration.selectedEvents" placeholder="Select an event" multiple="true">
                                 <md-option ng-value="event" ng-repeat="event in eventCtrl.getEvents()">{{event.event}} ({{event.element}})</md-option>
                             </md-select>
                         </md-input-container>
+                    </md-card>
 
-                    </div>
-                    <md-tabs ng-hide="configuration.selectedEvents.length === 0" md-stretch-tabs="always" md-dynamic-height="true" class="md-primary md-hue-2">
-                        <md-tab ng-repeat="handler in configuration.handlers">
-                            <md-tab-label>{{handler.event.event}} ({{handler.event.element}})</md-tab-label>
-                            <md-tab-body>
-                                <div ng-controller="ParlayBaseWidgetConfigurationHandlerController as handlerCtrl">
-                                    <div ui-ace="{mode: 'javascript', onLoad: handlerCtrl.onEditorLoad}" class="transform-edit" ng-model="handler.functionString"></div>
-                                </div>
-                            </md-tab-body>
-                        </md-tab>
-                    </md-tabs>
+                    <md-card>
+                        <md-tabs ng-hide="configuration.selectedEvents.length === 0" md-stretch-tabs="always" md-dynamic-height="true" class="md-primary md-hue-2">
+                            <md-tab ng-repeat="handler in configuration.handlers">
+                                <md-tab-label>{{handler.event.event}} ({{handler.event.element}})</md-tab-label>
+                                <md-tab-body>
+                                    <div ng-controller="ParlayBaseWidgetConfigurationHandlerController as handlerCtrl">
+                                        <div ui-ace="{mode: 'javascript', onLoad: handlerCtrl.onEditorLoad}" class="transform-edit" ng-model="handler.functionString"></div>
+                                    </div>
+                                </md-tab-body>
+                            </md-tab>
+                        </md-tabs>
+                    </md-card>
+
                 </md-tab-body>
             </md-tab>
             <md-tab ng-disabled="!wrapper.template || wrapper.template.type == 'input'">
@@ -47,40 +50,44 @@
 
                     <div ng-controller="ParlayBaseWidgetConfigurationSourceController as sourceCtrl">
 
-                        <md-chips ng-model="configuration.selectedItems" md-on-add="sourceCtrl.onAdd($chip, $index)" md-on-remove="sourceCtrl.onRemove($chip, $index)" md-require-match="true">
-                            <md-autocomplete
-                                    md-min-length="0"
-                                    md-select-on-match="true"
-                                    md-match-case-insensitive="true"
-                                    md-no-cache="true"
-                                    md-search-text="sourceCtrl.searchText"
-                                    md-items="item in sourceCtrl.querySearch(sourceCtrl.searchText)"
-                                    md-item-text="item.name"
-                                    placeholder="Search for a property, data stream or command"
-                                    md-menu-class="autocomplete-custom-template"
-                                    md-selected-item-change="sourceCtrl.change(item)">
-                                <md-item-template>
-                                <span class="item-title">
-                                    <md-icon ng-show="item.type == 'property'" ng-md-icon icon="description"></md-icon>
-                                    <md-icon ng-show="item.type == 'datastream'" ng-md-icon icon="group_work"></md-icon>
-                                    <md-icon ng-show="item.type == 'command'" ng-md-icon icon="code"></md-icon>
-                                    <md-icon ng-show="item.type == 'input'" ng-md-icon icon="text_fields"></md-icon>
-                                    <md-icon ng-show="item.type == 'button'" ng-md-icon icon="play_for_work"></md-icon>
-                                    <span md-highlight-text="sourceCtrl.searchText">{{item.name}}</span> <i>({{item.type}})</i>
-                                </span>
-                                <span class="item-metadata">
-                                    <span class="item-metastat">{{item.item_name}}</span>
-                                    <strong class="item-metastat" ng-show="!!item.value">value = {{item.value}}</strong>
-                                </span>
-                                </md-item-template>
-                            </md-autocomplete>
-                            <md-chip-template>
-                                <span>
-                                    <strong>{{$chip.name}}</strong>
-                                    <em>{{$chip.item_name}}</em>
-                                </span>
-                            </md-chip-template>
-                        </md-chips>
+                        <md-card>
+
+                            <md-chips ng-model="configuration.selectedItems" md-on-add="sourceCtrl.onAdd($chip, $index)" md-on-remove="sourceCtrl.onRemove($chip, $index)" md-require-match="true">
+                                <md-autocomplete
+                                        md-min-length="0"
+                                        md-select-on-match="true"
+                                        md-match-case-insensitive="true"
+                                        md-no-cache="true"
+                                        md-search-text="sourceCtrl.searchText"
+                                        md-items="item in sourceCtrl.querySearch(sourceCtrl.searchText)"
+                                        md-item-text="item.name"
+                                        placeholder="Search for a property, data stream or command"
+                                        md-menu-class="autocomplete-custom-template"
+                                        md-selected-item-change="sourceCtrl.change(item)">
+                                    <md-item-template>
+                                    <span class="item-title">
+                                        <md-icon ng-show="item.type == 'property'" ng-md-icon icon="description"></md-icon>
+                                        <md-icon ng-show="item.type == 'datastream'" ng-md-icon icon="group_work"></md-icon>
+                                        <md-icon ng-show="item.type == 'command'" ng-md-icon icon="code"></md-icon>
+                                        <md-icon ng-show="item.type == 'input'" ng-md-icon icon="text_fields"></md-icon>
+                                        <md-icon ng-show="item.type == 'button'" ng-md-icon icon="play_for_work"></md-icon>
+                                        <span md-highlight-text="sourceCtrl.searchText">{{item.name}}</span> <i>({{item.type}})</i>
+                                    </span>
+                                    <span class="item-metadata">
+                                        <span class="item-metastat">{{item.item_name}}</span>
+                                        <strong class="item-metastat" ng-show="!!item.value">value = {{item.value}}</strong>
+                                    </span>
+                                    </md-item-template>
+                                </md-autocomplete>
+                                <md-chip-template>
+                                    <span>
+                                        <strong>{{$chip.name}}</strong>
+                                        <em>{{$chip.item_name}}</em>
+                                    </span>
+                                </md-chip-template>
+                            </md-chips>
+
+                        </md-card>
 
                     </div>
 

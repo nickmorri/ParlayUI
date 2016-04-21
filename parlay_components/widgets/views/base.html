@@ -2,15 +2,15 @@
 
     <md-toolbar class="md-hue-2">
         <div class="md-toolbar-tools" layout="row">
-            <h5>Widget Canvas</h5>
+            <h2>Widget Canvas</h2>
             <span flex></span>
-            <md-switch ng-model="editing" aria-label="Editing">
-                {{editing ? "Editing" : "Viewing"}}
-            </md-switch>
+            <md-button ng-click="widgetsCtrl.save()">Save</md-button>
+            <md-button ng-click="widgetsCtrl.load()">Load</md-button>
+            <md-switch ng-model="editing" aria-label="Editing">{{editing ? "Editing" : "Viewing"}}</md-switch>
         </div>
     </md-toolbar>
 
-    <div>
+    <div layout="row">
         <parlay-base-widget ng-repeat="item in widgetsCtrl.items"></parlay-base-widget>
     </div>
 

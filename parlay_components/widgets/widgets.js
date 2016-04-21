@@ -38,14 +38,23 @@ var widget_dependencies = ["ui.router", "ui.ace", "ngMaterial", "parlay.widgets.
         }
     }
 
-    ParlayWidgetsController.$inject = ["$scope", "ParlaySettings"];
-    function ParlayWidgetsController ($scope, ParlaySettings) {
+    ParlayWidgetsController.$inject = ["$scope", "ParlaySettings", "ParlayStore"];
+    function ParlayWidgetsController ($scope, ParlaySettings, ParlayStore) {
 
         var settings = ParlaySettings.get("widgets");
+        var store = ParlayStore("widgets");
         
         $scope.editing = settings.editing;
 
         this.items = [];
+
+        this.save = function () {
+            store.set("default", JSON.stringify(this.items));
+        };
+
+        this.load = function () {
+            this.items = JSON.parse(store.get("default"));
+        };
 
         $scope.$watch("editing", function (newValue) {
             ParlaySettings.set("widgets", {editing: newValue});

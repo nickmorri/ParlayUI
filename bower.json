@@ -20,11 +20,14 @@
     "angular-ui-router": "^0.2.18",
     "angular-ui-ace": "bower",
     "jsinterpreter": "*",
-    "Chart.js": "^2.0.0"
+    "Chart.js": "^2.0.0",
+    "draggabilly": "^2.1.0"
   },
   "resolutions": {
     "angular": "^1.5.0",
-    "moment": ">=2.8.0 <2.11.0"
+    "moment": ">=2.8.0 <2.11.0",
+    "draggabilly": "^2.1.0",
+    "get-size": "~2.0.2"
   },
   "overrides": {
     "ace-builds": {
@@ -39,7 +42,7 @@
         "acorn_interpreter.js"
       ]
     },
-    "Chart.js" : {
+    "Chart.js": {
       "main": [
         "dist/Chart.bundle.min.js"
       ]

@@ -1,5 +1,5 @@
 <md-card class="parlay-item-card">
-    <md-toolbar>
+    <md-toolbar class="handle">
         <div class="md-toolbar-tools">
             <h2>
                 <span ng-repeat="container in items">
@@ -7,7 +7,6 @@
                 </span>
             </h2>
             <span flex></span>
-
             <md-menu ng-show="editing">
                 <md-button aria-label="Open widget menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
                     <md-icon ng-md-icon icon="more_vert"></md-icon>

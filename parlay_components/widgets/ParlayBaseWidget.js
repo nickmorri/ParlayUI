@@ -37,8 +37,11 @@
                     scope.edit(true);
                 }
 
-                function enableDraggabilly(element, initialPosition) {
-                    var draggie = new Draggabilly(element, {grid:[20, 20]});
+                function enableDraggabilly (element, initialPosition) {
+                    var draggie = new Draggabilly(element, {
+                        grid:[20, 20],
+                        handle: ".handle"
+                    });
 
                     draggie.on("dragEnd", function (event, pointer) {
                         scope.item.position = this.position;

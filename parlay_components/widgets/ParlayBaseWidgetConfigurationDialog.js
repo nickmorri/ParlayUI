@@ -12,8 +12,8 @@
         .controller("ParlayBaseWidgetConfigurationSourceController", ParlayBaseWidgetConfigurationSourceController)
         .controller("ParlayBaseWidgetConfigurationTransformController", ParlayBaseWidgetConfigurationTransformController);
 
-    ParlayBaseWidgetConfigurationDialogController.$inject = ["$scope", "$mdDialog", "ParlayWidgetTransformer", "ParlayWidgetEventHandler", "configuration", "template", "container", "widgetCompiler"];
-    function ParlayBaseWidgetConfigurationDialogController ($scope, $mdDialog, ParlayWidgetTransformer, ParlayWidgetEventHandler, configuration, template, container, widgetCompiler) {
+    ParlayBaseWidgetConfigurationDialogController.$inject = ["$scope", "$mdDialog", "ParlayWidgetTransformer", "configuration", "template", "container", "widgetCompiler"];
+    function ParlayBaseWidgetConfigurationDialogController ($scope, $mdDialog, ParlayWidgetTransformer, configuration, template, container, widgetCompiler) {
 
         $scope.configuration = configuration;
 

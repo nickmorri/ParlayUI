@@ -19,8 +19,8 @@
                 }
 
                 var attributes = [
-                    ["items", "configuration.transformer.items"],
-                    ["transformed-value", "configuration.transformer.value"],
+                    ["items", "item.configuration.transformer.items"],
+                    ["transformed-value", "item.configuration.transformer.value"],
                     ["widgets-ctrl", "widgetsCtrl"],
                     ["edit", "edit"],
                     ["index", "$index"],

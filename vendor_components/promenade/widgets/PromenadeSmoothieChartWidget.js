@@ -32,6 +32,8 @@
             templateUrl: "../vendor_components/promenade/widgets/directives/promenade-chart-canvas-widget.html",
             link: function (scope, element) {
 
+                scope.$parent.childLoad();
+
                 var chart, lines, randColor;
 
                 lines = {};

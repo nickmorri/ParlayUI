@@ -28,7 +28,10 @@
                 edit: "=",
                 editing: "="
             },
-            templateUrl: "../vendor_components/promenade/widgets/directives/promenade-display-widget.html"
+            templateUrl: "../vendor_components/promenade/widgets/directives/promenade-display-widget.html",
+            link: function (scope, element) {
+                scope.$parent.childLoad();
+            }
         };
     }
 

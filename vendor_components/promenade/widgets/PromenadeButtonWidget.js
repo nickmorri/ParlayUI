@@ -31,6 +31,9 @@
             },
             templateUrl: "../vendor_components/promenade/widgets/directives/promenade-button-widget.html",
             link: function (scope, element) {
+
+                scope.$parent.childLoad();
+
                 var parent_tag = "md-card-content";
                 var target_tag = "button";
                 var events = ["click"];

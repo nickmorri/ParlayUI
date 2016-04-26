@@ -14,6 +14,10 @@
             restrict: "E",
             link: function (scope, element) {
 
+                function onChildLoad () {
+                    enableDraggabilly(element[0], scope.item.position);
+                }
+
                 var attributes = [
                     ["items", "configuration.transformer.items"],
                     ["transformed-value", "configuration.transformer.value"],
@@ -23,7 +27,7 @@
                     ["editing", "editing"]
                 ];
 
-                function restore(item) {
+                function restore (item) {
                     scope.initialized = true;
                     scope.$index = item.index;
                     compileWrapper(attributes.map(function (attribute) {
@@ -31,7 +35,7 @@
                     }).join(" "))(item.template);
                 }
 
-                function construct() {
+                function construct () {
                     scope.initialized = false;
                     scope.item.configuration = {};
                     scope.edit(true);
@@ -43,7 +47,7 @@
                         handle: ".handle"
                     });
 
-                    draggie.on("dragEnd", function (event, pointer) {
+                    draggie.on("dragEnd", function () {
                         scope.item.position = this.position;
                     });
 
@@ -63,7 +67,7 @@
 
                 }
 
-                function compileWrapper(attributes) {
+                function compileWrapper (attributes) {
                     var scopeRef = scope;
                     var elementRef = element;
 
@@ -81,7 +85,7 @@
                         var childElement = $compile(element_template)(childScope)[0];
 
                         elementRef[0].appendChild(childElement);
-                        enableDraggabilly(elementRef[0], scope.item.position);
+                        childScope.childLoad = onChildLoad;
                         scopeRef.item.template = template;
 
                         return {

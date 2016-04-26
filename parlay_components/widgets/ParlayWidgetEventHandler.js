@@ -57,7 +57,7 @@
         };
 
         ParlayWidgetEventHandler.prototype.detach = function () {
-            this.event = undefined;
+            this.event = null;
         };
 
         ParlayWidgetEventHandler.prototype.makeEvent = function (interpreter, eventRef) {
@@ -66,14 +66,14 @@
 
             if (tag.includes("input")) {
 
-                var element = interpreter.createObject();
+                var obj = interpreter.createObject();
 
                 var currentTarget = event.target;
                 var val = currentTarget.type == "number" ? parseInt(currentTarget.value, 10) : currentTarget.value;
-                interpreter.setProperty(element, "name", interpreter.createPrimitive(currentTarget.name));
-                interpreter.setProperty(element, "type", interpreter.createPrimitive(currentTarget.type));
-                interpreter.setProperty(element, "value", interpreter.createPrimitive(val));
-                interpreter.setProperty(evt, "element", element);
+                interpreter.setProperty(obj, "name", interpreter.createPrimitive(currentTarget.name));
+                interpreter.setProperty(obj, "type", interpreter.createPrimitive(currentTarget.type));
+                interpreter.setProperty(obj, "value", interpreter.createPrimitive(val));
+                interpreter.setProperty(evt, "element", obj);
             }
             else if (tag.includes("button")) {
 

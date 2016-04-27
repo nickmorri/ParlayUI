@@ -68,8 +68,8 @@
 
     }
 
-    ParlayBaseWidgetConfigurationTemplateController.$inject = ["$scope", "ParlayWidgetsCollection"];
-    function ParlayBaseWidgetConfigurationTemplateController ($scope, ParlayWidgetsCollection) {
+    ParlayBaseWidgetConfigurationTemplateController.$inject = ["ParlayWidgetsCollection"];
+    function ParlayBaseWidgetConfigurationTemplateController (ParlayWidgetsCollection) {
 
         this.getTemplates = function () {
             return ParlayWidgetsCollection.getAvailableWidgets();
@@ -128,8 +128,8 @@
 
     }
 
-    ParlayBaseWidgetConfigurationHandlerController.$inject = ["$scope", "ParlayData"];
-    function ParlayBaseWidgetConfigurationHandlerController ($scope, ParlayData) {
+    ParlayBaseWidgetConfigurationHandlerController.$inject = ["ParlayData"];
+    function ParlayBaseWidgetConfigurationHandlerController (ParlayData) {
 
         function items() {
             var iterator = ParlayData.values();
@@ -250,8 +250,8 @@
 
     }
 
-    ParlayBaseWidgetConfigurationTransformController.$inject = ["$scope", "ParlayData", "ParlayWidgetTransformer"];
-    function ParlayBaseWidgetConfigurationTransformController ($scope, ParlayData, ParlayWidgetTransformer) {
+    ParlayBaseWidgetConfigurationTransformController.$inject = ["$scope"];
+    function ParlayBaseWidgetConfigurationTransformController ($scope) {
 
         function generateCompleter() {
             return {

@@ -31,7 +31,7 @@
         };
 
         $scope.$watch("wrapper.template", function (newValue, oldValue) {
-            if (newValue != oldValue) {
+            if (!angular.equals(newValue, oldValue)) {
 
                 $scope.wrapper.container = widgetCompiler($scope.wrapper.template);
 

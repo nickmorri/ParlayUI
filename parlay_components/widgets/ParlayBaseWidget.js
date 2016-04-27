@@ -32,7 +32,7 @@
                     scope.$index = item.index;
                     compileWrapper(attributes.map(function (attribute) {
                         return attribute[0] + "='" + attribute[1] + "'";
-                    }).join(" "))(item.template);
+                    }).join(" "))(angular.copy(item.template));
                 }
 
                 function construct () {

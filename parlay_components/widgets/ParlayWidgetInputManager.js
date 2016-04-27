@@ -1,13 +1,14 @@
 (function () {
     "use strict";
 
-    var module_dependencies = [];
+    var module_dependencies = ["parlay.widgets.eventhandler"];
 
     angular
         .module("parlay.widgets.inputmanager", module_dependencies)
         .factory("ParlayWidgetInputManager", ParlayWidgetInputManagerFactory);
 
-    function ParlayWidgetInputManagerFactory() {
+    ParlayWidgetInputManagerFactory.$inject = ["ParlayWidgetEventHandler"];
+    function ParlayWidgetInputManagerFactory (ParlayWidgetEventHandler) {
 
         function ParlayWidgetInputManager() {
             this.widgets = {};
@@ -41,7 +42,8 @@
                     event: current,
                     addListener: registerListener,
                     removeListener: removeListener,
-                    clearAllListeners: clearAllListeners
+                    clearAllListeners: clearAllListeners,
+                    handler: null
                 };
 
                 element.addEventListener(current, listenerCallbackRef);
@@ -84,10 +86,33 @@
             };
         };
 
+        ParlayWidgetInputManager.prototype.registerHandler = function (event) {
+            (new ParlayWidgetEventHandler()).attach(event);
+        };
+
+        ParlayWidgetInputManager.prototype.deregisterHandler = function (event) {
+            this.getEvents().find(function (candidate) {
+                return candidate === event;
+            }).handler.detach();
+        };
+
         ParlayWidgetInputManager.prototype.getElements = function () {
             return Object.keys(this.widgets).reduce(function (previous, current) {
                 return previous.concat(this.widgets[current]);
             }.bind(this), []);
+        };
+
+        ParlayWidgetInputManager.prototype.getEvents = function () {
+            return this.getElements().reduce(function (accumulator, current) {
+                return accumulator.concat(Object.keys(current.events).map(function (key) {
+                    current.events[key].element = current.name;
+                    return current.events[key];
+                }));
+            }, []);
+        };
+
+        ParlayWidgetInputManager.prototype.getHandlers = function () {
+
         };
 
         return new ParlayWidgetInputManager();

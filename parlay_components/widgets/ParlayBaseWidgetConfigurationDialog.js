@@ -12,15 +12,10 @@
         .controller("ParlayBaseWidgetConfigurationSourceController", ParlayBaseWidgetConfigurationSourceController)
         .controller("ParlayBaseWidgetConfigurationTransformController", ParlayBaseWidgetConfigurationTransformController);
 
-    ParlayBaseWidgetConfigurationDialogController.$inject = ["$scope", "$mdDialog", "ParlayWidgetTransformer", "configuration", "template", "container", "widgetCompiler"];
-    function ParlayBaseWidgetConfigurationDialogController ($scope, $mdDialog, ParlayWidgetTransformer, configuration, template, container, widgetCompiler) {
+    ParlayBaseWidgetConfigurationDialogController.$inject = ["$scope", "$mdDialog", "configuration", "widgetCompiler"];
+    function ParlayBaseWidgetConfigurationDialogController ($scope, $mdDialog, configuration, widgetCompiler) {
 
         $scope.configuration = configuration;
-
-        $scope.wrapper = {
-            template: template,
-            container: container
-        };
 
         this.cancel = function () {
             $mdDialog.cancel();
@@ -30,39 +25,9 @@
             $mdDialog.hide($scope.configuration);
         };
 
-        $scope.$watch("wrapper.template", function (newValue, oldValue) {
+        $scope.$watch("configuration.template", function (newValue, oldValue) {
             if (!angular.equals(newValue, oldValue)) {
-
-                $scope.wrapper.container = widgetCompiler($scope.wrapper.template);
-
-                if (!oldValue || newValue.type != oldValue.type) {
-                    if ($scope.wrapper.template.type == "display") {
-                        $scope.configuration.selectedItems = [];
-                        $scope.configuration.transformer = new ParlayWidgetTransformer();
-
-                        if (!!$scope.configuration.handlers) {
-                            $scope.configuration.handlers.forEach(function (handler) {
-                                handler.detach();
-                            });
-                            $scope.configuration.handlers = [];
-                        }
-
-                        $scope.currentTabIndex = 2;
-
-                    }
-                    else if ($scope.wrapper.template.type == "input") {
-                        $scope.configuration.selectedEvents = [];
-                        $scope.configuration.handlers = [];
-
-                        if (!!$scope.configuration.transformer) {
-                            $scope.configuration.transformer.cleanHandlers();
-                        }
-
-                        $scope.configuration.selectedItems = [];
-                        $scope.currentTabIndex = 1;
-                    }
-                }
-
+                widgetCompiler($scope.configuration.template);
             }
         });
 
@@ -78,54 +43,39 @@
     }
 
     ParlayBaseWidgetConfigurationEventController.$inject = ["$scope", "ParlayWidgetInputManager", "ParlayWidgetEventHandler"];
-    function ParlayBaseWidgetConfigurationEventController ($scope, ParlayWidgetInputManager, ParlayWidgetEventHandler) {
+    function ParlayBaseWidgetConfigurationEventController ($scope, ParlayWidgetInputManager) {
 
-        function getEvents () {
-            return $scope.wrapper.template ? ParlayWidgetInputManager.getElements().reduce(function (accumulator, current) {
-                return accumulator.concat(Object.keys(current.events).map(function (key) {
-                    current.events[key].element = current.name;
-                    return current.events[key];
-                }));
-            }, []) : [];
-        }
-        
         this.queryEvents = function (query) {
             var lowercase_query = angular.lowercase(query);
             
-            var events = getEvents().filter(function (event) {
+            return ParlayWidgetInputManager.getEvents().filter(function (event) {
                 return (angular.lowercase(event.event) + angular.lowercase(event.element)).includes(lowercase_query);
             });
-
-            return !!events && events.length > 0 ? events : getEvents();
+        };
+        
+        this.addHandler = function (event) {
+            ParlayWidgetInputManager.registerHandler(event);
+        };
+        
+        this.removeHandler = function (event) {
+            ParlayWidgetInputManager.deregisterHandler(event);
         };
 
-        $scope.$watchCollection("configuration.selectedEvents", function (newValue, oldValue) {
-
-            if (!!newValue && newValue.length > 0) {
-
-                var newEvent = newValue.find(function (newEvent) {
-                    return !oldValue.some(function (oldEvent) {
-                        return newEvent === oldEvent;
+        $scope.$watch("configuration.template.type", function (newValue, oldValue) {
+            if (!angular.equals(newValue, oldValue)) {
+                if (newValue == "input") {
+                    $scope.configuration.selectedEvents = [];
+                    $scope.$parent.currentTabIndex = 1;
+                }
+                else if (!!$scope.configuration.selectedEvents) {
+                    $scope.configuration.selectedEvents.forEach(function (event) {
+                        event.handler.detach();
                     });
-                });
-
-                $scope.configuration.handlers.push(new ParlayWidgetEventHandler(newEvent));
-
-                var old_handlers = $scope.configuration.handlers.filter(function (handler) {
-                    return !newValue.some(function (event) { return handler.event === event; });
-                });
-
-                old_handlers.forEach(function (handler) {
-                    handler.detach();
-                });
-
-                $scope.configuration.handlers = $scope.configuration.handlers.filter(function (handler) {
-                    return old_handlers.indexOf(handler) === -1;
-                });
+                    $scope.configuration.selectedEvents = [];
+                }
             }
-
         });
-
+        
     }
 
     ParlayBaseWidgetConfigurationHandlerController.$inject = ["ParlayData"];
@@ -203,8 +153,8 @@
 
     }
 
-    ParlayBaseWidgetConfigurationSourceController.$inject = ["$scope", "ParlayData", "ParlayWidgetInputManager"];
-    function ParlayBaseWidgetConfigurationSourceController ($scope, ParlayData, ParlayWidgetInputManager) {
+    ParlayBaseWidgetConfigurationSourceController.$inject = ["$scope", "ParlayData", "ParlayWidgetInputManager", "ParlayWidgetTransformer"];
+    function ParlayBaseWidgetConfigurationSourceController ($scope, ParlayData, ParlayWidgetInputManager, ParlayWidgetTransformer) {
 
         function items() {
             var iterator = ParlayData.values();
@@ -247,6 +197,20 @@
         this.onRemove = function ($chip) {
             $scope.configuration.transformer.removeItem($chip);
         };
+
+        $scope.$watch("configuration.template.type", function (newValue, oldValue) {
+            if (!angular.equals(newValue, oldValue)) {
+                if (newValue == "display") {
+                    $scope.configuration.selectedItems = [];
+                    $scope.configuration.transformer = new ParlayWidgetTransformer();
+                    $scope.$parent.currentTabIndex = 2;
+                }
+                else if (!!$scope.configuration.transformer) {
+                    $scope.configuration.transformer.cleanHandlers();
+                    $scope.configuration.selectedItems = [];
+                }
+            }
+        });
 
     }
 

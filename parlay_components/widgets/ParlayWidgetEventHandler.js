@@ -10,28 +10,22 @@
     ParlayWidgetEventHandlerFactory.$inject = ["ParlayInterpreter", "ParlaySocket"];
     function ParlayWidgetEventHandlerFactory(ParlayInterpreter, ParlaySocket) {
 
-        function ParlayWidgetEventHandler (initialEvent) {
-
+        function ParlayWidgetEventHandler () {
             ParlayInterpreter.call(this);
-
-            var event;
-            Object.defineProperty(this, "event", {
-                get: function () {
-                    return event;
-                },
-                set: function (value) {
-                    if (!!event) {
-                        event.removeListener(this.run);
-                        event = undefined;
-                    }
-                    if (!!value) {
-                        event = value;
-                        event.addListener(this.run.bind(this));
-                    }
-                }
-            });
-
-            this.event = initialEvent;
+            
+            var eventRef;
+            
+            this.attach = function (event) {
+                eventRef = event;
+                eventRef.addListener(this.run.bind(this));
+                eventRef.handler = this;
+            };
+            
+            this.detach = function () {
+                eventRef.removeListener(this.run);
+                eventRef.handler = null;
+            };
+            
         }
 
         ParlayWidgetEventHandler.prototype = Object.create(ParlayInterpreter.prototype);
@@ -54,10 +48,6 @@
             catch (error) {
                 return error.toString();
             }
-        };
-
-        ParlayWidgetEventHandler.prototype.detach = function () {
-            this.event = null;
         };
 
         ParlayWidgetEventHandler.prototype.makeEvent = function (interpreter, eventRef) {

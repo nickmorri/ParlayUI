@@ -32,7 +32,7 @@
                     scope.$index = item.index;
                     compileWrapper(attributes.map(function (attribute) {
                         return attribute[0] + "='" + attribute[1] + "'";
-                    }).join(" "))(angular.copy(item.template));
+                    }).join(" "))(angular.copy(item.configuration.template));
                 }
 
                 function construct () {
@@ -86,12 +86,6 @@
 
                         elementRef[0].appendChild(childElement);
                         childScope.childLoad = onChildLoad;
-                        scopeRef.item.template = template;
-
-                        return {
-                            childScope: childScope,
-                            childElement: childElement
-                        };
                     };
                 }
 
@@ -104,8 +98,6 @@
                         controllerAs: "dialogCtrl",
                         locals: {
                             configuration: scope.item.configuration,
-                            template: scope.item.template,
-                            container: {childScope: scope, childElement: element},
                             widgetCompiler: compileWrapper(attributes.map(function (attribute) {
                                 return attribute[0] + "='" + attribute[1] + "'";
                             }).join(" "))

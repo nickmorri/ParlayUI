@@ -7,7 +7,7 @@
                     <div layout="row" ng-controller="ParlayBaseWidgetConfigurationTemplateController as templateCtrl">
 
                         <md-input-container flex>
-                            <md-select ng-model="wrapper.template" placeholder="Select a template">
+                            <md-select ng-model="configuration.template" placeholder="Select a template">
                                 <md-option ng-value="template_option" ng-repeat="template_option in templateCtrl.getTemplates()">
                                     {{template_option.name}} ({{template_option.type}})
                                 </md-option>
@@ -17,13 +17,13 @@
                     </div>
                 </md-tab-body>
             </md-tab>
-            <md-tab ng-disabled="!wrapper.template || wrapper.template.type == 'display'">
+            <md-tab ng-disabled="!configuration.template || configuration.template.type == 'display'">
                 <md-tab-label>Handlers</md-tab-label>
                 <md-tab-body>
 
                     <md-card ng-controller="ParlayBaseWidgetConfigurationEventController as eventCtrl">
 
-                        <md-chips ng-model="configuration.selectedEvents" md-require-match="true">
+                        <md-chips ng-model="configuration.selectedEvents" md-require-match="true" md-on-add="eventCtrl.addHandler($chip)" md-on-remove="eventCtrl.removeHandler($chip)">
                             <md-autocomplete
                                     md-min-length="0"
                                     md-select-on-match="true"
@@ -47,11 +47,11 @@
 
                     <md-card>
                         <md-tabs ng-hide="configuration.selectedEvents.length === 0" md-stretch-tabs="always" md-dynamic-height="true" class="md-primary md-hue-2">
-                            <md-tab ng-repeat="handler in configuration.handlers">
-                                <md-tab-label>{{handler.event.event}} ({{handler.event.element}})</md-tab-label>
+                            <md-tab ng-repeat="event in configuration.selectedEvents">
+                                <md-tab-label>{{event.element}}.on({{event.event}})</md-tab-label>
                                 <md-tab-body>
                                     <div ng-controller="ParlayBaseWidgetConfigurationHandlerController as handlerCtrl">
-                                        <div ui-ace="{mode: 'javascript', onLoad: handlerCtrl.onEditorLoad}" class="transform-edit" ng-model="handler.functionString"></div>
+                                        <div ui-ace="{mode: 'javascript', onLoad: handlerCtrl.onEditorLoad}" class="transform-edit" ng-model="event.handler.functionString"></div>
                                     </div>
                                 </md-tab-body>
                             </md-tab>
@@ -60,7 +60,7 @@
 
                 </md-tab-body>
             </md-tab>
-            <md-tab ng-disabled="!wrapper.template || wrapper.template.type == 'input'">
+            <md-tab ng-disabled="!configuration.template || configuration.template.type == 'input'">
                 <md-tab-label>Transform</md-tab-label>
                 <md-tab-body>
 

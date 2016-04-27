@@ -32,8 +32,6 @@
             templateUrl: "../vendor_components/promenade/widgets/directives/promenade-button-widget.html",
             link: function (scope, element) {
 
-                scope.$parent.childLoad();
-
                 var parent_tag = "md-card-content";
                 var target_tag = "button";
                 var events = ["click"];
@@ -41,6 +39,8 @@
                 var registration = ParlayWidgetInputManager.registerElements(directive_name, element, parent_tag, target_tag, scope, events);
 
                 scope.tag_name = registration.parent_tag_name;
+
+                scope.$parent.childLoad();
             }
         };
     }

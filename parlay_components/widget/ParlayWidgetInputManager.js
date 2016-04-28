@@ -111,10 +111,6 @@
             }, []);
         };
 
-        ParlayWidgetInputManager.prototype.getHandlers = function () {
-
-        };
-
         return new ParlayWidgetInputManager();
     }
 

@@ -1,6 +1,16 @@
 // Holds the module dependencies for ParlayWidget. Creating this Array on the Global scope allows for other modules,
 // such as vendor defined widgets to include themselves as ParlayWidget dependencies.
 var widget_dependencies = ["ui.router", "ui.ace", "ngMaterial", "parlay.widget.base", "parlay.settings"];
+var registered_widgets = [];
+
+function widgetRegistration (module_name, directive_name, widget_type) {
+    "use strict";
+    widget_dependencies.push(module_name);
+    registered_widgets.push({
+        directive_name: directive_name,
+        widget_type: widget_type
+    });
+}
 
 (function (module_dependencies) {
     "use strict";
@@ -29,13 +39,18 @@ var widget_dependencies = ["ui.router", "ui.ace", "ngMaterial", "parlay.widget.b
         });
     }
 
-    ParlayWidgetsRun.$inject = ["ParlaySettings"];
-    function ParlayWidgetsRun (ParlaySettings) {
+    ParlayWidgetsRun.$inject = ["ParlaySettings", "ParlayWidgetCollection"];
+    function ParlayWidgetsRun (ParlaySettings, ParlayWidgetCollection) {
         ParlaySettings.registerDefault("widgets", {editing: true});
 
         if (!ParlaySettings.has("widgets")) {
             ParlaySettings.restoreDefault("widgets");
         }
+
+        registered_widgets.forEach(function (container) {
+            ParlayWidgetCollection.registerWidget(container.directive_name, container.widget_type);    
+        });
+        
     }
 
     ParlayWidgetsController.$inject = ["$scope", "ParlaySettings", "ParlayStore"];

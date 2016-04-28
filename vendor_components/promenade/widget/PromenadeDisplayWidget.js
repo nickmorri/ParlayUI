@@ -4,35 +4,19 @@
     var module_dependencies = ["parlay.widget.collection"];
     var module_name = "promenade.widget.display";
     var directive_name = "promenadeDisplayWidget";
+    var widget_type = "display";
 
-    widget_dependencies.push(module_name);
+    widgetRegistration(module_name, directive_name, widget_type);
 
     angular
         .module(module_name, module_dependencies)
-        .run(PromenadeDisplayWidgetRun)
         .directive(directive_name, PromenadeDisplayWidget);
 
-    PromenadeDisplayWidgetRun.$inject = ["ParlayWidgetCollection"];
-    function PromenadeDisplayWidgetRun (ParlayWidgetCollection) {
-        ParlayWidgetCollection.registerWidget(directive_name, "display");
-    }
-
-    function PromenadeDisplayWidget () {
-        return {
-            restrict: "E",
-            scope: {
-                index: "=",
-                items: "=",
-                transformedValue: "=",
-                widgetsCtrl: "=",
-                edit: "=",
-                editing: "="
-            },
-            templateUrl: "../vendor_components/promenade/widget/directives/promenade-display-widget.html",
-            link: function (scope, element) {
-                scope.$parent.childLoad();
-            }
-        };
+    PromenadeDisplayWidget.$inject = ["ParlayWidgetTemplate"];
+    function PromenadeDisplayWidget (ParlayWidgetTemplate) {
+        return new ParlayWidgetTemplate({
+            templateUrl: "../vendor_components/promenade/widget/directives/promenade-display-widget.html"
+        });
     }
 
 }());

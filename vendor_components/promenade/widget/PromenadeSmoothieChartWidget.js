@@ -4,96 +4,90 @@
     var module_dependencies = ["parlay.widget.collection", "parlay.utility"];
     var module_name = "promenade.widget.smoothiechart";
     var directive_name = "promenadeSmoothieChartWidget";
+    var widget_type = "display";
 
-    widget_dependencies.push(module_name);
+    widgetRegistration(module_name, directive_name, widget_type);
 
     angular
         .module(module_name, module_dependencies)
-        .run(PromenadeSmoothieChartWidgetRun)
         .directive(directive_name, PromenadeSmoothieChartWidget);
 
-    PromenadeSmoothieChartWidgetRun.$inject = ["ParlayWidgetCollection"];
-    function PromenadeSmoothieChartWidgetRun (ParlayWidgetCollection) {
-        ParlayWidgetCollection.registerWidget(directive_name, "display");
-    }
+    PromenadeSmoothieChartWidget.$inject = ["ParlayWidgetTemplate", "$interval", "RandColor"];
+    function PromenadeSmoothieChartWidget (ParlayWidgetTemplate, $interval, RandColor) {
 
-    PromenadeSmoothieChartWidget.$inject = ["$interval", "RandColor"];
-    function PromenadeSmoothieChartWidget ($interval, RandColor) {
-        return {
-            restrict: "E",
-            scope: {
-                index: "=",
-                items: "=",
-                transformedValue: "=",
-                widgetsCtrl: "=",
-                edit: "=",
-                editing: "="
-            },
-            templateUrl: "../vendor_components/promenade/widget/directives/promenade-chart-canvas-widget.html",
-            link: function (scope, element) {
+        function customLink (scope, element) {
 
-                scope.$parent.childLoad();
+            var lines, chart_interval, chart;
 
-                var chart, lines, randColor;
+            lines = {};
 
-                lines = {};
+            chart_interval = 1000;
 
-                scope.paused = false;
+            scope.paused = false;
 
-                scope.togglePause = function () {
-                    scope.paused = !scope.paused;
-                };
+            scope.togglePause = function () {
+                scope.paused = !scope.paused;
+            };
 
-                function values() {
-                    return scope.items.map(function (container) {
-                        return {name: container.item.name, value: container.item.value};
-                    }).concat([{name: "transformed_value", value: scope.transformedValue}]);
-                }
+            function values() {
+                return scope.items.map(function (container) {
+                    return {name: container.item.name, value: container.item.value};
+                }).concat([{name: "transformed_value", value: scope.transformedValue}]);
+            }
 
-                $interval(function () {
+            var interval_promise = $interval(function () {
 
-                    var items = values();
+                var items = values();
 
-                    if (!scope.paused && !!items && items.length > 0) {
-                        items.forEach(function (item) {
-                            if (!!lines[item.name]) {
-                                lines[item.name].append(new Date().getTime(), item.value);
-                            }
-                        });
-                    }
-
-                }, 1000);
-
-                scope.$watchCollection("items", function (newValue) {
-
-                    randColor = new RandColor();
-
-                    chart = new SmoothieChart({
-                        grid: {
-                            fillStyle: 'transparent',
-                            strokeStyle: 'transparent',
-                            borderVisible: false
-                        },
-                        labels: {
-                            fillStyle: '#000000',
+                if (!scope.paused && !!items && items.length > 0) {
+                    items.forEach(function (item) {
+                        if (lines.hasOwnProperty(item.name)) {
+                            lines[item.name].append(new Date().getTime(), item.value);
                         }
                     });
+                }
 
-                    chart.streamTo(element.find("canvas")[0], 1000);
+            }, chart_interval);
 
-                    newValue.forEach(function (item) {
-                        lines[item.item.name] = new TimeSeries();
-                        var rgb = randColor.pop().rgb();
-                        chart.addTimeSeries(lines[item.item.name], {
-                            strokeStyle: "rgb(" + rgb.r + ", " + rgb.g + ", " + rgb.b + ")",
-                            lineWidth: 3
-                        });
-                    });
+            var items_deregistration = scope.$watchCollection("items", function (newValue) {
 
+                var randColor = new RandColor();
+
+                chart = new SmoothieChart({
+                    grid: {
+                        fillStyle: 'transparent',
+                        strokeStyle: 'transparent',
+                        borderVisible: false
+                    },
+                    labels: {
+                        fillStyle: '#000000'
+                    }
                 });
 
-            }
-        };
+                chart.streamTo(element.find("canvas")[0], chart_interval);
+
+                newValue.map(function (item) {
+                    return item.item.name;
+                }).forEach(function (name) {
+                    lines[name] = new TimeSeries();
+                    var rgb = randColor.pop().rgb();
+                    var rgb_string = "rgb(" + rgb.r + ", " + rgb.g + ", " + rgb.b + ")";
+                    chart.addTimeSeries(lines[name], {strokeStyle: rgb_string, lineWidth: 3});
+                });
+
+            });
+
+            scope.$on("$destroy", function () {
+                $interval.cancel(interval_promise);
+                items_deregistration();
+            });
+
+        }
+
+        return new ParlayWidgetTemplate({
+            templateUrl: "../vendor_components/promenade/widget/directives/promenade-chart-canvas-widget.html",
+            customLink: customLink
+        });
     }
 
 }());

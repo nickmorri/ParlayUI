@@ -4,106 +4,103 @@
     var module_dependencies = ["parlay.widget.collection", "parlay.utility"];
     var module_name = "promenade.widget.chartjs";
     var directive_name = "promenadeChartJsWidget";
+    var widget_type = "display";
 
-    widget_dependencies.push(module_name);
+    widgetRegistration(module_name, directive_name, widget_type);
 
     angular
         .module(module_name, module_dependencies)
-        .run(PromenadeChartJsWidgetRun)
         .directive(directive_name, PromenadeChartJsWidget);
 
-    PromenadeChartJsWidgetRun.$inject = ["ParlayWidgetCollection"];
-    function PromenadeChartJsWidgetRun (ParlayWidgetCollection) {
-        ParlayWidgetCollection.registerWidget(directive_name, "display");
-        Chart.defaults.global.elements.point.radius = 10;
-        Chart.defaults.global.elements.point.hoverRadius = 30;
-    }
+    Chart.defaults.global.elements.point.radius = 10;
+    Chart.defaults.global.elements.point.hoverRadius = 30;
 
-    PromenadeChartJsWidget.$inject = ["$interval", "RandColor"];
-    function PromenadeChartJsWidget ($interval, RandColor) {
-        return {
-            restrict: "E",
-            scope: {
-                index: "=",
-                items: "=",
-                transformedValue: "=",
-                widgetsCtrl: "=",
-                edit: "=",
-                editing: "="
-            },
-            templateUrl: "../vendor_components/promenade/widget/directives/promenade-chart-canvas-widget.html",
-            link: function (scope, element) {
+    PromenadeChartJsWidget.$inject = ["ParlayWidgetTemplate", "$interval", "RandColor"];
+    function PromenadeChartJsWidget (ParlayWidgetTemplate, $interval, RandColor) {
 
-                scope.$parent.childLoad();
+        function customLink (scope, element) {
 
-                var chart, randColor;
+            var chart, chart_interval, canvas_context;
 
-                scope.paused = false;
-                
-                scope.togglePause = function () {
-                    scope.paused = !scope.paused;
-                };
+            chart_interval = 500;
 
-                function values() {
-                    return scope.items.map(function (container) {
-                        return {name: container.item.name, value: container.item.value};
-                    }).concat([{name: "transformed_value", value: scope.transformedValue}]);
-                }
+            canvas_context = element.find("canvas")[0].getContext("2d");
 
-                $interval(function () {
+            scope.paused = false;
 
-                    var items = values();
+            scope.togglePause = function () {
+                scope.paused = !scope.paused;
+            };
 
-                    if (!!items && items.length > 0) {
-                        items.forEach(function (item) {
+            function values(items) {
+                return items.map(function (container) {
+                    return {name: container.item.name, value: container.item.value};
+                }).concat([{name: "transformed_value", value: scope.transformedValue}]);
+            }
 
-                            var data = chart.data.datasets.find(function (dataset) {
-                                return dataset.label == item.name;
-                            }).data;
+            var interval_promise = $interval(function () {
 
-                            data.push(item.value);
+                var items = values(scope.items);
 
-                            if (data.length > 20) {
-                                data.shift();
-                            }
+                if (!!items && items.length > 0) {
+                    items.forEach(function (item) {
 
-                        });
+                        var data = chart.data.datasets.find(function (dataset) {
+                            return dataset.label == item.name;
+                        }).data;
 
-                        chart.data.labels.push("");
+                        data.push(item.value);
 
-                        if (chart.data.labels.length > 20) {
-                            chart.data.labels.shift();
+                        if (data.length > 20) {
+                            data.shift();
                         }
-                    }
 
-                    if (!scope.paused) {
-                        chart.update();
-                    }
-
-                }, 500);
-
-                scope.$watchCollection("items", function (newValue) {
-                    
-                    randColor = new RandColor();
-
-                    chart = new Chart(element.find("canvas")[0].getContext("2d"), {
-                        type: "line",
-                        options: {
-                            stacked: true,
-                            xAxes: [{display: false}]
-                        },
-                        data: {
-                            labels: [""],
-                            datasets: newValue.map(function (container) {
-                                return {label: container.item.name, data: [], backgroundColor: randColor.pop().hex()};
-                            }).concat([{label: "transformed_value", data: [], backgroundColor: randColor.pop().hex()}])
-                        }
                     });
 
+                    chart.data.labels.push("");
+
+                    if (chart.data.labels.length > 20) {
+                        chart.data.labels.shift();
+                    }
+                }
+
+                if (!scope.paused) {
+                    chart.update();
+                }
+
+            }, chart_interval);
+
+            var items_deregistration = scope.$watchCollection("items", function (newValue) {
+
+                var randColor = new RandColor();
+
+                chart = new Chart(canvas_context, {
+                    type: "line",
+                    options: {
+                        stacked: true,
+                        xAxes: [{display: false}]
+                    },
+                    data: {
+                        labels: [""],
+                        datasets: values(newValue).map(function (container) {
+                            return {label: container.name, data: [], backgroundColor: randColor.pop().hex()};
+                        }).concat([{label: "transformed_value", data: [], backgroundColor: randColor.pop().hex()}])
+                    }
                 });
 
-            }
-        };
+            });
+            
+            scope.$on("$destroy", function () {
+                $interval.cancel(interval_promise);
+                items_deregistration();
+            });
+
+        }
+
+        return new ParlayWidgetTemplate({
+            templateUrl: "../vendor_components/promenade/widget/directives/promenade-chart-canvas-widget.html",
+            customLink: customLink
+        });
     }
 
 }());

@@ -1,48 +1,28 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["parlay.widget.collection"];
+    var module_dependencies = ["parlay.widget.collection", "promenade.widget.template"];
     var module_name = "promenade.widget.button";
     var directive_name = "promenadeButtonWidget";
+    var widget_type = "input";
 
-    widget_dependencies.push(module_name);
+    widgetRegistration(module_name, directive_name, widget_type);
 
     angular
         .module(module_name, module_dependencies)
-        .run(PromenadeButtonWidgetRun)
         .directive(directive_name, PromenadeButtonWidget);
 
-    PromenadeButtonWidgetRun.$inject = ["ParlayWidgetCollection"];
-    function PromenadeButtonWidgetRun (ParlayWidgetCollection) {
-        ParlayWidgetCollection.registerWidget("promenadeButtonWidget", "input");
-    }
-
-    PromenadeButtonWidget.$inject = ["ParlayWidgetInputManager"];
-    function PromenadeButtonWidget (ParlayWidgetInputManager) {
-        return {
-            restrict: "E",
-            scope: {
-                index: "=",
-                items: "=",
-                transformedValue: "=",
-                widgetsCtrl: "=",
-                edit: "=",
-                editing: "="
-            },
+    PromenadeButtonWidget.$inject = ["ParlayWidgetTemplate"];
+    function PromenadeButtonWidget (ParlayWidgetTemplate) {
+        return new ParlayWidgetTemplate({
             templateUrl: "../vendor_components/promenade/widget/directives/promenade-button-widget.html",
-            link: function (scope, element) {
-
-                var parent_tag = "md-card-content";
-                var target_tag = "button";
-                var events = ["click"];
-
-                var registration = ParlayWidgetInputManager.registerElements(directive_name, element, parent_tag, target_tag, scope, events);
-
-                scope.tag_name = registration.parent_tag_name;
-
-                scope.$parent.childLoad();
+            elementRegistration: {
+                directive_name: directive_name,
+                parent_tag: "md-card-content",
+                target_tag: "button",
+                events: ["click"]
             }
-        };
+        });
     }
 
 }());

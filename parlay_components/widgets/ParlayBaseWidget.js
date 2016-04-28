@@ -18,6 +18,7 @@
                     enableDraggabilly(element[0], scope.item.position);
                     restoreHandlers(scope.item.configuration);
                     restoreTransformer(scope.item.configuration);
+                    scope.initialized = true;
                 }
 
                 var attributes = [
@@ -30,7 +31,6 @@
                 ];
 
                 function restore (item) {
-                    scope.initialized = true;
                     scope.$index = item.index;
                     compileWrapper(attributes.map(function (attribute) {
                         return attribute[0] + "='" + attribute[1] + "'";
@@ -54,7 +54,6 @@
 
                 function restoreTransformer (configuration) {
                     if (!!configuration.transformer) {
-
                         configuration.selectedItems = configuration.selectedItems.map(function (item) {
                             return ParlayData.get(item.name);
                         });
@@ -121,7 +120,6 @@
                 }
 
                 scope.edit = function (initialize) {
-
                     $mdDialog.show({
                         templateUrl: "../parlay_components/widgets/directives/parlay-base-widget-configuration-dialog.html",
                         clickOutsideToClose: false,

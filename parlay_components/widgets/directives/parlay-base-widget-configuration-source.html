@@ -1,0 +1,35 @@
+<md-card ng-controller="ParlayBaseWidgetConfigurationSourceController as sourceCtrl">
+    <md-chips ng-model="configuration.selectedItems" md-on-add="sourceCtrl.onAdd($chip, $index)" md-on-remove="sourceCtrl.onRemove($chip, $index)" md-require-match="true">
+        <md-autocomplete
+                md-min-length="0"
+                md-select-on-match="true"
+                md-match-case-insensitive="true"
+                md-no-cache="true"
+                md-search-text="sourceCtrl.searchText"
+                md-items="item in sourceCtrl.querySearch(sourceCtrl.searchText)"
+                md-item-text="item.name"
+                placeholder="Search for a property, data stream or command"
+                md-menu-class="autocomplete-custom-template">
+            <md-item-template>
+                <span class="item-title">
+                    <md-icon ng-show="item.type == 'property'" ng-md-icon icon="description"></md-icon>
+                    <md-icon ng-show="item.type == 'datastream'" ng-md-icon icon="group_work"></md-icon>
+                    <md-icon ng-show="item.type == 'command'" ng-md-icon icon="code"></md-icon>
+                    <md-icon ng-show="item.type == 'input'" ng-md-icon icon="text_fields"></md-icon>
+                    <md-icon ng-show="item.type == 'button'" ng-md-icon icon="play_for_work"></md-icon>
+                    <span md-highlight-text="sourceCtrl.searchText">{{item.name}}</span> <i>({{item.type}})</i>
+                </span>
+                <span class="item-metadata">
+                    <span class="item-metastat">{{item.item_name}}</span>
+                    <strong class="item-metastat" ng-show="!!item.value">value = {{item.value}}</strong>
+                </span>
+            </md-item-template>
+        </md-autocomplete>
+        <md-chip-template>
+            <span>
+                <strong>{{$chip.name}}</strong>
+                <em>{{$chip.item_name}}</em>
+            </span>
+        </md-chip-template>
+    </md-chips>
+</md-card>

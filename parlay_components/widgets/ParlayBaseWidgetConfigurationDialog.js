@@ -10,7 +10,12 @@
         .controller("ParlayBaseWidgetConfigurationEventController", ParlayBaseWidgetConfigurationEventController)
         .controller("ParlayBaseWidgetConfigurationHandlerController", ParlayBaseWidgetConfigurationHandlerController)
         .controller("ParlayBaseWidgetConfigurationSourceController", ParlayBaseWidgetConfigurationSourceController)
-        .controller("ParlayBaseWidgetConfigurationTransformController", ParlayBaseWidgetConfigurationTransformController);
+        .controller("ParlayBaseWidgetConfigurationTransformController", ParlayBaseWidgetConfigurationTransformController)
+        .directive("parlayBaseWidgetConfigurationTransform", ParlayBaseWidgetConfigurationTransformDirective)
+        .directive("parlayBaseWidgetConfigurationSource", ParlayBaseWidgetConfigurationSourceDirective)
+        .directive("parlayBaseWidgetConfigurationTemplate", ParlayBaseWidgetConfigurationTemplateDirective)
+        .directive("parlayBaseWidgetConfigurationEvent", ParlayBaseWidgetConfigurationEventDirective)
+        .directive("parlayBaseWidgetConfigurationHandler", ParlayBaseWidgetConfigurationHandlerDirective);
 
     ParlayBaseWidgetConfigurationDialogController.$inject = ["$scope", "$mdDialog", "configuration", "widgetCompiler"];
     function ParlayBaseWidgetConfigurationDialogController ($scope, $mdDialog, configuration, widgetCompiler) {
@@ -33,11 +38,11 @@
 
     }
 
-    ParlayBaseWidgetConfigurationTemplateController.$inject = ["ParlayWidgetsCollection"];
-    function ParlayBaseWidgetConfigurationTemplateController (ParlayWidgetsCollection) {
+    ParlayBaseWidgetConfigurationTemplateController.$inject = ["ParlayWidgetCollection"];
+    function ParlayBaseWidgetConfigurationTemplateController (ParlayWidgetCollection) {
 
         this.getTemplates = function () {
-            return ParlayWidgetsCollection.getAvailableWidgets();
+            return ParlayWidgetCollection.getAvailableWidgets();
         };
 
     }
@@ -229,6 +234,46 @@
             editor.completers = [generateCompleter()];
         };
 
+    }
+
+    function ParlayBaseWidgetConfigurationTransformDirective () {
+        return {
+            templateUrl: "../parlay_components/widgets/directives/parlay-base-widget-configuration-transform.html",
+            controller: "ParlayBaseWidgetConfigurationTransformController",
+            controllerAs: "transformCtrl"
+        };
+    }
+
+    function ParlayBaseWidgetConfigurationSourceDirective () {
+        return {
+            templateUrl: "../parlay_components/widgets/directives/parlay-base-widget-configuration-source.html",
+            controller: "ParlayBaseWidgetConfigurationSourceController",
+            controllerAs: "sourceCtrl"
+        };
+    }
+
+    function ParlayBaseWidgetConfigurationTemplateDirective () {
+        return {
+            templateUrl: "../parlay_components/widgets/directives/parlay-base-widget-configuration-template.html",
+            controller: "ParlayBaseWidgetConfigurationTemplateController",
+            controllerAs: "templateCtrl"
+        };
+    }
+    
+    function ParlayBaseWidgetConfigurationEventDirective () {
+        return {
+            templateUrl: "../parlay_components/widgets/directives/parlay-base-widget-configuration-event.html",
+            controller: "ParlayBaseWidgetConfigurationEventController",
+            controllerAs: "eventCtrl"
+        };
+    }
+
+    function ParlayBaseWidgetConfigurationHandlerDirective () {
+        return {
+            templateUrl: "../parlay_components/widgets/directives/parlay-base-widget-configuration-handler.html",
+            controller: "ParlayBaseWidgetConfigurationHandlerController",
+            controllerAs: "handlerCtrl"
+        };
     }
 
 }());

@@ -1,0 +1,11 @@
+<md-card flex="80">
+    <md-card-contents>
+        <div ui-ace="{mode: 'javascript', onLoad: transformCtrl.onEditorLoad}" class="transform-edit" ng-model="configuration.transformer.functionString"></div>
+    </md-card-contents>
+</md-card>
+
+<md-card flex="20">
+    <md-card-content>
+        <p>{{configuration.transformer.value}}</p>
+    </md-card-content>
+</md-card>

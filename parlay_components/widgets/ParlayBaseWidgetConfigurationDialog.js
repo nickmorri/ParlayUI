@@ -181,15 +181,6 @@
 
         };
 
-        this.change = function (item) {
-            if (!!item && item.type == "datastream") {
-                item.listen(false);
-            }
-            else if (!!item && item.type == "property") {
-                item.get();
-            }
-        };
-
         this.onAdd = function ($chip) {
             $scope.configuration.transformer.addItem($chip);
         };

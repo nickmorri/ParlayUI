@@ -59,15 +59,6 @@
                             return ParlayData.get(item.name);
                         });
 
-                        configuration.selectedItems.forEach(function (item) {
-                            if (item.constructor.name == "PromenadeStandardProperty") {
-                                item.get();
-                            }
-                            else if (item.constructor.name == "PromenadeStandardDatastream") {
-                                item.listen();
-                            }
-                        });
-
                         var actual_transformer = new ParlayWidgetTransformer(configuration.selectedItems);
                         actual_transformer.functionString = configuration.transformer.functionString;
 

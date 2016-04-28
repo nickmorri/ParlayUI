@@ -96,6 +96,14 @@
         };
 
         ParlayWidgetTransformer.prototype.addItem = function (item) {
+
+            if (item.constructor.name == "PromenadeStandardProperty") {
+                item.get();
+            }
+            else if (item.constructor.name == "PromenadeStandardDatastream") {
+                item.listen();
+            }
+
             this.items.push({
                 item: item,
                 handler: this.registerHandler(item)

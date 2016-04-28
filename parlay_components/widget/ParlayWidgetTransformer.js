@@ -116,7 +116,9 @@
             if (index > -1) {
                 this.handlers[index]();
                 this.handlers.splice(index, 1);
+                this.items.splice(index, 1);
             }
+            
             this.construct();
         };
 

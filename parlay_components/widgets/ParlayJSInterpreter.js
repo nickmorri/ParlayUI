@@ -107,6 +107,12 @@
             var container = !!this.namespace[parentName] ? this.namespace[parentName] : this.namespace;
             container[name] = type === "object" ? {} : type;
         };
+
+        ParlayInterpreter.toJSON = function () {
+            return {
+                functionString: this.functionString
+            };
+        };
         
         return ParlayInterpreter;
     }

@@ -49,7 +49,9 @@ var widget_dependencies = ["ui.router", "ui.ace", "ngMaterial", "parlay.widgets.
         this.items = [];
 
         this.save = function () {
-            store.set("default", JSON.stringify(this.items));
+            store.set("default", JSON.stringify(angular.copy(this.items), function (key, value) {
+                return value.constructor.name == "ParlayProtocol" ? value.protocol_name : value;
+            }));
         };
 
         this.load = function () {

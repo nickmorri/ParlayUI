@@ -7,8 +7,8 @@
         .module("parlay.widgets.base", module_dependencies)
         .directive("parlayBaseWidget", ParlayBaseWidget);
 
-    ParlayBaseWidget.$inject = ["$mdDialog", "$compile"];
-    function ParlayBaseWidget ($mdDialog, $compile) {
+    ParlayBaseWidget.$inject = ["$mdDialog", "$compile", "ParlayWidgetInputManager", "ParlayData", "ParlayWidgetTransformer"];
+    function ParlayBaseWidget ($mdDialog, $compile, ParlayWidgetInputManager, ParlayData, ParlayWidgetTransformer) {
         return {
             scope: true,
             restrict: "E",
@@ -16,6 +16,8 @@
 
                 function onChildLoad () {
                     enableDraggabilly(element[0], scope.item.position);
+                    restoreHandlers(scope.item.configuration);
+                    restoreTransformer(scope.item.configuration);
                 }
 
                 var attributes = [
@@ -33,6 +35,44 @@
                     compileWrapper(attributes.map(function (attribute) {
                         return attribute[0] + "='" + attribute[1] + "'";
                     }).join(" "))(angular.copy(item.configuration.template));
+                }
+
+                function restoreHandlers (configuration) {
+                    if (!!configuration.selectedEvents) {
+                        configuration.selectedEvents = configuration.selectedEvents.map(function (shallow_event) {
+                            var actual_event = ParlayWidgetInputManager.getEvents().find(function (candidate) {
+                                return candidate.element == shallow_event.element && candidate.event == shallow_event.event;
+                            });
+
+                            ParlayWidgetInputManager.registerHandler(actual_event);
+                            actual_event.handler.functionString = shallow_event.handler.functionString;
+
+                            return actual_event;
+                        });
+                    }
+                }
+
+                function restoreTransformer (configuration) {
+                    if (!!configuration.transformer) {
+
+                        configuration.selectedItems = configuration.selectedItems.map(function (item) {
+                            return ParlayData.get(item.name);
+                        });
+
+                        configuration.selectedItems.forEach(function (item) {
+                            if (item.constructor.name == "PromenadeStandardProperty") {
+                                item.get();
+                            }
+                            else if (item.constructor.name == "PromenadeStandardDatastream") {
+                                item.listen();
+                            }
+                        });
+
+                        var actual_transformer = new ParlayWidgetTransformer(configuration.selectedItems);
+                        actual_transformer.functionString = configuration.transformer.functionString;
+
+                        configuration.transformer = actual_transformer;
+                    }
                 }
 
                 function construct () {

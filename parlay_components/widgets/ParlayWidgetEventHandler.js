@@ -79,6 +79,10 @@
                 interpreter.setProperty(scope, name, this.makeEvent(interpreter, eventRef));
             }
         };
+        
+        ParlayWidgetEventHandler.prototype.toJSON = function () {
+            return angular.merge({}, ParlayInterpreter.toJSON.call(this));
+        };
 
         return ParlayWidgetEventHandler;
     }

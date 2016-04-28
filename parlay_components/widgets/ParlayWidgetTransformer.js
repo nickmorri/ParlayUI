@@ -35,7 +35,9 @@
             this.items = [];
 
             if (!!initialItems) {
-                initialItems.forEach(this.addItem);
+                initialItems.forEach(function (item) {
+                    this.addItem(item);
+                }, this);
             }
 
             this.construct();
@@ -111,6 +113,10 @@
                 this.items.splice(index, 1);
             }
             this.construct();
+        };
+
+        ParlayWidgetTransformer.prototype.toJSON = function () {
+            return angular.merge({}, ParlayInterpreter.toJSON.call(this));
         };
 
         return ParlayWidgetTransformer;

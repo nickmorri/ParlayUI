@@ -1,14 +1,14 @@
 (function () {
     "use strict";
     
-    var module_dependencies = ["parlay.data"];
+    var module_dependencies = ["parlay.data", "parlay.socket"];
     
     angular
         .module("parlay.widget.interpreter", module_dependencies)
         .factory("ParlayInterpreter", ParlayInterpreterFactory);
 
-    ParlayInterpreterFactory.$inject = ["ParlayData"];
-    function ParlayInterpreterFactory (ParlayData) {
+    ParlayInterpreterFactory.$inject = ["ParlayData", "ParlaySocket"];
+    function ParlayInterpreterFactory (ParlayData, ParlaySocket) {
 
         function df_extract (item) {
             return item.isPrimitive ? item.data : Object.keys(item.properties).reduce(function (accumulator, key) {
@@ -22,8 +22,19 @@
             this.interpreter = undefined;
         }
 
-        ParlayInterpreter.prototype.construct = function (initFunc) {
-            this.interpreter = new Interpreter(this.functionString, !!initFunc ? initFunc.bind(this) : undefined);
+        ParlayInterpreter.prototype.construct = function (childInitFunc) {
+                this.interpreter = new Interpreter(this.functionString, function (interpreter, scope) {
+
+                    this.attachObject(scope, interpreter, ParlaySocket);
+                    this.attachItems(scope, interpreter, this.getItems());
+                    this.attachFunction(scope, interpreter, alert);
+                    this.attachFunction(scope, interpreter, console.log.bind(console), "log");
+
+                    if (!!childInitFunc) {
+                        childInitFunc.call(this, interpreter, scope);
+                    }
+
+                }.bind(this));
         };
 
         ParlayInterpreter.prototype.run = function () {
@@ -51,17 +62,15 @@
 
             var prop, prop_val;
             for (prop in objectRef) {
-                if (this.functionString.indexOf(prop) > -1) {
-                    prop_val = objectRef[prop];
-                    if (typeof prop_val == "function") {
-                        interpreter.setProperty(obj, prop_val.name, this.makeFunction(interpreter, prop_val, objectRef));
-                    }
-                    else if (["string", "number", "boolean"].indexOf(typeof prop_val) > -1) {
-                        interpreter.setProperty(obj, prop, interpreter.createPrimitive(prop_val));
-                    }
-                    else if (prop_val === null) {
-                        interpreter.setProperty(obj, prop, interpreter.createPrimitive(null));
-                    }
+                prop_val = objectRef[prop];
+                if (typeof prop_val == "function") {
+                    interpreter.setProperty(obj, prop_val.name, this.makeFunction(interpreter, prop_val, objectRef));
+                }
+                else if (["string", "number", "boolean"].indexOf(typeof prop_val) > -1) {
+                    interpreter.setProperty(obj, prop, interpreter.createPrimitive(prop_val));
+                }
+                else if (prop_val === null) {
+                    interpreter.setProperty(obj, prop, interpreter.createPrimitive(null));
                 }
             }
 
@@ -72,8 +81,7 @@
             var name = !!optionalName ? optionalName : funcRef.name;
             
             if (this.functionString.includes(name)) {
-                var func = this.makeFunction(interpreter, funcRef);
-                interpreter.setProperty(scope, name, func);
+                interpreter.setProperty(scope, name, this.makeFunction(interpreter, funcRef));
             }
         };
 

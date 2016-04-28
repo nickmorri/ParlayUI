@@ -1,14 +1,14 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["parlay.widget.interpreter", "parlay.socket"];
+    var module_dependencies = ["parlay.widget.interpreter"];
 
     angular
         .module("parlay.widget.eventhandler", module_dependencies)
         .factory("ParlayWidgetEventHandler", ParlayWidgetEventHandlerFactory);
 
-    ParlayWidgetEventHandlerFactory.$inject = ["ParlayInterpreter", "ParlaySocket"];
-    function ParlayWidgetEventHandlerFactory(ParlayInterpreter, ParlaySocket) {
+    ParlayWidgetEventHandlerFactory.$inject = ["ParlayInterpreter"];
+    function ParlayWidgetEventHandlerFactory(ParlayInterpreter) {
 
         function ParlayWidgetEventHandler () {
             ParlayInterpreter.call(this);
@@ -32,11 +32,7 @@
 
         ParlayWidgetEventHandler.prototype.construct = function (domEvent) {
             ParlayInterpreter.prototype.construct.call(this, function initFunc(interpreter, scope) {
-                this.attachObject(scope, interpreter, ParlaySocket);
-                this.attachFunction(scope, interpreter, alert);
-                this.attachFunction(scope, interpreter, console.log.bind(console), "log");
                 this.attachEvent(scope, interpreter, domEvent);
-                this.attachItems(scope, interpreter, this.getItems());
             });
         };
 

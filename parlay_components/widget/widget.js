@@ -47,10 +47,7 @@ function widgetRegistration (module_name, directive_name, widget_type) {
             ParlaySettings.restoreDefault("widgets");
         }
 
-        registered_widgets.forEach(function (container) {
-            ParlayWidgetCollection.registerWidget(container.directive_name, container.widget_type);    
-        });
-        
+        ParlayWidgetCollection.registerWidgets(registered_widgets);
     }
 
     ParlayWidgetsController.$inject = ["$scope", "ParlaySettings", "ParlayStore"];

@@ -3,20 +3,20 @@
 
     var module_dependencies = ["parlay.widget.collection", "parlay.utility"];
     var module_name = "promenade.widget.chartjs";
-    var directive_name = "promenadeChartJsWidget";
+    var directive_name = "promenadeWidgetChartJs";
     var widget_type = "display";
 
     widgetRegistration(module_name, directive_name, widget_type);
 
     angular
         .module(module_name, module_dependencies)
-        .directive(directive_name, PromenadeChartJsWidget);
+        .directive(directive_name, PromenadeWidgetChartJs);
 
     Chart.defaults.global.elements.point.radius = 10;
     Chart.defaults.global.elements.point.hoverRadius = 30;
 
-    PromenadeChartJsWidget.$inject = ["ParlayWidgetTemplate", "$interval", "RandColor"];
-    function PromenadeChartJsWidget (ParlayWidgetTemplate, $interval, RandColor) {
+    PromenadeWidgetChartJs.$inject = ["ParlayWidgetTemplate", "$interval", "RandColor"];
+    function PromenadeWidgetChartJs (ParlayWidgetTemplate, $interval, RandColor) {
 
         function customLink (scope, element) {
 
@@ -98,7 +98,7 @@
         }
 
         return new ParlayWidgetTemplate({
-            templateUrl: "../vendor_components/promenade/widget/directives/promenade-chart-canvas-widget.html",
+            templateUrl: "../vendor_components/promenade/widget/directives/promenade-widget-chart-canvas.html",
             customLink: customLink
         });
     }

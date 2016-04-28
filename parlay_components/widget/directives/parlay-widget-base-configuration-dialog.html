@@ -4,19 +4,19 @@
             <md-tab>
                 <md-tab-label>Template</md-tab-label>
                 <md-tab-body>
-                    <parlay-base-widget-configuration-template layout="row"></parlay-base-widget-configuration-template>
+                    <parlay-widget-base-configuration-template layout="row"></parlay-widget-base-configuration-template>
                 </md-tab-body>
             </md-tab>
             <md-tab ng-disabled="!configuration.template || configuration.template.type == 'display'">
                 <md-tab-label>Handlers</md-tab-label>
                 <md-tab-body>
-                    <parlay-base-widget-configuration-event></parlay-base-widget-configuration-event>
+                    <parlay-widget-base-configuration-event></parlay-widget-base-configuration-event>
                     <md-card>
                         <md-tabs ng-hide="configuration.selectedEvents.length === 0" md-stretch-tabs="always" md-dynamic-height="true" class="md-primary md-hue-2">
                             <md-tab ng-repeat="event in configuration.selectedEvents">
                                 <md-tab-label>{{event.element}}.on({{event.event}})</md-tab-label>
                                 <md-tab-body>
-                                    <parlay-base-widget-configuration-handler></parlay-base-widget-configuration-handler>
+                                    <parlay-widget-base-configuration-handler></parlay-widget-base-configuration-handler>
                                 </md-tab-body>
                             </md-tab>
                         </md-tabs>
@@ -27,8 +27,8 @@
             <md-tab ng-disabled="!configuration.template || configuration.template.type == 'input'">
                 <md-tab-label>Transform</md-tab-label>
                 <md-tab-body>
-                    <parlay-base-widget-configuration-source></parlay-base-widget-configuration-source>
-                    <parlay-base-widget-configuration-transform layout="column"></parlay-base-widget-configuration-transform>
+                    <parlay-widget-base-configuration-source></parlay-widget-base-configuration-source>
+                    <parlay-widget-base-configuration-transform layout="column"></parlay-widget-base-configuration-transform>
                 </md-tab-body>
             </md-tab>
         </md-tabs>

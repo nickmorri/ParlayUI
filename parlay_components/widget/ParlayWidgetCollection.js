@@ -17,6 +17,12 @@
             this.available_widgets.push({name: element, type: type});
         };
 
+        ParlayWidgetCollection.prototype.registerWidgets = function (widgets) {
+            widgets.forEach(function (container) {
+                this.registerWidget(container.directive_name, container.widget_type);
+            }, this);
+        };
+
         ParlayWidgetCollection.prototype.getAvailableWidgets = function () {
             return this.available_widgets;
         };

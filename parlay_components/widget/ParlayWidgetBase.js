@@ -5,10 +5,10 @@
 
     angular
         .module("parlay.widget.base", module_dependencies)
-        .directive("parlayBaseWidget", ParlayBaseWidget);
+        .directive("parlayWidgetBase", ParlayWidgetBase);
 
-    ParlayBaseWidget.$inject = ["$mdDialog", "$compile", "ParlayWidgetInputManager", "ParlayData", "ParlayWidgetTransformer"];
-    function ParlayBaseWidget ($mdDialog, $compile, ParlayWidgetInputManager, ParlayData, ParlayWidgetTransformer) {
+    ParlayWidgetBase.$inject = ["$mdDialog", "$compile", "ParlayWidgetInputManager", "ParlayData", "ParlayWidgetTransformer"];
+    function ParlayWidgetBase ($mdDialog, $compile, ParlayWidgetInputManager, ParlayData, ParlayWidgetTransformer) {
         return {
             scope: true,
             restrict: "E",
@@ -121,9 +121,9 @@
 
                 scope.edit = function (initialize) {
                     $mdDialog.show({
-                        templateUrl: "../parlay_components/widget/directives/parlay-base-widget-configuration-dialog.html",
+                        templateUrl: "../parlay_components/widget/directives/parlay-widget-base-configuration-dialog.html",
                         clickOutsideToClose: false,
-                        controller: "ParlayBaseWidgetConfigurationDialogController",
+                        controller: "ParlayWidgetBaseConfigurationDialogController",
                         controllerAs: "dialogCtrl",
                         locals: {
                             configuration: scope.item.configuration,

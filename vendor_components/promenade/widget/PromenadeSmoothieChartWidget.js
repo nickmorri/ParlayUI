@@ -3,17 +3,17 @@
 
     var module_dependencies = ["parlay.widget.collection", "parlay.utility"];
     var module_name = "promenade.widget.smoothiechart";
-    var directive_name = "promenadeSmoothieChartWidget";
+    var directive_name = "promenadeWidgetSmoothieChart";
     var widget_type = "display";
 
     widgetRegistration(module_name, directive_name, widget_type);
 
     angular
         .module(module_name, module_dependencies)
-        .directive(directive_name, PromenadeSmoothieChartWidget);
+        .directive(directive_name, PromenadeWidgetSmoothieChart);
 
-    PromenadeSmoothieChartWidget.$inject = ["ParlayWidgetTemplate", "$interval", "RandColor"];
-    function PromenadeSmoothieChartWidget (ParlayWidgetTemplate, $interval, RandColor) {
+    PromenadeWidgetSmoothieChart.$inject = ["ParlayWidgetTemplate", "$interval", "RandColor"];
+    function PromenadeWidgetSmoothieChart (ParlayWidgetTemplate, $interval, RandColor) {
 
         function customLink (scope, element) {
 
@@ -85,7 +85,7 @@
         }
 
         return new ParlayWidgetTemplate({
-            templateUrl: "../vendor_components/promenade/widget/directives/promenade-chart-canvas-widget.html",
+            templateUrl: "../vendor_components/promenade/widget/directives/promenade-widget-chart-canvas.html",
             customLink: customLink
         });
     }

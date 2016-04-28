@@ -5,20 +5,20 @@
 
     angular
         .module("parlay.widget.base.configuration", module_dependencies)
-        .controller("ParlayBaseWidgetConfigurationDialogController", ParlayBaseWidgetConfigurationDialogController)
-        .controller("ParlayBaseWidgetConfigurationTemplateController", ParlayBaseWidgetConfigurationTemplateController)
-        .controller("ParlayBaseWidgetConfigurationEventController", ParlayBaseWidgetConfigurationEventController)
-        .controller("ParlayBaseWidgetConfigurationHandlerController", ParlayBaseWidgetConfigurationHandlerController)
-        .controller("ParlayBaseWidgetConfigurationSourceController", ParlayBaseWidgetConfigurationSourceController)
-        .controller("ParlayBaseWidgetConfigurationTransformController", ParlayBaseWidgetConfigurationTransformController)
-        .directive("parlayBaseWidgetConfigurationTransform", ParlayBaseWidgetConfigurationTransformDirective)
-        .directive("parlayBaseWidgetConfigurationSource", ParlayBaseWidgetConfigurationSourceDirective)
-        .directive("parlayBaseWidgetConfigurationTemplate", ParlayBaseWidgetConfigurationTemplateDirective)
-        .directive("parlayBaseWidgetConfigurationEvent", ParlayBaseWidgetConfigurationEventDirective)
-        .directive("parlayBaseWidgetConfigurationHandler", ParlayBaseWidgetConfigurationHandlerDirective);
+        .controller("ParlayWidgetBaseConfigurationDialogController", ParlayWidgetBaseConfigurationDialogController)
+        .controller("ParlayWidgetBaseConfigurationTemplateController", ParlayWidgetBaseConfigurationTemplateController)
+        .controller("ParlayWidgetBaseConfigurationEventController", ParlayWidgetBaseConfigurationEventController)
+        .controller("ParlayWidgetBaseConfigurationHandlerController", ParlayWidgetBaseConfigurationHandlerController)
+        .controller("ParlayWidgetBaseConfigurationSourceController", ParlayWidgetBaseConfigurationSourceController)
+        .controller("ParlayWidgetBaseConfigurationTransformController", ParlayWidgetBaseConfigurationTransformController)
+        .directive("parlayWidgetBaseConfigurationTemplate", ParlayWidgetBaseConfigurationTemplateDirective)
+        .directive("parlayWidgetBaseConfigurationEvent", ParlayWidgetBaseConfigurationEventDirective)
+        .directive("parlayWidgetBaseConfigurationHandler", ParlayWidgetBaseConfigurationHandlerDirective)
+        .directive("parlayWidgetBaseConfigurationTransform", ParlayWidgetBaseConfigurationTransformDirective)
+        .directive("parlayWidgetBaseConfigurationSource", ParlayWidgetBaseConfigurationSourceDirective);
 
-    ParlayBaseWidgetConfigurationDialogController.$inject = ["$scope", "$mdDialog", "configuration", "widgetCompiler"];
-    function ParlayBaseWidgetConfigurationDialogController ($scope, $mdDialog, configuration, widgetCompiler) {
+    ParlayWidgetBaseConfigurationDialogController.$inject = ["$scope", "$mdDialog", "configuration", "widgetCompiler"];
+    function ParlayWidgetBaseConfigurationDialogController ($scope, $mdDialog, configuration, widgetCompiler) {
 
         $scope.configuration = configuration;
 
@@ -38,8 +38,8 @@
 
     }
 
-    ParlayBaseWidgetConfigurationTemplateController.$inject = ["ParlayWidgetCollection"];
-    function ParlayBaseWidgetConfigurationTemplateController (ParlayWidgetCollection) {
+    ParlayWidgetBaseConfigurationTemplateController.$inject = ["ParlayWidgetCollection"];
+    function ParlayWidgetBaseConfigurationTemplateController (ParlayWidgetCollection) {
 
         this.getTemplates = function () {
             return ParlayWidgetCollection.getAvailableWidgets();
@@ -47,8 +47,8 @@
 
     }
 
-    ParlayBaseWidgetConfigurationEventController.$inject = ["$scope", "ParlayWidgetInputManager", "ParlayWidgetEventHandler"];
-    function ParlayBaseWidgetConfigurationEventController ($scope, ParlayWidgetInputManager) {
+    ParlayWidgetBaseConfigurationEventController.$inject = ["$scope", "ParlayWidgetInputManager", "ParlayWidgetEventHandler"];
+    function ParlayWidgetBaseConfigurationEventController ($scope, ParlayWidgetInputManager) {
 
         this.queryEvents = function (query) {
             var lowercase_query = angular.lowercase(query);
@@ -83,8 +83,8 @@
         
     }
 
-    ParlayBaseWidgetConfigurationHandlerController.$inject = ["ParlayData"];
-    function ParlayBaseWidgetConfigurationHandlerController (ParlayData) {
+    ParlayWidgetBaseConfigurationHandlerController.$inject = ["ParlayData"];
+    function ParlayWidgetBaseConfigurationHandlerController (ParlayData) {
 
         function items() {
             var iterator = ParlayData.values();
@@ -158,8 +158,8 @@
 
     }
 
-    ParlayBaseWidgetConfigurationSourceController.$inject = ["$scope", "ParlayData", "ParlayWidgetInputManager", "ParlayWidgetTransformer"];
-    function ParlayBaseWidgetConfigurationSourceController ($scope, ParlayData, ParlayWidgetInputManager, ParlayWidgetTransformer) {
+    ParlayWidgetBaseConfigurationSourceController.$inject = ["$scope", "ParlayData", "ParlayWidgetInputManager", "ParlayWidgetTransformer"];
+    function ParlayWidgetBaseConfigurationSourceController ($scope, ParlayData, ParlayWidgetInputManager, ParlayWidgetTransformer) {
 
         function items() {
             var iterator = ParlayData.values();
@@ -210,8 +210,8 @@
 
     }
 
-    ParlayBaseWidgetConfigurationTransformController.$inject = ["$scope"];
-    function ParlayBaseWidgetConfigurationTransformController ($scope) {
+    ParlayWidgetBaseConfigurationTransformController.$inject = ["$scope"];
+    function ParlayWidgetBaseConfigurationTransformController ($scope) {
 
         function generateCompleter() {
             return {
@@ -236,43 +236,43 @@
 
     }
 
-    function ParlayBaseWidgetConfigurationTransformDirective () {
+    function ParlayWidgetBaseConfigurationTemplateDirective () {
         return {
-            templateUrl: "../parlay_components/widget/directives/parlay-base-widget-configuration-transform.html",
-            controller: "ParlayBaseWidgetConfigurationTransformController",
-            controllerAs: "transformCtrl"
-        };
-    }
-
-    function ParlayBaseWidgetConfigurationSourceDirective () {
-        return {
-            templateUrl: "../parlay_components/widget/directives/parlay-base-widget-configuration-source.html",
-            controller: "ParlayBaseWidgetConfigurationSourceController",
-            controllerAs: "sourceCtrl"
-        };
-    }
-
-    function ParlayBaseWidgetConfigurationTemplateDirective () {
-        return {
-            templateUrl: "../parlay_components/widget/directives/parlay-base-widget-configuration-template.html",
-            controller: "ParlayBaseWidgetConfigurationTemplateController",
+            templateUrl: "../parlay_components/widget/directives/parlay-widget-base-configuration-template.html",
+            controller: "ParlayWidgetBaseConfigurationTemplateController",
             controllerAs: "templateCtrl"
         };
     }
-    
-    function ParlayBaseWidgetConfigurationEventDirective () {
+
+    function ParlayWidgetBaseConfigurationEventDirective () {
         return {
-            templateUrl: "../parlay_components/widget/directives/parlay-base-widget-configuration-event.html",
-            controller: "ParlayBaseWidgetConfigurationEventController",
+            templateUrl: "../parlay_components/widget/directives/parlay-widget-base-configuration-event.html",
+            controller: "ParlayWidgetBaseConfigurationEventController",
             controllerAs: "eventCtrl"
         };
     }
 
-    function ParlayBaseWidgetConfigurationHandlerDirective () {
+    function ParlayWidgetBaseConfigurationHandlerDirective () {
         return {
-            templateUrl: "../parlay_components/widget/directives/parlay-base-widget-configuration-handler.html",
-            controller: "ParlayBaseWidgetConfigurationHandlerController",
+            templateUrl: "../parlay_components/widget/directives/parlay-widget-base-configuration-handler.html",
+            controller: "ParlayWidgetBaseConfigurationHandlerController",
             controllerAs: "handlerCtrl"
+        };
+    }
+
+    function ParlayWidgetBaseConfigurationTransformDirective () {
+        return {
+            templateUrl: "../parlay_components/widget/directives/parlay-widget-base-configuration-transform.html",
+            controller: "ParlayWidgetBaseConfigurationTransformController",
+            controllerAs: "transformCtrl"
+        };
+    }
+
+    function ParlayWidgetBaseConfigurationSourceDirective () {
+        return {
+            templateUrl: "../parlay_components/widget/directives/parlay-widget-base-configuration-source.html",
+            controller: "ParlayWidgetBaseConfigurationSourceController",
+            controllerAs: "sourceCtrl"
         };
     }
 

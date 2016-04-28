@@ -32,6 +32,7 @@
             });
 
             this.items = [];
+            this.handlers = [];
 
             if (!!initialItems) {
                 initialItems.forEach(function (item) {
@@ -52,9 +53,7 @@
             }
 
             ParlayInterpreter.prototype.construct.call(this, function initFunc(interpreter, scope) {
-                this.attachItems(scope, interpreter, this.items.map(function (container) {
-                    return container.item;
-                }));
+                this.attachItems(scope, interpreter, this.items);
             });
         };
 
@@ -75,8 +74,9 @@
         };
 
         ParlayWidgetTransformer.prototype.cleanHandlers = function () {
-            while (!!this.items && this.items.length > 0) {
-                this.items.shift().handler();
+            while (!!this.handlers && this.handlers.length > 0) {
+                this.items.shift();
+                this.handlers.shift()();
             }
         };
 
@@ -103,21 +103,19 @@
                 item.listen();
             }
 
-            this.items.push({
-                item: item,
-                handler: this.registerHandler(item)
-            });
+            this.items.push(item);
+            this.handlers.push(this.registerHandler(item));
+
             this.construct();
         };
 
         ParlayWidgetTransformer.prototype.removeItem = function (item) {
-            var index = this.items.findIndex(function (candidate) {
-                return item == candidate.item;
-            });
 
-            if (index >= 0) {
-                this.items[index].handler();
-                this.items.splice(index, 1);
+            var index = this.items.indexOf(item);
+
+            if (index > -1) {
+                this.handlers[index]();
+                this.handlers.splice(index, 1);
             }
             this.construct();
         };

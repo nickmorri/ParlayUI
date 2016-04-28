@@ -1,19 +1,20 @@
-// Holds the module dependencies for ParlayWidget. Creating this Array on the Global scope allows for other modules,
-// such as vendor defined widgets to include themselves as ParlayWidget dependencies.
-var widget_dependencies = ["ui.router", "ui.ace", "ngMaterial", "parlay.widget.base", "parlay.settings"];
-var registered_widgets = [];
-
-function widgetRegistration (module_name, directive_name, widget_type) {
+var widgetRegistration = (function () {
     "use strict";
-    widget_dependencies.push(module_name);
-    registered_widgets.push({
-        directive_name: directive_name,
-        widget_type: widget_type
-    });
-}
 
-(function (module_dependencies) {
-    "use strict";
+    // Holds the module dependencies for ParlayWidget. Creating this Array on the Global scope allows for other modules,
+    // such as vendor defined widgets to include themselves as ParlayWidget dependencies.
+    var module_dependencies = ["ui.router", "ui.ace", "ngMaterial", "parlay.widget.base", "parlay.settings"];
+    var registered_widgets = [];
+
+    function widgetRegistration (module_name, submodule_dependencies, directive_name, widget_type, directive_function) {
+        module_dependencies.push(module_name);
+        registered_widgets.push({directive_name: directive_name, widget_type: widget_type});
+
+        angular
+            .module(module_name, submodule_dependencies)
+            .directive(directive_name, directive_function);
+
+    }
 
     angular
         .module("parlay.widget", module_dependencies)
@@ -83,4 +84,5 @@ function widgetRegistration (module_name, directive_name, widget_type) {
         this.items.splice(index, 1);
     };
 
-}(widget_dependencies));
+    return widgetRegistration;
+}());

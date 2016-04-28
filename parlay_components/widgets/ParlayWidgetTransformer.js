@@ -10,7 +10,6 @@
     ParlayWidgetTransformerFactory.$inject = ["ParlayInterpreter"];
     function ParlayWidgetTransformerFactory (ParlayInterpreter) {
 
-
         function ParlayWidgetTransformer(initialItems) {
 
             ParlayInterpreter.call(this);

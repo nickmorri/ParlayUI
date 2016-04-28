@@ -1,12 +1,12 @@
 // Holds the module dependencies for ParlayWidget. Creating this Array on the Global scope allows for other modules,
 // such as vendor defined widgets to include themselves as ParlayWidget dependencies.
-var widget_dependencies = ["ui.router", "ui.ace", "ngMaterial", "parlay.widgets.base", "parlay.settings"];
+var widget_dependencies = ["ui.router", "ui.ace", "ngMaterial", "parlay.widget.base", "parlay.settings"];
 
 (function (module_dependencies) {
     "use strict";
 
     angular
-        .module("parlay.widgets", module_dependencies)
+        .module("parlay.widget", module_dependencies)
         .config(ParlayWidgetsConfiguration)
         .run(ParlayWidgetsRun)
         .controller("ParlayWidgetsController", ParlayWidgetsController);

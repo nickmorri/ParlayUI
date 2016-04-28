@@ -1,10 +1,10 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["parlay.widgets.base.configuration"];
+    var module_dependencies = ["parlay.widget.base.configuration"];
 
     angular
-        .module("parlay.widgets.base", module_dependencies)
+        .module("parlay.widget.base", module_dependencies)
         .directive("parlayBaseWidget", ParlayBaseWidget);
 
     ParlayBaseWidget.$inject = ["$mdDialog", "$compile", "ParlayWidgetInputManager", "ParlayData", "ParlayWidgetTransformer"];

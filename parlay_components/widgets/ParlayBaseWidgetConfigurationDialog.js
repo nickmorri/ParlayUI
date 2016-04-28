@@ -1,10 +1,10 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["ui.ace", "parlay.widgets.collection", "parlay.widgets.inputmanager", "parlay.widget.transformer", "parlay.widgets.eventhandler", "parlay.data"];
+    var module_dependencies = ["ui.ace", "parlay.widget.collection", "parlay.widget.inputmanager", "parlay.widget.transformer", "parlay.widget.eventhandler", "parlay.data"];
 
     angular
-        .module("parlay.widgets.base.configuration", module_dependencies)
+        .module("parlay.widget.base.configuration", module_dependencies)
         .controller("ParlayBaseWidgetConfigurationDialogController", ParlayBaseWidgetConfigurationDialogController)
         .controller("ParlayBaseWidgetConfigurationTemplateController", ParlayBaseWidgetConfigurationTemplateController)
         .controller("ParlayBaseWidgetConfigurationEventController", ParlayBaseWidgetConfigurationEventController)

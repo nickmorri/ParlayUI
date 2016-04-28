@@ -4,7 +4,7 @@
     var module_dependencies = ["parlay.widget.interpreter", "parlay.socket"];
 
     angular
-        .module("parlay.widgets.eventhandler", module_dependencies)
+        .module("parlay.widget.eventhandler", module_dependencies)
         .factory("ParlayWidgetEventHandler", ParlayWidgetEventHandlerFactory);
 
     ParlayWidgetEventHandlerFactory.$inject = ["ParlayInterpreter", "ParlaySocket"];

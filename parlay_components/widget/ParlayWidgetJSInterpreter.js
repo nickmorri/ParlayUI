@@ -20,26 +20,52 @@
         function ParlayInterpreter () {
             this.functionString = undefined;
             this.interpreter = undefined;
+            this.constructionError = undefined;
         }
 
         ParlayInterpreter.prototype.construct = function (childInitFunc) {
-                this.interpreter = new Interpreter(this.functionString, function (interpreter, scope) {
 
-                    this.attachObject(scope, interpreter, ParlaySocket);
-                    this.attachItems(scope, interpreter, this.getItems());
-                    this.attachFunction(scope, interpreter, alert);
-                    this.attachFunction(scope, interpreter, console.log.bind(console), "log");
+            this.constructionError = undefined;
 
-                    if (!!childInitFunc) {
-                        childInitFunc.call(this, interpreter, scope);
-                    }
+            if (!this.functionString) {
+                this.constructionError = "Editor is empty. Please enter a valid statement.";
+            }
+            else {
+                try {
+                    this.interpreter = new Interpreter(this.functionString, function (interpreter, scope) {
 
-                }.bind(this));
+                        this.attachObject(scope, interpreter, ParlaySocket);
+                        this.attachItems(scope, interpreter, this.getItems());
+                        this.attachFunction(scope, interpreter, alert);
+                        this.attachFunction(scope, interpreter, console.log.bind(console), "log");
+
+                        if (!!childInitFunc) {
+                            childInitFunc.call(this, interpreter, scope);
+                        }
+
+                    }.bind(this));
+                }
+                catch (error) {
+                    this.constructionError = error.toString();
+                }
+            }
+
+
         };
 
         ParlayInterpreter.prototype.run = function () {
-            this.interpreter.run();
-            return this.interpreter.value.data;
+            if (!!this.constructionError) {
+                return this.constructionError;
+            }
+            else {
+                try {
+                    this.interpreter.run();
+                    return this.interpreter.value.data || "undefined";
+                }
+                catch (error) {
+                    return error.toString();
+                }
+            }
         };
 
         ParlayInterpreter.prototype.getItems = function () {

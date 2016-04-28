@@ -35,42 +35,17 @@
             this.handlers = [];
 
             if (!!initialItems) {
-                initialItems.forEach(function (item) {
-                    this.addItem(item);
-                }, this);
+                initialItems.forEach(this.addItem);
             }
-
-            this.construct();
 
         }
 
         ParlayWidgetTransformer.prototype = Object.create(ParlayInterpreter.prototype);
 
         ParlayWidgetTransformer.prototype.construct = function () {
-
-            if (!this.functionString) {
-                return;
-            }
-
             ParlayInterpreter.prototype.construct.call(this, function initFunc(interpreter, scope) {
                 this.attachItems(scope, interpreter, this.items);
             });
-        };
-
-        ParlayWidgetTransformer.prototype.run = function () {
-            try {
-                var result = ParlayInterpreter.prototype.run.call(this);
-
-                return !!result ? result : "Editor is empty. Please enter a valid statement.";
-            }
-            catch (error) {
-
-                if (!this.functionString) {
-                    return "Editor is empty. Please enter a valid statement.";
-                }
-
-                return error.toString();
-            }
         };
 
         ParlayWidgetTransformer.prototype.cleanHandlers = function () {
@@ -118,7 +93,7 @@
                 this.handlers.splice(index, 1);
                 this.items.splice(index, 1);
             }
-            
+
             this.construct();
         };
 

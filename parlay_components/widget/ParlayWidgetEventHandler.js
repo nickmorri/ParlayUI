@@ -13,16 +13,23 @@
         function ParlayWidgetEventHandler () {
             ParlayInterpreter.call(this);
             
-            var eventRef;
+            var eventRef, handlerRef;
+
+            handlerRef = this;
+
+            function listenerCallback(domEvent) {
+                handlerRef.construct(domEvent);
+                handlerRef.run();
+            }
             
             this.attach = function (event) {
                 eventRef = event;
-                eventRef.addListener(this.run.bind(this));
+                eventRef.addListener(listenerCallback);
                 eventRef.handler = this;
             };
             
             this.detach = function () {
-                eventRef.removeListener(this.run);
+                eventRef.removeListener(listenerCallback);
                 eventRef.handler = null;
             };
             
@@ -34,16 +41,6 @@
             ParlayInterpreter.prototype.construct.call(this, function initFunc(interpreter, scope) {
                 this.attachEvent(scope, interpreter, domEvent);
             });
-        };
-
-        ParlayWidgetEventHandler.prototype.run = function (domEvent) {
-            try {
-                this.construct(domEvent);
-                return ParlayInterpreter.prototype.run.call(this);
-            }
-            catch (error) {
-                return error.toString();
-            }
         };
 
         ParlayWidgetEventHandler.prototype.makeEvent = function (interpreter, eventRef) {

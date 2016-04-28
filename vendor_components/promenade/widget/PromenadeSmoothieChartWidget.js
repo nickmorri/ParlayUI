@@ -1,8 +1,8 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["parlay.widgets.collection", "parlay.utility"];
-    var module_name = "promenade.widgets.smoothiechart";
+    var module_dependencies = ["parlay.widget.collection", "parlay.utility"];
+    var module_name = "promenade.widget.smoothiechart";
     var directive_name = "promenadeSmoothieChartWidget";
 
     widget_dependencies.push(module_name);
@@ -12,9 +12,9 @@
         .run(PromenadeSmoothieChartWidgetRun)
         .directive(directive_name, PromenadeSmoothieChartWidget);
 
-    PromenadeSmoothieChartWidgetRun.$inject = ["ParlayWidgetsCollection"];
-    function PromenadeSmoothieChartWidgetRun (ParlayWidgetsCollection) {
-        ParlayWidgetsCollection.registerWidget(directive_name, "display");
+    PromenadeSmoothieChartWidgetRun.$inject = ["ParlayWidgetCollection"];
+    function PromenadeSmoothieChartWidgetRun (ParlayWidgetCollection) {
+        ParlayWidgetCollection.registerWidget(directive_name, "display");
     }
 
     PromenadeSmoothieChartWidget.$inject = ["$interval", "RandColor"];
@@ -29,7 +29,7 @@
                 edit: "=",
                 editing: "="
             },
-            templateUrl: "../vendor_components/promenade/widgets/directives/promenade-chart-canvas-widget.html",
+            templateUrl: "../vendor_components/promenade/widget/directives/promenade-chart-canvas-widget.html",
             link: function (scope, element) {
 
                 scope.$parent.childLoad();

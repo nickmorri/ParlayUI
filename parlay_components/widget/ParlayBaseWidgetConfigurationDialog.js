@@ -238,7 +238,7 @@
 
     function ParlayBaseWidgetConfigurationTransformDirective () {
         return {
-            templateUrl: "../parlay_components/widgets/directives/parlay-base-widget-configuration-transform.html",
+            templateUrl: "../parlay_components/widget/directives/parlay-base-widget-configuration-transform.html",
             controller: "ParlayBaseWidgetConfigurationTransformController",
             controllerAs: "transformCtrl"
         };
@@ -246,7 +246,7 @@
 
     function ParlayBaseWidgetConfigurationSourceDirective () {
         return {
-            templateUrl: "../parlay_components/widgets/directives/parlay-base-widget-configuration-source.html",
+            templateUrl: "../parlay_components/widget/directives/parlay-base-widget-configuration-source.html",
             controller: "ParlayBaseWidgetConfigurationSourceController",
             controllerAs: "sourceCtrl"
         };
@@ -254,7 +254,7 @@
 
     function ParlayBaseWidgetConfigurationTemplateDirective () {
         return {
-            templateUrl: "../parlay_components/widgets/directives/parlay-base-widget-configuration-template.html",
+            templateUrl: "../parlay_components/widget/directives/parlay-base-widget-configuration-template.html",
             controller: "ParlayBaseWidgetConfigurationTemplateController",
             controllerAs: "templateCtrl"
         };
@@ -262,7 +262,7 @@
     
     function ParlayBaseWidgetConfigurationEventDirective () {
         return {
-            templateUrl: "../parlay_components/widgets/directives/parlay-base-widget-configuration-event.html",
+            templateUrl: "../parlay_components/widget/directives/parlay-base-widget-configuration-event.html",
             controller: "ParlayBaseWidgetConfigurationEventController",
             controllerAs: "eventCtrl"
         };
@@ -270,7 +270,7 @@
 
     function ParlayBaseWidgetConfigurationHandlerDirective () {
         return {
-            templateUrl: "../parlay_components/widgets/directives/parlay-base-widget-configuration-handler.html",
+            templateUrl: "../parlay_components/widget/directives/parlay-base-widget-configuration-handler.html",
             controller: "ParlayBaseWidgetConfigurationHandlerController",
             controllerAs: "handlerCtrl"
         };

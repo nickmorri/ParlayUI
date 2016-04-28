@@ -4,7 +4,7 @@
         "protocols": "vendor_components/promenade/protocols/*.js",
     	"directives": "vendor_components/promenade/**/directives/*.html",
     	"items": "vendor_components/promenade/items/*.js",
-		"widgets": "vendor_components/promenade/widgets/*.js",
+		"widget": "vendor_components/promenade/widget/*.js",
     	"test": "vendor_components/promenade/**/test/*.spec.js",
     	"mocks": "vendor_components/promenade/**/mocks/*.js",
     	"stylesheets": "vendor_components/promenade/css/*.css"

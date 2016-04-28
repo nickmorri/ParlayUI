@@ -1,8 +1,8 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["parlay.widgets.collection"];
-    var module_name = "promenade.widgets.button";
+    var module_dependencies = ["parlay.widget.collection"];
+    var module_name = "promenade.widget.button";
     var directive_name = "promenadeButtonWidget";
 
     widget_dependencies.push(module_name);
@@ -12,9 +12,9 @@
         .run(PromenadeButtonWidgetRun)
         .directive(directive_name, PromenadeButtonWidget);
 
-    PromenadeButtonWidgetRun.$inject = ["ParlayWidgetsCollection"];
-    function PromenadeButtonWidgetRun (ParlayWidgetsCollection) {
-        ParlayWidgetsCollection.registerWidget("promenadeButtonWidget", "input");
+    PromenadeButtonWidgetRun.$inject = ["ParlayWidgetCollection"];
+    function PromenadeButtonWidgetRun (ParlayWidgetCollection) {
+        ParlayWidgetCollection.registerWidget("promenadeButtonWidget", "input");
     }
 
     PromenadeButtonWidget.$inject = ["ParlayWidgetInputManager"];
@@ -29,7 +29,7 @@
                 edit: "=",
                 editing: "="
             },
-            templateUrl: "../vendor_components/promenade/widgets/directives/promenade-button-widget.html",
+            templateUrl: "../vendor_components/promenade/widget/directives/promenade-button-widget.html",
             link: function (scope, element) {
 
                 var parent_tag = "md-card-content";

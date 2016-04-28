@@ -1,8 +1,8 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["parlay.widgets.collection", "parlay.utility"];
-    var module_name = "promenade.widgets.chartjs";
+    var module_dependencies = ["parlay.widget.collection", "parlay.utility"];
+    var module_name = "promenade.widget.chartjs";
     var directive_name = "promenadeChartJsWidget";
 
     widget_dependencies.push(module_name);
@@ -12,9 +12,9 @@
         .run(PromenadeChartJsWidgetRun)
         .directive(directive_name, PromenadeChartJsWidget);
 
-    PromenadeChartJsWidgetRun.$inject = ["ParlayWidgetsCollection"];
-    function PromenadeChartJsWidgetRun (ParlayWidgetsCollection) {
-        ParlayWidgetsCollection.registerWidget(directive_name, "display");
+    PromenadeChartJsWidgetRun.$inject = ["ParlayWidgetCollection"];
+    function PromenadeChartJsWidgetRun (ParlayWidgetCollection) {
+        ParlayWidgetCollection.registerWidget(directive_name, "display");
         Chart.defaults.global.elements.point.radius = 10;
         Chart.defaults.global.elements.point.hoverRadius = 30;
     }
@@ -31,7 +31,7 @@
                 edit: "=",
                 editing: "="
             },
-            templateUrl: "../vendor_components/promenade/widgets/directives/promenade-chart-canvas-widget.html",
+            templateUrl: "../vendor_components/promenade/widget/directives/promenade-chart-canvas-widget.html",
             link: function (scope, element) {
 
                 scope.$parent.childLoad();

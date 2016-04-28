@@ -1,8 +1,8 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["parlay.widgets.collection"];
-    var module_name = "promenade.widgets.input";
+    var module_dependencies = ["parlay.widget.collection"];
+    var module_name = "promenade.widget.input";
     var directive_name = "promenadeInputWidget";
 
     widget_dependencies.push(module_name);
@@ -12,9 +12,9 @@
         .run(PromenadeInputWidgetRun)
         .directive(directive_name, PromenadeInputWidget);
 
-    PromenadeInputWidgetRun.$inject = ["ParlayWidgetsCollection"];
-    function PromenadeInputWidgetRun (ParlayWidgetsCollection) {
-        ParlayWidgetsCollection.registerWidget(directive_name, "input");
+    PromenadeInputWidgetRun.$inject = ["ParlayWidgetCollection"];
+    function PromenadeInputWidgetRun (ParlayWidgetCollection) {
+        ParlayWidgetCollection.registerWidget(directive_name, "input");
     }
 
     PromenadeInputWidget.$inject = ["ParlayWidgetInputManager"];
@@ -29,7 +29,7 @@
                 edit: "=",
                 editing: "="
             },
-            templateUrl: "../vendor_components/promenade/widgets/directives/promenade-input-widget.html",
+            templateUrl: "../vendor_components/promenade/widget/directives/promenade-input-widget.html",
             link: function (scope, element) {
 
                 scope.$parent.childLoad();

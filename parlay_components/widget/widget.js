@@ -19,7 +19,7 @@ var widget_dependencies = ["ui.router", "ui.ace", "ngMaterial", "parlay.widget.b
     function ParlayWidgetsConfiguration($stateProvider) {
         $stateProvider.state("widgets", {
             url: "/widgets",
-            templateUrl: "../parlay_components/widgets/views/base.html",
+            templateUrl: "../parlay_components/widget/views/base.html",
             controller: "ParlayWidgetsController",
             controllerAs: "widgetsCtrl",
             data: {

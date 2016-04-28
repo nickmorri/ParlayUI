@@ -121,7 +121,7 @@
 
                 scope.edit = function (initialize) {
                     $mdDialog.show({
-                        templateUrl: "../parlay_components/widgets/directives/parlay-base-widget-configuration-dialog.html",
+                        templateUrl: "../parlay_components/widget/directives/parlay-base-widget-configuration-dialog.html",
                         clickOutsideToClose: false,
                         controller: "ParlayBaseWidgetConfigurationDialogController",
                         controllerAs: "dialogCtrl",

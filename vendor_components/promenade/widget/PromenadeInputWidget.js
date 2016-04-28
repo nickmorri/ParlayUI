@@ -5,12 +5,9 @@
     var module_name = "promenade.widget.input";
     var directive_name = "promenadeWidgetInput";
     var widget_type = "input";
+    var directive_function = PromenadeWidgetInput;
 
-    widgetRegistration(module_name, directive_name, widget_type);
-
-    angular
-        .module(module_name, module_dependencies)
-        .directive(directive_name, PromenadeWidgetInput);
+    widgetRegistration(module_name, module_dependencies, directive_name, widget_type, directive_function);
 
     PromenadeWidgetInput.$inject = ["ParlayWidgetTemplate"];
     function PromenadeWidgetInput (ParlayWidgetTemplate) {

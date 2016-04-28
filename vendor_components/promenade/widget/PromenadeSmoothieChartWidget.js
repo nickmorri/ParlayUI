@@ -5,12 +5,9 @@
     var module_name = "promenade.widget.smoothiechart";
     var directive_name = "promenadeWidgetSmoothieChart";
     var widget_type = "display";
+    var directive_function = PromenadeWidgetSmoothieChart;
 
-    widgetRegistration(module_name, directive_name, widget_type);
-
-    angular
-        .module(module_name, module_dependencies)
-        .directive(directive_name, PromenadeWidgetSmoothieChart);
+    widgetRegistration(module_name, module_dependencies, directive_name, widget_type, directive_function);
 
     PromenadeWidgetSmoothieChart.$inject = ["ParlayWidgetTemplate", "$interval", "RandColor"];
     function PromenadeWidgetSmoothieChart (ParlayWidgetTemplate, $interval, RandColor) {

@@ -5,12 +5,9 @@
     var module_name = "promenade.widget.chartjs";
     var directive_name = "promenadeWidgetChartJs";
     var widget_type = "display";
+    var directive_function = PromenadeWidgetChartJs;
 
-    widgetRegistration(module_name, directive_name, widget_type);
-
-    angular
-        .module(module_name, module_dependencies)
-        .directive(directive_name, PromenadeWidgetChartJs);
+    widgetRegistration(module_name, module_dependencies, directive_name, widget_type, directive_function);
 
     Chart.defaults.global.elements.point.radius = 10;
     Chart.defaults.global.elements.point.hoverRadius = 30;

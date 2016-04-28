@@ -5,12 +5,9 @@
     var module_name = "promenade.widget.button";
     var directive_name = "promenadeWidgetButton";
     var widget_type = "input";
+    var directive_function = PromenadeWidgetButton;
 
-    widgetRegistration(module_name, directive_name, widget_type);
-
-    angular
-        .module(module_name, module_dependencies)
-        .directive(directive_name, PromenadeWidgetButton);
+    widgetRegistration(module_name, module_dependencies, directive_name, widget_type, directive_function);
 
     PromenadeWidgetButton.$inject = ["ParlayWidgetTemplate"];
     function PromenadeWidgetButton (ParlayWidgetTemplate) {

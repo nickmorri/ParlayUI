@@ -10,16 +10,15 @@
     ParlayInterpreterFactory.$inject = ["ParlayData"];
     function ParlayInterpreterFactory (ParlayData) {
 
-        function extract (item) {
+        function df_extract (item) {
             return item.isPrimitive ? item.data : Object.keys(item.properties).reduce(function (accumulator, key) {
-                accumulator[key] = extract(item.properties[key]);
+                accumulator[key] = df_extract(item.properties[key]);
                 return accumulator;
             }, {});
         }
 
         function ParlayInterpreter () {
             this.functionString = undefined;
-            this.namespace = {};
             this.interpreter = undefined;
         }
 
@@ -43,7 +42,7 @@
 
         ParlayInterpreter.prototype.makeFunction = function (interpreter, funcRef, funcThis) {
             return interpreter.createNativeFunction(function () {
-                funcRef.apply(!!funcThis ? funcThis : null, Array.prototype.slice.call(arguments).map(extract));
+                funcRef.apply(!!funcThis ? funcThis : null, Array.prototype.slice.call(arguments).map(df_extract));
             });
         };
 
@@ -74,7 +73,6 @@
             
             if (this.functionString.includes(name)) {
                 var func = this.makeFunction(interpreter, funcRef);
-                this.registerOnNamespace(name, func.type);
                 interpreter.setProperty(scope, name, func);
             }
         };
@@ -83,17 +81,7 @@
             var name = !!optionalName ? optionalName : objectRef.constructor.name;
 
             if (this.functionString.includes(name)) {
-                var obj = this.makeObject(interpreter, objectRef);
-
-                this.registerOnNamespace(name, obj.type);
-
-                Object.keys(obj.properties).map(function (key) {
-                    return {name: key, type: obj.properties[key].type};
-                }).forEach(function (property) {
-                    this.registerOnNamespace(property.name, property.type, name);
-                }, this);
-
-                interpreter.setProperty(scope, name, obj);
+                interpreter.setProperty(scope, name, this.makeObject(interpreter, objectRef));
             }
         };
 
@@ -101,11 +89,6 @@
             items.forEach(function (item) {
                 this.attachObject(scope, interpreter, item, item.name);
             }, this);
-        };
-
-        ParlayInterpreter.prototype.registerOnNamespace = function (name, type, parentName) {
-            var container = !!this.namespace[parentName] ? this.namespace[parentName] : this.namespace;
-            container[name] = type === "object" ? {} : type;
         };
 
         ParlayInterpreter.toJSON = function () {

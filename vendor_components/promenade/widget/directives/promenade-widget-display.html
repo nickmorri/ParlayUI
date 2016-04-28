@@ -2,8 +2,8 @@
     <md-toolbar class="handle" ng-class="{'show-handle': editing}">
         <div class="md-toolbar-tools">
             <h2>
-                <span ng-repeat="container in items">
-                    {{container.item.name}}<span ng-show="!$last">, </span>
+                <span ng-repeat="item in items">
+                    {{item.name}}<span ng-show="!$last">, </span>
                 </span>
             </h2>
             <span flex></span>
@@ -28,7 +28,5 @@
             </md-menu>
         </div>
     </md-toolbar>
-    <md-card-content>
-        {{transformedValue}}
-    </md-card-content>
+    <md-card-content>{{transformedValue}}</md-card-content>
 </md-card>

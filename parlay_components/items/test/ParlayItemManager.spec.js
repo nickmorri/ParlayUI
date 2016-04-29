@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    describe('parlay.items.manager', function() {
+    xdescribe('parlay.items.manager', function() {
         
         beforeEach(module('parlay.items.manager'));
         beforeEach(module('mock.promenade.broker'));

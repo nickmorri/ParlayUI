@@ -1,8 +1,14 @@
 (function () {
     "use strict";
 
+    var module_dependencies = ["ngMaterial", "parlay.items.search", "parlay.protocols.list_controller", "parlay.settings.dialog", "parlay.common.genericsaveloaddialog", "parlay.items.manager"];
+
+    angular.module("parlay.navigation.sidenav", module_dependencies)
+        .controller("ParlayNavigationSidenavController", ParlayNavigationSidenavController);
+
     /* istanbul ignore next */
-    function ParlayNavigationSidenavController($mdSidenav, $mdDialog, $state, PromenadeBroker) {
+    ParlayNavigationSidenavController.$inject = ["$mdSidenav", "$mdDialog", "ParlayGenericSaveLoadDialog", "$state", "PromenadeBroker", "ParlayItemManager"];
+    function ParlayNavigationSidenavController($mdSidenav, $mdDialog, ParlayGenericSaveLoadDialog, $state, PromenadeBroker, ParlayItemManager) {
 
         this.getCurrentState = function () {
             return $state.current;
@@ -33,12 +39,12 @@
         };
 
         this.openWorkspaceManagementDialog = function (event) {
-            $mdDialog.show({
-                templateUrl: "../parlay_components/items/directives/parlay-workspace-management-dialog.html",
-                targetEvent: event,
-                controller: "ParlayWorkspaceManagementController",
-                controllerAs: "ctrl",
-                clickOutsideToClose: true
+            ParlayGenericSaveLoadDialog.show(event, ParlayItemManager, {
+                entry: "workspace",
+                entries: "workspaces",
+                title: "workspaces",
+                child: "item",
+                children: "items"
             });
         };
 
@@ -61,8 +67,5 @@
         };
 
     }
-
-    angular.module("parlay.navigation.sidenav", ["ngMaterial", "parlay.items.search", "parlay.protocols.list_controller", "parlay.settings.dialog", "parlay.items.workspaces"])
-        .controller("ParlayNavigationSidenavController", ["$mdSidenav", "$mdDialog", "$state", "PromenadeBroker", ParlayNavigationSidenavController]);
 
 }());

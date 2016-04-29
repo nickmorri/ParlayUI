@@ -1,0 +1,120 @@
+<md-dialog aria-label="{{options.title}}" flex="90" flex-gt-md="70" ng-class="{'md-dialog-fullscreen' : $mdMedia}">
+
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2 style="text-transform: capitalize;">{{options.title}}</h2>
+            <span flex></span>
+            <md-button class="md-icon-button" ng-click="ctrl.hide()" aria-label="Hide dialog">
+                <md-icon ng-md-icon icon="close" aria-label="Close dialog"></md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+        <md-list>
+
+            <md-list-item class="md-2-line" layout="row" layout-align="space-between center">
+
+                <md-icon hide-xs hide-sm hide-md ng-md-icon icon="home"></md-icon>
+
+                <div flex-sm="60" class="md-list-item-text">
+                    <h3>Current {{options.entry}}</h3>
+                    <p ng-pluralize count="ctrl.countActive()" when="{'0': 'empty', '1': '{} {{options.child}}', 'other': '{} {{options.children}}'}"></p>
+                </div>
+
+                <md-button ng-click="ctrl.saveActive()" class="md-secondary md-primary" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" aria-label="Save {{option.entry}}" ng-disabled="ctrl.countActive() <= 0">
+                    <md-tooltip>Save As</md-tooltip>
+                    <span hide show-gt-md>Save As</span>
+                    <md-icon hide-gt-md ng-md-icon icon="save"></md-icon>
+                </md-button>
+
+                <md-button ng-click="ctrl.clearActive()" class="md-secondary md-warn" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" aria-label="Clear {{option.entry}}" ng-disabled="ctrl.countActive() <= 0">
+                    <md-tooltip>Clear {{option.entry}}</md-tooltip>
+                    <span hide show-gt-md>Clear</span>
+                    <md-icon hide-gt-md ng-md-icon icon="clear"></md-icon>
+                </md-button>
+
+            </md-list-item>
+
+            <md-list-item class="md-3-line" layout="row" layout-align="space-between center" ng-if="ctrl.getAutosave()">
+
+                <md-icon hide-xs hide-sm hide-md ng-md-icon icon="history"></md-icon>
+
+                <div flex-sm="60" class="md-list-item-text">
+                    <h3>Autosaved {{options.entry}}</h3>
+                    <h4 ng-pluralize count="ctrl.getAutosave().count" when="{'0': 'empty', '1': '{} {{options.child}}', 'other': '{} {{options.children}}'}"></h4>
+                    <p am-time-ago="ctrl.getAutosave().timestamp" title="{{ctrl.getAutosave().timestamp}}"></p>
+                </div>
+
+                <md-button ng-click="ctrl.loadEntry(ctrl.getAutosave())" class="md-secondary md-primary" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" aria-label="Load {{options.entry}}">
+                    <md-tooltip>Load {{options.entry}}</md-tooltip>
+                    <span hide show-gt-md>Load</span>
+                    <md-icon hide-gt-md ng-md-icon icon="open_in_browser"></md-icon>
+                </md-button>
+
+                <md-button ng-click="ctrl.deleteEntry(ctrl.getAutosave())" class="md-secondary md-warn" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" aria-label="Delete {{options.entry}}">
+                    <md-tooltip>Delete {{options.entry}}</md-tooltip>
+                    <span hide show-gt-md>Delete</span>
+                    <md-icon hide-gt-md ng-md-icon icon="delete"></md-icon>
+                </md-button>
+
+            </md-list-item>
+
+            <md-subheader ng-show="ctrl.getSaved().length">Saved {{option.entries}}</md-subheader>
+
+            <md-list-item class="md-3-line" layout="row" layout-align="space-between center" ng-repeat="entry in ctrl.getSaved() | orderBy:'-timestamp'">
+
+                <md-icon hide-xs hide-sm hide-md ng-if="$index === 0" ng-md-icon icon="dashboard"></md-icon>
+
+                <div flex-sm="60" class="md-list-item-text" ng-class="{'md-offset': $index !== 0 && $mdMedia('gt-md')}">
+                    <h3>{{entry.name}}</h3>
+                    <h4 ng-pluralize count="entry.count" when="{'0': 'empty', '1': '{} {{options.child}}', 'other': '{} {{options.children}}'}"></h4>
+                    <p am-time-ago="entry.timestamp" title="{{entry.timestamp}}"></p>
+                </div>
+
+                <md-button ng-click="ctrl.loadEntry(entry)" class="md-secondary md-primary" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" aria-label="Load {{option.entry}}">
+                    <md-tooltip>Load {{option.entry}}</md-tooltip>
+                    <span hide show-gt-md>Load</span>
+                    <md-icon hide-gt-md ng-md-icon icon="open_in_browser"></md-icon>
+                </md-button>
+
+                <md-button ng-click="ctrl.saveEntry(entry)" class="md-secondary md-primary" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" aria-label="Save {{option.entry}}" ng-disabled="ctrl.countActive() === 0" >
+                    <md-tooltip>Save {{option.entry}}</md-tooltip>
+                    <span hide show-gt-md>Save</span>
+                    <md-icon hide-gt-md ng-md-icon icon="save"></md-icon>
+                </md-button>
+
+                <md-button ng-click="ctrl.deleteEntry(entry)" class="md-secondary md-warn" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" aria-label="Delete {{option.entry}}">
+                    <md-tooltip>Delete {{option.entry}}</md-tooltip>
+                    <span hide show-gt-md>Delete</span>
+                    <md-icon hide-gt-md ng-md-icon icon="delete"></md-icon>
+                </md-button>
+
+            </md-list-item>
+
+        </md-list>
+    </md-dialog-content>
+
+    <md-dialog-actions>
+
+        <!--Hidden file input that is triggered on md-list-item click-->
+        <input type="file" style="visibility:hidden" custom-on-change="ctrl.fileChanged" />
+
+        <md-button ng-click="ctrl.clearSaved($event)" ng-disabled="ctrl.getSaved().length <= 0"  class="md-primary">
+            <md-tooltip>Clear saved {{option.entries}}</md-tooltip>
+            Clear
+        </md-button>
+
+        <md-button ng-click="ctrl.exportSaved()" ng-disabled="ctrl.getSaved().length <= 0"  class="md-primary">
+            <md-tooltip>Export saved {{option.entries}}</md-tooltip>
+            Export
+        </md-button>
+
+        <md-button ng-click="ctrl.importSaved($event)" class="md-primary">
+            <md-tooltip>Import saved {{option.entries}}</md-tooltip>
+            Import
+        </md-button>
+
+    </md-dialog-actions>
+
+</md-dialog>

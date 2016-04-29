@@ -21,10 +21,10 @@
      * @param {AngularJS $interval} $interval - A AngularJS service that is analogous to setInterval.
      * @param {Material Angular Service} $mdMedia - Media size detection service.
      * @param {Parlay Service} ParlayUtility - Service that provides utility functions.
-     * @param {Parlay Service} ParlayPersistence - Service that provides automatic persistence of scope variables to localStorage.
+     * @param {Parlay Service} ParlayItemPersistence - Service that provides automatic persistence of scope variables to localStorage.
      */
-    PromenadeStandardItemCardGraphTabController.$inject = ["$scope", "$mdDialog", "$interval", "ParlayUtility", "ParlayPersistence"];
-    function PromenadeStandardItemCardGraphTabController($scope, $mdDialog, $interval, ParlayUtility, ParlayPersistence) {
+    PromenadeStandardItemCardGraphTabController.$inject = ["$scope", "$mdDialog", "$interval", "ParlayUtility", "ParlayItemPersistence"];
+    function PromenadeStandardItemCardGraphTabController($scope, $mdDialog, $interval, ParlayUtility, ParlayItemPersistence) {
 
         this.enabled_streams = [];
 
@@ -32,7 +32,7 @@
         var directive_name = 'parlayItemCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
 
         // Persist enabled streams across workspaces.
-        ParlayPersistence.monitor(directive_name, "ctrl.enabled_streams", $scope);
+        ParlayItemPersistence.monitor(directive_name, "ctrl.enabled_streams", $scope);
 
         this.streamColors = [];
 

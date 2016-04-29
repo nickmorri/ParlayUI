@@ -1,14 +1,14 @@
 (function () {
 	"use strict";
 
-    var module_dependencies = ["parlay.protocols.manager", "promenade.broker", "parlay.store.persistence"];
+    var module_dependencies = ["parlay.protocols.manager", "promenade.broker", "parlay.item.persistence"];
 
     angular
         .module("parlay.items.manager", module_dependencies)
         .factory("ParlayItemManager", ParlayItemManagerFactory);
 
-    ParlayItemManagerFactory.$inject = ["PromenadeBroker", "ParlayProtocolManager", "ParlayPersistence", "$window"];
-	function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager, ParlayPersistence, $window) {
+    ParlayItemManagerFactory.$inject = ["PromenadeBroker", "ParlayProtocolManager", "ParlayItemPersistence", "$window"];
+	function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager, ParlayItemPersistence, $window) {
 
 		// Items currently active in the workspace.
 		var active_items = [];
@@ -120,7 +120,7 @@
 
 			var old_directive = 'parlayItemCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
 
-			this.activateItem(container.ref, new_uid, ParlayPersistence.collectDirective(old_directive), index + 1);
+			this.activateItem(container.ref, new_uid, ParlayItemPersistence.collectDirective(old_directive), index + 1);
 		};
 
 		/**
@@ -136,7 +136,7 @@
 		 * @param {Object} workspace - Workspace container Object.
 		 */
 		ParlayItemManager.prototype.saveWorkspace = function (workspace) {
-			ParlayPersistence.store(workspace.name);
+			ParlayItemPersistence.store(workspace.name);
 		};
 
 		/**
@@ -191,7 +191,7 @@
 		 */
 		ParlayItemManager.prototype.autoSave = function() {
 			if (this.hasActiveItems()) {
-				ParlayPersistence.store("AutoSave", true);
+				ParlayItemPersistence.store("AutoSave", true);
 			}
 		};
 

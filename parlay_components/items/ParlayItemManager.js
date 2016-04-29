@@ -86,8 +86,8 @@
                 };
             });
 
-            var loaded_entries = [];
-            var failed_entries = [];
+            var loaded_items = [];
+            var failed_items = [];
 
             // Add each saved card to the workspace if their exists a valid available item.
             containers.forEach(function (container) {
@@ -95,17 +95,17 @@
                     return container.name === item.name;
                 });
                 if (item !== undefined) {
-                    loaded_entries.push(container);
+                    loaded_items.push(container);
                     this.activateItem(item, container.uid, container.stored_values);
                 }
                 else {
-                    failed_entries.push(container);
+                    failed_items.push(container);
                 }
             }, this);
 
             return {
-                loaded_entries: loaded_entries,
-                failed_entries: failed_entries
+                loaded_items: loaded_items,
+                failed_items: failed_items
             };
 
         };

@@ -302,12 +302,12 @@
     /**
      * Directive constructor for PromenadeStandardItemCardCommandContainer.
      * @param {AngularJS Service} RecursionHelper - Allows recursive nesting of this directive within itself for sub field support.
-     * @param {Parlay Service} ParlayPersistence - Allows directive to persist values that it should retain between sessions.
+     * @param {Parlay Service} ParlayItemPersistence - Allows directive to persist values that it should retain between sessions.
      * @param {Parlay Service} ParlayUtility - Parlay Utility Service.
      * @returns {Object} - Directive configuration.
      */
-    PromenadeStandardItemCardCommandContainer.$inject = ["RecursionHelper", "ParlayPersistence", "ParlayUtility"];
-    function PromenadeStandardItemCardCommandContainer(RecursionHelper, ParlayPersistence, ParlayUtility) {
+    PromenadeStandardItemCardCommandContainer.$inject = ["RecursionHelper", "ParlayItemPersistence", "ParlayUtility"];
+    function PromenadeStandardItemCardCommandContainer(RecursionHelper, ParlayItemPersistence, ParlayUtility) {
         return {
             scope: {
                 wrapper: '=',
@@ -323,7 +323,7 @@
                 var uuid = 0; // unique index for chip objects so that even chips with the same value will be 'unique'
                 var max_safe_int = 9007199254740990; // per the ECMAScript2015 spec
 
-                ParlayPersistence.monitor(directive_name, "wrapper.message", $scope, function (value) {
+                ParlayItemPersistence.monitor(directive_name, "wrapper.message", $scope, function (value) {
 
                     var message = $scope.wrapper.message;
 

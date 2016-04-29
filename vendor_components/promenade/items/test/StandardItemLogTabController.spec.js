@@ -6,13 +6,13 @@
         beforeEach(module("promenade.items.standarditem.log"));
 
         describe("PromenadeStandardItemLogController", function () {
-            var $scope, controller, ParlayPersistence;
+            var $scope, controller, ParlayItemPersistence;
 
-            beforeEach(inject(function ($rootScope, $controller, _ParlayPersistence_) {
+            beforeEach(inject(function ($rootScope, $controller, _ParlayItemPersistence_) {
                 $scope = $rootScope.$new();
                 $scope.container = {ref: {name: "test"}, uid: 100};
-                ParlayPersistence = _ParlayPersistence_;
-                spyOn(ParlayPersistence, "monitor").and.callThrough();
+                ParlayItemPersistence = _ParlayItemPersistence_;
+                spyOn(ParlayItemPersistence, "monitor").and.callThrough();
                 controller = $controller("PromenadeStandardItemCardLogTabController", {$scope: $scope});
                 controller.item = {
                     log: [{
@@ -27,7 +27,7 @@
 
             it("has initial values", function () {
                 expect(controller.filter_text).toBe(null);
-                expect(ParlayPersistence.monitor).toHaveBeenCalledWith("parlayItemCard.test_100", "filter_text", $scope);
+                expect(ParlayItemPersistence.monitor).toHaveBeenCalledWith("parlayItemCard.test_100", "filter_text", $scope);
             });
 
             it("getLog", function () {

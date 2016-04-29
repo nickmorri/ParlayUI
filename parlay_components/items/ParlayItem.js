@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["ngMaterial", "ngMessages", "ngMdIcons", "templates-main", "parlay.store.persistence", "parlay.utility"];
+    var module_dependencies = ["ngMaterial", "ngMessages", "ngMdIcons", "templates-main", "parlay.item.persistence", "parlay.utility"];
 
     angular
         .module("parlay.items.item", module_dependencies)
@@ -113,13 +113,13 @@
     /**
      * @name ParlayItemCard
      * @param $compile - AngularJS service used to create a template function used to link scope and template.
-     * @param ParlayPersistence - Parlay service used to persist scope values into local storage.
+     * @param ParlayItemPersistence - Parlay service used to persist scope values into local storage.
      * @description
      * Directive that displays data from a particular ParlayItem.
      * @returns AngularJS directive
      */
-    ParlayItemCard.$inject = ["$compile", "ParlayPersistence"];
-    function ParlayItemCard ($compile, ParlayPersistence) {
+    ParlayItemCard.$inject = ["$compile", "ParlayItemPersistence"];
+    function ParlayItemCard ($compile, ParlayItemPersistence) {
         return {
             templateUrl: "../parlay_components/items/directives/parlay-item-card.html",
             link: function (scope, element) {
@@ -133,7 +133,7 @@
                 var directive_name = "parlayItemCard." + scope.item.name.replace(" ", "_") + "_" + scope.container.uid;
 
                 // Container used to hold the names of the currently active directives.
-                // Allows for ParlayPersistence to mirror the active directives to local storage.
+                // Allows for ParlayItemPersistence to mirror the active directives to local storage.
                 scope.active_directives = {};
 
                 /**
@@ -163,10 +163,10 @@
                     else throw new Error("Attempted to deactivate inactive directive");
                 };
 
-                // Using ParlayPersistence we will first attempt to restore these values then we will record them to ParlayStore.
-                ParlayPersistence.monitor(directive_name, "$index", scope);
-                ParlayPersistence.monitor(directive_name, "active_tab_index", scope);
-                ParlayPersistence.monitor(directive_name, "active_directives", scope);
+                // Using ParlayItemPersistence we will first attempt to restore these values then we will record them to ParlayStore.
+                ParlayItemPersistence.monitor(directive_name, "$index", scope);
+                ParlayItemPersistence.monitor(directive_name, "active_tab_index", scope);
+                ParlayItemPersistence.monitor(directive_name, "active_directives", scope);
 
                 /**
                  * Setup drag event handlers to allow cards to by rearranged by dragging.
@@ -261,11 +261,11 @@
                     });
                 }
 
-                // Wait for ParlayPersistence to restore active_directives on scope.
+                // Wait for ParlayItemPersistence to restore active_directives on scope.
                 var one_time = scope.$watch("active_directives", function (newValue) {
                     // Call the deregistration function for this one time listener.
                     one_time();
-                    // If active_directives has been restored by ParlayPersistence then we should restore these directives.
+                    // If active_directives has been restored by ParlayItemPersistence then we should restore these directives.
                     // Otherwise we should use the defaults.
                     if (newValue !== undefined && Object.keys(newValue).length > 0) restoreDirectives();
                     else defaultDirectives();

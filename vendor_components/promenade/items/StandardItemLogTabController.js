@@ -2,7 +2,7 @@
     "use strict";
 
     var module_name = "promenade.items.standarditem.log";
-    var module_dependencies = ['parlay.utility', 'parlay.notification', 'parlay.store.persistence', 'luegg.directives'];
+    var module_dependencies = ['parlay.utility', 'parlay.notification', 'parlay.item.persistence', 'luegg.directives'];
 
     // Register this module as a StandardItem dependency.
     standard_item_dependencies.push(module_name);
@@ -17,8 +17,8 @@
     /**
      * Controller constructor for PromenadeStandardItemCardLogTabController.
      */
-    PromenadeStandardItemCardLogTabController.$inject = ['$scope', 'ParlayPersistence', 'ParlayUtility'];
-    function PromenadeStandardItemCardLogTabController($scope, ParlayPersistence, ParlayUtility) {
+    PromenadeStandardItemCardLogTabController.$inject = ['$scope', 'ParlayItemPersistence', 'ParlayUtility'];
+    function PromenadeStandardItemCardLogTabController($scope, ParlayItemPersistence, ParlayUtility) {
 
         // Initially we don't want to filter logged messages by anything.
         this.filter_text = null;
@@ -28,7 +28,7 @@
 
         var container = ParlayUtility.relevantScope($scope, 'container').container;
         var directive_name = 'parlayItemCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
-        ParlayPersistence.monitor(directive_name, "filter_text", $scope);
+        ParlayItemPersistence.monitor(directive_name, "filter_text", $scope);
     }
 
     /**

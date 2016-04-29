@@ -1,20 +1,20 @@
 (function () {
     "use strict";
     
-    describe("parlay.store.persistence", function() {
+    describe("parlay.item.persistence", function() {
     
-        beforeEach(module("parlay.store.persistence"));
+        beforeEach(module("parlay.item.persistence"));
         
-        describe("ParlayPersistence", function () {
-            var $scope, ParlayPersistence, ParlayStore;
+        describe("ParlayItemPersistence", function () {
+            var $scope, ParlayItemPersistence, ParlayStore;
 
-            beforeEach(inject(function(_$rootScope_, _ParlayPersistence_, _ParlayStore_) {
+            beforeEach(inject(function(_$rootScope_, _ParlayItemPersistence_, _ParlayStore_) {
                 /*jshint newcap: false */
                 $scope = _$rootScope_.$new();
-                ParlayPersistence = _ParlayPersistence_;
+                ParlayItemPersistence = _ParlayItemPersistence_;
                 ParlayStore = _ParlayStore_;
             }));
-            
+
             it("restores attributes", function () {
 
                 $scope.container = {
@@ -30,8 +30,8 @@
                 expect($scope.$index).toBeUndefined();
                 expect($scope.active_tab_index).toBeUndefined();
 
-                ParlayPersistence.monitor("parlayItem", "$index", $scope);
-                ParlayPersistence.monitor("parlayItem", "active_tab_index", $scope);
+                ParlayItemPersistence.monitor("parlayItem", "$index", $scope);
+                ParlayItemPersistence.monitor("parlayItem", "active_tab_index", $scope);
 
                 expect($scope.$index).toBe(0);
                 expect($scope.active_tab_index).toBe(0);
@@ -40,13 +40,13 @@
             
             it("persists attributes", function () {
 
-	            ParlayPersistence.monitor("parlayItem", "$index", $scope);
-                ParlayPersistence.monitor("parlayItem", "active_tab_index", $scope);
+	            ParlayItemPersistence.monitor("parlayItem", "$index", $scope);
+                ParlayItemPersistence.monitor("parlayItem", "active_tab_index", $scope);
 	            
 	            $scope.$index = 10;
                 $scope.active_tab_index = 10;
 
-                ParlayPersistence.store("test");
+                ParlayItemPersistence.store("test");
 
                 /*jshint newcap: false */
                 expect(ParlayStore("items").get("test").name).toEqual('test');
@@ -62,13 +62,13 @@
             });
 
             it("removes attribute registration", function () {
-                ParlayPersistence.monitor("parlayItem", "$index", $scope);
-                ParlayPersistence.monitor("parlayItem", "active_tab_index", $scope);
+                ParlayItemPersistence.monitor("parlayItem", "$index", $scope);
+                ParlayItemPersistence.monitor("parlayItem", "active_tab_index", $scope);
 
                 $scope.$index = 10;
                 $scope.active_tab_index = 10;
 
-                ParlayPersistence.store("test");
+                ParlayItemPersistence.store("test");
 
                 /*jshint newcap: false */
                 expect(ParlayStore("items").get("test").name).toEqual('test');
@@ -81,12 +81,12 @@
                     }
                 });
 
-                ParlayPersistence.remove("parlayItem", "$index");
+                ParlayItemPersistence.remove("parlayItem", "$index");
 
                 $scope.$index = 20;
                 $scope.active_tab_index = 20;
 
-                ParlayPersistence.store("test");
+                ParlayItemPersistence.store("test");
 
                 /*jshint newcap: false */
                 expect(ParlayStore("items").get("test").name).toEqual('test');
@@ -101,21 +101,21 @@
 
             it("collects all registrations", function () {
 
-                expect(ParlayPersistence.collectAll()).toEqual({});
+                expect(ParlayItemPersistence.collectAll()).toEqual({});
 
                 $scope.$index1 = 10;
                 $scope.active_tab_index1 = 10;
 
-                ParlayPersistence.monitor('parlayItem1', "$index1", $scope);
-                ParlayPersistence.monitor('parlayItem1', "active_tab_index1", $scope);
+                ParlayItemPersistence.monitor('parlayItem1', "$index1", $scope);
+                ParlayItemPersistence.monitor('parlayItem1', "active_tab_index1", $scope);
 
                 $scope.$index2 = 10;
                 $scope.active_tab_index2 = 10;
 
-                ParlayPersistence.monitor('parlayItem2', "$index2", $scope);
-                ParlayPersistence.monitor('parlayItem2', "active_tab_index2", $scope);
+                ParlayItemPersistence.monitor('parlayItem2', "$index2", $scope);
+                ParlayItemPersistence.monitor('parlayItem2', "active_tab_index2", $scope);
 
-                expect(ParlayPersistence.collectAll()).toEqual({
+                expect(ParlayItemPersistence.collectAll()).toEqual({
                     parlayItem1: {
                         $index1: 10,
                         active_tab_index1: 10
@@ -130,26 +130,26 @@
 
             it("collects all attributes for a directive", function () {
 
-                expect(ParlayPersistence.collectAll()).toEqual({});
+                expect(ParlayItemPersistence.collectAll()).toEqual({});
 
                 $scope.$index1 = 10;
                 $scope.active_tab_index1 = 10;
 
-                ParlayPersistence.monitor('parlayItem1', "$index1", $scope);
-                ParlayPersistence.monitor('parlayItem1', "active_tab_index1", $scope);
+                ParlayItemPersistence.monitor('parlayItem1', "$index1", $scope);
+                ParlayItemPersistence.monitor('parlayItem1', "active_tab_index1", $scope);
 
                 $scope.$index2 = 10;
                 $scope.active_tab_index2 = 10;
 
-                ParlayPersistence.monitor('parlayItem2', "$index2", $scope);
-                ParlayPersistence.monitor('parlayItem2', "active_tab_index2", $scope);
+                ParlayItemPersistence.monitor('parlayItem2', "$index2", $scope);
+                ParlayItemPersistence.monitor('parlayItem2', "active_tab_index2", $scope);
 
-                expect(ParlayPersistence.collectDirective('parlayItem1')).toEqual({
+                expect(ParlayItemPersistence.collectDirective('parlayItem1')).toEqual({
                     $index1: 10,
                     active_tab_index1: 10
                 });
 
-                expect(ParlayPersistence.collectDirective('parlayItem2')).toEqual({
+                expect(ParlayItemPersistence.collectDirective('parlayItem2')).toEqual({
                     $index2: 10,
                     active_tab_index2: 10
                 });
@@ -158,13 +158,13 @@
 
             it("gets all registrations for a directive", function () {
 
-                expect(ParlayPersistence.getRegistration('parlayItem1')).toEqual([]);
+                expect(ParlayItemPersistence.getRegistration('parlayItem1')).toEqual([]);
 
                 $scope.$index = 10;
 
-                ParlayPersistence.monitor('parlayItem1', "$index", $scope);
+                ParlayItemPersistence.monitor('parlayItem1', "$index", $scope);
 
-                expect(ParlayPersistence.getRegistration('parlayItem1')[0]).toEqual(jasmine.objectContaining({
+                expect(ParlayItemPersistence.getRegistration('parlayItem1')[0]).toEqual(jasmine.objectContaining({
                     $scope: jasmine.any(Object),
                     directive: 'parlayItem1',
                     attribute: '$index'

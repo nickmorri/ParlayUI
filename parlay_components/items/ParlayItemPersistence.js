@@ -4,11 +4,11 @@
     var module_dependencies = ['parlay.store'];
 
     angular
-        .module('parlay.store.persistence', module_dependencies)
-        .factory('ParlayPersistence', ParlayPersistenceFactory);
+        .module('parlay.item.persistence', module_dependencies)
+        .factory('ParlayItemPersistence', ParlayItemPersistenceFactory);
 
-    ParlayPersistenceFactory.$inject = ["ParlayStore"];
-    function ParlayPersistenceFactory (ParlayStore) {
+    ParlayItemPersistenceFactory.$inject = ["ParlayStore"];
+    function ParlayItemPersistenceFactory (ParlayStore) {
 
         /**
          * Given a key that belongs to the given scope search for the parent that belongs to the key.
@@ -41,7 +41,7 @@
          * Parlay service for persistence of directive $scope attributes to ParlayStore.
          * @constructor
          */
-        function ParlayPersistence() {
+        function ParlayItemPersistence() {
 
             // Holds key/value pairs where the value is an Object that contains the directive name, attribute name and
             // a reference to the $scope object where the attribute resides.
@@ -60,7 +60,7 @@
          * @param {Function} custom_restore - Function that will perform the $scope variable restoration.
          * @returns {Function} - Deregistration function, will remove the registration established by the monitor request.
          */
-        ParlayPersistence.prototype.monitor = function (directive, attribute, $scope, custom_restore) {
+        ParlayItemPersistence.prototype.monitor = function (directive, attribute, $scope, custom_restore) {
 
             // Register an Object with the directive name, attribute and $scope.
             this.registrations[directive + "{" + attribute + "}"] = {
@@ -131,7 +131,7 @@
          * @param {String} directive - Name of the directive where a registration has been made.
          * @param {String} attribute - Name of the attribute that was been requested for persistence.
          */
-        ParlayPersistence.prototype.remove = function (directive, attribute) {
+        ParlayItemPersistence.prototype.remove = function (directive, attribute) {
             delete this.registrations[directive + "{" + attribute + "}"];
         };
 
@@ -139,7 +139,7 @@
          * Collects the current values of all attributes that are being monitored.
          * @returns {Object} - Object that maps directive{attribute} = value
          */
-        ParlayPersistence.prototype.collectAll = function () {
+        ParlayItemPersistence.prototype.collectAll = function () {
             var directives = [];
 
             Object.keys(this.registrations).forEach(function (key) {
@@ -159,7 +159,7 @@
          * @param {String} directive - Name of the directive where a registration has been made.
          * @returns {Object} - Object that maps attribute = value
          */
-        ParlayPersistence.prototype.collectDirective = function (directive) {
+        ParlayItemPersistence.prototype.collectDirective = function (directive) {
             return this.getRegistration(directive).reduce(function (accumulator, registration) {
                 // Search for the $scope Object where the attribute exists.
                 var relevant_scope = find_parent(registration.attribute, find_scope(registration.attribute, registration.$scope));
@@ -180,7 +180,7 @@
          * @param {String} directive - Name of the directive where a registration has been made.
          * @returns {Array} - Array of monitored attribute registrations.
          */
-        ParlayPersistence.prototype.getRegistration = function (directive) {
+        ParlayItemPersistence.prototype.getRegistration = function (directive) {
             return Object.keys(this.registrations).filter(function (key) {
                 // Return only registrations that begin with the given directive name.
                 return key.indexOf(directive) === 0;
@@ -199,7 +199,7 @@
          * @param {Boolean} autosave - If true this save was triggered automatically by the browser. Otherwise the user
          * requested it.
          */
-        ParlayPersistence.prototype.store = function (name, autosave) {
+        ParlayItemPersistence.prototype.store = function (name, autosave) {
             this.items_store.set(name, {
                 name: name,
                 timestamp: new Date(),
@@ -209,7 +209,7 @@
 
         };
 
-        return new ParlayPersistence();
+        return new ParlayItemPersistence();
     }
 
 }());

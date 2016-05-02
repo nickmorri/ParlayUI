@@ -26,12 +26,11 @@
                     ["transformed-value", "item.configuration.transformer.value"],
                     ["widgets-ctrl", "widgetsCtrl"],
                     ["edit", "edit"],
-                    ["index", "$index"],
+                    ["$index", "$index"],
                     ["editing", "widgetsCtrl.manager.editing"]
                 ];
 
                 function restore (item) {
-                    scope.$index = item.index;
                     compileWrapper(attributes.map(function (attribute) {
                         return attribute[0] + "='" + attribute[1] + "'";
                     }).join(" "))(angular.copy(item.configuration.template));
@@ -150,10 +149,6 @@
                             scope.item.configuration.handler.detach();
                         }
                     }
-                });
-
-                scope.$watch("$index", function ($index) {
-                    scope.item.index = $index;
                 });
 
                 if (!!scope.item.configuration) {

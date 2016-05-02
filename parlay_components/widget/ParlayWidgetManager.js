@@ -166,8 +166,9 @@
             this.active_widgets.push({});
         };
 
-        ParlayWidgetManager.prototype.remove = function (index) {
-            this.active_widgets.splice(index, 1);
+        ParlayWidgetManager.prototype.remove = function ($index) {
+            this.active_widgets.splice($index, 1);
+        };
         };
         
         return new ParlayWidgetManager();

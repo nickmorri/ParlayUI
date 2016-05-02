@@ -25,8 +25,9 @@
         this.manager.add();
     };
 
-    ParlayWidgetCanvasController.prototype.remove = function (index) {
-        this.manager.remove(index);
+    ParlayWidgetCanvasController.prototype.remove = function ($index) {
+        this.manager.remove($index);
+    };
     };
 
     function ParlayEmptyWidgetsWorkspacePlaceholder () {

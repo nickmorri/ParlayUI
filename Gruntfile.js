@@ -394,7 +394,6 @@ module.exports = function (grunt) {
 	    'bower-install-simple:dist',
         'bower_concat:dist',
 	    'html2js',
-	    'karma:dev',
 	    'uglify:dist',
 	    'karma:dist',
 	    'cssmin:dist',

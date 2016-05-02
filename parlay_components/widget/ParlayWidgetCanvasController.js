@@ -5,7 +5,8 @@
 
     angular
         .module("parlay.widget.canvascontroller", module_dependencies)
-        .controller("ParlayWidgetCanvasController", ParlayWidgetCanvasController);
+        .controller("ParlayWidgetCanvasController", ParlayWidgetCanvasController)
+        .directive("parlayEmptyWidgetsWorkspacePlaceholder", ParlayEmptyWidgetsWorkspacePlaceholder);
 
     ParlayWidgetCanvasController.$inject = ["ParlayWidgetManager"];
     function ParlayWidgetCanvasController (ParlayWidgetManager) {
@@ -23,5 +24,11 @@
     ParlayWidgetCanvasController.prototype.remove = function (index) {
         this.manager.remove(index);
     };
+
+    function ParlayEmptyWidgetsWorkspacePlaceholder () {
+        return {
+            templateUrl: '../parlay_components/widget/directives/parlay-empty-widget-workspace-placeholder.html'
+        };
+    }
     
 }());

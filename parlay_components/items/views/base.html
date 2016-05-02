@@ -2,7 +2,7 @@
 <!-- layout-align="space-around start" specifies that the children will be aligned with space-around in the row, start specifies how they will be aligned perpendicular to the layout's direction -->
 
 <md-content flex layout-wrap layout="row" layout-align="space-around start" class="md-padding">
-    <parlay-empty-workspace-placeholder flex-xs="100" flex-sm="50" flex-md="50" flex="33" ng-hide="itemCtrl.hasItems()"></parlay-empty-workspace-placeholder>
+    <parlay-empty-items-workspace-placeholder flex-xs="100" flex-sm="50" flex-md="50" flex="33" ng-hide="itemCtrl.hasItems()"></parlay-empty-items-workspace-placeholder>
     <parlay-item-card flex-xs="100" flex-sm="50" flex-md="50" flex="33" ng-repeat="container in itemCtrl.filterItems() track by container.uid"></parlay-item-card>
 </md-content>
 

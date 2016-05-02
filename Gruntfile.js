@@ -220,7 +220,7 @@ module.exports = function (grunt) {
 					'reporters': ['progress'],					
 					'files': [
                         mainBowerFiles(),
-			            '<%= meta.dist_destination %>/<%= pkg.namelower %>.min.js',
+			            '<%= meta.tmp_destination %>/<%= pkg.namelower %>.min.js',
 			            '<%= meta.mocks %>',
 			            '<%= meta.tests %>'
 					]
@@ -318,8 +318,8 @@ module.exports = function (grunt) {
 			},
 			'dist': {
 				'files': {
-					'<%= meta.dist_destination %>/<%= pkg.namelower %>.min.js': ['<%= meta.source %>', '<%= meta.vendorComponents %>', '<%= meta.compiledHtml %>'],
-                    '<%= meta.dist_destination %>/lib.min.js': '<%= meta.tmp_destination %>/lib.js'
+					'<%= meta.tmp_destination %>/<%= pkg.namelower %>.min.js': ['<%= meta.source %>', '<%= meta.vendorComponents %>', '<%= meta.compiledHtml %>'],
+                    '<%= meta.tmp_destination %>/lib.min.js': '<%= meta.tmp_destination %>/lib.js'
 				}
 			}
 		},
@@ -331,12 +331,12 @@ module.exports = function (grunt) {
 			},
 			'dist': {
 				'files': {
-                    '<%= meta.dist_destination %>/<%= pkg.namelower %>.min.css': '<%= meta.stylesheets %>',
-                    '<%= meta.dist_destination %>/lib.min.css': '<%= meta.tmp_destination %>/lib.css'
+                    '<%= meta.tmp_destination %>/<%= pkg.namelower %>.min.css': '<%= meta.stylesheets %>',
+                    '<%= meta.tmp_destination %>/lib.min.css': '<%= meta.tmp_destination %>/lib.css'
                 }
 			},
 			'dev': {
-				'files': {'<%= meta.dev_destination %>/<%= pkg.namelower %>.min.css': '<%= meta.stylesheets %>'}
+				'files': {'<%= meta.tmp_destination %>/<%= pkg.namelower %>.min.css': '<%= meta.stylesheets %>'}
 			}
 		},
 

@@ -29,7 +29,9 @@
     		describe("initial state", function () {
 
 	    		it("getting saved entrys", function () {
-		    		expect(ParlayGenericSaveLoadDialogController.getSaved()).toEqual([]);
+					spyOn(manager, "getSaved");
+		    		ParlayGenericSaveLoadDialogController.getSaved();
+					expect(manager.getSaved).toHaveBeenCalled();
 	    		});
 	    		
 	    		it("does not have items in current entry", function () {

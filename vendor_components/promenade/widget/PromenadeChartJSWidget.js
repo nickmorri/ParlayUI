@@ -31,7 +31,7 @@
 
             function values(items) {
                 return items.map(function (container) {
-                    return {name: container.item.name, value: container.item.value};
+                    return {name: container.item_name, value: container.value};
                 }).concat([{name: "transformed_value", value: scope.transformedValue}]);
             }
 

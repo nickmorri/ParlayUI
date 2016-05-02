@@ -28,7 +28,7 @@
 
             function values() {
                 return scope.items.map(function (container) {
-                    return {name: container.item.name, value: container.item.value};
+                    return {name: container.item_name, value: container.value};
                 }).concat([{name: "transformed_value", value: scope.transformedValue}]);
             }
 
@@ -64,7 +64,7 @@
                 chart.streamTo(element.find("canvas")[0], chart_interval);
 
                 newValue.map(function (item) {
-                    return item.item.name;
+                    return item.item_name;
                 }).forEach(function (name) {
                     lines[name] = new TimeSeries();
                     var rgb = randColor.pop().rgb();

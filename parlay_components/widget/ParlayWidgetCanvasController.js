@@ -16,6 +16,10 @@
     ParlayWidgetCanvasController.prototype.getActiveWidgets = function () {
         return this.manager.getActiveWidgets();
     };
+    
+    ParlayWidgetCanvasController.prototype.hasWidgets = function () {
+        return this.getActiveWidgets().length > 0;  
+    };
 
     ParlayWidgetCanvasController.prototype.add = function () {
         this.manager.add();

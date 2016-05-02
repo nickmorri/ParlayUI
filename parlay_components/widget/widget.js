@@ -1,8 +1,6 @@
 var widgetRegistration = (function () {
     "use strict";
 
-    // Holds the module dependencies for ParlayWidget. Creating this Array on the Global scope allows for other modules,
-    // such as vendor defined widgets to include themselves as ParlayWidget dependencies.
     var module_dependencies = ["ui.router", "ui.ace", "ngMaterial", "parlay.widget.base", "parlay.widget.canvascontroller", "parlay.settings"];
 
     angular

@@ -292,21 +292,16 @@ module.exports = function (grunt) {
 		
 		'clean': {
 			'dist': '<%= meta.dist_destination %>',
+            'post_dist': ['<%= meta.dist_destination %>/*.css', '<%= meta.dist_destination %>/*.js'],
 			'dev': '<%= meta.dev_destination %>',
 			'tmp': '<%= meta.tmp_destination %>',
 			'coverage': '<%= meta.coverage_destination %>'
 		},
 
 		'copy': {
-			'dist': {
-		        'files': [
-		        	{'expand': true, 'src': '<%= meta.commonFiles %>', 'dest': '<%= meta.dist_destination %>'}
-		        ]
-			},
 			'dev': {
 		        'files': [
-					{'expand': true, 'src': ['<%= meta.source %>', '<%= meta.vendorComponents %>', '<%= meta.compiledHtml %>'], 'dest': '<%= meta.dev_destination %>'},
-					{'expand': true, 'src': '<%= meta.commonFiles %>', 'dest': '<%= meta.dev_destination %>'}
+					{'expand': true, 'src': ['<%= meta.source %>', '<%= meta.vendorComponents %>', '<%= meta.compiledHtml %>'], 'dest': '<%= meta.dev_destination %>'}
 				]
 			}
 		},
@@ -402,10 +397,10 @@ module.exports = function (grunt) {
 	    'karma:dev',
 	    'uglify:dist',
 	    'karma:dist',
-	    'copy:dist',
 	    'cssmin:dist',
-	    'processhtml:dist',
-	    'wiredep:dist'
+        'wiredep:dist',
+        'processhtml:dist',
+        'clean:post_dist'
 	]);
 
 	grunt.registerTask('build', ['dist']);

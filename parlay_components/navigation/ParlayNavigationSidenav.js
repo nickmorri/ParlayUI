@@ -34,6 +34,26 @@
             });
         };
 
+        this.openNotificationSidenav = function () {
+            $mdSidenav("notifications").open();
+        };
+
+        this.openHelpTab = function () {
+            window.open(window.location.origin + "/docs", '_blank').focus();
+        };
+
+        this.openSettingsDialog = function (event) {
+            $mdDialog.show({
+                templateUrl: "../parlay_components/settings/directives/parlay-settings-dialog.html",
+                targetEvent: event,
+                controller: "ParlaySettingsDialogController",
+                controllerAs: "ctrl",
+                clickOutsideToClose: true
+            });
+        };
+
+        // The below methods are only appropriate based on the given state.
+
         this.requestDiscovery = function () {
             PromenadeBroker.requestDiscovery(true);
         };
@@ -60,25 +80,7 @@
                 entries: "workspaces",
                 title: "workspaces",
                 child: "widget",
-                children: "widgetss"
-            });
-        };
-
-        this.openNotificationSidenav = function () {
-            $mdSidenav("notifications").open();
-        };
-
-        this.openHelpTab = function () {
-            window.open(window.location.origin + "/docs", '_blank').focus();
-        };
-
-        this.openSettingsDialog = function (event) {
-            $mdDialog.show({
-                templateUrl: "../parlay_components/settings/directives/parlay-settings-dialog.html",
-                targetEvent: event,
-                controller: "ParlaySettingsDialogController",
-                controllerAs: "ctrl",
-                clickOutsideToClose: true
+                children: "widgets"
             });
         };
 

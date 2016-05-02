@@ -1,20 +1,10 @@
 <div layout="column">
 
-    <md-toolbar class="md-hue-2">
-        <div class="md-toolbar-tools" layout="row">
-            <h2>Widget Canvas</h2>
-            <span flex></span>
-            <md-button ng-click="widgetsCtrl.save()">Save</md-button>
-            <md-button ng-click="widgetsCtrl.load()">Load</md-button>
-            <md-switch ng-model="editing" aria-label="Editing">{{editing ? "Editing" : "Viewing"}}</md-switch>
-        </div>
-    </md-toolbar>
-
     <div layout="row">
-        <parlay-widget-base ng-repeat="item in widgetsCtrl.items"></parlay-widget-base>
+        <parlay-widget-base ng-repeat="item in widgetsCtrl.getActiveWidgets()"></parlay-widget-base>
     </div>
 
-    <md-button ng-show="editing" class="md-fab md-fab-bottom-right" ng-click="widgetsCtrl.add()">
+    <md-button ng-show="widgetsCtrl.manager.editing" class="md-fab md-fab-bottom-right" ng-click="widgetsCtrl.add()">
         <md-tooltip>Add widget</md-tooltip>
         <md-icon ng-md-icon icon="add"></md-icon>
     </md-button>

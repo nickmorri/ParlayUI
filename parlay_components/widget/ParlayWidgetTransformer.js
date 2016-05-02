@@ -35,7 +35,9 @@
             this.handlers = [];
 
             if (!!initialItems) {
-                initialItems.forEach(this.addItem);
+                initialItems.forEach(function (item) {
+                    this.addItem(item);
+                }, this);
             }
 
         }

@@ -182,6 +182,25 @@
                 return container.uid === uid;
             }), 1);
         };
+
+        ParlayWidgetManager.prototype.duplicate = function (old_uid) {
+            var copy = angular.copy(this.active_widgets.find(function (container) {
+                return container.uid === old_uid;
+            }));
+
+            var new_uid = 0;
+
+            var active_uids = this.active_widgets.map(function (container) {
+                return container.uid;
+            });
+
+            while (active_uids.indexOf(new_uid) !== -1) {
+                new_uid++;
+            }
+
+            copy.uid = new_uid;
+
+            this.active_widgets.push(copy);
         };
         
         return new ParlayWidgetManager();

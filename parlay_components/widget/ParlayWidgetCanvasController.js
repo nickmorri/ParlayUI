@@ -28,6 +28,9 @@
     ParlayWidgetCanvasController.prototype.remove = function (uid) {
         this.manager.remove(uid);
     };
+
+    ParlayWidgetCanvasController.prototype.duplicate = function (uid) {
+        this.manager.duplicate(uid);
     };
 
     function ParlayEmptyWidgetsWorkspacePlaceholder () {

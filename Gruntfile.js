@@ -130,9 +130,6 @@ module.exports = function (grunt) {
         // Wires Bower dependencies into index.html during development.
         // https://github.com/taptapship/wiredep
 		'wiredep': {
-			'dist': {
-				'src': '<%= meta.dist_destination %>/index.html'
-			},
 			'dev': {
 				'src': '<%= meta.dev_destination %>/index.html'
 			}
@@ -401,7 +398,6 @@ module.exports = function (grunt) {
 	    'uglify:dist',
 	    'karma:dist',
 	    'cssmin:dist',
-        'wiredep:dist',
         'processhtml:dist',
         'clean:post_dist'
 	]);

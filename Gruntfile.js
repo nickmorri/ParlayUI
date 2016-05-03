@@ -71,7 +71,12 @@ module.exports = function (grunt) {
 					'bases': ['<%= meta.dev_destination %>'],
 					'livereload': true
 				}
-			}
+			},
+            'dist': {
+                'options' : {
+                    'bases': ['<%= meta.dist_destination %>']
+                }
+            }
 		},
 
         // Installs Bower components listed in bower.json.

@@ -77,7 +77,12 @@ module.exports = function (grunt) {
 					'bases': ['<%= meta.dev_destination %>'],
 					'livereload': true
 				}
-			}
+			},
+            'dist': {
+                'options' : {
+                    'bases': ['<%= meta.dist_destination %>']
+                }
+            }
 		},
 
         // Installs Bower components listed in bower.json.
@@ -428,6 +433,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('test', 'Lints and tests JavaScript files.', [
         'jshint',
+        'csslint:dev',
         'html2js',
         'karma:dev'
     ]);

@@ -131,7 +131,8 @@ module.exports = function (grunt) {
                         "src-noconflict/ext-language_tools.js",
                         "src-noconflict/worker-javascript.js"
                     ],
-                    'jsinterpreter': 'acorn_interpreter.js'
+                    'jsinterpreter': 'acorn_interpreter.js',
+                    "Chart.js": "dist/Chart.bundle.min.js"
                 }
 			}
 		},

@@ -51,7 +51,7 @@ module.exports = function (grunt) {
 		'vendor': getVendors(),
 
 		'meta': {
-			'source': ['app.js', 'parlay_components/*/*.js'],
+			'source': ['parlay_components/*/*.js'],
 			'vendorComponents': getVendorItems(['protocols', 'items', 'widget'], []),
 			'dist_destination': 'dist',
 			'dev_destination': 'dev',
@@ -159,7 +159,7 @@ module.exports = function (grunt) {
                     'interrupt': true
 				},
 				'files': ['<%= meta.source %>', '<%= meta.vendorComponents %>'],
-				'tasks': ['newer:jshint:dev', 'karma:dev', 'newer:copy:dev']
+				'tasks': ['newer:replace:dev', 'newer:jshint:dev', 'karma:dev', 'newer:copy:dev']
 			},
 			'stylesheets': {
 	        	'options': {
@@ -351,7 +351,7 @@ module.exports = function (grunt) {
 			},
 			'dist': {
 				'files': {
-					'<%= meta.tmp_destination %>/<%= pkg.namelower %>.min.js': ['<%= meta.source %>', '<%= meta.vendorComponents %>', '<%= meta.compiledHtml %>'],
+					'<%= meta.tmp_destination %>/<%= pkg.namelower %>.min.js': ['tmp/app.js', '<%= meta.source %>', '<%= meta.vendorComponents %>', '<%= meta.compiledHtml %>'],
                     '<%= meta.tmp_destination %>/lib.min.js': '<%= meta.tmp_destination %>/lib.js'
 				}
 			}
@@ -382,7 +382,38 @@ module.exports = function (grunt) {
 				'src': ['<%= meta.htmlViews %>', '<%= meta.htmlDirectives %>'],
 				'dest': '<%= meta.compiledHtml %>'
 			}
-		}
+		},
+        
+        'replace': {
+            'dev': {
+                'options': {
+                    'patterns': [
+                        {
+                            'match': 'debugEnabled',
+                            'replacement': true
+                        }
+                    ],
+                    'usePrefix': false
+                },
+                'files': [
+                    {'expand': true, 'flatten': true, 'src': 'app.js', 'dest': '<%= meta.dev_destination %>'}
+                ]
+            },
+            'dist': {
+                'options': {
+                    'patterns': [
+                        {
+                            'match': 'debugEnabled',
+                            'replacement': false
+                        }
+                    ],
+                    'usePrefix': false
+                },
+                'files': [
+                    {'expand': true, 'flatten': true, 'src': 'app.js', 'dest': '<%= meta.tmp_destination %>'}
+                ]
+            }
+        }
 
 	});
 	
@@ -394,6 +425,7 @@ module.exports = function (grunt) {
 	    'jshint:dev',
 	    'csslint:dev',
 	    'clean:dev',
+        'replace:dev',
 	    'bower-install-simple:dev',
 	    'bower:dev',
 	    'html2js',
@@ -411,6 +443,7 @@ module.exports = function (grunt) {
 	    'jshint:dist',
 	    'csslint:dist',
 	    'clean:dist',
+        'replace:dist',
 	    'bower-install-simple:dist',
         'bower_concat:dist',
 	    'html2js',

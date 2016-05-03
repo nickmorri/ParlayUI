@@ -125,7 +125,7 @@
             link: function (scope, element) {
 
                 // Setup drag handlers for ParlayItemCard drag and drop rearrange functionality.
-                setupDragHandlers(element);
+                setupDragHandlers(element, scope);
 
                 // Grab the item reference from the container for convenience of using scope.item.
                 scope.item = scope.container.ref;
@@ -172,12 +172,12 @@
                  * Setup drag event handlers to allow cards to by rearranged by dragging.
                  * @param {HTML Element} element - ParlayItemCard HTML element.
                  */
-                function setupDragHandlers(element) {
+                function setupDragHandlers(element, scope) {
 
                     // Fired when drag event begins on a ParlayItemCard.
                     element.on('dragstart', function (event) {
                         // Set the card index in the event.
-                        event.dataTransfer.setData("text/plain", angular.element(element).scope().$index);
+                        event.dataTransfer.setData("text/plain", scope.$index);
 
                         // Specify the type of drop zone that can accept the event.
                         event.dataTransfer.effectAllowed = "link";
@@ -197,7 +197,7 @@
                     // Fired when a ParlayItemCard is dropped on a ParlayItemCard.
                     element.on('drop', function (event) {
                         // Indices of the source and destination ParlayItemCard of the drag event.
-                        var thisIndex = angular.element(element).scope().$index;
+                        var thisIndex = scope.$index;
                         var thatIndex = event.dataTransfer.getData("text/plain");
 
                         // Swap the ParlayItemCards.

@@ -330,7 +330,8 @@ module.exports = function (grunt) {
 				'mangle': false,
 				'compress': true,
 				'sourceMap': false,
-				'preserveComments': false
+				'preserveComments': false,
+                'ASCIIOnly': true
 			},
 			'dist': {
 				'files': {

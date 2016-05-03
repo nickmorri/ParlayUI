@@ -1,0 +1,44 @@
+<md-card class="parlay-item-card">
+    <md-toolbar class="handle" ng-class="{'show-handle': editing}">
+        <div class="md-toolbar-tools">
+            <md-button class="md-fab md-mini" ng-click="togglePause()" aria-label="Pause graph">
+                <md-icon ng-md-icon icon="{{paused ? 'play_arrow' : 'pause'}}"></md-icon>
+            </md-button>
+            <h2>
+                <span ng-repeat="container in items">
+                    {{container.item_name}}<span ng-show="!$last">, </span>
+                </span>
+            </h2>
+            <span flex></span>
+            <md-menu ng-show="editing">
+                <md-button aria-label="Open widget menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
+                    <md-icon ng-md-icon icon="more_vert"></md-icon>
+                </md-button>
+                <md-menu-content width="2">
+                    <md-menu-item>
+                        <md-button ng-click="widgetsCtrl.remove(uid)">
+                            <md-icon ng-md-icon icon="delete"></md-icon>
+                            Delete
+                        </md-button>
+                    </md-menu-item>
+                    <md-menu-item>
+                        <md-button ng-click="edit(false)">
+                            <md-icon ng-md-icon icon="edit"></md-icon>
+                            Edit
+                        </md-button>
+                    </md-menu-item>
+                    <md-menu-item>
+                        <md-button ng-click="widgetsCtrl.duplicate(uid)">
+                            <md-icon ng-md-icon icon="content_copy"></md-icon>
+                            Copy
+                        </md-button>
+                    </md-menu-item>
+                </md-menu-content>
+            </md-menu>
+
+        </div>
+    </md-toolbar>
+
+    <canvas class="chart" width="800" height="800"></canvas>
+
+</md-card>

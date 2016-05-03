@@ -1,14 +1,14 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["ngMaterial", "parlay.items.search", "parlay.protocols.list_controller", "parlay.settings.dialog", "parlay.common.genericsaveloaddialog", "parlay.items.manager"];
+    var module_dependencies = ["ngMaterial", "parlay.items.search", "parlay.protocols.list_controller", "parlay.settings.dialog", "parlay.common.genericsaveloaddialog", "parlay.items.manager", "parlay.widget.manager"];
 
     angular.module("parlay.navigation.sidenav", module_dependencies)
         .controller("ParlayNavigationSidenavController", ParlayNavigationSidenavController);
 
     /* istanbul ignore next */
-    ParlayNavigationSidenavController.$inject = ["$mdSidenav", "$mdDialog", "ParlayGenericSaveLoadDialog", "$state", "PromenadeBroker", "ParlayItemManager"];
-    function ParlayNavigationSidenavController($mdSidenav, $mdDialog, ParlayGenericSaveLoadDialog, $state, PromenadeBroker, ParlayItemManager) {
+    ParlayNavigationSidenavController.$inject = ["$mdSidenav", "$mdDialog", "ParlayGenericSaveLoadDialog", "$state", "PromenadeBroker", "ParlayItemManager", "ParlayWidgetManager"];
+    function ParlayNavigationSidenavController($mdSidenav, $mdDialog, ParlayGenericSaveLoadDialog, $state, PromenadeBroker, ParlayItemManager, ParlayWidgetManager) {
 
         this.getCurrentState = function () {
             return $state.current;
@@ -34,20 +34,6 @@
             });
         };
 
-        this.requestDiscovery = function () {
-            PromenadeBroker.requestDiscovery(true);
-        };
-
-        this.openWorkspaceManagementDialog = function (event) {
-            ParlayGenericSaveLoadDialog.show(event, ParlayItemManager, {
-                entry: "workspace",
-                entries: "workspaces",
-                title: "workspaces",
-                child: "item",
-                children: "items"
-            });
-        };
-
         this.openNotificationSidenav = function () {
             $mdSidenav("notifications").open();
         };
@@ -63,6 +49,38 @@
                 controller: "ParlaySettingsDialogController",
                 controllerAs: "ctrl",
                 clickOutsideToClose: true
+            });
+        };
+
+        // The below methods are only appropriate based on the given state.
+
+        this.requestDiscovery = function () {
+            PromenadeBroker.requestDiscovery(true);
+        };
+
+        this.openItemSaveLoadDialog = function (event) {
+            ParlayGenericSaveLoadDialog.show(event, ParlayItemManager, {
+                entry: "workspace",
+                entries: "workspaces",
+                title: "workspaces",
+                child: "item",
+                children: "items"
+            });
+        };
+
+        this.editing = ParlayWidgetManager.editing;
+
+        this.toggleWidgetEditing = function () {
+            ParlayWidgetManager.toggleEditing();
+        };
+
+        this.openWidgetSaveLoadDialog = function (event) {
+            ParlayGenericSaveLoadDialog.show(event, ParlayWidgetManager, {
+                entry: "workspace",
+                entries: "workspaces",
+                title: "workspaces",
+                child: "widget",
+                children: "widgets"
             });
         };
 

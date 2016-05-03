@@ -1,0 +1,7 @@
+<md-input-container flex>
+    <md-select ng-model="configuration.template" placeholder="Select a template">
+        <md-option ng-value="template_option" ng-repeat="template_option in templateCtrl.getTemplates()">
+            {{template_option.name}} ({{template_option.type}})
+        </md-option>
+    </md-select>
+</md-input-container>

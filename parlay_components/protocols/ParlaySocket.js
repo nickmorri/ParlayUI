@@ -54,7 +54,7 @@
         }
     });
 
-    function CallbackContainerFactory() {
+    function CallbackContainerFactory () {
 
         /**
          * Container for registered topics callbacks.
@@ -76,7 +76,7 @@
              * @param {Object} value - topic or content value.
              * @return {String} - formatted String containing a stable encoded key and value.
              */
-            function get_hash(key, value) {
+            function get_hash (key, value) {
                 if (key === undefined || key === "undefined") {
                     key = "__undefined__";
                 }
@@ -90,7 +90,7 @@
              * Traverse tree and delete branches of tree if no longer needed.
              * @param {Map} map - Tree-like structure that contains topic registrations.
              */
-            function prune(map) {
+            function prune (map) {
 
                 // Check if entry for callback Array exists, if it does and it is empty we should delete it.
                 if (map.has(callback_key) && map.get(callback_key).length === 0) {
@@ -116,7 +116,7 @@
              * @param {Object} topics - Object of key/value pairs.
              * @returns {Array} - Array of callbacks that have been registered for the given topics.
              */
-            function get_callbacks_for_topics(topics) {
+            function get_callbacks_for_topics (topics) {
                 // This will be the map that we encode (sorted so we're stable).
                 var keys = Object.keys(topics).sort();
 
@@ -170,7 +170,7 @@
              * @param {Number} start_index -
              * @param {Map} map - Tree-like structure that contains topic registrations.
              */
-            function invoke_all_with_hashes(topics, contents, hash_list, start_index, map) {
+            function invoke_all_with_hashes (topics, contents, hash_list, start_index, map) {
 
                 // If map is not given we are done with our traversal.
                 if (map === undefined) {
@@ -224,7 +224,7 @@
                     verbose: verbose
                 });
 
-                return function deregistrationFunction() {
+                return function deregistrationFunction () {
                     this.delete(topics, callback);
                 }.bind(this);
             };
@@ -239,7 +239,7 @@
                 var callbacks = get_callbacks_for_topics(topics);
 
                 // Locate which index the given callback function is located in the callbacks Array.
-                var index = callbacks.findIndex(function(callback_obj) {
+                var index = callbacks.findIndex(function (callback_obj) {
                     return callback_obj.func === callback;
                 });
 
@@ -277,7 +277,7 @@
              * @param {Map} map - Tree-like structure that contains topic registrations.
              * @returns {Number} - Count of topics keys.
              */
-            this.size = function (map) {
+            this.size = function size(map) {
                 map = map || internal_map;
 
                 // Access the callbacks at this depth.
@@ -301,7 +301,7 @@
              * @param {Map} map - Tree-like structure that contains topic registrations.
              * @returns {Number} - Count of registered callback functions.
              */
-            this.callbackCount = function (map) {
+            this.callbackCount = function callbackCount(map) {
                 map = map || internal_map;
                 var count = 0;
 
@@ -324,7 +324,7 @@
              * Traverse the CallbackContainer tree to find the child at the maximum depth.
              * @returns {Number}
              */
-            this.maxDepth = function () {
+            this.maxDepth = function maxDepth() {
 
                 function traverse(tree) {
                     var max_child_depth = 0;
@@ -360,7 +360,7 @@
          * @param {String} message - Error message that will be included when thrown.
          * @constructor
          */
-        function ParlaySocketError(message) {
+        function ParlaySocketError (message) {
             TypeError.call(this, message);
             this.name = "ParlaySocketError";
         }
@@ -373,7 +373,7 @@
          * @param {String} type - Invalid type that was given.
          * @constructor
          */
-        function TopicsError(type) {
+        function TopicsError (type) {
             ParlaySocketError.call(this, "Invalid type for topics, accepts Object but was type " + type + ".");
             this.name = "TopicsError";
         }
@@ -386,7 +386,7 @@
          * @param {String} type - Invalid type that was given.
          * @constructor
          */
-        function ContentsError(type) {
+        function ContentsError (type) {
             ParlaySocketError.call(this, "Invalid type for contents, accepts Object or undefined but was type " + type + ".");
             this.name = "ContentsError";
         }
@@ -400,7 +400,7 @@
          * It provides convenience through registration of callbacks to specific topics and through Promise resolution.
          * @constructor
          */
-        function ParlaySocket() {
+        function ParlaySocket () {
 
             // Container that manages topic to callback registrations.
             var onMessageCallbacks = new CallbackContainer();
@@ -428,7 +428,7 @@
              * @param {String} url - Location the WebSocket instance should connect to.
              * @returns {$q.defer.promise} Resolved after WebSocket is opened.
              */
-            this.open = function(url) {
+            this.open = function open(url) {
                 if (typeof url !== "string") {
                     throw new ParlaySocketError("ParlaySocket.open(url) requires a url string.");
                 }
@@ -451,7 +451,7 @@
              * Closes WebSocket and returns Promise when complete.
              * @returns {$q.defer.promise} Resolved when WebSocket is closed.
              */
-            this.close = function(reason) {
+            this.close = function close(reason) {
                 socket.close(reason);
                 return onClosePromise.promise;
             };
@@ -466,7 +466,7 @@
              * @param {Boolean} verbose - If true we should invoke callback with full message. If false or undefined invoke with only contents for simplicity.
              * @returns {$q.defer.Promise} Resolves once message has been passed to socket.
              */
-            this.sendMessage = function(topics, contents, response_topics, response_callback, verbose) {
+            this.sendMessage = function sendMessage(topics, contents, response_topics, response_callback, verbose) {
                 // If verbose is not passed default to false.
                 var verbosity = verbose === undefined ? false : verbose;
 
@@ -506,7 +506,7 @@
              * @param {Boolean} verbose - If true we should invoke callback with full message. If false or undefined invoke with only contents for simplicity.
              * @returns {Function} Deregistration function for this message listener.
              */
-            this.onMessage = function(topics, callback, verbose) {
+            this.onMessage = function onMessage(topics, callback, verbose) {
                 // Ensure that topics is an Object.
                 if (typeof topics === 'object') {
                     return onMessageCallbacks.add(topics, callback, true, !!verbose);
@@ -521,7 +521,7 @@
              * Checks if WebSocket is open.
              * @returns {Boolean} - True if WebSocket is open, false otherwise.
              */
-            this.isConnected = function () {
+            this.isConnected = function isConnected() {
                 return socket !== undefined && socket.readyState === socket.OPEN;
             };
 
@@ -529,7 +529,7 @@
              * Returns the URL where the WebSocket is connected.
              * @returns {String} - URL.
              */
-            this.getAddress = function () {
+            this.getAddress = function getAddress() {
                 return socket.url;
             };
 
@@ -537,7 +537,7 @@
              * Registers a callback which will be invoked on socket close.
              * @param {Function} callbackFunc - Callback function which will be invoked on WebSocket close.
              */
-            this.onClose = function (callbackFunc) {
+            this.onClose = function onClose(callbackFunc) {
                 onCloseCallbacks.push(callbackFunc);
             };
 
@@ -545,7 +545,7 @@
              * Registers a callback which will be invoked on socket open.
              * @param {Function} callbackFunc - Callback function which will be invoked on WebSocket open.
              */
-            this.onOpen = function (callbackFunc) {
+            this.onOpen = function onOpen(callbackFunc) {
                 onOpenCallbacks.push(callbackFunc);
             };
 
@@ -555,7 +555,7 @@
              * @param {Object} contents
              * @returns {$q.defer.Promise} - Resolved if send completed without exception, rejected otherwise.
              */
-            function send(topics, contents) {
+            function send (topics, contents) {
                 // Stringify the message Object before sending.
                 var message = JSON.stringify({TOPICS: topics, CONTENTS: contents});
 
@@ -572,7 +572,7 @@
             /**
              * Attempt to send all messages that were queued while the socket was closed.
              */
-            function processSendQueue() {
+            function processSendQueue () {
                 sendQueue.forEach(function (message) {
                     socket.send(message);
                 });
@@ -587,7 +587,7 @@
              * As this function is called per message received and the topics may result in a high number of combinations,
              * this could potentially cause slowdown.
              */
-            function invokeCallbacks(topics, contents) {
+            function invokeCallbacks (topics, contents) {
                 onMessageCallbacks.invoke(topics, contents);
             }
 
@@ -595,7 +595,7 @@
              * Called when WebSocket is opened.
              * @param {MessageEvent} event - Event generated by the WebSocket on open.
              */
-            function onOpenHandler(event) {
+            function onOpenHandler (event) {
                 // If the onOpenPromise exists we should resolve it.
                 if (onOpenPromise !== undefined) {
                     onOpenPromise.resolve();
@@ -606,7 +606,7 @@
                 processSendQueue();
 
                 // Process each onOpenCallback
-                onOpenCallbacks.forEach(function(callback) {
+                onOpenCallbacks.forEach(function (callback) {
                     callback(event);
                 });
             }
@@ -615,7 +615,7 @@
              * Called when WebSocket is closed.
              * @param {MessageEvent} event - Event generated by the WebSocket on close.
              */
-            function onCloseHandler(event) {
+            function onCloseHandler (event) {
                 // If the close event was clean, we should resolve the promise.
                 if (event.wasClean) {
                     onClosePromise.resolve(event.reason);
@@ -635,7 +635,7 @@
                 sendQueue = [];
 
                 // Process each onCloseCallback
-                onCloseCallbacks.forEach(function(callback) {
+                onCloseCallbacks.forEach(function (callback) {
                     callback(event);
                 });
             }
@@ -644,7 +644,7 @@
              * Called on receipt of a message on the WebSocket.
              * @param {MessageEvent} event - Event generated by the WebSocket containing message contents.
              */
-            function onMessageHandler(event) {
+            function onMessageHandler (event) {
                 var message = JSON.parse(event.data);
                 invokeCallbacks(message.TOPICS, message.CONTENTS);
             }

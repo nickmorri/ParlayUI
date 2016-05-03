@@ -5,7 +5,7 @@
 
     angular
         .module("parlay.items.controller", module_dependencies)
-        .directive("parlayEmptyWorkspacePlaceholder", ParlayEmptyWorkspacePlaceholder)
+        .directive("parlayEmptyItemsWorkspacePlaceholder", ParlayEmptyItemsWorkspacePlaceholder)
         .controller("ParlayItemController", ParlayItemController);
 
     /**
@@ -63,8 +63,10 @@
 
     }
 
-    function ParlayEmptyWorkspacePlaceholder () {
-        return { templateUrl: '../parlay_components/items/directives/parlay-empty-workspace-placeholder.html' };
+    function ParlayEmptyItemsWorkspacePlaceholder () {
+        return {
+            templateUrl: '../parlay_components/items/directives/parlay-empty-items-workspace-placeholder.html'
+        };
     }
 
 }());

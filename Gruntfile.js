@@ -21,11 +21,17 @@ module.exports = function (grunt) {
 	 */
 	function getVendorItems (items, initial) {
 		var vendors = getVendors();
-		if (initial === undefined) initial = [];
+		if (initial === undefined) {
+			initial = [];
+		}
 		return initial.concat(Object.keys(vendors).reduce(function (accumulator, vendor)  {
 			return accumulator.concat(Object.keys(vendors[vendor]).filter(function (key) {
-				return items.some(function (item) { return key.indexOf(item) > -1; });
-	        }).map(function (key) { return '<%= vendor.' + vendor + '.' + key + ' %>'; }));
+				return items.some(function (item) {
+					return key.indexOf(item) > -1;
+				});
+	        }).map(function (key) {
+				return '<%= vendor.' + vendor + '.' + key + ' %>';
+			}));
 	    }, []));
 	}
 
@@ -46,7 +52,7 @@ module.exports = function (grunt) {
 
 		'meta': {
 			'source': ['app.js', 'parlay_components/*/*.js'],
-			'vendorComponents': getVendorItems(['protocols', 'items'], []),
+			'vendorComponents': getVendorItems(['protocols', 'items', 'widget'], []),
 			'dist_destination': 'dist',
 			'dev_destination': 'dev',
 			'tmp_destination': 'tmp',
@@ -122,7 +128,17 @@ module.exports = function (grunt) {
 				'dest': {
 					'js': '<%= meta.tmp_destination %>/lib.js',
                     'css': '<%= meta.tmp_destination %>/lib.css'
-				}
+				},
+                'mainFiles': {
+                    'ace-builds': [
+                        "src-noconflict/ace.js",
+                        "src-noconflict/mode-javascript.js",
+                        "src-noconflict/ext-language_tools.js",
+                        "src-noconflict/worker-javascript.js"
+                    ],
+                    'jsinterpreter': 'acorn_interpreter.js',
+                    "Chart.js": "dist/Chart.bundle.min.js"
+                }
 			}
 		},
 
@@ -278,13 +294,13 @@ module.exports = function (grunt) {
 			'dev': {
 				'src': '<%= meta.stylesheets %>',
 				'options': {
-					'important': false,
-					'known-properties': false
+					'important': false
 				}
 			},
 			'options': {
 				'adjoining-classes': false,
-				'outline-none': false
+				'outline-none': false,
+                'known-properties': false
 			}
 		},
 

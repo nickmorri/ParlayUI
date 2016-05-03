@@ -26,12 +26,14 @@
         <!-- /build -->
 
         <!-- build:js:dist inline tmp/parlayui.min.js -->
+        <!-- Parlay components -->
         <script src="app.js"></script>
         <script src="tmp/templates.js"></script>
 
         <script src="parlay_components/common/ParlayGenericSaveLoadDialog.js"></script>
 
         <script src="parlay_components/utility/ParlayUtility.js"></script>
+        <script src="parlay_components/utility/ParlayData.js"></script>
 
         <script src="parlay_components/navigation/ParlayNavigationSidenav.js"></script>
         <script src="parlay_components/navigation/ParlayNavigationContainer.js"></script>
@@ -56,11 +58,25 @@
         <script src="parlay_components/items/ParlayItemManager.js"></script>
         <script src="parlay_components/items/ParlayItemSearchController.js"></script>
 
-        <script src="parlay_components/store/ParlayStore.js"></script>
+        <script src="parlay_components/widget/widget.js"></script>
+        <script src="parlay_components/widget/ParlayWidgetBase.js"></script>
+        <script src="parlay_components/widget/ParlayWidgetTemplate.js"></script>
+        <script src="parlay_components/widget/ParlayWidgetManager.js"></script>
+        <script src="parlay_components/widget/ParlayWidgetCanvasController.js"></script>
+        <script src="parlay_components/widget/ParlayWidgetBaseConfigurationDialog.js"></script>
+        <script src="parlay_components/widget/ParlayWidgetCollection.js"></script>
+        <script src="parlay_components/widget/ParlayWidgetInputManager.js"></script>
+        <script src="parlay_components/widget/ParlayWidgetJSInterpreter.js"></script>
+        <script src="parlay_components/widget/ParlayWidgetTransformer.js"></script>
+        <script src="parlay_components/widget/ParlayWidgetEventHandler.js"></script>
 
+        <script src="parlay_components/store/ParlayStore.js"></script>
+        <!-- /Parlay components -->
+        
         <!-- Vendor components -->
         <script src="vendor_components/promenade/protocols/PromenadeBroker.js"></script>
         <script src="vendor_components/promenade/protocols/DirectMessage.js"></script>
+
         <script src="vendor_components/promenade/items/StandardItem.js"></script>
         <script src="vendor_components/promenade/items/StandardDatastream.js"></script>
         <script src="vendor_components/promenade/items/StandardProperty.js"></script>
@@ -70,6 +86,13 @@
         <script src="vendor_components/promenade/items/StandardItemLogTabController.js"></script>
         <script src="vendor_components/promenade/items/StandardItemGraphTabController.js"></script>
         <script src="vendor_components/promenade/items/StandardItemPropertyTabController.js"></script>
+
+        <script src="vendor_components/promenade/widget/PromenadeDisplayWidget.js"></script>
+        <script src="vendor_components/promenade/widget/PromenadeSmoothieChartWidget.js"></script>
+        <script src="vendor_components/promenade/widget/PromenadeChartJSWidget.js"></script>
+        <script src="vendor_components/promenade/widget/PromenadeInputWidget.js"></script>
+        <script src="vendor_components/promenade/widget/PromenadeButtonWidget.js"></script>
+        <!-- /Vendor components -->
         <!-- /build -->
     </body>
 </html>

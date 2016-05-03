@@ -51,7 +51,6 @@
 
                 property.get().then(function (result) {
                     expect(result).toEqual({CONTENTS: {VALUE: 10}});
-                    expect(property.value).toBe(10);
                     done();
                 });
 

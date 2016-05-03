@@ -70,11 +70,11 @@ module.exports = function (grunt) {
 					'livereload': true
 				}
 			},
-			'dist': {
-				'options': {
-					'bases': ['<%= meta.dist_destination %>']
-				}
-			}
+            'dist': {
+                'options' : {
+                    'bases': ['<%= meta.dist_destination %>']
+                }
+            }
 		},
 		
 		'bower-install-simple': {

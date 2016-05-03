@@ -279,13 +279,13 @@ module.exports = function (grunt) {
 			'dev': {
 				'src': '<%= meta.stylesheets %>',
 				'options': {
-					'important': false,
-					'known-properties': false
+					'important': false
 				}
 			},
 			'options': {
 				'adjoining-classes': false,
-				'outline-none': false
+				'outline-none': false,
+                'known-properties': false
 			}
 		},
 

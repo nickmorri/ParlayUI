@@ -123,7 +123,16 @@ module.exports = function (grunt) {
 				'dest': {
 					'js': '<%= meta.tmp_destination %>/lib.js',
                     'css': '<%= meta.tmp_destination %>/lib.css'
-				}
+				},
+                'mainFiles': {
+                    'ace-builds': [
+                        "src-noconflict/ace.js",
+                        "src-noconflict/mode-javascript.js",
+                        "src-noconflict/ext-language_tools.js",
+                        "src-noconflict/worker-javascript.js"
+                    ],
+                    'jsinterpreter': 'acorn_interpreter.js'
+                }
 			}
 		},
 

@@ -64,7 +64,7 @@
          */
         ParlayWidgetManager.prototype.saveEntry = function (workspace) {
             workspace.data = JSON.stringify(angular.copy(this.active_widgets), function (key, value) {
-                return value.constructor.name == "ParlayProtocol" ? value.protocol_name : value;
+                return !!value && value.constructor && value.constructor.name == "ParlayProtocol" ? value.protocol_name : value;
             });
             workspace.count = this.active_widgets.length;
             workspace.timestamp = new Date();

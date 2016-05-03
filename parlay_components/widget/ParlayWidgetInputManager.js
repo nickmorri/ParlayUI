@@ -53,7 +53,7 @@
 
         ParlayWidgetInputManager.prototype.registerElements = function (widgetName, rootElement, parentTag, targetTag, scope, events) {
             var parentElement = rootElement.find(parentTag);
-            var parent_tag_name = widgetName + scope.index;
+            var parent_tag_name = widgetName + scope.$index;
 
             if (!this.widgets[parent_tag_name]) {
                 this.widgets[parent_tag_name] = [];

@@ -16,17 +16,17 @@
     ParlayWidgetCanvasController.prototype.getActiveWidgets = function () {
         return this.manager.getActiveWidgets();
     };
-    
+
     ParlayWidgetCanvasController.prototype.hasWidgets = function () {
-        return this.getActiveWidgets().length > 0;  
+        return this.getActiveWidgets().length > 0;
     };
 
     ParlayWidgetCanvasController.prototype.add = function () {
         this.manager.add();
     };
 
-    ParlayWidgetCanvasController.prototype.remove = function ($index) {
-        this.manager.remove($index);
+    ParlayWidgetCanvasController.prototype.remove = function (uid) {
+        this.manager.remove(uid);
     };
     };
 
@@ -35,5 +35,5 @@
             templateUrl: '../parlay_components/widget/directives/parlay-empty-widget-workspace-placeholder.html'
         };
     }
-    
+
 }());

@@ -27,7 +27,8 @@
                     ["widgets-ctrl", "widgetsCtrl"],
                     ["edit", "edit"],
                     ["$index", "$index"],
-                    ["editing", "widgetsCtrl.manager.editing"]
+                    ["editing", "widgetsCtrl.manager.editing"],
+                    ["uid", "item.uid"]
                 ];
 
                 function restore (item) {

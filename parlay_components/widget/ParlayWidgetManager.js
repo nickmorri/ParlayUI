@@ -163,11 +163,24 @@
         };
 
         ParlayWidgetManager.prototype.add = function () {
-            this.active_widgets.push({});
+
+            var uid = 0;
+
+            var active_uids = this.active_widgets.map(function (container) {
+                return container.uid;
+            });
+
+            while (active_uids.indexOf(uid) !== -1) {
+                uid++;
+            }
+
+            this.active_widgets.push({uid: uid});
         };
 
-        ParlayWidgetManager.prototype.remove = function ($index) {
-            this.active_widgets.splice($index, 1);
+        ParlayWidgetManager.prototype.remove = function (uid) {
+            this.active_widgets.splice(this.active_widgets.findIndex(function (container) {
+                return container.uid === uid;
+            }), 1);
         };
         };
         

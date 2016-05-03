@@ -45,7 +45,8 @@
                     transformedValue: "=",
                     widgetsCtrl: "=",
                     edit: "=",
-                    editing: "="
+                    editing: "=",
+                    uid: "="
                 },
                 link: !!options.elementRegistration ? inputRegistrationLink : !!options.customLink ? customLink : defaultLink
             }, options);

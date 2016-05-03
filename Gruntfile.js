@@ -31,7 +31,7 @@ module.exports = function (grunt) {
 
 	// Read the dependencies in package.json and load Grunt tasks that match the "grunt-*".
 	require('load-grunt-tasks')(grunt);
-	
+
 	// Load this Grunt task individually since it doesn't match the "grunt-*" pattern.
     grunt.loadNpmTasks('main-bower-files');
 
@@ -298,7 +298,15 @@ module.exports = function (grunt) {
 		'copy': {
 			'dev': {
 		        'files': [
-					{'expand': true, 'src': ['<%= meta.source %>', '<%= meta.vendorComponents %>', '<%= meta.compiledHtml %>'], 'dest': '<%= meta.dev_destination %>'}
+					{
+                        'expand': true,
+                        'src': [
+                            '<%= meta.source %>',
+                            '<%= meta.vendorComponents %>',
+                            '<%= meta.compiledHtml %>'
+                        ],
+                        'dest': '<%= meta.dev_destination %>'
+                    }
 				]
 			}
 		},
@@ -306,12 +314,8 @@ module.exports = function (grunt) {
         // Processes and modify index.html based on the environment to replace text.
         // https://github.com/dciccale/grunt-processhtml
 		'processhtml': {
-			'dist': {
-				'files': {'<%= meta.dist_destination %>/index.html': ['index.html']}
-			},
-			'dev': {
-				'files': {'<%= meta.dev_destination %>/index.html': ['index.html']}
-			}
+			'dist': {'files': {'<%= meta.dist_destination %>/index.html': ['index.html']}},
+			'dev': {'files': {'<%= meta.dev_destination %>/index.html': ['index.html']}}
 		},
 
         // Minify JavaScript files during distribution.
@@ -358,7 +362,7 @@ module.exports = function (grunt) {
 				'dest': '<%= meta.compiledHtml %>'
 			}
 		}
-		
+
 	});
 	
 	grunt.registerTask('default', [

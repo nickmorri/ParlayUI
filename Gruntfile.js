@@ -365,8 +365,6 @@ module.exports = function (grunt) {
 	    'open:server',
 	    'watch'
 	]);
-
-	grunt.registerTask('test', 'Lints and tests JavaScript files.', ['jshint', 'html2js', 'karma:dev']);
 	
 	grunt.registerTask('coverage', 'Generates and opens test coverage.', ['karma:coverage', 'open:coverage'])
 
@@ -393,5 +391,17 @@ module.exports = function (grunt) {
 	    'open:server',
 	    'express-keepalive'
 	]);
+
+    grunt.registerTask('test', 'Lints and tests JavaScript files.', [
+        'jshint',
+        'csslint:dev',
+        'html2js',
+        'karma:dev'
+    ]);
+
+    grunt.registerTask('coverage', 'Generates and opens test coverage.', [
+        'karma:coverage',
+        'open:coverage'
+    ]);
 
 };

@@ -1,9 +1,9 @@
 <md-card class="parlay-item-card">
-    <md-toolbar class="handle" ng-class="{'show-handle': editing}">
+    <md-toolbar class="handle" ng-class="{'show-handle': widgetsCtrl.editing}">
         <div class="md-toolbar-tools">
             <h2>{{tag_name}}</h2>
             <span flex></span>
-            <md-menu ng-show="editing">
+            <md-menu ng-show="widgetsCtrl.editing">
                 <md-button aria-label="Open widget menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
                     <md-icon ng-md-icon icon="more_vert"></md-icon>
                 </md-button>

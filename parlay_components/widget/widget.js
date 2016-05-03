@@ -1,7 +1,7 @@
 var widgetRegistration = (function () {
     "use strict";
 
-    var module_dependencies = ["ui.router", "ui.ace", "ngMaterial", "parlay.widget.base", "parlay.widget.canvascontroller", "parlay.settings"];
+    var module_dependencies = ["ui.router", "ui.ace", "ngMaterial", "parlay.widget.base", "parlay.widget.controller", "parlay.settings"];
 
     angular
         .module("parlay.widget", module_dependencies)
@@ -23,13 +23,13 @@ var widgetRegistration = (function () {
     /**
      * @name WidgetsConfiguration
      * @param $stateProvider - Service provided by ui.router
-     * @description - The WidgetsConfiguration sets up the items state.
+     * @description - The WidgetsConfiguration sets up the widgets state.
      */
     function ParlayWidgetsConfiguration($stateProvider) {
         $stateProvider.state("widgets", {
             url: "/widgets",
             templateUrl: "../parlay_components/widget/views/base.html",
-            controller: "ParlayWidgetCanvasController",
+            controller: "ParlayWidgetController",
             controllerAs: "widgetsCtrl",
             data: {
                 displayName: "Widgets",

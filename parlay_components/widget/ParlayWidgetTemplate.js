@@ -45,7 +45,6 @@
                     transformedValue: "=",
                     widgetsCtrl: "=",
                     edit: "=",
-                    editing: "=",
                     uid: "="
                 },
                 link: !!options.elementRegistration ? inputRegistrationLink : !!options.customLink ? customLink : defaultLink

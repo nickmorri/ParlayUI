@@ -27,7 +27,6 @@
                     ["widgets-ctrl", "widgetsCtrl"],
                     ["edit", "edit"],
                     ["$index", "$index"],
-                    ["editing", "widgetsCtrl.manager.editing"],
                     ["uid", "item.uid"]
                 ];
 
@@ -86,7 +85,7 @@
                         draggie.positionDrag();
                     }
 
-                    scope.$watch("widgetsCtrl.manager.editing", function (editing) {
+                    scope.$watch("widgetsCtrl.editing", function (editing) {
                         if (editing) {
                             draggie.enable();
                         }

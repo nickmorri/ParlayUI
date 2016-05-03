@@ -5,7 +5,7 @@
         <parlay-widget-base ng-repeat="item in widgetsCtrl.getActiveWidgets() track by item.uid"></parlay-widget-base>
     </div>
 
-    <md-button ng-show="widgetsCtrl.manager.editing" class="md-fab md-fab-bottom-right" ng-click="widgetsCtrl.add()">
+    <md-button ng-show="widgetsCtrl.editing" class="md-fab md-fab-bottom-right" ng-click="widgetsCtrl.add()">
         <md-tooltip>Add widget</md-tooltip>
         <md-icon ng-md-icon icon="add"></md-icon>
     </md-button>

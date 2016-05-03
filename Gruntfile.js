@@ -45,7 +45,8 @@ module.exports = function (grunt) {
 	var mainBowerFiles = require('main-bower-files');
 
 	grunt.initConfig({
-    	'pkg': grunt.file.readJSON('package.json'),
+
+        'pkg': grunt.file.readJSON('package.json'),
 
 		'vendor': getVendors(),
 
@@ -61,10 +62,11 @@ module.exports = function (grunt) {
 			'compiledHtml': '<%= meta.tmp_destination %>/templates.js',
 			'htmlDirectives': getVendorItems(['directives'], ['parlay_components/**/directives/*.html']),
 			'htmlViews': 'parlay_components/**/views/*.html',
-			'commonFiles': ['images/logo.png', 'images/icon.png'],
 			'stylesheets': getVendorItems(['stylesheets'], ['css/*.css'])
 		},
-		
+
+        // Minimal web server used for development.
+        // https://github.com/blai/grunt-express
 		'express': {
 			'options': {
 				'port': 9000,
@@ -75,14 +77,11 @@ module.exports = function (grunt) {
 					'bases': ['<%= meta.dev_destination %>'],
 					'livereload': true
 				}
-			},
-			'dist': {
-				'options': {
-					'bases': ['<%= meta.dist_destination %>']
-				}
 			}
 		},
-		
+
+        // Installs Bower components listed in bower.json.
+        // https://github.com/rse/grunt-bower-install-simple
 		'bower-install-simple': {
 			'options': {
 				'directory': 'bower_components'
@@ -99,20 +98,9 @@ module.exports = function (grunt) {
 			}
 		},
 
+        // Copies packages from bower_components during development.
+        // https://github.com/curist/grunt-bower
 		'bower': {
-			'dist': {
-				'base': 'bower_components',
-				'dest': '<%= meta.dist_destination %>/bower_components',
-				'options': {
-					'checkExistence': true,
-					'debugging': true,
-					'paths': {
-						'bowerDirectory': 'bower_components',
-						'bowerrc': '.bowerrc',
-						'bowerJson': 'bower.json'
-            		}
-				}
-			},
 			'dev': {
 				'base': 'bower_components',
 				'dest': '<%= meta.dev_destination %>/bower_components',
@@ -128,6 +116,8 @@ module.exports = function (grunt) {
 			}
 		},
 
+        // Concatenates Bower components in the correct order based on dependencies.
+        // https://github.com/sapegin/grunt-bower-concat
 		'bower_concat': {
 			'dist': {
 				'dest': {
@@ -137,6 +127,8 @@ module.exports = function (grunt) {
 			}
 		},
 
+        // Wires Bower dependencies into index.html during development.
+        // https://github.com/taptapship/wiredep
 		'wiredep': {
 			'dist': {
 				'src': '<%= meta.dist_destination %>/index.html'
@@ -146,6 +138,8 @@ module.exports = function (grunt) {
 			}
 		},
 
+        // Run tasks whenever the watched files change.
+        // https://github.com/gruntjs/grunt-contrib-watch
 	    'watch': {
 		    'scripts': {
 			    'options': {
@@ -192,6 +186,8 @@ module.exports = function (grunt) {
 			}
 		},
 
+        // Automatically opens the default web browser pointed at the express web server.
+        // https://github.com/jsoverson/grunt-open
 		'open': {
 			'server': {
 				'path': 'http://localhost:<%= express.options.port %>'
@@ -204,6 +200,8 @@ module.exports = function (grunt) {
 			}
 		},
 
+        // Interfaces with Karma to run unit tests.
+        // https://github.com/karma-runner/grunt-karma
 		'karma': {
 			'options': {
 				'configFile': 'karma.conf.js'
@@ -256,6 +254,8 @@ module.exports = function (grunt) {
 			}
 		},
 
+        // Validates JavaScript files.
+        // https://github.com/gruntjs/grunt-contrib-jshint
 		'jshint': {
 			'dev': {
 				'options': {
@@ -273,6 +273,8 @@ module.exports = function (grunt) {
 			}
 		},
 
+        // Validates CSS files.
+        // https://github.com/gruntjs/grunt-contrib-csslint
 		'csslint': {
 			'dist': {
 				'src': '<%= meta.stylesheets %>'
@@ -289,7 +291,9 @@ module.exports = function (grunt) {
 				'outline-none': false
 			}
 		},
-		
+
+        // Clears files and folders.
+        // https://github.com/gruntjs/grunt-contrib-clean
 		'clean': {
 			'dist': '<%= meta.dist_destination %>',
             'post_dist': ['<%= meta.dist_destination %>/*.css', '<%= meta.dist_destination %>/*.js'],
@@ -298,6 +302,8 @@ module.exports = function (grunt) {
 			'coverage': '<%= meta.coverage_destination %>'
 		},
 
+        // Copies files and folders.
+        // https://github.com/gruntjs/grunt-contrib-copy
 		'copy': {
 			'dev': {
 		        'files': [
@@ -306,6 +312,8 @@ module.exports = function (grunt) {
 			}
 		},
 
+        // Processes and modify index.html based on the environment to replace text.
+        // https://github.com/dciccale/grunt-processhtml
 		'processhtml': {
 			'dist': {
 				'files': {'<%= meta.dist_destination %>/index.html': ['index.html']}
@@ -315,6 +323,8 @@ module.exports = function (grunt) {
 			}
 		},
 
+        // Minify JavaScript files during distribution.
+        // https://github.com/gruntjs/grunt-contrib-uglify
 		'uglify': {
 			'options': {
 				'mangle': false,
@@ -330,6 +340,8 @@ module.exports = function (grunt) {
 			}
 		},
 
+        // Minify CSS files during distribution.
+        // https://github.com/gruntjs/grunt-contrib-cssmin
 		'cssmin': {
 			'options': {
 	        	'shorthandCompacting': false,
@@ -346,25 +358,20 @@ module.exports = function (grunt) {
 			}
 		},
 
+        // Converts AngularJS templates to JavaScript.
+        // https://github.com/karlgoldstein/grunt-html2js
 		'html2js': {
 			'main': {
 				'src': ['<%= meta.htmlViews %>', '<%= meta.htmlDirectives %>'],
 				'dest': '<%= meta.compiledHtml %>'
 			}
-		},
-
-        'bump': {
-            'options': {
-                'files': ['package.json', 'bower.json'],
-                'commitFiles': ['package.json', 'bower.json'],
-                'push': false,
-                createTag: false
-            }
-        }
+		}
 		
 	});
 	
-	grunt.registerTask('default', ['develop']);
+	grunt.registerTask('default', [
+        'develop'
+    ]);
 
 	grunt.registerTask('develop', 'Lints and tests JavaScript files, processes HTML and finally starts HTTP server which autoreloads on file changes.', [
 	    'jshint:dev',
@@ -383,10 +390,6 @@ module.exports = function (grunt) {
 	    'watch'
 	]);
 
-	grunt.registerTask('test', 'Lints and tests JavaScript files.', ['jshint', 'html2js', 'karma:dev']);
-	
-	grunt.registerTask('coverage', 'Generates and opens test coverage.', ['karma:coverage', 'open:coverage']);
-
 	grunt.registerTask('dist', 'Generates tested and linted minified JavaScript and CSS files with HTML templates included in JavaScript.', [
 	    'jshint:dist',
 	    'csslint:dist',
@@ -402,12 +405,25 @@ module.exports = function (grunt) {
         'clean:post_dist'
 	]);
 
-	grunt.registerTask('build', ['dist']);
+	grunt.registerTask('build', [
+        'dist'
+    ]);
 
 	grunt.registerTask('server', 'Launches HTTP server with distribution files as source.', [
 	    'express:dist',
 	    'open:server',
 	    'express-keepalive'
 	]);
+
+    grunt.registerTask('test', 'Lints and tests JavaScript files.', [
+        'jshint',
+        'html2js',
+        'karma:dev'
+    ]);
+
+    grunt.registerTask('coverage', 'Generates and opens test coverage.', [
+        'karma:coverage',
+        'open:coverage'
+    ]);
 
 };

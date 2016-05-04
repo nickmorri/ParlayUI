@@ -13,14 +13,7 @@
             scope: true,
             restrict: "E",
             link: function (scope, element) {
-
-                function onChildLoad () {
-                    enableDraggabilly(element[0], scope.item.position);
-                    restoreHandlers(scope.item.configuration);
-                    restoreTransformer(scope.item.configuration);
-                    scope.initialized = true;
-                }
-
+                
                 var attributes = [
                     ["items", "item.configuration.transformer.items"],
                     ["transformed-value", "item.configuration.transformer.value"],
@@ -113,7 +106,7 @@
                         var childElement = $compile(element_template)(childScope)[0];
 
                         elementRef[0].appendChild(childElement);
-                        childScope.childLoad = onChildLoad;
+                        // scopeRef.childLoaded = onChildLoad;
                     };
                 }
 
@@ -138,6 +131,13 @@
                         }
                     });
                 };
+
+                scope.$on("parlayWidgetLoaded", function () {
+                    enableDraggabilly(element[0], scope.item.position);
+                    restoreHandlers(scope.item.configuration);
+                    restoreTransformer(scope.item.configuration);
+                    scope.initialized = true;
+                });
 
                 scope.$on("$destroy", function () {
                     if (scope.initialized) {

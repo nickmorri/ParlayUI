@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["parlay.widget.base.configuration"];
+    var module_dependencies = ["ngMaterial", "parlay.widget.base.configuration"];
 
     angular
         .module("parlay.widget.base", module_dependencies)
@@ -13,19 +13,29 @@
             scope: true,
             restrict: "E",
             link: function (scope, element) {
-                
-                var attributes = [
-                    ["items", "item.configuration.transformer.items"],
-                    ["transformed-value", "item.configuration.transformer.value"],
-                    ["widgets-ctrl", "widgetsCtrl"],
-                    ["edit", "edit"],
-                    ["uid", "item.uid"]
-                ];
+
+                scope.edit = edit;
+
+                scope.$on("parlayWidgetLoaded", function () {
+                    enableDraggabilly(element[0], scope.item.position);
+                    restoreHandlers(scope.item.configuration);
+                    restoreTransformer(scope.item.configuration);
+                    scope.initialized = true;
+                });
+
+                scope.$on("$destroy", function () {
+                    if (scope.initialized) {
+                        if (!!scope.item.configuration.transformer) {
+                            scope.item.configuration.transformer.cleanHandlers();
+                        }
+                        if (!!scope.item.configuration.handler) {
+                            scope.item.configuration.handler.detach();
+                        }
+                    }
+                });
 
                 function restore (item) {
-                    compileWrapper(attributes.map(function (attribute) {
-                        return attribute[0] + "='" + attribute[1] + "'";
-                    }).join(" "))(angular.copy(item.configuration.template));
+                    compileWrapper()(angular.copy(item.configuration.template));
                 }
 
                 function restoreHandlers (configuration) {
@@ -88,9 +98,19 @@
 
                 }
 
-                function compileWrapper (attributes) {
+                function compileWrapper () {
                     var scopeRef = scope;
                     var elementRef = element;
+
+                    var attributes = [
+                        ["items", "item.configuration.transformer.items"],
+                        ["transformed-value", "item.configuration.transformer.value"],
+                        ["widgets-ctrl", "widgetsCtrl"],
+                        ["edit", "edit"],
+                        ["uid", "item.uid"]
+                    ].map(function (attribute) {
+                        return attribute[0] + "='" + attribute[1] + "'";
+                    }).join(" ");
 
                     return function (template) {
                         while (elementRef[0].firstChild) {
@@ -106,11 +126,10 @@
                         var childElement = $compile(element_template)(childScope)[0];
 
                         elementRef[0].appendChild(childElement);
-                        // scopeRef.childLoaded = onChildLoad;
                     };
                 }
 
-                scope.edit = function (initialize) {
+                function edit (initialize) {
                     $mdDialog.show({
                         templateUrl: "../parlay_components/widget/directives/parlay-widget-base-configuration-dialog.html",
                         clickOutsideToClose: false,
@@ -118,9 +137,7 @@
                         controllerAs: "dialogCtrl",
                         locals: {
                             configuration: scope.item.configuration,
-                            widgetCompiler: compileWrapper(attributes.map(function (attribute) {
-                                return attribute[0] + "='" + attribute[1] + "'";
-                            }).join(" "))
+                            widgetCompiler: compileWrapper()
                         }
                     }).then(function (configuration) {
                         scope.initialized = true;
@@ -130,25 +147,7 @@
                             scope.widgetsCtrl.remove(scope.uid);
                         }
                     });
-                };
-
-                scope.$on("parlayWidgetLoaded", function () {
-                    enableDraggabilly(element[0], scope.item.position);
-                    restoreHandlers(scope.item.configuration);
-                    restoreTransformer(scope.item.configuration);
-                    scope.initialized = true;
-                });
-
-                scope.$on("$destroy", function () {
-                    if (scope.initialized) {
-                        if (!!scope.item.configuration.transformer) {
-                            scope.item.configuration.transformer.cleanHandlers();
-                        }
-                        if (!!scope.item.configuration.handler) {
-                            scope.item.configuration.handler.detach();
-                        }
-                    }
-                });
+                }
 
                 if (!!scope.item.configuration) {
                     restore(scope.item);

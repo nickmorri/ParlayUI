@@ -13,7 +13,7 @@
     function PromenadeWidgetButton (ParlayWidgetTemplate) {
         return new ParlayWidgetTemplate({
             templateUrl: "../vendor_components/promenade/widget/directives/promenade-widget-button.html",
-            elementRegistration: {
+            eventRegistration: {
                 directive_name: directive_name,
                 parent_tag: "md-card-content",
                 target_tag: "button",

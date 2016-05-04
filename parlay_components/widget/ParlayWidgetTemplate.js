@@ -1,56 +1,196 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["parlay.widget.collection"];
+    var module_dependencies = ["parlay.widget.inputmanager"];
     var module_name = "promenade.widget.template";
 
     angular
         .module(module_name, module_dependencies)
         .factory("ParlayWidgetTemplate", ParlayWidgetTemplateFactory);
-    
+
     ParlayWidgetTemplateFactory.$inject = ["ParlayWidgetInputManager"];
     function ParlayWidgetTemplateFactory (ParlayWidgetInputManager) {
 
+        /**
+         * @service
+         * @name ParlayWidgetTemplate
+         *
+         * @description
+         * ParlayWidget utility service for defining widget directives.
+         *
+         * This utility is intended to reduce the amount of boilerplate required to define a ParlayWidget directive.
+         * It is not required for ParlayWidget definition, a more advanced user may choose to define their ParlayWidget
+         * directives using the standard AngularJS directive registration.
+         *
+         * Information on the standard AngularJS directive registration is available in the following URL:
+         * https://docs.angularjs.org/guide/directive
+         *
+         * The return value is a fully configured directive definition Object. This Object is constructed using the values
+         * provided by the user in the options parameter given during construction.
+         *
+         * Any of the standard AngularJS directive definition parameters may be included in the options configuration Object.
+         * The standard AngularJS directive definition parameters are described in the following URL:
+         * https://docs.angularjs.org/api/ng/provider/$compileProvider#directive
+         *
+         * @param {Object} options - The following attributes are specific to the ParlayWidgetTemplate:
+         *
+         *      [optional] A AngularJS directive link function that the user can define for custom behavior.
+         *      Custom functionality that interacts with the DOM should be defined here. If integrating a separate JavaScript
+         *      library, such as graphing or charting, this is where it should be hooked in.
+         *
+         *      customLink {Function} (scope, element) :
+         *          scope {AngularJS Scope} - Isolated scope of the directive.
+         *          element {HTML Element} - HTML element of directive.
+         *
+         *
+         *      [optional] An Object that defines which events we should listen for on the given HTML Element.
+         *      A click event on a <button> or <input> HTML Element could be observed. In the examples below a click
+         *      event listener is registered on a <button> element. These elements are registered with
+         *      ParlayWidgetInputManager, that service will manage the given element and the element's event listeners.
+         *
+         *      eventRegistration {Object} : {
+         *          directive_name {String} : Name of the directive in camelCase.
+         *          target_tag {String} : HTML Element tag that should be registered.
+         *          parent_tag {String} : HTML Element tag of the parent of target_tag.
+         *          events {Array[{String}]} : Array of event names that should be registered.
+         *      }
+         *
+         * Three examples are provided below detailing the different use cases for the ParlayWidgetTemplate service.
+         *
+         * @example
+         * Basic template only example:
+         *
+         *      PromenadeWidgetExample.$inject = ["ParlayWidgetTemplate"];
+         *      function PromenadeWidgetExample (ParlayWidgetTemplate) {
+         *          return new ParlayWidgetTemplate({
+         *              templateUrl: "../vendor_components/promenade/widget/directives/promenade-widget-example.html"
+         *          });
+         *     }
+         *
+         * @example
+         * Intermediary element (event) registration example:
+         *
+         *      PromenadeWidgetExample.$inject = ["ParlayWidgetTemplate"];
+         *      function PromenadeWidgetExample (ParlayWidgetTemplate) {
+         *          return new ParlayWidgetTemplate({
+         *              templateUrl: "../vendor_components/promenade/widget/directives/promenade-widget-example.html",
+         *              elementRegistration: {
+         *                  directive_name: directive_name,
+         *                  parent_tag: "md-card-content",
+         *                  target_tag: "button",
+         *                  events: ["click"]
+         *              }
+         *          });
+         *      }
+         *
+         * @example
+         * Advanced custom user-defined link example:
+         *
+         *      PromenadeWidgetExample.$inject = ["ParlayWidgetTemplate"];
+         *      function PromenadeWidgetExample (ParlayWidgetTemplate) {
+         *
+         *          function customLink (scope, element) {
+         *              // Custom user defined logic that should run during link is here.
+         *          }
+         *
+         *          return new ParlayWidgetTemplate({
+         *              templateUrl: "../vendor_components/promenade/widget/directives/promenade-widget-example.html",
+         *              link: customLink
+         *          });
+         *
+         *      }
+         *
+         * @returns {Object} - Fully configured AngularJS directive definition Object.
+         *
+         */
+
         function ParlayWidgetTemplate(options) {
 
-            function defaultLink (scope) {
-                scope.$parent.childLoad();
+            var event_registration = options.eventRegistration;
+            var custom_link = options.customLink;
+
+            // We don't need the eventRegistration attribute in the directive definition Object.
+            if (!!event_registration) {
+                delete options.eventRegistration;
             }
 
-            function inputRegistrationLink (scope, element) {
-                var registration = ParlayWidgetInputManager.registerElements(
-                    options.elementRegistration.directive_name,
-                    element,
-                    options.elementRegistration.parent_tag,
-                    options.elementRegistration.target_tag,
-                    scope,
-                    options.elementRegistration.events
-                );
-
-                scope.tag_name = registration.parent_tag_name;
-
-                defaultLink(scope, element);
+            // We don't need the customLink attribute in the directive definition Object.
+            if (!!custom_link) {
+                delete options.customLink;
             }
 
-            function customLink (scope, element) {
-                options.customLink(scope, element);
-                defaultLink(scope, element);
+            /**
+             * If eventRegistration available, registers the given element during directive linking.
+             * If customLink available, calls the user provided link function during directive linking.
+             * Notifies parent that linking is complete.
+             * @param scope {AngularJS Scope} - Isolated scope of the directive.
+             * @param element {HTML Element} - HTML element of directive.
+             * @param attrs {Object} - Key/value pairs of normalized attribute names and their attribute values.
+             * @param controller {Object} - The directive's required controller instance or its own controller (if any).
+             * @param transcludeFn {Function} - Transclude linking function pre-bound to the correct transclusion scope.
+             */
+            function link (scope, element, attrs, controller, transcludeFn) {
+
+                if (!!event_registration) {
+                    // Register the given directive's elements and the requested element DOM events with the
+                    // ParlayWidgetInputManager.
+                    // Record the tag_name on the scope so directive's can use it.
+                    scope.tag_name = ParlayWidgetInputManager.registerElements(
+                        event_registration.directive_name,
+                        element,
+                        event_registration.parent_tag,
+                        event_registration.target_tag,
+                        scope,
+                        event_registration.events
+                    ).parent_tag_name;
+                }
+
+                // If the user also defined a customLink we should call it.
+                if (!!custom_link) {
+                    custom_link(scope, element, attrs, controller, transcludeFn);
+                }
+
+                // ParlayWidgets should notify their parent, ParlayBaseWidget, when they are loaded.
+                scope.$emit("parlayWidgetLoaded");
             }
 
-            return angular.merge({
+            /**
+             * @attribute {String} restrict - Restricts ParlayWidget constructed using ParlayWidgetTemplate to elements.
+             * @attribute {Function} link - Function that is called during directive linking. Specified in the options
+             * configuration Object.
+             * @attribute {Object} scope - Define the scope bindings for the ParlayWidget.
+             *
+             *      The bindings specified in the scope attribute correspond to attributes that live in the scope of
+             *      ParlayBaseWidget. A brief description is given here. A full explanation is available in ParlayBaseWidget
+             *      documentation.
+             *
+             *      @attribute {Array} items - Items the user selected during widget configuration.
+             *      @attribute {Number|String|Object} transformedValue - Result of the transform statement defined during widget configuration.
+             *      @attribute {AngularJS Controller} widgetsCtrl - Controller of the widget workspace.
+             *      @attribute {Function} edit - Launches the widget configuration dialog.
+             *      @attribute {Number} uid - A unique ID assigned to each ParlayWidget, it is used for deletion, duplication and other
+             *      bookkeeping activities.
+             *
+             */
+
+            var template_options = {
                 restrict: "E",
+                link: link,
                 scope: {
                     items: "=",
                     transformedValue: "=",
                     widgetsCtrl: "=",
                     edit: "=",
                     uid: "="
-                },
-                link: !!options.elementRegistration ? inputRegistrationLink : !!options.customLink ? customLink : defaultLink
-            }, options);
+                }
+            };
+
+            // Combines user specified options with the template options and returns a fully configured AngularJS
+            // directive definition Object.
+            return angular.merge(template_options, options);
         }
-        
-        return ParlayWidgetTemplate;        
+
+        return ParlayWidgetTemplate;
     }
-    
+
 }());

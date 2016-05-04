@@ -20,15 +20,20 @@
     ParlayWidgetBaseConfigurationDialogController.$inject = ["$scope", "$mdDialog", "configuration", "widgetCompiler"];
     function ParlayWidgetBaseConfigurationDialogController ($scope, $mdDialog, configuration, widgetCompiler) {
 
+        var ctrl = this;
+
         $scope.configuration = configuration;
 
-        this.cancel = function () {
+        ctrl.cancel = cancel;
+        ctrl.hide = hide;
+        
+        function cancel () {
             $mdDialog.cancel();
-        };
+        }
 
-        this.hide = function () {
+        function hide () {
             $mdDialog.hide($scope.configuration);
-        };
+        }
 
         $scope.$watch("configuration.template", function (newValue, oldValue) {
             if (!angular.equals(newValue, oldValue)) {
@@ -41,30 +46,40 @@
     ParlayWidgetBaseConfigurationTemplateController.$inject = ["ParlayWidgetCollection"];
     function ParlayWidgetBaseConfigurationTemplateController (ParlayWidgetCollection) {
 
-        this.getTemplates = function () {
+        var ctrl = this;
+        
+        ctrl.getTemplates = getTemplates;
+
+        function getTemplates () {
             return ParlayWidgetCollection.getAvailableWidgets();
-        };
+        }
 
     }
 
     ParlayWidgetBaseConfigurationEventController.$inject = ["$scope", "ParlayWidgetInputManager", "ParlayWidgetEventHandler"];
     function ParlayWidgetBaseConfigurationEventController ($scope, ParlayWidgetInputManager) {
 
-        this.queryEvents = function (query) {
+        var ctrl = this;
+
+        ctrl.queryEvents = queryEvents;
+        ctrl.addHandler = addHandler;
+        ctrl.removeHandler = removeHandler;
+        
+        function queryEvents (query) {
             var lowercase_query = angular.lowercase(query);
             
             return ParlayWidgetInputManager.getEvents().filter(function (event) {
                 return (angular.lowercase(event.event) + angular.lowercase(event.element)).includes(lowercase_query);
             });
-        };
+        }
         
-        this.addHandler = function (event) {
+        function addHandler  (event) {
             ParlayWidgetInputManager.registerHandler(event);
-        };
+        }
         
-        this.removeHandler = function (event) {
+        function removeHandler (event) {
             ParlayWidgetInputManager.deregisterHandler(event);
-        };
+        }
 
         $scope.$watch("configuration.template.type", function (newValue, oldValue) {
             if (!angular.equals(newValue, oldValue)) {
@@ -86,6 +101,32 @@
     ParlayWidgetBaseConfigurationHandlerController.$inject = ["ParlayData"];
     function ParlayWidgetBaseConfigurationHandlerController (ParlayData) {
 
+        var ctrl = this;
+
+        ctrl.onEditorLoad = onEditorLoad;
+
+        var static_completer_entries = [
+            {
+                caption: "ParlaySocket.sendMessage",
+                value: "ParlaySocket.sendMessage({}, {})"
+            },
+            {
+                caption: "log",
+                value: 'log("hello world")',
+                meta: "console.log"
+            },
+            {
+                caption: "alert",
+                value: 'alert("hello world")',
+                meta: "window.alert"
+            },
+            {
+                caption: "event",
+                value: "event",
+                meta: "JavaScript event"
+            }
+        ];
+
         function items() {
             var iterator = ParlayData.values();
             var values = [];
@@ -95,30 +136,7 @@
             return values;
         }
 
-        function generateCompleter() {
-
-            var static_entries = [
-                {
-                    caption: "ParlaySocket.sendMessage",
-                    value: "ParlaySocket.sendMessage({}, {})"
-                },
-                {
-                    caption: "log",
-                    value: 'log("hello world")',
-                    meta: "console.log"
-                },
-                {
-                    caption: "alert",
-                    value: 'alert("hello world")',
-                    meta: "window.alert"
-                },
-                {
-                    caption: "event",
-                    value: "event",
-                    meta: "JavaScript event"
-                }
-            ];
-
+        function generateCompleter(initial_entries) {
             return {
                 getCompletions: function (editor, session, pos, prefix, callback) {
                     callback(null, items().reduce(function (accumulator, item) {
@@ -144,22 +162,28 @@
                         });
 
                         return accumulator.concat(entries);
-                    }, static_entries));
+                    }, initial_entries));
                 }
             };
         }
 
-        this.onEditorLoad = function (editor) {
+        function onEditorLoad (editor) {
             editor.$blockScrolling = Infinity;
             ace.require("ace/ext/language_tools");
             editor.setOptions({enableBasicAutocompletion: true, enableLiveAutocompletion: true});
-            editor.completers = [generateCompleter()];
-        };
+            editor.completers = [generateCompleter(static_completer_entries)];
+        }
 
     }
 
     ParlayWidgetBaseConfigurationSourceController.$inject = ["$scope", "ParlayData", "ParlayWidgetInputManager", "ParlayWidgetTransformer"];
     function ParlayWidgetBaseConfigurationSourceController ($scope, ParlayData, ParlayWidgetInputManager, ParlayWidgetTransformer) {
+
+        var ctrl = this;
+
+        ctrl.querySearch = querySearch;
+        ctrl.onAdd = onAdd;
+        ctrl.onRemove = onRemove;
 
         function items() {
             var iterator = ParlayData.values();
@@ -170,8 +194,7 @@
             return values;
         }
 
-        this.querySearch = function (query) {
-
+        function querySearch (query) {
             var lowercase_query = query.toLowerCase();
 
             var filtered_items = items().filter(function (item) {
@@ -183,16 +206,15 @@
             });
 
             return filtered_items.concat(filtered_elements);
+        }
 
-        };
-
-        this.onAdd = function ($chip) {
+        function onAdd ($chip) {
             $scope.configuration.transformer.addItem($chip);
-        };
+        }
 
-        this.onRemove = function ($chip) {
+        function onRemove ($chip) {
             $scope.configuration.transformer.removeItem($chip);
-        };
+        }
 
         $scope.$watch("configuration.template.type", function (newValue, oldValue) {
             if (!angular.equals(newValue, oldValue)) {
@@ -213,7 +235,13 @@
     ParlayWidgetBaseConfigurationTransformController.$inject = ["$scope"];
     function ParlayWidgetBaseConfigurationTransformController ($scope) {
 
-        function generateCompleter() {
+        var ctrl = this;
+
+        ctrl.onEditorLoad = onEditorLoad;
+
+        var static_completer_entries = [];
+
+        function generateCompleter(initial_entries) {
             return {
                 getCompletions: function (editor, session, pos, prefix, callback) {
                     callback(null, $scope.configuration.selectedItems.reduce(function (accumulator, item) {
@@ -222,17 +250,17 @@
                             value: item.name + ".value",
                             meta: "Parlay{" + item.type + "} value"
                         }]);
-                    }, []));
+                    }, initial_entries));
                 }
             };
         }
 
-        this.onEditorLoad = function (editor) {
+        function onEditorLoad (editor) {
             editor.$blockScrolling = Infinity;
             ace.require("ace/ext/language_tools");
             editor.setOptions({enableBasicAutocompletion: true, enableLiveAutocompletion: true});
-            editor.completers = [generateCompleter()];
-        };
+            editor.completers = [generateCompleter(static_completer_entries)];
+        }
 
     }
 

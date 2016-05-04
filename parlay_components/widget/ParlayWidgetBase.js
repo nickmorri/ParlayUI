@@ -26,7 +26,6 @@
                     ["transformed-value", "item.configuration.transformer.value"],
                     ["widgets-ctrl", "widgetsCtrl"],
                     ["edit", "edit"],
-                    ["$index", "$index"],
                     ["uid", "item.uid"]
                 ];
 
@@ -135,7 +134,7 @@
                         scope.item.configuration = configuration;
                     }).catch(function () {
                         if (initialize) {
-                            scope.widgetsCtrl.remove(scope.$index);
+                            scope.widgetsCtrl.remove(scope.uid);
                         }
                     });
                 };

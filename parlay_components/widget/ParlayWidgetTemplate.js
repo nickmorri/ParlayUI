@@ -40,7 +40,6 @@
             return angular.merge({
                 restrict: "E",
                 scope: {
-                    $index: "=",
                     items: "=",
                     transformedValue: "=",
                     widgetsCtrl: "=",

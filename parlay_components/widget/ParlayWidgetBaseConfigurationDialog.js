@@ -67,9 +67,10 @@
         
         function queryEvents (query) {
             var lowercase_query = angular.lowercase(query);
-            
+
             return ParlayWidgetInputManager.getEvents().filter(function (event) {
-                return (angular.lowercase(event.event) + angular.lowercase(event.element)).includes(lowercase_query);
+                return (angular.lowercase(event.event) + angular.lowercase(event.element)).includes(lowercase_query) &&
+                    $scope.configuration.selectedEvents.indexOf(event) === -1;
             });
         }
         
@@ -85,7 +86,7 @@
             if (!angular.equals(newValue, oldValue)) {
                 if (newValue == "input") {
                     $scope.configuration.selectedEvents = [];
-                    $scope.$parent.currentTabIndex = 1;
+                    $scope.currentTabIndex = 1;
                 }
                 else if (!!$scope.configuration.selectedEvents) {
                     $scope.configuration.selectedEvents.forEach(function (event) {
@@ -221,7 +222,7 @@
                 if (newValue == "display") {
                     $scope.configuration.selectedItems = [];
                     $scope.configuration.transformer = new ParlayWidgetTransformer();
-                    $scope.$parent.currentTabIndex = 2;
+                    $scope.currentTabIndex = 2;
                 }
                 else if (!!$scope.configuration.transformer) {
                     $scope.configuration.transformer.cleanHandlers();

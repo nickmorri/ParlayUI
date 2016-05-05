@@ -11,13 +11,17 @@
     function ParlayWidgetManagerFactory ($window, ParlayStore, ParlaySettings) {
         
         function ParlayWidgetManager () {
+            // Immediately retrieve any saved workspaces.
             this.saved_workspaces = this.getWorkspaces();
             this.active_widgets = [];
             // Add event handler before window unload to autosave widgets.
             $window.addEventListener("beforeunload", ParlayWidgetManager.prototype.autoSave.bind(this));
             this.editing = ParlaySettings.get("widgets").editing;
         }
-        
+
+        /**
+         * Toggles the editing state and persists the state to ParlaySettings.
+         */
         ParlayWidgetManager.prototype.toggleEditing = function () {
             this.editing = !this.editing;
             ParlaySettings.set("widgets", {editing: this.editing});
@@ -158,10 +162,13 @@
          */
         ParlayWidgetManager.prototype.autoSave = function() {
             if (this.hasActiveWidgets()) {
-                this.saveEntry({name: "AutoSave", data:[]});
+                this.saveEntry({name: "AutoSave", data:[], autosave: true});
             }
         };
 
+        /**
+         * Creates container Object for a widget and assigns it a unique ID.
+         */
         ParlayWidgetManager.prototype.add = function () {
 
             var uid = 0;
@@ -177,12 +184,20 @@
             this.active_widgets.push({uid: uid});
         };
 
+        /**
+         * Removes the widget that corresponds to the given uid.
+         * @param {Number} uid - Unique ID given to a widget on add.
+         */
         ParlayWidgetManager.prototype.remove = function (uid) {
             this.active_widgets.splice(this.active_widgets.findIndex(function (container) {
                 return container.uid === uid;
             }), 1);
         };
 
+        /**
+         * Duplicates the widget that corresponds to the given uid. The copy will be given a new uid.
+         * @param {Number} old_uid - Unique ID given to widget on add.
+         */
         ParlayWidgetManager.prototype.duplicate = function (old_uid) {
             var copy = angular.copy(this.active_widgets.find(function (container) {
                 return container.uid === old_uid;

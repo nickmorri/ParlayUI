@@ -32,7 +32,7 @@
         Public.openProtocol = function (configuration) {
             return $q(function(resolve, reject) {
                 if (configuration.name === 'SuccessfulProtocol') resolve({STATUS:'ok'});
-                else reject({STATUS:'error'});
+                else reject('error');
             });
         };
 

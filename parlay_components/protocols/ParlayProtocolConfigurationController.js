@@ -73,13 +73,16 @@
          */
         this.connect = function () {
             this.connecting = true;
+            var protocol_name = ctrl.selected_protocol.name;
+            var protocol_parameters = Object.keys(ctrl.selected_protocol.parameters).reduce(function (accumulator, key) {
+                accumulator[key] = ctrl.selected_protocol.parameters[key].value ||
+                    ctrl.selected_protocol.parameters[key].search_text;;
+                return accumulator;
+            }, {});
 
             ParlayProtocolManager.openProtocol({
-                name: this.selected_protocol.name,
-                parameters: Object.keys(this.selected_protocol.parameters).reduce(function (param_obj, key) {
-                    param_obj[key] = this.selected_protocol.parameters[key].value;
-                    return param_obj;
-                }.bind(this), {})
+                name: protocol_name,
+                parameters: protocol_parameters
             }).then(function (response) {
                 $mdDialog.hide(response);
                 return response;

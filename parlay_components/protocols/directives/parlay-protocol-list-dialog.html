@@ -21,8 +21,8 @@
                 <md-icon hide-xs hide-sm hide-md ng-md-icon icon="group_work"></md-icon>
 
                 <div class="md-list-item-text">
-                    <h3>Broker (v{{ctrl.getBrokerVersion()}})</h3>
-                    <p>{{ctrl.getBrokerAddress()}}</p>
+                    <h3>Broker (v{{ctrl.broker_version}})</h3>
+                    <p>{{ctrl.broker_version}}</p>
                 </div>
 
                 <md-button ng-if="ctrl.isBrokerConnected()" class="md-secondary md-warn" ng-class="$mdMedia('gt-md') ? 'md-raised' : 'md-icon-button'" ng-click="ctrl.shutdownBroker()" aria-label="Shutdown">

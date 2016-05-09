@@ -46,7 +46,7 @@
                 it('tests connection', function () {
                     expect(ctrl.isBrokerConnected()).toBeFalsy();
                     expect(ctrl.getBrokerAddress()).toBe('ws://localhost:8080');
-                    expect(ctrl.getBrokerVersion()).toBe('0.0.1');
+                    expect(ctrl.broker_version).toBe('0.0.1');
                 });
 
                 it("shutdown broker connection", function () {
@@ -96,7 +96,9 @@
                 });
 
                 it("closes protocol", function () {
-                    var protocol = {};
+                    var protocol = {
+                        getName: function () { return ""; }
+                    };
                     spyOn(ParlayProtocolManager, "closeProtocol");
                     ctrl.closeProtocol(protocol);
                     expect(ParlayProtocolManager.closeProtocol).toHaveBeenCalledWith(protocol);

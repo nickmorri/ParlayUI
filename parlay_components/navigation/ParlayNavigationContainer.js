@@ -1,8 +1,14 @@
 (function () {
     "use strict";
 
+    var module_dependencies = ["ngMaterial", "parlay.navigation.sidenav", "vendor.defaults"];
+
     /* istanbul ignore next */
-    function ParlayNavigationContainerController($mdSidenav) {
+    ParlayNavigationContainerController.$inject = ["$mdSidenav", "vendorLogo", "vendorIcon"];
+    function ParlayNavigationContainerController($mdSidenav, vendorLogo, vendorIcon) {
+
+        this.vendorLogo = vendorLogo;
+        this.vendorIcon = vendorIcon;
 
         this.toggleSidenav = function () {
             $mdSidenav("navigation").toggle();
@@ -19,8 +25,8 @@
         };
     }
 
-    angular.module("parlay.navigation.container", ["ngMaterial", "parlay.navigation.sidenav"])
-        .controller("ParlayNavigationContainerController", ["$mdSidenav", ParlayNavigationContainerController])
-        .directive("parlayNavigationContainer", [ParlayNavigationContainer]);
+    angular.module("parlay.navigation.container", module_dependencies)
+        .controller("ParlayNavigationContainerController", ParlayNavigationContainerController)
+        .directive("parlayNavigationContainer", ParlayNavigationContainer);
 
 }());

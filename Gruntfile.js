@@ -31,6 +31,12 @@ module.exports = function (grunt) {
         }, {});
     }
 
+    function getBase64 (filepath) {
+        var split_path = filepath.split(".");
+        var extension = split_path[split_path.length - 1];
+        return "data:image/" + extension + ";base64," + grunt.file.read(filepath, {encoding: null}).toString("base64");
+    }
+
 	/**
 	 * Process vendor items and return an Array of Strings that Grunt can use.
 	 * @param {Array} items - Component items we are searching for.
@@ -328,6 +334,7 @@ module.exports = function (grunt) {
 					{
                         'expand': true,
                         'src': [
+                            'app.js',
                             '<%= meta.source %>',
                             '<%= meta.vendorComponents %>',
                             '<%= meta.compiledHtml %>'
@@ -357,7 +364,7 @@ module.exports = function (grunt) {
 			},
 			'dist': {
 				'files': {
-					'<%= meta.tmp_destination %>/<%= pkg.namelower %>.min.js': ['tmp/app.js', '<%= meta.source %>', '<%= meta.vendorComponents %>', '<%= meta.compiledHtml %>'],
+					'<%= meta.tmp_destination %>/<%= pkg.namelower %>.min.js': ['app.js', '<%= meta.tmp_destination %>/vendorDefaults.js', '<%= meta.source %>', '<%= meta.vendorComponents %>', '<%= meta.compiledHtml %>'],
                     '<%= meta.tmp_destination %>/lib.min.js': '<%= meta.tmp_destination %>/lib.js'
 				}
 			}
@@ -393,19 +400,29 @@ module.exports = function (grunt) {
         'replace': {
             'dev': {
                 'options': {'patterns': [
+                    {'match': 'vendorName', 'replacement': getPrimaryVendor(getVendors()).name},
+                    {'match': 'vendorLogo', 'replacement': getBase64(getPrimaryVendor(getVendors()).options.logo)},
+                    {'match': 'vendorIcon', 'replacement': getBase64(getPrimaryVendor(getVendors()).options.icon)},
                     {'match': 'primaryPalette', 'replacement': getPrimaryVendor(getVendors()).options.primaryPalette},
                     {'match': 'accentPalette', 'replacement': getPrimaryVendor(getVendors()).options.accentPalette},
                     {'match': 'debugEnabled', 'replacement': true}
                 ]},
-                'files': [{'expand': true, 'flatten': true, 'src': 'app.js', 'dest': '<%= meta.dev_destination %>'}]
+                'files': [
+                    {'expand': true, 'flatten': true, 'src': 'vendorDefaults.js', 'dest': '<%= meta.dev_destination %>'}
+                ]
             },
             'dist': {
                 'options': {'patterns': [
+                    {'match': 'vendorName', 'replacement': getPrimaryVendor(getVendors()).name},
+                    {'match': 'vendorLogo', 'replacement': getBase64(getPrimaryVendor(getVendors()).options.logo)},
+                    {'match': 'vendorIcon', 'replacement': getBase64(getPrimaryVendor(getVendors()).options.icon)},
                     {'match': 'primaryPalette', 'replacement': getPrimaryVendor(getVendors()).options.primaryPalette},
                     {'match': 'accentPalette', 'replacement': getPrimaryVendor(getVendors()).options.accentPalette},
                     {'match': 'debugEnabled', 'replacement': false}
                 ]},
-                'files': [{'expand': true, 'flatten': true, 'src': 'app.js', 'dest': '<%= meta.tmp_destination %>'}]
+                'files': [
+                    {'expand': true, 'flatten': true, 'src': 'vendorDefaults.js', 'dest': '<%= meta.tmp_destination %>'}
+                ]
             }
         }
 

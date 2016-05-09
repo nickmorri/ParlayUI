@@ -3,10 +3,11 @@
   "primary": true,
   "options": {
     "primaryPalette": "blue-grey",
-    "accentPalette": "red"
+    "accentPalette": "red",
+    "logo": "vendor_components/promenade/images/logo.png",
+    "icon": "vendor_components/promenade/images/icon.png"
   },
   "paths": {
-    "logo": "vendor_components/promenade/images/logo.png",
     "protocols": "vendor_components/promenade/protocols/*.js",
     "directives": "vendor_components/promenade/**/directives/*.html",
     "items": "vendor_components/promenade/items/*.js",

@@ -81,7 +81,7 @@
             var protocol_name = ctrl.selected_protocol.name;
             var protocol_parameters = Object.keys(ctrl.selected_protocol.parameters).reduce(function (accumulator, key) {
                 accumulator[key] = ctrl.selected_protocol.parameters[key].value ||
-                    ctrl.selected_protocol.parameters[key].search_text;;
+                    ctrl.selected_protocol.parameters[key].search_text;
                 return accumulator;
             }, {});
 

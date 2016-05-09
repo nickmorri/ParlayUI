@@ -17,11 +17,15 @@
     }
 
     /* istanbul ignore next */
-    function ParlayNavigationContainer () {
+    ParlayNavigationContainer.$inject = ["themeColor"];
+    function ParlayNavigationContainer (themeColor) {
         return {
             templateUrl: "../parlay_components/navigation/directives/parlay-navigation-container.html",
             controller: "ParlayNavigationContainerController",
-            controllerAs: "ctrl"
+            controllerAs: "ctrl",
+            link: function (scope, element) {
+                element.find("md-list")[0].style.backgroundColor = themeColor;
+            }
         };
     }
 

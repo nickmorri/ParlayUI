@@ -9,118 +9,99 @@
 
     ParlayProtocolListController.$inject = ["$scope", "$mdDialog", "$mdMedia", "ParlayProtocolManager", "PromenadeBroker"];
     function ParlayProtocolListController($scope, $mdDialog, $mdMedia, ParlayProtocolManager, PromenadeBroker) {
+        
+        var ctrl = this;
 
-        this.hide = $mdDialog.hide;
-        this.connecting = false;
+        ctrl.hide = $mdDialog.hide;
+        ctrl.connecting = false;
 
-        /**
-         * Returns Broker connection status.
-         * @returns {Boolean} Broker connection status
-         */
-        this.isBrokerConnected = function () {
-            return PromenadeBroker.isConnected();
-        };
+        ctrl.isBrokerConnected = isBrokerConnected;
+        ctrl.getBrokerAddress = PromenadeBroker.getBrokerAddress;
+        ctrl.broker_version = PromenadeBroker.version;
+        ctrl.shutdownBroker = shutdownBroker;
+        ctrl.connectBroker = connectBroker;
 
-        /**
-         * Returns Broker location.
-         * @returns {String} location of Broker where WebSocket is connected to.
-         */
-        this.getBrokerAddress = function () {
-            return PromenadeBroker.getBrokerAddress();
-        };
+        ctrl.openSavedProtocol = openSavedProtocol;
+        ctrl.hasOpenProtocols = hasOpenProtocols;
+        ctrl.hasSavedProtocols = hasSavedProtocols;
+        ctrl.openConfiguration = openConfiguration;
+        ctrl.getOpenProtocols = getOpenProtocols;
+        ctrl.getSavedProtocols = getSavedProtocols;
+        ctrl.deleteSavedProtocol = deleteSavedProtocol;
+        ctrl.closeProtocol = closeProtocol;
 
-        /**
-         * Returns Broker version.
-         * @returns {String} current version reported by Broker.
-         */
-        this.getBrokerVersion = function () {
-            return PromenadeBroker.version;
-        };
+        // Attach reference to $mdMedia to scope so that media queries can be done.
+        $scope.$mdMedia = $mdMedia;
 
-        /**
-         * Requests that the Broker shutdown.
-         */
-        this.shutdownBroker = function () {
+        function isBrokerConnected () {
+            return PromenadeBroker.connected;
+        }
+
+        function shutdownBroker () {
             /* istanbul ignore else */
-            if (PromenadeBroker.isConnected()) {
+            if (PromenadeBroker.connected) {
                 PromenadeBroker.requestShutdown();
             }
-        };
+        }
 
-        this.connectBroker = function () {
+        function connectBroker () {
             /* istanbul ignore else */
-            if (!PromenadeBroker.isConnected()) {
+            if (!PromenadeBroker.connected) {
                 PromenadeBroker.connect();
             }
-        };
+        }
 
-        /**
-         * Returns open protocols from ParlayProtocolManager.
-         * @returns {Array} open protocols
-         */
-        this.getOpenProtocols = function () {
+        function getOpenProtocols () {
             return ParlayProtocolManager.getOpenProtocols();
-        };
+        }
 
-        /**
-         * Check if ParlayProtocolManager has open protocols.
-         * @returns {Boolean} true if open protocols exist, false otherwise.
-         */
-        this.hasOpenProtocols = function () {
-            return this.getOpenProtocols().length !== 0;
-        };
-
-        this.getSavedProtocols = function () {
+        function getSavedProtocols () {
             return ParlayProtocolManager.getSavedProtocols();
-        };
+        }
 
-        /**
-         * Check if ParlayProtocolManager has saved protocols.
-         * @returns {Boolean} true if open protocols exist, false otherwise.
-         */
-        this.hasSavedProtocols = function () {
-            return this.getSavedProtocols().length !== 0;
-        };
+        function deleteSavedProtocol (configuration) {
+            return ParlayProtocolManager.deleteProtocolConfiguration(configuration);
+        }
 
-        this.openSavedProtocol = function (configuration) {
-            this.connecting = true;
+        function closeProtocol (protocol) {
+            return ParlayProtocolManager.closeProtocol(protocol);
+        }
+
+
+        function hasOpenProtocols () {
+            return ParlayProtocolManager.hasOpenProtocols();
+        }
+
+        function hasSavedProtocols () {
+            return ParlayProtocolManager.hasSavedProtocols();
+        }
+
+        function openSavedProtocol (configuration) {
+            ctrl.connecting = true;
             ParlayProtocolManager.openProtocol(configuration).then(function () {
-                this.connecting = false;
-            }.bind(this));
-        };
-
-        this.deleteSavedProtocol = function (configuration) {
-            ParlayProtocolManager.deleteProtocolConfiguration(configuration);
-        };
-
-        /**
-         * Closes protocol then spawns toast notifying user.
-         * @param {Object} protocol - Protocol configuration object.
-         */
-        this.closeProtocol = function (protocol) {
-            ParlayProtocolManager.closeProtocol(protocol);
-        };
+                ctrl.connecting = false;
+            });
+        }
 
         /**
          * Show protocol configuration dialog and have ParlayProtocolManager open a protocol.
          * @param {Event} - Event generated when button is selected. Allows use to have origin for dialog display animation.
          */
         /* istanbul ignore next */
-        this.openConfiguration = function (event) {
+        function openConfiguration (event) {
             // Show a configuration dialog allowing us to setup a protocol configuration.
             $mdDialog.show({
                 targetEvent: event,
                 clickOutsideToClose: true,
-                onComplete: function (scope, element) { element.find("input").focus(); },
+                onComplete: function (scope, element) {
+                    element.find("input").focus();
+                },
                 controller: "ParlayProtocolConfigurationController",
                 controllerAs: "ctrl",
                 bindToController: true,
                 templateUrl: "../parlay_components/protocols/directives/parlay-protocol-configuration-dialog.html"
             });
-        };
-
-        // Attach reference to $mdMedia to scope so that media queries can be done.
-        $scope.$mdMedia = $mdMedia;
+        }
 
     }
 

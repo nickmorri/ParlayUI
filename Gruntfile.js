@@ -72,7 +72,7 @@ module.exports = function (grunt) {
         'vendor_options': getVendorOptions(getVendors()),
 
 		'meta': {
-			'source': ['parlay_components/*/*.js'],
+			'source': ['app.js', 'parlay_components/*/*.js'],
 			'vendorComponents': getVendorPathGlobs(getVendors(), ['protocols', 'items'], []),
             'vendorOptions': getVendorOptions(getVendors()),
 			'dist_destination': 'dist',
@@ -170,7 +170,7 @@ module.exports = function (grunt) {
 				    'livereload': true,
                     'interrupt': true
 				},
-				'files': ['<%= meta.source %>', '<%= meta.vendorComponents %>'],
+				'files': ['vendorDefaults.js', '<%= meta.source %>', '<%= meta.vendorComponents %>'],
 				'tasks': ['newer:replace:dev', 'newer:jshint:dev', 'karma:dev', 'newer:copy:dev']
 			},
 			'stylesheets': {
@@ -201,13 +201,22 @@ module.exports = function (grunt) {
                 'tasks': ['processhtml:dev', 'wiredep:dev']
             },
 			'tests': {
+                'options': {
+                    'interrupt': true
+                },
 	        	'files': '<%= meta.tests %>',
 				'tasks': 'karma:dev'
 			},
 			'mocks': {
 				'files': '<%= meta.mocks %>',
 				'tasks': 'karma:dev'
-			}
+			},
+            'config': {
+                'files': ['Gruntfile.js', 'vendor_components/**/vendor.json'],
+                'options': {
+                    'reload': true
+                }
+            }
 		},
 
         // Automatically opens the default web browser pointed at the express web server.
@@ -334,7 +343,6 @@ module.exports = function (grunt) {
 					{
                         'expand': true,
                         'src': [
-                            'app.js',
                             '<%= meta.source %>',
                             '<%= meta.vendorComponents %>',
                             '<%= meta.compiledHtml %>'
@@ -364,7 +372,7 @@ module.exports = function (grunt) {
 			},
 			'dist': {
 				'files': {
-					'<%= meta.tmp_destination %>/<%= pkg.namelower %>.min.js': ['app.js', '<%= meta.tmp_destination %>/vendorDefaults.js', '<%= meta.source %>', '<%= meta.vendorComponents %>', '<%= meta.compiledHtml %>'],
+					'<%= meta.tmp_destination %>/<%= pkg.namelower %>.min.js': ['<%= meta.tmp_destination %>/vendorDefaults.js', '<%= meta.source %>', '<%= meta.vendorComponents %>', '<%= meta.compiledHtml %>'],
                     '<%= meta.tmp_destination %>/lib.min.js': '<%= meta.tmp_destination %>/lib.js'
 				}
 			}
@@ -396,7 +404,7 @@ module.exports = function (grunt) {
 				'dest': '<%= meta.compiledHtml %>'
 			}
 		},
-        
+
         'replace': {
             'dev': {
                 'options': {'patterns': [

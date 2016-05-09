@@ -1,31 +1,50 @@
 module.exports = function (grunt) {
+    "use strict";
 	
 	/**
 	 * Loads each vendor configuration file available in vendor_components
-	 * @returns {Object} - key (vendor name) -> Object of vendor source paths.
+	 * @returns {Object} - key (vendor name) -> Object of vendor configurations.
 	 */
 	function getVendors () {
 		return grunt.file.expand('vendor_components/**/vendor.json').map(function (vendor) {
 			return grunt.file.readJSON(vendor);
-	    }).reduce(function (accumulator, vendor) {
-	        accumulator[vendor.name] = vendor.source;
-	        return accumulator;
-	    }, {});
+	    });
 	}
-	
+
+    function getPrimaryVendor (vendors) {
+        return vendors.find(function (vendor) {
+            return vendor.primary;
+        });
+    }
+
+    function getVendorOptions (vendors) {
+        return vendors.reduce(function (accumulator, vendor) {
+            accumulator[vendor.name] = vendor.options;
+            return accumulator;
+        }, {});
+    }
+
+    function getVendorPaths (vendors) {
+        return vendors.reduce(function (accumulator, vendor) {
+            accumulator[vendor.name] = vendor.paths;
+            return accumulator;
+        }, {});
+    }
+
 	/**
 	 * Process vendor items and return an Array of Strings that Grunt can use.
 	 * @param {Array} items - Component items we are searching for.
 	 * @param {Array} initial - Any component we want to include explicitly.
 	 * @returns {Array} - Array of all components we extracted from the vendor Object and explicitly included components.
 	 */
-	function getVendorItems (items, initial) {
-		var vendors = getVendors();
-		if (initial === undefined) initial = [];
-		return initial.concat(Object.keys(vendors).reduce(function (accumulator, vendor)  {
-			return accumulator.concat(Object.keys(vendors[vendor]).filter(function (key) {
+	function getVendorPathGlobs (vendors, items, initial) {
+
+        var vendors_paths = getVendorPaths(vendors);
+
+		return (initial || []).concat(Object.keys(vendors_paths).reduce(function (accumulator, vendor)  {
+			return accumulator.concat(Object.keys(vendors_paths[vendor]).filter(function (key) {
 				return items.some(function (item) { return key.indexOf(item) > -1; });
-	        }).map(function (key) { return '<%= vendor.' + vendor + '.' + key + ' %>'; }));
+	        }).map(function (key) { return '<%= vendor_paths.' + vendor + '.' + key + ' %>'; }));
 	    }, []));
 	}
 
@@ -42,21 +61,24 @@ module.exports = function (grunt) {
 
         'pkg': grunt.file.readJSON('package.json'),
 
-		'vendor': getVendors(),
+		'vendor_paths': getVendorPaths(getVendors()),
+
+        'vendor_options': getVendorOptions(getVendors()),
 
 		'meta': {
 			'source': ['parlay_components/*/*.js'],
-			'vendorComponents': getVendorItems(['protocols', 'items'], []),
+			'vendorComponents': getVendorPathGlobs(getVendors(), ['protocols', 'items'], []),
+            'vendorOptions': getVendorOptions(getVendors()),
 			'dist_destination': 'dist',
 			'dev_destination': 'dev',
 			'tmp_destination': 'tmp',
 			'coverage_destination': 'coverage',
-			'mocks': getVendorItems (['mocks'], ['parlay_components/*/mocks/*.js']),
-			'tests': getVendorItems(['test'], ['parlay_components/*/test/*.spec.js']),
+			'mocks': getVendorPathGlobs(getVendors(), ['mocks'], ['parlay_components/*/mocks/*.js']),
+			'tests': getVendorPathGlobs(getVendors(), ['test'], ['parlay_components/*/test/*.spec.js']),
 			'compiledHtml': '<%= meta.tmp_destination %>/templates.js',
-			'htmlDirectives': getVendorItems(['directives'], ['parlay_components/**/directives/*.html']),
+			'htmlDirectives': getVendorPathGlobs(getVendors(), ['directives'], ['parlay_components/**/directives/*.html']),
 			'htmlViews': 'parlay_components/**/views/*.html',
-			'stylesheets': getVendorItems(['stylesheets'], ['css/*.css'])
+			'stylesheets': getVendorPathGlobs(getVendors(), ['stylesheets'], ['css/*.css'])
 		},
 
         // Minimal web server used for development.
@@ -370,32 +392,20 @@ module.exports = function (grunt) {
         
         'replace': {
             'dev': {
-                'options': {
-                    'patterns': [
-                        {
-                            'match': 'debugEnabled',
-                            'replacement': true
-                        }
-                    ],
-                    'usePrefix': false
-                },
-                'files': [
-                    {'expand': true, 'flatten': true, 'src': 'app.js', 'dest': '<%= meta.dev_destination %>'}
-                ]
+                'options': {'patterns': [
+                    {'match': 'primaryPalette', 'replacement': getPrimaryVendor(getVendors()).options.primaryPalette},
+                    {'match': 'accentPalette', 'replacement': getPrimaryVendor(getVendors()).options.accentPalette},
+                    {'match': 'debugEnabled', 'replacement': true}
+                ]},
+                'files': [{'expand': true, 'flatten': true, 'src': 'app.js', 'dest': '<%= meta.dev_destination %>'}]
             },
             'dist': {
-                'options': {
-                    'patterns': [
-                        {
-                            'match': 'debugEnabled',
-                            'replacement': false
-                        }
-                    ],
-                    'usePrefix': false
-                },
-                'files': [
-                    {'expand': true, 'flatten': true, 'src': 'app.js', 'dest': '<%= meta.tmp_destination %>'}
-                ]
+                'options': {'patterns': [
+                    {'match': 'primaryPalette', 'replacement': getPrimaryVendor(getVendors()).options.primaryPalette},
+                    {'match': 'accentPalette', 'replacement': getPrimaryVendor(getVendors()).options.accentPalette},
+                    {'match': 'debugEnabled', 'replacement': false}
+                ]},
+                'files': [{'expand': true, 'flatten': true, 'src': 'app.js', 'dest': '<%= meta.tmp_destination %>'}]
             }
         }
 

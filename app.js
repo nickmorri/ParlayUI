@@ -11,7 +11,7 @@
     function ParlayConfig ($urlRouterProvider, $mdThemingProvider, $compileProvider) {
 
         // Theme configuration.
-        $mdThemingProvider.theme("default").primaryPalette("blue-grey").accentPalette("red");
+        $mdThemingProvider.theme("default").primaryPalette("@@primaryPalette").accentPalette("@@accentPalette");
 
         // Needed for warning toast.
         $mdThemingProvider.theme("warning-toast").primaryPalette("amber");
@@ -23,7 +23,7 @@
         // https://docs.angularjs.org/guide/production#disabling-debug-data
         // The debugEnabled variable is replaced automatically by grunt-replace depending on the build environment.
         // If we are in dev debugEnabled will be true, if in dist it will be false.
-        $compileProvider.debugInfoEnabled(debugEnabled);
+        $compileProvider.debugInfoEnabled(@@debugEnabled);
 
     }
 

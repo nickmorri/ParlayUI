@@ -1,11 +1,17 @@
 {
-    "name": "promenade",
-    "source": {
-        "protocols": "vendor_components/promenade/protocols/*.js",
-    	"directives": "vendor_components/promenade/**/directives/*.html",
-    	"items": "vendor_components/promenade/items/*.js",
-    	"test": "vendor_components/promenade/**/test/*.spec.js",
-    	"mocks": "vendor_components/promenade/**/mocks/*.js",
-    	"stylesheets": "vendor_components/promenade/css/*.css"
-    }	
+  "name": "promenade",
+  "primary": true,
+  "options": {
+    "primaryPalette": "blue-grey",
+    "accentPalette": "red"
+  },
+  "paths": {
+    "logo": "vendor_components/promenade/images/logo.png",
+    "protocols": "vendor_components/promenade/protocols/*.js",
+    "directives": "vendor_components/promenade/**/directives/*.html",
+    "items": "vendor_components/promenade/items/*.js",
+    "test": "vendor_components/promenade/**/test/*.spec.js",
+    "mocks": "vendor_components/promenade/**/mocks/*.js",
+    "stylesheets": "vendor_components/promenade/css/*.css"
+  }
 }

@@ -15,20 +15,20 @@
         ctrl.hide = $mdDialog.hide;
         ctrl.connecting = false;
 
-        ctrl.isBrokerConnected = isBrokerConnected;
         ctrl.getBrokerAddress = PromenadeBroker.getBrokerAddress;
         ctrl.broker_version = PromenadeBroker.version;
+        ctrl.isBrokerConnected = isBrokerConnected;
         ctrl.shutdownBroker = shutdownBroker;
         ctrl.connectBroker = connectBroker;
 
+        ctrl.hasOpenProtocols = ParlayProtocolManager.hasOpenProtocols;
+        ctrl.hasSavedProtocols = ParlayProtocolManager.hasSavedProtocols;
+        ctrl.getOpenProtocols = ParlayProtocolManager.getOpenProtocols;
+        ctrl.getSavedProtocols = ParlayProtocolManager.getSavedProtocols;
+        ctrl.closeProtocol = ParlayProtocolManager.closeProtocol;
+        ctrl.deleteSavedProtocol = ParlayProtocolManager.deleteProtocolConfiguration;
         ctrl.openSavedProtocol = openSavedProtocol;
-        ctrl.hasOpenProtocols = hasOpenProtocols;
-        ctrl.hasSavedProtocols = hasSavedProtocols;
         ctrl.openConfiguration = openConfiguration;
-        ctrl.getOpenProtocols = getOpenProtocols;
-        ctrl.getSavedProtocols = getSavedProtocols;
-        ctrl.deleteSavedProtocol = deleteSavedProtocol;
-        ctrl.closeProtocol = closeProtocol;
 
         // Attach reference to $mdMedia to scope so that media queries can be done.
         $scope.$mdMedia = $mdMedia;
@@ -38,42 +38,11 @@
         }
 
         function shutdownBroker () {
-            /* istanbul ignore else */
-            if (PromenadeBroker.connected) {
-                PromenadeBroker.requestShutdown();
-            }
+            PromenadeBroker.requestShutdown();
         }
 
         function connectBroker () {
-            /* istanbul ignore else */
-            if (!PromenadeBroker.connected) {
-                PromenadeBroker.connect();
-            }
-        }
-
-        function getOpenProtocols () {
-            return ParlayProtocolManager.getOpenProtocols();
-        }
-
-        function getSavedProtocols () {
-            return ParlayProtocolManager.getSavedProtocols();
-        }
-
-        function deleteSavedProtocol (configuration) {
-            return ParlayProtocolManager.deleteProtocolConfiguration(configuration);
-        }
-
-        function closeProtocol (protocol) {
-            return ParlayProtocolManager.closeProtocol(protocol);
-        }
-
-
-        function hasOpenProtocols () {
-            return ParlayProtocolManager.hasOpenProtocols();
-        }
-
-        function hasSavedProtocols () {
-            return ParlayProtocolManager.hasSavedProtocols();
+            PromenadeBroker.connect();
         }
 
         function openSavedProtocol (configuration) {

@@ -88,22 +88,6 @@
                     expect(ctrl.connecting).toBeFalsy();
                 });
                 
-                it("deletes saved protocol", function () {
-                    var configuration = {};
-                    spyOn(ParlayProtocolManager, "deleteProtocolConfiguration");
-                    ctrl.deleteSavedProtocol(configuration);
-                    expect(ParlayProtocolManager.deleteProtocolConfiguration).toHaveBeenCalledWith({});
-                });
-
-                it("closes protocol", function () {
-                    var protocol = {
-                        getName: function () { return ""; }
-                    };
-                    spyOn(ParlayProtocolManager, "closeProtocol");
-                    ctrl.closeProtocol(protocol);
-                    expect(ParlayProtocolManager.closeProtocol).toHaveBeenCalledWith(protocol);
-                });
-                
             });
             
         });

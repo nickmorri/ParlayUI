@@ -81,6 +81,10 @@
                 setSavedProtocols();
             };
 
+            this.hasAvailableProtocols = function () {
+                return this.getAvailableProtocols().length > 0;
+            };
+
             /**
              * Returns cached available protocols.
              * @returns {Array} - available protocols.
@@ -89,12 +93,20 @@
                 return available_protocols;
             };
 
+            this.hasOpenProtocols = function () {
+                return this.getOpenProtocols().length > 0;
+            };
+
             /**
              * Returns cached open protocols.
              * @returns {Array} - open protocols.
              */
             this.getOpenProtocols = function () {
                 return open_protocols;
+            };
+
+            this.hasSavedProtocols = function () {
+                return this.getSavedProtocols().length > 0;
             };
 
             /**
@@ -109,7 +121,9 @@
              * Clears open and available protocols.
              */
             function clearProtocols() {
-                open_protocols.forEach(function (protocol) { protocol.onClose(); });
+                open_protocols.forEach(function (protocol) {
+                    protocol.onClose();
+                });
                 open_protocols = [];
                 available_protocols = [];
             }
@@ -275,7 +289,6 @@
         }
 
         return new ParlayProtocolManager();
-
     }
 
 }());

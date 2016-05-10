@@ -46,7 +46,7 @@
                 it('tests connection', function () {
                     expect(ctrl.isBrokerConnected()).toBeFalsy();
                     expect(ctrl.getBrokerAddress()).toBe('ws://localhost:8080');
-                    expect(ctrl.getBrokerVersion()).toBe('0.0.1');
+                    expect(ctrl.broker_version).toBe('0.0.1');
                 });
 
                 it("shutdown broker connection", function () {
@@ -86,20 +86,6 @@
                     expect(ctrl.connecting).toBeTruthy();
                     rootScope.$apply();
                     expect(ctrl.connecting).toBeFalsy();
-                });
-                
-                it("deletes saved protocol", function () {
-                    var configuration = {};
-                    spyOn(ParlayProtocolManager, "deleteProtocolConfiguration");
-                    ctrl.deleteSavedProtocol(configuration);
-                    expect(ParlayProtocolManager.deleteProtocolConfiguration).toHaveBeenCalledWith({});
-                });
-
-                it("closes protocol", function () {
-                    var protocol = {};
-                    spyOn(ParlayProtocolManager, "closeProtocol");
-                    ctrl.closeProtocol(protocol);
-                    expect(ParlayProtocolManager.closeProtocol).toHaveBeenCalledWith(protocol);
                 });
                 
             });

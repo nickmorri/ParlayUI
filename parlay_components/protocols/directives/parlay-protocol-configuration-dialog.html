@@ -1,5 +1,5 @@
 <md-dialog aria-label="Protocol Configuration" flex="90" flex-gt-md="70" ng-class="{'md-dialog-fullscreen' : $mdMedia}">
-    <md-toolbar>
+    <md-toolbar ng-class="{'md-accent': ctrl.error}">
         <div class="md-toolbar-tools">
             <h2 ng-show="ctrl.configuration.protocol === undefined">Protocol Configuration</h2>
             <h2 ng-hide="ctrl.configuration.protocol === undefined">{{::ctrl.configuration.protocol.name}}</h2>
@@ -10,7 +10,7 @@
         </div>
     </md-toolbar>
     
-    <md-progress-linear ng-show="ctrl.connecting" md-mode="indeterminate"></md-progress-linear>
+    <md-progress-linear ng-show="ctrl.connecting && !ctrl.error" md-mode="indeterminate"></md-progress-linear>
     
     <form name="configform" ng-submit="ctrl.connect()">
     
@@ -34,16 +34,17 @@
 		            
 		        <span flex="100" ng-repeat="(parameter_name, parameter) in ctrl.selected_protocol.parameters" ng-switch="ctrl.isContainer(parameter.defaults)" layout="row">
 					
-					<md-autocomplete flex="100"
-						ng-switch-when="true"
-		                md-no-cache="true"
-		                md-autoselect="true"
-		                md-search-text="parameter.search_text"
-		                md-selected-item="parameter.value"
-		                md-items="default in ctrl.filterDefaults(parameter.defaults, parameter.search_text)"
-		                md-item-text="default.toString()"
-		                md-min-length="0"
-		                md-floating-label="{{parameter_name}}">
+					<md-autocomplete
+                            flex="100"
+                            ng-switch-when="true"
+                            md-no-cache="true"
+                            md-autoselect="true"
+                            md-search-text="parameter.search_text"
+                            md-selected-item="parameter.value"
+                            md-items="default in ctrl.filterDefaults(parameter.defaults, parameter.search_text)"
+                            md-item-text="default.toString()"
+                            md-min-length="0"
+                            md-floating-label="{{parameter_name}}">
 		                <md-item-template>
 		                    <span md-highlight-text="parameter.search_text" md-highlight-flags="^i">{{default}}</span>
 		                </md-item-template>
@@ -59,12 +60,9 @@
 		        <md-input-container flex ng-hide="ctrl.selected_protocol === null || ctrl.selectedProtocolHasParameters()">
 		            Protocol hasn't provided configuration parameters.
 		        </md-input-container>
-		        
-		        <div ng-show="ctrl.error">
-		            <md-icon class="md-warn"><ng-md-icon icon="error"></ng-md-icon></md-icon>
-		            {{ctrl.error_message}}
-		        </div>
-	        
+
+                <pre ng-show="ctrl.error">{{ctrl.error_message}}</pre>
+
 	    	</div>
 	    </md-dialog-content>
 	    

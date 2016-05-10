@@ -180,7 +180,6 @@
                         expect(PromenadeBroker.onClose).toBe(ParlaySocket.onClose);
                         expect(PromenadeBroker.getBrokerAddress).toBe(ParlaySocket.getAddress);
                         expect(PromenadeBroker.disconnect).toBe(ParlaySocket.close);
-                        expect(PromenadeBroker.isConnected).toBe(ParlaySocket.isConnected);
                     });
                     
                     it("connect opens ParlaySocket", function () {
@@ -230,7 +229,7 @@
                         });
 
                         it("while disconnected", function () {
-                            expect(PromenadeBroker.isConnected()).toBeFalsy();
+                            expect(PromenadeBroker.connected).toBeFalsy();
                             spyOn(ParlayNotification, "show");
                             PromenadeBroker.requestDiscovery();
                             expect(ParlayNotification.show).toHaveBeenCalledWith({content: "Cannot discover while not connected to Broker."});

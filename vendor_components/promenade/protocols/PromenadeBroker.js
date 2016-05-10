@@ -32,6 +32,12 @@
 			// Container for registered on_discovery callbacks.
 			var on_discovery_callbacks = [];
 
+			Object.defineProperty(this, "connected", {
+				get: function () {
+					return ParlaySocket.isConnected();
+				}
+			});
+
 			/**
 			 * Requests ParlaySocket to open a WebSocket connection.
 			 */
@@ -212,7 +218,7 @@
 				var confirmation;
 
 				// If the Broker is currently connected we want to prompt the user to shutdown the Broker.
-				if (this.isConnected() && ParlaySettings.get("broker").show_prompt) {
+				if (this.connected && ParlaySettings.get("broker").show_prompt) {
 					confirmation = "Closing browser will not shut the Broker down. Are you sure you want to leave the page?";
 				}
 				// Otherwise we can just allow the browser windows to close.
@@ -250,7 +256,6 @@
 		PromenadeBroker.prototype.onClose = ParlaySocket.onClose;
 		PromenadeBroker.prototype.getBrokerAddress = ParlaySocket.getAddress;
 		PromenadeBroker.prototype.disconnect = ParlaySocket.close;
-		PromenadeBroker.prototype.isConnected = ParlaySocket.isConnected;
 
 		/**
 		 * Sends message to the Broker adding relevant topic fields.
@@ -293,7 +298,7 @@
 		PromenadeBroker.prototype.requestDiscovery = function (is_forced) {
 
 			// Check we are connected first, otherwise display ParlayNotification.
-			if (this.isConnected()) {
+			if (this.connected) {
 
 				// $q Deferred that will be resolved upon discovery response.
 				var deferred = $q.defer();

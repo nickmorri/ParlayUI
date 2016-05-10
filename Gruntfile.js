@@ -41,18 +41,42 @@ module.exports = function (grunt) {
 
 	/**
 	 * Process vendor items and return an Array of Strings that Grunt can use.
-	 * @param {Array} items - Component items we are searching for.
-	 * @param {Array} initial - Any component we want to include explicitly.
+	 * @param {Array} target_component - Component items we are searching for.
+	 * @param {Array} initial_paths - Any component we want to include explicitly.
 	 * @returns {Array} - Array of all components we extracted from the vendor Object and explicitly included components.
 	 */
-	function getVendorPathGlobs (vendors, items, initial) {
+	function getVendorPathGlobs (vendors, target_component, initial_paths) {
 
+        // Object { vendor name -> Object { component name -> component path } }
         var vendors_paths = getVendorPaths(vendors);
 
-		return (initial || []).concat(Object.keys(vendors_paths).reduce(function (accumulator, vendor)  {
-			return accumulator.concat(Object.keys(vendors_paths[vendor]).filter(function (key) {
-				return items.some(function (item) { return key.indexOf(item) > -1; });
-	        }).map(function (key) { return '<%= vendor_paths.' + vendor + '.' + key + ' %>'; }));
+        // Array [ vendor name ]
+		var vendor_names = Object.keys(vendors_paths);
+
+        // Array [ all vendor components in Grunt file path glob pattern ]
+		return (initial_paths || []).concat(vendor_names.reduce(function (accumulator, vendor_name)  {
+            // Don't attempt to process a vendors component paths if they don't define any.
+			if (vendors_paths[vendor_name] === undefined) {
+				return accumulator;
+			}
+			else {
+                // Array [ all of a vendor's component paths ]
+				var potential_paths = Object.keys(vendors_paths[vendor_name]);
+
+                // Array [ vendor's component paths that match the target component ]
+				var matched_paths = potential_paths.filter(function (path) {
+                    // Boolean ( True if a match is found, False otherwise )
+					return target_component.some(function (item) {
+                        // Boolean ( True if path contains a target component, False otherwise )
+						return path.indexOf(item) > -1;
+					});
+				});
+
+                // Array [  ]
+				return accumulator.concat(matched_paths.map(function (key) {
+					return '<%= vendor_paths.' + vendor_name + '.' + key + ' %>';
+				}));
+			}
 	    }, []));
 	}
 

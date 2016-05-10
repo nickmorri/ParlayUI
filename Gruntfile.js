@@ -3,7 +3,7 @@ module.exports = function (grunt) {
 	
 	/**
 	 * Loads each vendor configuration file available in vendor_components
-	 * @returns {Object} - key (vendor name) -> Object of vendor configurations.
+	 * @returns {Array} - Array of vendor configuration Objects.
 	 */
 	function getVendors () {
 		return grunt.file.expand('vendor_components/**/vendor.json').map(function (vendor) {
@@ -11,6 +11,11 @@ module.exports = function (grunt) {
 	    });
 	}
 
+    /**
+     * Returns vendor that has the primary flag set, defaults to "promenade" vendor if no other primary is found.
+     * @param {Array} vendors - Array of vendor configuration Objects.
+     * @returns {Object} - Primary vendor configuration Object.
+     */
     function getPrimaryVendor (vendors) {
 
         var primary = vendors.filter(function (vendor) {
@@ -33,6 +38,11 @@ module.exports = function (grunt) {
         }
     }
 
+    /**
+     * Returns the options properties of all the given vendors.
+     * @param {Array} vendors - Array of vendor configuration Objects.
+     * @returns {Object} - Object of key (vendor name) -> value (vendor options property).
+     */
     function getVendorOptions (vendors) {
         return vendors.reduce(function (accumulator, vendor) {
             accumulator[vendor.name] = vendor.options;
@@ -40,6 +50,11 @@ module.exports = function (grunt) {
         }, {});
     }
 
+    /**
+     * Returns the paths properties of all the given vendors.
+     * @param {Array} vendors - Array of vendor configuration Objects.
+     * @returns {Object} - Object of key (vendor name) -> value (vendor paths property).
+     */
     function getVendorPaths (vendors) {
         return vendors.reduce(function (accumulator, vendor) {
             accumulator[vendor.name] = vendor.paths;
@@ -47,6 +62,11 @@ module.exports = function (grunt) {
         }, {});
     }
 
+    /**
+     * Takes a filepath and returns a Base64 String encoding of the file at the given filepath.
+     * @param {String} filepath - file system path to a file.
+     * @returns {String} - Base64 encoded String of the file at the given filepath.
+     */
     function getBase64 (filepath) {
         var split_path = filepath.split(".");
         var extension = split_path[split_path.length - 1];
@@ -55,6 +75,7 @@ module.exports = function (grunt) {
 
 	/**
 	 * Process vendor items and return an Array of Strings that Grunt can use.
+     * @param {Array} vendors - Array of vendor configuration Objects.
 	 * @param {Array} target_component - Component items we are searching for.
 	 * @param {Array} initial_paths - Any component we want to include explicitly.
 	 * @returns {Array} - Array of all components we extracted from the vendor Object and explicitly included components.

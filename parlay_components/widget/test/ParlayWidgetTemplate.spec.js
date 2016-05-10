@@ -3,7 +3,7 @@
 
     var customLink;
 
-    describe("promenade.widget.template", function() {
+    describe("parlay.widget.template", function() {
 
         BasicTemplateDirective.$inject = ["ParlayWidgetTemplate"];
         function BasicTemplateDirective (ParlayWidgetTemplate) {
@@ -47,13 +47,13 @@
             });
         }
 
-        angular.module("sampleDirectives", ["promenade.widget.template"])
+        angular.module("sampleDirectives", ["parlay.widget.template"])
             .directive("basicTemplate", BasicTemplateDirective)
             .directive("elementRegistration", ElementRegistrationDirective)
             .directive("userDefinedLink", UserDefinedLinkDirective)
             .directive("userDefinedLinkWithElementRegistration", UserDefinedLinkWithElementRegistrationDirective);
 
-        beforeEach(module("promenade.widget.template"));
+        beforeEach(module("parlay.widget.template"));
         beforeEach(module("sampleDirectives"));
 
         describe("ParlayWidgetTemplate", function () {

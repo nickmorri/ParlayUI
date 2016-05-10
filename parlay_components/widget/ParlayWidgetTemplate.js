@@ -2,7 +2,7 @@
     "use strict";
 
     var module_dependencies = ["parlay.widget.inputmanager"];
-    var module_name = "promenade.widget.template";
+    var module_name = "parlay.widget.template";
 
     angular
         .module(module_name, module_dependencies)

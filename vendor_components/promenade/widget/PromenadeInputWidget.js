@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["parlay.widget.collection"];
+    var module_dependencies = ["parlay.widget.template"];
     var module_name = "promenade.widget.input";
     var directive_name = "promenadeWidgetInput";
     var widget_type = "input";

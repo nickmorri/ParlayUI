@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["parlay.widget.collection", "parlay.utility"];
+    var module_dependencies = ["parlay.widget.template", "parlay.utility"];
     var module_name = "promenade.widget.smoothiechart";
     var directive_name = "promenadeWidgetSmoothieChart";
     var widget_type = "display";

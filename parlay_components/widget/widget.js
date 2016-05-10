@@ -1,7 +1,7 @@
 var widgetRegistration = (function () {
     "use strict";
 
-    var module_dependencies = ["ui.router", "ui.ace", "ngMaterial", "parlay.widget.base", "parlay.widget.controller", "parlay.settings"];
+    var module_dependencies = ["ui.router", "ui.ace", "ngMaterial", "parlay.widget.base", "parlay.widget.collection", "parlay.widget.controller", "parlay.settings"];
 
     angular
         .module("parlay.widget", module_dependencies)

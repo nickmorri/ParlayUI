@@ -510,6 +510,15 @@ module.exports = function (grunt) {
                     {'expand': true, 'flatten': true, 'src': 'vendorDefaults.js', 'dest': '<%= meta.tmp_destination %>'}
                 ]
             }
+        },
+
+        'bump': {
+            'options': {
+                'commitMessage': 'build: Update distribution file',
+                'createTag': false,
+                'push': false,
+                'commitFiles': ['package.json', 'dist/index.html']
+            }
         }
 
 	});
@@ -548,7 +557,8 @@ module.exports = function (grunt) {
 	    'karma:dist',
 	    'cssmin:dist',
         'processhtml:dist',
-        'clean:post_dist'
+        'clean:post_dist',
+        'bump:git'
 	]);
 
 	grunt.registerTask('build', [

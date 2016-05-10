@@ -107,6 +107,70 @@ module.exports = function (grunt) {
             }
 		},
 
+        // Run tasks whenever the watched files change.
+        // https://github.com/gruntjs/grunt-contrib-watch
+        'watch': {
+            'scripts': {
+                'options': {
+                    'livereload': true,
+                    'interrupt': true
+                },
+                'files': ['vendorDefaults.js', '<%= meta.source %>', '<%= meta.vendorComponents %>'],
+                'tasks': ['newer:replace:dev', 'newer:jshint:dev', 'karma:dev', 'newer:copy:dev']
+            },
+            'stylesheets': {
+                'options': {
+                    'debounceDelay': 0,
+                    'livereload': true,
+                    'spawn': false
+                },
+                'files': '<%= meta.stylesheets %>',
+                'tasks': ['newer:csslint:dev', 'cssmin:dev']
+            },
+            'html': {
+                'options': {
+                    'debounceDelay': 0,
+                    'livereload': true,
+                    'spawn': false
+                },
+                'files': ['<%= meta.htmlDirectives %>', '<%= meta.htmlViews %>'],
+                'tasks': ['newer:html2js', 'newer:copy']
+            },
+            'index': {
+                'options': {
+                    'debounceDelay': 0,
+                    'livereload': true,
+                    'spawn': false
+                },
+                'files': ['index.html'],
+                'tasks': ['processhtml:dev', 'wiredep:dev']
+            },
+            'tests': {
+                'options': {
+                    'interrupt': true
+                },
+                'files': '<%= meta.tests %>',
+                'tasks': 'karma:dev'
+            },
+            'mocks': {
+                'files': '<%= meta.mocks %>',
+                'tasks': 'karma:dev'
+            },
+            'Gruntfile': {
+                'files': 'Gruntfile.js',
+                'options': {
+                    'reload': true
+                }
+            },
+            'vendor_config': {
+                'files': 'vendor_components/**/vendor.json',
+                'options': {
+                    'reload': true
+                },
+                'tasks': ['replace:dev']
+            }
+        },
+
         // Installs Bower components listed in bower.json.
         // https://github.com/rse/grunt-bower-install-simple
 		'bower-install-simple': {
@@ -160,63 +224,6 @@ module.exports = function (grunt) {
 			'dev': {
 				'src': '<%= meta.dev_destination %>/index.html'
 			}
-		},
-
-        // Run tasks whenever the watched files change.
-        // https://github.com/gruntjs/grunt-contrib-watch
-	    'watch': {
-		    'scripts': {
-			    'options': {
-				    'livereload': true,
-                    'interrupt': true
-				},
-				'files': ['vendorDefaults.js', '<%= meta.source %>', '<%= meta.vendorComponents %>'],
-				'tasks': ['newer:replace:dev', 'newer:jshint:dev', 'karma:dev', 'newer:copy:dev']
-			},
-			'stylesheets': {
-	        	'options': {
-					'debounceDelay': 0,
-					'livereload': true,
-                    'spawn': false
-				},
-				'files': '<%= meta.stylesheets %>',
-				'tasks': ['newer:csslint:dev', 'cssmin:dev']
-			},
-			'html': {
-	        	'options': {
-					'debounceDelay': 0,
-					'livereload': true,
-                    'spawn': false
-				},
-				'files': ['<%= meta.htmlDirectives %>', '<%= meta.htmlViews %>'],
-				'tasks': ['newer:html2js', 'newer:copy']
-			},
-            'index': {
-                'options': {
-                    'debounceDelay': 0,
-                    'livereload': true,
-                    'spawn': false
-                },
-                'files': ['index.html'],
-                'tasks': ['processhtml:dev', 'wiredep:dev']
-            },
-			'tests': {
-                'options': {
-                    'interrupt': true
-                },
-	        	'files': '<%= meta.tests %>',
-				'tasks': 'karma:dev'
-			},
-			'mocks': {
-				'files': '<%= meta.mocks %>',
-				'tasks': 'karma:dev'
-			},
-            'config': {
-                'files': ['Gruntfile.js', 'vendor_components/**/vendor.json'],
-                'options': {
-                    'reload': true
-                }
-            }
 		},
 
         // Automatically opens the default web browser pointed at the express web server.

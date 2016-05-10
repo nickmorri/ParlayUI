@@ -1,6 +1,5 @@
 {
   "name": "promenade",
-  "primary": true,
   "options": {
     "primaryPalette": "blue-grey",
     "accentPalette": "red",

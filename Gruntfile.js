@@ -14,7 +14,9 @@ module.exports = function (grunt) {
     function getPrimaryVendor (vendors) {
         return vendors.find(function (vendor) {
             return vendor.primary;
-        });
+        }) || vendors.find(function (vendor) {
+			return vendor.name == "promenade";
+		});
     }
 
     function getVendorOptions (vendors) {

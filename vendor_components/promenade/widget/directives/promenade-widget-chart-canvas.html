@@ -10,32 +10,7 @@
                 </span>
             </h2>
             <span flex></span>
-            <md-menu ng-show="widgetsCtrl.editing">
-                <md-button aria-label="Open widget menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
-                    <md-icon ng-md-icon icon="more_vert"></md-icon>
-                </md-button>
-                <md-menu-content width="2">
-                    <md-menu-item>
-                        <md-button ng-click="widgetsCtrl.remove(uid)">
-                            <md-icon ng-md-icon icon="delete"></md-icon>
-                            Delete
-                        </md-button>
-                    </md-menu-item>
-                    <md-menu-item>
-                        <md-button ng-click="edit(false)">
-                            <md-icon ng-md-icon icon="edit"></md-icon>
-                            Edit
-                        </md-button>
-                    </md-menu-item>
-                    <md-menu-item>
-                        <md-button ng-click="widgetsCtrl.duplicate(uid)">
-                            <md-icon ng-md-icon icon="content_copy"></md-icon>
-                            Copy
-                        </md-button>
-                    </md-menu-item>
-                </md-menu-content>
-            </md-menu>
-
+            <parlay-widget-base-menu ng-show="widgetsCtrl.editing"></parlay-widget-base-menu>
         </div>
     </md-toolbar>
 

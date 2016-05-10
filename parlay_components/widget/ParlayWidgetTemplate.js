@@ -1,11 +1,10 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["parlay.widget.inputmanager"];
-    var module_name = "parlay.widget.template";
+    var module_dependencies = ["parlay.widget.inputmanager", "parlay.widget.base.menu"];
 
     angular
-        .module(module_name, module_dependencies)
+        .module("parlay.widget.template", module_dependencies)
         .factory("ParlayWidgetTemplate", ParlayWidgetTemplateFactory);
 
     ParlayWidgetTemplateFactory.$inject = ["ParlayWidgetInputManager"];

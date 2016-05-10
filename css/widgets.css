@@ -22,3 +22,7 @@
 .is-dragging { opacity: 0.7; }
 /* Indicate to the user that this element can be dragged. */
 .show-handle { cursor: move; }
+
+parlay-widget-base-menu {
+    margin-right: -15px;
+}

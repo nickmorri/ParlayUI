@@ -12,11 +12,25 @@ module.exports = function (grunt) {
 	}
 
     function getPrimaryVendor (vendors) {
-        return vendors.find(function (vendor) {
+
+        var primary = vendors.filter(function (vendor) {
             return vendor.primary;
-        }) || vendors.find(function (vendor) {
-			return vendor.name == "promenade";
-		});
+        });
+
+        if (primary.length === 1) {
+            // Only one vendor has primary flag set, select that vendor.
+            return primary[0];
+        }
+        else if (primary.length === 0) {
+            // No vendor has primary flag set, select "promenade" as primary vendor by default.
+            return vendors.find(function (vendor) {
+                return vendor.name == "promenade";
+            });
+        }
+        else {
+            // More than one vendor has primary flag set.
+            throw new Error("Only one vendor can be primary. Multiple vendor.json configurations have the primary flag set.");
+        }
     }
 
     function getVendorOptions (vendors) {

@@ -1,14 +1,13 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["parlay.widget.inputmanager", "parlay.widget.base.menu"];
+    var module_dependencies = ["parlay.widget.base.menu"];
 
     angular
         .module("parlay.widget.template", module_dependencies)
         .factory("ParlayWidgetTemplate", ParlayWidgetTemplateFactory);
 
-    ParlayWidgetTemplateFactory.$inject = ["ParlayWidgetInputManager"];
-    function ParlayWidgetTemplateFactory (ParlayWidgetInputManager) {
+    function ParlayWidgetTemplateFactory () {
 
         /**
          * @service
@@ -41,20 +40,7 @@
          *          scope {AngularJS Scope} - Isolated scope of the directive.
          *          element {HTML Element} - HTML element of directive.
          *
-         *
-         *      [optional] An Object that defines which events we should listen for on the given HTML Element.
-         *      A click event on a <button> or <input> HTML Element could be observed. In the examples below a click
-         *      event listener is registered on a <button> element. These elements are registered with
-         *      ParlayWidgetInputManager, that service will manage the given element and the element's event listeners.
-         *
-         *      eventRegistration {Object} : {
-         *          directive_name {String} : Name of the directive in camelCase.
-         *          target_tag {String} : HTML Element tag that should be registered.
-         *          parent_tag {String} : HTML Element tag of the parent of target_tag.
-         *          events {Array[{String}]} : Array of event names that should be registered.
-         *      }
-         *
-         * Three examples are provided below detailing the different use cases for the ParlayWidgetTemplate service.
+         * Examples are provided below detailing the different use cases for the ParlayWidgetTemplate service.
          *
          * @example
          * Basic template only example:
@@ -66,21 +52,6 @@
          *          });
          *     }
          *
-         * @example
-         * Intermediary element (event) registration example:
-         *
-         *      PromenadeWidgetExample.$inject = ["ParlayWidgetTemplate"];
-         *      function PromenadeWidgetExample (ParlayWidgetTemplate) {
-         *          return new ParlayWidgetTemplate({
-         *              templateUrl: "../vendor_components/promenade/widget/directives/promenade-widget-example.html",
-         *              elementRegistration: {
-         *                  directive_name: directive_name,
-         *                  parent_tag: "md-card-content",
-         *                  target_tag: "button",
-         *                  events: ["click"]
-         *              }
-         *          });
-         *      }
          *
          * @example
          * Advanced custom user-defined link example:
@@ -105,13 +76,7 @@
 
         function ParlayWidgetTemplate(options) {
 
-            var event_registration = options.eventRegistration;
             var custom_link = options.customLink;
-
-            // We don't need the eventRegistration attribute in the directive definition Object.
-            if (!!event_registration) {
-                delete options.eventRegistration;
-            }
 
             // We don't need the customLink attribute in the directive definition Object.
             if (!!custom_link) {
@@ -119,7 +84,6 @@
             }
 
             /**
-             * If eventRegistration available, registers the given element during directive linking.
              * If customLink available, calls the user provided link function during directive linking.
              * Notifies parent that linking is complete.
              * @param scope {AngularJS Scope} - Isolated scope of the directive.
@@ -129,20 +93,6 @@
              * @param transcludeFn {Function} - Transclude linking function pre-bound to the correct transclusion scope.
              */
             function link (scope, element, attrs, controller, transcludeFn) {
-
-                if (!!event_registration) {
-                    // Register the given directive's elements and the requested element DOM events with the
-                    // ParlayWidgetInputManager.
-                    // Record the tag_name on the scope so directive's can use it.
-                    scope.tag_name = ParlayWidgetInputManager.registerElements(
-                        event_registration.directive_name,
-                        element,
-                        event_registration.parent_tag,
-                        event_registration.target_tag,
-                        scope,
-                        event_registration.events
-                    ).parent_tag_name;
-                }
 
                 // If the user also defined a customLink we should call it.
                 if (!!custom_link) {
@@ -180,7 +130,8 @@
                     transformedValue: "=",
                     widgetsCtrl: "=",
                     edit: "=",
-                    uid: "="
+                    uid: "=",
+                    template: "="
                 }
             };
 

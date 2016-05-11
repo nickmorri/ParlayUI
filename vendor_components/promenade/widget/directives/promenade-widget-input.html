@@ -1,7 +1,7 @@
 <md-card class="parlay-item-card">
     <md-toolbar class="handle" ng-class="{'show-handle': widgetsCtrl.editing}">
         <div class="md-toolbar-tools">
-            <h2>{{tag_name}}</h2>
+            <h2>{{template.name}}{{uid}}</h2>
             <span flex></span>
             <parlay-widget-base-menu ng-show="widgetsCtrl.editing"></parlay-widget-base-menu>
         </div>
@@ -10,12 +10,12 @@
 
         <md-input-container flex>
             <label>add</label>
-            <input type="number" name="add"/>
+            <input type="number" parlay-widget-input element-name="add" widget-name="{{template.name}}{{uid}}" events='["change"]'/>
         </md-input-container>
 
         <md-input-container flex>
             <label>subtract</label>
-            <input type="number" name="subtract"/>
+            <input type="number" parlay-widget-input element-name="subtract" widget-name="{{template.name}}{{uid}}" events='["change"]'/>
         </md-input-container>
 
     </md-card-content>

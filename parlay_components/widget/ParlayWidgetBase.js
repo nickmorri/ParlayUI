@@ -107,7 +107,8 @@
                         ["transformed-value", "item.configuration.transformer.value"],
                         ["widgets-ctrl", "widgetsCtrl"],
                         ["edit", "edit"],
-                        ["uid", "item.uid"]
+                        ["uid", "item.uid"],
+                        ["template", "item.configuration.template"]
                     ].map(function (attribute) {
                         return attribute[0] + "='" + attribute[1] + "'";
                     }).join(" ");

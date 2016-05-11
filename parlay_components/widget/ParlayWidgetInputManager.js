@@ -90,46 +90,34 @@
         /**
          * Register event listeners for each event for every element that match the target tag beneath the parent tag Object
          * contained within the DOM of the rootElement.
-         * @param {String} widgetName - Name given to the ParlayWidget.
-         * @param {HTMLElement} rootElement - Element that we should use as the root of the DOM we are interested in.
-         * @param {String} parentTag - Tag name of the element that contains the target tag element(s).
-         * @param {String} targetTag - Element(s) that we want to listen for the events on.
+         * @param {String} widget_name - Name given to the ParlayWidget.
+         * @param {HTMLElement} element - Element that we should attach event listeners to.
          * @param {AngularJS scope} scope - AngularJS scope that the elements are associated with.
          * @param {Array} events - Array of Strings of the event names we want to listen for.
-         * @returns {{parent_tag_name: String, elements: Array}} - Registration confirmation Object.
          */
-        ParlayWidgetInputManager.prototype.registerElements = function (widgetName, rootElement, parentTag, targetTag, scope, events) {
-            var parentElement = rootElement.find(parentTag);
-            var parent_tag_name = widgetName + scope.uid;
+        ParlayWidgetInputManager.prototype.registerElement = function (widget_name, element_name, element, scope, events) {
 
-            if (!this.widgets[parent_tag_name]) {
-                this.widgets[parent_tag_name] = [];
+            var registration = {
+                widget_name: widget_name,
+                element_name: element_name,
+                element: element,
+                events: setupEventListeners(element, events)
+            };
+
+            if (!this.widgets[widget_name]) {
+                this.widgets[widget_name] = [registration];
+            }
+            else {
+                this.widgets[widget_name].push(registration);
             }
 
-            Array.prototype.slice.call(parentElement.find(targetTag)).forEach(function (element) {
-                this.widgets[parent_tag_name].push({
-                    rootElement: rootElement,
-                    name: parent_tag_name + "_" + element.name,
-                    type: targetTag,
-                    element: element,
-                    events: setupEventListeners(element, events)
-                });
-            }, this);
-
             scope.$on("$destroy", function () {
-                this.widgets[parent_tag_name].forEach(function (element) {
-                    Object.keys(element.events).forEach(function (key) {
-                        element.events[key].clearAllListeners();
-                    });
+                Object.keys(registration.events).forEach(function (key) {
+                    registration.events[key].clearAllListeners();
                 });
-
-                delete this.widgets[parent_tag_name];
+                delete this.widgets[widget_name];
             }.bind(this));
 
-            return {
-                parent_tag_name: parent_tag_name,
-                elements: this.widgets[parent_tag_name]
-            };
         };
 
         /**
@@ -167,7 +155,7 @@
         ParlayWidgetInputManager.prototype.getEvents = function () {
             return this.getElements().reduce(function (accumulator, current) {
                 return accumulator.concat(Object.keys(current.events).map(function (key) {
-                    current.events[key].element = current.name;
+                    current.events[key].element = current.widget_name + "_" +  current.element_name;
                     return current.events[key];
                 }));
             }, []);

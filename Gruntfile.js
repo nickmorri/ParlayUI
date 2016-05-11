@@ -558,7 +558,7 @@ module.exports = function (grunt) {
 	    'cssmin:dist',
         'processhtml:dist',
         'clean:post_dist',
-        'bump:git'
+        'bump:patch'
 	]);
 
 	grunt.registerTask('build', [

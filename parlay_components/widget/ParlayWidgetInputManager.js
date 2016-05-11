@@ -100,7 +100,6 @@
             var registration = {
                 widget_name: widget_name,
                 element_name: element_name,
-                element: element,
                 events: setupEventListeners(element, events)
             };
 

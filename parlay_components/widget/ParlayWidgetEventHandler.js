@@ -74,7 +74,7 @@
         };
         
         ParlayWidgetEventHandler.prototype.toJSON = function () {
-            return angular.merge({}, ParlayInterpreter.toJSON.call(this));
+            return angular.merge({}, ParlayInterpreter.prototype.toJSON.call(this));
         };
 
         return ParlayWidgetEventHandler;

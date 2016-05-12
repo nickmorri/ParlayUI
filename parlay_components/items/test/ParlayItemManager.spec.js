@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    xdescribe('parlay.items.manager', function() {
+    describe('parlay.items.manager', function() {
         
         beforeEach(module('parlay.items.manager'));
         beforeEach(module('mock.promenade.broker'));
@@ -33,7 +33,7 @@
                 });
                 
                 it('counts active items', function () {
-	                expect(ParlayItemManager.getActiveItemCount()).toBe(0);
+	                expect(ParlayItemManager.countActive()).toBe(0);
                 });
             
                 it('gets available items', function () {
@@ -68,14 +68,14 @@
 		            ParlayItemManager.activateItem({name: 'test'});
 		            expect(ParlayItemManager.hasActiveItems()).toBeTruthy();
 		            ParlayItemManager.duplicateItem(0);
-		            expect(ParlayItemManager.getActiveItemCount()).toBe(2);
+		            expect(ParlayItemManager.countActive()).toBe(2);
 	            });
 	            
 	            it('clears active items', function () {
 		            expect(ParlayItemManager.hasActiveItems()).toBeFalsy();
 		            ParlayItemManager.activateItem({});
 		            expect(ParlayItemManager.hasActiveItems()).toBeTruthy();
-		            ParlayItemManager.clearActiveItems();
+		            ParlayItemManager.clearActive();
 		            expect(ParlayItemManager.hasActiveItems()).toBeFalsy();
 	            });
 	            
@@ -83,7 +83,7 @@
 		            expect(ParlayItemManager.hasActiveItems()).toBeFalsy();
 		            ParlayItemManager.activateItem({});
 		            ParlayItemManager.activateItem({});
-		            expect(ParlayItemManager.getActiveItemCount()).toBe(2);
+		            expect(ParlayItemManager.countActive()).toBe(2);
 		            
 		            var initial_item_set_1 = angular.copy(ParlayItemManager.getActiveItems());
 		            var initial_item_set_2 = angular.copy(ParlayItemManager.getActiveItems());
@@ -108,9 +108,9 @@
 		            };
 		            
 		            expect(ParlayItemManager.hasActiveItems()).toBeFalsy();
-		            var result = ParlayItemManager.loadWorkspace(mockWorkspace);
+		            var result = ParlayItemManager.loadEntry(mockWorkspace);
 					expect(result.loaded_items.length).toBe(4);
-		            expect(ParlayItemManager.getActiveItemCount()).toBe(4);
+		            expect(ParlayItemManager.countActive()).toBe(4);
 	            });
 	            
 	            it('fails to load workspace', function () {
@@ -124,7 +124,7 @@
 		            };
 		            
 		            expect(ParlayItemManager.hasActiveItems()).toBeFalsy();
-		            var result = ParlayItemManager.loadWorkspace(mockWorkspace);
+		            var result = ParlayItemManager.loadEntry(mockWorkspace);
 					expect(result.failed_items.length).toBe(4);
 		            expect(ParlayItemManager.hasActiveItems()).toBeFalsy();
 	            });
@@ -145,11 +145,11 @@
                     };
 
                     expect(ParlayItemManager.hasActiveItems()).toBeFalsy();
-                    var result = ParlayItemManager.loadWorkspace(mockWorkspace);
+                    var result = ParlayItemManager.loadEntry(mockWorkspace);
                     expect(result.failed_items.length).toBe(4);
                     expect(result.loaded_items.length).toBe(4);
                     expect(ParlayItemManager.hasActiveItems()).toBeTruthy();
-                    expect(ParlayItemManager.getActiveItemCount()).toBe(4);
+                    expect(ParlayItemManager.countActive()).toBe(4);
 
                 });
 	            

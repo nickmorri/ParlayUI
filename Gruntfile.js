@@ -557,12 +557,12 @@ module.exports = function (grunt) {
 	    'karma:dist',
 	    'cssmin:dist',
         'processhtml:dist',
-        'clean:post_dist',
-        'bump:patch'
+        'clean:post_dist'
 	]);
 
 	grunt.registerTask('build', [
-        'dist'
+        'dist',
+		'bump:patch'
     ]);
 
 	grunt.registerTask('server', 'Launches HTTP server with distribution files as source.', [

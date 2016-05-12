@@ -13,9 +13,14 @@
                 rootScope = $rootScope;
     			scope = $rootScope.$new();
 
-                protocol = {sendMessage: function () {
-                    return $q(function (resolve) { resolve({CONTENTS: {VALUE: 10}}); });
-                }, onMessage: function () {}};
+                protocol = {
+                    sendMessage: function (topics, contents, response_topics) {
+                        return $q(function (resolve) { resolve({CONTENTS: {VALUE: 10}}); });
+                    },
+                    onMessage: function () {
+
+                    }
+                };
 
                 property = new _PromenadeStandardProperty_({
                     NAME: "test_property1",
@@ -38,10 +43,10 @@
                 expect(ctrl.hasProperties()).toBeTruthy();
             });
 
-            it("getAllProperties", function (done) {
-                spyOn(protocol, "sendMessage").and.callThrough();
+            it("getAllProperties", function () {
+                spyOn(protocol, "sendMessage");
 
-                ctrl.getAllProperties().then(done);
+                ctrl.getAllProperties();
 
                 rootScope.$apply();
 
@@ -64,12 +69,12 @@
 
             });
 
-            it("SetAllProperties", function (done) {
-                spyOn(protocol, "sendMessage").and.callThrough();
+            it("setAllProperties", function () {
+                spyOn(protocol, "sendMessage");
 
                 property.value = 10;
 
-                ctrl.setAllProperties().then(done);
+                ctrl.setAllProperties();
 
                 rootScope.$apply();
 

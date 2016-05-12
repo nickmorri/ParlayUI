@@ -56,7 +56,38 @@
                 expect(property.read_only).toBe(data.READ_ONLY);
                 expect(property.item_name).toBe("TestItem");
             });
-            
+
+            it("sets", function () {
+
+                property.value = 10;
+
+                spyOn(protocol, "sendMessage");
+
+                property.set();
+
+                var topics = {
+                    TX_TYPE: "DIRECT",
+                    MSG_TYPE: "PROPERTY",
+                    TO: "TestItem"
+                };
+
+                var contents = {
+                    PROPERTY: data.NAME,
+                    ACTION: "SET",
+                    VALUE: 10
+                };
+
+                var response_topics = {
+                    TX_TYPE: "DIRECT",
+                    MSG_TYPE: "RESPONSE",
+                    FROM: "TestItem",
+                    TO: "UI"
+                };
+
+                expect(protocol.sendMessage).toHaveBeenCalledWith(topics, contents, response_topics, true);
+
+            });
+
             it("gets", function (done) {
 
                 spyOn(protocol, "sendMessage").and.callThrough();
@@ -76,45 +107,26 @@
 
                 $rootScope.$digest();
 
-                expect(protocol.sendMessage).toHaveBeenCalledWith({
+                var topics = {
                     TX_TYPE: "DIRECT",
                     MSG_TYPE: "PROPERTY",
                     TO: "TestItem"
-                }, {
+                };
+
+                var contents = {
                     PROPERTY: data.NAME,
                     ACTION: "GET",
                     VALUE: null
-                }, {
+                };
+
+                var response_topics = {
                     TX_TYPE: "DIRECT",
                     MSG_TYPE: "RESPONSE",
                     FROM: "TestItem",
                     TO: "UI"
-                }, true);
-                
-            });
+                };
 
-            it("sets", function () {
-
-                property.value = 10;
-
-                spyOn(protocol, "sendMessage");
-
-                property.set();
-
-                expect(protocol.sendMessage).toHaveBeenCalledWith({
-                    TX_TYPE: "DIRECT",
-                    MSG_TYPE: "PROPERTY",
-                    TO: "TestItem"
-                }, {
-                    PROPERTY: data.NAME,
-                    ACTION: "SET",
-                    VALUE: 10
-                }, {
-                    TX_TYPE: "DIRECT",
-                    MSG_TYPE: "RESPONSE",
-                    FROM: "TestItem",
-                    TO: "UI"
-                }, true);
+                expect(protocol.sendMessage).toHaveBeenCalledWith(topics, contents, response_topics, true);
 
             });
 

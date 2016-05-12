@@ -19,44 +19,27 @@
                 expect(ParlayWidgetInputManager.widgets).toEqual({});
             });
 
-            it("registerElements", function () {
+            it("registers element", function () {
 
                 expect(ParlayWidgetInputManager.widgets).toEqual({});
 
-                var widgetName = "testWidget";
-                var rootElement = $compile("<div><span><input name='test'/></span></div>")(scope);
-                var parentTag = "span";
-                var targetTag = "input";
-                var events = ["click"];
+                scope.widgetName = "testWidget";
+                scope.widgetUid = "0";
+                scope.elementName = "test";
+                var element = $compile("<input name='test'/>")(scope);
+                scope.events = '["click"]';
 
-                expect(ParlayWidgetInputManager.registerElements(
-                    widgetName, rootElement, parentTag, targetTag, scope, events
-                )).toEqual(jasmine.objectContaining({
-                    parent_tag_name: widgetName + scope.uid,
-                    elements: [{
-                        rootElement: rootElement,
-                        name: 'testWidget0_test',
-                        type: 'input',
-                        element: jasmine.any(Object),
-                        events: {
-                            click: {
-                                event: 'click',
-                                addListener: jasmine.any(Function),
-                                removeListener: jasmine.any(Function),
-                                clearAllListeners: jasmine.any(Function),
-                                handler: null
-                            }
-                        }
-                    }]
-                }));
+                ParlayWidgetInputManager.registerElement(
+                    scope.widgetName, parseInt(scope.widgetUid, 10), scope.elementName, element[0], scope, JSON.parse(scope.events)
+                );
 
                 expect(ParlayWidgetInputManager.widgets).toEqual({
                     testWidget0: [
                         {
-                            rootElement: rootElement,
-                            name: 'testWidget0_test',
-                            type: 'input',
-                            element: jasmine.any(Object),
+                            element_ref: element[0],
+                            widget_name: 'testWidget',
+                            element_name: 'test',
+                            widget_uid: 0,
                             events: {
                                 click: {
                                     event: 'click',
@@ -80,21 +63,21 @@
 
                 expect(ParlayWidgetInputManager.widgets).toEqual({});
 
-                var widgetName = "testWidget";
-                var rootElement = $compile("<div><span><input name='test'/></span></div>")(scope);
-                var parentTag = "span";
-                var targetTag = "input";
-                var events = ["click"];
+                scope.widgetName = "testWidget";
+                scope.widgetUid = "0";
+                scope.elementName = "test";
+                var element = $compile("<input name='test'/>")(scope);
+                scope.events = '["click"]';
 
-                var click_event = ParlayWidgetInputManager.registerElements(
-                    widgetName, rootElement, parentTag, targetTag, scope, events
-                ).elements[0].events.click;
+                ParlayWidgetInputManager.registerElement(
+                    scope.widgetName, parseInt(scope.widgetUid, 10), scope.elementName, element[0], scope, JSON.parse(scope.events)
+                );
 
-                expect(click_event.handler).toBe(null);
+                expect(ParlayWidgetInputManager.widgets.testWidget0[0].events.click.handler).toBe(null);
 
-                ParlayWidgetInputManager.registerHandler(click_event);
+                ParlayWidgetInputManager.registerHandler(ParlayWidgetInputManager.widgets.testWidget0[0].events.click);
 
-                expect(click_event.handler).not.toBe(null);
+                expect(ParlayWidgetInputManager.widgets.testWidget0[0].events.click.handler).not.toBe(null);
 
             });
 
@@ -102,59 +85,49 @@
 
                 expect(ParlayWidgetInputManager.widgets).toEqual({});
 
-                var widgetName = "testWidget";
-                var rootElement = $compile("<div><span><input name='test'/></span></div>")(scope);
-                var parentTag = "span";
-                var targetTag = "input";
-                var events = ["click"];
+                scope.widgetName = "testWidget";
+                scope.widgetUid = "0";
+                scope.elementName = "test";
+                var element = $compile("<input name='test'/>")(scope);
+                scope.events = '["click"]';
 
-                var click_event = ParlayWidgetInputManager.registerElements(
-                    widgetName, rootElement, parentTag, targetTag, scope, events
-                ).elements[0].events.click;
+                ParlayWidgetInputManager.registerElement(
+                    scope.widgetName, parseInt(scope.widgetUid, 10), scope.elementName, element[0], scope, JSON.parse(scope.events)
+                );
 
-                expect(click_event.handler).toBe(null);
+                expect(ParlayWidgetInputManager.widgets.testWidget0[0].events.click.handler).toBe(null);
 
-                ParlayWidgetInputManager.registerHandler(click_event);
+                ParlayWidgetInputManager.registerHandler(ParlayWidgetInputManager.widgets.testWidget0[0].events.click);
 
-                expect(click_event.handler).not.toBe(null);
+                expect(ParlayWidgetInputManager.widgets.testWidget0[0].events.click.handler).not.toBe(null);
 
-                ParlayWidgetInputManager.deregisterHandler(click_event);
+                ParlayWidgetInputManager.deregisterHandler(ParlayWidgetInputManager.widgets.testWidget0[0].events.click);
 
-                expect(click_event.handler).toBe(null);
+                expect(ParlayWidgetInputManager.widgets.testWidget0[0].events.click.handler).toBe(null);
             });
 
             it("getElements", function () {
 
                 expect(ParlayWidgetInputManager.getElements()).toEqual([]);
 
-                var testWidget1RootElement = $compile("<div><span><input name='test'/></span></div>")(scope);
+                var testWidget1Element = $compile("<input name='test'/>")(scope);
 
-                ParlayWidgetInputManager.registerElements(
-                    "testWidget1",
-                    testWidget1RootElement,
-                    "span",
-                    "input",
-                    scope,
-                    ["click"]
+                ParlayWidgetInputManager.registerElement(
+                    "testWidget", 0, "test", testWidget1Element[0], scope, ["click"]
                 );
 
-                var testWidget2RootElement = $compile("<div><span><input name='test'/></span></div>")(scope);
+                var testWidget2Element = $compile("<input name='test'/>")(scope);
 
-                ParlayWidgetInputManager.registerElements(
-                    "testWidget2",
-                    testWidget2RootElement,
-                    "span",
-                    "input",
-                    scope,
-                    ["click"]
+                ParlayWidgetInputManager.registerElement(
+                    "testWidget", 1, "test", testWidget2Element[0], scope, ["click"]
                 );
 
                 expect(ParlayWidgetInputManager.getElements()).toEqual([
                     {
-                        rootElement: testWidget1RootElement,
-                        name: 'testWidget10_test',
-                        type: 'input',
-                        element: jasmine.any(Object),
+                        element_ref: testWidget1Element[0],
+                        widget_name: 'testWidget',
+                        element_name: 'test',
+                        widget_uid: 0,
                         events: {
                             click: {
                                 event: 'click',
@@ -166,10 +139,10 @@
                         }
                     },
                     {
-                        rootElement: testWidget2RootElement,
-                        name: 'testWidget20_test',
-                        type: 'input',
-                        element: jasmine.any(Object),
+                        element_ref: testWidget2Element[0],
+                        widget_name: 'testWidget',
+                        element_name: 'test',
+                        widget_uid: 1,
                         events: {
                             click: {
                                 event: 'click',
@@ -187,26 +160,16 @@
 
                 expect(ParlayWidgetInputManager.getEvents()).toEqual([]);
 
-                var testWidget1RootElement = $compile("<div><span><input name='test'/></span></div>")(scope);
+                var testWidget1Element = $compile("<input name='test'/>")(scope);
 
-                ParlayWidgetInputManager.registerElements(
-                    "testWidget1",
-                    testWidget1RootElement,
-                    "span",
-                    "input",
-                    scope,
-                    ["click"]
+                ParlayWidgetInputManager.registerElement(
+                    "testWidget", 0, "test", testWidget1Element[0], scope, ["click"]
                 );
 
-                var testWidget2RootElement = $compile("<div><span><input name='test'/></span></div>")(scope);
+                var testWidget2Element = $compile("<input name='test'/>")(scope);
 
-                ParlayWidgetInputManager.registerElements(
-                    "testWidget2",
-                    testWidget2RootElement,
-                    "span",
-                    "input",
-                    scope,
-                    ["click"]
+                ParlayWidgetInputManager.registerElement(
+                    "testWidget", 1, "test", testWidget2Element[0], scope, ["click"]
                 );
 
                 expect(ParlayWidgetInputManager.getEvents()).toEqual([
@@ -216,7 +179,11 @@
                         removeListener: jasmine.any(Function),
                         clearAllListeners: jasmine.any(Function),
                         handler: null,
-                        element: 'testWidget10_test'
+                        element: {
+                            widget_name: 'testWidget',
+                            widget_uid: 0,
+                            element_name: 'test'
+                        }
                     },
                     {
                         event: 'click',
@@ -224,7 +191,11 @@
                         removeListener: jasmine.any(Function),
                         clearAllListeners: jasmine.any(Function),
                         handler: null,
-                        element: 'testWidget20_test'
+                        element: {
+                            widget_name: 'testWidget',
+                            widget_uid: 1,
+                            element_name: 'test'
+                        }
                     }
                 ]);
 

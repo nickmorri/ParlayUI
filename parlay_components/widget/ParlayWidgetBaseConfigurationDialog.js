@@ -64,22 +64,23 @@
         ctrl.queryEvents = queryEvents;
         ctrl.addHandler = addHandler;
         ctrl.removeHandler = removeHandler;
-        
+
+        function addHandler (event) {
+            ParlayWidgetInputManager.registerHandler(event);
+        }
+
+        function removeHandler (event) {
+            ParlayWidgetInputManager.deregisterHandler(event);
+        }
+
         function queryEvents (query) {
             var lowercase_query = angular.lowercase(query);
 
             return ParlayWidgetInputManager.getEvents().filter(function (event) {
-                return (angular.lowercase(event.event) + angular.lowercase(event.element)).includes(lowercase_query) &&
+                var lowercase = angular.lowercase(event.event + event.element.element_name + event.element.widget_name);
+                return (lowercase).includes(lowercase_query) &&
                     $scope.configuration.selectedEvents.indexOf(event) === -1;
             });
-        }
-        
-        function addHandler  (event) {
-            ParlayWidgetInputManager.registerHandler(event);
-        }
-        
-        function removeHandler (event) {
-            ParlayWidgetInputManager.deregisterHandler(event);
         }
 
         $scope.$watch("configuration.template.type", function (newValue, oldValue) {
@@ -96,7 +97,16 @@
                 }
             }
         });
-        
+
+        $scope.$watch("configuration.template.name", function (newValue, oldValue) {
+            if (!angular.equals(newValue, oldValue)) {
+                $scope.configuration.selectedEvents.forEach(function (event) {
+                    event.handler.detach();
+                });
+                $scope.configuration.selectedEvents = [];
+            }
+        });
+
     }
 
     ParlayWidgetBaseConfigurationHandlerController.$inject = ["ParlayData"];

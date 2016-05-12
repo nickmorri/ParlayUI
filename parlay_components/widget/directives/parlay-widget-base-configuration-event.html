@@ -11,11 +11,11 @@
                 md-item-text="event.event"
                 placeholder="Search for events">
             <md-item-template>
-                <span md-highlight-text="eventCtrl.searchText">{{event.element}}</span>.on('{{event.event}}')
+                <span md-highlight-text="eventCtrl.searchText">{{event.element.widget_name}}{{event.element.widget_uid}}[{{event.element.element_name}}].on('{{event.event}}')</span>
             </md-item-template>
         </md-autocomplete>
         <md-chip-template>
-            <em>{{$chip.element}}</em>.on(<strong>'{{$chip.event}}'</strong>)
+            <em>{{$chip.element.widget_name}}{{$chip.element.widget_uid}}[{{$chip.element.element_name}}]</em>.on(<strong>'{{$chip.event}}'</strong>)
         </md-chip-template>
     </md-chips>
 

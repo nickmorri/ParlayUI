@@ -91,30 +91,33 @@
          * Register event listeners for each event for every element that match the target tag beneath the parent tag Object
          * contained within the DOM of the rootElement.
          * @param {String} widget_name - Name given to the ParlayWidget.
+         * @param {String} widget_uid - Unique ID assigned to ParlayWidget.
          * @param {HTMLElement} element - Element that we should attach event listeners to.
          * @param {AngularJS scope} scope - AngularJS scope that the elements are associated with.
          * @param {Array} events - Array of Strings of the event names we want to listen for.
          */
-        ParlayWidgetInputManager.prototype.registerElement = function (widget_name, element_name, element, scope, events) {
+        ParlayWidgetInputManager.prototype.registerElement = function (widget_name, widget_uid, element_name, element, scope, events) {
 
             var registration = {
                 widget_name: widget_name,
+                widget_uid: widget_uid,
                 element_name: element_name,
+                element_ref: element,
                 events: setupEventListeners(element, events)
             };
 
-            if (!this.widgets[widget_name]) {
-                this.widgets[widget_name] = [registration];
+            if (!this.widgets[widget_name + widget_uid]) {
+                this.widgets[widget_name + widget_uid] = [registration];
             }
             else {
-                this.widgets[widget_name].push(registration);
+                this.widgets[widget_name + widget_uid].push(registration);
             }
 
             scope.$on("$destroy", function () {
                 Object.keys(registration.events).forEach(function (key) {
                     registration.events[key].clearAllListeners();
                 });
-                delete this.widgets[widget_name];
+                delete this.widgets[widget_name + widget_uid];
             }.bind(this));
 
         };
@@ -139,23 +142,35 @@
 
         /**
          * Returns all registered elements.
+         * @param {HTMLElement} [parent] - If given only descendants of element will be returned.
          * @returns {Array} - Registered elements.
          */
-        ParlayWidgetInputManager.prototype.getElements = function () {
-            return Object.keys(this.widgets).reduce(function (previous, current) {
-                return previous.concat(this.widgets[current]);
+        ParlayWidgetInputManager.prototype.getElements = function (parent) {
+            var elements = Object.keys(this.widgets).reduce(function (accumulator, key) {
+                return accumulator.concat(this.widgets[key]);
             }.bind(this), []);
+
+            return !!parent ? elements.filter(function (element) {
+                return parent[0].contains(element.element_ref);
+            }) : elements;
         };
 
         /**
          * Returns all registered events.
+         * @param {HTMLElement} [parent] - Optional parameter, if given elements will be filtered.
          * @returns {Array} - Registered events.
          */
-        ParlayWidgetInputManager.prototype.getEvents = function () {
-            return this.getElements().reduce(function (accumulator, current) {
+        ParlayWidgetInputManager.prototype.getEvents = function (parent) {
+            return this.getElements(parent).reduce(function (accumulator, current) {
                 return accumulator.concat(Object.keys(current.events).map(function (key) {
-                    current.events[key].element = current.widget_name + "_" +  current.element_name;
                     return current.events[key];
+                }).map(function (event) {
+                    event.element = {
+                        widget_name: current.widget_name,
+                        element_name: current.element_name,
+                        widget_uid: current.widget_uid
+                    };
+                    return event;
                 }));
             }, []);
         };

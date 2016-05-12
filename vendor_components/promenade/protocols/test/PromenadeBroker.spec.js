@@ -209,12 +209,13 @@
                     describe("requestDiscovery", function () {
 
                         it("while connected", function (done) {
-                            spyOn(ParlayNotification, "showProgress");
                             spyOn(PromenadeBroker, "sendMessage").and.callThrough();
                             spyOn(PromenadeBroker, "requestAvailableProtocols").and.callThrough();
                             spyOn(PromenadeBroker, "requestOpenProtocols").and.callThrough();
 
+                            expect(PromenadeBroker.connected).toBeFalsy();
                             PromenadeBroker.connect();
+                            expect(PromenadeBroker.connected).toBeTruthy();
                             PromenadeBroker.requestDiscovery(true).then(function () {
                                 expect(PromenadeBroker.requestAvailableProtocols).toHaveBeenCalled();
                                 expect(PromenadeBroker.requestOpenProtocols).toHaveBeenCalled();
@@ -223,8 +224,7 @@
                             });
 
                             $timeout.flush();
-                            expect(ParlayNotification.showProgress).toHaveBeenCalled();
-                            $rootScope.$apply();
+                            $rootScope.$digest();
 
                         });
 

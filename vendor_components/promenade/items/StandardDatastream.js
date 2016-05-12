@@ -12,9 +12,11 @@
 
         function PromenadeStandardDatastream(data, item_name, protocol) {
 
-            this.type = "datastream";
+            var datastream = this;
 
-            this.name = data.NAME;
+            datastream.type = "datastream";
+
+            datastream.name = data.NAME;
 
             // Holds internal value in the constructor closure scope.
             var internal_value;
@@ -23,7 +25,7 @@
             var onChangeCallbacks = {};
 
             // defineProperty so that we can define a custom setter to allow us to do the onChange callbacks.
-            Object.defineProperty(this, "value", {
+            Object.defineProperty(datastream, "value", {
                 writeable: true,
                 enumerable: true,
                 get: function () {
@@ -37,12 +39,32 @@
                 }
             });
 
+            datastream.item_name = item_name;
+            datastream.protocol = protocol;
+
+            datastream.listener = protocol.onMessage({
+                TX_TYPE: "DIRECT",
+                MSG_TYPE: "STREAM",
+                TO: "UI",
+                FROM: datastream.item_name,
+                STREAM: datastream.name
+            }, function(response) {
+                $rootScope.$apply(function () {
+                    datastream.value = response.VALUE;
+                });
+            });
+
+            datastream.listen = listen;
+            datastream.onChange = onChange;
+
+            ParlayData.set(datastream.name, datastream);
+
             /**
              * Allows for callbacks to be registered, these will be invoked on change of value.
              * @param {Function} callback - Function to be invoked whenever the value attribute changes.
              * @returns {Function} - onChange deregistration function.
              */
-            this.onChange = function onChange(callback) {
+            function onChange(callback) {
                 var UID = 0;
                 var keys = Object.keys(onChangeCallbacks).map(function (key) { return parseInt(key, 10); });
                 while (keys.indexOf(UID) !== -1) {
@@ -53,42 +75,25 @@
                 return function deregister() {
                     delete onChangeCallbacks[UID];
                 };
-            };
+            }
 
-            this.item_name = item_name;
-            this.protocol = protocol;
-
-            this.listener = protocol.onMessage({
-                TX_TYPE: "DIRECT",
-                MSG_TYPE: "STREAM",
-                TO: "UI",
-                FROM: this.item_name,
-                STREAM: this.name
-            }, function(response) {
-                $rootScope.$apply(function () {
-                    this.value = response.VALUE;
-                }.bind(this));
-            }.bind(this));
-
-            this.listen = function listen(stop) {
+            function listen(stop) {
                 return protocol.sendMessage({
                         TX_TYPE: "DIRECT",
                         MSG_TYPE: "STREAM",
-                        TO: this.item_name
+                        TO: datastream.item_name
                     },
                     {
-                        STREAM: this.name,
+                        STREAM: datastream.name,
                         STOP: stop
                     },
                     {
                         TX_TYPE: "DIRECT",
                         MSG_TYPE: "STREAM",
                         TO: "UI",
-                        FROM: this.item_name
+                        FROM: datastream.item_name
                     });
-            };
-
-            ParlayData.set(this.name, this);
+            }
 
         }
 

@@ -12,11 +12,13 @@
 
         function PromenadeStandardProperty(data, item_name, protocol) {
 
-            this.type = "property";
+            var property = this;
 
-            this.name = data.NAME;
-            this.input = data.INPUT;
-            this.read_only = data.READ_ONLY;
+            property.type = "property";
+
+            property.name = data.NAME;
+            property.input = data.INPUT;
+            property.read_only = data.READ_ONLY;
 
             // Holds internal value in the constructor closure scope.
             var internal_value;
@@ -25,7 +27,7 @@
             var onChangeCallbacks = {};
 
             // defineProperty so that we can define a custom setter to allow us to do the onChange callbacks.
-            Object.defineProperty(this, "value", {
+            Object.defineProperty(property, "value", {
                 writeable: true,
                 enumerable: true,
                 get: function () {
@@ -39,12 +41,35 @@
                 }
             });
 
+            property.get = get;
+            property.set = set;
+            property.onChange = onChange;
+
+            property.item_name = item_name;
+            property.protocol = protocol;
+
+            property.listener = protocol.onMessage({
+                TX_TYPE: "DIRECT",
+                MSG_TYPE: "RESPONSE",
+                FROM: property.item_name,
+                TO: "UI"
+            }, function(response) {
+                // TODO: Talk with Daniel about refactoring property API to require property name in topics.
+                if (property.name == response.PROPERTY && response.VALUE) {
+                    $rootScope.$apply(function () {
+                        property.value = response.VALUE;
+                    });
+                }
+            });
+
+            ParlayData.set(property.name, property);
+
             /**
              * Allows for callbacks to be registered, these will be invoked on change of value.
              * @param {Function} callback - Function to be invoked whenever the value attribute changes.
              * @returns {Function} - onChange deregistration function.
              */
-            this.onChange = function onChange(callback) {
+            function onChange(callback) {
                 var UID = 0;
                 var keys = Object.keys(onChangeCallbacks).map(function (key) {
                     return parseInt(key, 10);
@@ -57,67 +82,53 @@
                 return function deregister() {
                     delete onChangeCallbacks[UID];
                 };
-            };
+            }
 
-            this.item_name = item_name;
-            this.protocol = protocol;
+            function get () {
 
-            this.listener = protocol.onMessage({
-                TX_TYPE: "DIRECT",
-                MSG_TYPE: "RESPONSE",
-                FROM: this.item_name,
-                TO: "UI"
-            }, function(response) {
-                // TODO: Talk with Daniel about refactoring property API to require property name in topics.
-                if (this.name == response.PROPERTY && response.VALUE) {
-                    $rootScope.$apply(function () {
-                        this.value = response.VALUE;
-                    }.bind(this));
-                }
-            }.bind(this));
+                var topics = {
+                    TX_TYPE: "DIRECT",
+                    MSG_TYPE: "PROPERTY",
+                    TO: property.item_name
+                };
+                var contents = {
+                    PROPERTY: property.name,
+                    ACTION: "GET",
+                    VALUE: null
+                };
+                var response_topics = {
+                    TX_TYPE: "DIRECT",
+                    MSG_TYPE: "RESPONSE",
+                    FROM: property.item_name,
+                    TO: "UI"
+                };
 
-            this.get = function get() {
-                return protocol.sendMessage({
-                        TX_TYPE: "DIRECT",
-                        MSG_TYPE: "PROPERTY",
-                        TO: this.item_name
-                    },
-                    {
-                        PROPERTY: this.name,
-                        ACTION: "GET",
-                        VALUE: null
-                    },
-                    {
-                        TX_TYPE: "DIRECT",
-                        MSG_TYPE: "RESPONSE",
-                        FROM: this.item_name,
-                        TO: "UI"
-                    }, true);
-            };
+                return protocol.sendMessage(topics, contents, response_topics, true);
+            }
 
-            this.set = function set(value) {
-                if (!!value) {
-                    this.value = value;
-                }
-                return protocol.sendMessage({
-                        TX_TYPE: "DIRECT",
-                        MSG_TYPE: "PROPERTY",
-                        TO: this.item_name
-                    },
-                    {
-                        PROPERTY: this.name,
-                        ACTION: "SET",
-                        VALUE: this.value
-                    },
-                    {
-                        TX_TYPE: "DIRECT",
-                        MSG_TYPE: "RESPONSE",
-                        FROM: this.item_name,
-                        TO: "UI"
-                    }, true);
-            };
+            function set () {
 
-            ParlayData.set(this.name, this);
+                var topics = {
+                    TX_TYPE: "DIRECT",
+                    MSG_TYPE: "PROPERTY",
+                    TO: property.item_name
+                };
+
+                var contents = {
+                    PROPERTY: property.name,
+                    ACTION: "SET",
+                    VALUE: property.value
+                };
+
+                var response_topics = {
+                    TX_TYPE: "DIRECT",
+                    MSG_TYPE: "RESPONSE",
+                    FROM: property.item_name,
+                    TO: "UI"
+                };
+
+                return protocol.sendMessage(topics, contents, response_topics, true);
+            }
 
         }
 

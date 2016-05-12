@@ -14,10 +14,19 @@
             restrict: "E",
             link: function (scope, element) {
 
+                var draggie;
+                
                 scope.edit = edit;
 
-                scope.$on("parlayWidgetLoaded", function () {
+                scope.$on("parlayWidgetTemplateLoaded", function () {
                     enableDraggabilly(element[0], scope.item.position);
+                    restoreHandlers(scope.item.configuration);
+                    restoreTransformer(scope.item.configuration);
+                    scope.initialized = true;
+                });
+
+                scope.$on("parlayWidgetBaseCardLoaded", function (event, element) {
+                    enableDraggabilly(element[0].parentElement.parentElement, scope.item.position);
                     restoreHandlers(scope.item.configuration);
                     restoreTransformer(scope.item.configuration);
                     scope.initialized = true;
@@ -41,9 +50,20 @@
                 function restoreHandlers (configuration) {
                     if (!!configuration.selectedEvents) {
                         configuration.selectedEvents = configuration.selectedEvents.map(function (shallow_event) {
-                            var actual_event = ParlayWidgetInputManager.getEvents().find(function (candidate) {
-                                return candidate.element == shallow_event.element && candidate.event == shallow_event.event;
+
+                            var actual_event = ParlayWidgetInputManager.getEvents(element).filter(function (candidate) {
+                                return candidate.handler === null;
+                            }).find(function (candidate) {
+                                return (
+                                    candidate.element.widget_name == shallow_event.element.widget_name &&
+                                    candidate.element.element_name == shallow_event.element.element_name &&
+                                    candidate.event == shallow_event.event
+                                );
                             });
+
+                            if (!actual_event) {
+                                return shallow_event;
+                            }
 
                             ParlayWidgetInputManager.registerHandler(actual_event);
                             actual_event.handler.functionString = shallow_event.handler.functionString;
@@ -73,7 +93,12 @@
                 }
 
                 function enableDraggabilly (element, initialPosition) {
-                    var draggie = new Draggabilly(element, {
+
+                    if (!!draggie) {
+                        draggie.destroy();
+                    }
+
+                    draggie = new Draggabilly(element, {
                         grid:[20, 20],
                         handle: ".handle"
                     });

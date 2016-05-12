@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var module_dependencies = [];
+    var module_dependencies = ["parlay.widget.base.card"];
     var module_name = "promenade.widget.display";
     var directive_name = "promenadeWidgetDisplay";
     var widget_type = "display";

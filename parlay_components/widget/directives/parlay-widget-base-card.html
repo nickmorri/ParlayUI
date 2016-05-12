@@ -1,0 +1,10 @@
+<md-card class="parlay-item-card">
+    <md-toolbar class="handle" ng-class="{'show-handle': widgetsCtrl.editing}">
+        <div class="md-toolbar-tools">
+            <h2 ng-transclude="title"></h2>
+            <span flex></span>
+            <parlay-widget-base-menu ng-show="widgetsCtrl.editing"></parlay-widget-base-menu>
+        </div>
+    </md-toolbar>
+    <md-card-content ng-transclude="content"></md-card-content>
+</md-card>

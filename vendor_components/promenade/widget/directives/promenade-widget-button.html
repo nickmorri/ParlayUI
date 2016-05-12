@@ -1,11 +1,8 @@
-<md-card class="parlay-item-card">
-    <md-toolbar class="handle" ng-class="{'show-handle': widgetsCtrl.editing}">
-        <div class="md-toolbar-tools">
-            <h2>{{template.name}}{{uid}}</h2>
-            <span flex></span>
-            <parlay-widget-base-menu ng-show="widgetsCtrl.editing"></parlay-widget-base-menu>
-        </div>
-    </md-toolbar>
-    <md-card-content layout="column">
-    </md-card-content>
-</md-card>        <md-button class="md-primary" parlay-widget-input element-name="test" widget-name="{{template.name}}" widget-uid="{{uid}}" events='["click"]'>Do stuff</md-button>
+<parlay-widget-base-card>
+    <parlay-widget-base-card-title>
+        {{template.name}}{{uid}}
+    </parlay-widget-base-card-title>
+    <parlay-widget-base-card-content>
+        <md-button class="md-primary" parlay-widget-input element-name="test" widget-name="{{template.name}}" widget-uid="{{uid}}" events='["click"]'>Do stuff</md-button>
+    </parlay-widget-base-card-content>
+</parlay-widget-base-card>

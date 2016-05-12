@@ -1,14 +1,8 @@
-<md-card class="parlay-item-card">
-    <md-toolbar class="handle" ng-class="{'show-handle': widgetsCtrl.editing}">
-        <div class="md-toolbar-tools">
-            <h2>
-                <span ng-repeat="item in items">
-                    {{item.name}}<span ng-show="!$last">, </span>
-                </span>
-            </h2>
-            <span flex></span>
-            <parlay-widget-base-menu ng-show="widgetsCtrl.editing"></parlay-widget-base-menu>
-        </div>
-    </md-toolbar>
-    <md-card-content>{{transformedValue}}</md-card-content>
-</md-card>
+<parlay-widget-base-card>
+    <parlay-widget-base-card-title>
+        <span ng-repeat="item in items">{{item.name}}<span ng-show="!$last">, </span></span>
+    </parlay-widget-base-card-title>
+    <parlay-widget-base-card-content>
+        {{transformedValue}}
+    </parlay-widget-base-card-content>
+</parlay-widget-base-card>

@@ -100,7 +100,7 @@
                 }
 
                 // ParlayWidgets should notify their parent, ParlayBaseWidget, when they are loaded.
-                scope.$emit("parlayWidgetLoaded");
+                scope.$emit("parlayWidgetTemplateLoaded");
             }
 
             /**

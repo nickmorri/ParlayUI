@@ -1,7 +1,7 @@
 {
   "name": "ParlayUI",
   "namelower": "parlayui",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A web client for the Parlay broker system",
   "author": "Nick Morris <nick@promenadesoftware.com>",
   "main": "app/app.js",

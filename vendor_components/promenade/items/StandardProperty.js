@@ -1,14 +1,14 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["parlay.data"];
+    var module_dependencies = [];
 
     angular
         .module("promenade.items.property", module_dependencies)
         .factory("PromenadeStandardProperty", PromenadeStandardPropertyFactory);
 
-    PromenadeStandardPropertyFactory.$inject = ["ParlayData", "$rootScope"];
-    function PromenadeStandardPropertyFactory (ParlayData, $rootScope) {
+    PromenadeStandardPropertyFactory.$inject = ["$rootScope"];
+    function PromenadeStandardPropertyFactory ($rootScope) {
 
         function PromenadeStandardProperty(data, item_name, protocol) {
 
@@ -61,8 +61,6 @@
                     });
                 }
             });
-
-            ParlayData.set(property.name, property);
 
             /**
              * Allows for callbacks to be registered, these will be invoked on change of value.

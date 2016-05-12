@@ -1,14 +1,14 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["parlay.data"];
+    var module_dependencies = [];
 
     angular
         .module("promenade.items.datastream", module_dependencies)
         .factory("PromenadeStandardDatastream", PromenadeStandardDatastreamFactory);
 
-    PromenadeStandardDatastreamFactory.$inject = ["ParlayData", "$rootScope"];
-    function PromenadeStandardDatastreamFactory (ParlayData, $rootScope) {
+    PromenadeStandardDatastreamFactory.$inject = ["$rootScope"];
+    function PromenadeStandardDatastreamFactory ($rootScope) {
 
         function PromenadeStandardDatastream(data, item_name, protocol) {
 
@@ -56,8 +56,6 @@
 
             datastream.listen = listen;
             datastream.onChange = onChange;
-
-            ParlayData.set(datastream.name, datastream);
 
             /**
              * Allows for callbacks to be registered, these will be invoked on change of value.

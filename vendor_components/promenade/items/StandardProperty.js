@@ -106,7 +106,11 @@
                 return protocol.sendMessage(topics, contents, response_topics, true);
             }
 
-            function set () {
+            function set (value) {
+
+                if (!!value) {
+                    property.value = value;
+                }
 
                 var topics = {
                     TX_TYPE: "DIRECT",

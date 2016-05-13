@@ -105,6 +105,13 @@
 
                     draggie.on("dragEnd", function () {
                         scope.item.position = this.position;
+                        var card = angular.element(element).find("md-card");
+                        card[0].classList.remove("md-whiteframe-24dp");
+                    });
+
+                    draggie.on("dragStart", function () {
+                        var card = angular.element(element).find("md-card");
+                        card[0].classList.add("md-whiteframe-24dp");
                     });
 
                     if (!!initialPosition) {

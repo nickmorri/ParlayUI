@@ -127,7 +127,8 @@
          * @param {Event} event - HTML Event instance we should associate with a ParlayWidgetEventHandler.
          */
         ParlayWidgetInputManager.prototype.registerHandler = function (event) {
-            (new ParlayWidgetEventHandler()).attach(event);
+            var handler = new ParlayWidgetEventHandler();
+            handler.attach(event);
         };
 
         /**
@@ -135,9 +136,10 @@
          * @param {Event} event - HTML Event instance we should associate with a ParlayWidgetEventHandler.
          */
         ParlayWidgetInputManager.prototype.deregisterHandler = function (event) {
-            this.getEvents().find(function (candidate) {
+            var handler = this.getEvents().find(function (candidate) {
                 return candidate === event;
-            }).handler.detach();
+            }).handler;
+            handler.detach();
         };
 
         /**

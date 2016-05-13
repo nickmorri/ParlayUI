@@ -213,7 +213,7 @@
             });
 
             var filtered_elements = ParlayWidgetInputManager.getElements().filter(function (element) {
-                return element.name.indexOf(lowercase_query) > -1 && $scope.configuration.selectedItems.indexOf(element) === -1;
+                return element.element_name.indexOf(lowercase_query) > -1 && $scope.configuration.selectedItems.indexOf(element) === -1;
             });
 
             return filtered_items.concat(filtered_elements);

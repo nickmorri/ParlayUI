@@ -7,8 +7,8 @@
         .module("parlay.widget.base", module_dependencies)
         .directive("parlayWidgetBase", ParlayWidgetBase);
 
-    ParlayWidgetBase.$inject = ["$mdDialog", "$compile", "ParlayWidgetInputManager", "ParlayData", "ParlayWidgetTransformer"];
-    function ParlayWidgetBase ($mdDialog, $compile, ParlayWidgetInputManager, ParlayData, ParlayWidgetTransformer) {
+    ParlayWidgetBase.$inject = ["$mdDialog", "$compile", "$interval", "ParlayWidgetInputManager", "ParlayData", "ParlayWidgetTransformer"];
+    function ParlayWidgetBase ($mdDialog, $compile, $interval, ParlayWidgetInputManager, ParlayData, ParlayWidgetTransformer) {
         return {
             scope: true,
             restrict: "E",
@@ -40,6 +40,9 @@
                         if (!!scope.item.configuration.handler) {
                             scope.item.configuration.handler.detach();
                         }
+                    }
+                    if (!!draggie) {
+                        draggie.destroy();
                     }
                 });
 
@@ -92,33 +95,71 @@
                     scope.edit(true);
                 }
 
+                /**
+                 * Allows the user to reposition the ParlayWidget freely in the workspace.
+                 * @param {HTMLElement} element - ParlayWidget element to attach a Draggabilly instance to.
+                 * @param {Object} [initialPosition] - Optional position that we should set the ParlayWidget to.
+                 */
                 function enableDraggabilly (element, initialPosition) {
 
+                    // If a Draggabilly instance already exists we should destroy it.
                     if (!!draggie) {
                         draggie.destroy();
                     }
 
+                    // Create a Draggabilly instance for the given element. If a handle CSS class is included on any
+                    // child element we should use that as the handle.
                     draggie = new Draggabilly(element, {
-                        grid:[20, 20],
                         handle: ".handle"
                     });
 
+                    // Record the position of the card when dragging ends.
                     draggie.on("dragEnd", function () {
                         scope.item.position = this.position;
-                        var card = angular.element(element).find("md-card");
-                        card[0].classList.remove("md-whiteframe-24dp");
                     });
 
-                    draggie.on("dragStart", function () {
-                        var card = angular.element(element).find("md-card");
-                        card[0].classList.add("md-whiteframe-24dp");
-                    });
+                    // If the widget is a card we should add some feedback during dragging.
+                    var card = angular.element(element).find("md-card");
+                    if (!!card) {
+                        // Dropping animation.
+                        draggie.on("dragEnd", function () {
+                            var height = 24;
+                            var promise = $interval(function () {
+                                if (height == 1) {
+                                    $interval.cancel(promise);
+                                }
+                                else {
+                                    card[0].classList.remove("md-whiteframe-" + (height + 1) + "dp");
+                                    card[0].classList.add("md-whiteframe-" + height + "dp");
+                                    height--;
+                                }
+                            }, 2);
+                        });
 
+                        // Picking up animation.
+                        draggie.on("dragStart", function () {
+                            var height = 1;
+                            var promise = $interval(function () {
+                                if (height == 24) {
+                                    $interval.cancel(promise);
+                                }
+                                else {
+                                    card[0].classList.remove("md-whiteframe-" + (height - 1) + "dp");
+                                    card[0].classList.add("md-whiteframe-" + height + "dp");
+                                    height++;
+                                }
+                            }, 5);
+                        });
+                    }
+
+                    // If an initialPosition is given we should move the widget to that location.
                     if (!!initialPosition) {
                         draggie.dragPoint = initialPosition;
                         draggie.positionDrag();
                     }
 
+                    // If the widgetsCtrl is editing the user should be free to rearrange ParlayWidgets, otherwise
+                    // the widgets should not be draggable.
                     scope.$watch("widgetsCtrl.editing", function (editing) {
                         if (editing) {
                             draggie.enable();

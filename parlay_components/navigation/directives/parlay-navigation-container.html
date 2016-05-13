@@ -78,8 +78,8 @@
         </md-list-item>
 
         <md-list-item ng-show="ctrl.getCurrentState().name == 'widgets'" title="Toggle editing">
-            <md-icon ng-md-icon class="parlay-nav-icon" icon="{{ctrl.editing ? 'edit' : 'visibility'}}"></md-icon>
-            {{ctrl.editing ? "Editing" : "Viewing"}}
+            <md-icon ng-md-icon class="parlay-nav-icon" icon="edit"></md-icon>
+            Editing
             <md-switch class="md-secondary" ng-model="ctrl.editing" ng-change="ctrl.toggleWidgetEditing()" aria-label="Editing"></md-switch>
         </md-list-item>
 

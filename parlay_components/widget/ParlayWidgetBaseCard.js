@@ -1,7 +1,7 @@
 (function () {
     "use strict";
     
-    var module_dependencies = ["ngMaterial"];
+    var module_dependencies = ["ngMaterial", "parlay.widget.base.menu"];
     
     angular
         .module("parlay.widget.base.card", module_dependencies)

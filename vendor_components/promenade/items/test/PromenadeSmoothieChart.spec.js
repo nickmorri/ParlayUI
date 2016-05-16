@@ -124,10 +124,9 @@
     	});
     
         describe("general use", function() {
-            var scope, element, controller, $interval;
+            var scope, element, controller;
             
-            beforeEach(inject(function($rootScope, $compile, $controller, _$interval_) {
-	            $interval = _$interval_;
+            beforeEach(inject(function($rootScope, $compile, $controller) {
                 /*jshint newcap: false */
                 scope = $rootScope.$new();
                 
@@ -152,16 +151,18 @@
 		            value: 5,
 		            ATTR_name: "stream2",
 					name: "stream2",
-					UNITS: "ms"
+					UNITS: "ms",
+					onChange: function () {
+						return function () { };
+					}
 	            };
 
                 scope.enabled_streams.push("stream2");
 	            
 	            expect(scope.getSmoothie().seriesSet.length).toBe(0);
 	            
-	            $interval.flush(1000);
 	            scope.$digest();
-	            
+
 	            expect(scope.getSmoothie().seriesSet.length).toBe(1);
 	            
             });
@@ -172,21 +173,22 @@
 		            value: 5,
 		            ATTR_name: "stream2",
 					name: "stream2",
-					UNITS: "ms"
+					UNITS: "ms",
+					onChange: function () {
+						return function () { };
+					}
 	            };
 
                 scope.enabled_streams.push("stream2");
 	            
 	            expect(scope.getSmoothie().seriesSet.length).toBe(0);
 	            
-	            $interval.flush(1000);
 	            scope.$digest();
 	            
 	            expect(scope.getSmoothie().seriesSet.length).toBe(1);
 
 				scope.enabled_streams.splice(scope.enabled_streams.indexOf("stream2"), 1);
 	            
-	            $interval.flush(1000);
 	            scope.$digest();
 	            
 	            expect(scope.getSmoothie().seriesSet.length).toBe(0);
@@ -202,12 +204,14 @@
 			            value: i * 2,
 			            ATTR_name: "stream" + i,
 						name: "stream" + i,
-						UNITS: "ms"
+						UNITS: "ms",
+						onChange: function () {
+							return function () { };
+						}
 		            };
                     scope.enabled_streams.push("stream" + i);
 	            }
 	            
-	            $interval.flush(1000);
 	            scope.$digest();
 	            
 	            expect(scope.getSmoothie().seriesSet.length).toBe(10);
@@ -222,12 +226,14 @@
 			            value: i * 2,
 			            ATTR_name: "stream" + i,
 						name: "stream" + i,
-						UNITS: "ms"
+						UNITS: "ms",
+						onChange: function () {
+							return function () { };
+						}
 		            };
                     scope.enabled_streams.push("stream" + i);
 	            }
 	            
-	            $interval.flush(1000);
 	            scope.$digest();
 	            
 	            expect(scope.getSmoothie().seriesSet.length).toBe(10);
@@ -237,7 +243,6 @@
                     scope.enabled_streams.splice(scope.enabled_streams.indexOf("stream" + i), 1);
 				}
 	            
-	            $interval.flush(1000);
 	            scope.$digest();
 
 				expect(scope.getSmoothie().seriesSet.length).toBe(0);
@@ -250,28 +255,28 @@
 		            value: 5,
 		            ATTR_name: "stream",
 					name: "stream",
-					UNITS: "ms"
+					UNITS: "ms",
+				   onChange: function () {
+					   return function () { };
+				   }
 	            };
 	            
 	            expect(scope.getSmoothie().seriesSet.length).toBe(0);
 
 				scope.enabled_streams.push("stream");
 
-	            $interval.flush(1000);
 	            scope.$digest();
 	            
 	            expect(scope.getSmoothie().seriesSet.length).toBe(1);
 
 				scope.enabled_streams.splice(scope.enabled_streams.indexOf("stream"), 1);
 	            
-	            $interval.flush(1000);
 	            scope.$digest();
 	            
 	            expect(scope.getSmoothie().seriesSet.length).toBe(0);
 
 				scope.enabled_streams.push("stream");
 	            
-	            $interval.flush(1000);
 	            scope.$digest();
 	            
 	            expect(scope.getSmoothie().seriesSet.length).toBe(1);
@@ -279,27 +284,42 @@
             });
             
             it("updates streams with latest available values", function() {
-	            
+
+				function setupCallback(callback) {
+					return function (value) {
+						callback(value);
+					};
+				}
+
+				var doCallback;
+
 	            scope.data.stream = {
 		            value: 5,
 		            ATTR_name: "stream",
 					name: "stream",
-					UNITS: "ms"
+					UNITS: "ms",
+					onChange: function (callback) {
+						doCallback = setupCallback(callback);
+						doCallback(5);
+						return function () { };
+					}
 	            };
 
+				var smoothie = scope.getSmoothie();
+
                 scope.enabled_streams.push("stream");
+
+				scope.$digest();
+
+				var series = smoothie.seriesSet[0].timeSeries;
 	            
-	            $interval.flush(1000);
+	            expect(series.data[series.data.length - 1][1]).toBe(5);
+	            
+				doCallback(10);
+	            
 	            scope.$digest();
-	            
-	            expect(scope.getSmoothie().seriesSet[0].timeSeries.data[scope.getSmoothie().seriesSet[0].timeSeries.data.length - 1][1]).toBe(5);
-	            
-	            scope.data.stream.value = 10;
-	            
-	            $interval.flush(1000);
-	            scope.$digest();
-	            
-	            expect(scope.getSmoothie().seriesSet[0].timeSeries.data[scope.getSmoothie().seriesSet[0].timeSeries.data.length - 1][1]).toBe(10);
+
+	            expect(series.data[series.data.length - 1][1]).toBe(10);
             });
             
         });

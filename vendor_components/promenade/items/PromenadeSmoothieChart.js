@@ -49,101 +49,73 @@
      * @param {AngularJS Service} $interval - AngularJS interval Service.
      * @param {Parlay Service} ParlaySettings - ParlaySettings Service.
      */
-    PromenadeSmoothieChartController.$inject = ["$scope", "$interval", "ParlaySettings"];
-    function PromenadeSmoothieChartController (scope, $interval, ParlaySettings) {
+    PromenadeSmoothieChartController.$inject = ["$scope"];
+    function PromenadeSmoothieChartController (scope) {
+
+        var ctrl = this;
 
         // Easy colors to see on most transparent backgrounds.
-        this.colors = ["#000000", "#0433ff", "#aa7942", "#00fdff", "#00f900", "#ff40ff", "#ff9300", "#942192", "#ff2600", "#666633"];
+        ctrl.colors = ["#000000", "#0433ff", "#aa7942", "#00fdff", "#00f900", "#ff40ff", "#ff9300", "#942192", "#ff2600", "#666633"];
 
         // Container for TimeSeries Objects.
-        this.lines = {};
+        ctrl.lines = {};
 
-        /**
-         * Return streams that are currently enabled in scope.streams.
-         * @returns {Array} - Array of stream Objects.
-         */
-        this.getEnabledStreams = function() {
-            return Object.keys(scope.stream_data).map(function (key) {
-                return scope.stream_data[key];
-            }).filter(function (stream) {
-                return scope.enabled_streams.indexOf(stream.name) > -1;
-            });
-        }.bind(this);
+        // Container for onChange registrations.
+        var stream_watchers = {};
 
-        /**
-         * If a Smoothie TimeSeries doesn't exist for an enabled stream we should create it.
-         * @param {Array} streams - Array of enabled streams.
-         */
-        this.createTimeSeries = function(streams) {
-            streams.filter(function (stream) {
-                return !this.lines[stream.name];
-            }, this).forEach(function(stream) {
-                this.lines[stream.name] = new TimeSeries();
+        scope.$watch("smoothie", function (newValue) {
+            if (!!newValue) {
+                scope.$watchCollection("enabled_streams", function (newValue, oldValue) {
 
-                scope.smoothie.addTimeSeries(this.lines[stream.name], {
-                    strokeStyle: this.colors.pop(),
-                    lineWidth: 2,
-                    streamName: stream.name
+                    // Generate Array of streams that differ and should be disabled.
+                    oldValue.filter(function (line) {
+                        return newValue.indexOf(line) === -1;
+                    }).forEach(removeStream);
+
+                    // Generate Array of streams that differ and should be enabled.
+                    newValue.filter(function (line) {
+                        return oldValue.indexOf(line) === -1;
+                    }).forEach(addStream);
+
                 });
-            }, this);
-        }.bind(this);
-
-        /**
-         * If a Smoothie TimeSeries exists for a stream that is not enabled we should remove it.
-         * @param {Array} streams - Array of enabled streams.
-         */
-        this.pruneTimeSeries = function(streams) {
-            Object.keys(this.lines).filter(function(key) {
-                return !streams.some(function(stream) { return stream.name === key; });
-            }, this).forEach(function (key) {
-
-                // Re-add the now unused color to available list of colors.
-                this.colors.push(scope.smoothie.seriesSet.find(function (series) {
-                    return series.options.streamName === key;
-                }).options.strokeStyle);
-
-                scope.smoothie.removeTimeSeries(this.lines[key]);
-                delete this.lines[key];
-            }, this);
-        }.bind(this);
-
-        /**
-         * Append the current time and value for each enabled stream.
-         * @param {Object} stream - Enabled stream object.
-         */
-        this.updateStreamLine = function(stream) {
-            // Skip appending an undefined stream value.
-            if (stream.value !== undefined) {
-                this.lines[stream.name].append(new Date().getTime(), stream.value);
             }
-        }.bind(this);
-
-        this.updateLines = function() {
-
-            // Update label size.
-            scope.smoothie.options.labels.fontSize = ParlaySettings.get("graph").label_size;
-
-            // Get an array of currently enabled streams.
-            var enabled_streams = this.getEnabledStreams();
-
-            // If the TimeSeries doesn't exist create it.
-            this.createTimeSeries(enabled_streams);
-
-            // If a line is removed we should remove the TimeSeries from the SmoothieChart.
-            this.pruneTimeSeries(enabled_streams);
-
-            // Update the TimeSeries with the latest stream value.
-            enabled_streams.forEach(this.updateStreamLine);
-
-        }.bind(this);
-
-        // At at an interval specified by scope.delay ensure that the values available in scope.values are consistent with the SmoothieChart.
-        var interval_registration = $interval(this.updateLines, scope.delay);
-
-        // When the scope the PromenadeSmoothieChart exists on is destroyed we need to cancel our update interval.
-        scope.$on("$destroy", function () {
-            $interval.cancel(interval_registration);
         });
+
+        function addStream (stream_name) {
+            createTimeSeries(stream_name);
+            // Register an onChange handler that will update the TimeSeries.
+            stream_watchers[stream_name] = scope.stream_data[stream_name].onChange(function (value) {
+                ctrl.lines[stream_name].append((new Date()).getTime(), value);
+            });
+        }
+
+        function removeStream (stream_name) {
+            // Deregister the onChange handler and delete it's entry.
+            stream_watchers[stream_name]();
+            delete stream_watchers[stream_name];
+            pruneTimeSeries(stream_name);
+        }
+
+        function createTimeSeries (stream_name) {
+            ctrl.lines[stream_name] = new TimeSeries();
+
+            scope.smoothie.addTimeSeries(ctrl.lines[stream_name], {
+                strokeStyle: ctrl.colors.pop(),
+                lineWidth: 2,
+                streamName: stream_name
+            });
+        }
+
+        function pruneTimeSeries (stream_name) {
+            // Re-add the now unused color to available list of colors.
+            ctrl.colors.push(scope.smoothie.seriesSet.find(function (series) {
+                return series.options.streamName === stream_name;
+            }).options.strokeStyle);
+
+            scope.smoothie.removeTimeSeries(ctrl.lines[stream_name]);
+            delete ctrl.lines[stream_name];
+        }
+
     }
 
     /**
@@ -160,9 +132,7 @@
          * @param {canvas} canvas - HTML Canvas element.
          */
         function buildSetSize(canvas) {
-            /**
-             * Fills parent element with SmoothieChart HTML5 Canvas object.
-             */
+            // Fills parent element with SmoothieChart HTML5 Canvas object.
             return function setSize() {
                 canvas.style.width = "100%";
                 canvas.style.height = "100%";
@@ -217,7 +187,7 @@
                     }
                 });
 
-                // Attaches SmoothieChart to HTML5 Canvas element. Sets streaming delay to given value if available, otherwise defaults to 1000ms.
+                // Attaches SmoothieChart to HTML5 Canvas element.
                 scope.smoothie.streamTo(canvas, scope.delay);
 
                 // If the window resizes we are going to need to resize our graphs as well.

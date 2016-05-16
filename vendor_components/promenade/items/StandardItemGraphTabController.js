@@ -26,7 +26,9 @@
     PromenadeStandardItemCardGraphTabController.$inject = ["$scope", "$mdDialog", "$interval", "ParlayUtility", "ParlayItemPersistence"];
     function PromenadeStandardItemCardGraphTabController($scope, $mdDialog, $interval, ParlayUtility, ParlayItemPersistence) {
 
-        this.enabled_streams = [];
+        var ctrl = this;
+
+        ctrl.enabled_streams = [];
 
         var container = ParlayUtility.relevantScope($scope, 'container').container;
         var directive_name = 'parlayItemCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
@@ -34,10 +36,10 @@
         // Persist enabled streams across workspaces.
         ParlayItemPersistence.monitor(directive_name, "ctrl.enabled_streams", $scope);
 
-        this.streamColors = [];
+        ctrl.streamColors = [];
 
-        this.updateStreamColors = function () {
-            this.streamColors = this.getSmoothie() ? this.getSmoothie().seriesSet.map(function (series) {
+        ctrl.updateStreamColors = function () {
+            ctrl.streamColors = ctrl.getSmoothie() ? ctrl.getSmoothie().seriesSet.map(function (series) {
                 return {
                     name: series.options.streamName,
                     color: series.options.strokeStyle
@@ -45,8 +47,8 @@
             }) : [];
         };
 
-        this.hasStreamsAvailable = function () {
-            return Object.keys(this.item.data_streams).length > 0;
+        ctrl.hasStreamsAvailable = function () {
+            return Object.keys(ctrl.item.data_streams).length > 0;
         };
 
         /**
@@ -58,28 +60,28 @@
                 controller: "PromenadeStandardItemCardGraphTabConfigurationController",
                 controllerAs: "ctrl",
                 locals: {
-                    item: this.item,
-                    enabled_streams: this.enabled_streams,
-                    smoothie: this.getSmoothie()
+                    item: ctrl.item,
+                    enabled_streams: ctrl.enabled_streams,
+                    smoothie: ctrl.getSmoothie()
                 },
                 bindToController: true,
                 templateUrl: "../vendor_components/promenade/items/directives/promenade-standard-item-card-graph-configuration-dialog.html",
                 targetEvent: $event,
                 clickOutsideToClose: true
-            }).finally(this.updateStreamColors);
+            }).finally(ctrl.updateStreamColors);
         };
 
-        $interval(this.updateStreamColors.bind(this), 1000);
+        /**
+         * Returns a count of all currently enabled streams.
+         * @returns {Number} - Count of currently enabled streams.
+         */
+        ctrl.streamCount = function() {
+            return ctrl.enabled_streams.length;
+        };
+
+        $interval(ctrl.updateStreamColors.bind(ctrl), 1000);
 
     }
-
-    /**
-     * Returns a count of all currently enabled streams.
-     * @returns {Number} - Count of currently enabled streams.
-     */
-    PromenadeStandardItemCardGraphTabController.prototype.streamCount = function() {
-        return this.enabled_streams.length;
-    };
 
     /**
      * Controller constructor for the graph configuration dialog.
@@ -88,25 +90,31 @@
      * @param {Material Angular Service} $mdDialog - Dialog modal service.
      * @param {Material Angular Service} $mdMedia - Media size detection service.
      */
-    PromenadeStandardItemCardGraphTabConfigurationController.$inject = ["$scope", "$mdDialog", "$mdMedia", "item", "enabled_streams", "smoothie"];
+    PromenadeStandardItemCardGraphTabConfigurationController.$inject = ["$scope", "$mdDialog", "$mdMedia"];
     function PromenadeStandardItemCardGraphTabConfigurationController($scope, $mdDialog, $mdMedia) {
-        this.hide = $mdDialog.hide;
+
+        var ctrl = this;
+
+        ctrl.hide = $mdDialog.hide;
 
         // When minValue or maxValue are defined we should initialize their lock to true.
-        this.minimum_locked = this.smoothie.options.minValue !== undefined;
-        this.maximum_locked = this.smoothie.options.maxValue !== undefined;
+        ctrl.minimum_locked = ctrl.smoothie.options.minValue !== undefined;
+        ctrl.maximum_locked = ctrl.smoothie.options.maxValue !== undefined;
+
+        // Attach reference to $mdMedia to scope so that media queries can be done.
+        $scope.$mdMedia = $mdMedia;
 
         /**
          * Toggles the streams between enabled and disabled. Requests or cancels stream depending on state.
          */
-        this.toggleGraphing = function(stream) {
-            if (this.enabled_streams.indexOf(stream.name) == -1) {
-                this.enabled_streams.push(stream.name);
+        ctrl.toggleGraphing = function(stream) {
+            if (ctrl.enabled_streams.indexOf(stream.name) == -1) {
+                ctrl.enabled_streams.push(stream.name);
                 stream.listen(false);
             }
             else {
                 // Remove the stream from the Array of enabled streams.
-                this.enabled_streams.splice(this.enabled_streams.indexOf(stream.name), 1);
+                ctrl.enabled_streams.splice(ctrl.enabled_streams.indexOf(stream.name), 1);
                 // If stream value currently defined ask the user if they want to cancel the stream.
                 if (stream.value !== undefined) {
                     // Ask the user if they'd like to cancel the stream as well.
@@ -117,7 +125,7 @@
                         .cancel("Dismiss")
                     ).then(function () {
                         stream.listen(true);
-                    }.bind(this));
+                    });
                 }
                 // Otherwise silently cancel the stream.
                 else {
@@ -126,62 +134,59 @@
             }
         };
 
-        // Attach reference to $mdMedia to scope so that media queries can be done.
-        $scope.$mdMedia = $mdMedia;
+        /**
+         * Toggles the state of the minimum lock. If we are removing lock we should remove the minValue from Smoothie options.
+         */
+        ctrl.toggleMinimum = function () {
+
+            ctrl.minimum_locked = !ctrl.minimum_locked;
+
+            // Occurs when user enables checkbox.
+            if (ctrl.minimum_locked) {
+                // We want to remove the y range function when the user explicitly sets value as these should not automatically
+                // be scaled. Store a reference to it so it can be restored if the lock is removed.
+                ctrl.smoothie.options.yRangeFunctionRef = ctrl.smoothie.options.yRangeFunction;
+                delete ctrl.smoothie.options.yRangeFunction;
+                ctrl.smoothie.options.minValue = ctrl.smoothie.valueRange.min;
+            }
+            // Occurs when user disables checkbox.
+            else {
+                // Set the y range function when the user remove the lock.
+                ctrl.smoothie.options.yRangeFunction = ctrl.smoothie.options.yRangeFunctionRef;
+                delete ctrl.smoothie.options.yRangeFunctionRef;
+                delete ctrl.smoothie.options.minValue;
+            }
+        };
+
+        /**
+         * Toggles the state of the maximum lock. If we are removing lock we should remove the maxValue from Smoothie options.
+         */
+        ctrl.toggleMaximum = function () {
+
+            ctrl.maximum_locked = !ctrl.maximum_locked;
+
+            // Occurs when user enables checkbox.
+            if (ctrl.maximum_locked) {
+                // We want to remove the y range function when the user explicitly sets value as these should not automatically
+                // be scaled. Store a reference to it so it can be restored if the lock is removed.
+                ctrl.smoothie.options.yRangeFunctionRef = ctrl.smoothie.options.yRangeFunction;
+                delete ctrl.smoothie.options.yRangeFunction;
+                ctrl.smoothie.options.maxValue = ctrl.smoothie.valueRange.max;
+            }
+            // Occurs when user disables checkbox.
+            else {
+                // Set the y range function when the user remove the lock.
+                ctrl.smoothie.options.yRangeFunction = ctrl.smoothie.options.yRangeFunctionRef;
+                delete ctrl.smoothie.options.yRangeFunctionRef;
+                delete ctrl.smoothie.options.maxValue;
+            }
+        };
+
+        ctrl.isStreamEnabled = function (stream) {
+            return ctrl.enabled_streams.indexOf(stream.name) >= 0;
+        };
 
     }
-
-    /**
-     * Toggles the state of the minimum lock. If we are removing lock we should remove the minValue from Smoothie options.
-     */
-    PromenadeStandardItemCardGraphTabConfigurationController.prototype.toggleMinimum = function () {
-
-        this.minimum_locked = !this.minimum_locked;
-
-        // Occurs when user enables checkbox.
-        if (this.minimum_locked) {
-            // We want to remove the y range function when the user explicitly sets value as these should not automatically
-            // be scaled. Store a reference to it so it can be restored if the lock is removed.
-            this.smoothie.options.yRangeFunctionRef = this.smoothie.options.yRangeFunction;
-            delete this.smoothie.options.yRangeFunction;
-            this.smoothie.options.minValue = this.smoothie.valueRange.min;
-        }
-        // Occurs when user disables checkbox.
-        else {
-            // Set the y range function when the user remove the lock.
-            this.smoothie.options.yRangeFunction = this.smoothie.options.yRangeFunctionRef;
-            delete this.smoothie.options.yRangeFunctionRef;
-            delete this.smoothie.options.minValue;
-        }
-    };
-
-    /**
-     * Toggles the state of the maximum lock. If we are removing lock we should remove the maxValue from Smoothie options.
-     */
-    PromenadeStandardItemCardGraphTabConfigurationController.prototype.toggleMaximum = function () {
-
-        this.maximum_locked = !this.maximum_locked;
-
-        // Occurs when user enables checkbox.
-        if (this.maximum_locked) {
-            // We want to remove the y range function when the user explicitly sets value as these should not automatically
-            // be scaled. Store a reference to it so it can be restored if the lock is removed.
-            this.smoothie.options.yRangeFunctionRef = this.smoothie.options.yRangeFunction;
-            delete this.smoothie.options.yRangeFunction;
-            this.smoothie.options.maxValue = this.smoothie.valueRange.max;
-        }
-        // Occurs when user disables checkbox.
-        else {
-            // Set the y range function when the user remove the lock.
-            this.smoothie.options.yRangeFunction = this.smoothie.options.yRangeFunctionRef;
-            delete this.smoothie.options.yRangeFunctionRef;
-            delete this.smoothie.options.maxValue;
-        }
-    };
-
-    PromenadeStandardItemCardGraphTabConfigurationController.prototype.isStreamEnabled = function (stream) {
-        return this.enabled_streams.indexOf(stream.name) >= 0;
-    };
 
     /**
      * Constructor for the graph directive.

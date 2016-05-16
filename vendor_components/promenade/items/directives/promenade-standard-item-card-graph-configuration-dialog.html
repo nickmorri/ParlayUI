@@ -13,30 +13,48 @@
 
         <div layout-gt-sm="row" layout="column">
 
-            <div flex flex-order="0" flex-order-gt-sm="1">
+            <div flex flex-order="0" flex-order-gt-sm="1" layout="column">
 
                 <md-list><md-subheader>Y-Axis Range</md-subheader></md-list>
 
-                <div layout="column">
+                <div layout="row" class="graph-axis-control">
+                    <md-checkbox ng-checked="ctrl.maximum_locked " ng-click="ctrl.toggleMaximum()" aria-label="Lock maximum range"></md-checkbox>
+                    <md-input-container flex ng-switch="ctrl.maximum_locked">
+                        <label>Maximum range</label>
+                        <input ng-switch-when="false" ng-model="ctrl.smoothie.valueRange.max" type="number" disabled>
+                        <input ng-switch-when="true" ng-model="ctrl.smoothie.options.maxValue" type="number">
+                    </md-input-container>
+                </div>
 
-                    <div layout="row" class="graph-axis-control">
-                        <md-checkbox ng-checked="ctrl.maximum_locked " ng-click="ctrl.toggleMaximum()"></md-checkbox>
-                        <md-input-container flex ng-switch="ctrl.maximum_locked">
-                            <label>Maximum range</label>
-                            <input ng-switch-when="false" ng-model="ctrl.smoothie.valueRange.max" type="number" disabled>
-                            <input ng-switch-when="true" ng-model="ctrl.smoothie.options.maxValue" type="number">
-                        </md-input-container>
-                    </div>
+                <div layout="row">
+                    <md-checkbox ng-checked="ctrl.minimum_locked" ng-click="ctrl.toggleMinimum()" aria-label="Lock minimum range"></md-checkbox>
+                    <md-input-container flex ng-switch="ctrl.minimum_locked">
+                        <label>Minimum range</label>
+                        <input ng-switch-when="false" ng-model="ctrl.smoothie.valueRange.min" type="number" disabled>
+                        <input ng-switch-when="true" ng-model="ctrl.smoothie.options.minValue" type="number">
+                    </md-input-container>
+                </div>
 
-                    <div layout="row">
-                        <md-checkbox ng-checked="ctrl.minimum_locked" ng-click="ctrl.toggleMinimum()"></md-checkbox>
-                        <md-input-container flex ng-switch="ctrl.minimum_locked">
-                            <label>Minimum range</label>
-                            <input ng-switch-when="false" ng-model="ctrl.smoothie.valueRange.min" type="number" disabled>
-                            <input ng-switch-when="true" ng-model="ctrl.smoothie.options.minValue" type="number">
-                        </md-input-container>
-                    </div>
+                <md-list><md-subheader>Interpolation</md-subheader></md-list>
 
+                <div layout="row">
+                    <md-input-container flex>
+                        <label>Type</label>
+                        <md-select ng-model="ctrl.smoothie.options.interpolation">
+                            <md-option value="bezier">bezier</md-option>
+                            <md-option value="linear">linear</md-option>
+                            <md-option value="step">step</md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+
+                <md-list><md-subheader>Delay</md-subheader></md-list>
+
+                <div layout="row">
+                    <md-input-container flex>
+                        <label>Delay (ms)</label>
+                        <input ng-model="ctrl.smoothie.delay" type="number">
+                    </md-input-container>
                 </div>
 
             </div>

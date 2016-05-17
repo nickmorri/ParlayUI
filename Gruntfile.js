@@ -186,7 +186,7 @@ module.exports = function (grunt) {
                     'spawn': false
                 },
                 'files': '<%= meta.stylesheets %>',
-                'tasks': ['newer:csslint:dev', 'cssmin:dev']
+                'tasks': ['newer:csslint:dev', 'newer:copy:dev']
             },
             'html': {
                 'options': {
@@ -412,8 +412,9 @@ module.exports = function (grunt) {
                         'expand': true,
                         'src': [
                             '<%= meta.source %>',
-                            '<%= meta.vendorComponents %>',
-                            '<%= meta.compiledHtml %>'
+                            '<%= meta.vendor_components %>',
+                            '<%= meta.compiled_html %>',
+                            '<%= meta.stylesheets %>'
                         ],
                         'dest': '<%= meta.dev_destination %>'
                     }

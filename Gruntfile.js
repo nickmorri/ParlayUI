@@ -71,7 +71,10 @@ module.exports = function (grunt) {
     function getBase64 (filepath) {
         var split_path = filepath.split(".");
         var extension = split_path[split_path.length - 1];
-        return "data:image/" + extension + ";base64," + grunt.file.read(filepath, {encoding: null}).toString("base64");
+        var file = grunt.file.read(filepath, {encoding: null});
+        var headers = "data:image/" + extension + ";base64,";
+        var base64_file = file.toString("base64");
+        return headers + base64_file;
     }
 
 	/**
@@ -110,7 +113,7 @@ module.exports = function (grunt) {
 
                 // Array [  ]
 				return accumulator.concat(matched_paths.map(function (key) {
-					return '<%= vendor_paths.' + vendor_name + '.' + key + ' %>';
+					return '<%= meta.vendor_paths.' + vendor_name + '.' + key + ' %>';
 				}));
 			}
 	    }, []));
@@ -122,30 +125,25 @@ module.exports = function (grunt) {
 	// Load this Grunt task individually since it doesn't match the "grunt-*" pattern.
     grunt.loadNpmTasks('main-bower-files');
 
-	// Array of bower main JS files.
-	var mainBowerFiles = require('main-bower-files');
-
 	grunt.initConfig({
 
         'pkg': grunt.file.readJSON('package.json'),
 
-		'vendor_paths': getVendorPaths(getVendors()),
-
-        'vendor_options': getVendorOptions(getVendors()),
-
 		'meta': {
 			'source': ['app.js', 'parlay_components/*/*.js'],
-			'vendorComponents': getVendorPathGlobs(getVendors(), ['protocols', 'items'], []),
-            'vendorOptions': getVendorOptions(getVendors()),
+			'vendor_components': getVendorPathGlobs(getVendors(), ['protocols', 'items'], []),
+            'vendor_options': getVendorOptions(getVendors()),
+            'vendor_paths': getVendorPaths(getVendors()),
+            'bower_files': require('main-bower-files')(),
 			'dist_destination': 'dist',
 			'dev_destination': 'dev',
 			'tmp_destination': 'tmp',
 			'coverage_destination': 'coverage',
 			'mocks': getVendorPathGlobs(getVendors(), ['mocks'], ['parlay_components/*/mocks/*.js']),
 			'tests': getVendorPathGlobs(getVendors(), ['test'], ['parlay_components/*/test/*.spec.js']),
-			'compiledHtml': '<%= meta.tmp_destination %>/templates.js',
-			'htmlDirectives': getVendorPathGlobs(getVendors(), ['directives'], ['parlay_components/**/directives/*.html']),
-			'htmlViews': 'parlay_components/**/views/*.html',
+			'compiled_html': '<%= meta.tmp_destination %>/templates.js',
+			'html_directives': getVendorPathGlobs(getVendors(), ['directives'], ['parlay_components/**/directives/*.html']),
+			'html_views': 'parlay_components/**/views/*.html',
 			'stylesheets': getVendorPathGlobs(getVendors(), ['stylesheets'], ['css/*.css'])
 		},
 
@@ -177,7 +175,7 @@ module.exports = function (grunt) {
                     'livereload': true,
                     'interrupt': true
                 },
-                'files': ['vendorDefaults.js', '<%= meta.source %>', '<%= meta.vendorComponents %>'],
+                'files': ['vendorDefaults.js', '<%= meta.source %>', '<%= meta.vendor_components %>'],
                 'tasks': ['newer:replace:dev', 'newer:jshint:dev', 'karma:dev', 'newer:copy:dev']
             },
             'stylesheets': {
@@ -195,7 +193,7 @@ module.exports = function (grunt) {
                     'livereload': true,
                     'spawn': false
                 },
-                'files': ['<%= meta.htmlDirectives %>', '<%= meta.htmlViews %>'],
+                'files': ['<%= meta.html_directives %>', '<%= meta.html_views %>'],
                 'tasks': ['newer:html2js', 'newer:copy']
             },
             'index': {
@@ -314,11 +312,11 @@ module.exports = function (grunt) {
 				'options': {
 					'reporters': ['progress'],
 					'files': [
-                        mainBowerFiles(),
-			            '<%= meta.compiledHtml %>',
+                        '<%= meta.bower_files %>',
+			            '<%= meta.compiled_html %>',
 			            '<%= meta.source %>',
 			            '<%= meta.mocks %>',
-			            '<%= meta.vendorComponents %>',
+			            '<%= meta.vendor_components %>',
 			            '<%= meta.tests %>'
 					]
 				}
@@ -327,7 +325,7 @@ module.exports = function (grunt) {
 				'options': {
 					'reporters': ['progress'],					
 					'files': [
-                        mainBowerFiles(),
+                        '<%= meta.bower_files %>',
 			            '<%= meta.tmp_destination %>/<%= pkg.namelower %>.min.js',
 			            '<%= meta.mocks %>',
 			            '<%= meta.tests %>'
@@ -347,11 +345,11 @@ module.exports = function (grunt) {
 			            'dir': '<%= meta.coverage_destination %>'
 					},
 					'files': [
-                        mainBowerFiles(),
-			            '<%= meta.compiledHtml %>',
+                        '<%= meta.bower_files %>',
+			            '<%= meta.compiled_html %>',
 			            '<%= meta.source %>',
 			            '<%= meta.mocks %>',
-			            '<%= meta.vendorComponents %>',
+			            '<%= meta.vendor_components %>',
 			            '<%= meta.tests %>'
 					]
 				}
@@ -366,14 +364,14 @@ module.exports = function (grunt) {
 					'esnext': true,
 					'debug': true
 				},
-				'src': ['<%= meta.source %>', '<%= meta.vendorComponents %>', '<%= meta.tests %>'],
+				'src': ['<%= meta.source %>', '<%= meta.vendor_components %>', '<%= meta.tests %>'],
 				'gruntfile': 'Gruntfile.js'
 			},
 			'dist': {
 				'options': {
 					'esnext': true
 				},
-				'src': ['<%= meta.source %>', '<%= meta.vendorComponents %>']
+				'src': ['<%= meta.source %>', '<%= meta.vendor_components %>']
 			}
 		},
 
@@ -444,7 +442,7 @@ module.exports = function (grunt) {
 			},
 			'dist': {
 				'files': {
-					'<%= meta.tmp_destination %>/<%= pkg.namelower %>.min.js': ['<%= meta.tmp_destination %>/vendorDefaults.js', '<%= meta.source %>', '<%= meta.vendorComponents %>', '<%= meta.compiledHtml %>'],
+					'<%= meta.tmp_destination %>/<%= pkg.namelower %>.min.js': ['<%= meta.tmp_destination %>/vendorDefaults.js', '<%= meta.source %>', '<%= meta.vendor_components %>', '<%= meta.compiled_html %>'],
                     '<%= meta.tmp_destination %>/lib.min.js': '<%= meta.tmp_destination %>/lib.js'
 				}
 			}
@@ -472,8 +470,8 @@ module.exports = function (grunt) {
         // https://github.com/karlgoldstein/grunt-html2js
 		'html2js': {
 			'main': {
-				'src': ['<%= meta.htmlViews %>', '<%= meta.htmlDirectives %>'],
-				'dest': '<%= meta.compiledHtml %>'
+				'src': ['<%= meta.html_views %>', '<%= meta.html_directives %>'],
+				'dest': '<%= meta.compiled_html %>'
 			}
 		},
 
@@ -481,27 +479,31 @@ module.exports = function (grunt) {
         // https://github.com/outaTiME/grunt-replace
         'replace': {
             'dev': {
-                'options': {'patterns': [
-                    {'match': 'vendorName', 'replacement': getPrimaryVendor(getVendors()).name},
-                    {'match': 'vendorLogo', 'replacement': getBase64(getPrimaryVendor(getVendors()).options.logo)},
-                    {'match': 'vendorIcon', 'replacement': getBase64(getPrimaryVendor(getVendors()).options.icon)},
-                    {'match': 'primaryPalette', 'replacement': getPrimaryVendor(getVendors()).options.primaryPalette},
-                    {'match': 'accentPalette', 'replacement': getPrimaryVendor(getVendors()).options.accentPalette},
-                    {'match': 'debugEnabled', 'replacement': true}
-                ]},
+                'options': {
+                    'patterns': [
+                        {'match': 'vendorName', 'replacement': getPrimaryVendor(getVendors()).name},
+                        {'match': 'vendorLogo', 'replacement': getBase64(getPrimaryVendor(getVendors()).options.logo)},
+                        {'match': 'vendorIcon', 'replacement': getBase64(getPrimaryVendor(getVendors()).options.icon)},
+                        {'match': 'primaryPalette', 'replacement': getPrimaryVendor(getVendors()).options.primaryPalette},
+                        {'match': 'accentPalette', 'replacement': getPrimaryVendor(getVendors()).options.accentPalette},
+                        {'match': 'debugEnabled', 'replacement': true}
+                    ]
+                },
                 'files': [
                     {'expand': true, 'flatten': true, 'src': 'vendorDefaults.js', 'dest': '<%= meta.dev_destination %>'}
                 ]
             },
             'dist': {
-                'options': {'patterns': [
-                    {'match': 'vendorName', 'replacement': getPrimaryVendor(getVendors()).name},
-                    {'match': 'vendorLogo', 'replacement': getBase64(getPrimaryVendor(getVendors()).options.logo)},
-                    {'match': 'vendorIcon', 'replacement': getBase64(getPrimaryVendor(getVendors()).options.icon)},
-                    {'match': 'primaryPalette', 'replacement': getPrimaryVendor(getVendors()).options.primaryPalette},
-                    {'match': 'accentPalette', 'replacement': getPrimaryVendor(getVendors()).options.accentPalette},
-                    {'match': 'debugEnabled', 'replacement': false}
-                ]},
+                'options': {
+                    'patterns': [
+                        {'match': 'vendorName', 'replacement': getPrimaryVendor(getVendors()).name},
+                        {'match': 'vendorLogo', 'replacement': getBase64(getPrimaryVendor(getVendors()).options.logo)},
+                        {'match': 'vendorIcon', 'replacement': getBase64(getPrimaryVendor(getVendors()).options.icon)},
+                        {'match': 'primaryPalette', 'replacement': getPrimaryVendor(getVendors()).options.primaryPalette},
+                        {'match': 'accentPalette', 'replacement': getPrimaryVendor(getVendors()).options.accentPalette},
+                        {'match': 'debugEnabled', 'replacement': false}
+                    ]
+                },
                 'files': [
                     {'expand': true, 'flatten': true, 'src': 'vendorDefaults.js', 'dest': '<%= meta.tmp_destination %>'}
                 ]

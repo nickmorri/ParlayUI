@@ -23,16 +23,23 @@ module.exports = function (grunt) {
             return vendor.primary;
         });
 
+        // Select the "promenade" vendor.
+		var promenade = vendors.find(function (vendor) {
+			return vendor.name == "promenade";
+		});
+
         if (primary.length === 1) {
             // Only one vendor has primary flag set, select that vendor.
             return primary[0];
         }
-        else if (primary.length === 0) {
+        else if (primary.length === 0 && !!promenade) {
             // No vendor has primary flag set, select "promenade" as primary vendor by default.
-            return vendors.find(function (vendor) {
-                return vendor.name == "promenade";
-            });
+            return promenade;
         }
+		else if (primary.length === 0 && !promenade) {
+			// No vendor has primary flag set and "promenade" vendor is not available to set by default.
+			throw new Error("Either one vendor must be primary or promenade vendor files must be included.");
+		}
         else {
             // More than one vendor has primary flag set.
             throw new Error("Only one vendor can be primary. Multiple vendor.json configurations have the primary flag set.");

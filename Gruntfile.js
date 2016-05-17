@@ -18,6 +18,7 @@ module.exports = function (grunt) {
      */
     function getPrimaryVendor (vendors) {
 
+        // Select all vendors that have the primary flag set.
         var primary = vendors.filter(function (vendor) {
             return vendor.primary;
         });
@@ -148,7 +149,7 @@ module.exports = function (grunt) {
 			'stylesheets': getVendorPathGlobs(getVendors(), ['stylesheets'], ['css/*.css'])
 		},
 
-        // Minimal web server used for development.
+        // Minimal web server. Used for development.
         // https://github.com/blai/grunt-express
 		'express': {
 			'options': {
@@ -168,7 +169,7 @@ module.exports = function (grunt) {
             }
 		},
 
-        // Run tasks whenever the watched files change.
+        // Run tasks whenever the watched files change. Used for development.
         // https://github.com/gruntjs/grunt-contrib-watch
         'watch': {
             'scripts': {
@@ -250,7 +251,7 @@ module.exports = function (grunt) {
 			}
 		},
 
-        // Copies packages from bower_components during development.
+        // Copies packages from bower_components. Used for development.
         // https://github.com/curist/grunt-bower
 		'bower': {
 			'dev': {
@@ -268,7 +269,8 @@ module.exports = function (grunt) {
 			}
 		},
 
-        // Concatenates Bower components in the correct order based on dependencies.
+        // Concatenates Bower components in the correct order based on dependencies. Used for distribution.
+        // See bower + wiredep tasks as functional equivalent for development.
         // https://github.com/sapegin/grunt-bower-concat
 		'bower_concat': {
 			'dist': {
@@ -279,7 +281,8 @@ module.exports = function (grunt) {
 			}
 		},
 
-        // Wires Bower dependencies into index.html during development.
+        // Wires Bower dependencies into index.html. Depends on bower task. Used for development.
+        // See bower_concat task as functional equivalent for distribution.
         // https://github.com/taptapship/wiredep
 		'wiredep': {
 			'dev': {
@@ -474,6 +477,8 @@ module.exports = function (grunt) {
 			}
 		},
 
+        // Replace the matching patterns in the given files with the specified replacement.
+        // https://github.com/outaTiME/grunt-replace
         'replace': {
             'dev': {
                 'options': {'patterns': [
@@ -509,6 +514,8 @@ module.exports = function (grunt) {
         'develop'
     ]);
 
+    // Generates dev directory containing files needed for development. Launches an express HTTP server and a watch
+    // task that monitors the source files for changes.
 	grunt.registerTask('develop', 'Lints and tests JavaScript files, processes HTML and finally starts HTTP server which autoreloads on file changes.', [
 	    'jshint:dev',
 	    'csslint:dev',
@@ -527,6 +534,7 @@ module.exports = function (grunt) {
 	    'watch'
 	]);
 
+    // Generates dist/index.html with all Parlay, vendor and library source inlined.
 	grunt.registerTask('dist', 'Generates tested and linted minified JavaScript and CSS files with HTML templates included in JavaScript.', [
 	    'jshint:dist',
 	    'csslint:dist',

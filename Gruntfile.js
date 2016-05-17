@@ -136,12 +136,9 @@ module.exports = function (grunt) {
 
         'pkg': grunt.file.readJSON('package.json'),
 
-        'vendor_options': getVendorOptions(getVendors()),
-
 		'meta': {
 			'source': ['app.js', 'parlay_components/*/*.js'],
-			'vendorComponents': getVendorPathGlobs(getVendors(), ['widget', 'protocols', 'items'], []),
-            'vendorOptions': getVendorOptions(getVendors()),
+			'vendor_components': getVendorPathGlobs(getVendors(), ['widget', 'protocols', 'items'], []),
             'vendor_paths': getVendorPaths(getVendors()),
             'bower_files': require('main-bower-files')(),
 			'dist_destination': 'dist',

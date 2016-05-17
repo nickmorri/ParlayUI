@@ -11,6 +11,7 @@
         .module(module_name, module_dependencies)
         .factory("PromenadeStandardCommandMessage", PromenadeStandardCommandMessageFactory)
         .controller("PromenadeStandardItemCardCommandTabController", PromenadeStandardItemCardCommandTabController)
+        .controller("PromenadeStandardItemCardCommandContainerController", PromenadeStandardItemCardCommandContainerController)
         .directive("promenadeStandardItemCardCommands", PromenadeStandardItemCardCommands)
         .directive("promenadeStandardItemCardCommandContainer", PromenadeStandardItemCardCommandContainer);
 
@@ -300,14 +301,69 @@
     }
 
     /**
+     * Controller constructor for command container.
+     * @constructor
+     * @param {AngularJS $scope} $scope - A AngularJS $scope Object.
+     * @param {Parlay Service} ParlayItemPersistence - ParlayItemPersistence Service.
+     * @param {Parlay Service} ParlayUtility - ParlayUtility Service.
+     */
+    PromenadeStandardItemCardCommandContainerController.$inject = ["$scope", "ParlayItemPersistence", "ParlayUtility"];
+    function PromenadeStandardItemCardCommandContainerController ($scope, ParlayItemPersistence, ParlayUtility) {
+        var container = ParlayUtility.relevantScope($scope, 'container').container;
+        var directive_name = 'parlayItemCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
+        var uuid = 0; // unique index for chip objects so that even chips with the same value will be 'unique'
+        var max_safe_int = 9007199254740990; // per the ECMAScript2015 spec
+
+        ParlayItemPersistence.monitor(directive_name, "wrapper.message", $scope, function (value) {
+
+            var message = $scope.wrapper.message;
+
+            Object.keys(value).forEach(function (key) {
+                message[key] = value[key];
+            });
+
+            return message;
+        }.bind($scope));
+
+        /**
+         * Packages $mdChip object for insertion into message.
+         * @param {$mdChip} chip - $mdChip Object
+         */
+        $scope.prepChip = function (chip) {
+            uuid += 1;
+            if( uuid > max_safe_int) { uuid = 0;} // wrap around after max safe int
+            return {value: chip, idx: uuid};
+        };
+
+        /**
+         * Checks if the given field has sub fields available.
+         * @param {Object} field - the field we are interested in.
+         * @returns {Boolean} - true if the target field has sub fields available, false otherwise.
+         */
+        $scope.hasSubFields = function (field) {
+            var message_field = $scope.wrapper.message[field.msg_key + '_' + field.input];
+            return message_field !== undefined && message_field !== null && message_field.sub_fields !== undefined;
+        };
+
+        /**
+         * Returns a given field's sub fields.
+         * @param {Object} field - the field we are interested in.
+         * @returns {Object|Array} - the fields sub fields, may be Object or Array.
+         */
+        $scope.getSubFields = function (field) {
+            return $scope.wrapper.message[field.msg_key + '_' + field.input].sub_fields;
+        };
+    }
+
+    /**
      * Directive constructor for PromenadeStandardItemCardCommandContainer.
      * @param {AngularJS Service} RecursionHelper - Allows recursive nesting of this directive within itself for sub field support.
      * @param {Parlay Service} ParlayItemPersistence - Allows directive to persist values that it should retain between sessions.
      * @param {Parlay Service} ParlayUtility - Parlay Utility Service.
      * @returns {Object} - Directive configuration.
      */
-    PromenadeStandardItemCardCommandContainer.$inject = ["RecursionHelper", "ParlayItemPersistence", "ParlayUtility"];
-    function PromenadeStandardItemCardCommandContainer(RecursionHelper, ParlayItemPersistence, ParlayUtility) {
+    PromenadeStandardItemCardCommandContainer.$inject = ["RecursionHelper"];
+    function PromenadeStandardItemCardCommandContainer(RecursionHelper) {
         return {
             scope: {
                 wrapper: '=',
@@ -316,54 +372,7 @@
             },
             templateUrl: '../vendor_components/promenade/items/directives/promenade-standard-item-card-command-container.html',
             compile: RecursionHelper.compile,
-            controller: function ($scope) {
-
-                var container = ParlayUtility.relevantScope($scope, 'container').container;
-                var directive_name = 'parlayItemCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
-                var uuid = 0; // unique index for chip objects so that even chips with the same value will be 'unique'
-                var max_safe_int = 9007199254740990; // per the ECMAScript2015 spec
-
-                ParlayItemPersistence.monitor(directive_name, "wrapper.message", $scope, function (value) {
-
-                    var message = $scope.wrapper.message;
-
-                    Object.keys(value).forEach(function (key) {
-                        message[key] = value[key];
-                    });
-
-                    return message;
-                }.bind($scope));
-
-                /**
-                 * Packages $mdChip object for insertion into message.
-                 * @param {$mdChip} chip - $mdChip Object
-                 */
-                $scope.prepChip = function (chip) {
-                    uuid += 1;
-                    if( uuid > max_safe_int) { uuid = 0;} // wrap around after max safe int
-                    return {value: chip, idx: uuid};
-                };
-
-                /**
-                 * Checks if the given field has sub fields available.
-                 * @param {Object} field - the field we are interested in.
-                 * @returns {Boolean} - true if the target field has sub fields available, false otherwise.
-                 */
-                $scope.hasSubFields = function (field) {
-                    var message_field = $scope.wrapper.message[field.msg_key + '_' + field.input];
-                    return message_field !== undefined && message_field !== null && message_field.sub_fields !== undefined;
-                };
-
-                /**
-                 * Returns a given field's sub fields.
-                 * @param {Object} field - the field we are interested in.
-                 * @returns {Object|Array} - the fields sub fields, may be Object or Array.
-                 */
-                $scope.getSubFields = function (field) {
-                    return $scope.wrapper.message[field.msg_key + '_' + field.input].sub_fields;
-                };
-
-            }
+            controller: "PromenadeStandardItemCardCommandContainerController"
         };
     }
 

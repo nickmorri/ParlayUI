@@ -516,7 +516,6 @@ module.exports = function (grunt) {
 
         'bump': {
             'options': {
-                'updateConfigs': ['package.json', 'bower.json'],
                 'commitMessage': 'build: Update distribution file',
                 'createTag': false,
                 'push': false,

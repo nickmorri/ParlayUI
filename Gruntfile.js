@@ -47,18 +47,6 @@ module.exports = function (grunt) {
     }
 
     /**
-     * Returns the options properties of all the given vendors.
-     * @param {Array} vendors - Array of vendor configuration Objects.
-     * @returns {Object} - Object of key (vendor name) -> value (vendor options property).
-     */
-    function getVendorOptions (vendors) {
-        return vendors.reduce(function (accumulator, vendor) {
-            accumulator[vendor.name] = vendor.options;
-            return accumulator;
-        }, {});
-    }
-
-    /**
      * Returns the paths properties of all the given vendors.
      * @param {Array} vendors - Array of vendor configuration Objects.
      * @returns {Object} - Object of key (vendor name) -> value (vendor paths property).
@@ -126,7 +114,7 @@ module.exports = function (grunt) {
 	    }, []));
 	}
 
-	// Read the dependencies in package.json and load Grunt tasks that match the "grunt-*".
+	// Read the dependencies in package.json and load Grunt tasks that match "grunt-*".
 	require('load-grunt-tasks')(grunt);
 
 	// Load this Grunt task individually since it doesn't match the "grunt-*" pattern.

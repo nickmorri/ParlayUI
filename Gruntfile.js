@@ -434,7 +434,7 @@ module.exports = function (grunt) {
         // https://github.com/gruntjs/grunt-contrib-uglify
 		'uglify': {
 			'options': {
-				'mangle': false,
+				'mangle': true,
 				'compress': true,
 				'sourceMap': false,
 				'preserveComments': false,

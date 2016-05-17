@@ -521,7 +521,6 @@ module.exports = function (grunt) {
 	    'bower:dev',
 	    'html2js',
 	    'copy:dev',
-	    'cssmin:dev',
 	    'karma:dev',
 	    'processhtml:dev',
 	    'wiredep:dev',

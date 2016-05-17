@@ -21,6 +21,7 @@ _:-ms-lang(x), .md-transition-in, .md-transition-out {
 
 /* Positions logo in sidenav. */
 .logo {
-    width: 125px;
+    max-width: 300px;
+    max-height: 50px;
     margin-right: 10px;
 }

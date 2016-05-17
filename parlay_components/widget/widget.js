@@ -56,7 +56,8 @@ var widgetRegistration = (function () {
      * @param $stateProvider - Service provided by ui.router
      * @description - The WidgetsConfiguration sets up the widgets state.
      */
-    function ParlayWidgetsConfiguration($stateProvider) {
+    ParlayWidgetsConfiguration.$inject = ["$stateProvider"];
+    function ParlayWidgetsConfiguration ($stateProvider) {
         $stateProvider.state("widgets", {
             url: "/widgets",
             templateUrl: "../parlay_components/widget/views/base.html",

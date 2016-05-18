@@ -181,7 +181,8 @@
                         ["widgets-ctrl", "widgetsCtrl"],
                         ["edit", "edit"],
                         ["uid", "item.uid"],
-                        ["template", "item.configuration.template"]
+                        ["template", "item.configuration.template"],
+                        ["options", "item.configuration.options"]
                     ].map(function (attribute) {
                         return attribute[0] + "='" + attribute[1] + "'";
                     }).join(" ");
@@ -213,9 +214,8 @@
                             configuration: scope.item.configuration,
                             widgetCompiler: compileWrapper()
                         }
-                    }).then(function (configuration) {
+                    }).then(function () {
                         scope.initialized = true;
-                        scope.item.configuration = configuration;
                     }).catch(function () {
                         if (initialize) {
                             scope.widgetsCtrl.remove(scope.uid);

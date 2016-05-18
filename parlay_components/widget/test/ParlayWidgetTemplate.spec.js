@@ -51,7 +51,8 @@
                             widgetsCtrl: "=",
                             edit: "=",
                             uid: "=",
-                            template: "="
+                            template: "=",
+                            options: "="
                         },
                         templateUrl: "fake/path/to/directive.html"
                     });
@@ -78,7 +79,8 @@
                             widgetsCtrl: "=",
                             edit: "=",
                             uid: "=",
-                            template: "="
+                            template: "=",
+                            options: "="
                         },
                         templateUrl: "fake/path/to/directive.html"
                     });

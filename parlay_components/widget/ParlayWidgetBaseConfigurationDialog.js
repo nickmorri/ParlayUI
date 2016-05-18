@@ -11,11 +11,27 @@
         .controller("ParlayWidgetBaseConfigurationHandlerController", ParlayWidgetBaseConfigurationHandlerController)
         .controller("ParlayWidgetBaseConfigurationSourceController", ParlayWidgetBaseConfigurationSourceController)
         .controller("ParlayWidgetBaseConfigurationTransformController", ParlayWidgetBaseConfigurationTransformController)
+        .controller("ParlayWidgetBaseConfigurationCustomizationController", ParlayWidgetBaseConfigurationTransformController)
         .directive("parlayWidgetBaseConfigurationTemplate", ParlayWidgetBaseConfigurationTemplateDirective)
         .directive("parlayWidgetBaseConfigurationEvent", ParlayWidgetBaseConfigurationEventDirective)
         .directive("parlayWidgetBaseConfigurationHandler", ParlayWidgetBaseConfigurationHandlerDirective)
         .directive("parlayWidgetBaseConfigurationTransform", ParlayWidgetBaseConfigurationTransformDirective)
-        .directive("parlayWidgetBaseConfigurationSource", ParlayWidgetBaseConfigurationSourceDirective);
+        .directive("parlayWidgetBaseConfigurationSource", ParlayWidgetBaseConfigurationSourceDirective)
+        .directive("parlayWidgetBaseConfigurationCustomization", ParlayWidgetBaseConfigurationCustomizationDirective)
+        .directive("compile", compile);
+
+    // Used to compile tab bodies.
+    compile.$inject = ["$compile"];
+    function compile ($compile) {
+        return function (scope, element, attributes) {
+            scope.$watch(function (scope) {
+                return scope.$eval(attributes.compile);
+            }, function (value) {
+                element.html(value);
+                $compile(element.contents())(scope);
+            });
+        };
+    }
 
     ParlayWidgetBaseConfigurationDialogController.$inject = ["$scope", "$mdDialog", "configuration", "widgetCompiler"];
     function ParlayWidgetBaseConfigurationDialogController ($scope, $mdDialog, configuration, widgetCompiler) {
@@ -32,7 +48,7 @@
         }
 
         function hide () {
-            $mdDialog.hide($scope.configuration);
+            $mdDialog.hide();
         }
 
         $scope.$watch("configuration.template", function (newValue, oldValue) {
@@ -275,6 +291,11 @@
 
     }
 
+    ParlayWidgetBaseConfigurationCustomizationController.$inject = ["$scope"];
+    function ParlayWidgetBaseConfigurationCustomizationController ($scope) {
+
+    }
+
     function ParlayWidgetBaseConfigurationTemplateDirective () {
         return {
             templateUrl: "../parlay_components/widget/directives/parlay-widget-base-configuration-template.html",
@@ -312,6 +333,17 @@
             templateUrl: "../parlay_components/widget/directives/parlay-widget-base-configuration-source.html",
             controller: "ParlayWidgetBaseConfigurationSourceController",
             controllerAs: "sourceCtrl"
+        };
+    }
+
+    function ParlayWidgetBaseConfigurationCustomizationDirective () {
+        return {
+            scope: {
+                options: "="
+            },
+            templateUrl: "../parlay_components/widget/directives/parlay-widget-base-configuration-customization.html",
+            controller: "ParlayWidgetBaseConfigurationCustomizationController",
+            controllerAs: "customizationCtrl"
         };
     }
 

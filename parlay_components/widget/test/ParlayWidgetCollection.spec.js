@@ -19,7 +19,7 @@
             it("registers a widget", function () {
                 ParlayWidgetCollection.registerWidget("testWidget", "test");
                 expect(ParlayWidgetCollection.getAvailableWidgets()).toEqual([
-                    {name: "testWidget", type: "test"}
+                    jasmine.objectContaining({name: "testWidget", type: "test"})
                 ]);
             });
 
@@ -29,8 +29,8 @@
                     {directive_name: "test2", widget_type: "test"}
                 ]);
                 expect(ParlayWidgetCollection.getAvailableWidgets()).toEqual([
-                    {name: "test1", type: "test"},
-                    {name: "test2", type: "test"}
+                    jasmine.objectContaining({name: "test1", type: "test"}),
+                    jasmine.objectContaining({name: "test2", type: "test"})
                 ]);
             });
 

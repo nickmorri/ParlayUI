@@ -19,12 +19,12 @@ var widgetRegistration = (function () {
      * @param {String} widget_type -
      * @param {Function|Object} directive_definition -
      */
-    function widgetRegistration (module_name, submodule_dependencies, directive_name, widget_type, directive_definition) {
+    function widgetRegistration (module_name, submodule_dependencies, directive_name, widget_type, directive_definition, configuration_tabs) {
         // Ensure that parlay.widget includes the given module as a dependency.
         module_dependencies.push(module_name);
 
         // Register the record Object for the given widget.
-        registered_widgets.push({directive_name: directive_name, widget_type: widget_type});
+        registered_widgets.push({directive_name: directive_name, widget_type: widget_type, configuration_tabs: configuration_tabs});
 
         var directive_function;
 
@@ -44,10 +44,17 @@ var widgetRegistration = (function () {
             submodule_dependencies.push("parlay.widget.template");
         }
 
+        var module = angular.module(module_name, submodule_dependencies); 
+        
         // Register the widget module with AngularJS.
-        angular
-            .module(module_name, submodule_dependencies)
-            .directive(directive_name, directive_function);
+        module.directive(directive_name, directive_function);
+
+        // If the widget has configuration tabs that should be shown in the widget configuration dialog register them.
+        if (!!configuration_tabs) {
+            configuration_tabs.forEach(function (tab) {
+                module.directive(tab.directive_name, tab.directive_function); 
+            });
+        }
 
     }
 

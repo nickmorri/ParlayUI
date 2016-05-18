@@ -77,10 +77,16 @@
         function ParlayWidgetTemplate(options) {
 
             var custom_link = options.customLink;
+            var scope_defaults = options.scopeDefaults;
 
             // We don't need the customLink attribute in the directive definition Object.
             if (!!custom_link) {
                 delete options.customLink;
+            }
+
+            // We don't need the scopeDefaults attribute in the directive definition Object.
+            if (!!scope_defaults) {
+                delete options.scopeDefaults;
             }
 
             /**
@@ -94,9 +100,14 @@
              */
             function link (scope, element, attrs, controller, transcludeFn) {
 
-                // If the user also defined a customLink we should call it.
+                // If the user defined a customLink we should call it.
                 if (!!custom_link) {
                     custom_link(scope, element, attrs, controller, transcludeFn);
+                }
+
+                // If the user defined scope defaults we should assign them.
+                if (!scope.options && !!scope_defaults) {
+                    scope.options = angular.copy(scope_defaults);
                 }
 
                 // ParlayWidgets should notify their parent, ParlayBaseWidget, when they are loaded.
@@ -131,7 +142,8 @@
                     widgetsCtrl: "=",
                     edit: "=",
                     uid: "=",
-                    template: "="
+                    template: "=",
+                    options: "="
                 }
             };
 

@@ -23,7 +23,6 @@
                             </md-tab>
                         </md-tabs>
                     </md-card>
-
                 </md-tab-body>
             </md-tab>
             <md-tab ng-disabled="!configuration.template || configuration.template.type == 'input'">
@@ -31,6 +30,24 @@
                 <md-tab-body>
                     <parlay-widget-base-configuration-source></parlay-widget-base-configuration-source>
                     <parlay-widget-base-configuration-transform layout="column"></parlay-widget-base-configuration-transform>
+                </md-tab-body>
+            </md-tab>
+
+            <md-tab ng-if="configuration.options && configuration.template.configuration_tabs.length === 0">
+                <md-tab-label>
+                    Customization
+                </md-tab-label>
+                <md-tab-body>
+                    <parlay-widget-base-configuration-customization options="configuration.options"></parlay-widget-base-configuration-customization>
+                </md-tab-body>
+            </md-tab>
+
+            <md-tab ng-repeat="tab in configuration.template.configuration_tabs">
+                <md-tab-label>
+                    {{tab.label}}
+                </md-tab-label>
+                <md-tab-body>
+                    <span compile="tab.element"></span>
                 </md-tab-body>
             </md-tab>
         </md-tabs>

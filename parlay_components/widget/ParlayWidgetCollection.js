@@ -31,8 +31,8 @@
          * @param {String} directive_name - Name that the directive registration provides.
          * @param {String} widget_type - Type that the directive registration provides.
          */
-        ParlayWidgetCollection.prototype.registerWidget = function (directive_name, widget_type) {
-            this.available_widgets.push({name: directive_name, type: widget_type});
+        ParlayWidgetCollection.prototype.registerWidget = function (directive_name, widget_type, configuration_tabs) {
+            this.available_widgets.push({name: directive_name, type: widget_type, configuration_tabs: configuration_tabs});
         };
 
         /**
@@ -41,7 +41,7 @@
          */
         ParlayWidgetCollection.prototype.registerWidgets = function (widgets) {
             widgets.forEach(function (container) {
-                this.registerWidget(container.directive_name, container.widget_type);
+                this.registerWidget(container.directive_name, container.widget_type, container.configuration_tabs);
             }, this);
         };
 

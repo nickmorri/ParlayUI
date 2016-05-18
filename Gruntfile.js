@@ -409,7 +409,8 @@ module.exports = function (grunt) {
                             '<%= meta.source %>',
                             '<%= meta.vendor_components %>',
                             '<%= meta.compiled_html %>',
-                            '<%= meta.stylesheets %>'
+                            '<%= meta.stylesheets %>',
+                            'index.html'
                         ],
                         'dest': '<%= meta.dev_destination %>'
                     }
@@ -522,7 +523,6 @@ module.exports = function (grunt) {
 	    'html2js',
 	    'copy:dev',
 	    'karma:dev',
-	    'processhtml:dev',
 	    'wiredep:dev',
 	    'express:dev',
 	    'open:server',

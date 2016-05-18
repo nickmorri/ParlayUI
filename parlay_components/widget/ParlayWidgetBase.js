@@ -182,7 +182,7 @@
                         ["edit", "edit"],
                         ["uid", "item.uid"],
                         ["template", "item.configuration.template"],
-                        ["options", "item.configuration.options"]
+                        ["customizations", "item.configuration.customizations"]
                     ].map(function (attribute) {
                         return attribute[0] + "='" + attribute[1] + "'";
                     }).join(" ");

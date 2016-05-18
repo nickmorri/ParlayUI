@@ -339,7 +339,7 @@
     function ParlayWidgetBaseConfigurationCustomizationDirective () {
         return {
             scope: {
-                options: "="
+                customizations: "="
             },
             templateUrl: "../parlay_components/widget/directives/parlay-widget-base-configuration-customization.html",
             controller: "ParlayWidgetBaseConfigurationCustomizationController",

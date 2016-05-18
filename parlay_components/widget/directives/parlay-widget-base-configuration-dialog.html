@@ -33,12 +33,12 @@
                 </md-tab-body>
             </md-tab>
 
-            <md-tab ng-if="configuration.options && configuration.template.configuration_tabs.length === 0">
+            <md-tab ng-if="configuration.customizations && configuration.template.configuration_tabs.length === 0">
                 <md-tab-label>
                     Customization
                 </md-tab-label>
                 <md-tab-body>
-                    <parlay-widget-base-configuration-customization options="configuration.options"></parlay-widget-base-configuration-customization>
+                    <parlay-widget-base-configuration-customization customizations="configuration.customizations"></parlay-widget-base-configuration-customization>
                 </md-tab-body>
             </md-tab>
 

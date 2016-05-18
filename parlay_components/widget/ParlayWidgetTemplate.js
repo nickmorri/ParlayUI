@@ -77,7 +77,7 @@
         function ParlayWidgetTemplate(options) {
 
             var custom_link = options.customLink;
-            var scope_defaults = options.scopeDefaults;
+            var customization_defaults = options.customizationDefaults;
 
             // We don't need the customLink attribute in the directive definition Object.
             if (!!custom_link) {
@@ -85,8 +85,8 @@
             }
 
             // We don't need the scopeDefaults attribute in the directive definition Object.
-            if (!!scope_defaults) {
-                delete options.scopeDefaults;
+            if (!!customization_defaults) {
+                delete options.customizationDefaults;
             }
 
             /**
@@ -105,9 +105,9 @@
                     custom_link(scope, element, attrs, controller, transcludeFn);
                 }
 
-                // If the user defined scope defaults we should assign them.
-                if (!scope.options && !!scope_defaults) {
-                    scope.options = angular.copy(scope_defaults);
+                // If the user defined customizations we should assign them.
+                if (!scope.customizations && !!customization_defaults) {
+                    scope.customizations = angular.copy(customization_defaults);
                 }
 
                 // ParlayWidgets should notify their parent, ParlayBaseWidget, when they are loaded.
@@ -116,7 +116,7 @@
 
             /**
              * @attribute {String} restrict - Restricts ParlayWidget constructed using ParlayWidgetTemplate to elements.
-             * @attribute {Function} link - Function that is called during directive linking. Specified in the options
+             * @attribute {Function} link - Function that is called during directive linking. Specified in the customizations
              * configuration Object.
              * @attribute {Object} scope - Define the scope bindings for the ParlayWidget.
              *
@@ -143,7 +143,7 @@
                     edit: "=",
                     uid: "=",
                     template: "=",
-                    options: "="
+                    customizations: "="
                 }
             };
 

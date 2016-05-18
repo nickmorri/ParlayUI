@@ -14,7 +14,7 @@
 
     var directive_definition = {
         templateUrl: "../vendor_components/promenade/widget/directives/promenade-widget-button.html",
-        scopeDefaults: {
+        customizationDefaults: {
             button_text: {
                 property_name: "button_text",
                 type: "text",
@@ -31,12 +31,12 @@
 
     var configuration_tabs = [{
         label: "button",
-        element: "<button-configuration-tab options='configuration.options'></button-configuration-tab>",
+        element: "<button-configuration-tab customizations='configuration.customizations'></button-configuration-tab>",
         directive_name: "buttonConfigurationTab",
         directive_function: function () {
             return {
                 scope: {
-                    options: "="
+                    customizations: "="
                 },
                 templateUrl: "../vendor_components/promenade/widget/directives/promenade-widget-button-configuration.html",
                 controller: ButtonConfigurationTabController,

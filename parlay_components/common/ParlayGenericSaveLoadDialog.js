@@ -124,13 +124,13 @@
                 ParlayNotification.show({content: "Restored " + result.loaded_items.length + " " + options.entries + " from " + entry.name + "."});
             }
             else {
-                var loaded_entry_names = result.loaded_entries.length > 0 ? result.loaded_entries.map(function (container) {
+                var loaded_entry_names = result.loaded_items.length > 0 ? result.loaded_items.map(function (container) {
                     return container.name;
-                }).join(', ') : "No " + options.entries + ".";
+                }).join(', ') : "No " + options.children;
 
-                var failed_entry_names = result.failed_entries.length > 0 ? result.failed_entries.map(function (container) {
+                var failed_entry_names = result.failed_items.length > 0 ? result.failed_items.map(function (container) {
                     return container.name;
-                }).join(', ') : "No " + options.entries + ".";
+                }).join(', ') : "No " + options.children;
 
                 $mdDialog.show($mdDialog.alert({
                     title: 'Load did not complete successfully',

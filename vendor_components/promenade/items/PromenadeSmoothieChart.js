@@ -67,15 +67,22 @@
             if (!!newValue) {
                 scope.$watchCollection("enabled_streams", function (newValue, oldValue) {
 
+                    var current_lines = Object.keys(ctrl.lines);
+
+                    var new_streams, old_streams;
+
                     // Generate Array of streams that differ and should be disabled.
-                    oldValue.filter(function (line) {
+                    old_streams = current_lines.filter(function (line) {
                         return newValue.indexOf(line) === -1;
-                    }).forEach(removeStream);
+                    });
 
                     // Generate Array of streams that differ and should be enabled.
-                    newValue.filter(function (line) {
-                        return oldValue.indexOf(line) === -1;
-                    }).forEach(addStream);
+                    new_streams = newValue.filter(function (line) {
+                        return current_lines.indexOf(line) === -1;
+                    });
+
+                    old_streams.forEach(removeStream);
+                    new_streams.forEach(addStream);
 
                 });
             }

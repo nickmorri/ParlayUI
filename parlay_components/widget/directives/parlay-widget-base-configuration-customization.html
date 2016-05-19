@@ -1,6 +1,15 @@
 <div layout="column">
-    <md-input-container ng-repeat="option in customizations">
+    <md-input-container ng-repeat="option in customizations" ng-switch="option.type">
+
         <label>{{option.property_name}}</label>
-        <input ng-model="option.value">
+
+        <input type="text" ng-model="option.value" ng-switch-when="text">
+
+        <input type="number" ng-model="option.value" ng-switch-when="number">
+
+        <md-select ng-model="option.value" ng-switch-when="text-multiple" multiple="true">
+            <md-option ng-value="choice" ng-repeat="choice in option.choices">{{choice}}</md-option>
+        </md-select>
+
     </md-input-container>
 </div>

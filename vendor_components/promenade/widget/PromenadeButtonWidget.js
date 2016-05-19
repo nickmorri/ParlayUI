@@ -20,11 +20,11 @@
                 type: "text",
                 value: "click!"
             },
-            element_class: {
-                property_name: "element_class",
-                type: "text",
-                value: "md-primary",
-                choices: ["md-primary", "md-accent"]
+            button_class: {
+                property_name: "button_class",
+                type: "text-multiple",
+                value: ["md-primary", "md-raised"],
+                choices: ["md-primary", "md-accent", "md-raised"]
             }
         }
     };
@@ -44,6 +44,8 @@
             };
         }
     }];
+
+    configuration_tabs = [];
 
     widgetRegistration(module_name, module_dependencies, directive_name, widget_type, directive_definition, configuration_tabs);
 

@@ -508,6 +508,8 @@ module.exports = function (grunt) {
             }
         },
 
+        // Automatically include JavaScript and CSS references in index.html during development.
+        // https://github.com/jwvdiermen/grunt-include-source
         'includeSource': {
 			'options': {
 				'baseUrl': ""

@@ -170,7 +170,7 @@ module.exports = function (grunt) {
                     'interrupt': true
                 },
                 'files': ['vendorDefaults.js', '<%= meta.source %>', '<%= meta.vendor_components %>'],
-                'tasks': ['newer:replace:dev', 'newer:jshint:dev', 'karma:dev', 'newer:copy:dev']
+                'tasks': ['newer:replace:dev', 'newer:jshint:dev', 'karma:dev', 'newer:copy:dev', 'includeSource:dev', 'wiredep:dev']
             },
             'stylesheets': {
                 'options': {
@@ -179,7 +179,7 @@ module.exports = function (grunt) {
                     'spawn': false
                 },
                 'files': '<%= meta.stylesheets %>',
-                'tasks': ['newer:csslint:dev', 'newer:copy:dev']
+                'tasks': ['newer:csslint:dev', 'newer:copy:dev', 'includeSource:dev', 'wiredep:dev']
             },
             'html': {
                 'options': {
@@ -188,7 +188,7 @@ module.exports = function (grunt) {
                     'spawn': false
                 },
                 'files': ['<%= meta.html_directives %>', '<%= meta.html_views %>'],
-                'tasks': ['newer:html2js', 'newer:copy']
+                'tasks': ['newer:html2js', 'newer:copy', 'includeSource:dev', 'wiredep:dev']
             },
             'index': {
                 'options': {
@@ -197,7 +197,7 @@ module.exports = function (grunt) {
                     'spawn': false
                 },
                 'files': ['index.html'],
-                'tasks': ['processhtml:dev', 'wiredep:dev']
+                'tasks': ['includeSource:dev', 'wiredep:dev']
             },
             'tests': {
                 'options': {
@@ -209,12 +209,6 @@ module.exports = function (grunt) {
             'mocks': {
                 'files': '<%= meta.mocks %>',
                 'tasks': 'karma:dev'
-            },
-            'Gruntfile': {
-                'files': 'Gruntfile.js',
-                'options': {
-                    'reload': true
-                }
             },
             'vendor_config': {
                 'files': 'vendor_components/**/vendor.json',
@@ -419,8 +413,7 @@ module.exports = function (grunt) {
                             '<%= meta.source %>',
                             '<%= meta.vendor_components %>',
                             '<%= meta.compiled_html %>',
-                            '<%= meta.stylesheets %>',
-                            'index.html'
+                            '<%= meta.stylesheets %>'
                         ],
                         'dest': '<%= meta.dev_destination %>'
                     }
@@ -515,13 +508,25 @@ module.exports = function (grunt) {
             }
         },
 
+        'includeSource': {
+			'options': {
+				'baseUrl': ""
+			},
+            'dev': {
+                'files': {
+                    'dev/index.html': 'index.html'
+                }
+            }
+		},
+
         'bump': {
             'options': {
-                'commitMessage': 'build: Update distribution file',
-                'createTag': false,
-                'push': false,
-                'commitFiles': ['package.json', 'dist/index.html']
-            }
+				'baseUrl': ""
+			},
+            'commitMessage': 'build: Update distribution file',
+            'createTag': false,
+            'push': false,
+            'commitFiles': ['package.json', 'dist/index.html']
         }
 
 	});
@@ -542,7 +547,8 @@ module.exports = function (grunt) {
 	    'html2js',
 	    'copy:dev',
 	    'karma:dev',
-	    'wiredep:dev',
+        'includeSource:dev',
+        'wiredep:dev',
 	    'express:dev',
 	    'open:server',
 	    'watch'

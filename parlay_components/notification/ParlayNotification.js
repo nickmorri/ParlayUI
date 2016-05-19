@@ -30,8 +30,7 @@
 
     /* istanbul ignore next */
     function RunNotification() {
-        // Microsoft Edge does not have support for HTML 5 Notifications.
-        if (!navigator.userAgent.includes("Edge")) {
+        if ("Notification" in window) {
             // Request permissions as soon as possible.
             Notification.requestPermission();
         }
@@ -90,26 +89,35 @@
 
         // Clear browser notifications if visibility of the document changes.
         /* istanbul ignore next */
-        document.addEventListener("visibilitychange", function clearNotifications() {
-            active_browser_notifications.forEach(function (notification) {
-                notification.close();
+
+        if ("Notification" in window) {
+            document.addEventListener("visibilitychange", function clearNotifications() {
+                active_browser_notifications.forEach(function (notification) {
+                    notification.close();
+                });
             });
-        });
+        }
 
         /**
          * Displays the next available toast.
          * Then if more toasts are available display then next as well as call the callback if the $mdToast was resolved by user action.
          */
         function displayToast() {
-            if (!pending_toasts.length) return;
+            if (!pending_toasts.length) {
+                return;
+            }
             toast_active = true;
             var next_toast = pending_toasts.shift();
             $mdToast.show(next_toast.toast).then(function (result) {
                 // If there are pending toasts remaining display the next toast.
-                if (pending_toasts.length) displayToast();
+                if (pending_toasts.length) {
+                    displayToast();
+                }
                 toast_active = false;
                 // Result will be resolved with "ok" if the action is performed and true if the $mdToast has hidden.
-                if (result === "ok" && next_toast.callback) next_toast.callback();
+                if (result === "ok" && next_toast.callback) {
+                    next_toast.callback();
+                }
             });
         }
 
@@ -121,7 +129,9 @@
             var toast = $mdToast.simple().content(configuration.content).position(NotificationLocation);
 
             // If the warning option is true we should theme the toast to indicate that a warning has occurred.
-            if (configuration.warning) toast.theme("warning-toast");
+            if (configuration.warning) {
+                toast.theme("warning-toast");
+            }
 
             // Guess if the content that we want to add to the toast could overflow the container that is available.
             // TODO: Do check in more deterministic way that leverages DOM elements.
@@ -162,7 +172,9 @@
                 pending_toasts.push({toast: toast});
             }
 
-            if (!toast_active) displayToast();
+            if (!toast_active) {
+                displayToast();
+            }
 
         }
 
@@ -171,9 +183,11 @@
          * @param {Object} configuration - Notification configuration object.
          */
         function prepBrowserNotification(configuration) {
-            active_browser_notifications.push(new Notification(configuration.content, {
-                delay: NotificationDisplayDuration
-            }));
+            if ("Notification" in window) {
+                active_browser_notifications.push(new Notification(configuration.content, {
+                    delay: NotificationDisplayDuration
+                }));
+            }
         }
 
         /**
@@ -202,7 +216,9 @@
                 prepToast(configuration);
                 addToHistory(configuration);
 
-                if (document.hidden) prepBrowserNotification(configuration);
+                if (document.hidden) {
+                    prepBrowserNotification(configuration);
+                }
             },
             /**
              * Creates Toast that contains a linear indeterminate progress bar. Will remain indefinitely until hidden.

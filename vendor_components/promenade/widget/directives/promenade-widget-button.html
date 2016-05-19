@@ -9,7 +9,8 @@
                 widget-name="{{template.name}}"
                 widget-uid="{{uid}}"
                 events='["click"]'
-                ng-class="customizations.button_class.value">
+                ng-class="customizations.button_class.value"
+                ng-style="{color: customizations.button_text_color.value}">
             {{customizations.button_text.value}}
         </md-button>
     </parlay-widget-base-card-content>

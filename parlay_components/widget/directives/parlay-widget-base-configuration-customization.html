@@ -1,15 +1,37 @@
 <div layout="column">
-    <md-input-container ng-repeat="option in customizations" ng-switch="option.type">
 
-        <label>{{option.property_name}}</label>
+    <div flex ng-repeat="option in customizations" ng-switch="option.type" layout="row">
 
-        <input type="text" ng-model="option.value" ng-switch-when="text">
+        <md-input-container flex ng-switch-default>
 
-        <input type="number" ng-model="option.value" ng-switch-when="number">
+            <label>{{option.property_name}}</label>
 
-        <md-select ng-model="option.value" ng-switch-when="text-multiple" multiple="true">
-            <md-option ng-value="choice" ng-repeat="choice in option.choices">{{choice}}</md-option>
-        </md-select>
+            <input type="text" ng-model="option.value">
 
-    </md-input-container>
+        </md-input-container>
+
+        <md-input-container flex ng-switch-when="number">
+
+            <label>{{option.property_name}}</label>
+
+            <input type="number" ng-model="option.value">
+
+        </md-input-container>
+
+        <md-input-container flex ng-switch-when="text-multiple">
+
+            <label>{{option.property_name}}</label>
+
+            <md-select ng-model="option.value" multiple="true">
+                <md-option ng-value="choice" ng-repeat="choice in option.choices">
+                    {{choice}}
+                </md-option>
+            </md-select>
+
+        </md-input-container>
+
+        <div flex md-color-picker label="{{option.property_name}}" ng-model="option.value" ng-switch-when="color" preview="false"></div>
+
+    </div>
+
 </div>

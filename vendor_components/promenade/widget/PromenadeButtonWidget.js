@@ -25,6 +25,11 @@
                 type: "text-multiple",
                 value: ["md-primary", "md-raised"],
                 choices: ["md-primary", "md-accent", "md-raised"]
+            },
+            button_text_color: {
+                property_name: "button_text_color",
+                type: "color",
+                value: "#fff"
             }
         }
     };

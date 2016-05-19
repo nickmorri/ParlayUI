@@ -1,9 +1,9 @@
-<div layout="column">
-    <md-input-container>
+<div layout="row">
+    <md-input-container flex>
         <label>{{customizations.button_text.property_name}}</label>
         <input ng-model="customizations.button_text.value">
     </md-input-container>
-    <md-input-container>
+    <md-input-container flex>
         <label>{{customizations.element_class.property_name}}</label>
         <md-select ng-model="customizations.element_class.value">
             <md-option ng-value="choice" ng-repeat="choice in customizations.element_class.choices">{{choice}}</md-option>

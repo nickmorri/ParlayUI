@@ -2,13 +2,14 @@
     <parlay-widget-base-card-title>
         {{template.name}}{{uid}}
     </parlay-widget-base-card-title>
-    <parlay-widget-base-card-content>
-        <md-button
+    <parlay-widget-base-card-content layout="row">
+        <md-button flex
                 parlay-widget-input
                 element-name="test"
                 widget-name="{{template.name}}"
                 widget-uid="{{uid}}"
                 events='["click"]'
+                class="md-raised"
                 ng-class="customizations.element_class.value">
             {{customizations.button_text.value}}
         </md-button>

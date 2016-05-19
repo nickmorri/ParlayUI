@@ -519,17 +519,7 @@ module.exports = function (grunt) {
                     'dev/index.html': 'index.html'
                 }
             }
-		},
-
-        'bump': {
-            'options': {
-				'baseUrl': ""
-			},
-            'commitMessage': 'build: Update distribution file',
-            'createTag': false,
-            'push': false,
-            'commitFiles': ['package.json', 'dist/index.html']
-        }
+		}
 
 	});
 	
@@ -573,8 +563,7 @@ module.exports = function (grunt) {
 	]);
 
 	grunt.registerTask('build', [
-        'dist',
-		'bump:patch'
+		'dist'
     ]);
 
 	grunt.registerTask('server', 'Launches HTTP server with distribution files as source.', [

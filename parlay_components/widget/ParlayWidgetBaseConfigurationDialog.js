@@ -176,15 +176,15 @@
 
                         var entries = methods.map(function (method) {
                             return {
-                                caption: item.name + "." + method.name + "()",
-                                value: item.name + "." + method.name + "()",
+                                caption: item.item_name + "." + item.name + "." + method.name + "()",
+                                value: item.item_name + "." + item.name + "." + method.name + "()",
                                 meta: "Parlay{" + item.type + "} method"
                             };
                         });
 
                         entries.push({
-                            caption: item.name + ".value",
-                            value: item.name + ".value",
+                            caption: item.item_name + "." + item.name + ".value",
+                            value: item.item_name + "." + item.name + ".value",
                             meta: "Parlay{" + item.type + "} value"
                         });
 
@@ -273,8 +273,8 @@
                 getCompletions: function (editor, session, pos, prefix, callback) {
                     callback(null, $scope.configuration.selectedItems.reduce(function (accumulator, item) {
                         return accumulator.concat([{
-                            caption: item.name + ".value",
-                            value: item.name + ".value",
+                            caption: item.item_name + "." + item.name + ".value",
+                            value: item.item_name + "." + item.name + ".value",
                             meta: "Parlay{" + item.type + "} value"
                         }]);
                     }, initial_entries));

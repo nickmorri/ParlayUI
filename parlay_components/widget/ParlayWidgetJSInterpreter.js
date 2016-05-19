@@ -65,9 +65,23 @@
                     this.interpreter = new Interpreter(this.functionString, function (interpreter, scope) {
 
                         this.attachObject(scope, interpreter, ParlaySocket);
-                        this.attachItems(scope, interpreter, this.getItems());
                         this.attachFunction(scope, interpreter, alert);
                         this.attachFunction(scope, interpreter, console.log.bind(console), "log");
+
+                        var parlay_items = this.getItems().reduce(function (accumulator, current) {
+
+                            if (!accumulator[current.item_name]) {
+                                accumulator[current.item_name] = interpreter.createObject();
+                            }
+
+                            this.attachObject(accumulator[current.item_name], interpreter, current, current.name);
+
+                            return accumulator;
+                        }.bind(this), {});
+
+                        Object.keys(parlay_items).forEach(function (parlay_item_name) {
+                            interpreter.setProperty(scope, parlay_item_name, parlay_items[parlay_item_name]);
+                        }, this);
 
                         if (!!childInitFunc) {
                             childInitFunc.call(this, interpreter, scope);

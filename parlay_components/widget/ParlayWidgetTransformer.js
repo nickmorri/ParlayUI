@@ -84,9 +84,7 @@
          * JS-Interpreter scope.
          */
         ParlayWidgetTransformer.prototype.construct = function () {
-            ParlayInterpreter.prototype.construct.call(this, function initFunc(interpreter, scope) {
-                this.attachItems(scope, interpreter, this.items);
-            });
+            ParlayInterpreter.prototype.construct.call(this);
         };
 
         /**

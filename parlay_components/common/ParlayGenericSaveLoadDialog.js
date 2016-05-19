@@ -126,11 +126,11 @@
             else {
                 var loaded_entry_names = result.loaded_items.length > 0 ? result.loaded_items.map(function (container) {
                     return container.name;
-                }).join(', ') : "No entries";
+                }).join(', ') : "No " + options.children;
 
                 var failed_entry_names = result.failed_items.length > 0 ? result.failed_items.map(function (container) {
                     return container.name;
-                }).join(', ') : "No entries";
+                }).join(', ') : "No " + options.children;
 
                 $mdDialog.show($mdDialog.alert({
                     title: 'Load did not complete successfully',

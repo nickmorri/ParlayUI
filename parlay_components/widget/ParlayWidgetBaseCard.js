@@ -33,7 +33,6 @@
      *
      */
 
-    ParlayWidgetBaseCard.$inject = [];
     function ParlayWidgetBaseCard () {
         return {
             transclude: {
@@ -43,6 +42,7 @@
             restrict: "E",
             templateUrl: "../parlay_components/widget/directives/parlay-widget-base-card.html",
             link: function (scope, element) {
+                // Dispatch an event upwards notifying all listeners registered for the given event.
                 scope.$emit("parlayWidgetBaseCardLoaded", element);
             }
         };

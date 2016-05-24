@@ -171,10 +171,16 @@
 
                 }
 
+                /**
+                 * Captures variables in a closure scope that will be available to the returned Function.
+                 * @returns {Function} - Attaches the specified ParlayWidget template as a child of the ParlayBaseWidget.
+                 */
                 function compileWrapper () {
-                    var scopeRef = scope;
-                    var elementRef = element;
+                    var scope_ref = scope;
+                    var element_ref = element;
 
+                    // Generate a String that will be used as the element attributes that will be bound in the directive's
+                    // link function to the template scope.
                     var attributes = [
                         ["items", "item.configuration.transformer.items"],
                         ["transformed-value", "item.configuration.transformer.value"],
@@ -187,21 +193,31 @@
                         return attribute[0] + "='" + attribute[1] + "'";
                     }).join(" ");
 
-                    return function (template) {
-                        while (elementRef[0].firstChild) {
-                            angular.element(elementRef[0].firstChild).scope().$destroy();
-                            elementRef[0].removeChild(elementRef[0].firstChild);
+                    /**
+                     * Uses AngularJS $compile to generate HTML Element of the ParlayWidget template.
+                     * @param {Object} template - ParlayBaseWidget template definition Object.
+                     */
+                    function templateCompiler (template) {
+                        // Destroys the $scopes beneath ParlayBaseWidget element and removes the child elements before
+                        // compiling any new template.
+                        while (element_ref[0].firstChild) {
+                            angular.element(element_ref[0].firstChild).scope().$destroy();
+                            element_ref[0].removeChild(element_ref[0].firstChild);
                         }
 
+                        // Generate snake-case template name for element tag.
                         var snake_case = template.name.snakeCase();
 
-                        var element_template = "<" + snake_case + " " + attributes + "></" + snake_case + ">";
+                        // Generate String of template name and the attribute String.
+                        var element_tag_with_attributes = "<" + snake_case + " " + attributes + "></" + snake_case + ">";
 
-                        var childScope = scopeRef.$new();
-                        var childElement = $compile(element_template)(childScope)[0];
+                        // HTML Element of the ParlayWidget template that will be attached as a child to the ParlayBaseWidget Element.
+                        var child_element = $compile(element_tag_with_attributes)(scope_ref)[0];
 
-                        elementRef[0].appendChild(childElement);
-                    };
+                        element_ref[0].appendChild(child_element);
+                    }
+
+                    return templateCompiler;
                 }
 
                 function edit (initialize) {

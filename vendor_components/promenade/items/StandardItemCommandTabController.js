@@ -13,22 +13,8 @@
         .controller("PromenadeStandardItemCardCommandTabController", PromenadeStandardItemCardCommandTabController)
         .controller("PromenadeStandardItemCardCommandContainerController", PromenadeStandardItemCardCommandContainerController)
         .directive("promenadeStandardItemCardCommands", PromenadeStandardItemCardCommands)
-        .directive("promenadeStandardItemCardCommandContainer", PromenadeStandardItemCardCommandContainer);
-
-    /**
-     * If the buffer is valid and available we should force the md-chips controller to push it to the ng-model.
-     * @param {NodeList} chipElements - List of HTMLElements mapping to each md-chip.
-     */
-    function pushChipBuffer (chipElements) {
-        if (chipElements.length) {
-            var ctrl = angular.element(chipElements[0].querySelector('input')).scope().$mdChipsCtrl;
-            var buffer = ctrl.getChipBuffer();
-            if (buffer !== "") {
-                ctrl.appendChip(buffer);
-                ctrl.resetChipBuffer();
-            }
-        }
-    }
+        .directive("promenadeStandardItemCardCommandContainer", PromenadeStandardItemCardCommandContainer)
+        .directive("promenadeStandardItemCardCommandContainerChips", PromenadeStandardItemCardCommandContainerChipsDirective);
 
     function PromenadeStandardCommandMessageFactory() {
 
@@ -131,7 +117,6 @@
         };
 
         return PromenadeStandardCommandMessage;
-
     }
 
     /**
@@ -149,6 +134,10 @@
         $scope.wrapper = {
             message: new PromenadeStandardCommandMessage(this.item.name)
         };
+
+        // References to $mdChipsController instances.
+        // We want to clear the buffers before the message is collected and sent.
+        this.chipsControllers = [];
 
         // If there is only one field we should automatically assign it's default.
         if (this.item.content_fields && Object.keys(this.item.content_fields).length === 1) {
@@ -194,7 +183,13 @@
         this.send = function ($event) {
             // Push the buffer into the md-chips ng-model
             if ($event) {
-                pushChipBuffer($event.target.querySelectorAll('md-chips'));
+                this.chipsControllers.forEach(function (chipsController) {
+                    var buffer = chipsController.getChipBuffer();
+                    if (buffer !== "") {
+                        chipsController.appendChip(buffer);
+                        chipsController.resetChipBuffer();
+                    }
+                });
             }
 
             // Add a pending response Object.
@@ -301,6 +296,25 @@
     }
 
     /**
+     * Helper directive that records a reference to the $mdChipsController instance of it's child.
+     * Allows us to ensure that the buffer of the md-chips element is cleared before sending.
+     */
+    function PromenadeStandardItemCardCommandContainerChipsDirective () {
+        return {
+            restrict: "A",
+            link: function ($scope) {
+                // Record reference to controller.
+                $scope.chipsControllers.push($scope.$$childHead.$mdChipsCtrl);
+
+                // Remove reference on scope destruction.
+                $scope.$on("$destroy", function () {
+                    $scope.chipsControllers.splice($scope.chipsControllers.indexOf($scope.$$childHead.$mdChipsCtrl), 1);
+                });
+            }
+        };
+    }
+
+    /**
      * Controller constructor for command container.
      * @constructor
      * @param {AngularJS $scope} $scope - A AngularJS $scope Object.
@@ -368,7 +382,8 @@
             scope: {
                 wrapper: '=',
                 fields: '=',
-                commandform: '='
+                commandform: '=',
+                chipsControllers: "="
             },
             templateUrl: '../vendor_components/promenade/items/directives/promenade-standard-item-card-command-container.html',
             compile: RecursionHelper.compile,

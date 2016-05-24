@@ -15,7 +15,7 @@
             link: function (scope, element) {
 
                 var draggie;
-                
+
                 scope.edit = edit;
 
                 scope.$on("parlayWidgetTemplateLoaded", function () {
@@ -45,6 +45,12 @@
                         draggie.destroy();
                     }
                 });
+
+                function construct () {
+                    scope.initialized = false;
+                    scope.item.configuration = {};
+                    scope.edit(true);
+                }
 
                 function restore (item) {
                     compileWrapper()(angular.copy(item.configuration.template));
@@ -87,12 +93,6 @@
 
                         configuration.transformer = actual_transformer;
                     }
-                }
-
-                function construct () {
-                    scope.initialized = false;
-                    scope.item.configuration = {};
-                    scope.edit(true);
                 }
 
                 /**
@@ -220,7 +220,7 @@
                     return templateCompiler;
                 }
 
-                function edit (initialize) {
+                function edit (initializing) {
                     $mdDialog.show({
                         templateUrl: "../parlay_components/widget/directives/parlay-widget-base-configuration-dialog.html",
                         clickOutsideToClose: false,
@@ -230,15 +230,15 @@
                             configuration: scope.item.configuration,
                             widgetCompiler: compileWrapper()
                         }
-                    }).then(function () {
-                        scope.initialized = true;
                     }).catch(function () {
-                        if (initialize) {
+                        if (initializing) {
                             scope.widgetsCtrl.remove(scope.uid);
                         }
                     });
                 }
 
+                // If an existing configuration Object exists we should restore the configuration, otherwise construct
+                // from scratch.
                 if (!!scope.item.configuration) {
                     restore(scope.item);
                 }

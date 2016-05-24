@@ -17,10 +17,16 @@
         <input ng-if="field.input === 'STRING'" name="{{field.msg_key}}" ng-model="wrapper.message[field.msg_key + '_' + field.input]" type="text" ng-required="field.required">
         
         <!-- NUMBERS or STINGS or ARRAY input type -->
-        <md-chips name="{{field.msg_key}}" ng-model="wrapper.message[field.msg_key + '_' + field.input]"
-                  ng-if="field.input === 'NUMBERS' || field.input === 'STRINGS' || field.input === 'ARRAY'"
-                  ng-required="field.required" placeholder="{{field.label}}" secondary-placeholder="{{field.label}}"
-                  md-transform-chip="prepChip($chip)" md-separator-keys="[188, 32]"><!-- 188=',' 32=' ' -->
+        <md-chips
+                promenade-standard-item-card-command-container-chips
+                name="{{field.msg_key}}"
+                ng-model="wrapper.message[field.msg_key + '_' + field.input]"
+                ng-if="field.input === 'NUMBERS' || field.input === 'STRINGS' || field.input === 'ARRAY'"
+                ng-required="field.required"
+                placeholder="{{field.label}}"
+                secondary-placeholder="{{field.label}}"
+                md-transform-chip="prepChip($chip)"
+                md-separator-keys="[188, 32]"><!-- 188=',' 32=' ' -->
         	<md-chip-template>{{$chip.value}}</md-chip-template>
         </md-chips>
         
@@ -32,11 +38,13 @@
     </md-input-container>
     
     <!-- Recursive promenade-standard-item-card-command-container directive element to handle any potential nesting of sub fields -->
-    <promenade-standard-item-card-command-container flex
-	    ng-if="hasSubFields(field)"
-	    commandform="commandform"
-	    wrapper="wrapper"
-	    fields="getSubFields(field)">
+    <promenade-standard-item-card-command-container
+            flex
+            ng-if="hasSubFields(field)"
+            commandform="commandform"
+            wrapper="wrapper"
+            fields="getSubFields(field)"
+            chips-controllers="chipsControllers">
     </promenade-standard-item-card-command-container>
 
 </span>

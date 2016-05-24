@@ -89,7 +89,6 @@
             var tag = domEvent.target.tagName.toLowerCase();
 
             if (tag.includes("input")) {
-
                 var obj = interpreter.createObject();
 
                 var currentTarget = domEvent.target;
@@ -98,9 +97,6 @@
                 interpreter.setProperty(obj, "type", interpreter.createPrimitive(currentTarget.type));
                 interpreter.setProperty(obj, "value", interpreter.createPrimitive(val));
                 interpreter.setProperty(evt, "element", obj);
-            }
-            else if (tag.includes("button")) {
-
             }
 
             return evt;

@@ -154,42 +154,19 @@
             }
         ];
 
-        function items() {
-            var iterator = ParlayData.values();
-            var values = [];
-            for (var current = iterator.next(); !current.done; current = iterator.next()) {
-                values.push(current.value);
-            }
-            return values;
-        }
-
         function generateCompleter(initial_entries) {
             return {
                 getCompletions: function (editor, session, pos, prefix, callback) {
-                    callback(null, items().reduce(function (accumulator, item) {
 
-                        var methods = Object.getOwnPropertyNames(item).filter(function (prop) {
-                            return typeof item[prop] == 'function' && item[prop].name != "bound ";
-                        }).map(function (prop) {
-                            return item[prop];
-                        });
+                    var entries = [];
 
-                        var entries = methods.map(function (method) {
-                            return {
-                                caption: item.item_name + "." + item.name + "." + method.name + "()",
-                                value: item.item_name + "." + item.name + "." + method.name + "()",
-                                meta: "Parlay{" + item.type + "} method"
-                            };
-                        });
+                    ParlayData.forEach(function (value) {
+                        entries = entries.concat(value.generateAutocompleteEntries());
+                    });
 
-                        entries.push({
-                            caption: item.item_name + "." + item.name + ".value",
-                            value: item.item_name + "." + item.name + ".value",
-                            meta: "Parlay{" + item.type + "} value"
-                        });
+                    entries = entries.concat(initial_entries);
 
-                        return accumulator.concat(entries);
-                    }, initial_entries));
+                    callback(null, entries);
                 }
             };
         }
@@ -212,7 +189,7 @@
         ctrl.onAdd = onAdd;
         ctrl.onRemove = onRemove;
 
-        function items() {
+        function items () {
             var iterator = ParlayData.values();
             var values = [];
             for (var current = iterator.next(); !current.done; current = iterator.next()) {

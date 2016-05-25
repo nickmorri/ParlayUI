@@ -56,6 +56,7 @@
 
             datastream.listen = listen;
             datastream.onChange = onChange;
+            datastream.generateAutocompleteEntries = generateAutocompleteEntries;
 
             ParlayData.set(datastream.name, datastream);
 
@@ -93,6 +94,21 @@
                         TO: "UI",
                         FROM: datastream.item_name
                     });
+            }
+
+            /**
+             * Generates entry for Ace editor autocomplete consumed by ParlayWidget.
+             * @returns {Array[Object]} - Entry used to represent the PromenadeStandardDatastream.
+             */
+            function generateAutocompleteEntries () {
+
+                var value_entry = {
+                    caption: datastream.item_name + "." + datastream.name + ".value",
+                    value: datastream.item_name + "." + datastream.name + ".value",
+                    meta: "PromenadeDataStream value"
+                };
+
+                return [value_entry];
             }
 
         }

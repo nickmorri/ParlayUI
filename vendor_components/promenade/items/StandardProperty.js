@@ -44,6 +44,7 @@
             property.get = get;
             property.set = set;
             property.onChange = onChange;
+            property.generateAutocompleteEntries = generateAutocompleteEntries;
 
             property.item_name = item_name;
             property.protocol = protocol;
@@ -69,7 +70,7 @@
              * @param {Function} callback - Function to be invoked whenever the value attribute changes.
              * @returns {Function} - onChange deregistration function.
              */
-            function onChange(callback) {
+            function onChange (callback) {
                 var UID = 0;
                 var keys = Object.keys(onChangeCallbacks).map(function (key) {
                     return parseInt(key, 10);
@@ -84,6 +85,10 @@
                 };
             }
 
+            /**
+             * Requests the current value of the PromenadeStandardProperty.
+             * @returns {$q.deferred.Promise} - Resolved on response receipt.
+             */
             function get () {
 
                 var topics = {
@@ -106,6 +111,11 @@
                 return protocol.sendMessage(topics, contents, response_topics, true);
             }
 
+            /**
+             * Sets the value of the PromenadeStandardProperty to the given value.
+             * @param {Number|String|Object|*} value - Value to set.
+             * @returns {$q.deferred.Promise} - Resolved on response receipt.
+             */
             function set (value) {
 
                 if (!!value) {
@@ -132,6 +142,33 @@
                 };
 
                 return protocol.sendMessage(topics, contents, response_topics, true);
+            }
+
+            /**
+             * Generates entry for Ace editor autocomplete consumed by ParlayWidget.
+             * @returns {Array[Object]} - Entry used to represent the PromenadeStandardProperty.
+             */
+            function generateAutocompleteEntries () {
+
+                var get_entry = {
+                    caption: property.item_name + "." + property.name + ".get()",
+                    value: property.item_name + "." + property.name + ".get()",
+                    meta: "PromenadeStandardProperty method"
+                };
+
+                var set_entry = {
+                    caption: property.item_name + "." + property.name + ".set(" + property.value + ")",
+                    value: property.item_name + "." + property.name + ".set(" + property.value + ")",
+                    meta: "PromenadeStandardProperty method"
+                };
+
+                var value_entry = {
+                    caption: property.item_name + "." + property.name + ".value",
+                    value: property.item_name + "." + property.name + ".value",
+                    meta: "PromenadeStandardProperty value"
+                };
+
+                return [get_entry, set_entry, value_entry];
             }
 
         }

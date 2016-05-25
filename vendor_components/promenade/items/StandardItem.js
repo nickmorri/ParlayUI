@@ -1,14 +1,13 @@
 // Holds the module dependencies for StandardItem. Creating this Array on the Global scope allows for other modules,
 // such as tabs to include themselves as StandardItem dependencies.
-var standard_item_dependencies = ["parlay.items", "promenade.items.datastream", "promenade.items.property", "promenade.items.command", "ngOrderObjectBy"];
+var standard_item_dependencies = ["parlay.items", "promenade.items.standarditem.toolbar", "promenade.items.datastream", "promenade.items.property", "promenade.items.command", "ngOrderObjectBy"];
 
 (function (module_dependencies) {
     "use strict";
 
     angular
         .module("promenade.items.standarditem", module_dependencies)
-        .factory("PromenadeStandardItem", PromenadeStandardItemFactory)
-        .directive("promenadeStandardItemCardToolbar", PromenadeStandardItemCardToolbar);
+        .factory("PromenadeStandardItem", PromenadeStandardItemFactory);
 
     PromenadeStandardItemFactory.$inject = ["ParlayItem", "PromenadeStandardDatastream", "PromenadeStandardProperty", "PromenadeStandardCommand"];
     function PromenadeStandardItemFactory(ParlayItem, PromenadeStandardDatastream, PromenadeStandardProperty, PromenadeStandardCommand) {
@@ -146,16 +145,6 @@ var standard_item_dependencies = ["parlay.items", "promenade.items.datastream", 
         };
 
         return PromenadeStandardItem;
-    }
-
-    /* istanbul ignore next */
-    function PromenadeStandardItemCardToolbar() {
-        return {
-            scope: {
-                item: "="
-            },
-            templateUrl: "../vendor_components/promenade/items/directives/promenade-standard-item-card-toolbar.html"
-        };
     }
 
 }(standard_item_dependencies));

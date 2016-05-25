@@ -79,11 +79,6 @@
                         expect(PromenadeBroker.getLastDiscovery()).toBeUndefined();
                     });
 
-                    it("setLastDiscovery", function () {
-                        PromenadeBroker.setLastDiscovery({});
-                        expect(PromenadeBroker.getLastDiscovery()).toEqual({});
-                    });
-
                     it("applySavedDiscovery", function () {
                         spyOn(PromenadeBroker, "invokeDiscoveryCallbacks");
                         PromenadeBroker.applySavedDiscovery({});
@@ -116,26 +111,20 @@
 
                         it("0 protocols", function () {
                             spyOn(ParlayNotification, "show");
-                            spyOn(PromenadeBroker, "setLastDiscovery");
                             ParlaySocket.triggerOnMessage({"response": "get_discovery_response"}, {}, {discovery: []});
                             expect(ParlayNotification.show).toHaveBeenCalled();
-                            expect(PromenadeBroker.setLastDiscovery).toHaveBeenCalled();
                         });
 
                         it("1 protocol", function () {
                             spyOn(ParlayNotification, "show");
-                            spyOn(PromenadeBroker, "setLastDiscovery");
                             ParlaySocket.triggerOnMessage({"response": "get_discovery_response"}, {}, {discovery: [{NAME: "TestProtocol"}]});
                             expect(ParlayNotification.show).toHaveBeenCalledWith({content: "Discovered TestProtocol."});
-                            expect(PromenadeBroker.setLastDiscovery).toHaveBeenCalled();
                         });
 
                         it("> 1 protocol", function () {
                             spyOn(ParlayNotification, "show");
-                            spyOn(PromenadeBroker, "setLastDiscovery");
                             ParlaySocket.triggerOnMessage({"response": "get_discovery_response"}, {}, {discovery: [{NAME: "TestProtocol1"}, {NAME: "TestProtocol2"}]});
                             expect(ParlayNotification.show).toHaveBeenCalledWith({content: "Discovered 2 protocols."});
-                            expect(PromenadeBroker.setLastDiscovery).toHaveBeenCalled();
                         });
 
                     });
@@ -175,13 +164,6 @@
 
                 describe("methods", function () {
 
-                    it("binds ParlaySocket methods to PromenadeBroker", function () {
-                        expect(PromenadeBroker.onOpen).toBe(ParlaySocket.onOpen);
-                        expect(PromenadeBroker.onClose).toBe(ParlaySocket.onClose);
-                        expect(PromenadeBroker.getBrokerAddress).toBe(ParlaySocket.getAddress);
-                        expect(PromenadeBroker.disconnect).toBe(ParlaySocket.close);
-                    });
-                    
                     it("connect opens ParlaySocket", function () {
                         spyOn(ParlaySocket, "open");
                         PromenadeBroker.connect();

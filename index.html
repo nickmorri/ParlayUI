@@ -1,3 +1,5 @@
+<!-- This file is modified at build time. Please reference the build and the Gruntfile.js for more information. -->
+
 <!DOCTYPE html>
 <html ng-app="parlay.main">
     <head ng-controller="ParlayHeadController as ctrl">
@@ -6,6 +8,8 @@
         <link rel="icon" sizes="256x256" ng-src="{{ctrl.vendorIcon}}">
         <meta name="theme-color" content="{{ctrl.themeColor}}">
         <title>Parlay</title>
+
+        <!-- Stylesheets included or inlined at build time. -->
 
         <!-- library stylesheets for develop task -->
         <!-- bower:css --><!-- endbower -->
@@ -31,6 +35,8 @@
         <div class="view-container" ui-view flex></div>
 
         <parlay-notification-sidenav></parlay-notification-sidenav>
+
+        <!-- JavaScript source and libraries included or inlined at build time. -->
 
         <!-- library JavaScript source for dist task -->
         <!-- build:js:dist inline tmp/lib.min.js --><!-- /build -->

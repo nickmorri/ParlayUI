@@ -524,7 +524,10 @@ module.exports = function (grunt) {
 		'jsdoc': {
 			'doc': {
 				'src': ['<%= meta.source %>', '<%= meta.vendor_components %>']
-			}
+			},
+            'options': {
+                'readme': 'README.md'
+            }
 		}
 
 	});

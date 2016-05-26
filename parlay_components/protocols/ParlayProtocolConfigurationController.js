@@ -119,16 +119,15 @@
             // Set flag to indicate we are attempting a connection.
             ctrl.connecting = true;
 
-            var protocol_name = ctrl.selected_protocol.name;
-            var protocol_parameters = Object.keys(ctrl.selected_protocol.parameters).reduce(function (accumulator, key) {
-                accumulator[key] = ctrl.selected_protocol.parameters[key].value ||
-                    ctrl.selected_protocol.parameters[key].search_text;
-                return accumulator;
-            }, {});
-
             ParlayProtocolManager.openProtocol({
-                name: protocol_name,
-                parameters: protocol_parameters
+                name: ctrl.selected_protocol.name,
+                parameters: Object.keys(ctrl.selected_protocol.parameters).reduce(function (accumulator, key) {
+                    // If a exact value has been set by the autocomplete use that, otherwise use the text the user
+                    // entered into the autocomplete input.
+                    accumulator[key] = ctrl.selected_protocol.parameters[key].value ||
+                        ctrl.selected_protocol.parameters[key].search_text;
+                    return accumulator;
+                }, {})
             }).then(function (response) {
                 $mdDialog.hide(response);
                 return response;

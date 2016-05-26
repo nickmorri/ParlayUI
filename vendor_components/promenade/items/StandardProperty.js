@@ -67,7 +67,7 @@
              * @param {Function} callback - Function to be invoked whenever the value attribute changes.
              * @returns {Function} - onChange deregistration function.
              */
-            function onChange(callback) {
+            function onChange (callback) {
                 var UID = 0;
                 var keys = Object.keys(onChangeCallbacks).map(function (key) {
                     return parseInt(key, 10);
@@ -82,6 +82,10 @@
                 };
             }
 
+            /**
+             * Requests the current value of the PromenadeStandardProperty.
+             * @returns {$q.deferred.Promise} - Resolved on response receipt.
+             */
             function get () {
 
                 var topics = {
@@ -104,7 +108,16 @@
                 return protocol.sendMessage(topics, contents, response_topics, true);
             }
 
-            function set () {
+            /**
+             * Sets the value of the PromenadeStandardProperty to the given value.
+             * @param {(Number|String|Object)} value - Value to set.
+             * @returns {$q.deferred.Promise} - Resolved on response receipt.
+             */
+            function set (value) {
+
+                if (!!value) {
+                    property.value = value;
+                }
 
                 var topics = {
                     TX_TYPE: "DIRECT",

@@ -13,17 +13,17 @@
         .controller("PromenadeStandardItemCardGraphTabConfigurationController", PromenadeStandardItemCardGraphTabConfigurationController)
         .directive('promenadeStandardItemCardGraph', PromenadeStandardItemCardGraph);
 
+    PromenadeStandardItemCardGraphTabController.$inject = ["$scope", "$mdDialog", "$interval", "ParlayUtility", "ParlayItemPersistence"];
     /**
      * Controller constructor for the graph tab.
      * @constructor
-     * @param {AngularJS $scope} $scope - A AngularJS $scope Object.
-     * @param {Material Angular Service} $mdDialog - Dialog modal service.
-     * @param {AngularJS $interval} $interval - A AngularJS service that is analogous to setInterval.
-     * @param {Material Angular Service} $mdMedia - Media size detection service.
-     * @param {Parlay Service} ParlayUtility - Service that provides utility functions.
-     * @param {Parlay Service} ParlayItemPersistence - Service that provides automatic persistence of scope variables to localStorage.
+     * @param {Object} $scope - A AngularJS $scope Object.
+     * @param {Object} $mdDialog - Dialog modal service.
+     * @param {Object} $interval - A AngularJS service that is analogous to setInterval.
+     * @param {Object} $mdMedia - Media size detection service.
+     * @param {Object} ParlayUtility - Service that provides utility functions.
+     * @param {Object} ParlayItemPersistence - Service that provides automatic persistence of scope variables to localStorage.
      */
-    PromenadeStandardItemCardGraphTabController.$inject = ["$scope", "$mdDialog", "$interval", "ParlayUtility", "ParlayItemPersistence"];
     function PromenadeStandardItemCardGraphTabController($scope, $mdDialog, $interval, ParlayUtility, ParlayItemPersistence) {
 
         var ctrl = this;
@@ -83,14 +83,14 @@
 
     }
 
+    PromenadeStandardItemCardGraphTabConfigurationController.$inject = ["$scope", "$mdDialog", "$mdMedia"];
     /**
      * Controller constructor for the graph configuration dialog.
      * @constructor
-     * @param {AngularJS $scope} $scope - AngularJS $scope Object.
-     * @param {Material Angular Service} $mdDialog - Dialog modal service.
-     * @param {Material Angular Service} $mdMedia - Media size detection service.
+     * @param {Object} $scope - AngularJS $scope Object.
+     * @param {Object} $mdDialog - Dialog modal service.
+     * @param {Object} $mdMedia - Media size detection service.
      */
-    PromenadeStandardItemCardGraphTabConfigurationController.$inject = ["$scope", "$mdDialog", "$mdMedia"];
     function PromenadeStandardItemCardGraphTabConfigurationController($scope, $mdDialog, $mdMedia) {
 
         var ctrl = this;

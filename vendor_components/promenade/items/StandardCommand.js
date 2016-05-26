@@ -10,14 +10,19 @@
     function PromenadeStandardCommandFactory() {
 
         function PromenadeStandardCommand(data, item_name, protocol) {
-            this.msg_key = data.MSG_KEY;
-            this.input = data.INPUT;
-            this.label =  !!data.LABEL ? data.LABEL : data.MSG_KEY;
-            this.required =  !!data.REQUIRED ? data.REQUIRED : false;
-            this.default =  !!data.DEFAULT ? data.DEFAULT : undefined;
-            this.hidden =  !!data.HIDDEN ? data.HIDDEN : false;
 
-            this.options = !!data.DROPDOWN_OPTIONS ? data.DROPDOWN_OPTIONS.map(function (option, index) {
+            var command = this;
+
+            command.type = "command";
+
+            command.msg_key = data.MSG_KEY;
+            command.input = data.INPUT;
+            command.label =  !!data.LABEL ? data.LABEL : data.MSG_KEY;
+            command.required =  !!data.REQUIRED ? data.REQUIRED : false;
+            command.default =  !!data.DEFAULT ? data.DEFAULT : undefined;
+            command.hidden =  !!data.HIDDEN ? data.HIDDEN : false;
+
+            command.options = !!data.DROPDOWN_OPTIONS ? data.DROPDOWN_OPTIONS.map(function (option, index) {
                 return typeof option === "string" ? {
                     name: option,
                     value: option,
@@ -31,8 +36,9 @@
                 };
             }) : undefined;
 
-            this.item_name = item_name;
-            this.protocol = protocol;
+            command.item_name = item_name;
+            command.protocol = protocol;
+
         }
 
         return PromenadeStandardCommand;

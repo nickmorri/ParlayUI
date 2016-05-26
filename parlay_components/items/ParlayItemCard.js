@@ -67,7 +67,7 @@
 
                 /**
                  * Setup drag event handlers to allow cards to by rearranged by dragging.
-                 * @param {HTML Element} element - ParlayItemCard HTML element.
+                 * @param {HTMLElement} element - ParlayItemCard HTML element.
                  */
                 function setupDragHandlers(element, scope) {
 

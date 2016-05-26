@@ -30,6 +30,7 @@
     "grunt-express": "^1.4.1",
     "grunt-html2js": "^0.3.2",
     "grunt-include-source": "^0.7.1",
+    "grunt-jsdoc": "^2.0.0",
     "grunt-karma": "^1.0.0",
     "grunt-newer": "^1.1.1",
     "grunt-open": "^0.2.3",

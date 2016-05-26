@@ -76,7 +76,7 @@
 
 	/**
 	 * Traverses given scope object until scope is found where attribute exists.
-	 * @param {AngularJS $scope} scope - AngularJS $scope object to begin searching for the attribute on.
+	 * @param {Object} scope - AngularJS $scope object to begin searching for the attribute on.
 	 * @param {String} attribute - Name of the attribute we are searching for.
 	 */
 	ParlayUtility.prototype.relevantScope = function(scope, attribute) {
@@ -97,7 +97,7 @@
 
 	/**
 	 * Attribute directive that binds the given function to the change event.
-	 * @returns {AngularJS Directive}
+	 * @returns {Object}
 	 */
 	function customOnChange () {
 		return {

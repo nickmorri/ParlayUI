@@ -1,6 +1,15 @@
 var widgetRegistration = (function () {
     "use strict";
 
+    /**
+     * @module ParlayWidget
+     *
+     * @description
+     * A ParlayWidget can be defined by a developer to allow their end-users to easily put together a reconfigurable
+     * and reusable interface composed of custom HTML and JavaScript.
+     *
+     */
+
     var module_dependencies = ["ui.router", "ui.ace", "ngMaterial", "parlay.widget.base", "parlay.widget.collection", "parlay.widget.controller", "parlay.settings"];
 
     angular
@@ -13,11 +22,12 @@ var widgetRegistration = (function () {
 
     /**
      * Registers the widget module and ensures that it is a dependency of parlay.widget.
-     * @param {String} module_name -
-     * @param {Array} submodule_dependencies -
-     * @param {String} directive_name -
-     * @param {String} widget_type -
-     * @param {Function|Object} directive_definition -
+     * @member module:ParlayWidget#widgetRegistration
+     * @param {String} module_name - Name of the module the widget to be registered belongs to.
+     * @param {Array} submodule_dependencies - All dependencies the widget requires.
+     * @param {String} directive_name - Name of the widget directive to be registered.
+     * @param {String} widget_type - Type of the widget to be registered.
+     * @param {Object|Function} directive_definition - Directive definition Object or Function that defines the widget.
      */
     function widgetRegistration (module_name, submodule_dependencies, directive_name, widget_type, directive_definition, configuration_tabs) {
         // Ensure that parlay.widget includes the given module as a dependency.

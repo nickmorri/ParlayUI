@@ -1,22 +1,21 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["ngMaterial", "templates-main"];
-
-    angular
-        .module("parlay.notification", module_dependencies)
-        .run(RunNotification)
-        .value("NotificationDisplayDuration", 4000)
-        .value("NotificationLocation", "bottom right")
-        .factory("ParlayNotificationHistory", ParlayNotificationHistory)
-        .factory("ParlayNotification", ParlayNotificationFactory);
-
     /**
+     * @module ParlayNotification
+     *
+     * @description
+     * Handles distributing notifications to Angular Material toasts and the browser desktop Notification API.
+     *
      * General use of ParlayNotification.
+     *
+     * @example
      *
      * ParlayNotification.show({content: "Text you want to display."});
      *
      * With action button.
+     *
+     * @example
      *
      * ParlayNotification.show({
      *      content: "Text you want to display.",
@@ -26,7 +25,18 @@
      *	    },
      *	    warning: True // Only true if the given notification is a warning and should be styled as such.
      *  });
+     *
      */
+
+    var module_dependencies = ["ngMaterial", "templates-main"];
+
+    angular
+        .module("parlay.notification", module_dependencies)
+        .run(RunNotification)
+        .value("NotificationDisplayDuration", 4000)
+        .value("NotificationLocation", "bottom right")
+        .factory("ParlayNotificationHistory", ParlayNotificationHistory)
+        .factory("ParlayNotification", ParlayNotificationFactory);
 
     /* istanbul ignore next */
     function RunNotification() {
@@ -57,22 +67,24 @@
             this.action.called = true;
         };
 
-        return {
-            /**
-             * Records toast contents and action. Notes time it has been displayed.
-             * @param {String|Object} contents - Contents of notification that was displayed.
-             * @param {Object} action - Contains text of action button as well as a callback function.
-             */
-            add: function (contents, action) {
-                history.push(new ParlayNotificationHistoryItem(contents, action));
-            },
-            get: function () {
-                return history;
-            },
-            clear: function () {
-                history = [];
-            }
-        };
+        /**
+         * Records toast contents and action. Notes time it has been displayed.
+         * @param {String|Object} contents - Contents of notification that was displayed.
+         * @param {Object} action - Contains text of action button as well as a callback function.
+         */
+        function add (contents, action) {
+            history.push(new ParlayNotificationHistoryItem(contents, action));
+        }
+
+        function get () {
+            return history;
+        }
+
+        function clear () {
+            history = [];
+        }
+
+        return {add: add, get: get, clear: clear};
     }
 
     ParlayNotificationFactory.$inject = ["$mdToast", "$mdSidenav", "$mdDialog", "$interval", "NotificationDisplayDuration", "NotificationLocation", "ParlayNotificationHistory"];
@@ -198,84 +210,87 @@
             ParlayNotificationHistory.add(configuration.content, configuration.action);
         }
 
-        return {
-            /**
-             * Creates Toast and if the browser window is currently hidden a HTML5 Notification.
-             * @param {Object} configuration - Notification configuration object.
-             *
-             * {
+        /**
+         * Creates Toast and if the browser window is currently hidden a HTML5 Notification.
+         * @param {Object} configuration - Notification configuration object.
+         *
+         * @example
+         * {
 		 *      content: "Text you want to display."
 		 *	    action: {
 		 *		    text: "Text that the action button displays.",
 		 *		    callback: "Function to invoke when Toast action is clicked."
 		 *	    }
 		 *  }
-             *
-             */
-            show: function (configuration) {
-                prepToast(configuration);
-                addToHistory(configuration);
+         *
+         */
+        function show (configuration) {
+            prepToast(configuration);
+            addToHistory(configuration);
 
-                if (document.hidden) {
-                    prepBrowserNotification(configuration);
-                }
-            },
-            /**
-             * Creates Toast that contains a linear indeterminate progress bar. Will remain indefinitely until hidden.
-             */
-            showProgress: function (deferred) {
-
-                // Build the toast object which may be used to display an indeterminate progress.
-                var toast = $mdToast.build()
-                    .template("<md-toast><span flex>Discovering</span><md-progress-linear flex class='notification-progress' md-mode='indeterminate'></md-progress-linear><md-toast>")
-                    .hideDelay(false)
-                    .position(NotificationLocation);
-
-                // Show a dialog to indicate to the user that a discovery is in progress.
-                $mdDialog.show({
-                    templateUrl: "../parlay_components/notification/directives/parlay-discovery-dialog.html",
-                    controller: function ($mdDialog) {
-
-                        // Allow the user to hide the dialog.
-                        this.hide = function () {
-                            // If the user hides the dialog we should pass the deferred along so that the toast can be
-                            // dismissed open deferred resolution.
-                            $mdDialog.hide(deferred);
-                        };
-
-                        // If the deferred is resolved while the dialog is open we should reject the dialog's promise
-                        // this will prevent the toast from being shown on dialog promise resolution.
-                        deferred.promise.then($mdDialog.cancel);
-                    },
-                    locals: { deferred: deferred },
-                    bindToController: true,
-                    controllerAs: "ctrl",
-                    autoWrap: false,
-                    escapeToClose: false,
-                    clickOutsideToClose: false
-                }).then(function (deferred) {
-
-                    function dismiss() {
-                        $interval.cancel(registration);
-                        $mdToast.hide();
-                        displayToast();
-                    }
-
-                    // To ensure that the progress doesn't take priority over other toasts we should check every half second
-                    // for any pending toasts. If there are any pending toasts we should display them.
-                    var registration = $interval(function () {
-                        if (pending_toasts.length) dismiss();
-                    }, 500);
-
-                    // Show $mdToast and when resolved (on toast hide) be sure to deregister the $interval.
-                    $mdToast.show(toast).then(registration);
-
-                    // If the deferred is resolved we should cancel the $interval registration and display any pending toast.
-                    deferred.promise.then(dismiss);
-
-                });
+            if (document.hidden) {
+                prepBrowserNotification(configuration);
             }
-        };
+        }
+
+        /**
+         * Creates Toast that contains a linear indeterminate progress bar. Will remain indefinitely until hidden.
+         * @param {$q.deferred.Promise} deferred - $q Promise that if resolved will hide the dialog.
+         */
+        function showProgress (deferred) {
+
+            // Build the toast object which may be used to display an indeterminate progress.
+            var toast = $mdToast.build()
+                .template("<md-toast><span flex>Discovering</span><md-progress-linear flex class='notification-progress' md-mode='indeterminate'></md-progress-linear><md-toast>")
+                .hideDelay(false)
+                .position(NotificationLocation);
+
+            // Show a dialog to indicate to the user that a discovery is in progress.
+            $mdDialog.show({
+                templateUrl: "../parlay_components/notification/directives/parlay-discovery-dialog.html",
+                controller: function ($mdDialog) {
+
+                    // Allow the user to hide the dialog.
+                    this.hide = function () {
+                        // If the user hides the dialog we should pass the deferred along so that the toast can be
+                        // dismissed open deferred resolution.
+                        $mdDialog.hide(deferred);
+                    };
+
+                    // If the deferred is resolved while the dialog is open we should reject the dialog's promise
+                    // this will prevent the toast from being shown on dialog promise resolution.
+                    deferred.promise.then($mdDialog.cancel);
+                },
+                locals: { deferred: deferred },
+                bindToController: true,
+                controllerAs: "ctrl",
+                autoWrap: false,
+                escapeToClose: false,
+                clickOutsideToClose: false
+            }).then(function (deferred) {
+
+                function dismiss() {
+                    $interval.cancel(registration);
+                    $mdToast.hide();
+                    displayToast();
+                }
+
+                // To ensure that the progress doesn't take priority over other toasts we should check every half second
+                // for any pending toasts. If there are any pending toasts we should display them.
+                var registration = $interval(function () {
+                    if (pending_toasts.length) dismiss();
+                }, 500);
+
+                // Show $mdToast and when resolved (on toast hide) be sure to deregister the $interval.
+                $mdToast.show(toast).then(registration);
+
+                // If the deferred is resolved we should cancel the $interval registration and display any pending toast.
+                deferred.promise.then(dismiss);
+
+            });
+        }
+
+        return {show: show, showProgress: showProgress};
     }
 
 }());

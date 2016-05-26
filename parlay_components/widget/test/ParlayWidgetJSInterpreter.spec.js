@@ -245,24 +245,6 @@
 
             });
 
-            it("uses attached objects", function () {
-                ParlayInterpreter.functionString = "a.x + b.x";
-
-                ParlayInterpreter.construct(function (interpreter, scope) {
-                    this.attachItems(scope, interpreter, [{x: 10, name: "a"}, {x: 10, name: "b"}]);
-                });
-
-                var target = jasmine.objectContaining({isPrimitive: false, type: "object"});
-
-                expect(ParlayInterpreter.interpreter.getScope().properties.a.properties.x.data).toBe(10);
-                expect(ParlayInterpreter.interpreter.getScope().properties.b.properties.x.data).toBe(10);
-
-                expect(ParlayInterpreter.interpreter.getScope().properties.a).toEqual(target);
-                expect(ParlayInterpreter.interpreter.getScope().properties.b).toEqual(target);
-
-                expect(ParlayInterpreter.run()).toEqual(20);
-            });
-
         });
 
     });

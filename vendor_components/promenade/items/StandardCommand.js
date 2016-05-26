@@ -41,6 +41,7 @@
             command.protocol = protocol;
 
             command.generateAutocompleteEntries = generateAutocompleteEntries;
+            command.generateInterpreterWrappers = generateInterpreterWrappers;
 
             if (command.options) {
                 ParlayData.set(command.msg_key, command);
@@ -81,6 +82,29 @@
                         caption: entry_prefix + ")",
                         value: entry_prefix + entry_suffix + ")",
                         meta: "PromenadeStandardCommand"
+                    };
+                });
+            }
+
+            function generateInterpreterWrappers () {
+                return command.options.map(function (sub_command) {
+                    return {
+                        expression: sub_command.name,
+                        type: "function",
+                        reference: function (args_object) {
+
+                            var topics = {
+                                TO: command.item_name,
+                                MSG_TYPE: "COMMAND"
+                            };
+
+                            var contents = angular.copy(args_object);
+
+                            contents.COMMAND = sub_command.name;
+
+                            protocol.sendMessage(topics, contents);
+
+                        }
                     };
                 });
             }

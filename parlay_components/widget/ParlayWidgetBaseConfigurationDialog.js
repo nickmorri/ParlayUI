@@ -202,7 +202,11 @@
             var lowercase_query = query.toLowerCase();
 
             var filtered_items = items().filter(function (item) {
-                return item.name.indexOf(lowercase_query) > -1 && $scope.configuration.selectedItems.indexOf(item) === -1;
+                return (
+                    ["property", "datastream"].indexOf(item.type) !== -1 &&
+                    item.name.indexOf(lowercase_query) > -1 &&
+                    $scope.configuration.selectedItems.indexOf(item) === -1
+                );
             });
 
             var filtered_elements = ParlayWidgetInputManager.getElements().filter(function (element) {

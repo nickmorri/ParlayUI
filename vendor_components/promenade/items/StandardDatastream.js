@@ -57,6 +57,7 @@
             datastream.listen = listen;
             datastream.onChange = onChange;
             datastream.generateAutocompleteEntries = generateAutocompleteEntries;
+            datastream.generateInterpreterWrappers = generateInterpreterWrappers;
 
             ParlayData.set(datastream.name, datastream);
 
@@ -109,6 +110,21 @@
                 };
 
                 return [value_entry];
+            }
+
+            function generateInterpreterWrappers () {
+                return [
+                    {
+                        expression: "listen",
+                        type: "function",
+                        reference: datastream.listen
+                    },
+                    {
+                        expression: "value",
+                        type: "value",
+                        reference: datastream.value
+                    }
+                ];
             }
 
         }

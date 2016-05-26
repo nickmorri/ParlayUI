@@ -45,6 +45,7 @@
             property.set = set;
             property.onChange = onChange;
             property.generateAutocompleteEntries = generateAutocompleteEntries;
+            property.generateInterpreterWrappers = generateInterpreterWrappers;
 
             property.item_name = item_name;
             property.protocol = protocol;
@@ -169,6 +170,26 @@
                 };
 
                 return [get_entry, set_entry, value_entry];
+            }
+
+            function generateInterpreterWrappers () {
+                return [
+                    {
+                        expression: "get",
+                        type: "function",
+                        reference: property.get
+                    },
+                    {
+                        expression: "set",
+                        type: "function",
+                        reference: property.set
+                    },
+                    {
+                        expression: "value",
+                        type: "value",
+                        reference: property.value
+                    }
+                ];
             }
 
         }

@@ -67,21 +67,7 @@
                         this.attachObject(scope, interpreter, ParlaySocket);
                         this.attachFunction(scope, interpreter, alert);
                         this.attachFunction(scope, interpreter, console.log.bind(console), "log");
-
-                        var parlay_items = this.getItems().reduce(function (accumulator, current) {
-
-                            if (!accumulator[current.item_name]) {
-                                accumulator[current.item_name] = interpreter.createObject();
-                            }
-
-                            this.attachObject(accumulator[current.item_name], interpreter, current, current.name);
-
-                            return accumulator;
-                        }.bind(this), {});
-
-                        Object.keys(parlay_items).forEach(function (parlay_item_name) {
-                            interpreter.setProperty(scope, parlay_item_name, parlay_items[parlay_item_name]);
-                        }, this);
+                        this.attachItems(scope, interpreter, this.getItems());
 
                         if (!!childInitFunc) {
                             childInitFunc.call(this, interpreter, scope);
@@ -208,9 +194,86 @@
          * @param {Array} items - Array of Objects that will be attached to the given scope.
          */
         ParlayInterpreter.prototype.attachItems = function (scope, interpreter, items) {
-            items.forEach(function (item) {
-                this.attachObject(scope, interpreter, item, item.name);
+
+            var functionString = this.functionString;
+
+            var to_attach = [];
+
+            items.filter(function (current) {
+                return functionString.includes(current.item_name);
+            }).filter(function (current) {
+                if (current.type == "command") {
+                    return current.options.some(function (option) {
+                        return functionString.includes(option.name);
+                    });
+                }
+                else if (current.type == "property" || current.type == "datastream") {
+                    return functionString.includes(current.name);
+                }
+                else {
+                    return false;
+                }
+            }).forEach(function (current) {
+
+                if (!to_attach[current.item_name]) {
+                    to_attach[current.item_name] = interpreter.createObject();
+                }
+
+                var obj = to_attach[current.item_name];
+
+                if (["property", "datastream"].indexOf(current.type) !== -1) {
+
+                    var property_object = interpreter.createObject();
+
+                    current.generateInterpreterWrappers().filter(function (property_attribute) {
+                        return functionString.includes(property_attribute.expression);
+                    }).forEach(function (property_attribute) {
+
+                        if (property_attribute.type == "function") {
+                            interpreter.setProperty(property_object, property_attribute.expression, this.makeFunction(interpreter, property_attribute.reference, obj));
+                        }
+                        else if (property_attribute.type == "value") {
+                            interpreter.setProperty(property_object, property_attribute.expression, interpreter.createPrimitive(property_attribute.reference));
+                        }
+                        else {
+                            interpreter.setProperty(property_object, property_attribute.expression, interpreter.createPrimitive(null));
+                        }
+
+                    }, this);
+
+                    interpreter.setProperty(obj, current.name, property_object);
+
+                }
+                else if (["command"].indexOf(current.type) !== -1) {
+                    current.generateInterpreterWrappers().filter(function (sub_command) {
+                        return functionString.includes(sub_command.expression);
+                    }).forEach(function (sub_command) {
+                        interpreter.setProperty(obj, sub_command.expression, this.makeFunction(interpreter, sub_command.reference, obj));
+                    }, this);
+                }
+
+                // current.generateInterpreterWrappers().filter(function (property) {
+                //      return functionString.includes(property.expression);
+                // }).forEach(function (property) {
+                //
+                //     if (property.type == "function") {
+                //         interpreter.setProperty(obj, property.expression, this.makeFunction(interpreter, property.reference, obj));
+                //     }
+                //     else if (property.type == "value") {
+                //         interpreter.setProperty(obj, property.name, interpreter.createPrimitive(property.reference));
+                //     }
+                //     else {
+                //         interpreter.setProperty(obj, property.name, interpreter.createPrimitive(null));
+                //     }
+                //
+                // }, this);
+
             }, this);
+
+            Object.keys(to_attach).forEach(function (key) {
+                interpreter.setProperty(scope, key, to_attach[key]);
+            });
+
         };
 
         /**

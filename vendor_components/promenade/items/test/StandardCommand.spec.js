@@ -107,7 +107,16 @@
                     expect(command.item_name).toBe("TestItem");
                     expect(command.protocol).toBe(protocol);
 
-                    expect(command.options).toEqual([{name: "test_option", value: "TEST_OPTION", sub_fields: [new PromenadeStandardCommand(data.DROPDOWN_SUB_FIELDS[0][0])]}]);
+                    var ref = command.options[0].sub_fields[0];
+                    var sub = new PromenadeStandardCommand(data.DROPDOWN_SUB_FIELDS[0][0]);
+
+                    // Deleting function references as the won't ever be equal.
+                    delete ref.generateAutocompleteEntries;
+                    delete ref.generateInterpreterWrappers;
+                    delete sub.generateAutocompleteEntries;
+                    delete sub.generateInterpreterWrappers;
+
+                    expect(ref).toEqual(sub);
 
                 });
 

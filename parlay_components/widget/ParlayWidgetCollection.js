@@ -18,7 +18,7 @@
          * register themselves with the ParlayWidgetCollection so that other services and controllers can query a
          * single service to discover all available directives.
          *
-         * @returns {AngularJS service} - ParlayWidgetCollection service.
+         * @returns {Object} - ParlayWidgetCollection service.
          *
          */
 

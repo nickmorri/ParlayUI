@@ -37,8 +37,8 @@
          *      library, such as graphing or charting, this is where it should be hooked in.
          *
          *      customLink {Function} (scope, element) :
-         *          scope {AngularJS Scope} - Isolated scope of the directive.
-         *          element {HTML Element} - HTML element of directive.
+         *          scope {Object} - Isolated scope of the directive.
+         *          element {HTMLElement} - HTML element of directive.
          *
          * Examples are provided below detailing the different use cases for the ParlayWidgetTemplate service.
          *
@@ -92,8 +92,8 @@
             /**
              * If customLink available, calls the user provided link function during directive linking.
              * Notifies parent that linking is complete.
-             * @param scope {AngularJS Scope} - Isolated scope of the directive.
-             * @param element {HTML Element} - HTML element of directive.
+             * @param scope {Object} - Isolated scope of the directive.
+             * @param element {HTMLElement} - HTML element of directive.
              * @param attrs {Object} - Key/value pairs of normalized attribute names and their attribute values.
              * @param controller {Object} - The directive's required controller instance or its own controller (if any).
              * @param transcludeFn {Function} - Transclude linking function pre-bound to the correct transclusion scope.
@@ -125,8 +125,8 @@
              *      documentation.
              *
              *      @attribute {Array} items - Items the user selected during widget configuration.
-             *      @attribute {Number|String|Object} transformedValue - Result of the transform statement defined during widget configuration.
-             *      @attribute {AngularJS Controller} widgetsCtrl - Controller of the widget workspace.
+             *      @attribute {(Number|String|Object)} transformedValue - Result of the transform statement defined during widget configuration.
+             *      @attribute {Object} widgetsCtrl - Controller of the widget workspace.
              *      @attribute {Function} edit - Launches the widget configuration dialog.
              *      @attribute {Number} uid - A unique ID assigned to each ParlayWidget, it is used for deletion, duplication and other
              *      bookkeeping activities.

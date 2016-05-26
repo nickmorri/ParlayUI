@@ -33,7 +33,7 @@
          * https://github.com/NeilFraser/JS-Interpreter/
          *
          * @attribute {String} functionString - JavaScript code that should be executed on this.run()
-         * @attribute {JS-Interpreter} interpreter - JS-Interpreter instance.
+         * @attribute {Object} interpreter - JS-Interpreter instance.
          * @attribute {String} constructionError - Initially undefined, if a construction error occurs it will be set
          * error.toString() representation.
          *
@@ -120,7 +120,7 @@
 
         /**
          * Creates and returns a JS-Interpreter native Function that can be attached to a JS-Interpreter scope.
-         * @param {JS-Interpreter} interpreter - JS-Interpreter instance that will be used to construct the native Function.
+         * @param {Object} interpreter - JS-Interpreter instance that will be used to construct the native Function.
          * @param {Function} funcRef - JavaScript Function that will be used during interpretation.
          * @param {Object} funcThis - this context for the funcRef JavaScript Function during interpretation.
          * @returns {Object} - JS-Interpreter native Function that can be attached to JS-Interpreter scope.
@@ -133,7 +133,7 @@
 
         /**
          * Creates and returns a JS-Interpreter Object that can be attached to a JS-Interpreter scope.
-         * @param {JS-Interpreter} interpreter - JS-Interpreter instance that will be used to construct the native Function.
+         * @param {Object} interpreter - JS-Interpreter instance that will be used to construct the native Function.
          * @param {Object} objectRef - JavaScript Object that will be used during interpretation.
          * @returns {Object} - JS-Interpreter Object that can be attached to a JS-Interpreter scope.
          */
@@ -159,8 +159,8 @@
 
         /**
          * Binds a property on the JS-Interpreter scope to the given JavaScript Function.
-         * @param {JS-Interpreter scope} scope - Execution scope that the Function will be attached to.
-         * @param {JS-Interpreter} interpreter - JS-Interpreter instance that will be used to attach the Function.
+         * @param {Object} scope - Execution scope that the Function will be attached to.
+         * @param {Object} interpreter - JS-Interpreter instance that will be used to attach the Function.
          * @param {Function} funcRef - JavaScript Function that will be used during interpretation.
          * @param {String} optionalName - If provided this will be the name used on the scope to reference the funcRef.
          */
@@ -174,8 +174,8 @@
 
         /**
          * Binds a property on the JS-Interpreter scope to the given JavaScript Object.
-         * @param {JS-Interpreter scope} scope - Execution scope that the Object will be attached to.
-         * @param {JS-Interpreter} interpreter - JS-Interpreter instance that will be used to attach the Object.
+         * @param {Object} scope - Execution scope that the Object will be attached to.
+         * @param {Object} interpreter - JS-Interpreter instance that will be used to attach the Object.
          * @param objectRef - JavaScript Object that will be used during interpretation.
          * @param {String} optionalName - If provided this will be the name used on the scope to reference the funcRef.
          */
@@ -189,8 +189,8 @@
 
         /**
          * Binds multiple properties on the JS-Interpreter scope.
-         * @param {JS-Interpreter scope} scope - Execution scope that the Objects will be attached to.
-         * @param {JS-Interpreter} interpreter - JS-Interpreter instance that will be used to attach the Objects.
+         * @param {Object} scope - Execution scope that the Objects will be attached to.
+         * @param {Object} interpreter - JS-Interpreter instance that will be used to attach the Objects.
          * @param {Array} items - Array of Objects that will be attached to the given scope.
          */
         ParlayInterpreter.prototype.attachItems = function (scope, interpreter, items) {

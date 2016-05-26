@@ -93,7 +93,7 @@
          * @param {String} widget_name - Name given to the ParlayWidget.
          * @param {String} widget_uid - Unique ID assigned to ParlayWidget.
          * @param {HTMLElement} element - Element that we should attach event listeners to.
-         * @param {AngularJS scope} scope - AngularJS scope that the elements are associated with.
+         * @param {Object} scope - AngularJS scope that the elements are associated with.
          * @param {Array} events - Array of Strings of the event names we want to listen for.
          */
         ParlayWidgetInputManager.prototype.registerElement = function (widget_name, widget_uid, element_name, element, scope, events) {

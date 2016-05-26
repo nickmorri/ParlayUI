@@ -25,7 +25,7 @@
          * @attribute {JS-Interpreter} interpreter - JS-Interpreter instance.
          * @attribute {String} constructionError - Initially undefined, if a construction error occurs it will be set
          * error.toString() representation.
-         * @attribute {Number|String|Object} value - Result of interpretation of functionString and the state of the
+         * @attribute {(Number|String|Object)} value - Result of interpretation of functionString and the state of the
          * interpreter scope.
          * @attribute {Array} items - Contains the items that have been added to the transformer instance.
          * @attribute {Array} handlers - Contains the handlers for the items that have been added to the transformer

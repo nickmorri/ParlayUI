@@ -22,7 +22,7 @@
          * https://github.com/NeilFraser/JS-Interpreter/
          *
          * @attribute {String} functionString - JavaScript code that should be executed on this.run()
-         * @attribute {JS-Interpreter} interpreter - JS-Interpreter instance.
+         * @attribute {Object} interpreter - JS-Interpreter instance.
          * @attribute {String} constructionError - Initially undefined, if a construction error occurs it will be set
          * error.toString() representation.
          *
@@ -80,7 +80,7 @@
 
         /**
          * Creates and returns a JS-Interpreter Object that can be attached to a JS-Interpreter scope.
-         * @param {JS-Interpreter} interpreter - JS-Interpreter instance that will be used to construct the native Function.
+         * @param {Object} interpreter - JS-Interpreter instance that will be used to construct the native Function.
          * @param {Event} domEvent - Event fired from a HTMLElement.
          * @returns {Object} - JS-Interpreter Object that can be attached to a JS-Interpreter scope.
          */
@@ -104,8 +104,8 @@
 
         /**
          * Binds a property on the JS-Interpreter scope to the given domEvent.
-         * @param {JS-Interpreter scope} scope - Execution scope that the Object will be attached to.
-         * @param {JS-Interpreter} interpreter - JS-Interpreter instance that will be used to attach the Object.
+         * @param {Object} scope - Execution scope that the Object will be attached to.
+         * @param {Object} interpreter - JS-Interpreter instance that will be used to attach the Object.
          * @param {Event} domEvent - Event fired from a HTMLElement.
          * @param {String} optionalName - If provided this will be the name used on the scope to reference the domEvent.
          */

@@ -34,6 +34,20 @@
             });
         };
 
+        this.requestDiscovery = function () {
+            PromenadeBroker.requestDiscovery(true);
+        };
+
+        this.openWorkspaceManagementDialog = function (event) {
+            (new ParlayGenericSaveLoadDialog(event, ParlayItemManager, {
+                entry: "workspace",
+                entries: "workspaces",
+                title: "workspaces",
+                child: "item",
+                children: "items"
+            }));
+        };
+
         this.openNotificationSidenav = function () {
             $mdSidenav("notifications").open();
         };

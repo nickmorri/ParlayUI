@@ -11,10 +11,20 @@
     ParlayGenericSaveLoadDialogFactory.$inject = ["$mdDialog"];
     function ParlayGenericSaveLoadDialogFactory ($mdDialog) {
 
-        function ParlayGenericSaveLoadDialog () {}
-
-        ParlayGenericSaveLoadDialog.prototype.show = function (event, manager, options) {
-            return $mdDialog.show({
+        /**
+         * A generic save / load dialog that allows the end-user to interact with a entry manager.
+         * @constructor
+         * @param {Event} event - DOM Event that can be used to set an animation source for $mdDialog.
+         * @param {Object} manager - A manager instance where entries will be interacted with.
+         * @param {Object} options - Contains manager specific terminology.
+         * @param {Object} options.entry - Name of singular entry.
+         * @param {Object} options.entries - Name of plural entries.
+         * @param {Object} options.title - Title of the dialog.
+         * @param {Object} options.child - Name of a singular child of an entry.
+         * @param {Object} options.children - Name of plural children of an entry.
+         */
+        function ParlayGenericSaveLoadDialog (event, manager, options) {
+            $mdDialog.show({
                 templateUrl: "../parlay_components/common/directives/parlay-generic-save-load-dialog.html",
                 targetEvent: event,
                 controller: "ParlayGenericSaveLoadDialogController",
@@ -25,12 +35,22 @@
                     options: options
                 }
             });
-        };
+        }
 
-        return new ParlayGenericSaveLoadDialog();
+        return ParlayGenericSaveLoadDialog;
     }
 
     ParlayGenericSaveLoadDialogController.$inject = ["$scope", "$mdDialog", "$mdMedia", "ParlayNotification", "manager", "options"];
+    /**
+     * Controller for the ParlayGenericSaveLoadDialog $mdDialog.
+     * @param $scope
+     * @param $mdDialog
+     * @param $mdMedia
+     * @param ParlayNotification
+     * @param manager
+     * @param options
+     * @constructor
+     */
     function ParlayGenericSaveLoadDialogController ($scope, $mdDialog, $mdMedia, ParlayNotification, manager, options) {
 
         var ctrl = this;
@@ -180,7 +200,7 @@
 
         /**
          * Emulates click on hidden input element which will open file selection dialog.
-         * @param event - Mouse click event
+         * @param {Event} event - Mouse click event
          */
         function importAll (event) {
             event.target.parentElement.parentElement.getElementsByTagName("input")[0].click();
@@ -188,7 +208,7 @@
 
         /**
          * Called when input element is changed. Contents of file are passed to ParlayStore once loaded.
-         * @param event - Mouse click event
+         * @param {Event} event - Mouse click event
          */
         function fileChanged (event) {
 

@@ -1,19 +1,30 @@
 (function () {
 	"use strict";
 
+    /**
+     * @module ParlayStore
+     *
+     * @description
+	 * ParlayStore is a wrapper to the HTML Web Storage APIs.
+	 * Each ParlayStore instance is created with a namespace which allows management of a ParlayStore
+	 * for different modules without worry of items bumping into each other.
+     *
+	 */
+
 	var module_dependencies = [];
 
 	angular.module('parlay.store', module_dependencies)
 		.factory('ParlayStore', ParlayStore)
 		.factory('ParlayStoreService', ParlayStoreService);
 
-	/**
-	 * ParlayStore is a wrapper to the HTML Web Storage APIs.
-	 * Each ParlayStore instance is created with a namespace which allows management of a ParlayStore
-	 * for different modules without worry of items bumping into each other.
-	 */
 
 	ParlayStore.$inject = ["ParlayStoreService"];
+    /**
+     * Holds references to the various ParlayStore namespaces.
+     * @constructor module:ParlayStore.ParalyStoreService
+     * @param ParlayStoreService
+     * @returns {Function} - ParlayStore namespace getter.
+     */
 	function ParlayStore (ParlayStoreService) {
 
 		var active_instances = {};
@@ -33,17 +44,27 @@
 
 	}
 
-	function ParlayStoreService() {
+	function ParlayStoreService () {
 
 		/**
-		 * Constructor for ParlayStore Objects.
+		 * Interface betwen the Storage API and Parlay. Allows for namespacing of localStorage.
+         * @constructor module:ParlayStore.ParlayStore
 		 * @param {String} namespace - ParlayStore operations will be performed on this namespace.
 		 */
 		function ParlayStore(namespace) {
+
+            /**
+             * Name of space to separate this ParlayStore's items into.
+             * @member module:ParlayStore.ParlayStore#namespace
+             * @public
+             * @type {String}
+             */
 			this.namespace = namespace;
 
 			/**
-			 * Returns the count of the items in the ParlayStore's namespace in localStorage.
+			 * Count of the items in the ParlayStore's namespace in localStorage.
+             * @member module:ParlayStore.ParlayStore#length
+             * @public
 			 * @returns {Number} - Number of items.
 			 */
 			Object.defineProperty(this, "length", {
@@ -56,6 +77,8 @@
 
 		/**
 		 * Checks if the given key is present in available in localStorage.
+         * @member module:ParlayStore.ParlayStore#has
+         * @public
 		 * @param {String} key - Key of the item we are looking for in localStorage.
 		 * @returns {Boolean} - True if available, false otherwise.
 		 */
@@ -65,6 +88,8 @@
 
 		/**
 		 * Retrieves the requested key from localStorage.
+         * @member module:ParlayStore.ParlayStore#get
+         * @public
 		 * @param {String} key - Key of the item we are looking for in localStorage.
 		 * @returns {Object} - Return the requested Object if available, undefined otherwise.
 		 */
@@ -75,6 +100,8 @@
 
 		/**
 		 * Retrieves the requested key from localStorage.
+         * @member module:ParlayStore.ParlayStore#set
+         * @public
 		 * @param {String} key - Key of the item we are storing in localStorage.
 		 * @param {Object} value - Object that we storing in localStorage.
 		 * @returns {Object} - Return the requested Object if available, undefined otherwise.
@@ -85,6 +112,8 @@
 
 		/**
 		 * Remove the key from localStorage.
+         * @member module:ParlayStore.ParlayStore#remove
+         * @public
 		 * @param {String} key - Key of the item we are removing from localStorage.
 		 */
 		ParlayStore.prototype.remove = function (key) {
@@ -93,6 +122,8 @@
 
 		/**
 		 * Removes all items in the namespace from localStorage.
+         * @member module:ParlayStore.ParlayStore#clear
+         * @public
 		 */
 		ParlayStore.prototype.clear = function () {
 			this.keys().forEach(function (key) {
@@ -102,6 +133,8 @@
 
 		/**
 		 * Returns an Array of all the keys available in the localStorage namespace.
+         * @member module:ParlayStore.ParlayStore#keys
+         * @public
 		 * @returns {Array} - item keys from localStorage in namespace.
 		 */
 		ParlayStore.prototype.keys = function () {
@@ -117,6 +150,8 @@
 
 		/**
 		 * Returns an Object map of all the items available in the localStorage namespace.
+         * @member module:ParlayStore.ParlayStore#values
+         * @public
 		 * @returns {Object} - items from localStorage in namespace.
 		 */
 		ParlayStore.prototype.values = function () {
@@ -128,6 +163,8 @@
 
 		/**
 		 * Loads a String of all items in the namespace into localStorage.
+         * @member module:ParlayStore.ParlayStore#import
+         * @public
 		 * @param {String} data - JSON stringified Object of items in the namespace
 		 */
 		ParlayStore.prototype.import = function (data) {
@@ -138,6 +175,9 @@
 		};
 
 		/**
+         * Returns all items stored in this namespace.
+         * @member module:ParlayStore.ParlayStore#export
+         * @public
 		 * @returns {Object} - All items in the current namespace.
 		 */
 		ParlayStore.prototype.export = function () {

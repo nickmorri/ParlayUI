@@ -1,6 +1,10 @@
 (function () {
     "use strict";
 
+    /**
+     * @module PromenadeDirectMessage
+     */
+
     var module_dependencies = ["parlay.protocols.protocol", "promenade.items.standarditem"];
 
     angular
@@ -13,16 +17,29 @@
         /**
          * PromenadeDirectMessageProtocol constructor.
          * Prototypically inherits from ParlayProtocol.
-         * @constructor
+         * @constructor module:PromenadeDirectMessage.PromenadeDirectMessage
+         * @extends module:ParlayProtocol.ParlayProtocol
          */
         function PromenadeDirectMessageProtocol(configuration) {
             // Call the constructor of the prototype we inherit from.
             ParlayProtocol.call(this, configuration);
 
-            // Set our own item_factory.
+            /**
+             * Reference to the factory used to produce models for items connected to the protocol.
+             * Overrides ParlayProtocol's item_factory with PromenadeStandardItem factory.
+             * @member module:PromenadeDirectMessage.PromenadeDirectMessage#item_factory
+             * @public
+             * @type {Object}
+             */
             this.item_factory = PromenadeStandardItem;
 
-            // Defining custom attributes.
+
+            /**
+             * Incrementing message ID.
+             * @member module:PromenadeDirectMessage.PromenadeDirectMessage#current_message_id
+             * @public
+             * @type {Number}
+             */
             this.current_message_id = 200;
 
         }
@@ -32,6 +49,8 @@
 
         /**
          * Consumes a message ID by incrementing then returning this new ID.
+         * @member module:PromenadeDirectMessage.PromenadeDirectMessage#consumeMessageId
+         * @public
          * @returns {Number} - current message ID
          */
         PromenadeDirectMessageProtocol.prototype.consumeMessageId = function () {
@@ -40,6 +59,8 @@
 
         /**
          * Returns the current message ID.
+         * @member module:PromenadeDirectMessage.PromenadeDirectMessage#getMessageId
+         * @public
          * @returns {Number} - current message ID.
          */
         PromenadeDirectMessageProtocol.prototype.getMessageId = function () {
@@ -48,6 +69,8 @@
 
         /**
          * Constructs message topics from the partially built given message.
+         * @member module:PromenadeDirectMessage.PromenadeDirectMessage#buildMessageTopics
+         * @public
          * @param {Object} topics - partially constructed message.
          * @returns {Object} - partially constructed message with topics.
          */
@@ -60,6 +83,8 @@
 
         /**
          * Constructs response topics from the partially built given message.
+         * @member module:PromenadeDirectMessage.PromenadeDirectMessage#buildResponseTopics
+         * @public
          * @param {Object} topics - topics portion of message, to and from are swapped.
          * @param {Object} additional_topics - additional topics that are expected on response.
          * @param {Boolean} response_requires_msg_id - include the topics MSG_ID
@@ -93,6 +118,8 @@
 
         /**
          * Examines response and returns True if message status ok.
+         * @member module:PromenadeDirectMessage.PromenadeDirectMessage#isResponseOk
+         * @public
          * @param {Object} response - Map of key/value pairs.
          * @returns {Boolean} - True if MSG_STATUS is not ERROR or WARNING
          */
@@ -102,6 +129,8 @@
 
         /**
          * Sends message with topics specific to PromenadeDirectMessage.
+         * @member module:PromenadeDirectMessage.PromenadeDirectMessage#sendMessage
+         * @public
          * @param {Object} topics - Map of key/value pairs.
          * @param {Object} contents - Map of key/value pairs.
          * @param {Object} response_topics - Map of key/value pairs.

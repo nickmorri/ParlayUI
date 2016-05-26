@@ -7,13 +7,11 @@
         .module("parlay.items", module_dependencies)
         .config(ItemsConfiguration);
 
-    /**
-     * @name ItemsConfiguration
-     * @param $stateProvider - Service provided by ui.router
-     * @description - The ItemsConfiguration sets up the items state.
-     */
-
     ItemsConfiguration.$inject = ["$stateProvider"];
+    /**
+     * The sets up the items state for ui.router.
+     * @param {Object} $stateProvider - Service provided by ui.router
+     */
     function ItemsConfiguration ($stateProvider) {
         $stateProvider.state("items", {
             url: "/items",

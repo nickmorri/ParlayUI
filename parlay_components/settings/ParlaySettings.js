@@ -1,6 +1,10 @@
 (function () {
     "use strict";
 
+    /**
+     * @module ParlaySettings
+     */
+
     var module_dependencies = ["parlay.store"];
 
     angular
@@ -15,16 +19,23 @@
 
         /**
          * Parlay service which manages access and modification of user configurable settings.
-         * @constructor
+         * @constructor module:ParlaySettings.ParlaySettings
          */
         function ParlaySettings () {
 
-            // Stores default values for settings.
+            /**
+             * Stores default values for settings.
+             * @member module:ParlaySettings.ParlaySettings#defaults
+             * @public
+             * @type {Object}
+             */
             this.defaults = {};
         }
 
         /**
          * Retrieves stored setting value from ParlayStore for given key.
+         * @member module:ParlaySettings.ParlaySettings#get
+         * @public
          * @param {String} key - Name of setting.
          * @returns {*} - Stored setting value.
          */
@@ -34,6 +45,8 @@
 
         /**
          * Stores given setting key/value in ParlayStore.
+         * @member module:ParlaySettings.ParlaySettings#set
+         * @public
          * @param {String} key - Name of setting.
          * @param value - Value to be stored.
          */
@@ -49,6 +62,8 @@
 
         /**
          * Checks if given key exists in ParlayStore.
+         * @member module:ParlaySettings.ParlaySettings#has
+         * @public
          * @param {String} key - Name of setting.
          * @returns {Boolean} - True if key exists, false otherwise.
          */
@@ -58,6 +73,8 @@
 
         /**
          * Stores the default values for the given key.
+         * @member module:ParlaySettings.ParlaySettings#registerDefault
+         * @public
          * @param {String} key - Name of setting.
          * @param value - Default values associated with the given key.
          */
@@ -67,6 +84,8 @@
 
         /**
          * Restores the value of the given key to the default values if they were registered.
+         * @member module:ParlaySettings.ParlaySettings#restoreDefault
+         * @public
          * @param {String} key - Name of setting.
          */
         ParlaySettings.prototype.restoreDefault = function (key) {
@@ -74,7 +93,6 @@
         };
 
         return new ParlaySettings();
-
     }
 
 }());

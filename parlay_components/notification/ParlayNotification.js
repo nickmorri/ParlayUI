@@ -13,8 +13,6 @@
      *
      * ParlayNotification.show({content: "Text you want to display."});
      *
-     * With action button.
-     *
      * @example
      *
      * ParlayNotification.show({

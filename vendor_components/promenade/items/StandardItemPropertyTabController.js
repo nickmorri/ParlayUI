@@ -12,12 +12,12 @@
         .controller("PromenadeStandardItemCardPropertyTabController", PromenadeStandardItemCardPropertyTabController)
         .directive("promenadeStandardItemCardProperty", PromenadeStandardItemCardProperty);
 
+    PromenadeStandardItemCardPropertyTabController.$inject = ["$q"];
     /**
      * Controller constructor for the property tab.
      * @constructor
      * @param {Object} $q - AngularJS $q Service.
      */
-    PromenadeStandardItemCardPropertyTabController.$inject = ["$q"];
     function PromenadeStandardItemCardPropertyTabController($q) {
         // Controller state attribute, true if a request has been sent but the response has not been received.
         this.waiting = false;

@@ -119,6 +119,7 @@
         return PromenadeStandardCommandMessage;
     }
 
+    PromenadeStandardItemCardCommandTabController.$inject = ["$scope", "ParlayNotification", "PromenadeStandardCommandMessage"];
     /**
      * Controller constructor for the command tab.
      * @constructor
@@ -126,7 +127,6 @@
      * @param {Object} $timeout - AngularJS timeout Service.
      * @param {Object} ParlayNotification - ParlayNotification Service.
      */
-    PromenadeStandardItemCardCommandTabController.$inject = ["$scope", "ParlayNotification", "PromenadeStandardCommandMessage"];
     function PromenadeStandardItemCardCommandTabController($scope, ParlayNotification, PromenadeStandardCommandMessage) {
 
         // Due to the way JavaScript prototypical inheritance works and AngularJS scoping we want to enclose the message Object within another object.
@@ -314,6 +314,7 @@
         };
     }
 
+    PromenadeStandardItemCardCommandContainerController.$inject = ["$scope", "ParlayItemPersistence", "ParlayUtility"];
     /**
      * Controller constructor for command container.
      * @constructor
@@ -321,7 +322,6 @@
      * @param {Object} ParlayItemPersistence - ParlayItemPersistence Service.
      * @param {Object} ParlayUtility - ParlayUtility Service.
      */
-    PromenadeStandardItemCardCommandContainerController.$inject = ["$scope", "ParlayItemPersistence", "ParlayUtility"];
     function PromenadeStandardItemCardCommandContainerController ($scope, ParlayItemPersistence, ParlayUtility) {
         var container = ParlayUtility.relevantScope($scope, 'container').container;
         var directive_name = 'parlayItemCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
@@ -369,6 +369,7 @@
         };
     }
 
+    PromenadeStandardItemCardCommandContainer.$inject = ["RecursionHelper"];
     /**
      * Directive constructor for PromenadeStandardItemCardCommandContainer.
      * @param {Object} RecursionHelper - Allows recursive nesting of this directive within itself for sub field support.
@@ -376,7 +377,6 @@
      * @param {Object} ParlayUtility - Parlay Utility Service.
      * @returns {Object} - Directive configuration.
      */
-    PromenadeStandardItemCardCommandContainer.$inject = ["RecursionHelper"];
     function PromenadeStandardItemCardCommandContainer(RecursionHelper) {
         return {
             scope: {

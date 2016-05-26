@@ -71,12 +71,12 @@
         return this.item.log;
     };
 
+    PromenadeStandardItemCardLogItemController.$inject = ['ParlayNotification'];
     /**
      * Controller for Parlay Card Log Item.
      * @param {Object} ParlayNotification - Displays notifications to user.
      * @constructor
      */
-    PromenadeStandardItemCardLogItemController.$inject = ['ParlayNotification'];
     function PromenadeStandardItemCardLogItemController (ParlayNotification) {
         this.copy = function () {
             ParlayNotification.show({content: JSON.stringify(angular.copy(this.message)).copyToClipboard() ?
@@ -101,13 +101,13 @@
         };
     }
 
+    PromenadeStandardItemCardLogItem.$inject = ["ParlayNotification"];
     /**
      * Parlay Card Log Item directive.
      * @returns {Object}
      * @constructor
      */
     /* istanbul ignore next */
-    PromenadeStandardItemCardLogItem.$inject = ["ParlayNotification"];
     function PromenadeStandardItemCardLogItem() {
         return {
             scope: { message: "=" },

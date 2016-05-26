@@ -13,6 +13,7 @@
         .controller("PromenadeStandardItemCardGraphTabConfigurationController", PromenadeStandardItemCardGraphTabConfigurationController)
         .directive('promenadeStandardItemCardGraph', PromenadeStandardItemCardGraph);
 
+    PromenadeStandardItemCardGraphTabController.$inject = ["$scope", "$mdDialog", "$interval", "ParlayUtility", "ParlayItemPersistence"];
     /**
      * Controller constructor for the graph tab.
      * @constructor
@@ -23,7 +24,6 @@
      * @param {Object} ParlayUtility - Service that provides utility functions.
      * @param {Object} ParlayItemPersistence - Service that provides automatic persistence of scope variables to localStorage.
      */
-    PromenadeStandardItemCardGraphTabController.$inject = ["$scope", "$mdDialog", "$interval", "ParlayUtility", "ParlayItemPersistence"];
     function PromenadeStandardItemCardGraphTabController($scope, $mdDialog, $interval, ParlayUtility, ParlayItemPersistence) {
 
         var ctrl = this;
@@ -83,6 +83,7 @@
 
     }
 
+    PromenadeStandardItemCardGraphTabConfigurationController.$inject = ["$scope", "$mdDialog", "$mdMedia"];
     /**
      * Controller constructor for the graph configuration dialog.
      * @constructor
@@ -90,7 +91,6 @@
      * @param {Object} $mdDialog - Dialog modal service.
      * @param {Object} $mdMedia - Media size detection service.
      */
-    PromenadeStandardItemCardGraphTabConfigurationController.$inject = ["$scope", "$mdDialog", "$mdMedia"];
     function PromenadeStandardItemCardGraphTabConfigurationController($scope, $mdDialog, $mdMedia) {
 
         var ctrl = this;

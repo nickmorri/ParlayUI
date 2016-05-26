@@ -9,6 +9,7 @@
         .controller("PromenadeSmoothieChartController", PromenadeSmoothieChartController)
         .directive('promenadeSmoothieChart', PromenadeSmoothieChart);
 
+    PromenadeSmoothieChartRun.$inject = ["ParlaySettings"];
     /**
      * @name promenadeSmoothieChart
      * @restrict E
@@ -33,7 +34,6 @@
      * @param {Number} [delay=1000] delay - Add delay so upcoming values are known before we need to plot the value.
      * @param {Function} smoothieFn - Configuration retrieval function.
      */
-    PromenadeSmoothieChartRun.$inject = ["ParlaySettings"];
     function PromenadeSmoothieChartRun(ParlaySettings) {
         ParlaySettings.registerDefault("graph", {label_size: 12});
 
@@ -42,14 +42,14 @@
         }
     }
 
+    PromenadeSmoothieChartController.$inject = ["$scope"];
     /**
      * Controller constructor for the PromenadeSmoothieChart.
      * @constructor
-     * @param {AngularJS $scope} scope - A AngularJS $scope Object.
-     * @param {AngularJS Service} $interval - AngularJS interval Service.
-     * @param {Parlay Service} ParlaySettings - ParlaySettings Service.
+     * @param {Object} scope - A AngularJS $scope Object.
+     * @param {Object} $interval - AngularJS interval Service.
+     * @param {Object} ParlaySettings - ParlaySettings Service.
      */
-    PromenadeSmoothieChartController.$inject = ["$scope"];
     function PromenadeSmoothieChartController (scope) {
 
         var ctrl = this;
@@ -125,13 +125,13 @@
 
     }
 
+    PromenadeSmoothieChart.$inject = ['$window', "ParlaySettings"];
     /**
      * Directive constructor for PromenadeStandardItemCardProperty.
-     * @param {AngularJS Service} $window - AngularJS Window Service.
-     * @param {Parlay Service} ParlaySettings - ParlaySettings Service.
+     * @param {Object} $window - AngularJS Window Service.
+     * @param {Object} ParlaySettings - ParlaySettings Service.
      * @returns {Object} - Directive configuration.
      */
-    PromenadeSmoothieChart.$inject = ['$window', "ParlaySettings"];
     function PromenadeSmoothieChart ($window, ParlaySettings) {
 
         /**

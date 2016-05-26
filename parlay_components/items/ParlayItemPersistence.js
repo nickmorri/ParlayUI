@@ -56,7 +56,7 @@
          * Establishes an registration that will store the requested value when the workspace is saved.
          * @param {String} directive - Name of the directive where the requested attribute is to persisted.
          * @param {String} attribute - Name of the attribute that has been requested for persistence.
-         * @param (AngularJS $scope} $scope - $scope Object where the requested attribute resides.
+         * @param {Object} $scope - $scope Object where the requested attribute resides.
          * @param {Function} custom_restore - Function that will perform the $scope variable restoration.
          * @returns {Function} - Deregistration function, will remove the registration established by the monitor request.
          */

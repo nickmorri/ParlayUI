@@ -49,7 +49,7 @@
 
             /**
              * Generates entries for Ace editor autocomplete consumed by ParlayWidget.
-             * @returns {Array[Object]} - Entries used to represent the PromenadeStandardCommand.
+             * @returns {Array.Object} - Entries used to represent the PromenadeStandardCommand.
              */
             function generateAutocompleteEntries () {
                 // Array of entries of the available commands.

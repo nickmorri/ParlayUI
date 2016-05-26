@@ -122,9 +122,9 @@
     /**
      * Controller constructor for the command tab.
      * @constructor
-     * @param {AngularJS $scope} $scope - A AngularJS $scope Object.
-     * @param {AngularJS Service} $timeout - AngularJS timeout Service.
-     * @param {Parlay Service} ParlayNotification - ParlayNotification Service.
+     * @param {Object} $scope - A AngularJS $scope Object.
+     * @param {Object} $timeout - AngularJS timeout Service.
+     * @param {Object} ParlayNotification - ParlayNotification Service.
      */
     PromenadeStandardItemCardCommandTabController.$inject = ["$scope", "ParlayNotification", "PromenadeStandardCommandMessage"];
     function PromenadeStandardItemCardCommandTabController($scope, ParlayNotification, PromenadeStandardCommandMessage) {
@@ -317,9 +317,9 @@
     /**
      * Controller constructor for command container.
      * @constructor
-     * @param {AngularJS $scope} $scope - A AngularJS $scope Object.
-     * @param {Parlay Service} ParlayItemPersistence - ParlayItemPersistence Service.
-     * @param {Parlay Service} ParlayUtility - ParlayUtility Service.
+     * @param {Object} $scope - A AngularJS $scope Object.
+     * @param {Object} ParlayItemPersistence - ParlayItemPersistence Service.
+     * @param {Object} ParlayUtility - ParlayUtility Service.
      */
     PromenadeStandardItemCardCommandContainerController.$inject = ["$scope", "ParlayItemPersistence", "ParlayUtility"];
     function PromenadeStandardItemCardCommandContainerController ($scope, ParlayItemPersistence, ParlayUtility) {
@@ -362,7 +362,7 @@
         /**
          * Returns a given field's sub fields.
          * @param {Object} field - the field we are interested in.
-         * @returns {Object|Array} - the fields sub fields, may be Object or Array.
+         * @returns {(Object|Array)} - the fields sub fields, may be Object or Array.
          */
         $scope.getSubFields = function (field) {
             return $scope.wrapper.message[field.msg_key + '_' + field.input].sub_fields;
@@ -371,9 +371,9 @@
 
     /**
      * Directive constructor for PromenadeStandardItemCardCommandContainer.
-     * @param {AngularJS Service} RecursionHelper - Allows recursive nesting of this directive within itself for sub field support.
-     * @param {Parlay Service} ParlayItemPersistence - Allows directive to persist values that it should retain between sessions.
-     * @param {Parlay Service} ParlayUtility - Parlay Utility Service.
+     * @param {Object} RecursionHelper - Allows recursive nesting of this directive within itself for sub field support.
+     * @param {Object} ParlayItemPersistence - Allows directive to persist values that it should retain between sessions.
+     * @param {Object} ParlayUtility - Parlay Utility Service.
      * @returns {Object} - Directive configuration.
      */
     PromenadeStandardItemCardCommandContainer.$inject = ["RecursionHelper"];

@@ -15,7 +15,7 @@
     /**
      * Controller constructor for the property tab.
      * @constructor
-     * @param {AngularJS Service} $q - AngularJS $q Service.
+     * @param {Object} $q - AngularJS $q Service.
      */
     PromenadeStandardItemCardPropertyTabController.$inject = ["$q"];
     function PromenadeStandardItemCardPropertyTabController($q) {

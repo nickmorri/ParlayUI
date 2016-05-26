@@ -73,7 +73,7 @@
 
     /**
      * Controller for Parlay Card Log Item.
-     * @param {Parlay Service} ParlayNotification - Displays notifications to user.
+     * @param {Object} ParlayNotification - Displays notifications to user.
      * @constructor
      */
     PromenadeStandardItemCardLogItemController.$inject = ['ParlayNotification'];
@@ -103,7 +103,7 @@
 
     /**
      * Parlay Card Log Item directive.
-     * @returns {AngularJS directive factory}
+     * @returns {Object}
      * @constructor
      */
     /* istanbul ignore next */

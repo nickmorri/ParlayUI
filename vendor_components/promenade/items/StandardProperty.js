@@ -114,7 +114,7 @@
 
             /**
              * Sets the value of the PromenadeStandardProperty to the given value.
-             * @param {Number|String|Object|*} value - Value to set.
+             * @param {(Number|String|Object)} value - Value to set.
              * @returns {$q.deferred.Promise} - Resolved on response receipt.
              */
             function set (value) {
@@ -147,7 +147,7 @@
 
             /**
              * Generates entry for Ace editor autocomplete consumed by ParlayWidget.
-             * @returns {Array[Object]} - Entry used to represent the PromenadeStandardProperty.
+             * @returns {Array.Object} - Entry used to represent the PromenadeStandardProperty.
              */
             function generateAutocompleteEntries () {
 

@@ -99,7 +99,7 @@
 
             /**
              * Generates entry for Ace editor autocomplete consumed by ParlayWidget.
-             * @returns {Array[Object]} - Entry used to represent the PromenadeStandardDatastream.
+             * @returns {Array.Object} - Entry used to represent the PromenadeStandardDatastream.
              */
             function generateAutocompleteEntries () {
 

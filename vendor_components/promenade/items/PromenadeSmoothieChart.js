@@ -9,9 +9,9 @@
         .controller("PromenadeSmoothieChartController", PromenadeSmoothieChartController)
         .directive('promenadeSmoothieChart', PromenadeSmoothieChart);
 
-    PromenadeSmoothieChartRun.$inject = ["ParlaySettings"];
+
     /**
-     * @name promenadeSmoothieChart
+     * @module PromenadeSmoothieChart
      * @restrict E
      *
      * @description
@@ -34,6 +34,9 @@
      * @param {Number} [delay=1000] delay - Add delay so upcoming values are known before we need to plot the value.
      * @param {Function} smoothieFn - Configuration retrieval function.
      */
+
+
+    PromenadeSmoothieChartRun.$inject = ["ParlaySettings"];
     function PromenadeSmoothieChartRun(ParlaySettings) {
         ParlaySettings.registerDefault("graph", {label_size: 12});
 

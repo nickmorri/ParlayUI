@@ -7,15 +7,14 @@
         .module("parlay.items.item.card", module_dependencies)
         .directive("parlayItemCard", ParlayItemCard);
 
+    ParlayItemCard.$inject = ["$compile", "ParlayItemPersistence"];
     /**
-     * @name ParlayItemCard
-     * @param $compile - AngularJS service used to create a template function used to link scope and template.
-     * @param ParlayItemPersistence - Parlay service used to persist scope values into local storage.
+     * @constructor
      * @description
      * Directive that displays data from a particular ParlayItem.
-     * @returns AngularJS directive
+     * @param {Object} $compile - AngularJS service used to create a template function used to link scope and template.
+     * @param {Object} ParlayItemPersistence - Parlay service used to persist scope values into local storage.
      */
-    ParlayItemCard.$inject = ["$compile", "ParlayItemPersistence"];
     function ParlayItemCard ($compile, ParlayItemPersistence) {
         return {
             templateUrl: "../parlay_components/items/directives/parlay-item-card.html",

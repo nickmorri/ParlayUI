@@ -1,6 +1,10 @@
 (function () {
     "use strict";
 
+    /**
+     * @module ParlaySocket
+     */
+
     var module_dependencies = [];
 
     angular
@@ -54,29 +58,38 @@
         }
     });
 
-    function CallbackContainerFactory() {
+    function CallbackContainerFactory () {
 
         /**
          * Container for registered topics callbacks.
          * Uses EMCAScript 2015 Map() Object internally for storing mappings.
-         * @constructor
+         * @constructor module:ParlaySocket.CallbackContainer
          */
         function CallbackContainer () {
 
-            // EMCAScript 2015 Map Object.
+            /**
+             * EMCAScript 2015 Map Object.
+             * @type {Map}
+             * @access private
+             */
             var internal_map = new Map();
 
-            // This won't collide with any possible hash because it doesn't match the get_hash function that other keys use.
-            // This is the key that will be used for the callback list.
+            /**
+             * This won't collide with any possible hash because it doesn't match the get_hash function that other keys use.
+             * This is the key that will be used for the callback list.
+             * @type {String}
+             * @access private
+             */
             var callback_key = "__CALLBACK__";
 
             /**
              * Get the hash for a particular key value pair to put in the map.
+             * @access private
              * @param {Object} key - topic or content key.
              * @param {Object} value - topic or content value.
              * @return {String} - formatted String containing a stable encoded key and value.
              */
-            function get_hash(key, value) {
+            function get_hash (key, value) {
                 if (key === undefined || key === "undefined") {
                     key = "__undefined__";
                 }
@@ -88,9 +101,10 @@
 
             /**
              * Traverse tree and delete branches of tree if no longer needed.
+             * @access private
              * @param {Map} map - Tree-like structure that contains topic registrations.
              */
-            function prune(map) {
+            function prune (map) {
 
                 // Check if entry for callback Array exists, if it does and it is empty we should delete it.
                 if (map.has(callback_key) && map.get(callback_key).length === 0) {
@@ -113,10 +127,11 @@
 
             /**
              * Traverses the leaves of the subscribed topics tree and returns the callbacks associated.
+             * @access private
              * @param {Object} topics - Object of key/value pairs.
              * @returns {Array} - Array of callbacks that have been registered for the given topics.
              */
-            function get_callbacks_for_topics(topics) {
+            function get_callbacks_for_topics (topics) {
                 // This will be the map that we encode (sorted so we're stable).
                 var keys = Object.keys(topics).sort();
 
@@ -164,13 +179,14 @@
 
             /**
              * Invoke all registered callbacks and recursively traverse the hash list start at start_index in the hash list.
+             * @access private
              * @param {Object} topics - Object of key/value pairs.
              * @param {Object} contents - Object of key/value pairs.
              * @param {Array} hash_list -
              * @param {Number} start_index -
              * @param {Map} map - Tree-like structure that contains topic registrations.
              */
-            function invoke_all_with_hashes(topics, contents, hash_list, start_index, map) {
+            function invoke_all_with_hashes (topics, contents, hash_list, start_index, map) {
 
                 // If map is not given we are done with our traversal.
                 if (map === undefined) {
@@ -209,6 +225,7 @@
 
             /**
              * Adds callback registration for the given topics.
+             * @member module:ParlaySocket.CallbackContainer#add
              * @param {Object} topics - Object of key/value pairs.
              * @param {Function} callback - Called when message with matching topics is received.
              * @param {Boolean} persist - If true it will remain until explicitly deregistered otherwise, removed after one invocation.
@@ -224,13 +241,14 @@
                     verbose: verbose
                 });
 
-                return function deregistrationFunction() {
+                return function deregistrationFunction () {
                     this.delete(topics, callback);
                 }.bind(this);
             };
 
             /**
              * Removes callback registration for the given topics and callback reference.
+             * @member module:ParlaySocket.CallbackContainer#delete
              * @param {Object} topics - Object of key/value pairs.
              * @param {Function} callback - Reference to registered callback function.
              * @returns {Boolean} - True if a registration was removed, false otherwise.
@@ -258,6 +276,7 @@
             /**
              * Calls all applicable callbacks for the given topics Object.
              * Will remove any invoked callback that is not persistent.
+             * @member module:ParlaySocket.CallbackContainer#invoke
              * @param {Object} topics - Object of key/value pairs.
              * @param {Object} contents - Object of key/value pairs.
              */
@@ -274,6 +293,7 @@
 
             /**
              * Returns number of unique topic keys.
+             * @member module:ParlaySocket.CallbackContainer#size
              * @param {Map} map - Tree-like structure that contains topic registrations.
              * @returns {Number} - Count of topics keys.
              */
@@ -298,6 +318,7 @@
 
             /**
              * Returns number of registered callback functions.
+             * @member module:ParlaySocket.CallbackContainer#callbackCount
              * @param {Map} map - Tree-like structure that contains topic registrations.
              * @returns {Number} - Count of registered callback functions.
              */
@@ -322,6 +343,7 @@
 
             /**
              * Traverse the CallbackContainer tree to find the child at the maximum depth.
+             * @member module:ParlaySocket.CallbackContainer#maxDepth
              * @returns {Number}
              */
             this.maxDepth = function () {
@@ -358,7 +380,7 @@
         /**
          * ParlaySocket specific Error type that is thrown on invalid messages.
          * @param {String} message - Error message that will be included when thrown.
-         * @constructor
+         * @constructor module:ParlaySocket.ParlaySocketError
          */
         function ParlaySocketError(message) {
             TypeError.call(this, message);
@@ -371,7 +393,7 @@
         /**
          * ParlaySocket specific ParlaySocketError type that is thrown on invalid topics.
          * @param {String} type - Invalid type that was given.
-         * @constructor
+         * @constructor module:ParlaySocket.TopicsError
          */
         function TopicsError(type) {
             ParlaySocketError.call(this, "Invalid type for topics, accepts Object but was type " + type + ".");
@@ -384,7 +406,7 @@
         /**
          * ParlaySocket specific ParlaySocketError type that is thrown on invalid contents.
          * @param {String} type - Invalid type that was given.
-         * @constructor
+         * @constructor module:ParlaySocket.ContentsError
          */
         function ContentsError(type) {
             ParlaySocketError.call(this, "Invalid type for contents, accepts Object or undefined but was type " + type + ".");
@@ -398,37 +420,66 @@
          * ParlaySocket is a wrapper around the native HTML WebSocket.
          * ParlaySocket will automatically connect to the Broker address specific in the Angular value BrokerAddress.
          * It provides convenience through registration of callbacks to specific topics and through Promise resolution.
-         * @constructor
+         * @constructor module:ParlaySocket.ParlaySocket
          */
         function ParlaySocket() {
 
-            // Container that manages topic to callback registrations.
+            /**
+             * Container that manages topic to callback registrations.
+             * @type {Array}
+             * @access private
+             */
             var onMessageCallbacks = new CallbackContainer();
 
-            // Callbacks that will be called on WebSocket open.
+            /**
+             * Callbacks that will be called on WebSocket open.
+             * @type {Array}
+             * @private
+             */
             var onOpenCallbacks = [];
 
-            // Callbacks that will be called on WebSocket close.
+            /**
+             * Callbacks that will be called on WebSocket close.
+             * @type {Array}
+             * @private
+             */
             var onCloseCallbacks = [];
 
-            // Queue that holds messages that were attempted to be send while WebSocket was closed.
+            /**
+             * Queue that holds messages that were attempted to be send while WebSocket was closed.
+             * @type {Array}
+             * @private
+             */
             var sendQueue = [];
 
-            // Resolved on WebSocket open. If the WebSocket fails to open it will be rejected.
+            /**
+             * Resolved on WebSocket open. If the WebSocket fails to open it will be rejected.
+             * @type {$q.deferred.Promise}
+             * @private
+             */
             var onOpenPromise;
 
-            // Resolved on clean WebSocket close. Rejected on unclean WebSocket close.
+            /**
+             * Resolved on clean WebSocket close. Rejected on unclean WebSocket close.
+             * @type {$q.deferred.Promise}
+             * @private
+             */
             var onClosePromise;
 
-            // HTML WebSocket.
+            /**
+             * Native HTML WebSocket Object.
+             * @type {WebSocket}
+             * @private
+             */
             var socket;
 
             /**
              * Opens WebSocket and returns Promise when complete.
+             * @member module:ParlaySocket.ParlaySocket#open
              * @param {String} url - Location the WebSocket instance should connect to.
              * @returns {$q.defer.promise} Resolved after WebSocket is opened.
              */
-            this.open = function(url) {
+            this.open = function (url) {
                 if (typeof url !== "string") {
                     throw new ParlaySocketError("ParlaySocket.open(url) requires a url string.");
                 }
@@ -449,9 +500,10 @@
 
             /**
              * Closes WebSocket and returns Promise when complete.
+             * @member module:ParlaySocket.ParlaySocket#close
              * @returns {$q.defer.promise} Resolved when WebSocket is closed.
              */
-            this.close = function(reason) {
+            this.close = function (reason) {
                 socket.close(reason);
                 return onClosePromise.promise;
             };
@@ -459,6 +511,7 @@
             /**
              * Sends message to connected Broker over WebSocket with associated topics and contents.
              * Optionally registers a callback which will be called upon reply with matching topic signature.
+             * @member module:ParlaySocket.ParlaySocket#sendMessage
              * @param {Object} topics - Map of key/value pairs.
              * @param {Object} contents - Map of key/value pairs.
              * @param {Object} response_topics - Map of key/value pairs.
@@ -466,7 +519,7 @@
              * @param {Boolean} verbose - If true we should invoke callback with full message. If false or undefined invoke with only contents for simplicity.
              * @returns {$q.defer.Promise} Resolves once message has been passed to socket.
              */
-            this.sendMessage = function(topics, contents, response_topics, response_callback, verbose) {
+            this.sendMessage = function (topics, contents, response_topics, response_callback, verbose) {
                 // If verbose is not passed default to false.
                 var verbosity = verbose === undefined ? false : verbose;
 
@@ -501,12 +554,13 @@
 
             /**
              * Registers a callback to be associated with topics. Callback is invoked when message is received over WebSocket from Broker with matching signature.
+             * @member module:ParlaySocket.ParlaySocket#onMessage
              * @param {Object} topics - Map of key/value pairs.
              * @param {Function} callback - Callback to invoke upon receipt of message matching response topics.
              * @param {Boolean} verbose - If true we should invoke callback with full message. If false or undefined invoke with only contents for simplicity.
              * @returns {Function} Deregistration function for this message listener.
              */
-            this.onMessage = function(topics, callback, verbose) {
+            this.onMessage = function (topics, callback, verbose) {
                 // Ensure that topics is an Object.
                 if (typeof topics === 'object') {
                     return onMessageCallbacks.add(topics, callback, true, !!verbose);
@@ -519,6 +573,7 @@
 
             /**
              * Checks if WebSocket is open.
+             * @member module:ParlaySocket.ParlaySocket#isConnected
              * @returns {Boolean} - True if WebSocket is open, false otherwise.
              */
             this.isConnected = function () {
@@ -527,6 +582,7 @@
 
             /**
              * Returns the URL where the WebSocket is connected.
+             * @member module:ParlaySocket.ParlaySocket#getAddress
              * @returns {String} - URL.
              */
             this.getAddress = function () {
@@ -535,6 +591,7 @@
 
             /**
              * Registers a callback which will be invoked on socket close.
+             * @member module:ParlaySocket.ParlaySocket#onClose
              * @param {Function} callbackFunc - Callback function which will be invoked on WebSocket close.
              */
             this.onClose = function (callbackFunc) {
@@ -543,6 +600,7 @@
 
             /**
              * Registers a callback which will be invoked on socket open.
+             * @member module:ParlaySocket.ParlaySocket#onOpen
              * @param {Function} callbackFunc - Callback function which will be invoked on WebSocket open.
              */
             this.onOpen = function (callbackFunc) {
@@ -551,11 +609,12 @@
 
             /**
              * Attempts to send message containing topics and contents on the WebSocket.
+             * @member module:ParlaySocket.ParlaySocket#send
              * @param {Object} topics
              * @param {Object} contents
              * @returns {$q.defer.Promise} - Resolved if send completed without exception, rejected otherwise.
              */
-            function send(topics, contents) {
+            function send (topics, contents) {
                 // Stringify the message Object before sending.
                 var message = JSON.stringify({TOPICS: topics, CONTENTS: contents});
 
@@ -571,8 +630,9 @@
 
             /**
              * Attempt to send all messages that were queued while the socket was closed.
+             * @member module:ParlaySocket.ParlaySocket#processSendQueue
              */
-            function processSendQueue() {
+            function processSendQueue () {
                 sendQueue.forEach(function (message) {
                     socket.send(message);
                 });
@@ -582,20 +642,22 @@
             /**
              * Invokes callbacks associated with the topics, passes contents as parameters.
              * If the callback is not persistent it will be removed after invocation.
+             * @member module:ParlaySocket.ParlaySocket#invokeCallbacks
              * @param {Object} topics - Map of key/value pairs.
              * @param {Object} contents - Map of key/value pairs.
              * As this function is called per message received and the topics may result in a high number of combinations,
              * this could potentially cause slowdown.
              */
-            function invokeCallbacks(topics, contents) {
+            function invokeCallbacks (topics, contents) {
                 onMessageCallbacks.invoke(topics, contents);
             }
 
             /**
              * Called when WebSocket is opened.
+             * @member module:ParlaySocket.ParlaySocket#onOpenHandler
              * @param {MessageEvent} event - Event generated by the WebSocket on open.
              */
-            function onOpenHandler(event) {
+            function onOpenHandler (event) {
                 // If the onOpenPromise exists we should resolve it.
                 if (onOpenPromise !== undefined) {
                     onOpenPromise.resolve();
@@ -613,9 +675,10 @@
 
             /**
              * Called when WebSocket is closed.
+             * @member module:ParlaySocket.ParlaySocket#onCloseHandler
              * @param {MessageEvent} event - Event generated by the WebSocket on close.
              */
-            function onCloseHandler(event) {
+            function onCloseHandler (event) {
                 // If the close event was clean, we should resolve the promise.
                 if (event.wasClean) {
                     onClosePromise.resolve(event.reason);
@@ -642,9 +705,10 @@
 
             /**
              * Called on receipt of a message on the WebSocket.
+             * @member module:ParlaySocket.ParlaySocket#onMessageHandler
              * @param {MessageEvent} event - Event generated by the WebSocket containing message contents.
              */
-            function onMessageHandler(event) {
+            function onMessageHandler (event) {
                 var message = JSON.parse(event.data);
                 invokeCallbacks(message.TOPICS, message.CONTENTS);
             }

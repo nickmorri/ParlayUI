@@ -37,9 +37,10 @@
                 tabs: {
                     default: [],
                     available: []
-                },
-                available_cache: {}
+                }
             };
+            
+            this.available_directive_cache = {};
 
         }
 
@@ -89,13 +90,14 @@
          */
         ParlayItem.prototype.getAvailableDirectives = function () {
             var item = this;
-            item.directives.available_cache = Object.keys(item.directives).filter(function (target) {
+            this.available_directive_cache = Object.keys(this.directives).filter(function (target) {
                 return target.indexOf("cache") === -1;
             }).reduce(function (accumulator, target) {
                 accumulator[target] = item.directives[target].available;
                 return accumulator;
             }, {});
             return this.directives.available_cache;
+            return this.available_directive_cache;
         };
 
         /**

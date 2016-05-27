@@ -33,8 +33,7 @@
                         tabs: {
 	                        default: [],
 	                        available: []
-                        },
-                        available_cache: {}
+                        }
                     });
                     expect(ParlayItem.type).toBe('ParlayItem');
                     

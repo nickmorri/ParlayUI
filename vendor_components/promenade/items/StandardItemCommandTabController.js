@@ -264,7 +264,12 @@
                 // Check if the sub field has a default.
                 return field !== undefined && field.default !== undefined;
             }).forEach(function (field) {
-                $scope.wrapper.message[field.msg_key + '_' + field.input] = field.default;
+                if (!$scope.wrapper.message[field.msg_key + '_' + field.input] && ['NUMBERS', 'STRINGS', 'ARRAY'].indexOf(field.input) > -1) {
+                    $scope.wrapper.message[field.msg_key + '_' + field.input] = field.default.map(prepChip);
+                }
+                else if (!$scope.wrapper.message[field.msg_key + '_' + field.input]) {
+                    $scope.wrapper.message[field.msg_key + '_' + field.input] = field.default;
+                }
             });
 
             fields.filter(function (field) {
@@ -314,6 +319,29 @@
         };
     }
 
+    // Unique index for chip objects so that even chips with the same value will be 'unique'.
+    var uuid = 0;
+
+    // Per the ECMAScript2015 specification.
+    var max_safe_int = 9007199254740990;
+
+    /**
+     * Packages $mdChip object for insertion into message.
+     * @param {$mdChip} chip - $mdChip Object
+     */
+    function prepChip (chip) {
+        uuid += 1;
+
+        // Wrap around after max safe int
+        if (uuid > max_safe_int) {
+            uuid = 0;
+        }
+        return {
+            value: chip,
+            idx: uuid
+        };
+    }
+
     PromenadeStandardItemCardCommandContainerController.$inject = ["$scope", "ParlayItemPersistence", "ParlayUtility"];
     /**
      * Controller constructor for command container.
@@ -325,29 +353,12 @@
     function PromenadeStandardItemCardCommandContainerController ($scope, ParlayItemPersistence, ParlayUtility) {
         var container = ParlayUtility.relevantScope($scope, 'container').container;
         var directive_name = 'parlayItemCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
-        var uuid = 0; // unique index for chip objects so that even chips with the same value will be 'unique'
-        var max_safe_int = 9007199254740990; // per the ECMAScript2015 spec
 
         ParlayItemPersistence.monitor(directive_name, "wrapper.message", $scope, function (value) {
+            return angular.merge({}, $scope.wrapper.message, value);
+        });
 
-            var message = $scope.wrapper.message;
-
-            Object.keys(value).forEach(function (key) {
-                message[key] = value[key];
-            });
-
-            return message;
-        }.bind($scope));
-
-        /**
-         * Packages $mdChip object for insertion into message.
-         * @param {$mdChip} chip - $mdChip Object
-         */
-        $scope.prepChip = function (chip) {
-            uuid += 1;
-            if( uuid > max_safe_int) { uuid = 0;} // wrap around after max safe int
-            return {value: chip, idx: uuid};
-        };
+        $scope.prepChip = prepChip;
 
         /**
          * Checks if the given field has sub fields available.

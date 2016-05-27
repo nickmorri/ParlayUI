@@ -138,7 +138,8 @@ module.exports = function (grunt) {
 			'compiled_html': '<%= meta.tmp_destination %>/templates.js',
 			'html_directives': getVendorPathGlobs(getVendors(), ['directives'], ['parlay_components/**/directives/*.html']),
 			'html_views': 'parlay_components/**/views/*.html',
-			'stylesheets': getVendorPathGlobs(getVendors(), ['stylesheets'], ['css/*.css'])
+			'stylesheets': getVendorPathGlobs(getVendors(), ['stylesheets'], ['css/*.css']),
+            'tutorials': getVendorPathGlobs(getVendors(), ['tutorials'], ['tutorials/*.md', 'parlay_components/**/tutorials/*.md'])
 		},
 
         // Minimal web server. Used for development.
@@ -408,7 +409,19 @@ module.exports = function (grunt) {
                         'dest': '<%= meta.dev_destination %>'
                     }
 				]
-			}
+			},
+            'doc': {
+                'files': [
+                    {
+                        'expand': true,
+                        'flatten': true,
+                        'src': [
+                            '<%= meta.tutorials %>'
+                        ],
+                        'dest': '<%= meta.tmp_destination %>/tutorials'
+                    }
+                ]
+            }
 		},
 
         // Processes and modify index.html based on the environment to replace text.
@@ -516,7 +529,8 @@ module.exports = function (grunt) {
 				'src': ['<%= meta.source %>', '<%= meta.vendor_components %>']
 			},
             'options': {
-                'readme': 'README.md'
+                'readme': 'README.md',
+				'tutorials': '<%= meta.tmp_destination %>/tutorials'
             }
 		}
 
@@ -562,7 +576,8 @@ module.exports = function (grunt) {
 	]);
 
 	grunt.registerTask('build', [
-        'dist'
+        'dist',
+        'doc'
     ]);
 
 	grunt.registerTask('server', 'Launches HTTP server with distribution files as source.', [
@@ -584,6 +599,7 @@ module.exports = function (grunt) {
     ]);
 
 	grunt.registerTask('doc', 'Generates documentation.', [
+        'copy:doc',
 		'jsdoc:doc'
 	]);
 

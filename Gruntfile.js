@@ -545,6 +545,7 @@ module.exports = function (grunt) {
 				'src': ['<%= meta.source %>']
 			},
             'options': {
+                'private': true,
                 'readme': 'README.md',
 				'tutorials': '<%= meta.tmp_destination %>/tutorials'
             }

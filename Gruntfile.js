@@ -1,14 +1,18 @@
 module.exports = function (grunt) {
     "use strict";
-	
+
+    // Base paths to parlay_components and vendor_components directories.
+    var parlay_components_base_path = "parlay_components/";
+    var vendor_components_base_path = "vendor_components/";
+
 	/**
 	 * Loads each vendor configuration file available in vendor_components
 	 * @returns {Array} - Array of vendor configuration Objects.
 	 */
 	function getVendors () {
-		return grunt.file.expand('vendor_components/**/vendor.json').map(function (vendor) {
-			return grunt.file.readJSON(vendor);
-	    });
+        return grunt.file.expand('vendor_components/**/vendor.json').map(function (vendor) {
+            return grunt.file.readJSON(vendor);
+        });
 	}
 
     /**
@@ -52,10 +56,23 @@ module.exports = function (grunt) {
      * @returns {Object} - Object of key (vendor name) -> value (vendor paths property).
      */
     function getVendorPaths (vendors) {
+        var base = vendor_components_base_path;
         return vendors.reduce(function (accumulator, vendor) {
-            accumulator[vendor.name] = vendor.paths;
+            accumulator[vendor.name] = Object.keys(vendor.paths).reduce(function (accumulator, key) {
+                accumulator[key] = base + vendor.name + "/" + vendor.paths[key];
+                return accumulator;
+            }, {});
             return accumulator;
         }, {});
+    }
+
+    function getImagePaths (vendor) {
+        var base = vendor_components_base_path;
+
+        return {
+            icon: base + vendor.name + "/" + vendor.options.icon,
+            logo: base + vendor.name + "/" + vendor.options.logo
+        };
     }
 
     /**
@@ -125,20 +142,22 @@ module.exports = function (grunt) {
         'pkg': grunt.file.readJSON('package.json'),
 
 		'meta': {
-			'source': ['app.js', 'parlay_components/*/*.js'],
-			'vendor_components': getVendorPathGlobs(getVendors(), ['widget', 'protocols', 'items'], []),
+            'parlay_component_base_path': parlay_components_base_path,
+            'vendor_component_base_path': vendor_components_base_path,
+			'source': getVendorPathGlobs(getVendors(), ['source'], ['app.js', '<%= meta.parlay_component_base_path %>/*/*.js']),
             'vendor_paths': getVendorPaths(getVendors()),
             'bower_files': require('main-bower-files')(),
 			'dist_destination': 'dist',
 			'dev_destination': 'dev',
 			'tmp_destination': 'tmp',
 			'coverage_destination': 'coverage',
-			'mocks': getVendorPathGlobs(getVendors(), ['mocks'], ['parlay_components/*/mocks/*.js']),
-			'tests': getVendorPathGlobs(getVendors(), ['test'], ['parlay_components/*/test/*.spec.js']),
+			'mocks': getVendorPathGlobs(getVendors(), ['mocks'], ['<%= meta.parlay_component_base_path %>/*/mocks/*.js']),
+			'tests': getVendorPathGlobs(getVendors(), ['test'], ['<%= meta.parlay_component_base_path %>/*/test/*.spec.js']),
 			'compiled_html': '<%= meta.tmp_destination %>/templates.js',
-			'html_directives': getVendorPathGlobs(getVendors(), ['directives'], ['parlay_components/**/directives/*.html']),
-			'html_views': 'parlay_components/**/views/*.html',
-			'stylesheets': getVendorPathGlobs(getVendors(), ['stylesheets'], ['css/*.css'])
+			'html_directives': getVendorPathGlobs(getVendors(), ['directives'], ['<%= meta.parlay_component_base_path %>/**/directives/*.html']),
+			'html_views': '<%= meta.parlay_component_base_path %>/**/views/*.html',
+			'stylesheets': getVendorPathGlobs(getVendors(), ['stylesheets'], ['css/*.css']),
+            'tutorials': getVendorPathGlobs(getVendors(), ['tutorials'], ['tutorials/*.md', '<%= meta.parlay_component_base_path %>/**/tutorials/*.md'])
 		},
 
         // Minimal web server. Used for development.
@@ -169,7 +188,7 @@ module.exports = function (grunt) {
                     'livereload': true,
                     'interrupt': true
                 },
-                'files': ['vendorDefaults.js', '<%= meta.source %>', '<%= meta.vendor_components %>'],
+                'files': ['vendorDefaults.js', '<%= meta.source %>'],
                 'tasks': ['newer:replace:dev', 'newer:jshint:dev', 'karma:dev', 'newer:copy:dev', 'includeSource:dev', 'wiredep:dev']
             },
             'stylesheets': {
@@ -211,7 +230,7 @@ module.exports = function (grunt) {
                 'tasks': 'karma:dev'
             },
             'vendor_config': {
-                'files': 'vendor_components/**/vendor.json',
+                'files': '<%= meta.vendor_component_base_path %>/**/vendor.json',
                 'options': {
                     'reload': true
                 },
@@ -314,7 +333,6 @@ module.exports = function (grunt) {
 			            '<%= meta.compiled_html %>',
 			            '<%= meta.source %>',
 			            '<%= meta.mocks %>',
-			            '<%= meta.vendor_components %>',
 			            '<%= meta.tests %>'
 					]
 				}
@@ -334,9 +352,9 @@ module.exports = function (grunt) {
 				'options': {
 					'reporters': ['progress', 'coverage'],
 					'preprocessors': {
-						'parlay_components/*.js': ['coverage'],
-			            'parlay_components/**/*.js': ['coverage'],
-			            'vendor_components/**/*.js': ['coverage']
+						'<%= meta.parlay_component_base_path %>/*.js': ['coverage'],
+			            '<%= meta.parlay_component_base_path %>/**/*.js': ['coverage'],
+			            '<%= meta.vendor_component_base_path %>/**/*.js': ['coverage']
 					},
 					'coverageReporter': {
 			            'type': 'html',
@@ -347,7 +365,6 @@ module.exports = function (grunt) {
 			            '<%= meta.compiled_html %>',
 			            '<%= meta.source %>',
 			            '<%= meta.mocks %>',
-			            '<%= meta.vendor_components %>',
 			            '<%= meta.tests %>'
 					]
 				}
@@ -362,14 +379,14 @@ module.exports = function (grunt) {
 					'esnext': true,
 					'debug': true
 				},
-				'src': ['<%= meta.source %>', '<%= meta.vendor_components %>', '<%= meta.tests %>'],
+				'src': ['<%= meta.source %>', '<%= meta.tests %>'],
 				'gruntfile': 'Gruntfile.js'
 			},
 			'dist': {
 				'options': {
 					'esnext': true
 				},
-				'src': ['<%= meta.source %>', '<%= meta.vendor_components %>']
+				'src': ['<%= meta.source %>']
 			}
 		},
 
@@ -411,14 +428,25 @@ module.exports = function (grunt) {
                         'expand': true,
                         'src': [
                             '<%= meta.source %>',
-                            '<%= meta.vendor_components %>',
                             '<%= meta.compiled_html %>',
                             '<%= meta.stylesheets %>'
                         ],
                         'dest': '<%= meta.dev_destination %>'
                     }
 				]
-			}
+			},
+            'doc': {
+                'files': [
+                    {
+                        'expand': true,
+                        'flatten': true,
+                        'src': [
+                            '<%= meta.tutorials %>'
+                        ],
+                        'dest': '<%= meta.tmp_destination %>/tutorials'
+                    }
+                ]
+            }
 		},
 
         // Processes and modify index.html based on the environment to replace text.
@@ -440,7 +468,7 @@ module.exports = function (grunt) {
 			},
 			'dist': {
 				'files': {
-					'<%= meta.tmp_destination %>/<%= pkg.namelower %>.min.js': ['<%= meta.tmp_destination %>/vendorDefaults.js', '<%= meta.source %>', '<%= meta.vendor_components %>', '<%= meta.compiled_html %>'],
+					'<%= meta.tmp_destination %>/<%= pkg.namelower %>.min.js': ['<%= meta.tmp_destination %>/vendorDefaults.js', '<%= meta.source %>', '<%= meta.compiled_html %>'],
                     '<%= meta.tmp_destination %>/lib.min.js': '<%= meta.tmp_destination %>/lib.js'
 				}
 			}
@@ -480,8 +508,8 @@ module.exports = function (grunt) {
                 'options': {
                     'patterns': [
                         {'match': 'vendorName', 'replacement': getPrimaryVendor(getVendors()).name},
-                        {'match': 'vendorLogo', 'replacement': getBase64(getPrimaryVendor(getVendors()).options.logo)},
-                        {'match': 'vendorIcon', 'replacement': getBase64(getPrimaryVendor(getVendors()).options.icon)},
+                        {'match': 'vendorLogo', 'replacement': getBase64(getImagePaths(getPrimaryVendor(getVendors())).logo)},
+                        {'match': 'vendorIcon', 'replacement': getBase64(getImagePaths(getPrimaryVendor(getVendors())).icon)},
                         {'match': 'primaryPalette', 'replacement': getPrimaryVendor(getVendors()).options.primaryPalette},
                         {'match': 'accentPalette', 'replacement': getPrimaryVendor(getVendors()).options.accentPalette},
                         {'match': 'debugEnabled', 'replacement': true}
@@ -495,8 +523,8 @@ module.exports = function (grunt) {
                 'options': {
                     'patterns': [
                         {'match': 'vendorName', 'replacement': getPrimaryVendor(getVendors()).name},
-                        {'match': 'vendorLogo', 'replacement': getBase64(getPrimaryVendor(getVendors()).options.logo)},
-                        {'match': 'vendorIcon', 'replacement': getBase64(getPrimaryVendor(getVendors()).options.icon)},
+                        {'match': 'vendorLogo', 'replacement': getBase64(getImagePaths(getPrimaryVendor(getVendors())).logo)},
+                        {'match': 'vendorIcon', 'replacement': getBase64(getImagePaths(getPrimaryVendor(getVendors())).icon)},
                         {'match': 'primaryPalette', 'replacement': getPrimaryVendor(getVendors()).options.primaryPalette},
                         {'match': 'accentPalette', 'replacement': getPrimaryVendor(getVendors()).options.accentPalette},
                         {'match': 'debugEnabled', 'replacement': false}
@@ -523,10 +551,11 @@ module.exports = function (grunt) {
 		
 		'jsdoc': {
 			'doc': {
-				'src': ['<%= meta.source %>', '<%= meta.vendor_components %>']
+				'src': ['<%= meta.source %>']
 			},
             'options': {
-                'readme': 'README.md'
+                'readme': 'README.md',
+				'tutorials': '<%= meta.tmp_destination %>/tutorials'
             }
 		}
 
@@ -572,7 +601,8 @@ module.exports = function (grunt) {
 	]);
 
 	grunt.registerTask('build', [
-		'dist'
+        'dist',
+        'doc'
     ]);
 
 	grunt.registerTask('server', 'Launches HTTP server with distribution files as source.', [
@@ -594,6 +624,7 @@ module.exports = function (grunt) {
     ]);
 
 	grunt.registerTask('doc', 'Generates documentation.', [
+        'copy:doc',
 		'jsdoc:doc'
 	]);
 

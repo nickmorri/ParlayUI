@@ -406,7 +406,8 @@ module.exports = function (grunt) {
             'post_dist': ['<%= meta.dist_destination %>/*.css', '<%= meta.dist_destination %>/*.js'],
 			'dev': '<%= meta.dev_destination %>',
 			'tmp': '<%= meta.tmp_destination %>',
-			'coverage': '<%= meta.coverage_destination %>'
+			'coverage': '<%= meta.coverage_destination %>',
+			'doc': 'doc'
 		},
 
         // Copies files and folders.

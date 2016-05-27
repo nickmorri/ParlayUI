@@ -13,14 +13,20 @@
 		// Items currently active in the workspace.
 		var active_items = [];
 
+		/**
+		 * Manages [ParlayItem]{@link module:ParlayItem.ParlayItem}s active in the workspace.
+		 * @constructor module:ParlayItem.ParlayItemManager
+         */
 		function ParlayItemManager() {
             this.saved_workspaces = this.getWorkspaces();
-			// Add event handler before window unload to autosave items.
+			// Add event handler before window unload to auto save items.
 			$window.addEventListener("beforeunload", ParlayItemManager.prototype.autoSave.bind(this));
 		}
 
         /**
          * Returns the number of items currently active.
+         * @member module:ParlayItem.ParlayItemManager#countActive
+         * @public
          * @returns {Number} item count
          */
         ParlayItemManager.prototype.countActive = function () {
@@ -29,6 +35,8 @@
 
         /**
          * Clears reference to active item object.
+         * @member module:ParlayItem.ParlayItemManager#clearActive
+         * @public
          */
         ParlayItemManager.prototype.clearActive = function () {
             active_items = [];
@@ -36,6 +44,8 @@
 
         /**
          * Returns all saved workspaces except for those that were autosaved.
+         * @member module:ParlayItem.ParlayItemManager#getSaved
+         * @public
          * @returns {Array} - Array of workspace objects.
          */
         ParlayItemManager.prototype.getSaved = function () {
@@ -45,7 +55,9 @@
         };
 
         /**
-         * Returns autosaved workspace Object.
+         * Returns auto saved workspace Object.
+         * @member module:ParlayItem.ParlayItemManager#getAutosave
+         * @public
          * @returns {Object}
          */
         ParlayItemManager.prototype.getAutosave = function () {
@@ -56,6 +68,8 @@
 
         /**
          * Saves the items active in the workspace to a workspace with the given name.
+         * @member module:ParlayItem.ParlayItemManager#saveEntry
+         * @public
          * @param {Object} workspace - Workspace container Object.
          */
         ParlayItemManager.prototype.saveEntry = function (workspace) {
@@ -65,6 +79,8 @@
 
         /**
          * Loads items from the specified workspace.
+         * @member module:ParlayItem.ParlayItemManager#loadEntry
+         * @public
          * @param {Object} workspace - Saved workspace to be loaded.
          */
         ParlayItemManager.prototype.loadEntry = function (workspace) {
@@ -112,6 +128,8 @@
 
         /**
          * Deletes the given saved workspace.
+         * @member module:ParlayItem.ParlayItemManager#deleteEntry
+         * @public
          * @param {String} workspace_name - Workspace name.
          */
         ParlayItemManager.prototype.deleteEntry = function (workspace_name) {
@@ -121,6 +139,8 @@
 
         /**
          * Clears all saved workspaces
+         * @member module:ParlayItem.ParlayItemManager#clearSaved
+         * @public
          */
         ParlayItemManager.prototype.clearSaved = function () {
             ParlayStore("items").clear();
@@ -129,6 +149,8 @@
 
         /**
          * Returns the saved workspaces as a JSON string.
+         * @member module:ParlayItem.ParlayItemManager#export
+         * @public
          * @returns {String} - JSON string of saved workspaces.
          */
         ParlayItemManager.prototype.export = function () {
@@ -137,6 +159,8 @@
 
         /**
          * Contents of file are passed to ParlayStore once loaded.
+         * @member module:ParlayItem.ParlayItemManager#import
+         * @public
          * @param {String} contents - JSON string of saved workspaces.
          */
         ParlayItemManager.prototype.import = function (contents) {
@@ -145,7 +169,9 @@
         };
 
 		/**
-		 * Returns Object of active item containers
+		 * Returns Object of active item containers.
+         * @member module:ParlayItem.ParlayItemManager#getActiveItems
+         * @public
 		 * @returns {Object} key: order, value: active item containers
 		 */
 		ParlayItemManager.prototype.getActiveItems = function () {
@@ -154,6 +180,8 @@
 
 		/**
 		 * Checks if we currently have active items.
+         * @member module:ParlayItem.ParlayItemManager#hasActiveItems
+         * @public
 		 * @returns {Boolean} true if we have items, false otherwise.
 		 */
 		ParlayItemManager.prototype.hasActiveItems = function () {
@@ -162,6 +190,8 @@
 
 		/**
 		 * Returns the available items from all connected protocols.
+         * @member module:ParlayItem.ParlayItemManager#getAvailableItems
+         * @public
 		 * @returns {Array} - Items available on all protocols.
 		 */
 		ParlayItemManager.prototype.getAvailableItems = function () {
@@ -172,6 +202,8 @@
 
 		/**
 		 * Check whether any discovery request has been made.
+         * @member module:ParlayItem.ParlayItemManager#hasDiscovered
+         * @public
 		 * @returns {Boolean} - True if we have successfully completed a discovery, false otherwise.
 		 */
 		ParlayItemManager.prototype.hasDiscovered = function () {
@@ -179,6 +211,8 @@
 		};
 
 		/** Passes discovery request along to PromenadeBroker.
+         * @member module:ParlayItem.ParlayItemManager#requestDiscovery
+         * @public
 		 * @returns {Promise} - Resolved when a response is received.
 		 */
 		ParlayItemManager.prototype.requestDiscovery = function () {
@@ -187,6 +221,8 @@
 
 		/**
 		 * Swaps the item at the specified index with the item at index + distance.
+         * @member module:ParlayItem.ParlayItemManager#reorder
+         * @public
 		 * @param {Number} index - position of item to swap.
 		 * @param {Number} distance - How far to move target item.
 		 */
@@ -196,6 +232,13 @@
 			active_items[index] = temp;
 		};
 
+        /**
+         * Swaps the items at the given indices.
+         * @member module:ParlayItem.ParlayItemManager#swap
+         * @public
+         * @param {Number} indexA - Index of item A.
+         * @param {Number} indexB - Index of item B.
+         */
 		ParlayItemManager.prototype.swap = function (indexA, indexB) {
 			var temp = active_items[parseInt(indexA, 10)];
 			active_items[parseInt(indexA, 10)] = active_items[parseInt(indexB, 10)];
@@ -204,6 +247,8 @@
 
 		/**
 		 * Activates item.
+         * @member module:ParlayItem.ParlayItemManager#activateItem
+         * @public
 		 * @param {ParlayItem} item - Reference to the item object we want to activate.
 		 * @param {Number} uid[optional] - If given a uid we will use the provided one. Otherwise randomly generate one.
 		 * @param {Object} stored_values - Values that may have been stored from a origin card or previous session.
@@ -230,6 +275,8 @@
 
 		/**
 		 * Creates a duplicate item container that references the same item available at the given index.
+         * @member module:ParlayItem.ParlayItemManager#duplicateItem
+         * @public
 		 * @param {Number} index - Position of the item we want to duplicate.
 		 */
 		ParlayItemManager.prototype.duplicateItem = function (index) {
@@ -243,6 +290,8 @@
 
 		/**
 		 * Deactivates an endoint that is currently active.
+         * @member module:ParlayItem.ParlayItemManager#deactivateItem
+         * @public
 		 * @param {Number} index - Position of item to be deactivated.
 		 */
 		ParlayItemManager.prototype.deactivateItem = function (index) {
@@ -251,6 +300,8 @@
 
         /**
          * Gets all saved workspace objects.
+         * @member module:ParlayItem.ParlayItemManager#getWorkspaces
+         * @public
          * @returns {Array} - Array of workspace Objects.
          */
         ParlayItemManager.prototype.getWorkspaces = function () {
@@ -266,6 +317,8 @@
 
         /**
 		 * Saves active items to a workspace titled AutoSave automatically.
+         * @member module:ParlayItem.ParlayItemManager#autoSave
+         * @public
 		 */
 		ParlayItemManager.prototype.autoSave = function() {
 			if (this.hasActiveItems()) {

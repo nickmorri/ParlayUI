@@ -1,6 +1,10 @@
 (function () {
     "use strict";
 
+    /**
+     * @module ParlayItem
+     */
+
     var module_dependencies = ["ui.router", "parlay.items.controller"];
 
     angular

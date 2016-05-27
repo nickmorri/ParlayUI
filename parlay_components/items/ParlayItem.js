@@ -75,13 +75,12 @@
          * @returns {Object} - Mapping of target -> Array of default directive names.
          */
         ParlayItem.prototype.getDefaultDirectives = function () {
-            var item = this;
-            return Object.keys(item.directives).reduce(function (accumulator, target) {
-                if (item.directives[target].hasOwnProperty("default")) {
-                    accumulator[target] = item.directives[target].default;
+            return Object.keys(this.directives).reduce(function (accumulator, target) {
+                if (this.directives[target].hasOwnProperty("default")) {
+                    accumulator[target] = this.directives[target].default;
                 }
                 return accumulator;
-            }, {});
+            }.bind(this), {});
         };
 
         /**
@@ -89,14 +88,14 @@
          * @returns {Object} - Mapping of target -> Array of available directive names.
          */
         ParlayItem.prototype.getAvailableDirectives = function () {
-            var item = this;
             this.available_directive_cache = Object.keys(this.directives).filter(function (target) {
                 return target.indexOf("cache") === -1;
             }).reduce(function (accumulator, target) {
-                accumulator[target] = item.directives[target].available;
+                accumulator[target] = this.directives[target].available;
                 return accumulator;
             }, {});
             return this.directives.available_cache;
+            }.bind(this), {});
             return this.available_directive_cache;
         };
 

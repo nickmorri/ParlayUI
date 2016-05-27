@@ -9,9 +9,8 @@
 
     ParlayItemCard.$inject = ["$compile", "ParlayItemPersistence"];
     /**
-     * @constructor
-     * @description
      * Directive that displays data from a particular ParlayItem.
+     * @constructor module:ParlayItem.ParlayItemCard
      * @param {Object} $compile - AngularJS service used to create a template function used to link scope and template.
      * @param {Object} ParlayItemPersistence - Parlay service used to persist scope values into local storage.
      */
@@ -34,6 +33,8 @@
 
                 /**
                  * Compiles then stores the given directive in active_directives.
+                 * @member module:ParlayItem.ParlayItemCard#activateDirective
+                 * @public
                  * @param {String} target - Directive location: toolbar or tabs.
                  * @param {String} directive - Name of directive
                  */
@@ -49,6 +50,8 @@
 
                 /**
                  * Removes the directive from the active_directives container.
+                 * @member module:ParlayItem.ParlayItemCard#deactivateDirective
+                 * @public
                  * @param {String} target - Directive location: toolbar or tabs.
                  * @param {String} directive - Name of directive
                  */
@@ -66,6 +69,8 @@
 
                 /**
                  * Setup drag event handlers to allow cards to by rearranged by dragging.
+                 * @member module:ParlayItem.ParlayItemCard#setupDragHandlers
+                 * @private
                  * @param {HTMLElement} element - ParlayItemCard HTML element.
                  */
                 function setupDragHandlers(element, scope) {
@@ -107,6 +112,8 @@
 
                 /**
                  * Compiles the toolbar set on the item.
+                 * @member module:ParlayItem.ParlayItemCard#compileToolbar
+                 * @private
                  * @param {Array} directives - Array of directive name strings.
                  */
                 function compileToolbar(directives) {
@@ -122,6 +129,8 @@
 
                 /**
                  * Compiles the tabs set on the item.
+                 * @member module:ParlayItem.ParlayItemCard#compileTabs
+                 * @private
                  * @param {Array} directives - Array of directive name strings.
                  */
                 function compileTabs(directives) {
@@ -137,6 +146,8 @@
 
                 /**
                  * Activate each default directive.
+                 * @member module:ParlayItem.ParlayItemCard#defaultDirectives
+                 * @private
                  */
                 function defaultDirectives() {
                     var defaults = scope.item.getDefaultDirectives();
@@ -149,6 +160,8 @@
 
                 /**
                  * Compile each directive in active_directives.
+                 * @member module:ParlayItem.ParlayItemCard#defaultDirectives
+                 * @private
                  */
                 function restoreDirectives() {
                     Object.keys(scope.active_directives).forEach(function (target) {

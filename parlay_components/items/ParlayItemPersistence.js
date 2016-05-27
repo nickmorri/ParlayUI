@@ -18,10 +18,18 @@
          */
         function find_parent(key, parent) {
             var split_key = key.split('.');
-            if (parent === undefined || parent === null) return undefined;
-            else if (split_key.length === 1 && parent.hasOwnProperty(split_key[0])) return parent;
-            else if (split_key.length > 1 && parent.hasOwnProperty(split_key[0])) return find_parent(split_key.slice(1).join('.'), parent[split_key[0]]);
-            else return undefined;
+            if (parent === undefined || parent === null) {
+                return undefined;
+            }
+            else if (split_key.length === 1 && parent.hasOwnProperty(split_key[0])) {
+                return parent;
+            }
+            else if (split_key.length > 1 && parent.hasOwnProperty(split_key[0])) {
+                return find_parent(split_key.slice(1).join('.'), parent[split_key[0]]);
+            }
+            else {
+                return undefined;
+            }
         }
 
         /**
@@ -31,29 +39,49 @@
          */
         function find_scope(key, scope) {
             var scope_attribute = key.split('.')[0];
-            if (scope === undefined || scope === null) return undefined;
-            else if (scope.hasOwnProperty(scope_attribute)) return scope;
-            else if (scope.hasOwnProperty("$parent")) return find_scope(key, scope.$parent);
-            else return undefined;
+            if (scope === undefined || scope === null) {
+                return undefined;
+            }
+            else if (scope.hasOwnProperty(scope_attribute)) {
+                return scope;
+            }
+            else if (scope.hasOwnProperty("$parent")) {
+                return find_scope(key, scope.$parent);
+            }
+            else {
+                return undefined;
+            }
         }
 
         /**
-         * Parlay service for persistence of directive $scope attributes to ParlayStore.
-         * @constructor
+         * Parlay service for persistence of directive $scope attributes to [ParlayStore]{@link module:ParlayStore.ParlayStore}.
+         * @constructor module:ParlayItem.ParlayItemPersistence
          */
-        function ParlayItemPersistence() {
+        function ParlayItemPersistence () {
 
-            // Holds key/value pairs where the value is an Object that contains the directive name, attribute name and
-            // a reference to the $scope object where the attribute resides.
+            /**
+             * Holds key/value pairs where the value is an Object that contains the directive name, attribute name and
+             * a reference to the $scope object where the attribute resides.
+             * @member module:ParlayItem.ParlayItemPersistence#registrations
+             * @public
+             * @type {Object}
+             */
             this.registrations = {};
 
-            // Reference to items namespace ParlayStore.
+            /**
+             * Reference to items namespace ParlayStore.
+             * @member module:ParlayItem.ParlayItemPersistence#items_store
+             * @public
+             * @type {ParlayStore}
+             */
             this.items_store = ParlayStore("items");
 
         }
 
         /**
          * Establishes an registration that will store the requested value when the workspace is saved.
+         * @member module:ParlayItem.ParlayItemPersistence#monitor
+         * @public
          * @param {String} directive - Name of the directive where the requested attribute is to persisted.
          * @param {String} attribute - Name of the attribute that has been requested for persistence.
          * @param {Object} $scope - $scope Object where the requested attribute resides.
@@ -78,7 +106,7 @@
              * When the directive requests to monitor an attribute we will also attempt to restore any value that has been
              * store on the container Object from a restored workspace.
              */
-            function restore() {
+            function restore () {
                 // Object that may contain values that have been previously stored.
                 var container_scope = find_scope('container', $scope);
 
@@ -121,13 +149,15 @@
             restore();
 
             // Return a function that when called will remove the attribute registration.
-            return function () {
+            return function deregistration () {
                 this.remove(directive, attribute);
             }.bind(this);
         };
 
         /**
          * Removes the attribute registration for the given directive and attribute.
+         * @member module:ParlayItem.ParlayItemPersistence#remove
+         * @public
          * @param {String} directive - Name of the directive where a registration has been made.
          * @param {String} attribute - Name of the attribute that was been requested for persistence.
          */
@@ -137,6 +167,8 @@
 
         /**
          * Collects the current values of all attributes that are being monitored.
+         * @member module:ParlayItem.ParlayItemPersistence#collectAll
+         * @public
          * @returns {Object} - Object that maps directive{attribute} = value
          */
         ParlayItemPersistence.prototype.collectAll = function () {
@@ -156,6 +188,8 @@
 
         /**
          * Collects the monitored attributes of the given directive.
+         * @member module:ParlayItem.ParlayItemPersistence#collectDirective
+         * @public
          * @param {String} directive - Name of the directive where a registration has been made.
          * @returns {Object} - Object that maps attribute = value
          */
@@ -177,6 +211,8 @@
 
         /**
          * Returns all attribute registrations for the given directive.
+         * @member module:ParlayItem.ParlayItemPersistence#getRegistration
+         * @public
          * @param {String} directive - Name of the directive where a registration has been made.
          * @returns {Array} - Array of monitored attribute registrations.
          */
@@ -195,6 +231,8 @@
 
         /**
          * Collects the monitored attributes and store them with ParlayStore using the given name.
+         * @member module:ParlayItem.ParlayItemPersistence#store
+         * @public
          * @param {String} name - Given workspace name.
          * @param {Boolean} autosave - If true this save was triggered automatically by the browser. Otherwise the user
          * requested it.

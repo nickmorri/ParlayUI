@@ -8,6 +8,16 @@
 
     /* istanbul ignore next */
     ParlayNavigationSidenavController.$inject = ["$mdSidenav", "$mdDialog", "ParlayGenericSaveLoadDialog", "$state", "PromenadeBroker", "ParlayItemManager"];
+    /**
+     * Controller for the navigation $mdSidenav.
+     * @constructor module:ParlayNavigation.ParlayNavigationSidenavController
+     * @param {Object} $mdSidenav - Angular Material service.
+     * @param {Object} $mdDialog - Angular Material service.
+     * @param {Object} ParlayGenericSaveLoadDialog
+     * @param {Object} $state - ui.router $stateProvider service.
+     * @param {Object} PromenadeBroker - PromenadeBroker service.
+     * @param {Object} ParlayItemManager - ParlayItemManager service.
+     */
     function ParlayNavigationSidenavController($mdSidenav, $mdDialog, ParlayGenericSaveLoadDialog, $state, PromenadeBroker, ParlayItemManager) {
 
         this.getCurrentState = function () {

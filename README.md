@@ -19,6 +19,9 @@ Usage
 
 When ParlayUI first loads it will request from the Broker all available and currently connected protocol connections. It will then perform an automatic discovery.
 
+Navigation between different components of the ParlayUI may be done by clicking the navigation menu, the first item beneath the Parlay logo.
+This will list all available components. By default ParlayUI will load the ```Items``` component.
+
 #### Protocols
 
 ###### Protocol List Dialog

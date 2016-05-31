@@ -11,11 +11,7 @@
             scope = _$rootScope_.$new();
             ctrl = $controller("ParlaySettingsDialogController", {$scope: scope, ParlaySettings: ParlaySettings});
         }));
-
-        describe("ParlaySettingsDialogController", function () {
-
-        });
-
+        
     });
 
 }());

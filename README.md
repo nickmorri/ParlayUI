@@ -11,13 +11,18 @@ ParlayUI is built with JavaScript using the AngularJS and Angular Material frame
 The ParlayUI interacts with a broker over a WebSocket. The broker handles communication between the ParlayUI and any items using a publish/subscribe system.
 
 A variety of other third party front-end JavaScript libraries are also leveraged. Third party libraries are managed using Bower and can be referenced in the bower.json file located in the ui directory. 
-ParlayUI uses the Grunt task-runner to automate tasks during the development and distribution processes. Further documentation of these processes is available in the [Development tutorial]{@tutorial Development}.
+ParlayUI uses the Grunt task-runner to automate tasks during the development and distribution processes. 
+
+_Further documentation of these processes is available in the [Development tutorial]{@tutorial Development}._
 
 -----
 Usage
 -----
 
 When ParlayUI first loads it will request from the Broker all available and currently connected protocol connections. It will then perform an automatic discovery.
+
+Navigation between different components of the ParlayUI may be done by clicking the navigation menu, the first item beneath the Parlay logo.
+This will list all available components. By default ParlayUI will load the ```Items``` component.
 
 #### Protocols
 
@@ -31,7 +36,10 @@ New connections to available protocols can be opened by selecting the ```open pr
 
 ###### Protocol Configuration Dialog
 
-A new protocol connection can be made to an available protocol by completing the form for protocol configuration. 
+A new protocol connection can be made to an available protocol by completing the form for protocol configuration.
+ 
+_Further documentation on how to use Protocols is available in the [Protocols Use tutorial.]{@tutorial Protocols}_
+_Further documentation on how to develop Protocols is available in the Protocols Development tutorial._
 
 #### Items
 
@@ -42,6 +50,9 @@ An item can be added to a workspace by searching for the name of the item in the
 Once added to the workspace it can be removed, copied or rearranged with any other items active in the workspace.
 An item card represents one ParlayItem. An item card by default has a command, property, graph and log tab that allow the user to
 interact with and view data from a ParlayItem.
+
+_Further documentation on how to use Items and Items cards is available in the [Items Use tutorial]{@tutorial Items Use}._
+_Further documentation on how to develop Items and Items card is available in the [Items Development tutorial]{@tutorial Items Development}._
 
 #### Workspaces
 
@@ -93,4 +104,4 @@ To build ParlayUI development files perform the above build process and run:
     
 This will retrieve all front-end dependencies, run the unit tests and launch a webserver that serves the development copy of ParlayUI. For development this is the preferred environment as the source files will be served individually, and in their original unminified state making for easier debugging.
     
-For more detailed information refer to the [Development tutorial]{@tutorial Development}.
+_Further documentation of these processes is available in the [Development tutorial]{@tutorial Development}._

@@ -15,7 +15,11 @@
         <md-content layout="column" layout-margin>
             <md-card>
                 <md-toolbar class="md-hue-1">
-                    <h2 class="md-toolbar-tools">Discovery settings</h2>
+                    <div class="md-toolbar-tools">
+                        <h2>Discovery settings</h2>
+                        <span flex></span>
+                        <md-button ng-click="ctrl.restoreDefault('broker')">Restore defaults</md-button>
+                    </div>
                 </md-toolbar>
                 <md-card-content>
                     <md-switch ng-model="auto_discovery" aria-label="Autodiscover">
@@ -37,7 +41,11 @@
 
             <md-card>
                 <md-toolbar class="md-hue-1">
-                    <h2 class="md-toolbar-tools">Graph settings</h2>
+                    <div class="md-toolbar-tools">
+                        <h2>Graph settings</h2>
+                        <span flex></span>
+                        <md-button ng-click="ctrl.restoreDefault('graph')">Restore defaults</md-button>
+                    </div>
                 </md-toolbar>
                 <md-card-content layout="row" layout-margin>
                     <md-input-container flex="30" flex-gt-sm="10">
@@ -50,7 +58,11 @@
 
             <md-card>
                 <md-toolbar class="md-hue-1">
-                    <h2 class="md-toolbar-tools">Log settings</h2>
+                    <div class="md-toolbar-tools">
+                        <h2>Log settings</h2>
+                        <span flex></span>
+                        <md-button ng-click="ctrl.restoreDefault('log')">Restore defaults</md-button>
+                    </div>
                 </md-toolbar>
                 <md-card-content layout="column">
                     <md-input-container flex>
@@ -62,7 +74,11 @@
 
             <md-card>
                 <md-toolbar class="md-hue-1">
-                    <h2 class="md-toolbar-tools">Broker settings</h2>
+                    <div class="md-toolbar-tools">
+                        <h2>Broker settings</h2>
+                        <span flex></span>
+                        <md-button ng-click="ctrl.restoreDefault('broker')">Restore defaults</md-button>
+                    </div>
                 </md-toolbar>
                 <md-card-content layout="column">
                     <md-switch ng-model="show_prompt" aria-label="Show prompt">

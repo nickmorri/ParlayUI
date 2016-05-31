@@ -30,7 +30,7 @@
             },
             '{"TO":100,"MSG_ID":201,"FROM":"UI"}{}{"FROM":100,"TO":"UI"}': {
                 TOPICS: {
-                    MSG_STATUS: "ok"
+                    MSG_STATUS: "OK"
                 }
             },
             '{"TO":100,"MSG_ID":201,"FROM":"UI"}{}{"FROM":200,"TO":"UI"}': {
@@ -95,13 +95,13 @@
         MockParlaySocket.prototype.sendMessage = function (topics, contents, response_topics, response_callback) {
             if (response_callback == null) {
                 return $q(function (resolve, reject) {
-                    reject({STATUS: -1});
+                    reject({STATUS: "ERROR"});
                 });
             }
             else if (contents == null) {
                 response_callback({STATUS: -1});
                 return $q(function (resolve, reject) {
-                    reject({STATUS: -1});
+                    reject({STATUS: "ERROR"});
                 });
             }
             else if (sample_responses[JSON.stringify(topics) + JSON.stringify(contents) + JSON.stringify(response_topics)] !== undefined) {

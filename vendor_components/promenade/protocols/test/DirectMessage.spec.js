@@ -62,6 +62,12 @@
 
                     protocol.sendMessage({TO: 100}, {}, {FROM: 100}, false).then(done);
 
+                    socket.triggerOnMessage({
+                        TO: "UI",
+                        MSG_STATUS: "OK",
+                        FROM: 100
+                    }, {}, {});
+
                     $rootScope.$apply();
 
                     expect(protocol.buildMessageTopics).toHaveBeenCalledWith({TO: 100});
@@ -72,9 +78,10 @@
                             FROM: "UI",
                             MSG_ID: protocol.getMessageId()
                         }), jasmine.objectContaining({}), jasmine.objectContaining({
+                            TO: "UI",
                             FROM: 100
                         }), jasmine.any(Function),
-                        true);
+                        undefined);
                 });
 
                 it("rejects", function (done) {
@@ -83,6 +90,12 @@
                     spyOn(protocol, "buildResponseTopics").and.callThrough();
 
                     protocol.sendMessage({TO: 100}, {}, {FROM: 200}, false).catch(done);
+
+                    socket.triggerOnMessage({
+                        TO: "UI",
+                        MSG_STATUS: "ERROR",
+                        FROM: 200
+                    });
 
                     $rootScope.$apply();
 
@@ -94,17 +107,12 @@
                             FROM: "UI",
                             MSG_ID: protocol.getMessageId()
                         }), jasmine.objectContaining({}), jasmine.objectContaining({
+                            TO: "UI",
                             FROM: 200
                         }), jasmine.any(Function),
-                        true);
+                        undefined);
                 });
                 
-            });
-
-            it("checks if response is ok", function () {
-                expect(protocol.isResponseOk({TOPICS: {MSG_STATUS: "ERROR"}})).toBeFalsy();
-                expect(protocol.isResponseOk({TOPICS: {MSG_STATUS: "WARNING"}})).toBeFalsy();
-                expect(protocol.isResponseOk({TOPICS: {MSG_STATUS: "OK"}})).toBeTruthy();
             });
 
         });

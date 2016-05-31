@@ -48,7 +48,9 @@
 
             return setup + "\n" + var_name + "." + func + "(" + Object.keys(message).map(function (key) {
                     var value = JSON.stringify(message[key]);
-                    if (value === undefined) value = "None";
+                    if (value === undefined) {
+                        value = "None";
+                    }
                     return key + "=" + value;
                 }).join(", ") + ")";
         };
@@ -126,53 +128,94 @@
      * @param {Object} $scope - A AngularJS $scope Object.
      * @param {Object} $timeout - AngularJS timeout Service.
      * @param {Object} ParlayNotification - ParlayNotification Service.
+     * @param {Object} PromenadeStandardCommandMessage - PromenadeStandardCommandMessage factory.
      */
     function PromenadeStandardItemCardCommandTabController($scope, ParlayNotification, PromenadeStandardCommandMessage) {
+
+        var ctrl = this;
+
+        ctrl.send = send;
+        ctrl.copyCommand = copyCommand;
+        ctrl.clearResponses = clearResponses;
+        ctrl.toggleCommandBuilder = toggleCommandBuilder;
+        ctrl.toggleScriptBuilder = toggleScriptBuilder;
+        ctrl.toggleResponseContents = toggleResponseContents;
 
         // Due to the way JavaScript prototypical inheritance works and AngularJS scoping we want to enclose the message Object within another object.
         // Reference AngularJS "dot rule": http://jimhoskins.com/2012/12/14/nested-scopes-in-angularjs.html
         $scope.wrapper = {
-            message: new PromenadeStandardCommandMessage(this.item.name)
+            message: new PromenadeStandardCommandMessage(ctrl.item.name)
         };
 
         // References to $mdChipsController instances.
         // We want to clear the buffers before the message is collected and sent.
-        this.chipsControllers = [];
+        ctrl.chipsControllers = [];
 
         // If there is only one field we should automatically assign it's default.
-        if (this.item.content_fields && Object.keys(this.item.content_fields).length === 1) {
-            Object.keys(this.item.content_fields).forEach(function (key) {
-                $scope.wrapper.message[this.item.content_fields[key].msg_key + '_' + this.item.content_fields[key].input] = this.item.content_fields[key].options.find(function (option) {
-                    return option.name === this.item.content_fields[key].default;
-                }.bind(this));
-            }.bind(this));
+        if (ctrl.item.content_fields && Object.keys(ctrl.item.content_fields).length === 1) {
+            Object.keys(ctrl.item.content_fields).forEach(function (key) {
+                $scope.wrapper.message[ctrl.item.content_fields[key].msg_key + '_' + ctrl.item.content_fields[key].input] = ctrl.item.content_fields[key].options.find(function (option) {
+                    return option.name === ctrl.item.content_fields[key].default;
+                });
+            });
         }
 
         // Hold state of command section collapsibles.
-        this.collapsible_state = {
+        ctrl.collapsible_state = {
             command_builder: false,
             script_builder: false,
             response_contents: false
         };
 
         // Container for pending responses.
-        this.responses = [];
+        ctrl.responses = [];
 
         /**
-         * Add received response information to the pending response item.
-         * @param {Array} responses - Array of pending responses.
+         * Add received response information to the pending response item and mark response as success.
          * @param {Object} response - Response message topics and contents.
-         * @param {Boolean} success - True if the message was resolved, false otherwise.
          */
-        function markResponse(responses, response, success) {
-            var pending_response = responses.find(function (pending_response) {
+        function markOk (response) {
+            var pending_response = ctrl.responses.find(function (pending_response) {
                 return pending_response.MSG_ID === response.TOPICS.MSG_ID;
             });
 
             if (pending_response) {
                 pending_response.received = true;
                 pending_response.message = response;
-                pending_response.success = success;
+                pending_response.success = true;
+                pending_response.complete = true;
+            }
+        }
+
+        /**
+         * Add received response information to the pending response item and mark response as error.
+         * @param {Object} response - Response message topics and contents.
+         */
+        function markError (response) {
+            var pending_response = ctrl.responses.find(function (pending_response) {
+                return pending_response.MSG_ID === response.TOPICS.MSG_ID;
+            });
+
+            if (pending_response) {
+                pending_response.received = true;
+                pending_response.message = response;
+                pending_response.success = false;
+                pending_response.complete = true;
+            }
+        }
+
+        /**
+         * Add received response information to the pending response item and mark response as incomplete.
+         * @param {Object} response - Response message topics and contents.
+         */
+        function markProgress (response) {
+            var pending_response = ctrl.responses.find(function (pending_response) {
+                return pending_response.MSG_ID === response.TOPICS.MSG_ID;
+            });
+
+            if (pending_response) {
+                pending_response.received = true;
+                pending_response.message = response;
             }
         }
 
@@ -180,10 +223,10 @@
          * Collects and sends the command from the form. During this process it will update controller attributes to inform the user the current status.
          * @param {Event} $event - This event's target is used to reference the md-chips element so that we can clear the buffer if available.
          */
-        this.send = function ($event) {
+        function send ($event) {
             // Push the buffer into the md-chips ng-model
             if ($event) {
-                this.chipsControllers.forEach(function (chipsController) {
+                ctrl.chipsControllers.forEach(function (chipsController) {
                     var buffer = chipsController.getChipBuffer();
                     if (buffer !== "") {
                         chipsController.appendChip(buffer);
@@ -193,31 +236,30 @@
             }
 
             // Add a pending response Object.
-            this.responses.push({
+            ctrl.responses.push({
                 received: false,
-                MSG_ID: this.item.getMessageId() + 1,
+                complete: false,
+                MSG_ID: ctrl.item.getMessageId() + 1,
                 message: undefined,
                 success: undefined
             });
 
-            // Remove all responses that have been received.
-            this.responses = this.responses.filter(function (pending_response) {
-                return !pending_response.received;
+            // Remove all responses that have been marked complete.
+            ctrl.responses = ctrl.responses.filter(function (pending_response) {
+                return !pending_response.complete;
             });
 
+            var collected_message = $scope.wrapper.message.collect(false);
+
             // Request that the item send the collected message.
-            // When a response is received mark it as a success or failure.
-            this.item.sendMessage($scope.wrapper.message.collect(false)).then(function (response) {
-                markResponse(this.responses, response, true);
-            }.bind(this)).catch(function (response) {
-                markResponse(this.responses, response, false);
-            }.bind(this));
-        };
+            // When a response is received mark it as a success, failure, or record it's progress.
+            ctrl.item.sendMessage(collected_message).then(markOk, markError, markProgress);
+        }
 
         /**
          * Copy the Python command generated by the form to the clipboard.
          */
-        this.copyCommand = function() {
+        function copyCommand () {
             var command = $scope.wrapper.message.toPythonStatement();
 
             if (command) {
@@ -228,30 +270,35 @@
                 ParlayNotification.show({content: "Cannot copy empty command."});
             }
 
-        };
+        }
 
-        this.clearResponses = function () {
-            this.responses = [];
-        };
+        function clearResponses () {
+            ctrl.responses = [];
+        }
 
-        this.toggleCommandBuilder = function () {
-            this.collapsible_state.command_builder = !this.collapsible_state.command_builder;
-        };
+        function toggleCommandBuilder () {
+            ctrl.collapsible_state.command_builder = !ctrl.collapsible_state.command_builder;
+        }
 
-        this.toggleScriptBuilder = function () {
-            this.collapsible_state.script_builder = !this.collapsible_state.script_builder;
-        };
+        function toggleScriptBuilder () {
+            ctrl.collapsible_state.script_builder = !ctrl.collapsible_state.script_builder;
+        }
 
-        this.toggleResponseContents = function () {
-            this.collapsible_state.response_contents = !this.collapsible_state.response_contents;
-        };
+        function toggleResponseContents () {
+            ctrl.collapsible_state.response_contents = !ctrl.collapsible_state.response_contents;
+        }
 
         // Watch for new fields to fill with defaults.
         $scope.$watchCollection("wrapper.message", function () {
 
             var fields = Object.keys($scope.wrapper.message).filter(function (key) {
                 // Build an Array with fields that have sub fields.
-                return $scope.wrapper.message[key] !== undefined && $scope.wrapper.message[key].hasOwnProperty("sub_fields");
+                try {
+                    return $scope.wrapper.message[key] !== undefined && $scope.wrapper.message[key].hasOwnProperty("sub_fields");
+                }
+                catch (error) {
+                    return null;
+                }
             }).map(function (key) {
                 return $scope.wrapper.message[key].sub_fields;
             }).reduce(function (accumulator, current) {

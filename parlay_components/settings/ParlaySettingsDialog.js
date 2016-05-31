@@ -8,7 +8,7 @@
         .controller("ParlaySettingsDialogController", ParlaySettingsDialogController);
 
     /* istanbul ignore next */
-    ParlaySettingsDialogController.$inject = ["$scope", "$mdDialog", "$mdMedia", "ParlaySettings", "PromenadeBroker"];
+    ParlaySettingsDialogController.$inject = ["$scope", "$mdDialog", "ParlaySettings", "PromenadeBroker"];
     /**
      * @constructor module:ParlaySettings.ParlaySettingsDialogController
      * @param {Object} $scope - AngularJS $scope Object.
@@ -17,7 +17,7 @@
      * @param {Object} ParlaySettings - ParlaySettings service.
      * @param {Object} PromenadeBroker - PromenadeBroker service.
      */
-    function ParlaySettingsDialogController ($scope, $mdDialog, $mdMedia, ParlaySettings, PromenadeBroker) {
+    function ParlaySettingsDialogController ($scope, $mdDialog, ParlaySettings, PromenadeBroker) {
 
         var ctrl = this;
 
@@ -41,9 +41,6 @@
         $scope.show_prompt = broker_settings && broker_settings.show_prompt;
 
         $scope.notification_permission = !navigator.userAgent.includes("Edge") && Notification.permission === "granted";
-
-        // Attach reference to $mdMedia to scope so that media queries can be done.
-        $scope.$mdMedia = $mdMedia;
 
         $scope.$watch("auto_discovery", function (newValue) {
             ParlaySettings.set("broker", {auto_discovery: newValue});

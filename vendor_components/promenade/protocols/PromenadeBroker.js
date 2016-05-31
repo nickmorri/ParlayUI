@@ -131,16 +131,12 @@
                 if (contents.discovery && contents.discovery.length > 0) {
                     // Record the current Broker version.
 
-                    var broker = contents.discovery.find(function (item) {
+                    var broker_discovery = contents.discovery.find(function (item) {
                         return item.NAME && item.NAME === "Broker";
                     });
 
-                    if (broker !== undefined) {
-                        Object.defineProperty(broker, "version", {
-                            writeable: false,
-                            enumerable: true,
-                            value: broker.VERSION
-                        });
+                    if (broker_discovery !== undefined) {
+                        broker.version = broker_discovery.VERSION;
                     }
 
                 }

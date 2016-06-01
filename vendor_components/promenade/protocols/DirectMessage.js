@@ -22,9 +22,9 @@
 
         /**
          * PromenadeDirectMessageProtocol constructor.
-         * Prototypically inherits from ParlayProtocol.
-         * @constructor module:PromenadeDirectMessage.PromenadeDirectMessage
+         * Prototypically inherits from [ParlayProtocol]{@link module:ParlayProtocol.ParlayProtocol}.
          * @extends module:ParlayProtocol.ParlayProtocol
+         * @constructor module:PromenadeDirectMessage.PromenadeDirectMessage
          */
         function PromenadeDirectMessageProtocol(configuration) {
             // Call the constructor of the prototype we inherit from.

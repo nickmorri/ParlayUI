@@ -21,23 +21,36 @@
 	ParlayStore.$inject = ["ParlayStoreService"];
     /**
      * Holds references to the various ParlayStore namespaces.
-     * @constructor module:ParlayStore.ParalyStoreService
+     * @constructor module:ParlayStore.ParlayStoreService
      * @param ParlayStoreService
      * @returns {Function} - ParlayStore namespace getter.
      */
 	function ParlayStore (ParlayStoreService) {
 
+		/**
+		 * Holds references to all created ParlayStore instances.
+		 * @member module:ParlayStore.ParlayStoreService#active_instances
+		 * @private
+		 * @type {Object}
+         */
 		var active_instances = {};
 
 		/**
 		 * If we have previously constructed a ParlayStore instance for the given namespace return that.
 		 * Otherwise create a new ParlayStore for this namespace and cache it.
+		 * @member module:ParlayStore.ParlayStoreService#getInstance
+		 * @private
 		 */
-		function getInstance(namespace) {
+		function getInstance (namespace) {
 			if (!active_instances.hasOwnProperty(namespace)) active_instances[namespace] = new ParlayStoreService(namespace);
 			return active_instances[namespace];
 		}
 
+		/**
+		 * ParlayStore namespace getter.
+		 * @param {String} namespace - Unique name that will reference the ParlayStore instance.
+		 * @returns {ParlayStore} - Unique ParlayStore namespace instance.
+		 */
 		return function (namespace) {
 			return getInstance(namespace);
 		};
@@ -51,7 +64,7 @@
          * @constructor module:ParlayStore.ParlayStore
 		 * @param {String} namespace - ParlayStore operations will be performed on this namespace.
 		 */
-		function ParlayStore(namespace) {
+		function ParlayStore (namespace) {
 
             /**
              * Name of space to separate this ParlayStore's items into.

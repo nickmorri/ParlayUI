@@ -3,6 +3,11 @@
 
     /**
      * @module ParlayProtocol
+     *
+     * @description
+     * A [ParlayProtocol]{@link ParlayProtocol} represents a connection to a device. [ParlayProtocol]{@link ParlayProtocol}s contain all the
+     * [ParlayItem]{@link module:ParlayItem.ParlayItem}s that are connected to the given protocol instance.
+     * [ParlayProtocol]{@link ParlayProtocol}s are managed by the [ParlayProtocolManager]{@link module:ParlayProtocol.ParlayProtocolManager}.
      */
 
     var module_dependencies = ["parlay.socket", "parlay.items.item", "promenade.protocols.directmessage", "parlay.settings"];
@@ -25,6 +30,7 @@
     function ParlayProtocolFactory (ParlaySocket, ParlayItem, ParlaySettings, $q) {
 
         /**
+         *
          * @abstract
          * @constructor module:ParlayProtocol.ParlayProtocol
          * @param {Object} configuration - Contains details neccessary to configure a ParlayProtocol.

@@ -3,6 +3,9 @@
 
     /**
      * @module ParlayNavigation
+     *
+     * @description
+     * Provides navigation components to allow the end-user to easily navigate around ParlayUI.
      */
 
     var module_dependencies = ["ngMaterial", "parlay.navigation.sidenav", "vendor.defaults"];

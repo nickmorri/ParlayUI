@@ -3,6 +3,10 @@
 
     /**
      * @module ParlaySettings
+     *
+     * @description
+     * ParlaySettings provides an interface to the [ParlayStore]{@link module:ParlayStore.ParlayStore} that allows other components to get, set and provide
+     * default values for various user configurable settings values used throughout ParlayUI.
      */
 
     var module_dependencies = ["parlay.store"];
@@ -14,7 +18,11 @@
     ParlaySettingsFactory.$inject = ["ParlayStore"];
     function ParlaySettingsFactory (ParlayStore) {
 
-        // Reference to namespace settings ParlayStore.
+        /**
+         * Reference to namespace settings ParlayStore.
+         * @member module:ParlayStore.ParlayStore#store
+         * @private
+         */
         var store = ParlayStore("settings");
 
         /**

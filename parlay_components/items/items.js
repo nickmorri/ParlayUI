@@ -14,6 +14,7 @@
     ItemsConfiguration.$inject = ["$stateProvider"];
     /**
      * The sets up the items state for ui.router.
+     * @member module:ParlayItem#ItemsConfiguration
      * @param {Object} $stateProvider - Service provided by ui.router
      */
     function ItemsConfiguration ($stateProvider) {

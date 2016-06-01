@@ -11,12 +11,18 @@
     function ParlayProtocolManagerFactory($injector, $q, PromenadeBroker, ParlayStore, ParlayNotification) {
 
         /**
-         * Holds references to ParlayProtocol connections and manages opening and closing of these protocols.
+         * Holds references to available, open and saved [ParlayProtocol]{@link module:ParlayProtocol.ParlayProtocol} connections and configurations.
+         * Manages opening and closing of these protocols.
          * @constructor module:ParlayProtocol.ParlayProtocolManager
          */
         function ParlayProtocolManager() {
 
-            // Reference to ParlayStore protocols namespace
+            /**
+             * Reference to ParlayStore protocols namespace,
+             * @member module:ParlayProtocol.ParlayProtocolManager#store
+             * @private
+             * @type {ParlayStore}
+             */
             var store = ParlayStore("protocols");
 
             /**

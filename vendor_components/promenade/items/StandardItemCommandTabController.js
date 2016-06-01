@@ -126,7 +126,6 @@
      * Controller constructor for the command tab.
      * @constructor
      * @param {Object} $scope - A AngularJS $scope Object.
-     * @param {Object} $timeout - AngularJS timeout Service.
      * @param {Object} ParlayNotification - ParlayNotification Service.
      * @param {Object} PromenadeStandardCommandMessage - PromenadeStandardCommandMessage factory.
      */

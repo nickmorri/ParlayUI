@@ -9,7 +9,6 @@
         .controller("PromenadeSmoothieChartController", PromenadeSmoothieChartController)
         .directive('promenadeSmoothieChart', PromenadeSmoothieChart);
 
-
     /**
      * @module PromenadeSmoothieChart
      * @restrict E
@@ -35,7 +34,6 @@
      * @param {Function} smoothieFn - Configuration retrieval function.
      */
 
-
     PromenadeSmoothieChartRun.$inject = ["ParlaySettings"];
     function PromenadeSmoothieChartRun(ParlaySettings) {
         ParlaySettings.registerDefault("graph", {label_size: 12});
@@ -50,8 +48,6 @@
      * Controller constructor for the PromenadeSmoothieChart.
      * @constructor
      * @param {Object} scope - A AngularJS $scope Object.
-     * @param {Object} $interval - AngularJS interval Service.
-     * @param {Object} ParlaySettings - ParlaySettings Service.
      */
     function PromenadeSmoothieChartController (scope) {
 

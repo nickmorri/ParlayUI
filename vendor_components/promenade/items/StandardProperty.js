@@ -10,23 +10,73 @@
     PromenadeStandardPropertyFactory.$inject = ["ParlayData", "$rootScope"];
     function PromenadeStandardPropertyFactory (ParlayData, $rootScope) {
 
-        function PromenadeStandardProperty(data, item_name, protocol) {
+        /**
+         * Class that wraps property information provided in a discovery.
+         * @constructor PromenadeStandardProperty
+         * @param {Object} data - Discovery information used to initialize the PromenadeStandardProperty instance with.
+         * @param {Object} data.NAME - Name of the property.
+         * @param {String} item_name - Name of the [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} this command belongs to.
+         * @param {Object} protocol - Reference to the [PromenadeDirectMessage]{@link module:PromenadeDirectMessage.PromenadeDirectMessage} the [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} belongs to.
+         */
+        function PromenadeStandardProperty (data, item_name, protocol) {
 
             var property = this;
 
+            /**
+             * Allow easier identification of properties, data streams, commands, etc.
+             * @member PromenadeStandardProperty#type
+             * @public
+             * @type {String}
+             */
             property.type = "property";
 
+            /**
+             * Name of the property.
+             * @member PromenadeStandardProperty#name
+             * @public
+             * @type {String}
+             */
             property.name = data.NAME;
+
+            /**
+             * Type of input the property accepts.
+             * @member PromenadeStandardProperty#input
+             * @public
+             * @type {String}
+             */
             property.input = data.INPUT;
+
+            /**
+             * True if the property is read only, false otherwise.
+             * @member PromenadeStandardProperty#read_only
+             * @public
+             * @type {Boolean}
+             */
             property.read_only = data.READ_ONLY;
 
-            // Holds internal value in the constructor closure scope.
+            /**
+             * Holds internal value in the constructor closure scope.
+             * @member PromenadeStandardProperty#read_only
+             * @private
+             * @type {*}
+             */
             var internal_value;
 
-            // Holds callbacks that are invoked on every value change.
-            var onChangeCallbacks = {};
+            /**
+             * Holds callbacks that are invoked on every value change.
+             * @member PromenadeStandardProperty#on_change_callbacks
+             * @private
+             * @type {Object}
+             */
+            var on_change_callbacks = {};
 
-            // defineProperty so that we can define a custom setter to allow us to do the onChange callbacks.
+            /**
+             * Define a custom setter to allow us to invoke the onChange callbacks.
+             * Stores actual value in [internal_value]{@link PromenadeStandardProperty#internal_value}
+             * @member PromenadeStandardProperty#value
+             * @public
+             * @type {*}
+             */
             Object.defineProperty(property, "value", {
                 writeable: true,
                 enumerable: true,
@@ -35,21 +85,43 @@
                 },
                 set: function (new_value) {
                     internal_value = new_value;
-                    Object.keys(onChangeCallbacks).forEach(function (key) {
-                        onChangeCallbacks[key](internal_value);
+                    Object.keys(on_change_callbacks).forEach(function (key) {
+                        on_change_callbacks[key](internal_value);
                     });
                 }
             });
 
+            /**
+             * Name of the [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} this 
+             * property belongs to.
+             * @member PromenadeStandardProperty#item_name
+             * @public
+             * @type {String}
+             */
+            property.item_name = item_name;
+
+            /**
+             * Reference to the [PromenadeDirectMessage]{@link module:PromenadeDirectMessage.PromenadeDirectMessage} the [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} belongs to.
+             * @member PromenadeStandardProperty#protocol
+             * @public
+             * @type {Object}
+             */
+            property.protocol = protocol;
+
+            // Attach methods to PromenadeStandardProperty.
             property.get = get;
             property.set = set;
             property.onChange = onChange;
             property.generateAutocompleteEntries = generateAutocompleteEntries;
             property.generateInterpreterWrappers = generateInterpreterWrappers;
 
-            property.item_name = item_name;
-            property.protocol = protocol;
-
+            /**
+             * Requests a listener for the property. Saves a reference to deregistration function returned by
+             * [PromenadeDirectMessage.onMessage]{@link module:PromenadeDirectMessage.PromenadeDirectMessage#onMessage}.
+             * @member PromenadeStandardProperty#listener
+             * @public
+             * @type {Function}
+             */
             property.listener = protocol.onMessage({
                 TX_TYPE: "DIRECT",
                 MSG_TYPE: "RESPONSE",
@@ -68,26 +140,30 @@
 
             /**
              * Allows for callbacks to be registered, these will be invoked on change of value.
+             * @member PromenadeStandardProperty#onChange
+             * @public
              * @param {Function} callback - Function to be invoked whenever the value attribute changes.
              * @returns {Function} - onChange deregistration function.
              */
             function onChange (callback) {
                 var UID = 0;
-                var keys = Object.keys(onChangeCallbacks).map(function (key) {
+                var keys = Object.keys(on_change_callbacks).map(function (key) {
                     return parseInt(key, 10);
                 });
                 while (keys.indexOf(UID) !== -1) {
                     UID++;
                 }
-                onChangeCallbacks[UID] = callback;
+                on_change_callbacks[UID] = callback;
 
                 return function deregister() {
-                    delete onChangeCallbacks[UID];
+                    delete on_change_callbacks[UID];
                 };
             }
 
             /**
              * Requests the current value of the PromenadeStandardProperty.
+             * @member PromenadeStandardProperty#get
+             * @public
              * @returns {$q.deferred.Promise} - Resolved on response receipt.
              */
             function get () {
@@ -114,6 +190,8 @@
 
             /**
              * Sets the value of the PromenadeStandardProperty to the given value.
+             * @member PromenadeStandardProperty#set
+             * @public
              * @param {(Number|String|Object)} value - Value to set.
              * @returns {$q.deferred.Promise} - Resolved on response receipt.
              */
@@ -147,6 +225,8 @@
 
             /**
              * Generates entry for Ace editor autocomplete consumed by ParlayWidget.
+             * @member PromenadeStandardProperty#generateAutocompleteEntries
+             * @public
              * @returns {Array.Object} - Entry used to represent the PromenadeStandardProperty.
              */
             function generateAutocompleteEntries () {
@@ -172,6 +252,12 @@
                 return [get_entry, set_entry, value_entry];
             }
 
+            /**
+             * Generates Objects with Function references to be used in the ParlayWidgetJSInterpreter.
+             * @member PromenadeStandardProperty#generateInterpreterWrappers
+             * @public
+             * @returns {Array.Object} - Objects containing function references.
+             */
             function generateInterpreterWrappers () {
                 return [
                     {

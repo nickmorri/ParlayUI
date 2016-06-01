@@ -83,7 +83,7 @@
                     container.add({}, reference, false, false);
                     expect(container.size()).toBe(1);
                     expect(container.maxDepth()).toBe(1);
-                    container.delete({}, reference);
+                    container.remove({}, reference);
                     expect(container.size()).toBe(0);
                     expect(container.maxDepth()).toBe(1);
                 });
@@ -92,7 +92,7 @@
                     var reference = function () {};
                     container.add({key: 0}, reference, false, false);
                     expect(container.size()).toBe(1);
-                    container.delete({key: 0}, reference);
+                    container.remove({key: 0}, reference);
                     expect(container.size()).toBe(0);
                 });
 
@@ -108,7 +108,7 @@
                     expect(container.size()).toBe(1);
 
                     references.forEach(function (reference) {
-                        container.delete({key: 0}, reference);
+                        container.remove({key: 0}, reference);
                     });
 
                     expect(container.callbackCount()).toBe(0);
@@ -128,7 +128,7 @@
                     expect(container.size()).toBe(5);
 
                     references.forEach(function (reference, index) {
-                        container.delete({key: index}, reference);
+                        container.remove({key: index}, reference);
                     });
 
                     expect(container.callbackCount()).toBe(0);
@@ -149,9 +149,9 @@
 
                     expect(container.maxDepth()).toBe(4);
 
-                    container.delete({"first": 1, "second": 2, "third": 3}, reference_third);
+                    container.remove({"first": 1, "second": 2, "third": 3}, reference_third);
                     expect(container.maxDepth()).toBe(3);
-                    container.delete({"first": 1, "second": 2}, reference_second);
+                    container.remove({"first": 1, "second": 2}, reference_second);
                     expect(container.maxDepth()).toBe(1);
                     expect(container.size()).toBe(0);
 
@@ -161,7 +161,7 @@
                     expect(container.callbackCount()).toBe(1);
                     expect(container.size()).toBe(1);
 
-                    container.delete({"a": 1, "really": 2, "deep": 3, "topic": 4, "chain": 5, "that": 6, "should": 7, "be": 8, "depth": 9, "eleven": 10}, reference_deep);
+                    container.remove({"a": 1, "really": 2, "deep": 3, "topic": 4, "chain": 5, "that": 6, "should": 7, "be": 8, "depth": 9, "eleven": 10}, reference_deep);
                     expect(container.maxDepth()).toBe(1);
                     expect(container.callbackCount()).toBe(0);
                     expect(container.size()).toBe(0);
@@ -170,7 +170,7 @@
 
                 it("fails appropriately", function () {
                     var reference = function () {};
-                    expect(container.delete({}, reference)).toBeFalsy();
+                    expect(container.remove({}, reference)).toBeFalsy();
                 });
 
             });

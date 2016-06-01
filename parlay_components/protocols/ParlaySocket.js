@@ -88,6 +88,16 @@
              */
             var callback_key = "__CALLBACK__";
 
+            var container = this;
+
+            // Attach methods to CallbackContainer.
+            container.add = add;
+            container.remove = remove;
+            container.invoke = invoke;
+            container.size = size;
+            container.callbackCount = callbackCount;
+            container.maxDepth = maxDepth;
+
             /**
              * Get the hash for a particular key value pair to put in the map.
              * @member module:ParlaySocket.CallbackContainer#get_hash
@@ -243,7 +253,7 @@
              * @param {Boolean} verbose - If true both topics and contents are passed to callback, otherwise only contents.
              * @returns {Function} - Deregistration function, if called this registration will be removed.
              */
-            this.add = function (topics, callback, persist, verbose) {
+            function add (topics, callback, persist, verbose) {
                 var callbacks = get_callbacks_for_topics(topics);
 
                 callbacks.push({
@@ -253,9 +263,9 @@
                 });
 
                 return function deregistrationFunction () {
-                    this.delete(topics, callback);
-                }.bind(this);
-            };
+                    container.remove(topics, callback);
+                };
+            }
 
             /**
              * Removes callback registration for the given topics and callback reference.
@@ -265,7 +275,7 @@
              * @param {Function} callback - Reference to registered callback function.
              * @returns {Boolean} - True if a registration was removed, false otherwise.
              */
-            this.delete = function (topics, callback) {
+            function remove (topics, callback) {
                 var callbacks = get_callbacks_for_topics(topics);
 
                 // Locate which index the given callback function is located in the callbacks Array.
@@ -283,7 +293,7 @@
                 else {
                     return false;
                 }
-            };
+            }
 
             /**
              * Calls all applicable callbacks for the given topics Object.
@@ -293,7 +303,7 @@
              * @param {Object} topics - Object of key/value pairs.
              * @param {Object} contents - Object of key/value pairs.
              */
-            this.invoke = function (topics, contents) {
+            function invoke (topics, contents) {
 
                 // This will be the map that we encode (sorted so we're stable).
                 var hash_list = Object.keys(topics).sort().map(function (key) {
@@ -302,7 +312,7 @@
 
                 // Start at the root.
                 invoke_all_with_hashes(topics, contents, hash_list, 0, internal_map);
-            };
+            }
 
             /**
              * Returns number of unique topic keys.
@@ -311,7 +321,7 @@
              * @param {Map} map - Tree-like structure that contains topic registrations.
              * @returns {Number} - Count of topics keys.
              */
-            this.size = function size(map) {
+            function size (map) {
                 map = map || internal_map;
 
                 // Access the callbacks at this depth.
@@ -323,12 +333,12 @@
                 // Recursively add our children up.
                 map.forEach(function (value, key) {
                     if (key !== callback_key && value !== undefined) {
-                        count += this.size(value);
+                        count += container.size(value);
                     }
-                }, this);
+                });
 
                 return count;
-            };
+            }
 
             /**
              * Returns number of registered callback functions.
@@ -337,7 +347,7 @@
              * @param {Map} map - Tree-like structure that contains topic registrations.
              * @returns {Number} - Count of registered callback functions.
              */
-            this.callbackCount = function callbackCount(map) {
+            function callbackCount (map) {
                 map = map || internal_map;
                 var count = 0;
 
@@ -349,12 +359,12 @@
                 // Recursively add our children up.
                 map.forEach(function (value, key) {
                     if (key !== callback_key && value !== undefined) {
-                        count += this.callbackCount(value);
+                        count += container.callbackCount(value);
                     }
-                }, this);
+                });
 
                 return count;
-            };
+            }
 
             /**
              * Traverse the CallbackContainer tree to find the child at the maximum depth.
@@ -362,7 +372,7 @@
              * @public
              * @returns {Number}
              */
-            this.maxDepth = function maxDepth() {
+            function maxDepth () {
 
                 function traverse(tree) {
                     var max_child_depth = 0;
@@ -383,7 +393,7 @@
                 }
 
                 return traverse(internal_map);
-            };
+            }
 
         }
 
@@ -496,6 +506,21 @@
              */
             var socket;
 
+            var parlay_socket = this;
+
+            // Attach methods to ParlaySocket.
+            parlay_socket.open = open;
+            parlay_socket.close = close;
+            parlay_socket.sendMessage = sendMessage;
+            parlay_socket.onMessage = onMessage;
+            parlay_socket.getAddress = getAddress;
+            parlay_socket.onClose = onClose;
+            parlay_socket.onOpen = onOpen;
+            parlay_socket.isConnected = isConnected;
+
+            // Opens ParlaySocket as soon as possible.
+            parlay_socket.open($location.protocol === 'https:' ? 'wss://' + BrokerAddress + ':8086' : 'ws://' + BrokerAddress + ':8085');
+
             /**
              * Opens WebSocket and returns Promise when complete.
              * @member module:ParlaySocket.ParlaySocket#open
@@ -503,11 +528,11 @@
              * @param {String} url - Location the WebSocket instance should connect to.
              * @returns {$q.defer.promise} Resolved after WebSocket is opened.
              */
-            this.open = function open(url) {
+            function open (url) {
                 if (typeof url !== "string") {
                     throw new ParlaySocketError("ParlaySocket.open(url) requires a url string.");
                 }
-                else if (this.isConnected()) {
+                else if (parlay_socket.isConnected()) {
                     throw new ParlaySocketError("ParlaySocket open was called while the socket was already open.");
                 }
                 else {
@@ -520,7 +545,7 @@
                     socket.onmessage = onMessageHandler;
                 }
                 return onOpenPromise.promise;
-            };
+            }
 
             /**
              * Closes WebSocket and returns Promise when complete.
@@ -528,10 +553,10 @@
              * @member module:ParlaySocket.ParlaySocket#close
              * @returns {$q.defer.promise} Resolved when WebSocket is closed.
              */
-            this.close = function close(reason) {
+            function close (reason) {
                 socket.close(reason);
                 return onClosePromise.promise;
-            };
+            }
 
             /**
              * Sends message to connected Broker over WebSocket with associated topics and contents.
@@ -545,7 +570,7 @@
              * @param {Boolean} [verbose] - If true we should invoke callback with full message. If false or undefined invoke with only contents for simplicity.
              * @returns {$q.defer.Promise} Resolves once message has been passed to socket.
              */
-            this.sendMessage = function sendMessage(topics, contents, response_topics, response_callback, verbose) {
+            function sendMessage (topics, contents, response_topics, response_callback, verbose) {
                 // If verbose is not passed default to false.
                 verbose = (verbose || false);
 
@@ -576,7 +601,7 @@
                 else {
                     throw new TopicsError(typeof topics);
                 }
-            };
+            }
 
             /**
              * Registers a callback to be associated with topics. Callback is invoked when message is received over WebSocket from Broker with matching signature.
@@ -587,7 +612,7 @@
              * @param {Boolean} verbose - If true we should invoke callback with full message. If false or undefined invoke with only contents for simplicity.
              * @returns {Function} Deregistration function for this message listener.
              */
-            this.onMessage = function onMessage(topics, callback, verbose) {
+            function onMessage (topics, callback, verbose) {
                 // Ensure that topics is an Object.
                 if (typeof topics === 'object') {
                     return onMessageCallbacks.add(topics, callback, true, !!verbose);
@@ -596,7 +621,7 @@
                 else {
                     throw new TopicsError(typeof topics);
                 }
-            };
+            }
 
             /**
              * Checks if WebSocket is open.
@@ -604,9 +629,9 @@
              * @public
              * @returns {Boolean} - True if WebSocket is open, false otherwise.
              */
-            this.isConnected = function isConnected() {
+            function isConnected () {
                 return socket !== undefined && socket.readyState === socket.OPEN;
-            };
+            }
 
             /**
              * Returns the URL where the WebSocket is connected.
@@ -614,9 +639,9 @@
              * @public
              * @returns {String} - URL.
              */
-            this.getAddress = function getAddress() {
+            function getAddress () {
                 return socket.url;
-            };
+            }
 
             /**
              * Registers a callback which will be invoked on socket close.
@@ -624,18 +649,19 @@
              * @public
              * @param {Function} callbackFunc - Callback function which will be invoked on WebSocket close.
              */
-            this.onClose = function onClose(callbackFunc) {
+            function onClose (callbackFunc) {
                 onCloseCallbacks.push(callbackFunc);
-            };
+            }
 
             /**
              * Registers a callback which will be invoked on socket open.
              * @member module:ParlaySocket.ParlaySocket#onOpen
+             * @public
              * @param {Function} callbackFunc - Callback function which will be invoked on WebSocket open.
              */
-            this.onOpen = function onOpen(callbackFunc) {
+            function onOpen(callbackFunc) {
                 onOpenCallbacks.push(callbackFunc);
-            };
+            }
 
             /**
              * Attempts to send message containing topics and contents on the WebSocket.
@@ -741,6 +767,7 @@
             /**
              * Called on receipt of a message on the WebSocket.
              * @member module:ParlaySocket.ParlaySocket#onMessageHandler
+             * @public
              * @param {MessageEvent} event - Event generated by the WebSocket containing message contents.
              */
             function onMessageHandler (event) {
@@ -748,13 +775,9 @@
                 invokeCallbacks(message.TOPICS, message.CONTENTS);
             }
 
-            // Opens ParlaySocket as soon as possible.
-            this.open($location.protocol === 'https:' ? 'wss://' + BrokerAddress + ':8086' : 'ws://' + BrokerAddress + ':8085');
-
         }
 
         return new ParlaySocket();
-
     }
 
 }());

@@ -212,7 +212,7 @@
                         var element_tag_with_attributes = "<" + snake_case + " " + attributes + "></" + snake_case + ">";
 
                         // HTML Element of the ParlayWidget template that will be attached as a child to the ParlayBaseWidget Element.
-                        var child_element = $compile(element_tag_with_attributes)(scope_ref)[0];
+                        var child_element = $compile(element_tag_with_attributes)(scope_ref.$new())[0];
 
                         element_ref[0].appendChild(child_element);
                     }

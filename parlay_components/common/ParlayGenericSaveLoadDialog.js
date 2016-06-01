@@ -9,14 +9,28 @@
         .controller("ParlayGenericSaveLoadDialogController", ParlayGenericSaveLoadDialogController);
 
     ParlayGenericSaveLoadDialogFactory.$inject = ["$mdDialog"];
+    /**
+     * A generic save / load dialog that allows the end-user to interact with a entry manager such as
+     * [ParlayItemManager]{@link module:ParlayItem.ParlayItemManager}.
+     *
+     * Uses {@link ParlayGenericSaveLoadDialogController}.
+     * @constructor ParlayGenericSaveLoadDialog
+     *
+     * @example <caption>Launching a ParlayGenericSaveLoadDialog with [ParlayItemManager]{@link module:ParlayItem.ParlayItemManager} as the designated manager.</caption>
+     *
+     * ParlayGenericSaveLoadDialog.show(event, ParlayItemManager, {
+         *      entry: "workspace",
+         *      entries: "workspaces",
+         *      title: "workspaces",
+         *      child: "item",
+         *      children: "items"
+         * });
+     *
+     */
     function ParlayGenericSaveLoadDialogFactory ($mdDialog) {
 
         /**
-         * A generic save / load dialog that allows the end-user to interact with a entry manager such as
-         * [ParlayItemManager]{@link module:ParlayItem.ParlayItemManager}.
-         *
-         * Uses {@link ParlayGenericSaveLoadDialogController}.
-         * @constructor ParlayGenericSaveLoadDialog
+         * Launches the $mdDialog instance.
          * @param {Event} event - DOM Event that can be used to set an animation source for $mdDialog.
          * @param {Object} manager - A manager instance where entries will be interacted with.
          * @param {Object} options - Contains manager specific terminology.
@@ -25,19 +39,8 @@
          * @param {Object} options.title - Title of the dialog.
          * @param {Object} options.child - Name of a singular child of an entry.
          * @param {Object} options.children - Name of plural children of an entry.
-         *
-         * @example <caption>Launching a ParlayGenericSaveLoadDialog with ParlayItemManager as the designated manager.</caption>
-         *
-         * (new ParlayGenericSaveLoadDialog(event, ParlayItemManager, {
-         *      entry: "workspace",
-         *      entries: "workspaces",
-         *      title: "workspaces",
-         *      child: "item",
-         *      children: "items"
-         * }));
-         *
          */
-        function ParlayGenericSaveLoadDialog (event, manager, options) {
+        function show (event, manager, options) {
             $mdDialog.show({
                 templateUrl: "../parlay_components/common/directives/parlay-generic-save-load-dialog.html",
                 targetEvent: event,
@@ -51,7 +54,9 @@
             });
         }
 
-        return ParlayGenericSaveLoadDialog;
+        return {
+            show: show
+        };
     }
 
     ParlayGenericSaveLoadDialogController.$inject = ["$scope", "$mdDialog", "$mdMedia", "ParlayNotification", "manager", "options"];

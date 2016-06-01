@@ -115,7 +115,7 @@
         });
 
         $scope.$watch("configuration.template.name", function (newValue, oldValue) {
-            if (!!oldValue && !angular.equals(newValue, oldValue)) {
+            if (!!oldValue && !angular.equals(newValue, oldValue) && !!$scope.configuration.selectedEvents) {
                 $scope.configuration.selectedEvents.forEach(function (event) {
                     event.handler.detach();
                 });

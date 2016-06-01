@@ -12,7 +12,9 @@
     function ParlayGenericSaveLoadDialogFactory ($mdDialog) {
 
         /**
-         * A generic save / load dialog that allows the end-user to interact with a entry manager.
+         * A generic save / load dialog that allows the end-user to interact with a entry manager such as
+         * [ParlayItemManager]{@link module:ParlayItem.ParlayItemManager}.
+         *
          * Uses {@link ParlayGenericSaveLoadDialogController}.
          * @constructor ParlayGenericSaveLoadDialog
          * @param {Event} event - DOM Event that can be used to set an animation source for $mdDialog.
@@ -23,6 +25,17 @@
          * @param {Object} options.title - Title of the dialog.
          * @param {Object} options.child - Name of a singular child of an entry.
          * @param {Object} options.children - Name of plural children of an entry.
+         *
+         * @example <caption>Launching a ParlayGenericSaveLoadDialog with ParlayItemManager as the designated manager.</caption>
+         *
+         * (new ParlayGenericSaveLoadDialog(event, ParlayItemManager, {
+         *      entry: "workspace",
+         *      entries: "workspaces",
+         *      title: "workspaces",
+         *      child: "item",
+         *      children: "items"
+         * }));
+         *
          */
         function ParlayGenericSaveLoadDialog (event, manager, options) {
             $mdDialog.show({
@@ -45,17 +58,18 @@
     /**
      * Controller for the {@link ParlayGenericSaveLoadDialog} $mdDialog.
      * @constructor ParlayGenericSaveLoadDialogController
-     * @param $scope
-     * @param $mdDialog
-     * @param $mdMedia
-     * @param ParlayNotification
-     * @param manager
-     * @param options
+     * @param {Object} $scope - AngularJS $scope Object.
+     * @param {Object} $mdDialog - Angular Material dialog service.
+     * @param {Object} $mdMedia - Angular Material media query service.
+     * @param {Object} ParlayNotification - ParlayNotification service.
+     * @param {Object} manager - A manager instance where entries will be interacted with.
+     * @param {Object} options - Contains manager specific terminology.
      */
     function ParlayGenericSaveLoadDialogController ($scope, $mdDialog, $mdMedia, ParlayNotification, manager, options) {
 
         var ctrl = this;
 
+        // Attach methods to controller.
         ctrl.getSaved = getSaved;
         ctrl.getAutosave = getAutosave;
         ctrl.clearActive = clearActive;
@@ -68,7 +82,7 @@
         ctrl.exportSaved = exportAll;
         ctrl.importSaved = importAll;
         ctrl.fileChanged = fileChanged;
-        ctrl.hide = hide;
+        ctrl.hide = $mdDialog.hide;
 
         // Attach $mdMedia to scope so media queries can be done.
         $scope.$mdMedia = $mdMedia;
@@ -78,6 +92,8 @@
 
         /**
          * Returns all saved entries, except for those that were auto saved.
+         * @method ParlayGenericSaveLoadDialogController#getSaved
+         * @public
          * @returns {Array} - Array of entries.
          */
         function getSaved () {
@@ -86,6 +102,8 @@
 
         /**
          * Returns auto saved entry.
+         * @method ParlayGenericSaveLoadDialogController#getAutosave
+         * @public
          * @returns {Object} - auto saved entry.
          */
         function getAutosave () {
@@ -94,6 +112,8 @@
 
         /**
          * Clears all active items.
+         * @method ParlayGenericSaveLoadDialogController#clearActive
+         * @public
          */
         function clearActive () {
             manager.clearActive();
@@ -101,6 +121,8 @@
 
         /**
          * Count of all active items.
+         * @method ParlayGenericSaveLoadDialogController#countActive
+         * @public
          * @returns {Number}
          */
         function countActive () {
@@ -109,6 +131,8 @@
 
         /**
          * Saves active items to an entry with the name that will be collected by $mdDialog.
+         * @method ParlayGenericSaveLoadDialogController#saveActive
+         * @public
          */
         /* istanbul ignore next */
         function saveActive () {
@@ -126,6 +150,8 @@
 
         /**
          * Saves the active items to the given entry.
+         * @method ParlayGenericSaveLoadDialogController#saveEntry
+         * @public
          * @param {Object} entry - Entry container Object.
          */
         function saveEntry (entry) {
@@ -135,6 +161,8 @@
 
         /**
          * Loads the items from the given entry to the workspace and then makes them active.
+         * @method ParlayGenericSaveLoadDialogController#loadEntry
+         * @public
          * @param {Object} entry - Entry container Object.
          */
         function loadEntry (entry) {
@@ -165,6 +193,8 @@
 
         /**
          * Deletes the entry and its contained items.
+         * @method ParlayGenericSaveLoadDialogController#deleteEntry
+         * @public
          * @param {Object} entry - Entry container Object.
          */
         function deleteEntry (entry) {
@@ -174,6 +204,8 @@
 
         /**
          * Clears all saved entries if the user confirms the $mdDialog.
+         * @method ParlayGenericSaveLoadDialogController#clearSaved
+         * @public
          * @param {Event} event - Used to set source of dialog animation.
          */
         function clearSaved (event) {
@@ -194,6 +226,8 @@
 
         /**
          * Downloads the saved entries to a JSON stringified file.
+         * @method ParlayGenericSaveLoadDialogController#exportAll
+         * @public
          */
         function exportAll () {
             manager.export().download("saved_entries_" + new Date().toISOString() + ".txt");
@@ -201,6 +235,8 @@
 
         /**
          * Emulates click on hidden input element which will open file selection dialog.
+         * @method ParlayGenericSaveLoadDialogController#importAll
+         * @public
          * @param {Event} event - Mouse click event
          */
         function importAll (event) {
@@ -209,6 +245,8 @@
 
         /**
          * Called when input element is changed. Contents of file are passed to ParlayStore once loaded.
+         * @method ParlayGenericSaveLoadDialogController#fileChanged
+         * @public
          * @param {Event} event - Mouse click event
          */
         function fileChanged (event) {
@@ -224,13 +262,6 @@
 
             // Read file as text
             fileReader.readAsText(event.target.files[0]);
-        }
-
-        /**
-         * Dismiss the $mdDialog that this controller belongs to. Resolves the promise.
-         */
-        function hide () {
-            $mdDialog.hide();
         }
 
     }

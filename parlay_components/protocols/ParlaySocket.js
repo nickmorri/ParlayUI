@@ -514,14 +514,14 @@
              * @member module:ParlaySocket.ParlaySocket#sendMessage
              * @param {Object} topics - Map of key/value pairs.
              * @param {Object} contents - Map of key/value pairs.
-             * @param {Object} response_topics - Map of key/value pairs.
-             * @param {Function} response_callback - Callback to invoke upon receipt of message matching response topics.
-             * @param {Boolean} verbose - If true we should invoke callback with full message. If false or undefined invoke with only contents for simplicity.
+             * @param {Object} [response_topics] - Map of key/value pairs.
+             * @param {Function} [response_callback] - Callback to invoke upon receipt of message matching response topics.
+             * @param {Boolean} [verbose] - If true we should invoke callback with full message. If false or undefined invoke with only contents for simplicity.
              * @returns {$q.defer.Promise} Resolves once message has been passed to socket.
              */
             this.sendMessage = function sendMessage(topics, contents, response_topics, response_callback, verbose) {
                 // If verbose is not passed default to false.
-                var verbosity = verbose === undefined ? false : verbose;
+                verbose = (verbose || false);
 
                 // Check if either response_topics or response_callbacks is defined.
                 if (response_topics !== undefined || response_callback !== undefined) {
@@ -531,7 +531,7 @@
                     }
                     // Otherwise we should register a listener.
                     else {
-                        onMessageCallbacks.add(response_topics, response_callback, false, verbosity);
+                        onMessageCallbacks.add(response_topics, response_callback, false, verbose);
                     }
                 }
 

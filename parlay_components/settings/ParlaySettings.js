@@ -20,6 +20,23 @@
         /**
          * Parlay service which manages access and modification of user configurable settings.
          * @constructor module:ParlaySettings.ParlaySettings
+         *
+         * @example <caption>Register default settings that can be used to restore to a default state.</caption>
+         *
+         * ParlaySettings.registerDefault("graph", {label_size: 12});
+         *
+         * @example <caption>Restore to the default setting registered with ParlaySettings.</caption>
+         *
+         * ParlaySettings.restoreDefault("graph");
+         *
+         * @example <caption>Retrieve the user set value for the given key.</caption>
+         *
+         * ParlaySettings.get("graph")
+         *
+         * @example <caption>Stores the value for the given key.</caption>
+         *
+         * ParlaySettings.set("graph", {label_size: newValue});
+		 *
          */
         function ParlaySettings () {
 

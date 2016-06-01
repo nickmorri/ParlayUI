@@ -53,12 +53,15 @@
             this.closeProtocol = function (protocol) {
                 return PromenadeBroker.closeProtocol(protocol.getName()).then(function (response) {
                     // Search for open protocol requested to be closed.
-                    var index = open_protocols
-                        .findIndex(function (suspect) { return protocol.getName() === suspect.getName(); });
+                    var index = open_protocols.findIndex(function (candidate) {
+                        return protocol.getName() === candidate.getName();
+                    });
 
                     // Remove if we find the protocol, then call it"s onClose method.
                     /* istanbul ignore else */
-                    if (index > -1) open_protocols.splice(index, 1)[0].onClose();
+                    if (index > -1) {
+                        open_protocols.splice(index, 1)[0].onClose();
+                    }
 
                     ParlayNotification.show({content: "Closed " + protocol.getName() + "."});
 
@@ -103,12 +106,12 @@
              */
             this.deleteProtocolConfiguration = function (configuration) {
                 var protocols = store.get("saved");
-                if (protocols === undefined) return;
+                if (!!protocols) {
+                    delete protocols[configuration.name];
 
-                delete protocols[configuration.name];
-
-                store.set("saved", protocols);
-                setSavedProtocols();
+                    store.set("saved", protocols);
+                    setSavedProtocols();
+                }
             };
 
             /**
@@ -168,7 +171,7 @@
              * @returns {Array} - Array of protocol configurations.
              */
             this.getSavedProtocols = function () {
-                return saved_protocols;
+                return saved_protocols.filter(checkSavedConfiguration);
             };
 
             /**
@@ -271,12 +274,7 @@
                     return instance;
                 }
 
-                var protocols = response.protocols;
-
-                setSavedProtocols();
-
-                open_protocols = protocols.map(constructProtocol);
-
+                open_protocols = response.protocols.map(constructProtocol);
             }
 
             /**
@@ -288,14 +286,14 @@
              */
             function checkSavedConfiguration (configuration) {
                 return available_protocols.some(function (protocol) {
-                        return configuration.name === protocol.name;
-                    }) && !open_protocols.some(function (protocol) {
-                        return Object.keys(configuration.parameters).map(function (key) {
-                            return configuration.parameters[key];
-                        }).some(function (value) {
-                            return protocol.protocol_name.indexOf(value) !== -1;
-                        });
+                    return configuration.name === protocol.name;
+                }) && !open_protocols.some(function (protocol) {
+                    return Object.keys(configuration.parameters).map(function (key) {
+                        return configuration.parameters[key];
+                    }).some(function (value) {
+                        return protocol.protocol_name.indexOf(value) !== -1;
                     });
+                });
             }
 
             /**
@@ -306,13 +304,12 @@
             function setSavedProtocols () {
                 var saved_configurations = store.get("saved");
 
-                // If there aren't any saved configurations we should just return and leave the saved_protocols as is.
-                if (!saved_configurations) return;
-
-                // Only show saved configurations that are currently available but not connected.
-                saved_protocols = Object.keys(saved_configurations)
-                    .map(function (key) { return saved_configurations[key]; })
-                    .filter(checkSavedConfiguration);
+                if (!!saved_configurations) {
+                    // Only show saved configurations that are currently available but not connected.
+                    saved_protocols = Object.keys(saved_configurations).map(function (key) {
+                        return saved_configurations[key];
+                    });
+                }
             }
 
             /**
@@ -323,7 +320,9 @@
              */
             function addDiscoveryInfoToOpenProtocol (info) {
                 var protocol = getOpenProtocol(info.NAME);
-                if (protocol) protocol.addDiscoveryInfo(info);
+                if (!!protocol) {
+                    protocol.addDiscoveryInfo(info);
+                }
             }
 
             /**
@@ -333,8 +332,8 @@
              * @param {Object} configuration - Protocol configuration that can be sent to the Broker.
              */
             function saveProtocolConfiguration (configuration) {
-                var protocols = store.get("saved");
-                if (protocols === undefined) protocols = {};
+
+                var protocols = (store.get("saved") || {});
 
                 configuration.last_connected = new Date();
 
@@ -361,6 +360,8 @@
             PromenadeBroker.onDiscovery(function (response) {
                 response.discovery.forEach(addDiscoveryInfoToOpenProtocol);
             });
+
+            setSavedProtocols();
 
         }
 

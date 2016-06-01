@@ -14,6 +14,12 @@
     PromenadeDirectMessageProtocolFactory.$inject = ["ParlayProtocol", "PromenadeStandardItem", "$q"];
     function PromenadeDirectMessageProtocolFactory (ParlayProtocol, PromenadeStandardItem, $q) {
 
+        // Reference Message Topic Information Google Doc for more information.
+        // https://docs.google.com/document/d/1MlR6e48Su19D7jF-1BxCPGOSNipOoQ7Y9i8o_ukMzXQ
+        var msg_status_success = ["OK"];
+        var msg_status_incomplete = ["INFO", "WARNING", "ACK"];
+        var msg_status_error = ["ERROR"];
+
         /**
          * PromenadeDirectMessageProtocol constructor.
          * Prototypically inherits from ParlayProtocol.
@@ -117,17 +123,6 @@
         };
 
         /**
-         * Examines response and returns True if message status ok.
-         * @member module:PromenadeDirectMessage.PromenadeDirectMessage#isResponseOk
-         * @public
-         * @param {Object} response - Map of key/value pairs.
-         * @returns {Boolean} - True if MSG_STATUS is not ERROR or WARNING
-         */
-        PromenadeDirectMessageProtocol.prototype.isResponseOk = function (response) {
-            return ["ERROR", "WARNING"].indexOf(response.TOPICS.MSG_STATUS) === -1;
-        };
-
-        /**
          * Sends message with topics specific to PromenadeDirectMessage.
          * @member module:PromenadeDirectMessage.PromenadeDirectMessage#sendMessage
          * @public
@@ -140,10 +135,38 @@
         PromenadeDirectMessageProtocol.prototype.sendMessage = function (topics, contents, response_topics, response_requires_msg_id) {
             var extended_topics = this.buildMessageTopics(topics);
             var extended_response_topics = this.buildResponseTopics(extended_topics, response_topics, response_requires_msg_id);
+            var ok_response_topics = angular.merge({MSG_STATUS: "OK"}, extended_response_topics);
+            var error_response_topics = angular.merge({MSG_STATUS: "ERROR"}, extended_response_topics);
 
-            return ParlayProtocol.prototype.sendMessage(extended_topics, contents, extended_response_topics, true).then(function (response) {
-                return this.isResponseOk(response) ? response : $q.reject(response);
-            }.bind(this));
+            // Resolved on a response of MSG_TYPE "OK" or "ERROR", notified otherwise.
+            var deferred = $q.defer();
+
+            // Register persistent listener to monitor responses that are incomplete. ["ACK", "WARNING", "INFO"]
+            var incomplete_listener_registration = this.onMessage(extended_response_topics, function (response) {
+                deferred.notify(response);
+            }, true);
+
+            // Register a listener for a response of MSG_STATUS "OK".
+            var ok_listener_registration = this.onMessage(ok_response_topics, function (response) {
+                // On receipt of a message with MSG_TYPE "OK" we should clear the other listener registrations and
+                // resolve the deferred.
+                incomplete_listener_registration();
+                error_listener_registration();
+                deferred.resolve(response);
+            }, true);
+
+            // Register a listener for a response of MSG_STATUS "ERROR".
+            var error_listener_registration = this.onMessage(error_response_topics, function (response) {
+                // On receipt of a message with MSG_TYPE "ERROR" we should clear the other listener registrations and
+                // reject the deferred.
+                incomplete_listener_registration();
+                ok_listener_registration();
+                deferred.reject(response);
+            }, true);
+
+            ParlayProtocol.prototype.sendMessage(extended_topics, contents, extended_response_topics);
+
+            return deferred.promise;
         };
 
         return PromenadeDirectMessageProtocol;

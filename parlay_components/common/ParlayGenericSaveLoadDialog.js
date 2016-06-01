@@ -1,6 +1,6 @@
 (function () {
     "use strict";
-
+    
     var module_dependencies = ["ngMaterial", "angularMoment", "parlay.notification", "parlay.utility"];
 
     angular
@@ -13,7 +13,8 @@
 
         /**
          * A generic save / load dialog that allows the end-user to interact with a entry manager.
-         * @constructor
+         * Uses {@link ParlayGenericSaveLoadDialogController}.
+         * @constructor ParlayGenericSaveLoadDialog
          * @param {Event} event - DOM Event that can be used to set an animation source for $mdDialog.
          * @param {Object} manager - A manager instance where entries will be interacted with.
          * @param {Object} options - Contains manager specific terminology.
@@ -42,14 +43,14 @@
 
     ParlayGenericSaveLoadDialogController.$inject = ["$scope", "$mdDialog", "$mdMedia", "ParlayNotification", "manager", "options"];
     /**
-     * Controller for the ParlayGenericSaveLoadDialog $mdDialog.
+     * Controller for the {@link ParlayGenericSaveLoadDialog} $mdDialog.
+     * @constructor ParlayGenericSaveLoadDialogController
      * @param $scope
      * @param $mdDialog
      * @param $mdMedia
      * @param ParlayNotification
      * @param manager
      * @param options
-     * @constructor
      */
     function ParlayGenericSaveLoadDialogController ($scope, $mdDialog, $mdMedia, ParlayNotification, manager, options) {
 

@@ -8,7 +8,7 @@
         .controller("ParlaySettingsDialogController", ParlaySettingsDialogController);
 
     /* istanbul ignore next */
-    ParlaySettingsDialogController.$inject = ["$scope", "$mdDialog", "$mdMedia", "ParlaySettings", "PromenadeBroker"];
+    ParlaySettingsDialogController.$inject = ["$scope", "$mdDialog", "ParlaySettings", "PromenadeBroker"];
     /**
      * @constructor module:ParlaySettings.ParlaySettingsDialogController
      * @param {Object} $scope - AngularJS $scope Object.
@@ -17,7 +17,7 @@
      * @param {Object} ParlaySettings - ParlaySettings service.
      * @param {Object} PromenadeBroker - PromenadeBroker service.
      */
-    function ParlaySettingsDialogController ($scope, $mdDialog, $mdMedia, ParlaySettings, PromenadeBroker) {
+    function ParlaySettingsDialogController ($scope, $mdDialog, ParlaySettings, PromenadeBroker) {
 
         var ctrl = this;
 
@@ -30,20 +30,12 @@
 
         // Attach $mdDialog.hide to controller to allow user to dismiss dialog.
         ctrl.hide = $mdDialog.hide;
+        ctrl.restoreDefault = restoreDefault;
 
-        var log_settings = ParlaySettings.get("log");
-        var graph_settings = ParlaySettings.get("graph");
-        var broker_settings = ParlaySettings.get("broker");
-
-        $scope.auto_discovery = broker_settings && broker_settings.auto_discovery;
-        $scope.max_log_size = log_settings && parseInt(log_settings.max_size);
-        $scope.label_size = graph_settings && parseInt(graph_settings.label_size);
-        $scope.show_prompt = broker_settings && broker_settings.show_prompt;
+        var log_settings, graph_settings, broker_settings;
+        loadStaticSettingValues();
 
         $scope.notification_permission = !navigator.userAgent.includes("Edge") && Notification.permission === "granted";
-
-        // Attach reference to $mdMedia to scope so that media queries can be done.
-        $scope.$mdMedia = $mdMedia;
 
         $scope.$watch("auto_discovery", function (newValue) {
             ParlaySettings.set("broker", {auto_discovery: newValue});
@@ -60,6 +52,22 @@
         $scope.$watch("show_prompt", function (newValue) {
             ParlaySettings.set("broker", {show_prompt: newValue});
         });
+
+        function loadStaticSettingValues () {
+            log_settings = ParlaySettings.get("log");
+            graph_settings = ParlaySettings.get("graph");
+            broker_settings = ParlaySettings.get("broker");
+
+            $scope.auto_discovery = broker_settings && broker_settings.auto_discovery;
+            $scope.max_log_size = log_settings && parseInt(log_settings.max_size);
+            $scope.label_size = graph_settings && parseInt(graph_settings.label_size);
+            $scope.show_prompt = broker_settings && broker_settings.show_prompt;
+        }
+
+        function restoreDefault (setting) {
+            ParlaySettings.restoreDefault(setting);
+            loadStaticSettingValues();
+        }
 
         /**
          * Download the last discovery information as a text file.

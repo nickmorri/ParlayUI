@@ -21,8 +21,20 @@ var standard_item_dependencies = ["parlay.items", "promenade.items.standarditem.
          * @extends module:ParlayItem.ParlayItem
          * @constructor module:PromenadeStandardItem.PromenadeStandardItem
          * @param {Object} data - Discovery information to initialize the item with.
-         * @param {Object} data.ID - Unique identifier.
+         * @param {String} data.NAME - Human readable identifier.
+         * @param {String} data.ID - Unique identifier.
+         * @param {Object} data.CONTENT_FIELDS - ParlayCommand(s) available to send to the PromenadeStandardItem using the provided protocol.
+         * @param {Object} data.PROPERTIES - ParlayPropert{y|ies} available to get and set using the provided protocol.
+         * @param {Object} data.DATASTREAMS - PromenadeDatastream(s) available to listen for using the provided protocol.
          * @param {Object} protocol - Reference to the parent protocol instance.
+         *
+         * @example <caption>Initializing a PromenadeStandardItem with discovery data.<caption>
+         *
+         * // discovery: Object with the discovery data needed to build the PromenadeStandardItem.
+         * // protocol: ParlayProtocol or a prototypical inheritor that the PromenadeStandardItem is connected to.
+         *
+         * var item = new PromenadeStandardItem(discovery, protocol);
+         *
          */
         function PromenadeStandardItem (data, protocol) {
             // Call our parent constructor first.

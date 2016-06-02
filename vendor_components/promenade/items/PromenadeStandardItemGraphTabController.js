@@ -4,7 +4,7 @@
     var module_name = "promenade.items.standarditem.graph";
     var module_dependencies = ["promenade.smoothiechart"];
 
-    // Register this module as a StandardItem dependency.
+    // Register module as [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} dependency.
     standard_item_dependencies.push(module_name);
 
     angular
@@ -13,49 +13,63 @@
         .controller("PromenadeStandardItemCardGraphTabConfigurationController", PromenadeStandardItemCardGraphTabConfigurationController)
         .directive('promenadeStandardItemCardGraph', PromenadeStandardItemCardGraph);
 
-    PromenadeStandardItemCardGraphTabController.$inject = ["$scope", "$mdDialog", "$interval", "ParlayUtility", "ParlayItemPersistence"];
+    PromenadeStandardItemCardGraphTabController.$inject = ["$scope", "$mdDialog", "ParlayUtility", "ParlayItemPersistence"];
     /**
      * Controller constructor for the graph tab.
-     * @constructor
+     * @constructor module:PromenadeStandardItem.PromenadeStandardItemCardGraphTabController
      * @param {Object} $scope - A AngularJS $scope Object.
      * @param {Object} $mdDialog - Dialog modal service.
-     * @param {Object} $interval - A AngularJS service that is analogous to setInterval.
-     * @param {Object} $mdMedia - Media size detection service.
      * @param {Object} ParlayUtility - Service that provides utility functions.
      * @param {Object} ParlayItemPersistence - Service that provides automatic persistence of scope variables to localStorage.
      */
-    function PromenadeStandardItemCardGraphTabController($scope, $mdDialog, $interval, ParlayUtility, ParlayItemPersistence) {
+    function PromenadeStandardItemCardGraphTabController($scope, $mdDialog, ParlayUtility, ParlayItemPersistence) {
 
         var ctrl = this;
 
+        /**
+         * Holds names of all currently enabled streams.
+         * @member module:PromenadeStandardItem.PromenadeStandardItemCardGraphTabController#enabled_streams
+         * @public
+         * @type {Array}
+         */
         ctrl.enabled_streams = [];
+
+        /**
+         * Holds Objects that relate stream name and stream color.
+         * @member module:PromenadeStandardItem.PromenadeStandardItemCardGraphTabController#streamColors
+         * @public
+         * @type {Array}
+         */
+        ctrl.streamColors = [];
+
+        // Attach methods to controller.
+        ctrl.hasStreamsAvailable = hasStreamsAvailable;
+        ctrl.openConfigurationDialog = openConfigurationDialog;
+        ctrl.streamCount = streamCount;
 
         var container = ParlayUtility.relevantScope($scope, 'container').container;
         var directive_name = 'parlayItemCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
 
-        // Persist enabled streams across workspaces.
+        // Persist enabled streams across sessions.
         ParlayItemPersistence.monitor(directive_name, "ctrl.enabled_streams", $scope);
 
-        ctrl.streamColors = [];
-
-        ctrl.updateStreamColors = function () {
-            ctrl.streamColors = ctrl.getSmoothie() ? ctrl.getSmoothie().seriesSet.map(function (series) {
-                return {
-                    name: series.options.streamName,
-                    color: series.options.strokeStyle
-                };
-            }) : [];
-        };
-
-        ctrl.hasStreamsAvailable = function () {
+        /**
+         * True if streams are available, false otherwise.
+         * @member module:PromenadeStandardItem.PromenadeStandardItemCardGraphTabController#hasStreamsAvailable
+         * @public
+         * @returns {Boolean}
+         */
+        function hasStreamsAvailable () {
             return Object.keys(ctrl.item.data_streams).length > 0;
-        };
+        }
 
         /**
          * Launches graph configuration $mdDialog modal.
+         * @member module:PromenadeStandardItem.PromenadeStandardItemCardGraphTabController#openConfigurationDialog
+         * @public
          * @param {MouseEvent} $event - Used to create source for $mdDialog opening animation.
          */
-        this.openConfigurationDialog = function($event) {
+        function openConfigurationDialog ($event) {
             $mdDialog.show({
                 controller: "PromenadeStandardItemCardGraphTabConfigurationController",
                 controllerAs: "ctrl",
@@ -68,46 +82,73 @@
                 templateUrl: "../vendor_components/promenade/items/directives/promenade-standard-item-card-graph-configuration-dialog.html",
                 targetEvent: $event,
                 clickOutsideToClose: true
-            }).finally(ctrl.updateStreamColors);
-        };
+            }).finally(function () {
+                ctrl.streamColors = ctrl.getSmoothie() ? ctrl.getSmoothie().seriesSet.map(function (series) {
+                    return {
+                        name: series.options.streamName,
+                        color: series.options.strokeStyle
+                    };
+                }) : [];
+            });
+        }
 
         /**
          * Returns a count of all currently enabled streams.
+         * @member module:PromenadeStandardItem.PromenadeStandardItemCardGraphTabController#streamCount
+         * @public
          * @returns {Number} - Count of currently enabled streams.
          */
-        ctrl.streamCount = function() {
+        function streamCount () {
             return ctrl.enabled_streams.length;
-        };
-
-        $interval(ctrl.updateStreamColors.bind(ctrl), 1000);
+        }
 
     }
 
     PromenadeStandardItemCardGraphTabConfigurationController.$inject = ["$scope", "$mdDialog", "$mdMedia"];
     /**
      * Controller constructor for the graph configuration dialog.
-     * @constructor
+     * @constructor module:PromenadeStandardItem.PromenadeStandardItemCardGraphTabConfigurationController
      * @param {Object} $scope - AngularJS $scope Object.
      * @param {Object} $mdDialog - Dialog modal service.
      * @param {Object} $mdMedia - Media size detection service.
      */
-    function PromenadeStandardItemCardGraphTabConfigurationController($scope, $mdDialog, $mdMedia) {
+    function PromenadeStandardItemCardGraphTabConfigurationController ($scope, $mdDialog, $mdMedia) {
 
         var ctrl = this;
 
-        ctrl.hide = $mdDialog.hide;
-
-        // When minValue or maxValue are defined we should initialize their lock to true.
+        /**
+         * Flag indicating y-axis minimum lock status. When minValue is defined we should initialize to true.
+         * @member module:PromenadeStandardItem.PromenadeStandardItemCardGraphTabConfigurationController#minimum_locked
+         * @public
+         */
         ctrl.minimum_locked = ctrl.smoothie.options.minValue !== undefined;
+
+        /**
+         * Flag indicating y-axis maximum lock status. When maxValue is defined we should initialize to true.
+         * @member module:PromenadeStandardItem.PromenadeStandardItemCardGraphTabConfigurationController#minimum_locked
+         * @public
+         */
         ctrl.maximum_locked = ctrl.smoothie.options.maxValue !== undefined;
 
         // Attach reference to $mdMedia to scope so that media queries can be done.
         $scope.$mdMedia = $mdMedia;
 
+        // Attach $mdDialog hide method to controller.
+        ctrl.hide = $mdDialog.hide;
+
+        // Attach methods to controller;
+        ctrl.toggleGraphing = toggleGraphing;
+        ctrl.toggleMinimum = toggleMinimum;
+        ctrl.toggleMaximum = toggleMaximum;
+        ctrl.isStreamEnabled = isStreamEnabled;
+
         /**
          * Toggles the streams between enabled and disabled. Requests or cancels stream depending on state.
+         * @member module:PromenadeStandardItem.PromenadeStandardItemCardGraphTabConfigurationController#toggleGraphing
+         * @public
+         * @param {Object} stream - Reference to a [PromenadeStandardDatastream]{@link module:PromenadeStandardItem.PromenadeStandardDatastream}.
          */
-        ctrl.toggleGraphing = function(stream) {
+        function toggleGraphing (stream) {
             if (ctrl.enabled_streams.indexOf(stream.name) == -1) {
                 ctrl.enabled_streams.push(stream.name);
                 stream.listen(false);
@@ -132,12 +173,14 @@
                     stream.listen(true);
                 }
             }
-        };
+        }
 
         /**
          * Toggles the state of the minimum lock. If we are removing lock we should remove the minValue from Smoothie options.
+         * @member module:PromenadeStandardItem.PromenadeStandardItemCardGraphTabConfigurationController#toggleMinimum
+         * @public
          */
-        ctrl.toggleMinimum = function () {
+        function toggleMinimum () {
 
             ctrl.minimum_locked = !ctrl.minimum_locked;
 
@@ -156,12 +199,14 @@
                 delete ctrl.smoothie.options.yRangeFunctionRef;
                 delete ctrl.smoothie.options.minValue;
             }
-        };
+        }
 
         /**
          * Toggles the state of the maximum lock. If we are removing lock we should remove the maxValue from Smoothie options.
+         * @member module:PromenadeStandardItem.PromenadeStandardItemCardGraphTabConfigurationController#toggleMaximum
+         * @public
          */
-        ctrl.toggleMaximum = function () {
+        function toggleMaximum () {
 
             ctrl.maximum_locked = !ctrl.maximum_locked;
 
@@ -180,11 +225,18 @@
                 delete ctrl.smoothie.options.yRangeFunctionRef;
                 delete ctrl.smoothie.options.maxValue;
             }
-        };
+        }
 
-        ctrl.isStreamEnabled = function (stream) {
+        /**
+         * True if the given stream is enabled, false otherwise.
+         * @member module:PromenadeStandardItem.PromenadeStandardItemCardGraphTabConfigurationController#toggleMaximum
+         * @public
+         * @param {Object} stream - Reference to a [PromenadeStandardDatastream]{@link module:PromenadeStandardItem.PromenadeStandardDatastream}.
+         * @returns {Boolean}
+         */
+        function isStreamEnabled (stream) {
             return ctrl.enabled_streams.indexOf(stream.name) >= 0;
-        };
+        }
 
     }
 

@@ -12,7 +12,7 @@
 
         /**
          * Class that wraps data stream information provided in a discovery.
-         * @constructor PromenadeStandardDatastream
+         * @constructor module:PromenadeStandardItem.PromenadeStandardDatastream
          * @param {Object} data - Discovery information used to initialize the PromenadeStandardDatastream instance with.
          * @param {String} item_name - Name of the [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} this command belongs to.
          * @param {Object} protocol - Reference to the [PromenadeDirectMessage]{@link module:PromenadeDirectMessage.PromenadeDirectMessage} the [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} belongs to.
@@ -23,7 +23,7 @@
 
             /**
              * Allow easier identification of properties, data streams, commands, etc.
-             * @member PromenadeStandardDatastream#type
+             * @member module:PromenadeStandardItem.PromenadeStandardDatastream#type
              * @public
              * @type {String}
              */
@@ -31,7 +31,7 @@
 
             /**
              * Name of the data stream.
-             * @member PromenadeStandardDatastream#name
+             * @member module:PromenadeStandardItem.PromenadeStandardDatastream#name
              * @public
              * @type {String}
              */
@@ -39,7 +39,7 @@
 
             /**
              * Holds internal value in the constructor closure scope.
-             * @member PromenadeStandardDatastream#read_only
+             * @member module:PromenadeStandardItem.PromenadeStandardDatastream#read_only
              * @private
              * @type {*}
              */
@@ -47,7 +47,7 @@
 
             /**
              * Holds callbacks that are invoked on every value change.
-             * @member PromenadeStandardDatastream#on_change_callbacks
+             * @member module:PromenadeStandardItem.PromenadeStandardDatastream#on_change_callbacks
              * @private
              * @type {Object}
              */
@@ -56,7 +56,7 @@
             /**
              * Define a custom setter to allow us to invoke the onChange callbacks.
              * Stores actual value in [internal_value]{@link PromenadeStandardDatastream#internal_value}
-             * @member PromenadeStandardDatastream#value
+             * @member module:PromenadeStandardItem.PromenadeStandardDatastream#value
              * @public
              * @type {*}
              */
@@ -77,7 +77,7 @@
             /**
              * Name of the [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} this
              * data stream belongs to.
-             * @member PromenadeStandardDatastream#item_name
+             * @member module:PromenadeStandardItem.PromenadeStandardDatastream#item_name
              * @public
              * @type {String}
              */
@@ -85,7 +85,7 @@
 
             /**
              * Reference to the [PromenadeDirectMessage]{@link module:PromenadeDirectMessage.PromenadeDirectMessage} the [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} belongs to.
-             * @member PromenadeStandardDatastream#protocol
+             * @member module:PromenadeStandardItem.PromenadeStandardDatastream#protocol
              * @public
              * @type {Object}
              */
@@ -98,7 +98,7 @@
             /**
              * Requests a listener for the data stream. Saves a reference to deregistration function returned by
              * [PromenadeDirectMessage.onMessage]{@link module:PromenadeDirectMessage.PromenadeDirectMessage#onMessage}.
-             * @member PromenadeStandardDatastream#listener
+             * @member module:PromenadeStandardItem.PromenadeStandardDatastream#listener
              * @public
              * @type {Function}
              */
@@ -116,7 +116,7 @@
 
             /**
              * Allows for callbacks to be registered, these will be invoked on change of value.
-             * @member PromenadeStandardDatastream#onChange
+             * @member module:PromenadeStandardItem.PromenadeStandardDatastream#onChange
              * @public
              * @param {Function} callback - Function to be invoked whenever the value attribute changes.
              * @returns {Function} - onChange deregistration function.
@@ -136,7 +136,7 @@
 
             /**
              * Request that the stream values be broadcast.
-             * @member PromenadeStandardDatastream#listen
+             * @member module:PromenadeStandardItem.PromenadeStandardDatastream#listen
              * @public
              * @param {Boolean} [stop] - If true it will stop the data stream broadcast.
              * @returns {$q.deferred.Promise} - Resolved on receipt of broad cast message.

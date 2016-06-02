@@ -68,14 +68,8 @@ var standard_item_dependencies = ["parlay.items", "promenade.items.standarditem.
             });
 
             // Add toolbar and tabs directives.
-            this.addDefaultDirectives("toolbar", ["promenadeStandardItemCardToolbar"]);
-            this.addDefaultDirectives("tabs", [
-                "promenadeStandardItemCardCommands",
-                "promenadeStandardItemCardProperty",
-                "promenadeStandardItemCardGraph",
-                "promenadeStandardItemCardLog"
-            ]);
-            this.addAvailableDirectives("tabs", [
+            this.addDirectives("toolbar", ["promenadeStandardItemCardToolbar"]);
+            this.addDirectives("tabs", [
                 "promenadeStandardItemCardCommands",
                 "promenadeStandardItemCardProperty",
                 "promenadeStandardItemCardGraph",

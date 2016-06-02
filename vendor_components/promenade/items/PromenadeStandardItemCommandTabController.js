@@ -4,7 +4,7 @@
     var module_name = "promenade.items.standarditem.commands";
     var module_dependencies = ["ngMaterial", "RecursionHelper", "parlay.store", "parlay.utility", "parlay.notification"];
 
-    // Register this module as a StandardItem dependency.
+    // Register module as [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} dependency.
     standard_item_dependencies.push(module_name);
 
     angular
@@ -16,14 +16,28 @@
         .directive("promenadeStandardItemCardCommandContainer", PromenadeStandardItemCardCommandContainer)
         .directive("promenadeStandardItemCardCommandContainerChips", PromenadeStandardItemCardCommandContainerChipsDirective);
 
-    function PromenadeStandardCommandMessageFactory() {
+    function PromenadeStandardCommandMessageFactory () {
 
-        function PromenadeStandardCommandMessage(item_name) {
+        /**
+         * Representation of a message for a ParlayCommand.
+         * @constructor module:PromenadeStandardItem.PromenadeStandardCommandMessage
+         * @param {String} item_name - Name of the ParlayItem that the command belongs to.
+         * @param {Object} data - Data from a prior session used to populate the message.
+         */
+        function PromenadeStandardCommandMessage (item_name, data) {
             this.item_name = item_name;
+
+            // If during initialization a data Object is provided we should merge it to this Object.
+            if (!!data) {
+                angular.merge(this, data);
+            }
+
         }
 
         /**
          * Transforms the fields available into an equivalent Python statement.
+         * @method module:PromenadeStandardItem.PromenadeStandardCommandMessage#toPythonStatement
+         * @public
          * @returns {String} - Python statement.
          */
         PromenadeStandardCommandMessage.prototype.toPythonStatement = function () {
@@ -57,6 +71,8 @@
 
         /**
          * Collects and formats the fields available on the given message object.
+         * @method module:PromenadeStandardItem.PromenadeStandardCommandMessage#collect
+         * @public
          * @param {Boolean} for_statement - If true we should collect the message for a Python statement, otherwise collect
          * if for a message.
          * @returns {Object} - parsed and formatted StandardItem data.
@@ -124,12 +140,12 @@
     PromenadeStandardItemCardCommandTabController.$inject = ["$scope", "ParlayNotification", "PromenadeStandardCommandMessage"];
     /**
      * Controller constructor for the command tab.
-     * @constructor
+     * @constructor module:PromenadeStandardItem.PromenadeStandardItemCardCommandTabController
      * @param {Object} $scope - A AngularJS $scope Object.
      * @param {Object} ParlayNotification - ParlayNotification Service.
      * @param {Object} PromenadeStandardCommandMessage - PromenadeStandardCommandMessage factory.
      */
-    function PromenadeStandardItemCardCommandTabController($scope, ParlayNotification, PromenadeStandardCommandMessage) {
+    function PromenadeStandardItemCardCommandTabController ($scope, ParlayNotification, PromenadeStandardCommandMessage) {
 
         var ctrl = this;
 
@@ -146,145 +162,46 @@
             message: new PromenadeStandardCommandMessage(ctrl.item.name)
         };
 
-        // References to $mdChipsController instances.
-        // We want to clear the buffers before the message is collected and sent.
+        /**
+         * References to $mdChipsController instances.
+         * We want to clear the buffers before the message is collected and sent.
+         * @member module:PromenadeStandardItem.PromenadeStandardItemCardCommandTabController#chipsControllers
+         * @public
+         * @type {Array}
+         */
         ctrl.chipsControllers = [];
 
-        // If there is only one field we should automatically assign it's default.
-        if (ctrl.item.content_fields && Object.keys(ctrl.item.content_fields).length === 1) {
-            Object.keys(ctrl.item.content_fields).forEach(function (key) {
-                $scope.wrapper.message[ctrl.item.content_fields[key].msg_key + '_' + ctrl.item.content_fields[key].input] = ctrl.item.content_fields[key].options.find(function (option) {
-                    return option.name === ctrl.item.content_fields[key].default;
-                });
-            });
-        }
-
-        // Hold state of command section collapsibles.
+        /**
+         * Hold state of command section collapsibles.
+         * @member module:PromenadeStandardItem.PromenadeStandardItemCardCommandTabController#collapsible_state
+         * @public
+         * @type {Object}
+         */
         ctrl.collapsible_state = {
             command_builder: false,
             script_builder: false,
             response_contents: false
         };
 
-        // Container for pending responses.
+        /**
+         * Container for pending responses.
+         * @member module:PromenadeStandardItem.PromenadeStandardItemCardCommandTabController#responses
+         * @public
+         * @type {Array}
+         */
         ctrl.responses = [];
 
-        /**
-         * Add received response information to the pending response item and mark response as success.
-         * @param {Object} response - Response message topics and contents.
-         */
-        function markOk (response) {
-            var pending_response = ctrl.responses.find(function (pending_response) {
-                return pending_response.MSG_ID === response.TOPICS.MSG_ID;
-            });
-
-            if (pending_response) {
-                pending_response.received = true;
-                pending_response.message = response;
-                pending_response.success = true;
-                pending_response.complete = true;
-            }
-        }
-
-        /**
-         * Add received response information to the pending response item and mark response as error.
-         * @param {Object} response - Response message topics and contents.
-         */
-        function markError (response) {
-            var pending_response = ctrl.responses.find(function (pending_response) {
-                return pending_response.MSG_ID === response.TOPICS.MSG_ID;
-            });
-
-            if (pending_response) {
-                pending_response.received = true;
-                pending_response.message = response;
-                pending_response.success = false;
-                pending_response.complete = true;
-            }
-        }
-
-        /**
-         * Add received response information to the pending response item and mark response as incomplete.
-         * @param {Object} response - Response message topics and contents.
-         */
-        function markProgress (response) {
-            var pending_response = ctrl.responses.find(function (pending_response) {
-                return pending_response.MSG_ID === response.TOPICS.MSG_ID;
-            });
-
-            if (pending_response) {
-                pending_response.received = true;
-                pending_response.message = response;
-            }
-        }
-
-        /**
-         * Collects and sends the command from the form. During this process it will update controller attributes to inform the user the current status.
-         * @param {Event} $event - This event's target is used to reference the md-chips element so that we can clear the buffer if available.
-         */
-        function send ($event) {
-            // Push the buffer into the md-chips ng-model
-            if ($event) {
-                ctrl.chipsControllers.forEach(function (chipsController) {
-                    var buffer = chipsController.getChipBuffer();
-                    if (buffer !== "") {
-                        chipsController.appendChip(buffer);
-                        chipsController.resetChipBuffer();
-                    }
+        // If there is only one field we should automatically assign it's default.
+        if (ctrl.item.content_fields && Object.keys(ctrl.item.content_fields).length === 1) {
+            Object.keys(ctrl.item.content_fields).forEach(function (key) {
+                var default_value = ctrl.item.content_fields[key].options.find(function (option) {
+                    return option.name === ctrl.item.content_fields[key].default;
                 });
-            }
 
-            // Add a pending response Object.
-            ctrl.responses.push({
-                received: false,
-                complete: false,
-                MSG_ID: ctrl.item.getMessageId() + 1,
-                message: undefined,
-                success: undefined
+                var item_key = ctrl.item.content_fields[key].msg_key + '_' + ctrl.item.content_fields[key].input;
+
+                $scope.wrapper.message[item_key] = default_value;
             });
-
-            // Remove all responses that have been marked complete.
-            ctrl.responses = ctrl.responses.filter(function (pending_response) {
-                return !pending_response.complete;
-            });
-
-            var collected_message = $scope.wrapper.message.collect(false);
-
-            // Request that the item send the collected message.
-            // When a response is received mark it as a success, failure, or record it's progress.
-            ctrl.item.sendMessage(collected_message).then(markOk, markError, markProgress);
-        }
-
-        /**
-         * Copy the Python command generated by the form to the clipboard.
-         */
-        function copyCommand () {
-            var command = $scope.wrapper.message.toPythonStatement();
-
-            if (command) {
-                ParlayNotification.show({content: command.copyToClipboard() ?
-                    "Command copied to clipboard." : "Copy failed. Check browser compatibility."});
-            }
-            else {
-                ParlayNotification.show({content: "Cannot copy empty command."});
-            }
-
-        }
-
-        function clearResponses () {
-            ctrl.responses = [];
-        }
-
-        function toggleCommandBuilder () {
-            ctrl.collapsible_state.command_builder = !ctrl.collapsible_state.command_builder;
-        }
-
-        function toggleScriptBuilder () {
-            ctrl.collapsible_state.script_builder = !ctrl.collapsible_state.script_builder;
-        }
-
-        function toggleResponseContents () {
-            ctrl.collapsible_state.response_contents = !ctrl.collapsible_state.response_contents;
         }
 
         // Watch for new fields to fill with defaults.
@@ -328,13 +245,161 @@
             });
         });
 
+        /**
+         * Add received response information to the pending response item and mark response as success.
+         * @member module:PromenadeStandardItem.PromenadeStandardItemCardCommandTabController#markOk
+         * @private
+         * @param {Object} response - Response message topics and contents.
+         */
+        function markOk (response) {
+            var pending_response = ctrl.responses.find(function (pending_response) {
+                return pending_response.MSG_ID === response.TOPICS.MSG_ID;
+            });
+
+            if (pending_response) {
+                pending_response.received = true;
+                pending_response.message = response;
+                pending_response.success = true;
+                pending_response.complete = true;
+            }
+        }
+
+        /**
+         * Add received response information to the pending response item and mark response as error.
+         * @member module:PromenadeStandardItem.PromenadeStandardItemCardCommandTabController#markError
+         * @private
+         * @param {Object} response - Response message topics and contents.
+         */
+        function markError (response) {
+            var pending_response = ctrl.responses.find(function (pending_response) {
+                return pending_response.MSG_ID === response.TOPICS.MSG_ID;
+            });
+
+            if (pending_response) {
+                pending_response.received = true;
+                pending_response.message = response;
+                pending_response.success = false;
+                pending_response.complete = true;
+            }
+        }
+
+        /**
+         * Add received response information to the pending response item and mark response as incomplete.
+         * @member module:PromenadeStandardItem.PromenadeStandardItemCardCommandTabController#markProgress
+         * @private
+         * @param {Object} response - Response message topics and contents.
+         */
+        function markProgress (response) {
+            var pending_response = ctrl.responses.find(function (pending_response) {
+                return pending_response.MSG_ID === response.TOPICS.MSG_ID;
+            });
+
+            if (pending_response) {
+                pending_response.received = true;
+                pending_response.message = response;
+            }
+        }
+
+        /**
+         * Collects and sends the command from the form. During this process it will update controller attributes to inform the user the current status.
+         * @member module:PromenadeStandardItem.PromenadeStandardItemCardCommandTabController#send
+         * @public
+         * @param {Event} $event - This event's target is used to reference the md-chips element so that we can clear the buffer if available.
+         */
+        function send ($event) {
+            // Push the buffer into the md-chips ng-model
+            if ($event) {
+                ctrl.chipsControllers.forEach(function (chipsController) {
+                    var buffer = chipsController.getChipBuffer();
+                    if (buffer !== "") {
+                        chipsController.appendChip(buffer);
+                        chipsController.resetChipBuffer();
+                    }
+                });
+            }
+
+            // Add a pending response Object.
+            ctrl.responses.push({
+                received: false,
+                complete: false,
+                MSG_ID: ctrl.item.getMessageId() + 1,
+                message: undefined,
+                success: undefined
+            });
+
+            // Remove all responses that have been marked complete.
+            ctrl.responses = ctrl.responses.filter(function (pending_response) {
+                return !pending_response.complete;
+            });
+
+            var collected_message = $scope.wrapper.message.collect(false);
+
+            // Request that the item send the collected message.
+            // When a response is received mark it as a success, failure, or record it's progress.
+            ctrl.item.sendMessage(collected_message).then(markOk, markError, markProgress);
+        }
+
+        /**
+         * Copy the Python command generated by the form to the clipboard.
+         * @member module:PromenadeStandardItem.PromenadeStandardItemCardCommandTabController#copyCommand
+         * @public
+         */
+        function copyCommand () {
+            var command = $scope.wrapper.message.toPythonStatement();
+
+            if (command) {
+                ParlayNotification.show({content: command.copyToClipboard() ?
+                    "Command copied to clipboard." : "Copy failed. Check browser compatibility."});
+            }
+            else {
+                ParlayNotification.show({content: "Cannot copy empty command."});
+            }
+
+        }
+
+        /**
+         * Clear all pending responses.
+         * @member module:PromenadeStandardItem.PromenadeStandardItemCardCommandTabController#clearResponses
+         * @public
+         */
+        function clearResponses () {
+            ctrl.responses = [];
+        }
+
+        /**
+         * Toggle between collapsed and expanded.
+         * @member module:PromenadeStandardItem.PromenadeStandardItemCardCommandTabController#toggleCommandBuilder
+         * @public
+         */
+        function toggleCommandBuilder () {
+            ctrl.collapsible_state.command_builder = !ctrl.collapsible_state.command_builder;
+        }
+
+        /**
+         * Toggle between collapsed and expanded.
+         * @member module:PromenadeStandardItem.PromenadeStandardItemCardCommandTabController#toggleScriptBuilder
+         * @public
+         */
+        function toggleScriptBuilder () {
+            ctrl.collapsible_state.script_builder = !ctrl.collapsible_state.script_builder;
+        }
+
+        /**
+         * Toggle between collapsed and expanded.
+         * @member module:PromenadeStandardItem.PromenadeStandardItemCardCommandTabController#toggleResponseContents
+         * @public
+         */
+        function toggleResponseContents () {
+            ctrl.collapsible_state.response_contents = !ctrl.collapsible_state.response_contents;
+        }
+
     }
 
     /**
      * Directive constructor for PromenadeStandardItemCardCommands.
-     * @returns {Object} - Directive configuration.
+     * @returns {Object} - AngularJS directive definition Object.
      */
-    function PromenadeStandardItemCardCommands() {
+    function PromenadeStandardItemCardCommands () {
         return {
             scope: {
                 item: "="
@@ -349,6 +414,7 @@
     /**
      * Helper directive that records a reference to the $mdChipsController instance of it's child.
      * Allows us to ensure that the buffer of the md-chips element is cleared before sending.
+     * @returns {Object} - AngularJS directive definition Object.
      */
     function PromenadeStandardItemCardCommandContainerChipsDirective () {
         return {
@@ -388,22 +454,30 @@
         };
     }
 
-    PromenadeStandardItemCardCommandContainerController.$inject = ["$scope", "ParlayItemPersistence", "ParlayUtility"];
+    PromenadeStandardItemCardCommandContainerController.$inject = ["$scope", "ParlayItemPersistence", "PromenadeStandardCommandMessage", "ParlayUtility"];
     /**
      * Controller constructor for command container.
-     * @constructor
+     * @constructor module:PromenadeStandardItem.PromenadeStandardItemCardCommandContainerController
      * @param {Object} $scope - A AngularJS $scope Object.
-     * @param {Object} ParlayItemPersistence - ParlayItemPersistence Service.
-     * @param {Object} ParlayUtility - ParlayUtility Service.
+     * @param {Object} ParlayItemPersistence - ParlayItemPersistence service.
+     * @param {Object} PromenadeStandardCommandMessage - PromenadeStandardCommandMessage factory.
+     * @param {Object} ParlayUtility - ParlayUtility service.
      */
-    function PromenadeStandardItemCardCommandContainerController ($scope, ParlayItemPersistence, ParlayUtility) {
+    function PromenadeStandardItemCardCommandContainerController ($scope, ParlayItemPersistence, PromenadeStandardCommandMessage, ParlayUtility) {
         var container = ParlayUtility.relevantScope($scope, 'container').container;
         var directive_name = 'parlayItemCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
 
+        // Request that $scope.wrapper.message is monitored for persistence. Also pass a custom restoration function
+        // that will instantiate a PromenadeStandardCommandMessage instead of a JavaScript Object on when the persisted
+        // message is restored.
         ParlayItemPersistence.monitor(directive_name, "wrapper.message", $scope, function (value) {
-            return angular.merge({}, $scope.wrapper.message, value);
+            // Merge the data on $scope.wrapper.message and the persisted data into an empty JavaScript Object.
+            var merged_data = angular.merge({}, $scope.wrapper.message, value);
+            // Initialize a PromenadeStandardCommandMessage with the merged data.
+            return new PromenadeStandardCommandMessage(value.item_name, merged_data);
         });
 
+        // Make the prepChip Function available on the PromenadeStandardItemCardCommandContainer $scope.
         $scope.prepChip = prepChip;
 
         /**
@@ -429,12 +503,22 @@
     PromenadeStandardItemCardCommandContainer.$inject = ["RecursionHelper"];
     /**
      * Directive constructor for PromenadeStandardItemCardCommandContainer.
+     * PromenadeStandardItemCardCommandContainer will recursively construct a form from the given fields.
+     *
+     * The scope attribute of the directive definition Object contains the following bindings:
+     *      wrapper - Contains message Object, the wrapper Object is passed so that the message reference is maintained
+     *      through the tree of scopes rather than a copy of the Object.
+     *      fields - Object of the fields that should be displayed within the container. If a field contains a subfield,
+     *      a PromenadeStandardItemCardCommandContainer will be compiled as a child of this
+     *      PromenadeStandardItemCardCommandContainer.
+     *      commandform - The HTML form instance, used for validation.
+     *      chipsControllers - Array of $mdChips controllers that are collected so that the buffers can be cleared before
+     *      sending a message.
+     *
      * @param {Object} RecursionHelper - Allows recursive nesting of this directive within itself for sub field support.
-     * @param {Object} ParlayItemPersistence - Allows directive to persist values that it should retain between sessions.
-     * @param {Object} ParlayUtility - Parlay Utility Service.
-     * @returns {Object} - Directive configuration.
+     * @returns {Object} - AngularJS directive definition.
      */
-    function PromenadeStandardItemCardCommandContainer(RecursionHelper) {
+    function PromenadeStandardItemCardCommandContainer (RecursionHelper) {
         return {
             scope: {
                 wrapper: '=',

@@ -26,14 +26,8 @@
                 
                 it('has correct default values', function () {
                     expect(ParlayItem.directives).toEqual({
-                        toolbar: {
-	                        default: [],
-	                        available: []
-                        },
-                        tabs: {
-	                        default: [],
-	                        available: []
-                        }
+                        toolbar: [],
+                        tabs: []
                     });
                     expect(ParlayItem.type).toBe('ParlayItem');
                     
@@ -53,12 +47,8 @@
                     expect(ParlayItem.getType()).toBe("ParlayItem");
                 });
 
-                it("get default directives", function () {
-                    expect(ParlayItem.getDefaultDirectives()).toEqual({toolbar:[], tabs:[]});
-                });
-
-                it("get available directives", function () {
-                    expect(ParlayItem.getAvailableDirectives()).toEqual({toolbar:[], tabs:[]});
+                it("get directives", function () {
+                    expect(ParlayItem.getDirectives()).toEqual({toolbar:[], tabs:[]});
                 });
 
             });
@@ -69,17 +59,10 @@
                 expect(console.warn).toHaveBeenCalledWith("matchesQuery is not implemented for TestProtocol");
             });
 
-            describe("adds directives", function () {
+            it("adds directives", function () {
 
-                it("adds available directives", function () {
-                    ParlayItem.addAvailableDirectives("toolbar", ["test1", "test2"]);
-                    expect(ParlayItem.getAvailableDirectives()).toEqual({toolbar:["test1", "test2"], tabs:[]});
-                });
-
-                it("adds default directives", function () {
-                    ParlayItem.addDefaultDirectives("toolbar", ["test1", "test2"]);
-                    expect(ParlayItem.getDefaultDirectives()).toEqual({toolbar:["test1", "test2"], tabs:[]});
-                });
+                ParlayItem.addDirectives("toolbar", ["test1", "test2"]);
+                expect(ParlayItem.getDirectives()).toEqual({toolbar:["test1", "test2"], tabs:[]});
 
             });
     		

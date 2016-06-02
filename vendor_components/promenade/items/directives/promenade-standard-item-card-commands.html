@@ -89,41 +89,43 @@
 
             <!-- Column headers -->
             <div layout="row" layout-align="start center" class="promenade-response-contents-body">
-                <!-- Column 1: MSG ID -->
+                <!-- Column 1: Received status -->
+                <p flex="10" flex-offset="0" class="md-body-2">Ack</p>
+                <!-- Column 2: Success status -->
+                <p flex="10" flex-offset="0" class="md-body-2">Done</p>
+                <!-- Column 3: MSG ID -->
                 <p flex="15" class="md-body-2">ID</p>
-                <!-- Column 2: Contents -->
+                <!-- Column 4: Contents -->
                 <p flex flex-offset="5" class="md-body-2">Contents</p>
-                <!-- Column 3: Received status -->
-                <p flex="10" flex-offset="5" class="md-body-2">Received</p>
-                <!-- Column 4: Success status -->
-                <p flex="10" flex-offset="5" class="md-body-2">Success</p>
+
             </div>
 
             <!-- Rows -->
             <div ng-repeat="response in ctrl.responses">
                 <div layout="row" layout-align="start center" class="promenade-response-contents-body">
-                    <!-- Column 1: MSG ID -->
+                    <!-- Column 1: Received status -->
+                    <md-icon flex="10" flex-offset="0" ng-md-icon icon="check" ng-show="response.received"></md-icon>
+                    <md-progress-circular flex="10" flex-offset="0" ng-hide="response.received" md-mode="indeterminate" md-diameter="30px"></md-progress-circular>
+
+                    <!-- Column 2: Success status -->
+                    <md-progress-circular flex="10" flex-offset="0" ng-hide="response.complete" md-mode="indeterminate" md-diameter="30px"></md-progress-circular>
+                    <md-icon flex="10" flex-offset="0" ng-md-icon ng-show="response.complete" icon="{{response.success ? 'check' : 'clear'}}" options='{"rotation": "none"}'></md-icon>
+
+                    <!-- Column 3: MSG ID -->
                     <p flex="15" class="md-body-1">{{response.MSG_ID}}</p>
 
-                    <!-- Column 2: Contents -->
+                    <!-- Column 4: Contents -->
 
                     <p flex flex-offset="5" ng-hide="response.received" class="md-body-1">Waiting for acknowledgement..</p>
                     <p flex flex-offset="5" ng-hide="!response.received || response.complete" class="md-body-1">Waiting for response..</p>
 
-                    <div flex flex-offset="5" ng-show="response.complete" layout="column">
+                    <div flex flex-offset="5" ng-show="response.complete" layout="column" style="overflow-x:auto">
                         <p flex ng-show="response.received" class="md-body-1 promenade-response-contents-key-values" ng-repeat="(key, value) in response.message.CONTENTS">
                             {{key}} = {{value}}<span ng-show="!$last">,</span>
                         </p>
                     </div>
 
-                    <!-- Column 3: Received status -->
-                    <md-icon flex="10" flex-offset="5" ng-md-icon icon="check" ng-show="response.received"></md-icon>
-                    <md-progress-circular flex="10" flex-offset="5" ng-hide="response.received" md-mode="indeterminate" md-diameter="30px"></md-progress-circular>
-
-                    <!-- Column 4: Success status -->
-                    <md-progress-circular flex="10" flex-offset="5" ng-hide="response.complete" md-mode="indeterminate" md-diameter="30px"></md-progress-circular>
-                    <md-icon flex="10" flex-offset="5" ng-md-icon ng-show="response.complete" icon="{{response.success ? 'check' : 'clear'}}" options='{"rotation": "none"}'></md-icon>
-                </div>
+                    </div>
             </div>
 
         </div>

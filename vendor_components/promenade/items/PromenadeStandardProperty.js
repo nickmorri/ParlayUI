@@ -12,7 +12,7 @@
 
         /**
          * Class that wraps property information provided in a discovery.
-         * @constructor PromenadeStandardProperty
+         * @constructor module:PromenadeStandardItem.PromenadeStandardProperty
          * @param {Object} data - Discovery information used to initialize the PromenadeStandardProperty instance with.
          * @param {Object} data.NAME - Name of the property.
          * @param {String} item_name - Name of the [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} this command belongs to.
@@ -24,7 +24,7 @@
 
             /**
              * Allow easier identification of properties, data streams, commands, etc.
-             * @member PromenadeStandardProperty#type
+             * @member module:PromenadeStandardItem.PromenadeStandardProperty#type
              * @public
              * @type {String}
              */
@@ -32,7 +32,7 @@
 
             /**
              * Name of the property.
-             * @member PromenadeStandardProperty#name
+             * @member module:PromenadeStandardItem.PromenadeStandardProperty#name
              * @public
              * @type {String}
              */
@@ -40,7 +40,7 @@
 
             /**
              * Type of input the property accepts.
-             * @member PromenadeStandardProperty#input
+             * @member module:PromenadeStandardItem.PromenadeStandardProperty#input
              * @public
              * @type {String}
              */
@@ -48,7 +48,7 @@
 
             /**
              * True if the property is read only, false otherwise.
-             * @member PromenadeStandardProperty#read_only
+             * @member module:PromenadeStandardItem.PromenadeStandardProperty#read_only
              * @public
              * @type {Boolean}
              */
@@ -56,7 +56,7 @@
 
             /**
              * Holds internal value in the constructor closure scope.
-             * @member PromenadeStandardProperty#read_only
+             * @member module:PromenadeStandardItem.PromenadeStandardProperty#read_only
              * @private
              * @type {*}
              */
@@ -64,7 +64,7 @@
 
             /**
              * Holds callbacks that are invoked on every value change.
-             * @member PromenadeStandardProperty#on_change_callbacks
+             * @member module:PromenadeStandardItem.PromenadeStandardProperty#on_change_callbacks
              * @private
              * @type {Object}
              */
@@ -73,7 +73,7 @@
             /**
              * Define a custom setter to allow us to invoke the onChange callbacks.
              * Stores actual value in [internal_value]{@link PromenadeStandardProperty#internal_value}
-             * @member PromenadeStandardProperty#value
+             * @member module:PromenadeStandardItem.PromenadeStandardProperty#value
              * @public
              * @type {*}
              */
@@ -94,7 +94,7 @@
             /**
              * Name of the [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} this 
              * property belongs to.
-             * @member PromenadeStandardProperty#item_name
+             * @member module:PromenadeStandardItem.PromenadeStandardProperty#item_name
              * @public
              * @type {String}
              */
@@ -102,7 +102,7 @@
 
             /**
              * Reference to the [PromenadeDirectMessage]{@link module:PromenadeDirectMessage.PromenadeDirectMessage} the [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} belongs to.
-             * @member PromenadeStandardProperty#protocol
+             * @member module:PromenadeStandardItem.PromenadeStandardProperty#protocol
              * @public
              * @type {Object}
              */
@@ -118,7 +118,7 @@
             /**
              * Requests a listener for the property. Saves a reference to deregistration function returned by
              * [PromenadeDirectMessage.onMessage]{@link module:PromenadeDirectMessage.PromenadeDirectMessage#onMessage}.
-             * @member PromenadeStandardProperty#listener
+             * @member module:PromenadeStandardItem.PromenadeStandardProperty#listener
              * @public
              * @type {Function}
              */
@@ -140,7 +140,7 @@
 
             /**
              * Allows for callbacks to be registered, these will be invoked on change of value.
-             * @member PromenadeStandardProperty#onChange
+             * @member module:PromenadeStandardItem.PromenadeStandardProperty#onChange
              * @public
              * @param {Function} callback - Function to be invoked whenever the value attribute changes.
              * @returns {Function} - onChange deregistration function.
@@ -162,7 +162,7 @@
 
             /**
              * Requests the current value of the PromenadeStandardProperty.
-             * @member PromenadeStandardProperty#get
+             * @member module:PromenadeStandardItem.PromenadeStandardProperty#get
              * @public
              * @returns {$q.deferred.Promise} - Resolved on response receipt.
              */
@@ -190,7 +190,7 @@
 
             /**
              * Sets the value of the PromenadeStandardProperty to the given value.
-             * @member PromenadeStandardProperty#set
+             * @member module:PromenadeStandardItem.PromenadeStandardProperty#set
              * @public
              * @param {(Number|String|Object)} value - Value to set.
              * @returns {$q.deferred.Promise} - Resolved on response receipt.

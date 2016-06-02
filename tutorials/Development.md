@@ -114,7 +114,7 @@ Contributing
 ParlayUI has been architected so that core abstract components belong in parlay_components. Vendor specific items, protocols and interfaces belong in the vendor_components directory. Components should only be added to the parlay_components directory if they are general modules that can be reused by unrelated vendors. Components should be added to the vendor_components directory if they contain vendor or project specific concepts.
 
 -----
-Notes
+Build Notes
 -----
 
 - vendorDefaults.js is modified by the replace Grunt task during develop and build. Options defined in the primary vendor.json are used to replace the placeholders. The task is described in further detail in Gruntfile.js.

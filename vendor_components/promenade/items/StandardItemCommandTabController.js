@@ -16,10 +16,15 @@
         .directive("promenadeStandardItemCardCommandContainer", PromenadeStandardItemCardCommandContainer)
         .directive("promenadeStandardItemCardCommandContainerChips", PromenadeStandardItemCardCommandContainerChipsDirective);
 
-    function PromenadeStandardCommandMessageFactory() {
+    function PromenadeStandardCommandMessageFactory () {
 
-        function PromenadeStandardCommandMessage(item_name) {
+        function PromenadeStandardCommandMessage (item_name, data) {
             this.item_name = item_name;
+
+            if (data) {
+                angular.merge(this, data);
+            }
+
         }
 
         /**
@@ -388,7 +393,7 @@
         };
     }
 
-    PromenadeStandardItemCardCommandContainerController.$inject = ["$scope", "ParlayItemPersistence", "ParlayUtility"];
+    PromenadeStandardItemCardCommandContainerController.$inject = ["$scope", "ParlayItemPersistence", "PromenadeStandardCommandMessage", "ParlayUtility"];
     /**
      * Controller constructor for command container.
      * @constructor
@@ -396,12 +401,13 @@
      * @param {Object} ParlayItemPersistence - ParlayItemPersistence Service.
      * @param {Object} ParlayUtility - ParlayUtility Service.
      */
-    function PromenadeStandardItemCardCommandContainerController ($scope, ParlayItemPersistence, ParlayUtility) {
+    function PromenadeStandardItemCardCommandContainerController ($scope, ParlayItemPersistence, PromenadeStandardCommandMessage, ParlayUtility) {
         var container = ParlayUtility.relevantScope($scope, 'container').container;
         var directive_name = 'parlayItemCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
 
         ParlayItemPersistence.monitor(directive_name, "wrapper.message", $scope, function (value) {
-            return angular.merge({}, $scope.wrapper.message, value);
+            var merged_data = angular.merge({}, $scope.wrapper.message, value);
+            return new PromenadeStandardCommandMessage(value.item_name, merged_data);
         });
 
         $scope.prepChip = prepChip;

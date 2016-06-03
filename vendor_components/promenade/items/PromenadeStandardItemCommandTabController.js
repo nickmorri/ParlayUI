@@ -43,14 +43,13 @@
         PromenadeStandardCommandMessage.prototype.toPythonStatement = function () {
 
             var message = this.collect(true);
-            if(message === undefined) return ""; // no python statement if we're undefined
 
             // Replace all spaces in the item name with underscores.
             var var_name = "e_" + this.item_name.replace(/\s+/g, "_");
             var setup = var_name + " = get_item_by_name('" + this.item_name + "')";
 
             // If we are given an empty message return only the setup.
-            if (Object.getOwnPropertyNames(message).length === 0) {
+            if (message === undefined || Object.getOwnPropertyNames(message).length === 0) {
                 return setup;
             }
 
@@ -93,7 +92,9 @@
             var relevant_fields = [root_field];
 
             //if we haven't selected a command, return undefined
-            if(!this[root_field]) { return undefined; }
+            if (!this[root_field]) {
+                return undefined;
+            }
 
             if (this[root_field].sub_fields) {
                 relevant_fields = relevant_fields.concat(this[root_field].sub_fields.map(function (field) {

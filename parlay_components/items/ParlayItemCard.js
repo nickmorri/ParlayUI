@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["ngMaterial", "ngMessages", "ngMdIcons", "templates-main", "parlay.item.persistence", "parlay.utility"];
+    var module_dependencies = ["ngMdIcons", "templates-main", "parlay.item.persistence"];
 
     angular
         .module("parlay.items.item.card", module_dependencies)

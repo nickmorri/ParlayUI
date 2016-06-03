@@ -1,7 +1,7 @@
 (function () {
     "use strict";
     
-    var module_dependencies = ["ngMaterial", "angularMoment", "parlay.notification", "parlay.utility"];
+    var module_dependencies = ["ngMaterial", "angularMoment", "parlay.notification"];
 
     angular
         .module("parlay.common.genericsaveloaddialog", module_dependencies)

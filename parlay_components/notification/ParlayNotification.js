@@ -37,7 +37,7 @@
         .factory("ParlayNotification", ParlayNotificationFactory);
 
     /* istanbul ignore next */
-    function RunNotification() {
+    function RunNotification () {
         if ("Notification" in window) {
             // Request permissions as soon as possible.
             Notification.requestPermission();
@@ -70,6 +70,7 @@
              * @member module:ParlayNotification.ParlayNotificationHistory#add
              * @public
              * @param {(String|Object)} contents - Contents of notification that was displayed.
+             * @parma {Object} [action] - Container for toast action button configuration.
              * @param {String} [action.text] - Text that was displayed on the action button.
              * @param {Function} [action.callback] - Function that the action button would invoke.
              */

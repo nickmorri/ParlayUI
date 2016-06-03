@@ -29,6 +29,7 @@
         PromenadeStandardCommandMessage.prototype.toPythonStatement = function () {
 
             var message = this.collect(true);
+            if(message === undefined) return ""; // no python statement if we're undefined
 
             // Replace all spaces in the item name with underscores.
             var var_name = "e_" + this.item_name.replace(/\s+/g, "_");
@@ -74,6 +75,9 @@
 
             // Build Array of relevant fields, relevant meaning a sub field of the root field.
             var relevant_fields = [root_field];
+
+            //if we haven't selected a command, return undefined
+            if(!this[root_field]) { return undefined; }
 
             if (this[root_field].sub_fields) {
                 relevant_fields = relevant_fields.concat(this[root_field].sub_fields.map(function (field) {

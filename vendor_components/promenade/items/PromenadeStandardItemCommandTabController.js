@@ -2,7 +2,7 @@
     "use strict";
 
     var module_name = "promenade.items.standarditem.commands";
-    var module_dependencies = ["ngMaterial", "RecursionHelper", "parlay.store", "parlay.utility", "parlay.notification"];
+    var module_dependencies = ["ngMessages", "RecursionHelper", "parlay.utility", "parlay.notification"];
 
     // Register module as [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} dependency.
     standard_item_dependencies.push(module_name);

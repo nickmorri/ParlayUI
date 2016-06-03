@@ -10,7 +10,7 @@
      * [ParlayProtocol]{@link ParlayProtocol}s are managed by the [ParlayProtocolManager]{@link module:ParlayProtocol.ParlayProtocolManager}.
      */
 
-    var module_dependencies = ["parlay.socket", "parlay.items.item", "promenade.protocols.directmessage", "parlay.settings"];
+    var module_dependencies = ["parlay.socket", "parlay.items.item", "parlay.settings"];
 
     angular
         .module("parlay.protocols.protocol", module_dependencies)

@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["ngMaterial", "ngMessages", "ngMdIcons", "templates-main", "parlay.item.persistence", "parlay.utility"];
+    var module_dependencies = ["ngMdIcons", "templates-main", "parlay.item.persistence"];
 
     angular
         .module("parlay.items.item.card", module_dependencies)
@@ -25,77 +25,21 @@
                 // Grab the item reference from the container for convenience of using scope.item.
                 scope.item = scope.container.ref;
 
-                // Container used to hold the names of the currently active directives.
-                // Allows for ParlayItemPersistence to mirror the active directives to local storage.
-                scope.active_directives = {};
+                // Compile all the toolbar and tab directives.
+                compileDirectives();
 
-                scope.activateDirective = activateDirective;
-                scope.deactivateDirective = deactivateDirective;
-
-                // Wait for ParlayItemPersistence to restore active_directives on scope.
-                var one_time = scope.$watch("active_directives", function (newValue) {
-                    // Call the deregistration function for this one time listener.
-                    one_time();
-                    // If active_directives has been restored by ParlayItemPersistence then we should restore these directives.
-                    // Otherwise we should use the defaults.
-                    if (newValue !== undefined && Object.keys(newValue).length > 0) {
-                        restoreDirectives();
-                    }
-                    else {
-                        defaultDirectives();
-                    }
-                });
-
-                /**
-                 * Compiles then stores the given directive in active_directives.
-                 * @member module:ParlayItem.ParlayItemCard#activateDirective
-                 * @public
-                 * @param {String} target - Directive location: toolbar or tabs.
-                 * @param {String} directive - Name of directive
-                 */
-                function activateDirective (target, directive) {
-                    if (target === "tabs") {
-                        compileTabs([directive]);
-                    }
-                    else if (target === "toolbar") {
-                        compileToolbar([directive]);
-                    }
-
-                    if (!scope.active_directives.hasOwnProperty(target)) {
-                        scope.active_directives[target] = [];
-                    }
-                    scope.active_directives[target].push(directive);
-                }
-
-                /**
-                 * Removes the directive from the active_directives container.
-                 * @member module:ParlayItem.ParlayItemCard#deactivateDirective
-                 * @public
-                 * @param {String} target - Directive location: toolbar or tabs.
-                 * @param {String} directive - Name of directive
-                 */
-                function deactivateDirective (target, directive) {
-                    var index = scope.active_directives[target].indexOf(directive);
-                    // If directive exists in active_directives then remove, otherwise throw error.
-                    if (index > -1) {
-                        scope.active_directives[target].splice(index, 1);
-                    }
-                    else {
-                        throw new Error("Attempted to deactivate inactive directive");
-                    }
-                }
-
-                // Using ParlayItemPersistence we will first attempt to restore these values then we will record them to ParlayStore.
+                // ParlayItemPersistence will restore any values available if the card was duplicated or from a previous
+                // session. It will then register them for persistence across sessions.
                 var directive_name = "parlayItemCard." + scope.item.name.replace(" ", "_") + "_" + scope.container.uid;
                 ParlayItemPersistence.monitor(directive_name, "$index", scope);
                 ParlayItemPersistence.monitor(directive_name, "active_tab_index", scope);
-                ParlayItemPersistence.monitor(directive_name, "active_directives", scope);
 
                 /**
                  * Setup drag event handlers to allow cards to by rearranged by dragging.
                  * @member module:ParlayItem.ParlayItemCard#setupDragHandlers
                  * @private
                  * @param {HTMLElement} element - ParlayItemCard HTML element.
+                 * @param {Object} scope - AngularJS $scope Object.
                  */
                 function setupDragHandlers (element, scope) {
 
@@ -122,12 +66,12 @@
                     // Fired when a ParlayItemCard is dropped on a ParlayItemCard.
                     element.on('drop', function (event) {
                         // Indices of the source and destination ParlayItemCard of the drag event.
-                        var thisIndex = scope.$index;
-                        var thatIndex = event.dataTransfer.getData("text/plain");
+                        var this_index = scope.$index;
+                        var that_index = event.dataTransfer.getData("text/plain");
 
                         // Swap the ParlayItemCards.
                         scope.$apply(function () {
-                            scope.itemCtrl.swap(thisIndex, thatIndex);
+                            scope.itemCtrl.swap(this_index, that_index);
                         });
 
                     });
@@ -169,32 +113,21 @@
                 }
 
                 /**
-                 * Activate each default directive.
-                 * @member module:ParlayItem.ParlayItemCard#defaultDirectives
+                 * Compile each directive.
+                 * @member module:ParlayItem.ParlayItemCard#compileDirectives
                  * @private
                  */
-                function defaultDirectives () {
-                    var defaults = scope.item.getDefaultDirectives();
-                    Object.keys(defaults).forEach(function (target) {
-                        defaults[target].forEach(function (directive) {
-                            scope.activateDirective(target, directive);
+                function compileDirectives () {
+                    var directives = scope.item.getDirectives();
+                    Object.keys(directives).forEach(function (target) {
+                        directives[target].forEach(function (directive) {
+                            if (target === "tabs") {
+                                compileTabs([directive]);
+                            }
+                            else if (target === "toolbar") {
+                                compileToolbar([directive]);
+                            }
                         });
-                    });
-                }
-
-                /**
-                 * Compile each directive in active_directives.
-                 * @member module:ParlayItem.ParlayItemCard#defaultDirectives
-                 * @private
-                 */
-                function restoreDirectives () {
-                    Object.keys(scope.active_directives).forEach(function (target) {
-                        if (target === "tabs") {
-                            compileTabs(scope.active_directives[target]);
-                        }
-                        else if (target === "toolbar") {
-                            compileToolbar(scope.active_directives[target]);
-                        }
                     });
                 }
 

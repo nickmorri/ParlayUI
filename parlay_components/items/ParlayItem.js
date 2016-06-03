@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["ngMaterial", "ngMessages", "ngMdIcons", "templates-main", "parlay.item.persistence", "parlay.utility", "parlay.items.item.card"];
+    var module_dependencies = ["ngMaterial", "parlay.items.item.card"];
 
     angular
         .module("parlay.items.item", module_dependencies)
@@ -14,9 +14,17 @@
          * ParlayItem but can stand on its own as well.
          * @constructor module:ParlayItem.ParlayItem
          * @param {Object} data - A ParlayItem's unique data.
-         * @param {String} data.NAME - A unique name used to identify a ParlayItem.
+         * @param {String} data.NAME - Human readable identifier.
          * @param {(Array|Object)} data.INTERFACES - Potential interfaces that the ParlayItem is compatible with.
          * @param {ParlayProtocol} protocol - Reference to the ParlayProtocol instance that the ParlayItem is connected to.
+         *
+         * @example <caption>Initializing a ParlayItem with discovery data.<caption>
+         *
+         * // discovery: Object with the discovery data needed to build the ParlayItem.
+         * // protocol: ParlayProtocol or a prototypical inheritor that the ParlayItem is connected to.
+         *
+         * var item = new ParlayItem(discovery, protocol);
+         * 
          */
         function ParlayItem (data, protocol) {
 
@@ -63,24 +71,16 @@
             this.interfaces = data.INTERFACES;
 
             /**
-             * All the available and default directives that the ParlayItem can use for toolbar and tabs locations.
+             * All the available and default directives that the ParlayItem will compile in toolbar and tabs locations.
              * @member module:ParlayItem.ParlayItem#directives
              * @public
              * @type {Object}
              */
             this.directives = {
-                toolbar: {
-                    default: [],
-                    available: []
-                },
-                tabs: {
-                    default: [],
-                    available: []
-                }
+                toolbar: [],
+                tabs: []
             };
             
-            this.available_directive_cache = {};
-
         }
 
         /**
@@ -94,56 +94,24 @@
         };
 
         /**
-         * Adds the given directives as defaults for the specified target.
-         * @member module:ParlayItem.ParlayItem#addDefaultDirectives
+         * Adds the given directives for the specified target.
+         * @member module:ParlayItem.ParlayItem#addDirectives
          * @public
          * @param {String} target - Directive target: toolbar or tabs.
          * @param {Array} directives - Array of directive names.
          */
-        ParlayItem.prototype.addDefaultDirectives = function(target, directives) {
-            this.directives[target].default = this.directives[target].default.concat(directives);
-        };
-
-        /**
-         * Adds the given directives as available for the specified target.
-         * @member module:ParlayItem.ParlayItem#addAvailableDirectives
-         * @public
-         * @param {String} target - Directive target: toolbar or tabs.
-         * @param {Array} directives - Array of directive names.
-         */
-        ParlayItem.prototype.addAvailableDirectives = function (target, directives) {
-            this.directives[target].available = this.directives[target].available.concat(directives);
-        };
-
-        /**
-         * Gets the directives that have been added as defaults.
-         * @member module:ParlayItem.ParlayItem#getDefaultDirectives
-         * @public
-         * @returns {Object} - Mapping of target -> Array of default directive names.
-         */
-        ParlayItem.prototype.getDefaultDirectives = function () {
-            return Object.keys(this.directives).reduce(function (accumulator, target) {
-                if (this.directives[target].hasOwnProperty("default")) {
-                    accumulator[target] = this.directives[target].default;
-                }
-                return accumulator;
-            }.bind(this), {});
+        ParlayItem.prototype.addDirectives = function (target, directives) {
+            this.directives[target] = this.directives[target].concat(directives);
         };
 
         /**
          * Gets the directives that have been added as available.
-         * @member module:ParlayItem.ParlayItem#getAvailableDirectives
+         * @member module:ParlayItem.ParlayItem#getDirectives
          * @public
-         * @returns {Object} - Mapping of target -> Array of available directive names.
+         * @returns {Object} - Mapping of target -> Array of directive names.
          */
-        ParlayItem.prototype.getAvailableDirectives = function () {
-            this.available_directive_cache = Object.keys(this.directives).filter(function (target) {
-                return target.indexOf("cache") === -1;
-            }).reduce(function (accumulator, target) {
-                accumulator[target] = this.directives[target].available;
-                return accumulator;
-            }.bind(this), {});
-            return this.available_directive_cache;
+        ParlayItem.prototype.getDirectives = function () {
+            return this.directives;
         };
 
         /**

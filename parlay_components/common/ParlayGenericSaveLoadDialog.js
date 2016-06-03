@@ -1,7 +1,7 @@
 (function () {
     "use strict";
     
-    var module_dependencies = ["ngMaterial", "angularMoment", "parlay.notification", "parlay.utility"];
+    var module_dependencies = ["ngMaterial", "angularMoment", "parlay.notification"];
 
     angular
         .module("parlay.common.genericsaveloaddialog", module_dependencies)
@@ -19,12 +19,12 @@
      * @example <caption>Launching a ParlayGenericSaveLoadDialog with [ParlayItemManager]{@link module:ParlayItem.ParlayItemManager} as the designated manager.</caption>
      *
      * ParlayGenericSaveLoadDialog.show(event, ParlayItemManager, {
-         *      entry: "workspace",
-         *      entries: "workspaces",
-         *      title: "workspaces",
-         *      child: "item",
-         *      children: "items"
-         * });
+     *      entry: "workspace",
+     *      entries: "workspaces",
+     *      title: "workspaces",
+     *      child: "item",
+     *      children: "items"
+     * });
      *
      */
     function ParlayGenericSaveLoadDialogFactory ($mdDialog) {

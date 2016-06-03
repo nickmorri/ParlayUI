@@ -11,7 +11,7 @@
 
         /**
          * Class that wraps command information provided in a discovery.
-         * @constructor PromenadeStandardCommand
+         * @constructor module:PromenadeStandardItem.PromenadeStandardCommand
          * @param {Object} data - Discovery information used to initialize the PromenadeStandardCommand instance with.
          * @param {String} item_name - Name of the [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} this command belongs to.
          * @param {Object} protocol - Reference to the [PromenadeDirectMessage]{@link module:PromenadeDirectMessage.PromenadeDirectMessage} the [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} belongs to.
@@ -22,7 +22,7 @@
 
             /**
              * Allow easier identification of properties, data streams, commands, etc.
-             * @member PromenadeStandardCommand#type
+             * @member module:PromenadeStandardItem.PromenadeStandardCommand#type
              * @public
              * @type {String}
              */
@@ -30,7 +30,7 @@
 
             /**
              * Uniquely identifying key for each command.
-             * @member PromenadeStandardCommand#msg_key
+             * @member module:PromenadeStandardItem.PromenadeStandardCommand#msg_key
              * @public
              * @type {String}
              */
@@ -38,7 +38,7 @@
 
             /**
              * Type of values that the command can take.
-             * @member PromenadeStandardCommand#input
+             * @member module:PromenadeStandardItem.PromenadeStandardCommand#input
              * @public
              * @type {String}
              */
@@ -46,7 +46,7 @@
 
             /**
              * Human readable label that will be displayed instead of the message key if available.
-             * @member PromenadeStandardCommand#label
+             * @member module:PromenadeStandardItem.PromenadeStandardCommand#label
              * @public
              * @type {String}
              */
@@ -54,7 +54,7 @@
 
             /**
              * True if the field is required for submission of the command.
-             * @member PromenadeStandardCommand#label
+             * @member module:PromenadeStandardItem.PromenadeStandardCommand#label
              * @public
              * @type {Boolean}
              */
@@ -62,7 +62,7 @@
 
             /**
              * Default value provided in discovery to initialize the command with.
-             * @member PromenadeStandardCommand#default
+             * @member module:PromenadeStandardItem.PromenadeStandardCommand#default
              * @public
              * @type {*}
              */
@@ -70,7 +70,7 @@
 
             /**
              * True if the field should not be displayed to the user.
-             * @member PromenadeStandardCommand#hidden
+             * @member module:PromenadeStandardItem.PromenadeStandardCommand#hidden
              * @public
              * @type {Boolean}
              */
@@ -79,7 +79,7 @@
             /**
              * Array of potential options for the PromenadeStandardCommand. Children can be simple JavaScript Objects or full
              * PromenadeStandardCommand Objects.
-             * @member PromenadeStandardCommand#options
+             * @member module:PromenadeStandardItem.PromenadeStandardCommand#options
              * @public
              * @type {Array}
              */
@@ -100,7 +100,7 @@
             /**
              * Name of the [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} this
              * command belongs to.
-             * @member PromenadeStandardCommand#item_name
+             * @member module:PromenadeStandardItem.PromenadeStandardCommand#item_name
              * @public
              * @type {String}
              */
@@ -108,7 +108,7 @@
 
             /**
              * Reference to the [PromenadeDirectMessage]{@link module:PromenadeDirectMessage.PromenadeDirectMessage} the [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} belongs to.
-             * @member PromenadeStandardCommand#protocol
+             * @member module:PromenadeStandardItem.PromenadeStandardCommand#protocol
              * @public
              * @type {Object}
              */

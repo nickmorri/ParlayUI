@@ -26,9 +26,6 @@
 		 * The PromenadeBroker is a implementation of a Broker that communicates using the Parlay communication publish/
          * subscribe model.
          *
-         * @todo Turn PromenadeBroker into a implemention of the Broker interface so that Parlay components don't have a
-         * hard dependency of the PromenadeBroker.
-         *
 		 * @constructor module:PromenadeBroker.PromenadeBroker
 		 */
 		function PromenadeBroker() {

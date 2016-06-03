@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["parlay.protocols.manager", "ngMaterial", "ngMessages", "ngMdIcons", "templates-main"];
+    var module_dependencies = ["ngMaterial", "ngMdIcons", "templates-main", "parlay.protocols.manager"];
 
     angular
         .module("parlay.protocols.configuration_controller", module_dependencies)

@@ -20,9 +20,6 @@ was loosely following to keep some semblance of consistent syntax.
 
 #### Tips
 
-AngularJS, Angular Material and JavaScript have some quirks that can leave someone unacquainted scratching their heads.
-Provided below are some guides and references that may be useful.
-
 - [JavaScript equality comparisons]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Equality_comparisons_and_sameness}
 
 JavaScript == is not the same as {C++, Python, Java, etc} ==. In JavaScript == will compare both values after conversion
@@ -109,3 +106,12 @@ From the Mozilla Developer Network documents:
 
 > The bind() method creates a new function that, when called, has its this keyword set to the provided value, with a given sequence of arguments preceding any provided when the new function is called.
     
+- [AngularJS conceptual overview]{@link https://docs.angularjs.org/guide/concepts}
+
+This primer is a good introduction to the various components of AngularJS that make it powerful.
+
+- [Angular Material overview]{@link https://material.angularjs.org/latest/}
+
+Angular Material is a implementation of Google's Material Design as a UI component framework. 
+There are demos, tutorials, and API specifications available. More information on Google's Material Design 
+can be found at [Google design]{@link http://www.google.com/design/spec/material-design/introduction.html}.

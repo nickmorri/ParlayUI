@@ -603,8 +603,7 @@ module.exports = function (grunt) {
 	]);
 
 	grunt.registerTask('build', [
-        'dist',
-        'doc'
+        'dist'
     ]);
 
 	grunt.registerTask('server', 'Launches HTTP server with distribution files as source.', [

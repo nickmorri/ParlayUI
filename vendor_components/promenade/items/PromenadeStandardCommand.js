@@ -67,7 +67,7 @@
              * @public
              * @type {*}
              */
-            command.default =  !!data.DEFAULT ? data.DEFAULT : undefined;
+            command.default =  data.DEFAULT; // (Already undefined if there is None)
 
             /**
              * True if the field should not be displayed to the user.

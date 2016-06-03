@@ -49,7 +49,7 @@
             var setup = var_name + " = get_item_by_name('" + this.item_name + "')";
 
             // If we are given an empty message return only the setup.
-            if (Object.getOwnPropertyNames(message).length === 0) {
+            if (message === undefined || Object.getOwnPropertyNames(message).length === 0) {
                 return setup;
             }
 
@@ -90,6 +90,11 @@
 
             // Build Array of relevant fields, relevant meaning a sub field of the root field.
             var relevant_fields = [root_field];
+
+            //if we haven't selected a command, return undefined
+            if (!this[root_field]) {
+                return undefined;
+            }
 
             if (this[root_field].sub_fields) {
                 relevant_fields = relevant_fields.concat(this[root_field].sub_fields.map(function (field) {

@@ -417,7 +417,7 @@ module.exports = function (grunt) {
 			'dev': '<%= meta.dev_destination %>',
 			'tmp': '<%= meta.tmp_destination %>',
 			'coverage': '<%= meta.coverage_destination %>',
-			'doc': 'doc'
+			'doc': ['doc', '<%= meta.tmp_destination %>/tutorials']
 		},
 
         // Copies files and folders.
@@ -625,6 +625,7 @@ module.exports = function (grunt) {
     ]);
 
 	grunt.registerTask('doc', 'Generates documentation.', [
+		'clean:doc',
         'copy:doc',
 		'jsdoc:doc'
 	]);

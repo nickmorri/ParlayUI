@@ -34,6 +34,7 @@
     "grunt-karma": "^1.0.0",
     "grunt-newer": "^1.1.1",
     "grunt-open": "^0.2.3",
+    "grunt-parallel": "^0.5.1",
     "grunt-processhtml": "^0.3.8",
     "grunt-replace": "^1.0.1",
     "grunt-wiredep": "^2.0.0",

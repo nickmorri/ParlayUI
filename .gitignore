@@ -1,1 +1,7 @@
 .idea
+.grunt
+bower_components
+dist
+doc
+node_modules
+tmp

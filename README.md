@@ -16,8 +16,6 @@ The ParlayUI interacts with a broker over a WebSocket. The broker handles commun
 A variety of other third party front-end JavaScript libraries are also leveraged. Third party libraries are managed using Bower and can be referenced in the bower.json file located in the ui directory. 
 ParlayUI uses the Grunt task-runner to automate tasks during the development and distribution processes. 
 
-_Further documentation of these processes is available in the [Development tutorial]{@tutorial Development}._
-
 -----
 Usage
 -----
@@ -50,5 +48,3 @@ To build ParlayUI development files perform the above build process and run:
     grunt develop
     
 This will retrieve all front-end dependencies, run the unit tests and launch a webserver that serves the development copy of ParlayUI. For development this is the preferred environment as the source files will be served individually, and in their original unminified state making for easier debugging.
-    
-_Further documentation of these processes is available in the [Development tutorial]{@tutorial Development}._

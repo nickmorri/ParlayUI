@@ -13,3 +13,4 @@ deploy:
   on:
     repo: PromenadeSoftware/ParlayUI
     tags: true
+after_deploy: grunt travis_doc_deploy

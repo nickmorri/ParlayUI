@@ -1,5 +1,5 @@
-<md-card class="parlay-item-card">
-    <md-toolbar class="handle" ng-class="{'show-handle': widgetsCtrl.editing}">
+<md-card class="parlay-item-card" ng-class="{'parlay-widget-card-view-only': !widgetsCtrl.editing}">
+    <md-toolbar class="handle" ng-class="{'show-handle ': widgetsCtrl.editing, 'parlay-widget-toolbar-view-only': !widgetsCtrl.editing}">
         <div class="md-toolbar-tools">
             <h2 ng-transclude="title"></h2>
             <span flex></span>

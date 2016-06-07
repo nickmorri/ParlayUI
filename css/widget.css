@@ -24,3 +24,12 @@
 parlay-widget-base-menu {
     margin-right: -15px;
 }
+
+.parlay-widget-toolbar-view-only {
+    opacity: 0;
+}
+
+.parlay-widget-card-view-only {
+    background-color: inherit;
+    box-shadow: none;
+}

@@ -1,7 +1,4 @@
-
-master: [![Build Status](https://travis-ci.org/PromenadeSoftware/ParlayUI.svg?branch=master)](https://travis-ci.org/PromenadeSoftware/ParlayUI)
-dev: [![Build Status](https://travis-ci.org/PromenadeSoftware/ParlayUI.svg?branch=dev)](https://travis-ci.org/PromenadeSoftware/ParlayUI)
-
+[![Build Status](https://travis-ci.org/PromenadeSoftware/ParlayUI.svg?branch=master)](https://travis-ci.org/PromenadeSoftware/ParlayUI)
 
 The ParlayUI contains two directories that can serve the UI. The distribution directory, dist, contains a single index.html that has all application JavaScript, CSS and HTML templates concatenated. This makes it easy to include on a variety of platforms as this file can be served by a simple web server. The development directory, dev, contains a copy of the source files needed for the development of the UI. This makes it easy for development as you can inspect the files in an un-minified state.
 

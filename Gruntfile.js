@@ -574,8 +574,7 @@ module.exports = function (grunt) {
         'clean:post_dist'
 	]);
 
-	grunt.registerTask('deploy', '', [
-		'release',
+	grunt.registerTask('travis_doc_deploy', 'Task for Travis document deployment', [
 		'doc',
 		'gh-pages'
 	]);

@@ -15,9 +15,10 @@ parlay-item-search {
 }
 
 /* Limit height of toolbars in ParlayItemCard to allow for greater information density. */
-.parlay-item-card > md-toolbar {
-	height: 48px;
+.parlay-item-card > md-toolbar , .parlay-item-card > md-toolbar > .md-toolbar-tools {
+	height: auto;
 	min-height: 48px;
+    max-height: 90px;
 }
 
 /* Indicate to the user that the card is moveable. */
@@ -25,6 +26,7 @@ parlay-item-search {
 
 /* Limit height of toolbars in ParlayItemCard to allow for greater information density. */
 md-tab-content > div > md-toolbar {
-	height: 48px;
+	height: auto;
 	min-height: 48px;
+    max-height:90px;
 }

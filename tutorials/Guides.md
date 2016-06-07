@@ -14,6 +14,9 @@ available.
 
 - For **Angular Material** reference the [official documentation]{@link https://material.angularjs.org/latest/} is generally
 the best source of accurate and up to date information.
+
+- For **Jasmine testing** reference the [official documentation]{@link https://jasmine.github.io/2.4/introduction.html} 
+is generally the best source of examples and API explanations.
  
 - During development of ParlayUI this [style guide]{@link https://github.com/johnpapa/angular-styleguide/blob/master/a1/README.md} 
 was loosely following to keep some semblance of consistent syntax.

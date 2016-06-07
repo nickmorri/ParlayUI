@@ -1,0 +1,15 @@
+language: node_js
+node_js:
+- '0.10'
+cache:
+  directories:
+  - node_modules
+deploy:
+  provider: releases
+  api_key:
+    secure: QIRJFtvez3H4mnnNhdEWxEs+mhrweQt1zO2Epv5IsC9VCFRWSsyv4I6cSilrz52szdGDqbaEeT5kFFqF/y7gUiziJEv6RCnGc5irCx6tQVaAgZMW6gTgERhSYGjRYLUiGZM1hzJn3+K7U9gGaqV5W0qn8cZVI1lz1AZITdIl7BJr1xP/9U6Z394fCWj7GfgsvtN1AJeq9Xlmh84a+hlJFZWZEvcPBnYEWMn0yUvUuMV7aF1Ubuip5yKiSiGNF7+fGFVDUID8iBmZ5TunU2d4lkoEFoYEcVPUyzEpuIPRwWuLYOBaOTC4e/P9zLYo6EIR57cmcL2NHIJIuCUOd678nhwChKFa4D3zAJkfP7GjwAmnGlzCqPTXyrz/2S6jmS58a2yF4Vj5AS2KzWxP/T/o6ylggMsy4UqYzpaRMnmuRDEirJ+u4G9e+qXUErosWcNN9FpA8rXJvNmmmVciU4sM/sYLx894oPx3vuXi9FvXJTN0LumP6tB757OELTmMW0vZCfbOl26n0kBjEUrL5f2lDAaxUgxrGAr/egw8edqZ0lEv/cwZRr3+8hOJuME3tuIAIqo9Fyn//XZ2VnaPKuUitqGPYi/jiVarnQvmpYz269sAqfzDlVMUI6zpvZy78lp580sntzf8/5uAHf891weZrqLiSyh6nFaXaX0FFdjAegk=
+  file: dist/index.html
+  skip_cleanup: true
+  on:
+    repo: PromenadeSoftware/ParlayUI
+    tags: true

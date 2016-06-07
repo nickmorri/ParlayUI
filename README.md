@@ -1,3 +1,8 @@
+
+master: [![Build Status](https://travis-ci.org/PromenadeSoftware/ParlayUI.svg?branch=master)](https://travis-ci.org/PromenadeSoftware/ParlayUI)
+dev: [![Build Status](https://travis-ci.org/PromenadeSoftware/ParlayUI.svg?branch=dev)](https://travis-ci.org/PromenadeSoftware/ParlayUI)
+
+
 The ParlayUI contains two directories that can serve the UI. The distribution directory, dist, contains a single index.html that has all application JavaScript, CSS and HTML templates concatenated. This makes it easy to include on a variety of platforms as this file can be served by a simple web server. The development directory, dev, contains a copy of the source files needed for the development of the UI. This makes it easy for development as you can inspect the files in an un-minified state.
 
 The ParlayUI is built using the Grunt task runner. Grunt automates several processes that would be tedious if repeatedly done by hand. ParlayUI uses npm for management of build utility packages. Bower is used for management of front-end JavaScript packages. These package managers make it easier to handle the packages that ParlayUI depends on.

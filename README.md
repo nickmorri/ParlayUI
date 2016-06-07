@@ -1,3 +1,6 @@
+master: [![Build Status](https://travis-ci.org/PromenadeSoftware/ParlayUI.svg?branch=master)](https://travis-ci.org/PromenadeSoftware/ParlayUI)
+dev: [![Build Status](https://travis-ci.org/PromenadeSoftware/ParlayUI.svg?branch=dev)](https://travis-ci.org/PromenadeSoftware/ParlayUI)
+
 ------------
 Introduction
 ------------

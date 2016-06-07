@@ -28,6 +28,7 @@
          * @type {Boolean}
          */
         ctrl.connecting = false;
+        ctrl.error = false;
 
         // Attach methods to controller.
         ctrl.isBrokerConnected = isBrokerConnected;
@@ -92,6 +93,11 @@
             ctrl.connecting = true;
             ParlayProtocolManager.openProtocol(configuration).then(function () {
                 ctrl.connecting = false;
+            }).catch(function (response) {
+                ctrl.connecting = false;
+                ctrl.error = true;
+                ctrl.error_message = response;
+                return response;
             });
         }
 

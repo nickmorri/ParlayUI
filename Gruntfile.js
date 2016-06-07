@@ -559,6 +559,20 @@ module.exports = function (grunt) {
                 'readme': 'README.md',
 				'tutorials': '<%= meta.tmp_destination %>/tutorials'
             }
+		},
+
+		'release': {
+			'options': {
+				'npm': false,
+				'additionalFiles': ['package.json', 'bower.json']
+			}
+		},
+
+		'gh-pages': {
+			'options': {
+				'base': 'doc'
+			},
+			'src': ['**']
 		}
 
 	});
@@ -596,10 +610,14 @@ module.exports = function (grunt) {
         'bower_concat:dist',
 	    'html2js',
 	    'uglify:dist',
-	    'karma:dist',
 	    'cssmin:dist',
         'processhtml:dist',
         'clean:post_dist'
+	]);
+
+	grunt.registerTask('travis_doc_deploy', 'Task for Travis document deployment', [
+		'doc',
+		'gh-pages'
 	]);
 
 	grunt.registerTask('build', [
@@ -616,7 +634,7 @@ module.exports = function (grunt) {
         'jshint',
         'csslint:dev',
         'html2js',
-        'karma:dev'
+        'karma:dist'
     ]);
 
     grunt.registerTask('coverage', 'Generates and opens test coverage.', [

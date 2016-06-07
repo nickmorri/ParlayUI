@@ -529,6 +529,7 @@ module.exports = function (grunt) {
 
 		'gh-pages': {
 			'options': {
+				'repo': 'git@github.com:PromenadeSoftware/ParlayUIDocs.git',
 				'base': 'doc'
 			},
 			'src': ['**']

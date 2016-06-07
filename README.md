@@ -48,3 +48,9 @@ To build ParlayUI development files perform the above build process and run:
     grunt develop
     
 This will retrieve all front-end dependencies, run the unit tests and launch a webserver that serves the development copy of ParlayUI. For development this is the preferred environment as the source files will be served individually, and in their original unminified state making for easier debugging.
+
+-------------
+Documentation
+-------------
+
+A reference and tutorials are available at [ParlayUIDocs](https://promenadesoftware.github.io/ParlayUIDocs/).

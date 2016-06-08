@@ -18,7 +18,7 @@ parlay-item-search {
 .parlay-item-card > md-toolbar , .parlay-item-card > md-toolbar > .md-toolbar-tools {
 	height: auto;
 	min-height: 48px;
-    max-height: 90px;
+    max-height: 48px;
 }
 
 /* Indicate to the user that the card is moveable. */
@@ -28,5 +28,5 @@ parlay-item-search {
 md-tab-content > div > md-toolbar {
 	height: auto;
 	min-height: 48px;
-    max-height:90px;
+    max-height: 48px;
 }

@@ -622,7 +622,7 @@ module.exports = function (grunt) {
 	]);
 
     grunt.registerTask('test', 'Lints and tests JavaScript files.', [
-        'jshint',
+        'jshint:dev',
         'csslint:dev',
         'html2js',
         'karma:dev'

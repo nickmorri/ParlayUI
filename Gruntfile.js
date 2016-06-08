@@ -625,7 +625,7 @@ module.exports = function (grunt) {
         'jshint',
         'csslint:dev',
         'html2js',
-        'karma:dist'
+        'karma:dev'
     ]);
 
     grunt.registerTask('coverage', 'Generates and opens test coverage.', [

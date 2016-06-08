@@ -36,7 +36,6 @@
 
     var configuration_tabs = [{
         label: "customization",
-        element: "<button-configuration-tab customizations='configuration.customizations'></button-configuration-tab>",
         directive_name: "buttonConfigurationTab",
         directive_function: function () {
             return {

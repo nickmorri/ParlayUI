@@ -18,16 +18,17 @@
         .directive("parlayWidgetBaseConfigurationTransform", ParlayWidgetBaseConfigurationTransformDirective)
         .directive("parlayWidgetBaseConfigurationSource", ParlayWidgetBaseConfigurationSourceDirective)
         .directive("parlayWidgetBaseConfigurationCustomization", ParlayWidgetBaseConfigurationCustomizationDirective)
-        .directive("compile", compile);
 
     // Used to compile tab bodies.
-    compile.$inject = ["$compile"];
-    function compile ($compile) {
+        .directive("tabCompiler", tabCompiler);
+    tabCompiler.$inject = ["$compile"];
+    function tabCompiler ($compile) {
         return function (scope, element, attributes) {
             scope.$watch(function (scope) {
-                return scope.$eval(attributes.compile);
+                return scope.$eval(attributes.tabCompiler);
             }, function (value) {
-                element.html(value);
+                var element_tag = value.snakeCase();
+                element.html(["<", element_tag, " ", "customizations='configuration.customizations'", "></", element_tag, ">"].join(""));
                 $compile(element.contents())(scope);
             });
         };

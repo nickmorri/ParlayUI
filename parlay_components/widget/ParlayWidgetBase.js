@@ -8,30 +8,63 @@
         .directive("parlayWidgetBase", ParlayWidgetBase);
 
     ParlayWidgetBase.$inject = ["$mdDialog", "$compile", "$interval", "ParlayWidgetInputManager", "ParlayData", "ParlayWidgetTransformer", "widgetLastZIndex"];
+    /**
+     * Base directive of a ParlayWidget. Repeated inside the widget workspace and contains the chosen compiled widget
+     * template.
+     *
+     * @constructor module:ParlayWidget.ParlayWidgetBase
+     * @param {Object} $mdDialog - Angular Material service.
+     * @param {Object} $compile - Angular Material service.
+     * @param {Object} $interval - Angular Material service.
+     * @param {Object} ParlayWidgetInputManager - Parlay service.
+     * @param {Object} ParlayData - Parlay service.
+     * @param {Object} ParlayWidgetTransformer - ParlayWidgetTransformer factory.
+     * @param {Object} widgetLastZIndex - value from ParlayWidgetInputManager.
+     * @returns {Object} - AngularJS directive definition Object.
+     *
+     * The attributes of the $scope Object of the ParlayBaseWidget is as follows:
+     *
+     * {Boolean} initialized - True if the template has been selected and compiled, false otherwise.
+     * {Function} edit - Launches the widget configuration $mdDialog.
+     * {Number} item.uid - Unique ID assigned by the ParlayWidgetController and used by ng-repeat track by.
+     * {Object} item.position - Coordinates of the last position of the widget.
+     * {Object} item.configuration - Holds user selected configuration details used to define behavior and appearence
+     * of the widget.
+     * {Object} item.configuration.template - Widget template selected by the user during the configuration process.
+     * {Array} item.configuration.template.configuration_tabs - @see {@link module:ParlayWidget#widgetRegistration} for more information.
+     * {String} item.configuration.template.name -
+     * {String} item.configuration.template.type -
+     * {ParlayWidgetEventHandler} item.configuration.handler
+     * {ParlayWidgetTransformer} item.configuration.transformer -
+     *
+     */
     function ParlayWidgetBase ($mdDialog, $compile, $interval, ParlayWidgetInputManager, ParlayData, ParlayWidgetTransformer, widgetLastZIndex) {
         return {
             scope: true,
             restrict: "E",
             link: function (scope, element) {
 
+                /**
+                 * Reference to the Draggabilly instance that is attached to the element.
+                 * @member module:ParlayWidget.ParlayWidgetBase#draggie
+                 * @private
+                 */
                 var draggie;
 
+                // Attach the methods to scope.
                 scope.edit = edit;
 
+                // Handle widget initialization on parlayWidgetTemplateLoaded event.
                 scope.$on("parlayWidgetTemplateLoaded", function () {
-                    enableDraggabilly(element[0], scope.item.position);
-                    restoreHandlers(scope.item.configuration);
-                    restoreTransformer(scope.item.configuration);
-                    scope.initialized = true;
+                    onLoaded(element[0]);
                 });
 
+                // Handle widget initialization on parlayWidgetBaseCardLoaded event.
                 scope.$on("parlayWidgetBaseCardLoaded", function (event, element) {
-                    enableDraggabilly(element[0].parentElement.parentElement, scope.item.position);
-                    restoreHandlers(scope.item.configuration);
-                    restoreTransformer(scope.item.configuration);
-                    scope.initialized = true;
+                    onLoaded(element[0].parentElement.parentElement);
                 });
 
+                // Handle $destroy event.
                 scope.$on("$destroy", function () {
                     if (scope.initialized) {
                         if (!!scope.item.configuration.transformer) {
@@ -46,16 +79,36 @@
                     }
                 });
 
-                function construct () {
+                // If an existing configuration Object exists we should restore the configuration, otherwise construct
+                // from scratch.
+                if (!!scope.item.configuration) {
+                    compileWrapper()(angular.copy(scope.item.configuration.template));
+                }
+                else {
                     scope.initialized = false;
                     scope.item.configuration = {};
                     scope.edit(true);
                 }
 
-                function restore (item) {
-                    compileWrapper()(angular.copy(item.configuration.template));
+                /**
+                 * Event handler for loaded events emitted from ParlayWidgets.
+                 * @member module:ParlayWidget.ParlayWidgetBase#onLoaded
+                 * @private
+                 * @param {HTMLElement} drag_element - Element that the Draggabilly will attach to.
+                 */
+                function onLoaded (drag_element) {
+                    enableDraggabilly(drag_element, scope.item.position);
+                    restoreHandlers(scope.item.configuration);
+                    restoreTransformer(scope.item.configuration);
+                    scope.initialized = true;
                 }
 
+                /**
+                 * Reattaches event handlers from a previous session to the equivalent input events on this session.
+                 * @member module:ParlayWidget.ParlayWidgetBase#restoreHandlers
+                 * @private
+                 * @param {Array} configuration.selected_events - User selected element events that should have handlers reattached.
+                 */
                 function restoreHandlers (configuration) {
                     if (!!configuration.selectedEvents) {
                         configuration.selectedEvents = configuration.selectedEvents.map(function (shallow_event) {
@@ -82,6 +135,13 @@
                     }
                 }
 
+                /**
+                 * Reattaches transformation function and selected item data sources from a previous session.
+                 * @member module:ParlayWidget.ParlayWidgetBase#restoreHandlers
+                 * @private
+                 * @param {Array} configuration.selectedItems
+                 * @param {ParlayWidgetTransformer} configuration.transformer
+                 */
                 function restoreTransformer (configuration) {
                     if (!!configuration.transformer) {
                         configuration.selectedItems = configuration.selectedItems.map(function (item) {
@@ -97,6 +157,8 @@
 
                 /**
                  * Allows the user to reposition the ParlayWidget freely in the workspace.
+                 * @member module:ParlayWidget.ParlayWidgetBase#enableDraggabilly
+                 * @private
                  * @param {HTMLElement} element - ParlayWidget element to attach a Draggabilly instance to.
                  * @param {Object} [initialPosition] - Optional position that we should set the ParlayWidget to.
                  */
@@ -179,6 +241,8 @@
 
                 /**
                  * Captures variables in a closure scope that will be available to the returned Function.
+                 * @member module:ParlayWidget.ParlayWidgetBase#compileWrapper
+                 * @private
                  * @returns {Function} - Attaches the specified ParlayWidget template as a child of the ParlayBaseWidget.
                  */
                 function compileWrapper () {
@@ -201,6 +265,8 @@
 
                     /**
                      * Uses AngularJS $compile to generate HTML Element of the ParlayWidget template.
+                     * @member module:ParlayWidget.ParlayWidgetBase#templateCompiler
+                     * @private
                      * @param {Object} template - ParlayBaseWidget template definition Object.
                      */
                     function templateCompiler (template) {
@@ -226,6 +292,14 @@
                     return templateCompiler;
                 }
 
+                /**
+                 * Launches the widget configuration dialog with a reference to the configuration Object to allow the
+                 * user to configure the widget.
+                 * @member module:ParlayWidget.ParlayWidgetBase#edit
+                 * @public
+                 * @param {Boolean} initializing - True if the widget was just created, false otherwise. For example if
+                 * the user hit the edit button.
+                 */
                 function edit (initializing) {
                     $mdDialog.show({
                         templateUrl: "../parlay_components/widget/directives/parlay-widget-base-configuration-dialog.html",
@@ -237,19 +311,11 @@
                             widgetCompiler: compileWrapper()
                         }
                     }).catch(function () {
+                        // If the widget was just created and the dialog was canceled we should remove the widget.
                         if (initializing) {
                             scope.widgetsCtrl.remove(scope.uid);
                         }
                     });
-                }
-
-                // If an existing configuration Object exists we should restore the configuration, otherwise construct
-                // from scratch.
-                if (!!scope.item.configuration) {
-                    restore(scope.item);
-                }
-                else {
-                    construct();
                 }
 
             }

@@ -6,12 +6,17 @@
     var directive_name = "promenadeWidgetButton";
     var widget_type = "input";
 
+    PromenadeButtonWidgetConfigurationTabController.$inject = [];
+    /**
+     * Controller for the customization tab in the widget configuration dialog.
+     * @constructor module:PromenadeWidget.PromenadeButtonWidget.PromenadeButtonWidgetConfigurationTabController
+     */
+    function PromenadeButtonWidgetConfigurationTabController () {}
 
-    ButtonConfigurationTabController.$inject = ["$scope"];
-    function ButtonConfigurationTabController ($scope) {
-
-    }
-
+    /**
+     * Directive definition for the PromenadeButtonWidget.
+     * @see [widgetRegistration]{@link module:ParlayWidget#widgetRegistration}
+     */
     var directive_definition = {
         templateUrl: "../vendor_components/promenade/widget/directives/promenade-widget-button.html",
         customizationDefaults: {
@@ -34,9 +39,12 @@
         }
     };
 
+    /**
+     * Configuration tab definition for the PromenadeButtonWidget.
+     * @see [widgetRegistration]{@link module:ParlayWidget#widgetRegistration}
+     */
     var configuration_tabs = [{
         label: "customization",
-        element: "<button-configuration-tab customizations='configuration.customizations'></button-configuration-tab>",
         directive_name: "buttonConfigurationTab",
         directive_function: function () {
             return {
@@ -44,12 +52,14 @@
                     customizations: "="
                 },
                 templateUrl: "../vendor_components/promenade/widget/directives/promenade-widget-button-configuration.html",
-                controller: ButtonConfigurationTabController,
+                controller: PromenadeButtonWidgetConfigurationTabController,
                 controllerAs: "buttonCtrl"
             };
         }
     }];
 
+    // Setting to an empty Array because we'd actually prefer to use the default and this particular configuration is
+    // provided as an example.
     configuration_tabs = [];
 
     widgetRegistration(module_name, module_dependencies, directive_name, widget_type, directive_definition, configuration_tabs);

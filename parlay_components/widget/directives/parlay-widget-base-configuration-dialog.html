@@ -1,12 +1,14 @@
 <md-dialog aria-label="Parlay Widget Configuration Dialog" flex="90" flex-gt-md="70" ng-class="{'md-dialog-fullscreen' : $mdMedia}">
     <md-dialog-content>
         <md-tabs md-stretch-tabs="always" md-dynamic-height="true" class="md-primary" md-selected="currentTabIndex">
+
             <md-tab>
                 <md-tab-label>Template</md-tab-label>
                 <md-tab-body>
                     <parlay-widget-base-configuration-template layout="row"></parlay-widget-base-configuration-template>
                 </md-tab-body>
             </md-tab>
+
             <md-tab ng-disabled="!configuration.template || configuration.template.type == 'display'">
                 <md-tab-label>Handlers</md-tab-label>
                 <md-tab-body>
@@ -25,6 +27,7 @@
                     </md-card>
                 </md-tab-body>
             </md-tab>
+
             <md-tab ng-disabled="!configuration.template || configuration.template.type == 'input'">
                 <md-tab-label>Transform</md-tab-label>
                 <md-tab-body>
@@ -47,9 +50,10 @@
                     {{tab.label}}
                 </md-tab-label>
                 <md-tab-body>
-                    <span compile="tab.element"></span>
+                    <span tab-compiler="tab.directive_name"></span>
                 </md-tab-body>
             </md-tab>
+
         </md-tabs>
     </md-dialog-content>
     <md-dialog-actions layout="row" layout-align="space-between center">

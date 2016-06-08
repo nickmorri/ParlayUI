@@ -23,31 +23,51 @@
         }
 
         /**
-         * @service
-         * @name ParlayInterpreter
-         *
-         * @description
          * ParlayInterpreter factory for running arbitrary code in a sandboxed JavaScript interpreter.
          *
          * Uses JS-Interpreter internally for code execution.
          * https://github.com/NeilFraser/JS-Interpreter/
-         *
+         * @constructor module:ParlayWidget.ParlayInterpreter
          * @attribute {String} functionString - JavaScript code that should be executed on this.run()
          * @attribute {Object} interpreter - JS-Interpreter instance.
          * @attribute {String} constructionError - Initially undefined, if a construction error occurs it will be set
          * error.toString() representation.
-         *
          */
-
         function ParlayInterpreter () {
+
+            /**
+             * Statement to be interpreted.
+             * @member module:ParlayWidget.ParlayInterpreter#functionString
+             * @public
+             * @type {String}
+             * @default {undefined}
+             */
             this.functionString = undefined;
+
+            /**
+             * Reference to the JS-Interpreter instance.
+             * @member module:ParlayWidget.ParlayInterpreter#interpreter
+             * @public
+             * @type {String}
+             * @default {undefined}
+             */
             this.interpreter = undefined;
+
+            /**
+             * Set if a error occurs during the interpreter construction process.
+             * @member module:ParlayWidget.ParlayInterpreter#constructionError
+             * @public
+             * @type {String}
+             * @default {undefined}
+             */
             this.constructionError = undefined;
         }
 
         /**
          * Attempts to construct a JS-Interpreter instance using functionString and the given childInitFunc.
          * If construction fails constructionError will be set to the String representation of the caught error.
+         * @member module:ParlayWidget.ParlayInterpreter#construct
+         * @public
          * @param {Function} childInitFunc - Initialization function that is given access to the interpreter instance
          * and it's scope.
          *
@@ -84,7 +104,9 @@
         };
 
         /**
-         * Attempts to run the constructed interpreter. 
+         * Attempts to run the constructed interpreter.
+         * @member module:ParlayWidget.ParlayInterpreter#run
+         * @public
          * @returns {Object} - Result of interpretation of functionString and the state of the interpreter scope.
          */
         ParlayInterpreter.prototype.run = function () {
@@ -107,6 +129,8 @@
 
         /**
          * Helper method which retrieves items from ParlayData.
+         * @member module:ParlayWidget.ParlayInterpreter#getItems
+         * @public
          * @returns {Array} - Items from ParlayData.
          */
         ParlayInterpreter.prototype.getItems = function () {
@@ -120,6 +144,8 @@
 
         /**
          * Creates and returns a JS-Interpreter native Function that can be attached to a JS-Interpreter scope.
+         * @member module:ParlayWidget.ParlayInterpreter#makeFunction
+         * @public
          * @param {Object} interpreter - JS-Interpreter instance that will be used to construct the native Function.
          * @param {Function} funcRef - JavaScript Function that will be used during interpretation.
          * @param {Object} funcThis - this context for the funcRef JavaScript Function during interpretation.
@@ -133,6 +159,8 @@
 
         /**
          * Creates and returns a JS-Interpreter Object that can be attached to a JS-Interpreter scope.
+         * @member module:ParlayWidget.ParlayInterpreter#makeObject
+         * @public
          * @param {Object} interpreter - JS-Interpreter instance that will be used to construct the native Function.
          * @param {Object} objectRef - JavaScript Object that will be used during interpretation.
          * @returns {Object} - JS-Interpreter Object that can be attached to a JS-Interpreter scope.
@@ -159,6 +187,8 @@
 
         /**
          * Binds a property on the JS-Interpreter scope to the given JavaScript Function.
+         * @member module:ParlayWidget.ParlayInterpreter#attachFunction
+         * @public
          * @param {Object} scope - Execution scope that the Function will be attached to.
          * @param {Object} interpreter - JS-Interpreter instance that will be used to attach the Function.
          * @param {Function} funcRef - JavaScript Function that will be used during interpretation.
@@ -174,6 +204,8 @@
 
         /**
          * Binds a property on the JS-Interpreter scope to the given JavaScript Object.
+         * @member module:ParlayWidget.ParlayInterpreter#attachObject
+         * @public
          * @param {Object} scope - Execution scope that the Object will be attached to.
          * @param {Object} interpreter - JS-Interpreter instance that will be used to attach the Object.
          * @param objectRef - JavaScript Object that will be used during interpretation.
@@ -189,6 +221,8 @@
 
         /**
          * Binds multiple properties on the JS-Interpreter scope.
+         * @member module:ParlayWidget.ParlayInterpreter#attachItems
+         * @public
          * @param {Object} scope - Execution scope that the Objects will be attached to.
          * @param {Object} interpreter - JS-Interpreter instance that will be used to attach the Objects.
          * @param {Array} items - Array of Objects that will be attached to the given scope.
@@ -252,22 +286,6 @@
                     }, this);
                 }
 
-                // current.generateInterpreterWrappers().filter(function (property) {
-                //      return functionString.includes(property.expression);
-                // }).forEach(function (property) {
-                //
-                //     if (property.type == "function") {
-                //         interpreter.setProperty(obj, property.expression, this.makeFunction(interpreter, property.reference, obj));
-                //     }
-                //     else if (property.type == "value") {
-                //         interpreter.setProperty(obj, property.name, interpreter.createPrimitive(property.reference));
-                //     }
-                //     else {
-                //         interpreter.setProperty(obj, property.name, interpreter.createPrimitive(null));
-                //     }
-                //
-                // }, this);
-
             }, this);
 
             Object.keys(to_attach).forEach(function (key) {
@@ -278,6 +296,8 @@
 
         /**
          * Converts ParlayInterpreter instance to Object that can be JSON.strinfified.
+         * @member module:ParlayWidget.ParlayInterpreter#constructionError
+         * @public
          * @returns {{functionString: {String}}}
          */
         ParlayInterpreter.prototype.toJSON = function () {

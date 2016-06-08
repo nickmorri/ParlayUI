@@ -2,12 +2,9 @@ var widgetRegistration = (function () {
     "use strict";
 
     /**
-     * @module ParlayWidget
-     *
-     * @description
      * A ParlayWidget can be defined by a developer to allow their end-users to easily put together a reconfigurable
      * and reusable interface composed of custom HTML and JavaScript.
-     *
+     * @module ParlayWidget
      */
 
     var module_dependencies = ["ui.router", "ui.ace", "ngMaterial", "parlay.widget.base", "parlay.widget.collection", "parlay.widget.controller", "parlay.settings"];
@@ -26,8 +23,67 @@ var widgetRegistration = (function () {
      * @param {String} module_name - Name of the module the widget to be registered belongs to.
      * @param {Array} submodule_dependencies - All dependencies the widget requires.
      * @param {String} directive_name - Name of the widget directive to be registered.
-     * @param {String} widget_type - Type of the widget to be registered.
+     * @param {String} widget_type - Type of the widget to be registered. Available types: display or input.
      * @param {Object|Function} directive_definition - Directive definition Object or Function that defines the widget.
+     * @param {String} directive_definition.templateUrl - Path to the widget HTML template.
+     * @param {Object} [directive_definition.customizationDefaults] - Describes which customizations are available for
+     * the widget.
+     * @param {String} directive_definition.customizationDefaults.*.property_name - Name of the customization property,
+     * should be the same as the key in the customizationDefaults Object.
+     * @param {String} directive_definition.customizationDefaults.*.type - Type of customization. Available types: text,
+     * text-multiple, and color.
+     * @param {*} directive_definition.customizationDefaults.*.value - User selected value, a default should be provided.
+     * @param {Array} [directive_definition.customizationDefaults.*.choices] - Array of acceptable values for the
+     * customization.
+     * @param {Object[]} [configuration_tabs] - Objects that contain definitions for vendor provided configuration tabs.
+     * @param {String} configuration_tabs[].label - Text to fill md-tab-label element with.
+     * @param {String} configuration_tabs[].directive_name - Directive name.
+     * @param {Function} configuration_tabs[].directive_function - Factory function for creating new instance of directives.
+     *
+     * @example
+     *
+     * var module_name = "vendor.widgets";
+     * var submodule_dependencies = ["vendor.datasource"];
+     * var directive_name = "vendorWidgetExample";
+     * var widget_type = "display";
+     * var directive_definition = {
+     *      templateUrl: "../vendor_components/vendor/widget/directives/vendor-widget-example.html",
+     *      customizationDefaults: {
+     *          example_text: {
+     *              property_name: "example_text",
+     *              type: "text",
+     *              value: "foo"
+     *          },
+     *          example_class: {
+     *              property_name: "example_class",
+     *              type: "text-multiple",
+     *              value: ["md-primary", "md-raised"],
+     *              choices: ["md-primary", "md-accent", "md-raised"]
+     *          },
+     *          example_text_color: {
+     *              property_name: "example_text_color",
+     *              type: "color",
+     *              value: "#fff"
+     *          }
+     *      }
+     * };
+     * var configuration_tabs = [{
+     *      label: "customization",
+     *      directive_name: "exampleConfigurationTab",
+     *      directive_function: function () {
+     *          return {
+     *              scope: {
+     *                  customizations: "="
+     *              },
+     *              templateUrl: "../vendor_components/vendor/widget/directives/vendor-widget-example-configuration.html",
+     *              controller: VendorExampleWidgetConfigurationTabController,
+     *              controllerAs: "exampleCtrl"
+     *          };
+     *      }
+     * }];
+     * 
+     * widgetRegistration(module_name, module_dependencies, directive_name, widget_type, directive_definition, configuration_tabs);
+     *
      */
     function widgetRegistration (module_name, submodule_dependencies, directive_name, widget_type, directive_definition, configuration_tabs) {
         // Ensure that parlay.widget includes the given module as a dependency.

@@ -6,12 +6,9 @@
     angular
         .module("parlay.widget.input", module_dependencies)
         .directive("parlayWidgetInput", ParlayWidgetInput);
-
+    
+    ParlayWidgetInput.$inject = ["ParlayWidgetInputManager"];
     /**
-     * @directive
-     * @name ParlayWidgetInput
-     *
-     * @description
      * ParlayWidgetInput directive for registering events on HTMLElements.
      *
      * This directive is intended to reduce the amount of boilerplate required to define a ParlayWidget directive.
@@ -19,18 +16,15 @@
      * ParlayWidgetInputManager. A widget designer that has experience with AngularJS may choose to manually register
      * their element's event handling with the ParlayWidgetInputManager.
      *
+     * @constructor module:ParlayWidgetInput
      * @attribute {String} elementName - Name that will be used to identify the element that the directive is place on.
      * @attribute {String} widgetName - Name of the widget that the element is a descendant of.
      * @attribute {Number} widgetUid - Unique identifier of the widget that the element is a descendant of.
      * @attribute {Array} events - Event names that should be listened for on the element.
      *
      * @example
-     *
-     * <button parlay-widget-input widget-name='{{template.name}}' widget-uid='{{uid}}' element-name='test' events="['click']"></button>
-     *
+     *      <button parlay-widget-input widget-name='{{template.name}}' widget-uid='{{uid}}' element-name='test' events="['click']"></button>
      */
-
-    ParlayWidgetInput.$inject = ["ParlayWidgetInputManager"];
     function ParlayWidgetInput (ParlayWidgetInputManager) {
         return {
             scope: {

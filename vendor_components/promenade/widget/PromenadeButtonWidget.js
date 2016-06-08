@@ -50,6 +50,8 @@
         }
     }];
 
+    // Setting to an empty Array because we'd actually prefer to use the default and this particular configuration is
+    // provided as an example.
     configuration_tabs = [];
 
     widgetRegistration(module_name, module_dependencies, directive_name, widget_type, directive_definition, configuration_tabs);

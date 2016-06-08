@@ -8,6 +8,35 @@
         .directive("parlayWidgetBase", ParlayWidgetBase);
 
     ParlayWidgetBase.$inject = ["$mdDialog", "$compile", "$interval", "ParlayWidgetInputManager", "ParlayData", "ParlayWidgetTransformer"];
+    /**
+     * Base directive of a ParlayWidget. Repeated inside the widget workspace and contains the chosen compiled widget
+     * template.
+     *
+     * @constructor module:ParlayWidget.ParlayWidgetBase
+     * @param {Object} $mdDialog - Angular Material service.
+     * @param {Object} $compile - Angular Material service.
+     * @param {Object} $interval - Angular Material service.
+     * @param {Object} ParlayWidgetInputManager - Parlay service.
+     * @param {Object} ParlayData - Parlay service.
+     * @param {Object} ParlayWidgetTransformer - ParlayWidgetTransformer factory.
+     * @returns {Object} - AngularJS directive definition Object.
+     *
+     * The attributes of the $scope Object of the ParlayBaseWidget is as follows:
+     *
+     * {Boolean} initialized - True if the template has been selected and compiled, false otherwise.
+     * {Function} edit - Launches the widget configuration $mdDialog.
+     * {Number} item.uid - Unique ID assigned by the ParlayWidgetController and used by ng-repeat track by.
+     * {Object} item.position - Coordinates of the last position of the widget.
+     * {Object} item.configuration - Holds user selected configuration details used to define behavior and appearence
+     * of the widget.
+     * {Object} item.configuration.template - Widget template selected by the user during the configuration process.
+     * {Array} item.configuration.template.configuration_tabs - @see {@link module:ParlayWidget#widgetRegistration} for more information.
+     * {String} item.configuration.template.name -
+     * {String} item.configuration.template.type -
+     * {ParlayWidgetEventHandler} item.configuration.handler
+     * {ParlayWidgetTransformer} item.configuration.transformer -
+     *
+     */
     function ParlayWidgetBase ($mdDialog, $compile, $interval, ParlayWidgetInputManager, ParlayData, ParlayWidgetTransformer) {
         return {
             scope: true,
@@ -173,6 +202,8 @@
 
                 /**
                  * Captures variables in a closure scope that will be available to the returned Function.
+                 * @member module:ParlayWidget.ParlayWidgetBase#compileWrapper
+                 * @private
                  * @returns {Function} - Attaches the specified ParlayWidget template as a child of the ParlayBaseWidget.
                  */
                 function compileWrapper () {

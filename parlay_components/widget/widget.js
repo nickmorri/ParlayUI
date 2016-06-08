@@ -28,6 +28,10 @@ var widgetRegistration = (function () {
      * @param {String} directive_name - Name of the widget directive to be registered.
      * @param {String} widget_type - Type of the widget to be registered.
      * @param {Object|Function} directive_definition - Directive definition Object or Function that defines the widget.
+     * @param {Object[]} configuration_tabs - Objects that contain definitions for vendor provided configuration tabs.
+     * @param {String} configuration_tabs[].label - Text to fill md-tab-label element with.
+     * @param {String} configuration_tabs[].directive_name - Directive name.
+     * @param {Function} configuration_tabs[].directive_function - Factory function for creating new instance of directives.
      */
     function widgetRegistration (module_name, submodule_dependencies, directive_name, widget_type, directive_definition, configuration_tabs) {
         // Ensure that parlay.widget includes the given module as a dependency.

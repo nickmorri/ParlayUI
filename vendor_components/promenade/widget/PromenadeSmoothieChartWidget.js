@@ -10,6 +10,12 @@
     widgetRegistration(module_name, module_dependencies, directive_name, widget_type, directive_function);
 
     PromenadeWidgetSmoothieChart.$inject = ["ParlayWidgetTemplate", "$interval", "RandColor"];
+    /**
+     * @constructor module:PromenadeWidget.PromenadeWidgetSmoothieChart
+     * @param {ParlayWidgetTemplate} ParlayWidgetTemplate - [ParlayWidgetTemplate]{@link module:ParlayWidget.ParlayWidgetTemplate} service.
+     * @param {Object} $interval - AngularJS [$interval]{@link https://docs.angularjs.org/api/ng/service/$interval} service
+     * @param {Object} RandColor - Parlay [RandColor]{@link module:ParlayUtility.RandColor} service.
+     */
     function PromenadeWidgetSmoothieChart (ParlayWidgetTemplate, $interval, RandColor) {
 
         function customLink (scope, element) {

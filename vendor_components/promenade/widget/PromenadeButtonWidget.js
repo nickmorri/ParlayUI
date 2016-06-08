@@ -6,12 +6,17 @@
     var directive_name = "promenadeWidgetButton";
     var widget_type = "input";
 
+    PromenadeButtonWidgetConfigurationTabController.$inject = [];
+    /**
+     * Controller for the customization tab in the widget configuration dialog.
+     * @constructor module:PromenadeWidget.PromenadeButtonWidget.PromenadeButtonWidgetConfigurationTabController
+     */
+    function PromenadeButtonWidgetConfigurationTabController () {}
 
-    ButtonConfigurationTabController.$inject = ["$scope"];
-    function ButtonConfigurationTabController ($scope) {
-
-    }
-
+    /**
+     * Directive definition for the PromenadeButtonWidget.
+     * @see [widgetRegistration]{@link module:ParlayWidget#widgetRegistration}
+     */
     var directive_definition = {
         templateUrl: "../vendor_components/promenade/widget/directives/promenade-widget-button.html",
         customizationDefaults: {
@@ -34,6 +39,10 @@
         }
     };
 
+    /**
+     * Configuration tab definition for the PromenadeButtonWidget.
+     * @see [widgetRegistration]{@link module:ParlayWidget#widgetRegistration}
+     */
     var configuration_tabs = [{
         label: "customization",
         directive_name: "buttonConfigurationTab",
@@ -43,7 +52,7 @@
                     customizations: "="
                 },
                 templateUrl: "../vendor_components/promenade/widget/directives/promenade-widget-button-configuration.html",
-                controller: ButtonConfigurationTabController,
+                controller: PromenadeButtonWidgetConfigurationTabController,
                 controllerAs: "buttonCtrl"
             };
         }

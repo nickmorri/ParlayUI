@@ -10,10 +10,6 @@
     function ParlayWidgetTemplateFactory () {
 
         /**
-         * @service
-         * @name ParlayWidgetTemplate
-         *
-         * @description
          * ParlayWidget utility service for defining widget directives.
          *
          * This utility is intended to reduce the amount of boilerplate required to define a ParlayWidget directive.
@@ -30,6 +26,7 @@
          * The standard AngularJS directive definition parameters are described in the following URL:
          * https://docs.angularjs.org/api/ng/provider/$compileProvider#directive
          *
+         * @constructor module:ParlayWidget:ParlayWidgetTemplate
          * @param {Object} options - The following attributes are specific to the ParlayWidgetTemplate:
          *
          *      [optional] A AngularJS directive link function that the user can define for custom behavior.
@@ -73,7 +70,6 @@
          * @returns {Object} - Fully configured AngularJS directive definition Object.
          *
          */
-
         function ParlayWidgetTemplate(options) {
 
             var custom_link = options.customLink;
@@ -92,6 +88,7 @@
             /**
              * If customLink available, calls the user provided link function during directive linking.
              * Notifies parent that linking is complete.
+             *
              * @param scope {Object} - Isolated scope of the directive.
              * @param element {HTMLElement} - HTML element of directive.
              * @param attrs {Object} - Key/value pairs of normalized attribute names and their attribute values.

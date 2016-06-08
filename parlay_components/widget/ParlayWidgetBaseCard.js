@@ -8,10 +8,6 @@
         .directive("parlayWidgetBaseCard", ParlayWidgetBaseCard);
 
     /**
-     * @directive
-     * @name ParlayWidgetBaseCard
-     *
-     * @description
      * ParlayWidgetBaseCard directive reduces the amount of boilerplate HTML to define a ParlayWidget in the form of
      * a Angular Material card. This directive wraps the contents within the <parlay-widget-base-card-title> element
      * within a <md-toolbar> element. Within the toolbar a <parlay-widget-base-menu> element is included. The contents
@@ -19,6 +15,7 @@
      *
      * Additional information on AngularJS transclusion:
      * http://teropa.info/blog/2015/06/09/transclusion.html
+     * @constructor module:ParlayWidget:ParlayWidgetBaseCard
      *
      * @example
      *
@@ -32,7 +29,6 @@
      *  </parlay-widget-base-card>
      *
      */
-
     function ParlayWidgetBaseCard () {
         return {
             transclude: {

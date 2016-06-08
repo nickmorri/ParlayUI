@@ -8,11 +8,8 @@
         .directive("parlayWidgetBaseMenu", ParlayWidgetBaseMenu);
 
     /**
-     * @directive
-     * @name ParlayWidgetBaseMenu
-     *
-     * @description
      * ParlayWidgetBaseMenu directive that contains a typical <md-menu> element used in a ParlayWidget.
+     * @constructor module:ParlayWidget:ParlayWidgetBaseMenu
      *
      * @example
      *

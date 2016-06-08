@@ -10,16 +10,11 @@
     function ParlayWidgetCollectionFactory() {
 
         /**
-         * @service
-         * @name ParlayWidgetCollection
-         *
-         * @description
          * ParlayWidgetCollection service for collecting widget directives. As directives are created they should
          * register themselves with the ParlayWidgetCollection so that other services and controllers can query a
          * single service to discover all available directives.
          *
-         * @returns {Object} - ParlayWidgetCollection service.
-         *
+         * @constructor module:ParlayWidget:ParlayWidgetCollection
          */
 
         function ParlayWidgetCollection() {
@@ -28,6 +23,8 @@
 
         /**
          * Records the given directive and it's type.
+         * @member module:ParlayWidget:ParlayWidgetCollection#registerWidget
+         * @public
          * @param {String} directive_name - Name that the directive registration provides.
          * @param {String} widget_type - Type that the directive registration provides.
          */
@@ -37,6 +34,8 @@
 
         /**
          * Records the Array of directives.
+         * @member module:ParlayWidget:ParlayWidgetCollection#registerWidgets
+         * @public
          * @param {Array} widgets - Array of directives to be recorded.
          */
         ParlayWidgetCollection.prototype.registerWidgets = function (widgets) {
@@ -47,6 +46,8 @@
 
         /**
          * Returns all previously registered widgets.
+         * @member module:ParlayWidget:ParlayWidgetCollection#getAvailableWidgets
+         * @public
          * @returns {Array} - Array of registered widgets.
          */
         ParlayWidgetCollection.prototype.getAvailableWidgets = function () {

@@ -11,15 +11,13 @@
     function ParlayWidgetTransformerFactory (ParlayInterpreter) {
 
         /**
-         * @service
-         * @name ParlayWidgetTransformer
-         *
-         * @description
          * ParlayWidgetTransformer factory for transforming PromenadeStandardProperty, PromenadeStandardDatastream and
          * HTML <input> values with arbitrary code in a sandboxed JavaScript interpreter.
-         *
          * Uses JS-Interpreter internally for code execution.
          * https://github.com/NeilFraser/JS-Interpreter/
+         *
+         * @constructor module:ParlayWidget.ParlayWidgetTransformer
+         * @param {Array} initialItems - Array of items to add immediately on creation.
          *
          * @attribute {String} functionString - JavaScript code that should be executed on this.run()
          * @attribute {JS-Interpreter} interpreter - JS-Interpreter instance.
@@ -30,26 +28,33 @@
          * @attribute {Array} items - Contains the items that have been added to the transformer instance.
          * @attribute {Array} handlers - Contains the handlers for the items that have been added to the transformer
          * instance.
-         *
-         * @param {Array} initialItems - Array of items to add immediately on creation.
-         *
          */
-
         function ParlayWidgetTransformer(initialItems) {
 
             // Call our parent constructor first.
             ParlayInterpreter.call(this);
 
-            // Result of interpretation of functionString and the state of the interpreter scope.
+            /**
+             * Result of interpretation of functionString and the state of the interpreter scope.
+             * @member module:ParlayWidget.ParlayWidgetTransformer#value
+             * @public
+             * @type {*}
+             */
             Object.defineProperty(this, "value", {
                 get: function () {
                     return this.run();
                 }
             });
 
-            // The interpreter should be rebuilt whenever the functionString is changed.
-            // This means we will to implement both a custom getter/setter, that requires we store the actual value
-            // of the functionString in cached_functionString.
+            /**
+             * The interpreter should be rebuilt whenever the functionString is changed.
+             * This means we will to implement both a custom getter/setter, that requires we store the actual value
+             * of the functionString in cached_functionString.
+             * Contains the items that have been added to the transformer instance.
+             * @member module:ParlayWidget.ParlayWidgetTransformer#functionString
+             * @public
+             * @type {String}
+             */
             var cached_functionString;
             Object.defineProperty(this, "functionString", {
                 get: function () {
@@ -61,10 +66,20 @@
                 }.bind(this)
             });
 
-            // Contains the items that have been added to the transformer instance.
+            /**
+             * Contains the items that have been added to the transformer instance.
+             * @member module:ParlayWidget.ParlayWidgetTransformer#items
+             * @public
+             * @type {Array}
+             */
             this.items = [];
 
-            // Contains the handlers for the items that have been added to the transformer instance.
+            /**
+             * Contains the handlers for the items that have been added to the transformer instance.
+             * @member module:ParlayWidget.ParlayWidgetTransformer#handlers
+             * @public
+             * @type {Array}
+             */
             this.handlers = [];
 
             // On creation we should add all initialItems if provided.
@@ -82,6 +97,8 @@
         /**
          * Construct the parent ParlayInterpreter with the initFunc to ensure that this.items are attached to the
          * JS-Interpreter scope.
+         * @member module:ParlayWidget.ParlayWidgetTransformer#construct
+         * @public
          */
         ParlayWidgetTransformer.prototype.construct = function () {
             ParlayInterpreter.prototype.construct.call(this);
@@ -89,6 +106,8 @@
 
         /**
          * Remove all items and handlers from this ParlayWidgetTransformer instance.
+         * @member module:ParlayWidget.ParlayWidgetTransformer#cleanHandlers
+         * @public
          */
         ParlayWidgetTransformer.prototype.cleanHandlers = function () {
             while (!!this.handlers && this.handlers.length > 0) {
@@ -101,6 +120,8 @@
 
         /**
          * Establish a change event listener that will re-construct this ParlayWidgetTransformer instance.
+         * @member module:ParlayWidget.ParlayWidgetTransformer#registerHandler
+         * @public
          * @param {Object} item - Item we want to listen for changes on.
          * @returns {Function} - Handler deregistration Function.
          */
@@ -124,6 +145,8 @@
         /**
          * Request that the item retrieves the latest value, add it to this.items and this.handlers, register a change
          * handler and finally reconstruct this ParlayWidgetTransformer instance.
+         * @member module:ParlayWidget.ParlayWidgetTransformer#addItem
+         * @public
          * @param {Object} item - PromenadeStandardProperty, PromenadeStandardDatastream or HTML <input> instance.
          */
         ParlayWidgetTransformer.prototype.addItem = function (item) {
@@ -146,6 +169,8 @@
 
         /**
          * Remove from this.items and this.handlers and reconstruct this ParlayWidgetTransformer instance.
+         * @member module:ParlayWidget.ParlayWidgetTransformer#removeItem
+         * @public
          * @param {Object} item - PromenadeStandardProperty, PromenadeStandardDatastream or HTML <input> instance.
          */
         ParlayWidgetTransformer.prototype.removeItem = function (item) {
@@ -164,6 +189,8 @@
 
         /**
          * Converts ParlayWidgetTransformer instance to Object that can be JSON.strinfified.
+         * @member module:ParlayWidget.ParlayWidgetTransformer#toJSON
+         * @public
          * @returns {Object}
          */
         ParlayWidgetTransformer.prototype.toJSON = function () {

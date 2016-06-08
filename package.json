@@ -10,8 +10,8 @@
     "url": "https://github.com/PromenadeSoftware/ParlayUI"
   },
   "scripts": {
-    "postinstall": "bower install && grunt build",
-    "test": "grunt test"
+    "postinstall": "bower install",
+    "test": "grunt test",
   },
   "devDependencies": {
     "bower": "~1.7.9",

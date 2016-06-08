@@ -6,6 +6,8 @@ cache:
   - node_modules
 git:
   depth: 3
+sudo: false
+before_deploy: grunt build
 deploy:
   provider: releases
   api_key:

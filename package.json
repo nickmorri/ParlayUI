@@ -11,7 +11,7 @@
   },
   "scripts": {
     "postinstall": "bower install",
-    "test": "grunt test",
+    "test": "grunt test"
   },
   "devDependencies": {
     "bower": "~1.7.9",

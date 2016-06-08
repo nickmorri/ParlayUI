@@ -1,15 +1,20 @@
 (function () {
     "use strict";
-    
+
     var module_dependencies = ["parlay.store", "parlay.settings"];
-    
+
+    var widgetLastZIndex = {
+      value: 0
+    };
+
     angular
         .module("parlay.widget.manager", module_dependencies)
+        .value("widgetLastZIndex", widgetLastZIndex)
         .factory("ParlayWidgetManager", ParlayWidgetManagerFactory);
 
-    ParlayWidgetManagerFactory.$inject = ["$window", "ParlayStore", "ParlaySettings"];
-    function ParlayWidgetManagerFactory ($window, ParlayStore, ParlaySettings) {
-        
+    ParlayWidgetManagerFactory.$inject = ["$window", "ParlayStore", "ParlaySettings", "widgetLastZIndex"];
+    function ParlayWidgetManagerFactory ($window, ParlayStore, ParlaySettings, widgetLastZIndex) {
+
         function ParlayWidgetManager () {
             // Immediately retrieve any saved workspaces.
             this.saved_workspaces = this.getWorkspaces();
@@ -67,6 +72,23 @@
          * @param {Object} workspace - Workspace container Object.
          */
         ParlayWidgetManager.prototype.saveEntry = function (workspace) {
+          // sort the widgets by their zIndex
+          this.active_widgets.sort(function (widget1, widget2) {
+            if (widget1.zIndex > widget2.zIndex) {
+              return 1;
+            }
+            if (widget1.zIndex < widget2.zIndex) {
+              return -1;
+            }
+            // widget1 must be equal to widget2
+            return 0;
+          });
+
+          // compact the zIndices so that they don't get too big
+          this.active_widgets.forEach(function (element, index, array) {
+            element.zIndex = index+1;
+          });
+
             workspace.data = JSON.stringify(angular.copy(this.active_widgets), function (key, value) {
                 return !!value && value.constructor && value.constructor.name == "ParlayProtocol" ? value.protocol_name : value;
             });
@@ -82,6 +104,10 @@
          */
         ParlayWidgetManager.prototype.loadEntry = function (workspace) {
             this.active_widgets = workspace.data;
+            widgetLastZIndex.value = 0;
+            widgetLastZIndex.value = this.active_widgets.reduce(function (greatest_index, current_widget) {
+              return greatest_index > current_widget.zIndex ? greatest_index : current_widget.zIndex;
+            });
 
             var loaded_items = workspace.data;
             var failed_items = [];
@@ -181,7 +207,7 @@
                 uid++;
             }
 
-            this.active_widgets.push({uid: uid});
+            this.active_widgets.push({uid: uid, zIndex: ++widgetLastZIndex.value});
         };
 
         /**
@@ -214,11 +240,12 @@
             }
 
             copy.uid = new_uid;
+            copy.zIndex = ++widgetLastZIndex.value;
 
             this.active_widgets.push(copy);
         };
-        
+
         return new ParlayWidgetManager();
     }
-    
+
 }());

@@ -31,23 +31,47 @@ To build ParlayUI distribution files you must first install npm which is include
 
 Once npm is installed ParlayUI can be built after cloning the Git repository.
 
-    git clone git@github.com:PromenadeSoftware/Parlay.git
+    git clone git@github.com:PromenadeSoftware/ParlayUI.git
 
-After the clone is complete navigate to Parlay/common/parlay/ui and run:
+After the clone is complete navigate to Parlay/common/parlay/ui.
+
+To retrieve all build time dependencies and front-end dependencies run:
 
     npm install
+    
+If the ```grunt-cli``` has not previously been installed on your machine you will also need to run:
 
-This will retrieve all build time dependencies, front-end dependencies, run the unit tests and generate dist/index.html. dist/index.html has all JavaScript, CSS and HTML templates inlined. It is the only file needed to be served by the webserver.
+    npm install -g grunt-cli
 
-To re-generate dist/index.html run:
+To build the ParlayUI distribution file run:
 
     grunt build
+    
+This will retrieve all front-end dependencies, run the unit tests and generate the distribution file (dist/index.html). The distribution file has all JavaScript, CSS and HTML templates inlined. It is the only file needed to be served by the webserver.
 
-To build ParlayUI development files perform the above build process and run:
+To build the ParlayUI development files run:
 
     grunt develop
     
 This will retrieve all front-end dependencies, run the unit tests and launch a webserver that serves the development copy of ParlayUI. For development this is the preferred environment as the source files will be served individually, and in their original unminified state making for easier debugging.
+
+To re-run the unit test suite run:
+ 
+    grunt test
+    
+To generate unit test coverage data run:
+    
+    grunt coverage
+    
+To generate documentation using JSDoc run:
+  
+    grunt doc
+    
+To deploy a release run:
+
+    grunt release
+    
+**This should only be done by ParlayUI maintainers.**
 
 -------------
 Documentation

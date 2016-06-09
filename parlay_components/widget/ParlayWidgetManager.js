@@ -126,9 +126,31 @@
          * @param {Object} workspace - Saved workspace to be loaded.
          */
         ParlayWidgetManager.prototype.loadEntry = function (workspace) {
-            this.active_widgets = workspace.data;
 
-            var loaded_items = workspace.data;
+            var next_uid = 0;
+
+            // Collect all UIDs in use.
+            var uids_in_use = this.active_widgets.map(function (widget) {
+                return widget.uid;
+            });
+
+            this.active_widgets = workspace.data.map(function (widget) {
+
+                // If the widget's uid is already in use assign it another.
+                if (uids_in_use.indexOf(widget.uid) > -1) {
+                    // Ensure that the uid we generate isn't in use.
+                    while (uids_in_use.indexOf(next_uid) > -1) {
+                        next_uid++;
+                    }
+                    // Record the new uid that was generated.
+                    uids_in_use.push(next_uid);
+                    widget.uid = next_uid;
+                }
+
+                return widget;
+            });
+
+            var loaded_items = this.active_widgets;
             var failed_items = [];
 
             return {

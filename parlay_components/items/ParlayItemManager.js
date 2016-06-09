@@ -111,20 +111,34 @@
          */
         ParlayItemManager.prototype.loadEntry = function (workspace) {
 
+            // Make copy to ensure that the references are broker from the saved workspaces.
+            var copy = angular.copy(workspace);
+
+            // Collect the used UIDs so that ng-repeat won't assume items are the same.
+            var used_uids = active_items.map(function (item) {
+                return item.uid;
+            });
+
             // Clear the current workspace before attempting to load another.
             this.clearActive();
 
             // Sort by the $index recorded from the previous session. This corresponds with the order that the cards will be loaded into the workspace.
-            var containers = Object.keys(workspace.data).sort(function (a, b) {
-                return workspace.data[a].$index > workspace.data[b].$index;
+            var containers = Object.keys(copy.data).sort(function (a, b) {
+                return copy.data[a].$index > copy.data[b].$index;
             }).map(function (key) {
                 var split_name = key.split('.')[1].split('_');
                 var uid = parseInt(split_name.splice(split_name.length - 1, 1)[0], 10);
+
+                while (used_uids.indexOf(uid) > -1) {
+                    uid++;
+                }
+                used_uids.push(uid);
+
                 var item_name = split_name.join(' ');
                 return {
                     name: item_name,
                     uid: uid,
-                    stored_values: workspace.data[key]
+                    stored_values: copy.data[key]
                 };
             });
 

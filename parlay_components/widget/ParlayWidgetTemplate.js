@@ -26,7 +26,7 @@
          * The standard AngularJS directive definition parameters are described in the following URL:
          * https://docs.angularjs.org/api/ng/provider/$compileProvider#directive
          *
-         * @constructor module:ParlayWidget:ParlayWidgetTemplate
+         * @constructor module:ParlayWidget.ParlayWidgetTemplate
          * @param {Object} options - The following attributes are specific to the ParlayWidgetTemplate:
          *
          *      [optional] A AngularJS directive link function that the user can define for custom behavior.

@@ -14,7 +14,7 @@
          * register themselves with the ParlayWidgetCollection so that other services and controllers can query a
          * single service to discover all available directives.
          *
-         * @constructor module:ParlayWidget:ParlayWidgetCollection
+         * @constructor module:ParlayWidget.ParlayWidgetCollection
          */
 
         function ParlayWidgetCollection() {
@@ -23,7 +23,7 @@
 
         /**
          * Records the given directive and it's type.
-         * @member module:ParlayWidget:ParlayWidgetCollection#registerWidget
+         * @member module:ParlayWidget.ParlayWidgetCollection#registerWidget
          * @public
          * @param {String} directive_name - Name that the directive registration provides.
          * @param {String} widget_type - Type that the directive registration provides.
@@ -34,7 +34,7 @@
 
         /**
          * Records the Array of directives.
-         * @member module:ParlayWidget:ParlayWidgetCollection#registerWidgets
+         * @member module:ParlayWidget.ParlayWidgetCollection#registerWidgets
          * @public
          * @param {Array} widgets - Array of directives to be recorded.
          */
@@ -46,7 +46,7 @@
 
         /**
          * Returns all previously registered widgets.
-         * @member module:ParlayWidget:ParlayWidgetCollection#getAvailableWidgets
+         * @member module:ParlayWidget.ParlayWidgetCollection#getAvailableWidgets
          * @public
          * @returns {Array} - Array of registered widgets.
          */

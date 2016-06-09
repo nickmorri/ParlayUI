@@ -15,7 +15,7 @@
      *
      * Additional information on AngularJS transclusion:
      * http://teropa.info/blog/2015/06/09/transclusion.html
-     * @constructor module:ParlayWidget:ParlayWidgetBaseCard
+     * @constructor module:ParlayWidget.ParlayWidgetBaseCard
      *
      * @example
      *

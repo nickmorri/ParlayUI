@@ -11,7 +11,7 @@
     ParlayWidgetController.$inject = ["ParlayWidgetManager"];
     /**
      * Controller for the widget workspace.
-     * @constructor module:ParlayWidget:ParlayWidgetController
+     * @constructor module:ParlayWidget.ParlayWidgetController
      * @param ParlayWidgetManager
      */
     function ParlayWidgetController (ParlayWidgetManager) {
@@ -34,7 +34,7 @@
 
         /**
          * Requests all active widget configuration Objects from the ParlayWidgetManager.
-         * @member module:ParlayWidget:ParlayWidgetController#getActiveWidgets
+         * @member module:ParlayWidget.ParlayWidgetController#getActiveWidgets
          * @public
          * @returns {Array}
          */
@@ -44,7 +44,7 @@
 
         /**
          * True if any widgets are active, false otherwise.
-         * @member module:ParlayWidget:ParlayWidgetController#hasWidgets
+         * @member module:ParlayWidget.ParlayWidgetController#hasWidgets
          * @public
          * @returns {Boolean}
          */
@@ -54,7 +54,7 @@
 
         /**
          * Requests the ParlayWidgetManager to insert another widget configuration Object.
-         * @member module:ParlayWidget:ParlayWidgetController#add
+         * @member module:ParlayWidget.ParlayWidgetController#add
          * @public
          */
         function add () {
@@ -63,7 +63,7 @@
 
         /**
          * Requests the ParlayWidgetManager to remove the widget configuration Object corresponding to the given uid.
-         * @member module:ParlayWidget:ParlayWidgetController#remove
+         * @member module:ParlayWidget.ParlayWidgetController#remove
          * @public
          * @param {Number} uid - Unique ID that identifies a single widget configuration Object.
          */
@@ -73,7 +73,7 @@
 
         /**
          * Requests the ParlayWidgetManager to duplicate the widget configuration Object corresponding to the given uid.
-         * @member module:ParlayWidget:ParlayWidgetController#duplicate
+         * @member module:ParlayWidget.ParlayWidgetController#duplicate
          * @public
          * @param {Number} uid - Unique ID that identifies a single widget configuration Object.
          */

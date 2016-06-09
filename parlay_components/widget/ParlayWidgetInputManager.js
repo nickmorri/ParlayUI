@@ -12,13 +12,13 @@
 
         /**
          * ParlayWidgetInputManager service for managing inputs available within widgets.
-         * @constructor module:ParlayWidget:ParlayWidgetInputManager
+         * @constructor module:ParlayWidget.ParlayWidgetInputManager
          */
 
         function ParlayWidgetInputManager() {
             /**
              * Collection of active input widgets.
-             * @member module:ParlayWidget:ParlayWidgetInputManager#
+             * @member module:ParlayWidget.ParlayWidgetInputManager#
              * @public
              * @type {Object}
              */
@@ -27,7 +27,7 @@
 
         /**
          * Adds event listeners for each event on the given element. Returns Object that allows for listener management.
-         * @member module:ParlayWidget:ParlayWidgetInputManager#setupEventListeners
+         * @member module:ParlayWidget.ParlayWidgetInputManager#setupEventListeners
          * @private
          * @param {HTMLElement} element - Element that event listeners will be attached to.
          * @param {Array} events - Array of event name Strings.
@@ -95,7 +95,7 @@
         /**
          * Register event listeners for each event for every element that match the target tag beneath the parent tag Object
          * contained within the DOM of the rootElement.
-         * @member module:ParlayWidget:ParlayWidgetInputManager#registerElement
+         * @member module:ParlayWidget.ParlayWidgetInputManager#registerElement
          * @public
          * @param {String} widget_name - Name given to the ParlayWidget.
          * @param {String} widget_uid - Unique ID assigned to ParlayWidget.
@@ -131,7 +131,7 @@
 
         /**
          * Attaches ParlayWidgetEventHandler to the given Event instance.
-         * @member module:ParlayWidget:ParlayWidgetInputManager#registerHandler
+         * @member module:ParlayWidget.ParlayWidgetInputManager#registerHandler
          * @public
          * @param {Event} event - HTML Event instance we should associate with a ParlayWidgetEventHandler.
          */
@@ -142,7 +142,7 @@
 
         /**
          * Remove the ParlayWidgetEventHandler from the given Event instance.
-         * @member module:ParlayWidget:ParlayWidgetInputManager#deregisterHandler
+         * @member module:ParlayWidget.ParlayWidgetInputManager#deregisterHandler
          * @public
          * @param {Event} event - HTML Event instance we should associate with a ParlayWidgetEventHandler.
          */
@@ -155,7 +155,7 @@
 
         /**
          * Returns all registered elements.
-         * @member module:ParlayWidget:ParlayWidgetInputManager#getElements
+         * @member module:ParlayWidget.ParlayWidgetInputManager#getElements
          * @public
          * @param {HTMLElement} [parent] - If given only descendants of element will be returned.
          * @returns {Array} - Registered elements.
@@ -172,7 +172,7 @@
 
         /**
          * Returns all registered events.
-         * @member module:ParlayWidget:ParlayWidgetInputManager#getEvents
+         * @member module:ParlayWidget.ParlayWidgetInputManager#getEvents
          * @public
          * @param {HTMLElement} [parent] - Optional parameter, if given elements will be filtered.
          * @returns {Array} - Registered events.

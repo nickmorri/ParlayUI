@@ -1,12 +1,13 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["ui.router", "ngMaterial", "ngSanitize", "vendor.defaults", "parlay.items", "parlay.navigation.container", "parlay.notification.sidenav"];
+    var module_dependencies = ["ui.router", "ngMaterial", "ngSanitize", "vendor.defaults", "parlay.items", "parlay.navigation.container", "parlay.notification.sidenav", "parlay.store"];
 
     angular
         .module("parlay.main", module_dependencies)
         .controller("ParlayHeadController", ParlayHeadController)
-        .config(ParlayConfig);
+        .config(ParlayConfig)
+        .run(ParlayRun);
 
     ParlayConfig.$inject = ["$provide", "$urlRouterProvider", "$mdThemingProvider", "$compileProvider", "vendorPalette", "debugEnabled"];
     function ParlayConfig ($provide, $urlRouterProvider, $mdThemingProvider, $compileProvider, vendorPalette, debugEnabled) {
@@ -28,7 +29,20 @@
 
         // Make the primary theme color available as a value.
         $provide.value("themeColor", $mdThemingProvider._PALETTES[vendorPalette.primary][500]);
+    }
 
+    ParlayRun.$inject = ["$rootScope", "$state", "ParlayStore"];
+    function ParlayRun ($rootScope, $state, ParlayStore) {
+
+        // If the user navigated directly to a route take them there.
+        if (window.location.hash === "" && ParlayStore("route").has("last")) {
+            $state.go(ParlayStore("route").get("last"));
+        }
+
+        // Record the last state the user navigated to.
+        $rootScope.$on("$stateChangeSuccess", function (event, toState) {
+            ParlayStore("route").set("last", toState.name);
+        });
     }
 
     ParlayHeadController.$inject = ["$sce", "vendorIcon", "themeColor"];

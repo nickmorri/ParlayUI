@@ -16,7 +16,7 @@
     /**
      * Controller constructor for the property tab.
      * @constructor module:PromenadeStandardItem.PromenadeStandardItemCardPropertyTabController
-     * @param {Object} $q - AngularJS $q service.
+     * @param {Object} $q - AngularJS [$q]{@link https://docs.angularjs.org/api/ng/service/$q} service.
      */
     function PromenadeStandardItemCardPropertyTabController ($q) {
         
@@ -36,7 +36,8 @@
         ctrl.setAllProperties = setAllProperties;
 
         /**
-         * True if the item has any properties, false otherwise.
+         * True if the item has any
+         * [PromenadeStandardProperty]{@link module:PromenadeStandardItem.PromenadeStandardProperty}, false otherwise.
          * @member module:PromenadeStandardItem.PromenadeStandardItemCardPropertyTabController#hasProperties
          * @public
          * @returns {Boolean}
@@ -46,7 +47,8 @@
         }
 
         /**
-         * Gets all property values from an item.
+         * Gets all
+         * [PromenadeStandardProperty]{@link module:PromenadeStandardItem.PromenadeStandardProperty} values from an item.
          * @member module:PromenadeStandardItem.PromenadeStandardItemCardPropertyTabController#getAllProperties
          * @public
          * @returns {$q.deferred.Promise} - Resolved when all properties have returned a response.
@@ -61,7 +63,8 @@
         }
 
         /**
-         * Sets all property values from an item.
+         * Sets all
+         * [PromenadeStandardProperty]{@link module:PromenadeStandardItem.PromenadeStandardProperty} values from an item.
          * @member module:PromenadeStandardItem.PromenadeStandardItemCardPropertyTabController#getAllProperties
          * @public
          * @returns {$q.deferred.Promise} - Resolved when all properties have returned a response. 

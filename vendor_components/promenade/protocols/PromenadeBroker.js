@@ -23,8 +23,8 @@
 	function PromenadeBrokerFactory (ParlaySocket, BrokerAddress, ParlayNotification, ParlayErrorDialog, ParlaySettings, $q, $location, $timeout, $window, $mdDialog) {
 
 		/**
-		 * The PromenadeBroker is a implementation of a Broker that communicates using the Parlay communication publish/
-         * subscribe model.
+		 * The PromenadeBroker is a implementation of a Broker that communicates using the Parlay communication
+         * MQTT publish/subscribe model.
          *
 		 * @constructor module:PromenadeBroker.PromenadeBroker
 		 */
@@ -41,7 +41,7 @@
 			var connected_previously = false;
 
             /**
-             * Cached copy of the most recent discovery Object received from the Broker.
+             * Cached copy of the most recent discovery Object received from the PromenadeBroker.
              * @member module:PromenadeBroker.PromenadeBroker#last_discovery
              * @private
              * @type {Object}
@@ -57,7 +57,7 @@
 			var on_discovery_callbacks = [];
 
             /**
-             * True if the ParlaySocket is connected, false otherwise.
+             * True if the [ParlaySocket]{@link module:ParlaySocket.ParlaySocket} is connected, false otherwise.
              * @member module:PromenadeBroker.PromenadeBroker#connected
              * @private
              * @type {Boolean}
@@ -234,7 +234,8 @@
              * Registers a callback which will be invoked on socket open.
              * @member module:PromenadeBroker.PromenadeBroker#onOpen
              * @public
-             * @param {Function} callbackFunc - Callback function which will be invoked on WebSocket open.
+             * @param {Function} callbackFunc - Callback function which will be invoked on
+             * [ParlaySocket]{@link module:ParlaySocket.ParlaySocket} open.
              */
             function onOpen (callbackFunc) {
                 ParlaySocket.onOpen(callbackFunc);
@@ -244,14 +245,15 @@
              * Registers a callback which will be invoked on socket close.
              * @member module:PromenadeBroker.PromenadeBroker#onClose
              * @public
-             * @param {Function} callbackFunc - Callback function which will be invoked on WebSocket close.
+             * @param {Function} callbackFunc - Callback function which will be invoked on
+             * [ParlaySocket]{@link module:ParlaySocket.ParlaySocket} close.
              */
             function onClose (callbackFunc) {
                 ParlaySocket.onClose(callbackFunc);
             }
 
             /**
-             * Returns the URL where the WebSocket is connected.
+             * Returns the URL where the [ParlaySocket]{@link module:ParlaySocket.ParlaySocket} is connected.
              * @member module:PromenadeBroker.PromenadeBroker#getBrokerAddress
              * @public
              * @returns {String} - URL.
@@ -261,17 +263,17 @@
             }
 
             /**
-             * Closes WebSocket and returns Promise when complete.
+             * Closes [ParlaySocket]{@link module:ParlaySocket.ParlaySocket} and returns Promise when complete.
              * @member module:PromenadeBroker.PromenadeBroker#disconnect
              * @public
-             * @returns {$q.defer.promise} Resolved when WebSocket is closed.
+             * @returns {$q.defer.promise} Resolved when [ParlaySocket]{@link module:ParlaySocket.ParlaySocket} is closed.
              */
             function disconnect (reason) {
                 return ParlaySocket.close(reason);
             }
 
 			/**
-			 * Requests ParlaySocket to open a WebSocket connection.
+			 * Requests [ParlaySocket]{@link module:ParlaySocket.ParlaySocket} to open a new connection.
              * @member module:PromenadeBroker.PromenadeBroker#connect
              * @public
 			 */
@@ -355,7 +357,9 @@
                 topics.type = "broker";
                 response_topics.type = "broker";
 
-                return $q(function (resolve) { ParlaySocket.sendMessage(topics, contents, response_topics, resolve); });
+                return $q(function (resolve) {
+                    ParlaySocket.sendMessage(topics, contents, response_topics, resolve);
+                });
             }
 
             /**

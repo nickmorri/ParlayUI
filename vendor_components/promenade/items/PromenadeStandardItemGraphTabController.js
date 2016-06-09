@@ -17,10 +17,11 @@
     /**
      * Controller constructor for the graph tab.
      * @constructor module:PromenadeStandardItem.PromenadeStandardItemCardGraphTabController
-     * @param {Object} $scope - A AngularJS $scope Object.
-     * @param {Object} $mdDialog - Dialog modal service.
-     * @param {Object} ParlayUtility - Service that provides utility functions.
-     * @param {Object} ParlayItemPersistence - Service that provides automatic persistence of scope variables to localStorage.
+     * @param {Object} $scope - AngularJS [$scope]{@link https://docs.angularjs.org/guide/scope} Object.
+     * @param {Object} $mdDialog - Angular Material [$mdDialog]{@link https://material.angularjs.org/latest/api/service/$mdDialog} service.
+     * @param {Object} ParlayUtility - [ParlayUtility]{@link module:ParlayUtility.ParlayUtility} service.
+     * @param {Object} ParlayItemPersistence - [ParlayItemPersistence]{@link module:ParlayItem.ParlayItemPersistence}
+     * service.
      */
     function PromenadeStandardItemCardGraphTabController($scope, $mdDialog, ParlayUtility, ParlayItemPersistence) {
 
@@ -108,9 +109,9 @@
     /**
      * Controller constructor for the graph configuration dialog.
      * @constructor module:PromenadeStandardItem.PromenadeStandardItemCardGraphTabConfigurationController
-     * @param {Object} $scope - AngularJS $scope Object.
-     * @param {Object} $mdDialog - Dialog modal service.
-     * @param {Object} $mdMedia - Media size detection service.
+     * @param {Object} $scope - AngularJS [$scope]{@link https://docs.angularjs.org/guide/scope} Object.
+     * @param {Object} $mdDialog - Angular Material [$mdDialog]{@link https://material.angularjs.org/latest/api/service/$mdDialog} service.
+     * @param {Object} $mdMedia - Angular Material [$mdMedia]{@link https://material.angularjs.org/latest/api/service/$mdMedia} service.
      */
     function PromenadeStandardItemCardGraphTabConfigurationController ($scope, $mdDialog, $mdMedia) {
 

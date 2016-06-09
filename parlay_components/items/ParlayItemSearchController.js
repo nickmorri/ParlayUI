@@ -42,7 +42,7 @@
         ctrl.hasDiscovered = hasDiscovered;
 
         /**
-         * On event handler for user selection of ParlayItem.
+         * On event handler for user selection of [ParlayItem]{@link module:ParlayItem.ParlayItem}.
          * @member module:ParlayItem.ParlayItemSearchController#selectItem
          * @public
          * @param item

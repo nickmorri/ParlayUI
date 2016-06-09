@@ -19,7 +19,7 @@
     /**
      * Controller for the ParlayNavigationContainer.
      * @constructor module:ParlayNavigation.ParlayNavigationContainerController
-     * @param {Object} $mdSidenav - Angular Material dialog service.
+     * @param {Object} $mdSidenav - Angular Material [$mdDialog]{@link https://material.angularjs.org/latest/api/service/$mdDialog} service.
      * @param {String} vendorLogo - Base64 encoded version of the logo image.
      * @param {String} vendorIcon - Base64 encoded version of the icon image.
      */
@@ -42,7 +42,7 @@
         this.vendorIcon = vendorIcon;
 
         /**
-         * Toggles the navigation $mdSidenav.
+         * Toggles the navigation [$mdDialog]{@link https://material.angularjs.org/latest/api/service/$mdDialog}.
          * @method module:ParlayNavigation.ParlayNavigationContainerController#toggleSidenav
          * @public
          */

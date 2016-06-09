@@ -11,11 +11,11 @@
     ParlaySettingsDialogController.$inject = ["$scope", "$mdDialog", "ParlaySettings", "PromenadeBroker"];
     /**
      * @constructor module:ParlaySettings.ParlaySettingsDialogController
-     * @param {Object} $scope - AngularJS $scope Object.
-     * @param {Object} $mdDialog - Material Angular dialog service.
-     * @param {Object} $mdMedia - Material Angular media query service.
-     * @param {Object} ParlaySettings - ParlaySettings service.
-     * @param {Object} PromenadeBroker - PromenadeBroker service.
+     * @param {Object} $scope - AngularJS [$scope]{@link https://docs.angularjs.org/guide/scope} Object.
+     * @param {Object} $mdDialog - Angular Material [$mdDialog]{@link https://material.angularjs.org/latest/api/service/$mdDialog} service.
+     * @param {Object} $mdMedia - Angular Material [$mdMedia]{@link https://material.angularjs.org/latest/api/service/$mdMedia} service.
+     * @param {Object} ParlaySettings - [ParlaySettings]{@link module:ParlaySettings.ParlaySettings} service.
+     * @param {Object} PromenadeBroker - [PromenadeBroker]{@link module:PromenadeBroker.PromenadeBroker} service.
      */
     function ParlaySettingsDialogController ($scope, $mdDialog, ParlaySettings, PromenadeBroker) {
 
@@ -88,7 +88,8 @@
         }
 
         /**
-         * Handler for file input change event. Provides the Broker with the discovery information from the text file.
+         * Handler for file input change event. Provides the
+         * [PromenadeBroker]{@link module:PromenadeBroker.PromenadeBroker} with the discovery information from the text file.
          * @member module:ParlaySettings.ParlaySettingsDialogController#fileChanged
          * @public
          */
@@ -109,7 +110,7 @@
         }
 
         /**
-         * Requests the end-user's browser for permission to display desktop notifications.
+         * Requests the end-user's browser for permission to display [HTML5 Notifications]{@link https://developer.mozilla.org/en-US/docs/Web/API/notification}.
          * @member module:ParlaySettings.ParlaySettingsDialogController#requestNotificationPermission
          * @public
          */
@@ -122,7 +123,7 @@
         }
 
         /**
-         * True if the end-user's browser supports the HTML Notification API.
+         * True if the end-user's browser supports [HTML5 Notifications]{@link https://developer.mozilla.org/en-US/docs/Web/API/notification}.
          * @member module:ParlaySettings.ParlaySettingsDialogController#supportsNotifications
          * @public
          */

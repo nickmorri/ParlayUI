@@ -28,7 +28,7 @@
         var active_items = [];
 
         /**
-         * Reference to the items namespace ParlayStore instance.
+         * Reference to the items namespace [ParlayStore]{@link module:ParlayStore.ParlayStore} instance.
          * @member module:ParlayItem.ParlayItemManager#store
          * @private
          * @type {ParlayStore}
@@ -272,8 +272,8 @@
 		};
 
 		/**
-		 * Activates item in workspace by creating a container Object that has a reference to the ParlayItem,
-		 * a unique ID and any previously stored values.
+		 * Activates item in workspace by creating a container Object that has a reference to the
+         * [ParlayItem]{@link module:ParlayItem.ParlayItem}, a unique ID and any previously stored values.
          * @member module:ParlayItem.ParlayItemManager#activateItem
          * @public
 		 * @param {ParlayItem} item - Reference to the item object we want to activate.

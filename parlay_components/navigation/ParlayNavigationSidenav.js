@@ -37,7 +37,7 @@
         ctrl.openWidgetSaveLoadDialog = openWidgetSaveLoadDialog;
 
         /**
-         * Reference the editing state of the ParlayWidgetManager.
+         * Reference the editing state of the [ParlayWidgetManager]{@link module:ParlayWidget.ParlayWidgetManager}.
          * @member module:ParlayNavigation.ParlayNavigationSidenavController#editing
          * @public
          * @type {Boolean}
@@ -157,7 +157,8 @@
         }
 
         /**
-         * Launches a ParlayGenericSaveLoadDialog for widgets workspace management.
+         * Launches a [ParlayGenericSaveLoadDialog]{@link module:ParlayCommon.ParlayGenericSaveLoadDialog} for
+         * widgets workspace management.
          * @member module:ParlayNavigation.ParlayNavigationSidenavController#openWidgetSaveLoadDialog
          * @public
          * @param {Event} event - DOM Event that can be used to set an animation source for $mdDialog.

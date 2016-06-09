@@ -17,7 +17,8 @@ var standard_item_dependencies = ["parlay.items", "promenade.items.standarditem.
     function PromenadeStandardItemFactory(ParlayItem, PromenadeStandardDatastream, PromenadeStandardProperty, PromenadeStandardCommand) {
 
         /**
-         * PromenadeStandardItem extends from [ParlayItem]{module:ParlayItem.ParlayItem} to better accommodate the discovery data provided.
+         * PromenadeStandardItem extends from [ParlayItem]{@link module:ParlayItem.ParlayItem} to better accommodate
+         * the discovery data provided.
          * @extends module:ParlayItem.ParlayItem
          * @constructor module:PromenadeStandardItem.PromenadeStandardItem
          * @param {Object} data - Discovery information to initialize the item with.
@@ -28,7 +29,7 @@ var standard_item_dependencies = ["parlay.items", "promenade.items.standarditem.
          * @param {Object} data.DATASTREAMS - PromenadeDatastream(s) available to listen for using the provided protocol.
          * @param {Object} protocol - Reference to the parent protocol instance.
          *
-         * @example <caption>Initializing a PromenadeStandardItem with discovery data.<caption>
+         * @example <caption>Initializing a PromenadeStandardItem with discovery data.</caption>
          *
          * // discovery: Object with the discovery data needed to build the PromenadeStandardItem.
          * // protocol: ParlayProtocol or a prototypical inheritor that the PromenadeStandardItem is connected to.

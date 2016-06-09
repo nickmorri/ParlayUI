@@ -18,7 +18,7 @@
         function ParlayProtocolManager() {
 
             /**
-             * Reference to ParlayStore protocols namespace,
+             * Reference to [ParlayStore]{@link module:ParlayStore.ParlayStore} protocols namespace,
              * @member module:ParlayProtocol.ParlayProtocolManager#store
              * @private
              * @type {ParlayStore}
@@ -26,7 +26,7 @@
             var store = ParlayStore("protocols");
 
             /**
-             * Holds ParlayProtocols that are open.
+             * Holds [ParlayProtocol]{@link module:ParlayProtocol.ParlayProtocol}s that are open.
              * @member module:ParlayProtocol.ParlayProtocolManager#open_protocols
              * @private
              * @type {Array}
@@ -34,7 +34,7 @@
             var open_protocols = [];
 
             /**
-             * Holds ParlayProtocols that are available.
+             * Holds [ParlayProtocol]{@link module:ParlayProtocol.ParlayProtocol}s that are available.
              * @member module:ParlayProtocol.ParlayProtocolManager#available_protocols
              * @private
              * @type {Array}
@@ -42,7 +42,7 @@
             var available_protocols = [];
 
             /**
-             * Holds ParlayProtocols that are saved.
+             * Holds [ParlayProtocol]{@link module:ParlayProtocol.ParlayProtocol}s that are saved.
              * @member module:ParlayProtocol.ParlayProtocolManager#saved_protocols
              * @private
              * @type {Array}
@@ -50,7 +50,7 @@
             var saved_protocols = [];
 
             /**
-             * Requests the Broker to close a protocol.
+             * Requests the [PromenadeBroker]{@link module:PromenadeBroker.PromenadeBroker} to close a protocol.
              * @member module:ParlayProtocol.ParlayProtocolManager#closeProtocol
              * @public
              * @param {Object} protocol - The protocol to be closed
@@ -79,8 +79,8 @@
             };
 
             /**
-             * Requests the Broker to open a protocol.
-             * Saves the configuration in ParlayStore for later ease of use.
+             * Requests the [PromenadeBroker]{@link module:PromenadeBroker.PromenadeBroker} to open a protocol.
+             * Saves the configuration in [ParlayStore]{@link module:ParlayStore.ParlayStore} for later ease of use.
              * @member module:ParlayProtocol.ParlayProtocolManager#openProtocol
              * @public
              * @param {Object} configuration - Contains protocol configuration parameters.
@@ -105,7 +105,7 @@
             };
 
             /**
-             * Delete the protocol configuration in the ParlayStore.
+             * Delete the protocol configuration in the [ParlayStore]{@link module:ParlayStore.ParlayStore}.
              * @member module:ParlayProtocol.ParlayProtocolManager#deleteProtocolConfiguration
              * @public
              * @param {Object} configuration - Protocol configuration that we are removing from the ParlayStore.
@@ -266,7 +266,8 @@
 
                 /**
                  * Construct and instantiate a protocol with the given configuration.
-                 * If the given protocol type is not available in system default to PromenadeDirectMessageProtocol.
+                 * If the given protocol type is not available in system default to
+                 * [PromenadeDirectMessageProtocol]{@link module:PromenadeDirectMessage.PromenadeDirectMessage}.
                  * @member module:ParlayProtocol.ParlayProtocolManager#constructProtocol
                  * @private
                  * @param {Object} configuration - Protocol configuration information.
@@ -332,7 +333,7 @@
             }
 
             /**
-             * Save the protocol configuration in the ParlayStore.
+             * Save the protocol configuration in the [ParlayStore]{@link module:ParlayStore.ParlayStore}.
              * @member module:ParlayProtocol.ParlayProtocolManager#saveProtocolConfiguration
              * @private
              * @param {Object} configuration - Protocol configuration that can be sent to the Broker.

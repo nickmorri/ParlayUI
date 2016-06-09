@@ -13,12 +13,13 @@
          * Model for a ParlayItem. Intended to be used as a base class that is extended by vendor's representation of
          * ParlayItem but can stand on its own as well.
          * @constructor module:ParlayItem.ParlayItem
+         * @abstract
          * @param {Object} data - A ParlayItem's unique data.
          * @param {String} data.NAME - Human readable identifier.
          * @param {(Array|Object)} data.INTERFACES - Potential interfaces that the ParlayItem is compatible with.
-         * @param {ParlayProtocol} protocol - Reference to the ParlayProtocol instance that the ParlayItem is connected to.
+         * @param {ParlayProtocol} protocol - Reference to the [ParlayProtocol]{@link module:ParlayProtocol.ParlayProtocol} instance that the ParlayItem is connected to.
          *
-         * @example <caption>Initializing a ParlayItem with discovery data.<caption>
+         * @example <caption>Initializing a ParlayItem with discovery data.</caption>
          *
          * // discovery: Object with the discovery data needed to build the ParlayItem.
          * // protocol: ParlayProtocol or a prototypical inheritor that the ParlayItem is connected to.
@@ -42,7 +43,8 @@
             });
 
             /**
-             * Reference to the ParlayProtocol instance that the ParlayItem is connected to.
+             * Reference to the [ParlayProtocol]{@link module:ParlayProtocol.ParlayProtocol} instance that the
+             * ParlayItem is connected to.
              * @member module:ParlayItem.ParlayItem#protocol
              * @public
              * @type {ParlayProtocol}

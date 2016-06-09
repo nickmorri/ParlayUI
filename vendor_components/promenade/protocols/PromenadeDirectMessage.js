@@ -32,7 +32,8 @@
 
             /**
              * Reference to the factory used to produce models for items connected to the protocol.
-             * Overrides ParlayProtocol's item_factory with PromenadeStandardItem factory.
+             * Overrides [ParlayProtocol]{@link module:ParlayProtocol.ParlayProtocol}'s item_factory with
+             * [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} factory.
              * @member module:PromenadeDirectMessage.PromenadeDirectMessage#item_factory
              * @public
              * @type {Object}

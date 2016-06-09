@@ -19,9 +19,11 @@
     function PromenadeStandardCommandMessageFactory () {
 
         /**
-         * Representation of a message for a ParlayCommand.
+         * Representation of a message for a
+         * [PromenadeStandardCommand]{@link module:PromenadeStandardItem.PromenadeStandardCommand}.
          * @constructor module:PromenadeStandardItem.PromenadeStandardCommandMessage
-         * @param {String} item_name - Name of the ParlayItem that the command belongs to.
+         * @param {String} item_name - Name of the [ParlayItem]{@link module:ParlayItem.ParlayItem} that the command
+         * belongs to.
          * @param {Object} data - Data from a prior session used to populate the message.
          */
         function PromenadeStandardCommandMessage (item_name, data) {
@@ -146,9 +148,9 @@
     /**
      * Controller constructor for the command tab.
      * @constructor module:PromenadeStandardItem.PromenadeStandardItemCardCommandTabController
-     * @param {Object} $scope - A AngularJS $scope Object.
-     * @param {Object} ParlayNotification - ParlayNotification Service.
-     * @param {Object} PromenadeStandardCommandMessage - PromenadeStandardCommandMessage factory.
+     * @param {Object} $scope - AngularJS [$scope]{@link https://docs.angularjs.org/guide/scope} Object.
+     * @param {Object} ParlayNotification - [ParlayNotification]{@link module:ParlayNotification.ParlayNotification} service.
+     * @param {Object} PromenadeStandardCommandMessage - [PromenadeStandardCommandMessage]{@link module:PromenadeStandardItem.PromenadeStandardCommandMessage} factory.
      */
     function PromenadeStandardItemCardCommandTabController ($scope, ParlayNotification, PromenadeStandardCommandMessage) {
 
@@ -168,7 +170,7 @@
         };
 
         /**
-         * References to $mdChipsController instances.
+         * References to [$mdChipsController]{@link https://material.angularjs.org/latest/api/directive/mdChips} instances.
          * We want to clear the buffers before the message is collected and sent.
          * @member module:PromenadeStandardItem.PromenadeStandardItemCardCommandTabController#chipsControllers
          * @public
@@ -463,10 +465,10 @@
     /**
      * Controller constructor for command container.
      * @constructor module:PromenadeStandardItem.PromenadeStandardItemCardCommandContainerController
-     * @param {Object} $scope - A AngularJS $scope Object.
-     * @param {Object} ParlayItemPersistence - ParlayItemPersistence service.
-     * @param {Object} PromenadeStandardCommandMessage - PromenadeStandardCommandMessage factory.
-     * @param {Object} ParlayUtility - ParlayUtility service.
+     * @param {Object} $scope - AngularJS [$scope]{@link https://docs.angularjs.org/guide/scope} Object.
+     * @param {Object} ParlayItemPersistence - [ParlayItemPersistence]{@link module:ParlayItem.ParlayItemPersistence} service.
+     * @param {Object} PromenadeStandardCommandMessage - [PromenadeStandardCommandMessage]{@link module:PromenadeStandardItem.PromenadeStandardCommandMessage} factory.
+     * @param {Object} ParlayUtility - [ParlayUtility]{@link module:ParlayUtility.ParlayUtility} service.
      */
     function PromenadeStandardItemCardCommandContainerController ($scope, ParlayItemPersistence, PromenadeStandardCommandMessage, ParlayUtility) {
         var container = ParlayUtility.relevantScope($scope, 'container').container;

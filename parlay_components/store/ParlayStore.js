@@ -5,7 +5,7 @@
      * @module ParlayStore
      *
      * @description
-	 * ParlayStore is a wrapper to the HTML Web Storage APIs.
+	 * ParlayStore is a wrapper to the [Web Storage APIs]{@link https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API}.
 	 * Each ParlayStore instance is created with a namespace which allows management of a ParlayStore
 	 * for different modules without worry of items bumping into each other.
      *
@@ -20,15 +20,15 @@
 
 	ParlayStore.$inject = ["ParlayStoreService"];
     /**
-     * Holds references to the various ParlayStore namespaces.
+     * Holds references to the various [ParlayStore]{@link module:ParlayStore.ParlayStore} namespaces.
      * @constructor module:ParlayStore.ParlayStoreService
      * @param ParlayStoreService
-     * @returns {Function} - ParlayStore namespace getter.
+     * @returns {Function} - [ParlayStore]{@link module:ParlayStore.ParlayStore} namespace getter.
      */
 	function ParlayStore (ParlayStoreService) {
 
 		/**
-		 * Holds references to all created ParlayStore instances.
+		 * Holds references to all created [ParlayStore]{@link module:ParlayStore.ParlayStore} instances.
 		 * @member module:ParlayStore.ParlayStoreService#active_instances
 		 * @private
 		 * @type {Object}
@@ -36,8 +36,9 @@
 		var active_instances = {};
 
 		/**
-		 * If we have previously constructed a ParlayStore instance for the given namespace return that.
-		 * Otherwise create a new ParlayStore for this namespace and cache it.
+		 * If we have previously constructed a [ParlayStore]{@link module:ParlayStore.ParlayStore}
+		 * instance for the given namespace return that.
+		 * Otherwise create a new [ParlayStore]{@link module:ParlayStore.ParlayStore} for this namespace and cache it.
 		 * @member module:ParlayStore.ParlayStoreService#getInstance
 		 * @private
 		 */
@@ -47,7 +48,7 @@
 		}
 
 		/**
-		 * ParlayStore namespace getter.
+		 * [ParlayStore]{@link module:ParlayStore.ParlayStore} namespace getter.
 		 * @param {String} namespace - Unique name that will reference the ParlayStore instance.
 		 * @returns {ParlayStore} - Unique ParlayStore namespace instance.
 		 */
@@ -60,7 +61,9 @@
 	function ParlayStoreService () {
 
 		/**
-		 * Interface betwen the Storage API and Parlay. Allows for namespacing of localStorage.
+		 * Interface betwen the [Web Storage APIs]{@link https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API}
+		 * and Parlay. Allows for namespacing of
+		 * [localStorage]{@link https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage}.
          * @constructor module:ParlayStore.ParlayStore
 		 * @param {String} namespace - ParlayStore operations will be performed on this namespace.
 		 */
@@ -75,7 +78,8 @@
 			this.namespace = namespace;
 
 			/**
-			 * Count of the items in the ParlayStore's namespace in localStorage.
+			 * Count of the items in the ParlayStore's namespace in
+			 * [localStorage]{@link https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage}.
              * @member module:ParlayStore.ParlayStore#length
              * @public
 			 * @returns {Number} - Number of items.
@@ -89,7 +93,8 @@
 		}
 
 		/**
-		 * Checks if the given key is present in available in localStorage.
+		 * Checks if the given key is present in available in
+		 * [localStorage]{@link https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage}.
          * @member module:ParlayStore.ParlayStore#has
          * @public
 		 * @param {String} key - Key of the item we are looking for in localStorage.
@@ -100,7 +105,8 @@
 		};
 
 		/**
-		 * Retrieves the requested key from localStorage.
+		 * Retrieves the requested key from
+		 * [localStorage]{@link https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage}.
          * @member module:ParlayStore.ParlayStore#get
          * @public
 		 * @param {String} key - Key of the item we are looking for in localStorage.
@@ -112,7 +118,8 @@
 		};
 
 		/**
-		 * Retrieves the requested key from localStorage.
+		 * Retrieves the requested key from
+		 * [localStorage]{@link https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage}.
          * @member module:ParlayStore.ParlayStore#set
          * @public
 		 * @param {String} key - Key of the item we are storing in localStorage.
@@ -124,7 +131,8 @@
 		};
 
 		/**
-		 * Remove the key from localStorage.
+		 * Remove the key from
+		 * [localStorage]{@link https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage}.
          * @member module:ParlayStore.ParlayStore#remove
          * @public
 		 * @param {String} key - Key of the item we are removing from localStorage.
@@ -134,7 +142,8 @@
 		};
 
 		/**
-		 * Removes all items in the namespace from localStorage.
+		 * Removes all items in the namespace from
+		 * [localStorage]{@link https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage}.
          * @member module:ParlayStore.ParlayStore#clear
          * @public
 		 */
@@ -145,7 +154,8 @@
 		};
 
 		/**
-		 * Returns an Array of all the keys available in the localStorage namespace.
+		 * Returns an Array of all the keys available in the
+		 * [localStorage]{@link https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage} namespace.
          * @member module:ParlayStore.ParlayStore#keys
          * @public
 		 * @returns {Array} - item keys from localStorage in namespace.
@@ -162,7 +172,8 @@
 		};
 
 		/**
-		 * Returns an Object map of all the items available in the localStorage namespace.
+		 * Returns an Object map of all the items available in the
+		 * [localStorage]{@link https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage} namespace.
          * @member module:ParlayStore.ParlayStore#values
          * @public
 		 * @returns {Object} - items from localStorage in namespace.
@@ -175,7 +186,8 @@
 		};
 
 		/**
-		 * Loads a String of all items in the namespace into localStorage.
+		 * Loads a String of all items in the namespace into
+		 * [localStorage]{@link https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage}.
          * @member module:ParlayStore.ParlayStore#import
          * @public
 		 * @param {String} data - JSON stringified Object of items in the namespace

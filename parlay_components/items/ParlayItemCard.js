@@ -11,8 +11,10 @@
     /**
      * Directive that displays data from a particular ParlayItem.
      * @constructor module:ParlayItem.ParlayItemCard
-     * @param {Object} $compile - AngularJS service used to create a template function used to link scope and template.
-     * @param {Object} ParlayItemPersistence - Parlay service used to persist scope values into local storage.
+     * @param {Object} $compile - AngularJS [$compile]{@link https://docs.angularjs.org/api/ng/service/$compile} service
+     * used to create a template function used to link scope and template.
+     * @param {Object} ParlayItemPersistence - [ParlayItemPersistence]{@link module:ParlayItem.ParlayItemPersistence}
+     * service used to persist scope values into local storage.
      */
     function ParlayItemCard ($compile, ParlayItemPersistence) {
         return {

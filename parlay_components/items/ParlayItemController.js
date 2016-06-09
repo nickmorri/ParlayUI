@@ -13,8 +13,9 @@
      * The ParlayItemController is a controller that interacts with the
      * [ParlayItemManager]{@link module:ParlayItem.ParlayItemManager} to manage [ParlayItem]{@link module:ParlayItem.ParlayItem}s in the items workspace.
      * @constructor module:ParlayItem.ParlayItemController
-     * @param {Object} ParlayItemManager - Service that manages the available items.
-     * @param {Object} $mdSidenav - Angular Material Service for $mdSidenav.
+     * @param {Object} ParlayItemManager - [ParlayItemManager]{@link module:ParlayItem.ParlayItemManager} service that manages the available items.
+     * @param {Object} $mdSidenav - Angular Material
+     * [$mdSidenav]{@link https://material.angularjs.org/latest/api/service/$mdSidenav} service.
      */
     function ParlayItemController (ParlayItemManager, $mdSidenav) {
 
@@ -39,7 +40,7 @@
         }
 
         /**
-         * True if the ParlayItemManager has active items, false otherwise.
+         * True if the [ParlayItemManager]{@link module:ParlayItem.ParlayItemManager} has active items, false otherwise.
          * @member module:ParlayItem.ParlayItemController#filterItems
          * @public
          * @returns {Boolean}

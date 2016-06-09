@@ -9,12 +9,12 @@
 
     ParlayProtocolConfigurationController.$inject = ["$scope", "$mdDialog", "$mdMedia", "ParlayProtocolManager"];
     /**
-     * Interfaces with ParlayProtocolManager to allow end-user to setup a protocol.
+     * Interfaces with [ParlayProtocolManager]{@link module:ParlayProtocol.ParlayProtocolManager} to allow end-user to setup a protocol.
      * @constructor module:ParlayProtocol.ParlayProtocolConfigurationController
-     * @param {Object} $scope - AngularJS $scope Object.
-     * @param {Object} $mdDialog - Angular Material dialog service.
-     * @param {Object} $mdMedia - Angular Material media detection service.
-     * @param {Object} ParlayProtocolManager - ParlayProtocolManager service.
+     * @param {Object} $scope - AngularJS [$scope]{@link https://docs.angularjs.org/guide/scope} Object.
+     * @param {Object} $mdDialog - Angular Material [$mdDialog]{@link https://material.angularjs.org/latest/api/service/$mdDialog} service.
+     * @param {Object} $mdMedia - Angular Material [$mdMedia]{@link https://material.angularjs.org/latest/api/service/$mdMedia} service.
+     * @param {Object} ParlayProtocolManager - [ParlayProtocolManager]{@link module:ParlayProtocol.ParlayProtocolManager} service.
      */
     function ParlayProtocolConfigurationController ($scope, $mdDialog, $mdMedia, ParlayProtocolManager) {
 
@@ -110,7 +110,7 @@
         }
 
         /**
-         * Resolves the $mdDialog promise with the a configured ctrl.selected_protocol.
+         * Resolves the [$mdDialog]{@link https://material.angularjs.org/latest/api/service/$mdDialog} promise with the a configured ctrl.selected_protocol.
          * @member module:ParlayProtocol.ParlayProtocolConfigurationController#connect
          * @public
          * @returns {$q.defer.promise} Resolves the $mdDialog promise with the a configured $scope.selected_protocol.

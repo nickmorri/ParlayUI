@@ -19,9 +19,9 @@
     /**
      * Controller constructor for PromenadeStandardItemCardLogTabController.
      * @constructor module:PromenadeStandardItem.PromenadeStandardItemCardLogTabController
-     * @param {Object} $scope - A AngularJS $scope Object.
-     * @param {Object} ParlayItemPersistence - Service that provides automatic persistence of scope variables to localStorage.
-     * @param {Object} ParlayUtility - Service that provides utility functions.
+     * @param {Object} $scope - AngularJS [$scope]{@link https://docs.angularjs.org/guide/scope} Object.
+     * @param {Object} ParlayItemPersistence - [ParlayItemPersistence]{@link module:ParlayItem.ParlayItemPersistence} service.
+     * @param {Object} ParlayUtility - [ParlayUtility]{@link module:ParlayUtility.ParlayUtility} service.
      */
     function PromenadeStandardItemCardLogTabController ($scope, ParlayItemPersistence, ParlayUtility) {
 
@@ -106,7 +106,7 @@
     /**
      * Controller for Parlay Card Log Item.
      * @constructor module:PromenadeStandardItem.PromenadeStandardItemCardLogItemController
-     * @param {Object} ParlayNotification - ParlayNotification service.
+     * @param {Object} ParlayNotification - [ParlayNotification]{@link module:ParlayNotification.ParlayNotification} service.
      */
     function PromenadeStandardItemCardLogItemController (ParlayNotification) {
 
@@ -116,8 +116,9 @@
         ctrl.copy = copy;
 
         /**
-         * Attempts to copy the message to the end-user's clipboard. A ParlayNotification is displayed with the
-         * success or failure of the copy operation.
+         * Attempts to copy the message to the end-user's clipboard.
+         * A [ParlayNotification]{@link module:ParlayNotification.ParlayNotification} is displayed with the success or
+         * failure of the copy operation.
          * @member module:PromenadeStandardItem.PromenadeStandardItemCardLogItemController#copy
          * @public
          */

@@ -81,7 +81,7 @@
             this.registrations = {};
 
             /**
-             * Reference to items namespace ParlayStore.
+             * Reference to items namespace [ParlayStore]{@link module:ParlayStore.ParlayStore}.
              * @member module:ParlayItem.ParlayItemPersistence#items_store
              * @public
              * @type {ParlayStore}
@@ -242,7 +242,7 @@
         };
 
         /**
-         * Collects the monitored attributes and store them with ParlayStore using the given name.
+         * Collects the monitored attributes and store them with [ParlayStore]{@link module:ParlayStore.ParlayStore} using the given name.
          * @member module:ParlayItem.ParlayItemPersistence#store
          * @public
          * @param {String} name - Given workspace name.

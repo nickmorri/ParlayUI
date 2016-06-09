@@ -14,7 +14,7 @@
      * [ParlayItemManager]{@link module:ParlayItem.ParlayItemManager}.
      *
      * Uses {@link ParlayGenericSaveLoadDialogController}.
-     * @constructor ParlayGenericSaveLoadDialog
+     * @constructor module:ParlayCommon.ParlayGenericSaveLoadDialog
      *
      * @example <caption>Launching a ParlayGenericSaveLoadDialog with [ParlayItemManager]{@link module:ParlayItem.ParlayItemManager} as the designated manager.</caption>
      *

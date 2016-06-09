@@ -73,7 +73,8 @@
             this.available_items = [];
 
             /**
-             * Contains all messages, up to the limit specified in ParlaySettings, exchanged over the protocol.
+             * Contains all messages, up to the limit specified in [ParlaySettings]{@link module:ParlaySettings.ParlaySettings},
+             * exchanged over the protocol.
              * @member module:ParlayProtocol.ParlayProtocol#log
              * @public
              * @type {Array}
@@ -144,7 +145,7 @@
          * @member module:ParlayProtocol.ParlayProtocol#registerListener
          * @public
          * @param {Object} topics - Map of key/value pairs.
-         * @param {Function} deregistrationFn - Function returned from ParlaySocket that will cancel the onMessage callback.
+         * @param {Function} deregistrationFn - Function returned from [ParlaySocket]{@link module:ParlaySocket.ParlaySocket} that will cancel the onMessage callback.
          */
         ParlayProtocol.prototype.registerListener = function (topics, deregistrationFn) {
             // JSONify the topics Object so that it can be used as a key in our listeners Object..
@@ -183,14 +184,14 @@
         };
 
         /**
-         * Sends message through ParlaySocket.
+         * Sends message through [ParlaySocket]{@link module:ParlaySocket.ParlaySocket}.
          * @member module:ParlayProtocol.ParlayProtocol#sendMessage
          * @public
          * @param {Object} topics - Map of key/value pairs.
          * @param {Object} contents - Map of key/value pairs.
          * @param {Object} response_topics - Map of key/value pairs.
          * @param {Boolean} verbose - If true we should invoke callback with full message. If false or undefined invoke with only contents for simplicity.
-         * @returns {$q.defer.Promise} - Resolved if ParlaySocket receives a response, rejected if an error occurs during send.
+         * @returns {$q.defer.Promise} - Resolved if [ParlaySocket]{@link module:ParlaySocket.ParlaySocket} receives a response, rejected if an error occurs during send.
          */
         ParlayProtocol.prototype.sendMessage = function (topics, contents, response_topics, verbose) {
             return $q(function(resolve, reject) {

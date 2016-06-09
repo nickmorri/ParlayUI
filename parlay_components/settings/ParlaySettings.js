@@ -19,8 +19,8 @@
     function ParlaySettingsFactory (ParlayStore) {
 
         /**
-         * Reference to namespace settings ParlayStore.
-         * @member module:ParlayStore.ParlayStore#store
+         * Reference to namespace settings [ParlayStore]{@link module:ParlayStore.ParlayStore}.
+         * @member module:module:ParlaySettings.ParlaySettings#store
          * @private
          */
         var store = ParlayStore("settings");
@@ -58,7 +58,7 @@
         }
 
         /**
-         * Retrieves stored setting value from ParlayStore for given key.
+         * Retrieves stored setting value from [ParlayStore]{@link module:ParlayStore.ParlayStore} for given key.
          * @member module:ParlaySettings.ParlaySettings#get
          * @public
          * @param {String} key - Name of setting.
@@ -69,7 +69,7 @@
         };
 
         /**
-         * Stores given setting key/value in ParlayStore.
+         * Stores given setting key/value in [ParlayStore]{@link module:ParlayStore.ParlayStore}.
          * @member module:ParlaySettings.ParlaySettings#set
          * @public
          * @param {String} key - Name of setting.
@@ -86,7 +86,7 @@
         };
 
         /**
-         * Checks if given key exists in ParlayStore.
+         * Checks if given key exists in [ParlayStore]{@link module:ParlayStore.ParlayStore}.
          * @member module:ParlaySettings.ParlaySettings#has
          * @public
          * @param {String} key - Name of setting.

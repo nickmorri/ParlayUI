@@ -8,11 +8,11 @@
 
     ParlayNavigationSidenavController.$inject = ["$mdSidenav", "$mdDialog", "ParlayGenericSaveLoadDialog", "$state", "PromenadeBroker", "ParlayItemManager"];
     /**
-     * Controller for the navigation $mdSidenav.
+     * Controller for the navigation [$mdSidenav]{@link https://material.angularjs.org/latest/api/service/$mdSidenav}.
      * @constructor module:ParlayNavigation.ParlayNavigationSidenavController
-     * @param {Object} $mdSidenav - Angular Material service.
-     * @param {Object} $mdDialog - Angular Material service.
-     * @param {Object} ParlayGenericSaveLoadDialog - ParlayGenericSaveLoadDialog service.
+     * @param {Object} $mdSidenav - Angular Material [$mdDialog]{@link https://material.angularjs.org/latest/api/service/$mdDialog} service.
+     * @param {Object} $mdDialog - Angular Material [$mdSidenav]{@link https://material.angularjs.org/latest/api/service/$mdSidenav} service.
+     * @param {Object} ParlayGenericSaveLoadDialog - [ParlayGenericSaveLoadDialog]{@link module:ParlayCommon.ParlayGenericSaveLoadDialog} service.
      * @param {Object} $state - ui.router $stateProvider service.
      * @param {Object} PromenadeBroker - PromenadeBroker service.
      * @param {Object} ParlayItemManager - ParlayItemManager service.
@@ -34,7 +34,7 @@
         ctrl.openItemSaveLoadDialog = openItemSaveLoadDialog;
 
         /**
-         * Returns the current state Object from the ui.router $stateProvider.
+         * Returns the current state Object from the [ui.router $stateProvider]{@link https://angular-ui.github.io/ui-router/site/#/api/ui.router.state.$stateProvider}.
          * @member module:ParlayNavigation.ParlayNavigationSidenavController#getCurrentState
          * @public
          * @returns {Object}
@@ -44,7 +44,7 @@
         }
 
         /**
-         * Returns the all, non-abstract, state Objects from the ui.router $stateProvider.
+         * Returns the all, non-abstract, state Objects from the [ui.router $stateProvider]{@link https://angular-ui.github.io/ui-router/site/#/api/ui.router.state.$stateProvider}.
          * @member module:ParlayNavigation.ParlayNavigationSidenavController#getAllStates
          * @public
          * @returns {Array}
@@ -56,7 +56,7 @@
         }
 
         /**
-         * Request the ui.router $stateProvider to go to the given state.
+         * Request the [ui.router $stateProvider]{@link https://angular-ui.github.io/ui-router/site/#/api/ui.router.state.$stateProvider} to go to the given state.
          * @member module:ParlayNavigation.ParlayNavigationSidenavController#navigateState
          * @public
          * @param {Object} state - ui.router state Object to go to.
@@ -67,7 +67,7 @@
         }
 
         /**
-         * Requests PromenadeBroker performs a discovery.
+         * Requests [PromenadeBroker]{@link module:PromenadeBroker.PromenadeBroker} performs a discovery.
          * @member module:ParlayNavigation.ParlayNavigationSidenavController#requestDiscovery
          * @public
          */
@@ -76,7 +76,7 @@
         }
 
         /**
-         * Opens the notifications $mdSidenav.
+         * Opens the notifications [$mdSidenav]{@link https://material.angularjs.org/latest/api/service/$mdSidenav}.
          * @member module:ParlayNavigation.ParlayNavigationSidenavController#openNotificationSidenav
          * @public
          */
@@ -94,7 +94,7 @@
         }
 
         /**
-         * Launches a $mdDialog for the Parlay protocol list.
+         * Launches a [$mdDialog]{@link https://material.angularjs.org/latest/api/service/$mdDialog} for the Parlay protocol list.
          * @member module:ParlayNavigation.ParlayNavigationSidenavController#openProtocolManagementDialog
          * @public
          * @param {Event} event - DOM Event that can be used to set an animation source for $mdDialog.
@@ -110,7 +110,7 @@
         }
 
         /**
-         * Launches a $mdDialog for Parlay settings.
+         * Launches a [$mdDialog]{@link https://material.angularjs.org/latest/api/service/$mdDialog} for [ParlaySettings]{@link module:ParlaySettings.ParlaySettings}s.
          * @member module:ParlayNavigation.ParlayNavigationSidenavController#openSettingsDialog
          * @public
          * @param {Event} event - DOM Event that can be used to set an animation source for $mdDialog.
@@ -126,7 +126,8 @@
         }
 
         /**
-         * Launches a ParlayGenericSaveLoadDialog for item workspace management.
+         * Launches a [ParlayGenericSaveLoadDialog]{@link module:ParlayCommon.ParlayGenericSaveLoadDialog} for
+         * item workspace management.
          * @member module:ParlayNavigation.ParlayNavigationSidenavController#openWorkspaceManagementDialog
          * @public
          * @param {Event} event - DOM Event that can be used to set an animation source for $mdDialog.

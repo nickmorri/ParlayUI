@@ -54,7 +54,7 @@
         function ParlayNotificationHistory () {
 
             /**
-             * Holds ParlayNotificationHistoryItems.
+             * Holds [ParlayNotificationHistoryItem]{@link module:ParlayNotification.ParlayNotificationHistoryItem}s.
              * @member module:ParlayNotification.ParlayNotificationHistory#container
              * @private
              * @type {Array}
@@ -180,7 +180,7 @@
             var pending_toasts = [];
 
             /**
-             * Contains references to HTML5 Notification objects.
+             * Contains references to [HTML5 Notification]{@link https://developer.mozilla.org/en-US/docs/Web/API/notification} objects.
              * @member module:ParlayNotification.ParlayNotification#active_browser_notifications
              * @private
              * @type {Array}
@@ -234,7 +234,8 @@
             }
 
             /**
-             * Creates $mdToast and shows it whenever we can, if nothing is currently shown show now otherwise show when no toast are being shown.
+             * Creates [$mdToast]{@link https://material.angularjs.org/latest/api/service/$mdToast} and shows it
+             * whenever we can, if nothing is currently shown show now otherwise show when no toast are being shown.
              * @param {Object} configuration - Notification configuration object.
              * @member module:ParlayNotification.ParlayNotification#prepToast
              * @private
@@ -293,7 +294,8 @@
             }
 
             /**
-             * Creates Notification (HTML5 Notifications API) and stores a reference that can be cleared later.
+             * Creates [HTML5 Notification]{@link https://developer.mozilla.org/en-US/docs/Web/API/notification} and
+             * stores a reference that can be cleared later.
              * @param {Object} configuration - Notification configuration object.
              * @member module:ParlayNotification.ParlayNotification#prepBrowserNotification
              * @private
@@ -317,7 +319,9 @@
             }
 
             /**
-             * Creates Toast and if the browser window is currently hidden a HTML5 Notification.
+             * Creates [$mdToast]{@link https://material.angularjs.org/latest/api/service/$mdToast} and if the browser
+             * window is currently hidden a
+             * [HTML5 Notification]{@link https://developer.mozilla.org/en-US/docs/Web/API/notification}.
              * @member module:ParlayNotification.ParlayNotification#show
              * @private
              * @param {String} configuration.content - Text to display on notification.
@@ -334,7 +338,8 @@
             }
 
             /**
-             * Creates Toast that contains a linear indeterminate progress bar. Will remain indefinitely until hidden.
+             * Creates [$mdToast]{@link https://material.angularjs.org/latest/api/service/$mdToast} that contains a
+             * linear indeterminate progress bar. Will remain indefinitely until hidden.
              * @member module:ParlayNotification.ParlayNotification#showProgress
              * @private
              * @param {$q.deferred.Promise} deferred - $q Promise that if resolved will hide the dialog.

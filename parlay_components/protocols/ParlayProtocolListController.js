@@ -9,13 +9,14 @@
 
     ParlayProtocolListController.$inject = ["$scope", "$mdDialog", "$mdMedia", "ParlayProtocolManager", "PromenadeBroker"];
     /**
-     * Interfaces with ParlayProtocolManager to allow end-user to view connected and saved protocols.
+     * Interfaces with [ParlayProtocolManager]{@link module:ParlayProtocol.ParlayProtocolManager} to allow end-user to
+     * view connected and saved protocols.
      * @constructor module:ParlayProtocol.ParlayProtocolListController
-     * @param {Object} $scope - AngularJS $scope Object.
-     * @param {Object} $mdDialog - Angular Material dialog service.
-     * @param {Object} $mdMedia - Angular Material media detection service.
-     * @param {Object} ParlayProtocolManager - ParlayProtocolManager service.
-     * @param {Object} PromenadeBroker - PromenadeBroker service.
+     * @param {Object} $scope - AngularJS [$scope]{@link https://docs.angularjs.org/guide/scope} Object.
+     * @param {Object} $mdDialog - Angular Material [$mdDialog]{@link https://material.angularjs.org/latest/api/service/$mdDialog} service.
+     * @param {Object} $mdMedia - Angular Material [$mdMedia]{@link https://material.angularjs.org/latest/api/service/$mdMedia} service.
+     * @param {Object} ParlayProtocolManager - [ParlayProtocolManager]{@link module:ParlayProtocol.ParlayProtocolManager} service.
+     * @param {Object} PromenadeBroker - [PromenadeBroker]{@link module:PromenadeBroker.PromenadeBroker} service.
      */
     function ParlayProtocolListController($scope, $mdDialog, $mdMedia, ParlayProtocolManager, PromenadeBroker) {
         
@@ -56,7 +57,7 @@
         $scope.$mdMedia = $mdMedia;
 
         /**
-         * True if PromenadeBroker is connected, false otherwise.
+         * True if [PromenadeBroker]{@link module:PromenadeBroker.PromenadeBroker} is connected, false otherwise.
          * @member module:ParlayProtocol.ParlayProtocolListController#isBrokerConnected
          * @public
          * @returns {Boolean}
@@ -66,7 +67,7 @@
         }
 
         /**
-         * Requests that the PromenadeBroker shuts down.
+         * Requests that the [PromenadeBroker]{@link module:PromenadeBroker.PromenadeBroker} shuts down.
          * @member module:ParlayProtocol.ParlayProtocolListController#shutdownBroker
          * @public
          */
@@ -75,7 +76,7 @@
         }
 
         /**
-         * Attempts to connect to the PromenadeBroker.
+         * Attempts to connect to the [PromenadeBroker]{@link module:PromenadeBroker.PromenadeBroker}.
          * @member module:ParlayProtocol.ParlayProtocolListController#connectBroker
          * @public
          */
@@ -102,7 +103,8 @@
         }
 
         /**
-         * Show protocol configuration dialog and have ParlayProtocolManager open a protocol.
+         * Show protocol configuration dialog and have
+         * [ParlayProtocolManager]{@link module:ParlayProtocol.ParlayProtocolManager} open a protocol.
          * @member module:ParlayProtocol.ParlayProtocolListController#openConfiguration
          * @public
          * @param {Event} - Event generated when button is selected. Allows use to have origin for dialog display animation.

@@ -13,7 +13,7 @@
 
     ItemsConfiguration.$inject = ["$stateProvider"];
     /**
-     * The sets up the items state for ui.router.
+     * The sets up the items state for [ui.router]{@link https://github.com/angular-ui/ui-router}.
      * @member module:ParlayItem#ItemsConfiguration
      * @param {Object} $stateProvider - Service provided by ui.router
      */

@@ -66,13 +66,13 @@
 
         /**
          * Container for registered topics callbacks.
-         * Uses EMCAScript 2015 Map() Object internally for storing mappings.
+         * Uses [ECMAScript 2015 Map()]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map} Object internally for storing mappings.
          * @constructor module:ParlaySocket.CallbackContainer
          */
         function CallbackContainer () {
 
             /**
-             * EMCAScript 2015 Map Object.
+             * [ECMAScript 2015 Map()]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map}.
              * @member module:ParlaySocket.CallbackContainer#internal_map
              * @private
              * @type {Map}
@@ -404,7 +404,7 @@
     function ParlaySocketFactory (BrokerAddress, $location, $q, CallbackContainer) {
 
         /**
-         * ParlaySocket specific Error type that is thrown on invalid messages.
+         * [ParlaySocket]{@link module:ParlaySocket.ParlaySocket} specific Error type that is thrown on invalid messages.
          * @param {String} message - Error message that will be included when thrown.
          * @constructor module:ParlaySocket.ParlaySocketError
          */
@@ -417,7 +417,8 @@
         ParlaySocketError.prototype = Object.create(TypeError.prototype);
 
         /**
-         * ParlaySocket specific ParlaySocketError type that is thrown on invalid topics.
+         * [ParlaySocket]{@link module:ParlaySocket.ParlaySocket} specific
+         * [ParlaySocketError]{@link module:ParlaySocket.ParlaySocketError} type that is thrown on invalid topics.
          * @param {String} type - Invalid type that was given.
          * @constructor module:ParlaySocket.TopicsError
          */
@@ -430,7 +431,8 @@
         TopicsError.prototype = Object.create(ParlaySocketError.prototype);
 
         /**
-         * ParlaySocket specific ParlaySocketError type that is thrown on invalid contents.
+         * [ParlaySocket]{@link module:ParlaySocket.ParlaySocket} specific
+         * [ParlaySocketError]{@link module:ParlaySocket.ParlaySocketError} type that is thrown on invalid contents.
          * @param {String} type - Invalid type that was given.
          * @constructor module:ParlaySocket.ContentsError
          */
@@ -443,9 +445,11 @@
         ContentsError.prototype = Object.create(ParlaySocketError.prototype);
 
         /**
-         * ParlaySocket is a wrapper around the native HTML WebSocket.
+         * ParlaySocket is a wrapper around the native
+         * [HTML WebSocket]{@link https://developer.mozilla.org/en-US/docs/Web/API/WebSocket}.
          * ParlaySocket will automatically connect to the Broker address specific in the Angular value BrokerAddress.
-         * It provides convenience through registration of callbacks to specific topics and through Promise resolution.
+         * It provides convenience through registration of callbacks to specific topics and through
+         * [Promise]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise} resolution.
          * @constructor module:ParlaySocket.ParlaySocket
          */
         function ParlaySocket () {
@@ -459,7 +463,7 @@
             var onMessageCallbacks = new CallbackContainer();
 
             /**
-             * Callbacks that will be called on WebSocket open.
+             * Callbacks that will be called on [HTML WebSocket]{@link https://developer.mozilla.org/en-US/docs/Web/API/WebSocket} open.
              * @member module:ParlaySocket.ParlaySocket#onOpenCallbacks
              * @private
              * @type {Array}
@@ -467,7 +471,7 @@
             var onOpenCallbacks = [];
 
             /**
-             * Callbacks that will be called on WebSocket close.
+             * Callbacks that will be called on [HTML WebSocket]{@link https://developer.mozilla.org/en-US/docs/Web/API/WebSocket} close.
              * @member module:ParlaySocket.ParlaySocket#onCloseCallbacks
              * @private
              * @type {Array}
@@ -475,7 +479,8 @@
             var onCloseCallbacks = [];
 
             /**
-             * Queue that holds messages that were attempted to be send while WebSocket was closed.
+             * Queue that holds messages that were attempted to be send while
+             * [HTML WebSocket]{@link https://developer.mozilla.org/en-US/docs/Web/API/WebSocket} was closed.
              * @member module:ParlaySocket.ParlaySocket#sendQueue
              * @private
              * @type {Array}
@@ -483,7 +488,9 @@
             var sendQueue = [];
 
             /**
-             * Resolved on WebSocket open. If the WebSocket fails to open it will be rejected.
+             * Resolved on [HTML WebSocket]{@link https://developer.mozilla.org/en-US/docs/Web/API/WebSocket} open. If
+             * the [HTML WebSocket]{@link https://developer.mozilla.org/en-US/docs/Web/API/WebSocket} fails to open it
+             * will be rejected.
              * @member module:ParlaySocket.ParlaySocket#onOpenPromise
              * @private
              * @type {$q.deferred.Promise}
@@ -491,7 +498,9 @@
             var onOpenPromise;
 
             /**
-             * Resolved on clean WebSocket close. Rejected on unclean WebSocket close.
+             * Resolved on clean [HTML WebSocket]{@link https://developer.mozilla.org/en-US/docs/Web/API/WebSocket}
+             * close. Rejected on unclean [HTML WebSocket]{@link https://developer.mozilla.org/en-US/docs/Web/API/WebSocket}
+             * close.
              * @member module:ParlaySocket.ParlaySocket#onClosePromise
              * @private
              * @type {$q.deferred.Promise}
@@ -499,7 +508,7 @@
             var onClosePromise;
 
             /**
-             * Native HTML WebSocket Object.
+             * [HTML WebSocket]{@link https://developer.mozilla.org/en-US/docs/Web/API/WebSocket}.
              * @member module:ParlaySocket.ParlaySocket#socket
              * @private
              * @type {WebSocket}
@@ -522,7 +531,9 @@
             parlay_socket.open($location.protocol === 'https:' ? 'wss://' + BrokerAddress + ':8086' : 'ws://' + BrokerAddress + ':8085');
 
             /**
-             * Opens WebSocket and returns Promise when complete.
+             * Opens [HTML WebSocket]{@link https://developer.mozilla.org/en-US/docs/Web/API/WebSocket} and returns
+             * [Promise]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise}
+             * when complete.
              * @member module:ParlaySocket.ParlaySocket#open
              * @public
              * @param {String} url - Location the WebSocket instance should connect to.
@@ -548,7 +559,8 @@
             }
 
             /**
-             * Closes WebSocket and returns Promise when complete.
+             * Closes [HTML WebSocket]{@link https://developer.mozilla.org/en-US/docs/Web/API/WebSocket} and returns
+             * [Promise]{@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise} when complete.
              * @public
              * @member module:ParlaySocket.ParlaySocket#close
              * @returns {$q.defer.promise} Resolved when WebSocket is closed.
@@ -559,7 +571,8 @@
             }
 
             /**
-             * Sends message to connected Broker over WebSocket with associated topics and contents.
+             * Sends message to connected [PromenadeBroker]{@link module:PromenadeBroker.PromenadeBroker} over
+             * [HTML WebSocket]{@link https://developer.mozilla.org/en-US/docs/Web/API/WebSocket} with associated topics and contents.
              * Optionally registers a callback which will be called upon reply with matching topic signature.
              * @member module:ParlaySocket.ParlaySocket#sendMessage
              * @public
@@ -604,7 +617,9 @@
             }
 
             /**
-             * Registers a callback to be associated with topics. Callback is invoked when message is received over WebSocket from Broker with matching signature.
+             * Registers a callback to be associated with topics. Callback is invoked when message is received over
+             * [HTML WebSocket]{@link https://developer.mozilla.org/en-US/docs/Web/API/WebSocket} from
+             * [PromenadeBroker]{@link module:PromenadeBroker.PromenadeBroker} with matching signature.
              * @member module:ParlaySocket.ParlaySocket#onMessage
              * @public
              * @param {Object} topics - Map of key/value pairs.
@@ -624,7 +639,7 @@
             }
 
             /**
-             * Checks if WebSocket is open.
+             * Checks if [HTML WebSocket]{@link https://developer.mozilla.org/en-US/docs/Web/API/WebSocket} is open.
              * @member module:ParlaySocket.ParlaySocket#isConnected
              * @public
              * @returns {Boolean} - True if WebSocket is open, false otherwise.
@@ -664,7 +679,8 @@
             }
 
             /**
-             * Attempts to send message containing topics and contents on the WebSocket.
+             * Attempts to send message containing topics and contents on the
+             * [HTML WebSocket]{@link https://developer.mozilla.org/en-US/docs/Web/API/WebSocket}.
              * @member module:ParlaySocket.ParlaySocket#send
              * @public
              * @param {Object} topics
@@ -712,7 +728,7 @@
             }
 
             /**
-             * Called when WebSocket is opened.
+             * Called when [HTML WebSocket]{@link https://developer.mozilla.org/en-US/docs/Web/API/WebSocket} is opened.
              * @member module:ParlaySocket.ParlaySocket#onOpenHandler
              * @public
              * @param {MessageEvent} event - Event generated by the WebSocket on open.
@@ -734,7 +750,7 @@
             }
 
             /**
-             * Called when WebSocket is closed.
+             * Called when [HTML WebSocket]{@link https://developer.mozilla.org/en-US/docs/Web/API/WebSocket} is closed.
              * @member module:ParlaySocket.ParlaySocket#onCloseHandler
              * @public
              * @param {MessageEvent} event - Event generated by the WebSocket on close.
@@ -765,7 +781,8 @@
             }
 
             /**
-             * Called on receipt of a message on the WebSocket.
+             * Called on receipt of a message on the
+             * [HTML WebSocket]{@link https://developer.mozilla.org/en-US/docs/Web/API/WebSocket}.
              * @member module:ParlaySocket.ParlaySocket#onMessageHandler
              * @public
              * @param {MessageEvent} event - Event generated by the WebSocket containing message contents.

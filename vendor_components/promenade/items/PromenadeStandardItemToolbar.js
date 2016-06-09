@@ -8,14 +8,11 @@
 
     /* istanbul ignore next */
     /**
-     * Toolbar directive for use in a PromenadeStandardItem.
+     * Toolbar directive for use in a [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem}.
      * @constructor module:PromenadeStandardItem.PromenadeStandardItemToolbar
      *
      * @example
-     *
      * <promenade-standard-item-card-toolbar item="item"></promenade-standard-item-card-toolbar>
-     *
-     * @returns {Object} - AngularJS directive definition Object.
      */
     function PromenadeStandardItemCardToolbar () {
         return {

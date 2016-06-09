@@ -6,5 +6,5 @@
             <parlay-widget-base-menu ng-show="widgetsCtrl.editing"></parlay-widget-base-menu>
         </div>
     </md-toolbar>
-    <md-card-content ng-transclude="content"></md-card-content>
+    <md-card-content class="parlay-widget-base-card-contents" ng-class="{'parlay-widget-base-card-contents-view-only': !widgetsCtrl.editing}" ng-transclude="content"></md-card-content>
 </md-card>

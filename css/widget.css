@@ -33,3 +33,15 @@ parlay-widget-base-menu {
     background-color: inherit;
     box-shadow: none;
 }
+
+.parlay-widget-base-card-view-only {
+    pointer-events: none;
+}
+
+.parlay-widget-base-card-contents-view-only {
+    pointer-events: auto;
+}
+
+.parlay-widget-base-card-contents {
+    padding: 0;
+}

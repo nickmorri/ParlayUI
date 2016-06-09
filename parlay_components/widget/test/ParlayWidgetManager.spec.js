@@ -18,8 +18,9 @@
         describe("ParlayWidgetManager", function () {
             var ParlayWidgetManager, $window;
 
-            beforeEach(inject(function (_ParlayWidgetManager_, _$window_) {
+            beforeEach(inject(function (_ParlayWidgetManager_, _$window_, _widgetLastZIndex_) {
                 ParlayWidgetManager = _ParlayWidgetManager_;
+                _widgetLastZIndex_.value = 0;
                 $window = _$window_;
             }));
 
@@ -40,15 +41,15 @@
             it("adds widget", function () {
                 expect(ParlayWidgetManager.getActiveWidgets()).toEqual([]);
                 ParlayWidgetManager.add();
-                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0}]);
+                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0, zIndex: 1}]);
                 ParlayWidgetManager.add();
-                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0}, {uid: 1}]);
+                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0, zIndex: 1}, {uid: 1, zIndex: 2}]);
             });
 
             it("removes widget", function () {
                 expect(ParlayWidgetManager.getActiveWidgets()).toEqual([]);
                 ParlayWidgetManager.add();
-                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0}]);
+                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0, zIndex: 1}]);
                 ParlayWidgetManager.remove(0);
                 expect(ParlayWidgetManager.getActiveWidgets()).toEqual([]);
 
@@ -57,9 +58,9 @@
             it("duplicates widget", function () {
                 expect(ParlayWidgetManager.getActiveWidgets()).toEqual([]);
                 ParlayWidgetManager.add();
-                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0}]);
+                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0, zIndex: 1}]);
                 ParlayWidgetManager.duplicate(0);
-                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0}, {uid: 1}]);
+                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0, zIndex: 1}, {uid: 1, zIndex: 2}]);
             });
 
             it("has active widgets", function () {
@@ -136,7 +137,7 @@
                 ParlayWidgetManager.add();
                 expect(ParlayWidgetManager.getAutosave()).toBeUndefined();
                 ParlayWidgetManager.autoSave();
-                expect(ParlayWidgetManager.getAutosave()).toEqual({name: 'AutoSave', data: [{ uid: 0 }], autosave: true, count: 1, timestamp: jasmine.any(Date)});
+                expect(ParlayWidgetManager.getAutosave()).toEqual({name: 'AutoSave', data: [{ uid: 0, zIndex: 1}], autosave: true, count: 1, timestamp: jasmine.any(Date)});
             });
 
         });

@@ -7,7 +7,7 @@
         .module("parlay.widget.base", module_dependencies)
         .directive("parlayWidgetBase", ParlayWidgetBase);
 
-    ParlayWidgetBase.$inject = ["$mdDialog", "$compile", "$interval", "ParlayWidgetInputManager", "ParlayData", "ParlayWidgetTransformer"];
+    ParlayWidgetBase.$inject = ["$mdDialog", "$compile", "$interval", "ParlayWidgetInputManager", "ParlayData", "ParlayWidgetTransformer", "widgetLastZIndex"];
     /**
      * Base directive of a ParlayWidget. Repeated inside the widget workspace and contains the chosen compiled widget
      * template.
@@ -19,6 +19,7 @@
      * @param {Object} ParlayWidgetInputManager - Parlay service.
      * @param {Object} ParlayData - Parlay service.
      * @param {Object} ParlayWidgetTransformer - ParlayWidgetTransformer factory.
+     * @param {Object} widgetLastZIndex - value from ParlayWidgetInputManager.
      * @returns {Object} - AngularJS directive definition Object.
      *
      * The attributes of the $scope Object of the ParlayBaseWidget is as follows:
@@ -37,7 +38,7 @@
      * {ParlayWidgetTransformer} item.configuration.transformer -
      *
      */
-    function ParlayWidgetBase ($mdDialog, $compile, $interval, ParlayWidgetInputManager, ParlayData, ParlayWidgetTransformer) {
+    function ParlayWidgetBase ($mdDialog, $compile, $interval, ParlayWidgetInputManager, ParlayData, ParlayWidgetTransformer, widgetLastZIndex) {
         return {
             scope: true,
             restrict: "E",
@@ -177,6 +178,7 @@
                     // Record the position of the card when dragging ends.
                     draggie.on("dragEnd", function () {
                         scope.item.position = this.position;
+                        scope.item.zIndex = angular.element(element)[0].style.zIndex;
                     });
 
                     // If the widget is a card we should add some feedback during dragging.
@@ -200,6 +202,10 @@
                         // Picking up animation.
                         draggie.on("dragStart", function () {
                             var height = 1;
+                            if(angular.element(element)[0].style.zIndex < widgetLastZIndex.value) {
+                              angular.element(element)[0].style.zIndex = ++widgetLastZIndex.value;
+                            }
+
                             var promise = $interval(function () {
                                 if (height == 24) {
                                     $interval.cancel(promise);
@@ -217,6 +223,7 @@
                     if (!!initialPosition) {
                         draggie.dragPoint = initialPosition;
                         draggie.positionDrag();
+                        angular.element(element)[0].style.zIndex = scope.item.zIndex;
                     }
 
                     // If the widgetsCtrl is editing the user should be free to rearrange ParlayWidgets, otherwise

@@ -1,14 +1,19 @@
 (function () {
     "use strict";
-    
+
     var module_dependencies = ["parlay.store", "parlay.settings"];
-    
+
+    var widgetLastZIndex = {
+      value: 0
+    };
+
     angular
         .module("parlay.widget.manager", module_dependencies)
+        .value("widgetLastZIndex", widgetLastZIndex)
         .factory("ParlayWidgetManager", ParlayWidgetManagerFactory);
 
-    ParlayWidgetManagerFactory.$inject = ["$window", "ParlayStore", "ParlaySettings"];
-    function ParlayWidgetManagerFactory ($window, ParlayStore, ParlaySettings) {
+    ParlayWidgetManagerFactory.$inject = ["$window", "ParlayStore", "ParlaySettings", "widgetLastZIndex"];
+    function ParlayWidgetManagerFactory ($window, ParlayStore, ParlaySettings, widgetLastZIndex) {
 
         /**
          * Manages [ParlayWidgetBase]{@link module:ParlayWidget.ParlayWidgetBase}s active in the workspace.
@@ -18,7 +23,9 @@
          * @param {Object} $window - AngularJS [$window]{@link https://docs.angularjs.org/api/ng/service/$window} service.
          * @param {Object} ParlayStore - Parlay [ParlayStore]{@link module:ParlayStore.ParlayStoreService} service.
          * @param {Object} ParlaySettings - Parlay [ParlaySettings]{@link module:ParlayStore.ParlayStore#store} service.
+         * @param {Object} widgetLastZIndex - injected value for tracking the last used zIndex.
          */
+
         function ParlayWidgetManager () {
 
             /**
@@ -110,6 +117,23 @@
          * @param {Object} workspace - Workspace container Object.
          */
         ParlayWidgetManager.prototype.saveEntry = function (workspace) {
+          // sort the widgets by their zIndex
+          this.active_widgets.sort(function (widget1, widget2) {
+            if (widget1.zIndex > widget2.zIndex) {
+              return 1;
+            }
+            if (widget1.zIndex < widget2.zIndex) {
+              return -1;
+            }
+            // widget1 must be equal to widget2
+            return 0;
+          });
+
+          // compact the zIndices so that they don't get too big
+          this.active_widgets.forEach(function (element, index, array) {
+            element.zIndex = index+1;
+          });
+
             workspace.data = JSON.stringify(angular.copy(this.active_widgets), function (key, value) {
                 return !!value && value.constructor && value.constructor.name == "ParlayProtocol" ? value.protocol_name : value;
             });
@@ -126,31 +150,13 @@
          * @param {Object} workspace - Saved workspace to be loaded.
          */
         ParlayWidgetManager.prototype.loadEntry = function (workspace) {
-
-            var next_uid = 0;
-
-            // Collect all UIDs in use.
-            var uids_in_use = this.active_widgets.map(function (widget) {
-                return widget.uid;
+            this.active_widgets = workspace.data;
+            
+            widgetLastZIndex.value = this.active_widgets.reduce(function (greatest_index, current_widget) {
+              return greatest_index > current_widget.zIndex ? greatest_index : current_widget.zIndex;
             });
 
-            this.active_widgets = workspace.data.map(function (widget) {
-
-                // If the widget's uid is already in use assign it another.
-                if (uids_in_use.indexOf(widget.uid) > -1) {
-                    // Ensure that the uid we generate isn't in use.
-                    while (uids_in_use.indexOf(next_uid) > -1) {
-                        next_uid++;
-                    }
-                    // Record the new uid that was generated.
-                    uids_in_use.push(next_uid);
-                    widget.uid = next_uid;
-                }
-
-                return widget;
-            });
-
-            var loaded_items = this.active_widgets;
+            var loaded_items = workspace.data;
             var failed_items = [];
 
             return {
@@ -266,7 +272,7 @@
                 uid++;
             }
 
-            this.active_widgets.push({uid: uid});
+            this.active_widgets.push({uid: uid, zIndex: ++widgetLastZIndex.value});
         };
 
         /**
@@ -303,11 +309,12 @@
             }
 
             copy.uid = new_uid;
+            copy.zIndex = ++widgetLastZIndex.value;
 
             this.active_widgets.push(copy);
         };
-        
+
         return new ParlayWidgetManager();
     }
-    
+
 }());

@@ -117,27 +117,25 @@
          * @param {Object} workspace - Workspace container Object.
          */
         ParlayWidgetManager.prototype.saveEntry = function (workspace) {
-          // sort the widgets by their zIndex
-          this.active_widgets.sort(function (widget1, widget2) {
-            if (widget1.zIndex > widget2.zIndex) {
-              return 1;
-            }
-            if (widget1.zIndex < widget2.zIndex) {
-              return -1;
-            }
-            // widget1 must be equal to widget2
-            return 0;
-          });
 
-          // compact the zIndices so that they don't get too big
-          this.active_widgets.forEach(function (element, index, array) {
-            element.zIndex = index+1;
-          });
+            // Copy active widgets so that when we sort and modify indices we aren't modifying the active widgets.
+            var copy = angular.copy(this.active_widgets);
 
-            workspace.data = JSON.stringify(angular.copy(this.active_widgets), function (key, value) {
+            // Sort the widgets by their zIndex.
+            copy.sort(function (widget1, widget2) {
+                return widget1.zIndex - widget2.zIndex;
+            });
+
+            // Compact the zIndices so that they don't get too big.
+            copy.forEach(function (element, index) {
+                element.zIndex = index + 1;
+            });
+
+            workspace.data = JSON.stringify(copy, function (key, value) {
                 return !!value && value.constructor && value.constructor.name == "ParlayProtocol" ? value.protocol_name : value;
             });
-            workspace.count = this.active_widgets.length;
+
+            workspace.count = copy.length;
             workspace.timestamp = new Date();
             ParlayStore("widgets").set(workspace.name, workspace);
             this.saved_workspaces = this.getWorkspaces();
@@ -150,13 +148,36 @@
          * @param {Object} workspace - Saved workspace to be loaded.
          */
         ParlayWidgetManager.prototype.loadEntry = function (workspace) {
-            this.active_widgets = workspace.data;
-            
+
+            var next_uid = 0;
+
+            // Locate the highest zIndex.
             widgetLastZIndex.value = this.active_widgets.reduce(function (greatest_index, current_widget) {
-              return greatest_index > current_widget.zIndex ? greatest_index : current_widget.zIndex;
+                return greatest_index > current_widget.zIndex ? greatest_index : parseInt(current_widget.zIndex, 10);
+            }, 0);
+
+            // Collect all UIDs in use.
+            var uids_in_use = this.active_widgets.map(function (widget) {
+                return widget.uid;
             });
 
-            var loaded_items = workspace.data;
+            this.active_widgets = workspace.data.map(function (widget) {
+
+                // If the widget's uid is already in use assign it another.
+                if (uids_in_use.indexOf(widget.uid) > -1) {
+                    // Ensure that the uid we generate isn't in use.
+                    while (uids_in_use.indexOf(next_uid) > -1) {
+                        next_uid++;
+                    }
+                    // Record the new uid that was generated.
+                    uids_in_use.push(next_uid);
+                    widget.uid = next_uid;
+                }
+
+                return widget;
+            });
+
+            var loaded_items = this.active_widgets;
             var failed_items = [];
 
             return {

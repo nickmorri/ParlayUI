@@ -178,7 +178,7 @@
                     // Record the position of the card when dragging ends.
                     draggie.on("dragEnd", function () {
                         scope.item.position = this.position;
-                        scope.item.zIndex = angular.element(element)[0].style.zIndex;
+                        scope.item.zIndex = parseInt(angular.element(element)[0].style.zIndex, 10);
                     });
 
                     // If the widget is a card we should add some feedback during dragging.
@@ -202,8 +202,8 @@
                         // Picking up animation.
                         draggie.on("dragStart", function () {
                             var height = 1;
-                            if(angular.element(element)[0].style.zIndex < widgetLastZIndex.value) {
-                              angular.element(element)[0].style.zIndex = ++widgetLastZIndex.value;
+                            if (angular.element(element)[0].style.zIndex === "" || parseInt(angular.element(element)[0].style.zIndex, 10) < widgetLastZIndex.value) {
+                                angular.element(element)[0].style.zIndex = ++widgetLastZIndex.value;
                             }
 
                             var promise = $interval(function () {

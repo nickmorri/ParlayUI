@@ -121,14 +121,13 @@
             // Copy active widgets so that when we sort and modify indices we aren't modifying the active widgets.
             var copy = angular.copy(this.active_widgets);
 
-            // Sort the widgets by their zIndex.
-            copy.sort(function (widget1, widget2) {
+            // Sort the widgets by their zIndex and compact the zIndices so that they don't get too big.
+            angular.copy(this.active_widgets).sort(function (widget1, widget2) {
                 return widget1.zIndex - widget2.zIndex;
-            });
-
-            // Compact the zIndices so that they don't get too big.
-            copy.forEach(function (element, index) {
-                element.zIndex = index + 1;
+            }).forEach(function (element, index) {
+                copy.find(function (widget) {
+                    return widget.uid === element.uid;
+                }).zIndex = index + 1;
             });
 
             workspace.data = JSON.stringify(copy, function (key, value) {
@@ -155,6 +154,10 @@
             widgetLastZIndex.value = this.active_widgets.reduce(function (greatest_index, current_widget) {
                 return greatest_index > current_widget.zIndex ? greatest_index : parseInt(current_widget.zIndex, 10);
             }, 0);
+
+            widgetLastZIndex.value = workspace.data.reduce(function (greatest_index, current_widget) {
+                return greatest_index > current_widget.zIndex ? greatest_index : parseInt(current_widget.zIndex, 10);
+            }, widgetLastZIndex.value);
 
             // Collect all UIDs in use.
             var uids_in_use = this.active_widgets.map(function (widget) {

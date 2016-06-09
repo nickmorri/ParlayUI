@@ -35,7 +35,10 @@
 
         // If the user navigated directly to a route take them there.
         if (window.location.hash === "" && ParlayStore("route").has("last")) {
-            $state.go(ParlayStore("route").get("last"));
+            var last_state = ParlayStore("route").get("last");
+            if ($state.get(last_state) !== null) {
+                $state.go(last_state);
+            }
         }
 
         // Record the last state the user navigated to.

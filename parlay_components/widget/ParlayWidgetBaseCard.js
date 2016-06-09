@@ -9,12 +9,12 @@
 
     /**
      * ParlayWidgetBaseCard directive reduces the amount of boilerplate HTML to define a ParlayWidget in the form of
-     * a Angular Material card. This directive wraps the contents within the <parlay-widget-base-card-title> element
-     * within a <md-toolbar> element. Within the toolbar a <parlay-widget-base-menu> element is included. The contents
-     * inside the <parlay-widget-base-card-content> element are wrapped in a <md-card-contents> element.
+     * a Angular Material [Card]{@link https://material.angularjs.org/latest/demo/card}. This directive wraps the
+     * contents within the parlay-widget-base-card-title element within a md-toolbar element.
+     * Within the toolbar a parlay-widget-base-menu element is included. The contents inside the
+     * parlay-widget-base-card-content element are wrapped in a md-card-contents element.
      *
-     * Additional information on AngularJS transclusion:
-     * http://teropa.info/blog/2015/06/09/transclusion.html
+     * @see [AngularJS transclusion]{@link http://teropa.info/blog/2015/06/09/transclusion.html}
      * @constructor module:ParlayWidget.ParlayWidgetBaseCard
      *
      * @example

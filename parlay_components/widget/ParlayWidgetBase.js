@@ -13,39 +13,39 @@
      * template.
      *
      * @constructor module:ParlayWidget.ParlayWidgetBase
-     * @param {Object} $mdDialog - Angular Material service.
-     * @param {Object} $compile - Angular Material service.
-     * @param {Object} $interval - Angular Material service.
-     * @param {Object} ParlayWidgetInputManager - Parlay service.
-     * @param {Object} ParlayData - Parlay service.
-     * @param {Object} ParlayWidgetTransformer - ParlayWidgetTransformer factory.
-     * @param {Object} widgetLastZIndex - value from ParlayWidgetInputManager.
-     * @returns {Object} - AngularJS directive definition Object.
-     *
-     * The attributes of the $scope Object of the ParlayBaseWidget is as follows:
-     *
-     * {Boolean} initialized - True if the template has been selected and compiled, false otherwise.
-     * {Function} edit - Launches the widget configuration $mdDialog.
-     * {Number} item.uid - Unique ID assigned by the ParlayWidgetController and used by ng-repeat track by.
-     * {Object} item.position - Coordinates of the last position of the widget.
-     * {Object} item.configuration - Holds user selected configuration details used to define behavior and appearence
-     * of the widget.
-     * {Object} item.configuration.template - Widget template selected by the user during the configuration process.
-     * {Array} item.configuration.template.configuration_tabs - @see {@link module:ParlayWidget#widgetRegistration} for more information.
-     * {String} item.configuration.template.name -
-     * {String} item.configuration.template.type -
-     * {ParlayWidgetEventHandler} item.configuration.handler
-     * {ParlayWidgetTransformer} item.configuration.transformer -
-     *
+     * @param {Object} $mdDialog - Angular [$mdDialog]{@link https://material.angularjs.org/latest/api/service/$mdDialog} service.
+     * @param {Object} $compile - AngularJS [$compile]{@link https://docs.angularjs.org/api/ng/service/$compile} service.
+     * @param {Object} $interval - AngularJS [$interval]{@link https://docs.angularjs.org/api/ng/service/$interval} service.
+     * @param {Object} ParlayWidgetInputManager - [ParlayWidgetInputManager]{@link module:ParlayWidget.ParlayWidgetInputManager} service.
+     * @param {Object} ParlayData - [ParlayData]{@link module:ParlayData} service.
+     * @param {Object} ParlayWidgetTransformer - [ParlayWidgetTransformer]{@link module:ParlayWidget.ParlayWidgetTransformer} factory.
+     * @param {Object} widgetLastZIndex - zIndex of the highest ParlayWidget.
      */
     function ParlayWidgetBase ($mdDialog, $compile, $interval, ParlayWidgetInputManager, ParlayData, ParlayWidgetTransformer, widgetLastZIndex) {
         return {
             scope: true,
             restrict: "E",
+            /**
+             * @member module:ParlayWidget.ParlayWidgetBase#link
+             * @param {Object} scope - AngularJS [$scope]{@link https://docs.angularjs.org/guide/scope} Object.
+             * @param {Boolean} scope.initialized - True if the template has been selected and compiled, false otherwise.
+             * @param {Function} scope.edit - Launches the widget configuration $mdDialog.
+             * @param {Number} scope.item.uid - Unique ID assigned by the ParlayWidgetController and used by ng-repeat track by.
+             * @param {Object} scope.item.position - Coordinates of the last position of the widget.
+             * @param {Object} scope.item.configuration - Holds user selected configuration details used to define behavior and appearence
+             * of the widget.
+             * @param {Object} scope.item.configuration.template - Widget template selected by the user during the configuration process.
+             * @param {Array} scope.item.configuration.template.configuration_tabs - @see {@link module:ParlayWidget#widgetRegistration} for more information.
+             * @param {String} scope.item.configuration.template.name - Widget name used for identification.
+             * @param {String} scope.item.configuration.template.type - Widget type, can be display or input.
+             * @param {ParlayWidgetEventHandler} scope.item.configuration.handler - [ParlayWidgetEventHandler]{@link module:ParlayWidget.ParlayWidgetEventHandler} instance.
+             * @param {ParlayWidgetTransformer} scope.item.configuration.transformer - [ParlayWidgetTransformer]{@link module:ParlayWidget.ParlayWidgetTransformer} instance.
+             * @param {HTMLElement} element - Element the directive created and link is attache to.
+             */
             link: function (scope, element) {
 
                 /**
-                 * Reference to the Draggabilly instance that is attached to the element.
+                 * Reference to the [Draggabilly]{@link http://draggabilly.desandro.com/} instance that is attached to the element.
                  * @member module:ParlayWidget.ParlayWidgetBase#draggie
                  * @private
                  */
@@ -264,7 +264,8 @@
                     }).join(" ");
 
                     /**
-                     * Uses AngularJS $compile to generate HTML Element of the ParlayWidget template.
+                     * Uses AngularJS [$compile]{@link https://docs.angularjs.org/api/ng/service/$compile} to generate
+                     * HTML Element of the ParlayWidget template.
                      * @member module:ParlayWidget.ParlayWidgetBase#templateCompiler
                      * @private
                      * @param {Object} template - ParlayBaseWidget template definition Object.

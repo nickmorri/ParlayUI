@@ -12,7 +12,7 @@
     /**
      * Controller for the widget workspace.
      * @constructor module:ParlayWidget.ParlayWidgetController
-     * @param ParlayWidgetManager
+     * @param {ParlayWidgetManager} ParlayWidgetManager - [ParlayWidgetManager]{@link module:ParlayWidget.ParlayWidgetManager} service.
      */
     function ParlayWidgetController (ParlayWidgetManager) {
 
@@ -33,7 +33,8 @@
         ctrl.duplicate = duplicate;
 
         /**
-         * Requests all active widget configuration Objects from the ParlayWidgetManager.
+         * Requests all active widget configuration Objects from the
+         * [ParlayWidgetManager]{@link module:ParlayWidget.ParlayWidgetManager}.
          * @member module:ParlayWidget.ParlayWidgetController#getActiveWidgets
          * @public
          * @returns {Array}
@@ -53,7 +54,8 @@
         }
 
         /**
-         * Requests the ParlayWidgetManager to insert another widget configuration Object.
+         * Requests the [ParlayWidgetManager]{@link module:ParlayWidget.ParlayWidgetManager} to insert another widget
+         * configuration Object.
          * @member module:ParlayWidget.ParlayWidgetController#add
          * @public
          */
@@ -62,7 +64,8 @@
         }
 
         /**
-         * Requests the ParlayWidgetManager to remove the widget configuration Object corresponding to the given uid.
+         * Requests the [ParlayWidgetManager]{@link module:ParlayWidget.ParlayWidgetManager} to remove the widget
+         * configuration Object corresponding to the given uid.
          * @member module:ParlayWidget.ParlayWidgetController#remove
          * @public
          * @param {Number} uid - Unique ID that identifies a single widget configuration Object.
@@ -72,7 +75,8 @@
         }
 
         /**
-         * Requests the ParlayWidgetManager to duplicate the widget configuration Object corresponding to the given uid.
+         * Requests the [ParlayWidgetManager]{@link module:ParlayWidget.ParlayWidgetManager} to duplicate the widget
+         * configuration Object corresponding to the given uid.
          * @member module:ParlayWidget.ParlayWidgetController#duplicate
          * @public
          * @param {Number} uid - Unique ID that identifies a single widget configuration Object.

@@ -11,9 +11,9 @@
     function ParlayInterpreterFactory (ParlayData, ParlaySocket) {
 
         /**
-         * Extracts interesting values from a JS-Interpreter scope item, all JS-Interpreter metadata will be removed.
-         * @param {Object} item - JS-Interpreter scope item.
-         * @returns {Object} - Actual data without JS-Interpreter metadata.
+         * Extracts interesting values from a [JS-Interpreter]{@link https://github.com/NeilFraser/JS-Interpreter/} scope item, all [JS-Interpreter]{@link https://github.com/NeilFraser/JS-Interpreter/} metadata will be removed.
+         * @param {Object} item - [JS-Interpreter]{@link https://github.com/NeilFraser/JS-Interpreter/} scope item.
+         * @returns {Object} - Actual data without [JS-Interpreter]{@link https://github.com/NeilFraser/JS-Interpreter/} metadata.
          */
         function df_extract (item) {
             return item.isPrimitive ? item.data : Object.keys(item.properties).reduce(function (accumulator, key) {
@@ -25,11 +25,10 @@
         /**
          * ParlayInterpreter factory for running arbitrary code in a sandboxed JavaScript interpreter.
          *
-         * Uses JS-Interpreter internally for code execution.
-         * https://github.com/NeilFraser/JS-Interpreter/
+         * Uses [JS-Interpreter]{@link https://github.com/NeilFraser/JS-Interpreter/} internally for code execution.
          * @constructor module:ParlayWidget.ParlayInterpreter
          * @attribute {String} functionString - JavaScript code that should be executed on this.run()
-         * @attribute {Object} interpreter - JS-Interpreter instance.
+         * @attribute {Object} interpreter - [JS-Interpreter]{@link https://github.com/NeilFraser/JS-Interpreter/} instance.
          * @attribute {String} constructionError - Initially undefined, if a construction error occurs it will be set
          * error.toString() representation.
          */
@@ -45,7 +44,7 @@
             this.functionString = undefined;
 
             /**
-             * Reference to the JS-Interpreter instance.
+             * Reference to the [JS-Interpreter]{@link https://github.com/NeilFraser/JS-Interpreter/} instance.
              * @member module:ParlayWidget.ParlayInterpreter#interpreter
              * @public
              * @type {String}
@@ -64,7 +63,7 @@
         }
 
         /**
-         * Attempts to construct a JS-Interpreter instance using functionString and the given childInitFunc.
+         * Attempts to construct a [JS-Interpreter]{@link https://github.com/NeilFraser/JS-Interpreter/} instance using functionString and the given childInitFunc.
          * If construction fails constructionError will be set to the String representation of the caught error.
          * @member module:ParlayWidget.ParlayInterpreter#construct
          * @public
@@ -131,7 +130,7 @@
          * Helper method which retrieves items from ParlayData.
          * @member module:ParlayWidget.ParlayInterpreter#getItems
          * @public
-         * @returns {Array} - Items from ParlayData.
+         * @returns {Array} - Items from [ParlayData]{@link module:ParlayData.ParlayData}.
          */
         ParlayInterpreter.prototype.getItems = function () {
             var iterator = ParlayData.values();
@@ -143,13 +142,13 @@
         };
 
         /**
-         * Creates and returns a JS-Interpreter native Function that can be attached to a JS-Interpreter scope.
+         * Creates and returns a [JS-Interpreter]{@link https://github.com/NeilFraser/JS-Interpreter/} native Function that can be attached to a JS-Interpreter scope.
          * @member module:ParlayWidget.ParlayInterpreter#makeFunction
          * @public
-         * @param {Object} interpreter - JS-Interpreter instance that will be used to construct the native Function.
+         * @param {Object} interpreter - [JS-Interpreter]{@link https://github.com/NeilFraser/JS-Interpreter/} instance that will be used to construct the native Function.
          * @param {Function} funcRef - JavaScript Function that will be used during interpretation.
          * @param {Object} funcThis - this context for the funcRef JavaScript Function during interpretation.
-         * @returns {Object} - JS-Interpreter native Function that can be attached to JS-Interpreter scope.
+         * @returns {Object} - [JS-Interpreter]{@link https://github.com/NeilFraser/JS-Interpreter/} native Function that can be attached to [JS-Interpreter]{@link https://github.com/NeilFraser/JS-Interpreter/} scope.
          */
         ParlayInterpreter.prototype.makeFunction = function (interpreter, funcRef, funcThis) {
             return interpreter.createNativeFunction(function () {
@@ -158,12 +157,12 @@
         };
 
         /**
-         * Creates and returns a JS-Interpreter Object that can be attached to a JS-Interpreter scope.
+         * Creates and returns a [JS-Interpreter]{@link https://github.com/NeilFraser/JS-Interpreter/} Object that can be attached to a [JS-Interpreter]{@link https://github.com/NeilFraser/JS-Interpreter/} scope.
          * @member module:ParlayWidget.ParlayInterpreter#makeObject
          * @public
-         * @param {Object} interpreter - JS-Interpreter instance that will be used to construct the native Function.
+         * @param {Object} interpreter - [JS-Interpreter]{@link https://github.com/NeilFraser/JS-Interpreter/} instance that will be used to construct the native Function.
          * @param {Object} objectRef - JavaScript Object that will be used during interpretation.
-         * @returns {Object} - JS-Interpreter Object that can be attached to a JS-Interpreter scope.
+         * @returns {Object} - [JS-Interpreter]{@link https://github.com/NeilFraser/JS-Interpreter/} Object that can be attached to a [JS-Interpreter]{@link https://github.com/NeilFraser/JS-Interpreter/} scope.
          */
         ParlayInterpreter.prototype.makeObject = function (interpreter, objectRef) {
             var obj = interpreter.createObject();
@@ -186,11 +185,11 @@
         };
 
         /**
-         * Binds a property on the JS-Interpreter scope to the given JavaScript Function.
+         * Binds a property on the [JS-Interpreter]{@link https://github.com/NeilFraser/JS-Interpreter/} scope to the given JavaScript Function.
          * @member module:ParlayWidget.ParlayInterpreter#attachFunction
          * @public
          * @param {Object} scope - Execution scope that the Function will be attached to.
-         * @param {Object} interpreter - JS-Interpreter instance that will be used to attach the Function.
+         * @param {Object} interpreter - [JS-Interpreter]{@link https://github.com/NeilFraser/JS-Interpreter/} instance that will be used to attach the Function.
          * @param {Function} funcRef - JavaScript Function that will be used during interpretation.
          * @param {String} optionalName - If provided this will be the name used on the scope to reference the funcRef.
          */
@@ -203,11 +202,11 @@
         };
 
         /**
-         * Binds a property on the JS-Interpreter scope to the given JavaScript Object.
+         * Binds a property on the [JS-Interpreter]{@link https://github.com/NeilFraser/JS-Interpreter/} scope to the given JavaScript Object.
          * @member module:ParlayWidget.ParlayInterpreter#attachObject
          * @public
          * @param {Object} scope - Execution scope that the Object will be attached to.
-         * @param {Object} interpreter - JS-Interpreter instance that will be used to attach the Object.
+         * @param {Object} interpreter - [JS-Interpreter]{@link https://github.com/NeilFraser/JS-Interpreter/} instance that will be used to attach the Object.
          * @param objectRef - JavaScript Object that will be used during interpretation.
          * @param {String} optionalName - If provided this will be the name used on the scope to reference the funcRef.
          */
@@ -220,11 +219,11 @@
         };
 
         /**
-         * Binds multiple properties on the JS-Interpreter scope.
+         * Binds multiple properties on the [JS-Interpreter]{@link https://github.com/NeilFraser/JS-Interpreter/} scope.
          * @member module:ParlayWidget.ParlayInterpreter#attachItems
          * @public
          * @param {Object} scope - Execution scope that the Objects will be attached to.
-         * @param {Object} interpreter - JS-Interpreter instance that will be used to attach the Objects.
+         * @param {Object} interpreter - [JS-Interpreter]{@link https://github.com/NeilFraser/JS-Interpreter/} instance that will be used to attach the Objects.
          * @param {Array} items - Array of Objects that will be attached to the given scope.
          */
         ParlayInterpreter.prototype.attachItems = function (scope, interpreter, items) {
@@ -295,7 +294,7 @@
         };
 
         /**
-         * Converts ParlayInterpreter instance to Object that can be JSON.strinfified.
+         * Converts ParlayInterpreter instance to Object that can be JSON.stringified.
          * @member module:ParlayWidget.ParlayInterpreter#constructionError
          * @public
          * @returns {{functionString: {String}}}

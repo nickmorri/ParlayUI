@@ -13,8 +13,9 @@
      *
      * This directive is intended to reduce the amount of boilerplate required to define a ParlayWidget directive.
      * By using this directive a ParlayWidget definer does not have to manually interact with the
-     * ParlayWidgetInputManager. A widget designer that has experience with AngularJS may choose to manually register
-     * their element's event handling with the ParlayWidgetInputManager.
+     * [ParlayWidgetInputManager]{@link module:ParlayWidget.ParlayWidgetInputManager}. A widget designer that has
+     * experience with AngularJS may choose to manually register their element's event handling with the
+     * [ParlayWidgetInputManager]{@link module:ParlayWidget.ParlayWidgetInputManager}.
      *
      * @constructor module:ParlayWidgetInput
      * @attribute {String} elementName - Name that will be used to identify the element that the directive is place on.

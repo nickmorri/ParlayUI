@@ -22,7 +22,7 @@
 
     tabCompiler.$inject = ["$compile"];
     /**
-     * Used to compile customization configuration tab bodies. @see [widgetRegistration]{@link module:ParlayWidget#widgetRegistration}
+     * Used to compile customization configuration tab bodies. [widgetRegistration]{@link module:ParlayWidget#widgetRegistration}
      * for more information.
      *
      * @member module:ParlayWidget.ParlayWidgetBaseConfigurationDialogController#tabCompiler
@@ -42,13 +42,13 @@
 
     ParlayWidgetBaseConfigurationDialogController.$inject = ["$scope", "$mdDialog", "configuration", "widgetCompiler"];
     /**
-     * Base $mdDialog widget configuration controller.
+     * Base [$mdDialog]{@link https://material.angularjs.org/latest/api/service/$mdDialog} widget configuration controller.
      * @constructor module:ParlayWidget.ParlayWidgetBaseConfigurationDialogController
-     * @param {Object} $scope - AngularJS $scope Object.
-     * @param {Object} $mdDialog - Angular Material service.
+     * @param {Object} $scope - AngularJS [$scope]{@link https://docs.angularjs.org/guide/scope} Object.
+     * @param {Object} $mdDialog - Angular Material [$mdDialog]{@link https://material.angularjs.org/latest/api/service/$mdDialog} service.
      * @param {Object} configuration - Holds user selected configuration details used to define behavior and appearence
      * of the widget.
-     * @param {Function} widgetCompiler - @see {@link module:ParlayWidget.ParlayWidgetBase#compileWrapper}
+     * @param {Function} widgetCompiler - [widgetCompiler]{@link module:ParlayWidget.ParlayWidgetBase#compileWrapper}
      */
     function ParlayWidgetBaseConfigurationDialogController ($scope, $mdDialog, configuration, widgetCompiler) {
 
@@ -86,7 +86,7 @@
     /**
      * Manages the user selection of templates.
      * @constructor module:ParlayWidget.ParlayWidgetBaseConfigurationTemplateController
-     * @param {Object} ParlayWidgetCollection - ParlayWidgetCollection service.
+     * @param {Object} ParlayWidgetCollection - [ParlayWidgetCollection]{@link module:ParlayWidget.ParlayWidgetCollection} service.
      */
     function ParlayWidgetBaseConfigurationTemplateController (ParlayWidgetCollection) {
 
@@ -111,8 +111,8 @@
     /**
      * Manages the user selection of widget events.
      * @constructor module:ParlayWidget.ParlayWidgetBaseConfigurationEventController
-     * @param {Object} $scope - AngularJS $scope Object.
-     * @param {Object} ParlayWidgetInputManager - ParlayWidgetInputManager service.
+     * @param {Object} $scope - AngularJS [$scope]{@link https://docs.angularjs.org/guide/scope} Object.
+     * @param {Object} ParlayWidgetInputManager - [ParlayWidgetInputManager]{@link module:ParlayWidget.ParlayWidgetInputManager} service.
      */
     function ParlayWidgetBaseConfigurationEventController ($scope, ParlayWidgetInputManager) {
 
@@ -225,11 +225,11 @@
         ];
 
         /**
-         * Creates Object of an Ace editor auto completer that pulls entries from ParlayData.
+         * Creates Object of an [Ace editor]{@link https://ace.c9.io/} auto completer that pulls entries from ParlayData.
          * @member module:ParlayWidget.ParlayWidgetBaseConfigurationHandlerController#generateCompleter
          * @private
          * @param {Array} initial_entries - Entries that should be included explicitly.
-         * @returns {Object} - Ace editor auto completer.
+         * @returns {Object} - [Ace editor]{@link https://ace.c9.io/} auto completer.
          */
         function generateCompleter (initial_entries) {
             return {
@@ -249,10 +249,10 @@
         }
 
         /**
-         * Called when the Ace editor instance completes loading.
+         * Called when the [Ace editor]{@link https://ace.c9.io/} instance completes loading.
          * @member module:ParlayWidget.ParlayWidgetBaseConfigurationHandlerController#onEditorLoad
          * @public
-         * @param {Object} editor - Ace editor instance.
+         * @param {Object} editor - [Ace editor]{@link https://ace.c9.io/} instance.
          */
         function onEditorLoad (editor) {
             editor.$blockScrolling = Infinity;
@@ -267,7 +267,7 @@
     /**
      * Manages the user selection of data sources.
      * @constructor module:ParlayWidget.ParlayWidgetBaseConfigurationSourceController
-     * @param {Object} $scope - AngularJS $scope Object.
+     * @param {Object} $scope - AngularJS [$scope]{@link https://docs.angularjs.org/guide/scope} Object.
      * @param {Object} ParlayData - [ParlayData]{@link module:ParlayData} service.
      * @param {Object} ParlayWidgetInputManager - [ParlayWidgetInputManager]{@link module:ParlayWidget.ParlayWidgetInputManager} service.
      * @param {Object} ParlayWidgetTransformer - [ParlayWidgetTransformer]{@link module:ParlayWidget.ParlayWidgetTransformer} service.
@@ -282,7 +282,7 @@
         ctrl.onRemove = onRemove;
 
         /**
-         * Collects items register with ParlayData.
+         * Collects items register with [ParlayData]{@link module:ParlayData}.
          * @member module:ParlayWidget.ParlayWidgetBaseConfigurationSourceController#items
          * @private
          * @returns {Array} - All available items registered with ParlayData.
@@ -297,7 +297,8 @@
         }
 
         /**
-         * Filter items and input elements registered with ParlayData and ParlayWidgetInputManager.
+         * Filter items and input elements registered with [ParlayData]{@link module:ParlayData} and
+         * [ParlayWidgetInputManager]{@link module:ParlayWidget.ParlayWidgetInputManager}.
          * @member module:ParlayWidget.ParlayWidgetBaseConfigurationSourceController#querySearch
          * @public
          * @param {String} query - Text used to filter the data sources by.
@@ -322,8 +323,9 @@
         }
 
         /**
-         * $mdChips onAdd event handler. Adds $chip item to the [ParlayWidgetTransformer]{@link module:ParlayWidget.ParlayWidgetTransformer}
-         * in the configuration.
+         * [$mdChips]{@link https://material.angularjs.org/latest/api/directive/mdChips} onAdd event handler.
+         * Adds $chip item to the [ParlayWidgetTransformer]{@link module:ParlayWidget.ParlayWidgetTransformer} in the
+         * configuration.
          * @member module:ParlayWidget.ParlayWidgetBaseConfigurationSourceController#onAdd
          * @public
          * @param {Object} $chip - Angular Material [$mdChip]{@link https://material.angularjs.org/latest/api/directive/mdChips} instance.
@@ -333,7 +335,8 @@
         }
 
         /**
-         * $mdChips onRemove event handler. Removes $chip item from the [ParlayWidgetTransformer]{@link module:ParlayWidget.ParlayWidgetTransformer}
+         * [$mdChips]{@link https://material.angularjs.org/latest/api/directive/mdChips} onRemove event handler.
+         * Removes $chip item from the [ParlayWidgetTransformer]{@link module:ParlayWidget.ParlayWidgetTransformer}
          * in the configuration.
          * @member module:ParlayWidget.ParlayWidgetBaseConfigurationSourceController#onRemove
          * @public
@@ -365,7 +368,7 @@
     /**
      * Manages the transformations of user selected data sources.
      * @constructor module:ParlayWidget.ParlayWidgetBaseConfigurationTransformController
-     * @param {Object} $scope - AngularJS $scope Object.
+     * @param {Object} $scope - AngularJS [$scope]{@link https://docs.angularjs.org/guide/scope} Object.
      */
     function ParlayWidgetBaseConfigurationTransformController ($scope) {
 
@@ -377,11 +380,11 @@
         var static_completer_entries = [];
 
         /**
-         * Creates Object of an Ace editor auto completer that pulls entries from configuration.selectedItems.
+         * Creates Object of an [Ace editor]{@link https://ace.c9.io/} auto completer that pulls entries from configuration.selectedItems.
          * @member module:ParlayWidget.ParlayWidgetBaseConfigurationTransformController#generateCompleter
          * @private
          * @param {Array} initial_entries - Entries that should be included explicitly.
-         * @returns {Object} - Ace editor auto completer.
+         * @returns {Object} - [Ace editor]{@link https://ace.c9.io/} auto completer.
          */
         function generateCompleter (initial_entries) {
             return {
@@ -398,10 +401,10 @@
         }
 
         /**
-         * Called when the Ace editor instance completes loading.
+         * Called when the [Ace editor]{@link https://ace.c9.io/} instance completes loading.
          * @member module:ParlayWidget.ParlayWidgetBaseConfigurationTransformController#onEditorLoad
          * @public
-         * @param {Object} editor - Ace editor instance.
+         * @param {Object} editor - [Ace editor]{@link https://ace.c9.io/} instance.
          */
         function onEditorLoad (editor) {
             editor.$blockScrolling = Infinity;

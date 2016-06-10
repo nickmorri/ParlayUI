@@ -170,14 +170,21 @@
                     }
 
                     // Create a Draggabilly instance for the given element. If a handle CSS class is included on any
-                    // child element we should use that as the handle.
+                    // child element we should use that as the handle. Contain widget dragging to enclosing div with
+                    // .view-container class.
                     draggie = new Draggabilly(element, {
-                        handle: ".handle"
+                        handle: ".handle",
+                        containment: ".view-container"
                     });
 
                     // Record the position of the card when dragging ends.
                     draggie.on("dragEnd", function () {
-                        scope.item.position = this.position;
+                        scope.item.position = {
+                            left: element.style.left,
+                            top: element.style.top,
+                            right: element.style.right,
+                            bottom: element.style.bottom
+                        };
                         scope.item.zIndex = parseInt(angular.element(element)[0].style.zIndex, 10);
                     });
 
@@ -221,8 +228,10 @@
 
                     // If an initialPosition is given we should move the widget to that location.
                     if (!!initialPosition) {
-                        draggie.dragPoint = initialPosition;
-                        draggie.positionDrag();
+                        element.style.left = scope.item.position.left;
+                        element.style.top = scope.item.position.top;
+                        element.style.right = scope.item.position.right;
+                        element.style.bottom = scope.item.position.bottom;
                         angular.element(element)[0].style.zIndex = scope.item.zIndex;
                     }
 

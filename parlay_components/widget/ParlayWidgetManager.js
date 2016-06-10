@@ -333,7 +333,15 @@
             }
 
             copy.uid = new_uid;
+
+            // TODO: Not following best practices here by mixing model management and view definition here.
+            // If possible this should be moved down to be a directive responsibility.
             copy.zIndex = ++widgetLastZIndex.value;
+
+            // Shift a few pixels over so that the duplicate widget doesn't completely overlap the original so that the
+            // user is aware a new widget has been created.
+            copy.position.left = (parseInt(copy.position.left, 10) + 20) + "px";
+            copy.position.top = (parseInt(copy.position.top, 10) + 20) + "px";
 
             this.active_widgets.push(copy);
         };

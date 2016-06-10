@@ -18,6 +18,11 @@
 
 ._md-chip-input-container { width: 100%; }
 
+/* Prevent widgets effecting other widgets positioning. */
+parlay-widget-base {
+    position: absolute !important;
+}
+
 /* Indicate to the user that this element can be dragged. */
 .show-handle { cursor: move; }
 

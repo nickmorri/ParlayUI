@@ -28,7 +28,7 @@
     		
     		describe("initial state", function () {
 
-	    		it("getting saved entrys", function () {
+	    		it("getting saved entries", function () {
 					spyOn(manager, "getSaved");
 		    		ParlayGenericSaveLoadDialogController.getSaved();
 					expect(manager.getSaved).toHaveBeenCalled();

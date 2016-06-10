@@ -5,43 +5,38 @@
     padding-bottom: 8px;
     white-space: normal;
 }
-.autocomplete-custom-template li:last-child {
-    border-bottom-width: 0;
-}
+
+.autocomplete-custom-template li:last-child { border-bottom-width: 0; }
+
 .autocomplete-custom-template .item-title,
 .autocomplete-custom-template .item-metadata {
     display: block;
     line-height: 2;
 }
-.transform-edit {
-    height: 400px;
-}
+
+.transform-edit { height: 400px; }
+
 ._md-chip-input-container { width: 100%; }
 
 /* Indicate to the user that this element can be dragged. */
 .show-handle { cursor: move; }
 
-parlay-widget-base-menu {
-    margin-right: -15px;
-}
+parlay-widget-base-menu { margin-right: -15px; }
 
-.parlay-widget-toolbar-view-only {
-    opacity: 0;
-}
+/* Hide the widget toolbar controls. */
+.parlay-widget-toolbar-view-only { opacity: 0; }
 
+/* Hide widget card UI elements. */
 .parlay-widget-card-view-only {
     background-color: inherit;
     box-shadow: none;
 }
 
-.parlay-widget-base-card-view-only {
-    pointer-events: none;
-}
+/* Allow user to click through translucent elements to widgets beneath hidden elements. */
+.parlay-widget-base-card-view-only { pointer-events: none; }
 
-.parlay-widget-base-card-contents-view-only {
-    pointer-events: auto;
-}
+/* Capture pointer-events from overlapping elements that may have a higher z-index. */
+.parlay-widget-base-card-contents-view-only { pointer-events: auto; }
 
-.parlay-widget-base-card-contents {
-    padding: 0;
-}
+/* Reduce padding on card contents to make the position and sizing of the widget elements in editing similar to the viewing mode. */
+.parlay-widget-base-card-contents { padding: 0; }

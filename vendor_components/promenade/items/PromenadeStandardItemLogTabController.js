@@ -92,7 +92,6 @@
         /**
          * Returns the log stored on the item Object.
          * @member module:PromenadeStandardItem.PromenadeStandardItemCardLogTabController#getLog
-         * @param {String} query - Query to filter the log by.
          * @returns {Array} - All messages captured by the item.
          */
         function getLog () {

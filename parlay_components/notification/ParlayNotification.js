@@ -70,7 +70,7 @@
              * @member module:ParlayNotification.ParlayNotificationHistory#add
              * @public
              * @param {(String|Object)} contents - Contents of notification that was displayed.
-             * @parma {Object} [action] - Container for toast action button configuration.
+             * @param {Object} [action] - Container for toast action button configuration.
              * @param {String} [action.text] - Text that was displayed on the action button.
              * @param {Function} [action.callback] - Function that the action button would invoke.
              */

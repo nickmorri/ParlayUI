@@ -33,7 +33,7 @@
          *
          * @abstract
          * @constructor module:ParlayProtocol.ParlayProtocol
-         * @param {Object} configuration - Contains details neccessary to configure a ParlayProtocol.
+         * @param {Object} configuration - Contains details necessary to configure a ParlayProtocol.
          * @param {String} configuration.name - Name used to identify a protocol.
          * @param {String} configuration.protocol_type - String representation of the protocol's type.
          */
@@ -148,7 +148,7 @@
          * @param {Function} deregistrationFn - Function returned from [ParlaySocket]{@link module:ParlaySocket.ParlaySocket} that will cancel the onMessage callback.
          */
         ParlayProtocol.prototype.registerListener = function (topics, deregistrationFn) {
-            // JSONify the topics Object so that it can be used as a key in our listeners Object..
+            // JSON stringify the topics Object so that it can be used as a key in our listeners Object..
             var topics_string = JSON.stringify(topics);
 
             // Store the deregistrationFn.

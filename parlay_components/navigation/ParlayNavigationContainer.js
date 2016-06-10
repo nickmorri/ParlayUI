@@ -58,7 +58,7 @@
      * Directive definition for <parlay-navigation-container></parlay-navigation-container>.
      * @constructor module:ParlayNavigation.ParlayNavigationContainer
      * @param {String} themeColor
-     * @returns {Object} - Directive defintion
+     * @returns {Object} - Directive definition
      * @constructor
      */
     function ParlayNavigationContainer (themeColor) {

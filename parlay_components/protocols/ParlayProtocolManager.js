@@ -207,7 +207,7 @@
              * Requests available protocols.
              * @member module:ParlayProtocol.ParlayProtocolManager#requestAvailableProtocols
              * @private
-             * @returns {$q.defer.promise} - Resolved when request response is recieved.
+             * @returns {$q.defer.promise} - Resolved when request response is received.
              */
             function requestAvailableProtocols () {
                 return PromenadeBroker.requestAvailableProtocols();
@@ -217,7 +217,7 @@
              * Requests open protocols.
              * @member module:ParlayProtocol.ParlayProtocolManager#requestOpenProtocols
              * @private
-             * @returns {$q.defer.promise} - Resolved when request response is recieved.
+             * @returns {$q.defer.promise} - Resolved when request response is received.
              */
             function requestOpenProtocols () {
                 return PromenadeBroker.requestOpenProtocols();

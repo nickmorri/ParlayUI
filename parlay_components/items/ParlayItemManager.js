@@ -316,7 +316,7 @@
 				stored_values: stored_values
 			};
 
-			if (index !== undefined) {
+			if (!!index) {
 				// Update the $index in the active items container.
 				container.stored_values.$index = index;
 

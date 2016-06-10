@@ -38,7 +38,7 @@
             Object.defineProperty(this, "name", {
                 value: data.NAME,
                 enumerable: true,
-                writeable: false,
+                writable: false,
                 configurable: false
             });
 
@@ -51,7 +51,7 @@
              */
             Object.defineProperty(this, "protocol", {
                 value: protocol,
-                writeable: false,
+                writable: false,
                 enumerable: false,
                 configurable: false
             });

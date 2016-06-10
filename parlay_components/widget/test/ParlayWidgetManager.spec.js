@@ -58,9 +58,10 @@
             it("duplicates widget", function () {
                 expect(ParlayWidgetManager.getActiveWidgets()).toEqual([]);
                 ParlayWidgetManager.add();
-                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0, zIndex: 1}]);
+                ParlayWidgetManager.active_widgets[0].position = {left: "10px", top: "10px"};
+                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0, zIndex: 1, position: {left: "10px", top: "10px"}}]);
                 ParlayWidgetManager.duplicate(0);
-                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0, zIndex: 1}, {uid: 1, zIndex: 2}]);
+                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0, zIndex: 1, position: {left: "10px", top: "10px"}}, {uid: 1, zIndex: 2, position: {left: "30px", top: "30px"}}]);
             });
 
             it("has active widgets", function () {

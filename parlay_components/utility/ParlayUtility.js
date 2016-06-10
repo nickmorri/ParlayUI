@@ -83,7 +83,7 @@
 
         /**
          * Convert the given hex color code to RGB.
-         * @member module:ParlayUtility.RandColoritem#hexToRgb
+         * @member module:ParlayUtility.RandColorItem#hexToRgb
          * @private
          * @see [GitHub]{@link http://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb}
          * @param {String} hex - hex color code.

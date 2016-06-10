@@ -20,7 +20,7 @@
 
         /**
          * Reference to namespace settings [ParlayStore]{@link module:ParlayStore.ParlayStore}.
-         * @member module:module:ParlaySettings.ParlaySettings#store
+         * @member module:ParlaySettings.ParlaySettings#store
          * @private
          */
         var store = ParlayStore("settings");

@@ -27,6 +27,7 @@
          * @public
          * @param {String} directive_name - Name that the directive registration provides.
          * @param {String} widget_type - Type that the directive registration provides.
+         * @param {Array} configuration_tabs - Array containing configuration tab directive definitions provided by widget.
          */
         ParlayWidgetCollection.prototype.registerWidget = function (directive_name, widget_type, configuration_tabs) {
             this.available_widgets.push({name: directive_name, type: widget_type, configuration_tabs: configuration_tabs});

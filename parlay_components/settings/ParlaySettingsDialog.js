@@ -13,7 +13,6 @@
      * @constructor module:ParlaySettings.ParlaySettingsDialogController
      * @param {Object} $scope - AngularJS [$scope]{@link https://docs.angularjs.org/guide/scope} Object.
      * @param {Object} $mdDialog - Angular Material [$mdDialog]{@link https://material.angularjs.org/latest/api/service/$mdDialog} service.
-     * @param {Object} $mdMedia - Angular Material [$mdMedia]{@link https://material.angularjs.org/latest/api/service/$mdMedia} service.
      * @param {Object} ParlaySettings - [ParlaySettings]{@link module:ParlaySettings.ParlaySettings} service.
      * @param {Object} PromenadeBroker - [PromenadeBroker]{@link module:PromenadeBroker.PromenadeBroker} service.
      */

@@ -25,7 +25,6 @@
          * @param {Object} ParlaySettings - Parlay [ParlaySettings]{@link module:ParlayStore.ParlayStore#store} service.
          * @param {Object} widgetLastZIndex - injected value for tracking the last used zIndex.
          */
-
         function ParlayWidgetManager () {
 
             /**

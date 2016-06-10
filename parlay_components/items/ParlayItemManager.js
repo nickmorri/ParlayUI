@@ -191,7 +191,7 @@
          * Returns the saved workspaces as a JSON string.
          * @member module:ParlayItem.ParlayItemManager#export
          * @public
-         * @returns {String} - JSON string of saved workspaces.
+         * @returns {Object} - Object containing saved workspaces.
          */
         ParlayItemManager.prototype.export = function () {
             return store.export();
@@ -291,9 +291,9 @@
          * @member module:ParlayItem.ParlayItemManager#activateItem
          * @public
 		 * @param {ParlayItem} item - Reference to the item object we want to activate.
-		 * @param {Number} uid[optional] - If given a uid we will use the provided one. Otherwise randomly generate one.
+		 * @param {Number} [uid] - If given a uid we will use the provided one. Otherwise randomly generate one.
 		 * @param {Object} stored_values - Values that may have been stored from a origin card or previous session.
-		 * @param {Number} index - Position in active_items Array.
+		 * @param {Number} [index] - Position in active_items Array.
 		 */
 		ParlayItemManager.prototype.activateItem = function (item, uid, stored_values, index) {
 
@@ -316,7 +316,7 @@
 				stored_values: stored_values
 			};
 
-			if (index !== undefined) {
+			if (!!index) {
 				// Update the $index in the active items container.
 				container.stored_values.$index = index;
 

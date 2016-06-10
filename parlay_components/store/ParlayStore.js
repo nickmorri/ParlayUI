@@ -61,7 +61,7 @@
 	function ParlayStoreService () {
 
 		/**
-		 * Interface betwen the [Web Storage APIs]{@link https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API}
+		 * Interface between the [Web Storage APIs]{@link https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API}
 		 * and Parlay. Allows for namespacing of
 		 * [localStorage]{@link https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage}.
          * @constructor module:ParlayStore.ParlayStore

@@ -188,7 +188,7 @@
         };
 
         /**
-         * Converts ParlayWidgetTransformer instance to Object that can be JSON.strinfified.
+         * Converts ParlayWidgetTransformer instance to Object that can be JSON.stringified.
          * @member module:ParlayWidget.ParlayWidgetTransformer#toJSON
          * @public
          * @returns {Object}

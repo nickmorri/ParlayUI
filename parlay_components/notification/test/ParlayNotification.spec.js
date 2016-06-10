@@ -13,7 +13,7 @@
 
         describe("ParlayNotificationHistory", function () {
 
-            it("emtpy initially", function () {
+            it("empty initially", function () {
                 expect(ParlayNotificationHistory.get()).toEqual([]);
             });
 

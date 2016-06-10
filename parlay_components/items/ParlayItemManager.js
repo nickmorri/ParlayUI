@@ -191,7 +191,7 @@
          * Returns the saved workspaces as a JSON string.
          * @member module:ParlayItem.ParlayItemManager#export
          * @public
-         * @returns {String} - JSON string of saved workspaces.
+         * @returns {Object} - Object containing saved workspaces.
          */
         ParlayItemManager.prototype.export = function () {
             return store.export();

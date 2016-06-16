@@ -23,7 +23,7 @@
                 };
 
                 property = new _PromenadeStandardProperty_({
-                    NAME: "test_property1",
+                    PROPERTY: "test_property1",
                     INPUT: "STRING",
                     READ_ONLY: false
                 }, "TestItem", protocol);

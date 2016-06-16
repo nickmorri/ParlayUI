@@ -14,7 +14,7 @@
                 $rootScope = _$rootScope_;
 
                 data = {
-                    NAME: "test_property",
+                    PROPERTY: "test_property",
                     INPUT: "STRING",
                     READ_ONLY: false
                 };
@@ -51,7 +51,7 @@
             }));
 
             it("creates PromenadeStandardProperty", function () {
-                expect(property.name).toBe(data.NAME);
+                expect(property.name).toBe(data.PROPERTY);
                 expect(property.input).toBe(data.INPUT);
                 expect(property.read_only).toBe(data.READ_ONLY);
                 expect(property.item_name).toBe("TestItem");
@@ -72,7 +72,7 @@
                 };
 
                 var contents = {
-                    PROPERTY: data.NAME,
+                    PROPERTY: data.PROPERTY,
                     ACTION: "SET",
                     VALUE: 10
                 };
@@ -114,7 +114,7 @@
                 };
 
                 var contents = {
-                    PROPERTY: data.NAME,
+                    PROPERTY: data.PROPERTY,
                     ACTION: "GET",
                     VALUE: null
                 };

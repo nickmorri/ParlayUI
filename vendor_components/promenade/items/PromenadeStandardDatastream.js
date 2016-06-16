@@ -35,7 +35,15 @@
              * @public
              * @type {String}
              */
-            datastream.name = data.NAME;
+            datastream.id = data.STREAM;
+
+            /**
+             * Name of the data stream.
+             * @member module:PromenadeStandardItem.PromenadeStandardDatastream#name
+             * @public
+             * @type {String}
+             */
+            datastream.name = data.STREAM_NAME !== undefined ? data.STREAM_NAME : data.STREAM;
 
             /**
              * Holds internal value in the constructor closure scope.
@@ -107,7 +115,7 @@
                 MSG_TYPE: "STREAM",
                 TO: "UI",
                 FROM: datastream.item_name,
-                STREAM: datastream.name
+                STREAM: datastream.id
             }, function(response) {
                 $rootScope.$apply(function () {
                     datastream.value = response.VALUE;
@@ -148,7 +156,7 @@
                     TO: datastream.item_name
                 },
                 {
-                    STREAM: datastream.name,
+                    STREAM: datastream.id,
                     STOP: !!stop
                 },
                 {

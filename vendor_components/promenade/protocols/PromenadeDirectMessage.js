@@ -61,7 +61,8 @@
          * @returns {Number} - current message ID
          */
         PromenadeDirectMessageProtocol.prototype.consumeMessageId = function () {
-            return ++this.current_message_id;
+            // message ID is capped at 16-bit unsigned
+            return ++this.current_message_id % 65536;
         };
 
         /**

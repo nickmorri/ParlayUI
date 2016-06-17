@@ -17,7 +17,7 @@
         // Reference Message Topic Information Google Doc for more information.
         // https://docs.google.com/document/d/1MlR6e48Su19D7jF-1BxCPGOSNipOoQ7Y9i8o_ukMzXQ
         var msg_status_success = ["OK"];
-        var msg_status_incomplete = ["INFO", "WARNING", "ACK"];
+        var msg_status_incomplete = ["INFO", "WARNING", "PROGRESS"];
         var msg_status_error = ["ERROR"];
 
         /**
@@ -61,7 +61,8 @@
          * @returns {Number} - current message ID
          */
         PromenadeDirectMessageProtocol.prototype.consumeMessageId = function () {
-            return ++this.current_message_id;
+            // message ID is capped at 16-bit unsigned
+            return ++this.current_message_id % 65536;
         };
 
         /**

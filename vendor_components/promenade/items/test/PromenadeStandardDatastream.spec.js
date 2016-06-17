@@ -14,13 +14,13 @@
             
             it("creates PromenadeStandardDatastream", function () {
                 
-                var data = {NAME: "datastream"};
+                var data = {STREAM: "datastream"};
                 var protocol = { onMessage: function () {}, sendMessage: function () {} };
                 spyOn(protocol, "onMessage");
 
                 var datastream = new PromenadeStandardDatastream(data, "TestItem", protocol);
 
-                expect(datastream.name).toBe(data.NAME);
+                expect(datastream.name).toBe(data.STREAM);
                 expect(datastream.item_name).toBe("TestItem");
                 expect(datastream.protocol).toBe(protocol);
                 expect(protocol.onMessage).toHaveBeenCalledWith({
@@ -28,13 +28,13 @@
                     MSG_TYPE: "STREAM",
                     TO: "UI",
                     FROM: "TestItem",
-                    STREAM: data.NAME
+                    STREAM: data.STREAM
                 }, jasmine.any(Function));
 
             });
 
             it("starts listening", function () {
-                var data = {NAME: "datastream"};
+                var data = {STREAM: "datastream"};
                 var protocol = { onMessage: function () {}, sendMessage: function () {} };
                 var datastream = new PromenadeStandardDatastream(data, "TestItem", protocol);
 
@@ -48,7 +48,7 @@
                     TO: "TestItem"
                 },
                 {
-                    STREAM: data.NAME,
+                    STREAM: data.STREAM,
                     STOP: false
                 },
                 {
@@ -60,7 +60,7 @@
             });
 
             it("stops listening", function () {
-                var data = {NAME: "datastream"};
+                var data = {STREAM: "datastream"};
                 var protocol = { onMessage: function () {}, sendMessage: function () {} };
                 var datastream = new PromenadeStandardDatastream(data, "TestItem", protocol);
 
@@ -74,7 +74,7 @@
                     TO: "TestItem"
                 },
                 {
-                    STREAM: data.NAME,
+                    STREAM: data.STREAM,
                     STOP: true
                 },
                 {
@@ -89,7 +89,7 @@
 
                 var stored_callback;
 
-                var datastream = new PromenadeStandardDatastream({NAME: "datastream"}, "TestItem", { onMessage: function (topics, callback) {
+                var datastream = new PromenadeStandardDatastream({STREAM: "datastream"}, "TestItem", { onMessage: function (topics, callback) {
                     stored_callback = callback;
                 }});
 

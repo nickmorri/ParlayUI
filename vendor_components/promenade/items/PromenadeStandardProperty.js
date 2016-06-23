@@ -31,12 +31,19 @@
             property.type = "property";
 
             /**
+             * ID of the property.
+             * @member module:PromenadeStandardItem.PromenadeStandardProperty#name
+             * @public
+             * @type {String}
+             */
+            property.id = data.PROPERTY;
+            /**
              * Name of the property.
              * @member module:PromenadeStandardItem.PromenadeStandardProperty#name
              * @public
              * @type {String}
              */
-            property.name = data.NAME;
+            property.name = data.PROPERTY_NAME !== undefined ? data.PROPERTY_NAME : property.id;
 
             /**
              * Type of input the property accepts.
@@ -129,7 +136,7 @@
                 TO: "UI"
             }, function(response) {
                 // TODO: Talk with Daniel about refactoring property API to require property name in topics.
-                if (property.name == response.PROPERTY && response.VALUE) {
+                if (property.id == response.PROPERTY && response.VALUE) {
                     $rootScope.$apply(function () {
                         property.value = response.VALUE;
                     });
@@ -174,7 +181,7 @@
                     TO: property.item_name
                 };
                 var contents = {
-                    PROPERTY: property.name,
+                    PROPERTY: property.id,
                     ACTION: "GET",
                     VALUE: null
                 };
@@ -208,7 +215,7 @@
                 };
 
                 var contents = {
-                    PROPERTY: property.name,
+                    PROPERTY: property.id,
                     ACTION: "SET",
                     VALUE: property.value
                 };

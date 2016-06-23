@@ -100,7 +100,7 @@ var standard_item_dependencies = ["parlay.items", "promenade.items.standarditem.
             // If the discovery data contains [PromenadeStandardProperty]{@link module:PromenadeStandard.PromenadeStandardProperty}s we should initialize them.
             if (data.PROPERTIES) {
                 this.properties = data.PROPERTIES.reduce(function (accumulator, current) {
-                    accumulator[current.NAME] = new PromenadeStandardProperty(current, this.id, protocol);
+                    accumulator[current.PROPERTY] = new PromenadeStandardProperty(current, this.id, protocol);
                     return accumulator;
                 }.bind(this), {});
             }
@@ -108,7 +108,7 @@ var standard_item_dependencies = ["parlay.items", "promenade.items.standarditem.
             // If the discovery data contains [PromenadeStandardDatastream]{@link module:PromenadeStandard.PromenadeStandardDatastream}s we should initialize them.
             if (data.DATASTREAMS) {
                 this.data_streams = data.DATASTREAMS.reduce(function (accumulator, current) {
-                    accumulator[current.NAME] = new PromenadeStandardDatastream(current, this.id, protocol);
+                    accumulator[current.STREAM] = new PromenadeStandardDatastream(current, this.id, protocol);
                     return accumulator;
                 }.bind(this), {});
             }

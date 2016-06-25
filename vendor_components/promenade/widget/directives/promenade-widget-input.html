@@ -1,16 +1,11 @@
 <parlay-widget-base-card>
     <parlay-widget-base-card-title>
-        {{template.name}}{{uid}}
+        Text Input #{{uid}}
     </parlay-widget-base-card-title>
     <parlay-widget-base-card-content layout="column">
         <md-input-container flex>
-            <label>add</label>
-            <input type="number" parlay-widget-input element-name="add" widget-name="{{template.name}}" widget-uid="{{uid}}" events='["change"]'/>
-        </md-input-container>
-
-        <md-input-container flex>
-            <label>subtract</label>
-            <input type="number" parlay-widget-input element-name="subtract" widget-name="{{template.name}}" widget-uid="{{uid}}" events='["change"]'/>
+            <label>{{customizations.label.value}}</label>
+            <input type="{{customizations.inputtype.value}}" parlay-widget-input element-name="value" widget-name="{{template.name}}" widget-uid="{{uid}}" events='["change"]' value="{{properties.text.value}}"/>
         </md-input-container>
     </parlay-widget-base-card-content>
 </parlay-widget-base-card>

@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var module_dependencies = [];
+    var module_dependencies = ["parlay.data"];
 
     angular
         .module("parlay.widget.template", module_dependencies)
@@ -74,6 +74,7 @@
 
             var custom_link = options.customLink;
             var customization_defaults = options.customizationDefaults;
+            var custom_properties = !!options.properties ? options.properties : {};
 
             // We don't need the customLink attribute in the directive definition Object.
             if (!!custom_link) {
@@ -84,6 +85,12 @@
             if (!!customization_defaults) {
                 delete options.customizationDefaults;
             }
+
+            if(!!options.properties)
+            {
+                delete options.properties;
+            }
+
 
             /**
              * If customLink available, calls the user provided link function during directive linking.
@@ -106,6 +113,20 @@
                 if (!scope.customizations && !!customization_defaults) {
                     scope.customizations = angular.copy(customization_defaults);
                 }
+
+                scope.properties = {};
+                //inject all of the custom properties into the scope
+                for(var key in custom_properties)
+                {   // only keys for this object
+                    if(custom_properties.hasOwnProperty(key))
+                    {
+                       scope.properties[key] = {value: custom_properties[key].default};
+                        //parlayData[key] = scope[key];
+                    }
+                }
+
+                console.log(scope);
+                scope.widgetsCtrl.registerProperties(scope.properties);
 
                 // ParlayWidgets should notify their parent, ParlayBaseWidget, when they are loaded.
                 scope.$emit("parlayWidgetTemplateLoaded");

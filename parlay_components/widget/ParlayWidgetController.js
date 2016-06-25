@@ -1,20 +1,20 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["parlay.widget.manager"];
+    var module_dependencies = ["parlay.widget.manager", "parlay.data"];
 
     angular
         .module("parlay.widget.controller", module_dependencies)
         .controller("ParlayWidgetController", ParlayWidgetController)
         .directive("parlayEmptyWidgetsWorkspacePlaceholder", ParlayEmptyWidgetsWorkspacePlaceholder);
 
-    ParlayWidgetController.$inject = ["ParlayWidgetManager"];
+    ParlayWidgetController.$inject = ["ParlayWidgetManager", "ParlayData"];
     /**
      * Controller for the widget workspace.
      * @constructor module:ParlayWidget.ParlayWidgetController
      * @param {ParlayWidgetManager} ParlayWidgetManager - [ParlayWidgetManager]{@link module:ParlayWidget.ParlayWidgetManager} service.
      */
-    function ParlayWidgetController (ParlayWidgetManager) {
+    function ParlayWidgetController (ParlayWidgetManager, ParlayData) {
 
         var ctrl = this;
 
@@ -31,6 +31,7 @@
         ctrl.add = add;
         ctrl.remove = remove;
         ctrl.duplicate = duplicate;
+        ctrl.registerProperties = registerProperties;
 
         /**
          * Requests all active widget configuration Objects from the
@@ -84,7 +85,19 @@
         function duplicate (uid) {
             ParlayWidgetManager.duplicate(uid);
         }
-        
+
+        function registerProperties(scope_properties)
+        {
+
+             for(var key in scope_properties)
+                {   // only keys for this object
+                    if(scope_properties.hasOwnProperty(key))
+                    {
+                       ParlayData[key] = scope_properties[key];
+                    }
+                }
+            console.log(ParlayData);
+        }
     }
 
     /* istanbul ignore next */

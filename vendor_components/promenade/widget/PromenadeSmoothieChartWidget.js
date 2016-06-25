@@ -1,13 +1,14 @@
 (function () {
     "use strict";
 
+    var display_name = "SmoothieChart";
     var module_dependencies = ["parlay.widget.template", "parlay.utility"];
     var module_name = "promenade.widget.smoothiechart";
     var directive_name = "promenadeWidgetSmoothieChart";
     var widget_type = "display";
     var directive_function = PromenadeWidgetSmoothieChart;
 
-    widgetRegistration(module_name, module_dependencies, directive_name, widget_type, directive_function);
+    widgetRegistration(display_name, module_name, module_dependencies, directive_name, widget_type, directive_function);
 
     PromenadeWidgetSmoothieChart.$inject = ["ParlayWidgetTemplate", "$interval", "RandColor"];
     /**

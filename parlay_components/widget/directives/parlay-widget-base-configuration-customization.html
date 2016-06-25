@@ -30,6 +30,18 @@
 
         </md-input-container>
 
+        <md-input-container flex ng-switch-when="text-choice">
+
+            <label>{{option.property_name}}</label>
+
+            <md-select ng-model="option.value" multiple="false">
+                <md-option ng-value="choice" ng-repeat="choice in option.choices">
+                    {{choice}}
+                </md-option>
+            </md-select>
+
+        </md-input-container>
+
         <div flex md-color-picker label="{{option.property_name}}" ng-model="option.value" ng-switch-when="color" preview="false"></div>
 
     </div>

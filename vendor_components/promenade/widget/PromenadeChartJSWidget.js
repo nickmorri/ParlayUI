@@ -1,13 +1,13 @@
 (function () {
     "use strict";
-
+    var display_name = "ChartJS";
     var module_dependencies = ["parlay.widget.template", "parlay.utility"];
     var module_name = "promenade.widget.chartjs";
     var directive_name = "promenadeWidgetChartJs";
     var widget_type = "display";
     var directive_function = PromenadeWidgetChartJs;
 
-    widgetRegistration(module_name, module_dependencies, directive_name, widget_type, directive_function);
+    widgetRegistration(display_name, module_name, module_dependencies, directive_name, widget_type, directive_function);
 
     Chart.defaults.global.elements.point.radius = 10;
     Chart.defaults.global.elements.point.hoverRadius = 30;
@@ -95,6 +95,7 @@
         }
 
         return new ParlayWidgetTemplate({
+            title: "ChartJS",
             templateUrl: "../vendor_components/promenade/widget/directives/promenade-widget-chart-canvas.html",
             customLink: customLink
         });

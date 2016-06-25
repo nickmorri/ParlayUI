@@ -1,6 +1,6 @@
 (function () {
     "use strict";
-
+    var display_name = "Button";
     var module_dependencies = ["parlay.widget.input"];
     var module_name = "promenade.widget.button";
     var directive_name = "promenadeWidgetButton";
@@ -62,6 +62,6 @@
     // provided as an example.
     configuration_tabs = [];
 
-    widgetRegistration(module_name, module_dependencies, directive_name, widget_type, directive_definition, configuration_tabs);
+    widgetRegistration(display_name, module_name, module_dependencies, directive_name, widget_type, directive_definition, configuration_tabs);
 
 }());

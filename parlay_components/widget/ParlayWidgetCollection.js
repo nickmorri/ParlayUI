@@ -25,12 +25,13 @@
          * Records the given directive and it's type.
          * @member module:ParlayWidget.ParlayWidgetCollection#registerWidget
          * @public
+         * @param {String} display_name - Name that will be displayed to the user
          * @param {String} directive_name - Name that the directive registration provides.
          * @param {String} widget_type - Type that the directive registration provides.
          * @param {Array} configuration_tabs - Array containing configuration tab directive definitions provided by widget.
          */
-        ParlayWidgetCollection.prototype.registerWidget = function (directive_name, widget_type, configuration_tabs) {
-            this.available_widgets.push({name: directive_name, type: widget_type, configuration_tabs: configuration_tabs});
+        ParlayWidgetCollection.prototype.registerWidget = function (display_name, directive_name, widget_type, configuration_tabs) {
+            this.available_widgets.push({display_name: display_name, name: directive_name, type: widget_type, configuration_tabs: configuration_tabs});
         };
 
         /**
@@ -41,7 +42,7 @@
          */
         ParlayWidgetCollection.prototype.registerWidgets = function (widgets) {
             widgets.forEach(function (container) {
-                this.registerWidget(container.directive_name, container.widget_type, container.configuration_tabs);
+                this.registerWidget(container.display_name, container.directive_name, container.widget_type, container.configuration_tabs);
             }, this);
         };
 

@@ -17,16 +17,16 @@
             });
 
             it("registers a widget", function () {
-                ParlayWidgetCollection.registerWidget("testWidget", "test");
+                ParlayWidgetCollection.registerWidget("testWidget", "testWidget", "test");
                 expect(ParlayWidgetCollection.getAvailableWidgets()).toEqual([
-                    jasmine.objectContaining({name: "testWidget", type: "test"})
+                    jasmine.objectContaining({display_name: "testWidget", name: "testWidget", type: "test"})
                 ]);
             });
 
             it("registers widgets", function () {
                 ParlayWidgetCollection.registerWidgets([
-                    {directive_name: "test1", widget_type: "test"},
-                    {directive_name: "test2", widget_type: "test"}
+                    {display_name: "test1", directive_name: "test1", widget_type: "test"},
+                    {display_name: "test2", directive_name: "test2", widget_type: "test"}
                 ]);
                 expect(ParlayWidgetCollection.getAvailableWidgets()).toEqual([
                     jasmine.objectContaining({name: "test1", type: "test"}),

@@ -5,7 +5,7 @@
     <parlay-widget-base-card-content layout="column">
         <md-input-container flex>
             <label>{{customizations.label.value}}</label>
-            <input type="{{customizations.inputtype.value}}" parlay-widget-input element-name="value" widget-name="{{template.name}}" widget-uid="{{uid}}" events='["change"]' value="{{properties.text.value}}"/>
+            <input type="{{customizations.inputtype.value}}" parlay-widget-input element-name="value" widget-name="{{template.name}}" widget-uid="{{uid}}" events='["change"]'  ng-model="properties.text.value" ng-change="alert('zys')"/>
         </md-input-container>
     </parlay-widget-base-card-content>
 </parlay-widget-base-card>

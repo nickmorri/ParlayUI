@@ -5,7 +5,9 @@
      * @module PromenadeBroker
      */
 
-	var module_dependencies = ["parlay.socket", "parlay.notification", "parlay.notification.error", "parlay.settings", "ngMaterial"];
+	var module_dependencies = ["parlay.socket", "parlay.notification",
+        "parlay.notification.error", "parlay.settings", "promenade.items.standarditem",
+        "promenade.protocols.directmessage", "ngMaterial"];
 
 	angular.module("promenade.broker", module_dependencies)
 		.run(PromenadeBrokerRun)
@@ -19,18 +21,43 @@
 		}
 	}
 
-    PromenadeBrokerFactory.$inject = ["ParlaySocket", "BrokerAddress", "ParlayNotification", "ParlayErrorDialog", "ParlaySettings", "$q", "$location", "$timeout", "$window", "$mdDialog"];
-	function PromenadeBrokerFactory (ParlaySocket, BrokerAddress, ParlayNotification, ParlayErrorDialog, ParlaySettings, $q, $location, $timeout, $window, $mdDialog) {
+    PromenadeBrokerFactory.$inject = ["ParlaySocket", "BrokerAddress", "ParlayNotification", "ParlayErrorDialog", "ParlaySettings", "PromenadeStandardItem", "PromenadeDirectMessageProtocol", "$q", "$location", "$timeout", "$window", "$mdDialog"];
+	function PromenadeBrokerFactory (ParlaySocket, BrokerAddress, ParlayNotification, ParlayErrorDialog, ParlaySettings, PromenadeStandardItem,PromenadeDirectMessageProtocol, $q, $location, $timeout, $window, $mdDialog) {
 
 		/**
 		 * The PromenadeBroker is a implementation of a Broker that communicates using the Parlay communication
-         * MQTT publish/subscribe model.
+         * publish/subscribe model.
          *
 		 * @constructor module:PromenadeBroker.PromenadeBroker
 		 */
 		function PromenadeBroker() {
 			
 			var broker = this;
+            /**
+             * List of all items
+             * @member module:PromenadeBroker.PromenadeBroker#items
+             * @type {Array}
+             */
+            broker.items = [];
+
+            broker.default_item_factory = PromenadeStandardItem;
+            broker.default_protocol = new PromenadeDirectMessageProtocol({NAME: "UIDummyProtocol", type:"Local"});
+            //it's Open
+            broker.default_protocol.onOpen();
+
+            broker.addItem = function(data)
+            {
+                //don't add the broker or items without IDs
+                if(data !== {} && data.TEMPLATE !== "Broker")
+                {
+                    broker.items.push(new broker.default_item_factory(data, broker.default_protocol));
+                    //add CHILDREN, if any
+                    if(data.CHILDREN)
+                    {
+                        data.CHILDREN.forEach(function(v){broker.items.push(new broker.default_item_factory(v, broker.default_protocol));});
+                    }
+                }
+            };
 
             /**
              * True if the there has been a previously successful connection, false otherwise.

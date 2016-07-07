@@ -7,6 +7,7 @@
         .module('mock.promenade.broker', module_dependencies)
         .factory('PromenadeBroker', MockPromenadeBroker);
 
+
     var sample_items = function () {
         var items = [];
 
@@ -38,6 +39,8 @@
             discovered: false
         };
 
+        PromenadeBroker.items = [];
+        
         PromenadeBroker.requestAvailableProtocols = function () {
             return $q(function (resolve) {
                 resolve([]);

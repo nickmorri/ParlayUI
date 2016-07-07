@@ -175,9 +175,12 @@
          */
         ParlayProtocol.prototype.onMessage = function (response_topics, callback, verbose) {
 
+            // Include this.id in the response topics we will listen for.
+            var topics = angular.merge({TO: this.id}, response_topics);
+
             // Register a listener with ParlaySocket and record the deregistration on this protocol.
-            var deregistration = ParlaySocket.onMessage(response_topics, callback, verbose);
-            return this.registerListener(response_topics, deregistration);
+            var deregistration = ParlaySocket.onMessage(topics, callback, verbose);
+            return this.registerListener(topics, deregistration);
         };
 
         /**

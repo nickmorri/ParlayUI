@@ -23,7 +23,7 @@
     }
 
     /* istanbul ignore next */
-    function ParlayNotificationSidenav() {
+    function ParlayNotificationSidenav () {
         return {
             scope: {},
             templateUrl: "../parlay_components/notification/directives/parlay-notification-sidenav.html",

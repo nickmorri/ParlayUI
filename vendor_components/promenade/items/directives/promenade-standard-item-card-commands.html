@@ -3,7 +3,7 @@
 	<md-toolbar class="md-hue-2">
 		<div class="md-toolbar-tools">
 
-			<h5>Command Builder</h5>
+			<h6>Command Builder</h6>
 
 			<span flex></span>
 
@@ -42,7 +42,7 @@
     <md-toolbar class="md-hue-2">
         <div class="md-toolbar-tools">
 
-            <h5>Script Builder</h5>
+            <h6>Script Builder</h6>
 
             <span flex></span>
 
@@ -66,7 +66,7 @@
     <md-toolbar class="md-hue-2">
         <div class="md-toolbar-tools">
 
-            <h5>Response Contents</h5>
+            <h6>Response Contents</h6>
 
             <span flex></span>
 
@@ -87,29 +87,45 @@
 
         <div ng-show="ctrl.responses.length" layout="column" layout-margin>
 
+            <!-- Column headers -->
             <div layout="row" layout-align="start center" class="promenade-response-contents-body">
+                <!-- Column 1: Received status -->
+                <p flex="10" flex-offset="0" class="md-body-2">Ack</p>
+                <!-- Column 2: Success status -->
+                <p flex="10" flex-offset="0" class="md-body-2">Done</p>
+                <!-- Column 3: MSG ID -->
                 <p flex="15" class="md-body-2">ID</p>
-                <p flex flex-offset="5" ng-hide="response.received" class="md-body-2">Contents</p>
-                <p flex="10" flex-offset="5" class="md-body-2">Received</p>
-                <p flex="10" flex-offset="5" class="md-body-2">Success</p>
+                <!-- Column 4: Contents -->
+                <p flex flex-offset="5" class="md-body-2">Contents</p>
+
             </div>
 
+            <!-- Rows -->
             <div ng-repeat="response in ctrl.responses">
                 <div layout="row" layout-align="start center" class="promenade-response-contents-body">
-                    <p flex="15" class="md-body-1">{{response.MSG_ID}}</p>
-                    <p flex flex-offset="5" ng-hide="response.received" class="md-body-1">Waiting for response..</p>
+                    <!-- Column 1: Received status -->
+                    <md-icon flex="10" flex-offset="0" ng-md-icon icon="check" ng-show="response.received"></md-icon>
+                    <md-progress-circular flex="10" flex-offset="0" ng-hide="response.received" md-mode="indeterminate" md-diameter="30px"></md-progress-circular>
 
-                    <div flex flex-offset="5" ng-show="response.received" layout="column">
+                    <!-- Column 2: Success status -->
+                    <md-progress-circular flex="10" flex-offset="0" ng-hide="response.complete" md-mode="indeterminate" md-diameter="30px"></md-progress-circular>
+                    <md-icon flex="10" flex-offset="0" ng-md-icon ng-show="response.complete" icon="{{response.success ? 'check' : 'clear'}}" options='{"rotation": "none"}'></md-icon>
+
+                    <!-- Column 3: MSG ID -->
+                    <p flex="15" class="md-body-1">{{response.MSG_ID}}</p>
+
+                    <!-- Column 4: Contents -->
+
+                    <p flex flex-offset="5" ng-hide="response.received" class="md-body-1">Waiting for acknowledgement..</p>
+                    <p flex flex-offset="5" ng-hide="!response.received || response.complete" class="md-body-1">Waiting for response..</p>
+
+                    <div flex flex-offset="5" ng-show="response.complete" layout="column" style="overflow-x:auto">
                         <p flex ng-show="response.received" class="md-body-1 promenade-response-contents-key-values" ng-repeat="(key, value) in response.message.CONTENTS">
                             {{key}} = {{value}}<span ng-show="!$last">,</span>
                         </p>
                     </div>
 
-                    <md-icon flex="10" flex-offset="5" ng-md-icon icon="check" ng-show="response.received"></md-icon>
-                    <md-progress-circular flex="10" flex-offset="5" ng-hide="response.received" md-mode="indeterminate" md-diameter="30px"></md-progress-circular>
-
-                    <md-icon flex="10" flex-offset="5" ng-md-icon icon="{{response.success ? 'check' : 'clear'}}" options='{"rotation": "none"}'></md-icon>
-                </div>
+                    </div>
             </div>
 
         </div>

@@ -21,7 +21,7 @@ parlay-item-search {
 }
 
 /* Indicate to the user that the card is moveable. */
-.moveable-parlay-item-card > md-toolbar { cursor: move; }
+.movable-parlay-item-card > md-toolbar { cursor: move; }
 
 /* Limit height of toolbars in ParlayItemCard to allow for greater information density. */
 md-tab-content > div > md-toolbar {

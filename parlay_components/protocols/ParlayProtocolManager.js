@@ -11,16 +11,22 @@
     function ParlayProtocolManagerFactory($injector, $q, PromenadeBroker, ParlayStore, ParlayNotification) {
 
         /**
-         * Holds references to ParlayProtocol connections and manages opening and closing of these protocols.
+         * Holds references to available, open and saved [ParlayProtocol]{@link module:ParlayProtocol.ParlayProtocol} connections and configurations.
+         * Manages opening and closing of these protocols.
          * @constructor module:ParlayProtocol.ParlayProtocolManager
          */
         function ParlayProtocolManager() {
 
-            // Reference to ParlayStore protocols namespace
+            /**
+             * Reference to [ParlayStore]{@link module:ParlayStore.ParlayStore} protocols namespace,
+             * @member module:ParlayProtocol.ParlayProtocolManager#store
+             * @private
+             * @type {ParlayStore}
+             */
             var store = ParlayStore("protocols");
 
             /**
-             * Holds ParlayProtocols that are open.
+             * Holds [ParlayProtocol]{@link module:ParlayProtocol.ParlayProtocol}s that are open.
              * @member module:ParlayProtocol.ParlayProtocolManager#open_protocols
              * @private
              * @type {Array}
@@ -28,7 +34,7 @@
             var open_protocols = [];
 
             /**
-             * Holds ParlayProtocols that are available.
+             * Holds [ParlayProtocol]{@link module:ParlayProtocol.ParlayProtocol}s that are available.
              * @member module:ParlayProtocol.ParlayProtocolManager#available_protocols
              * @private
              * @type {Array}
@@ -36,7 +42,7 @@
             var available_protocols = [];
 
             /**
-             * Holds ParlayProtocols that are saved.
+             * Holds [ParlayProtocol]{@link module:ParlayProtocol.ParlayProtocol}s that are saved.
              * @member module:ParlayProtocol.ParlayProtocolManager#saved_protocols
              * @private
              * @type {Array}
@@ -44,7 +50,7 @@
             var saved_protocols = [];
 
             /**
-             * Requests the Broker to close a protocol.
+             * Requests the [PromenadeBroker]{@link module:PromenadeBroker.PromenadeBroker} to close a protocol.
              * @member module:ParlayProtocol.ParlayProtocolManager#closeProtocol
              * @public
              * @param {Object} protocol - The protocol to be closed
@@ -53,12 +59,15 @@
             this.closeProtocol = function (protocol) {
                 return PromenadeBroker.closeProtocol(protocol.getName()).then(function (response) {
                     // Search for open protocol requested to be closed.
-                    var index = open_protocols
-                        .findIndex(function (suspect) { return protocol.getName() === suspect.getName(); });
+                    var index = open_protocols.findIndex(function (candidate) {
+                        return protocol.getName() === candidate.getName();
+                    });
 
                     // Remove if we find the protocol, then call it"s onClose method.
                     /* istanbul ignore else */
-                    if (index > -1) open_protocols.splice(index, 1)[0].onClose();
+                    if (index > -1) {
+                        open_protocols.splice(index, 1)[0].onClose();
+                    }
 
                     ParlayNotification.show({content: "Closed " + protocol.getName() + "."});
 
@@ -70,8 +79,8 @@
             };
 
             /**
-             * Requests the Broker to open a protocol.
-             * Saves the configuration in ParlayStore for later ease of use.
+             * Requests the [PromenadeBroker]{@link module:PromenadeBroker.PromenadeBroker} to open a protocol.
+             * Saves the configuration in [ParlayStore]{@link module:ParlayStore.ParlayStore} for later ease of use.
              * @member module:ParlayProtocol.ParlayProtocolManager#openProtocol
              * @public
              * @param {Object} configuration - Contains protocol configuration parameters.
@@ -96,19 +105,19 @@
             };
 
             /**
-             * Delete the protocol configuration in the ParlayStore.
+             * Delete the protocol configuration in the [ParlayStore]{@link module:ParlayStore.ParlayStore}.
              * @member module:ParlayProtocol.ParlayProtocolManager#deleteProtocolConfiguration
              * @public
              * @param {Object} configuration - Protocol configuration that we are removing from the ParlayStore.
              */
             this.deleteProtocolConfiguration = function (configuration) {
                 var protocols = store.get("saved");
-                if (protocols === undefined) return;
+                if (!!protocols) {
+                    delete protocols[configuration.name];
 
-                delete protocols[configuration.name];
-
-                store.set("saved", protocols);
-                setSavedProtocols();
+                    store.set("saved", protocols);
+                    setSavedProtocols();
+                }
             };
 
             /**
@@ -168,7 +177,7 @@
              * @returns {Array} - Array of protocol configurations.
              */
             this.getSavedProtocols = function () {
-                return saved_protocols;
+                return saved_protocols.filter(checkSavedConfiguration);
             };
 
             /**
@@ -198,7 +207,7 @@
              * Requests available protocols.
              * @member module:ParlayProtocol.ParlayProtocolManager#requestAvailableProtocols
              * @private
-             * @returns {$q.defer.promise} - Resolved when request response is recieved.
+             * @returns {$q.defer.promise} - Resolved when request response is received.
              */
             function requestAvailableProtocols () {
                 return PromenadeBroker.requestAvailableProtocols();
@@ -208,7 +217,7 @@
              * Requests open protocols.
              * @member module:ParlayProtocol.ParlayProtocolManager#requestOpenProtocols
              * @private
-             * @returns {$q.defer.promise} - Resolved when request response is recieved.
+             * @returns {$q.defer.promise} - Resolved when request response is received.
              */
             function requestOpenProtocols () {
                 return PromenadeBroker.requestOpenProtocols();
@@ -257,7 +266,8 @@
 
                 /**
                  * Construct and instantiate a protocol with the given configuration.
-                 * If the given protocol type is not available in system default to PromenadeDirectMessageProtocol.
+                 * If the given protocol type is not available in system default to
+                 * [PromenadeDirectMessageProtocol]{@link module:PromenadeDirectMessage.PromenadeDirectMessage}.
                  * @member module:ParlayProtocol.ParlayProtocolManager#constructProtocol
                  * @private
                  * @param {Object} configuration - Protocol configuration information.
@@ -271,12 +281,7 @@
                     return instance;
                 }
 
-                var protocols = response.protocols;
-
-                setSavedProtocols();
-
-                open_protocols = protocols.map(constructProtocol);
-
+                open_protocols = response.protocols.map(constructProtocol);
             }
 
             /**
@@ -288,14 +293,14 @@
              */
             function checkSavedConfiguration (configuration) {
                 return available_protocols.some(function (protocol) {
-                        return configuration.name === protocol.name;
-                    }) && !open_protocols.some(function (protocol) {
-                        return Object.keys(configuration.parameters).map(function (key) {
-                            return configuration.parameters[key];
-                        }).some(function (value) {
-                            return protocol.protocol_name.indexOf(value) !== -1;
-                        });
+                    return configuration.name === protocol.name;
+                }) && !open_protocols.some(function (protocol) {
+                    return Object.keys(configuration.parameters).map(function (key) {
+                        return configuration.parameters[key];
+                    }).some(function (value) {
+                        return protocol.protocol_name.indexOf(value) !== -1;
                     });
+                });
             }
 
             /**
@@ -306,13 +311,12 @@
             function setSavedProtocols () {
                 var saved_configurations = store.get("saved");
 
-                // If there aren't any saved configurations we should just return and leave the saved_protocols as is.
-                if (!saved_configurations) return;
-
-                // Only show saved configurations that are currently available but not connected.
-                saved_protocols = Object.keys(saved_configurations)
-                    .map(function (key) { return saved_configurations[key]; })
-                    .filter(checkSavedConfiguration);
+                if (!!saved_configurations) {
+                    // Only show saved configurations that are currently available but not connected.
+                    saved_protocols = Object.keys(saved_configurations).map(function (key) {
+                        return saved_configurations[key];
+                    });
+                }
             }
 
             /**
@@ -323,18 +327,24 @@
              */
             function addDiscoveryInfoToOpenProtocol (info) {
                 var protocol = getOpenProtocol(info.NAME);
-                if (protocol) protocol.addDiscoveryInfo(info);
+                var protocolless_items = [];
+                if (!!protocol) {
+                    protocol.addDiscoveryInfo(info);
+                }
+                else {
+                    PromenadeBroker.addItem(info);
+                }
             }
 
             /**
-             * Save the protocol configuration in the ParlayStore.
+             * Save the protocol configuration in the [ParlayStore]{@link module:ParlayStore.ParlayStore}.
              * @member module:ParlayProtocol.ParlayProtocolManager#saveProtocolConfiguration
              * @private
              * @param {Object} configuration - Protocol configuration that can be sent to the Broker.
              */
             function saveProtocolConfiguration (configuration) {
-                var protocols = store.get("saved");
-                if (protocols === undefined) protocols = {};
+
+                var protocols = (store.get("saved") || {});
 
                 configuration.last_connected = new Date();
 
@@ -359,8 +369,11 @@
             PromenadeBroker.onMessage({type: "broker", response: "get_open_protocols_response"}, setOpenProtocols);
 
             PromenadeBroker.onDiscovery(function (response) {
+                PromenadeBroker.items = []; //clear protocoless items
                 response.discovery.forEach(addDiscoveryInfoToOpenProtocol);
             });
+
+            setSavedProtocols();
 
         }
 

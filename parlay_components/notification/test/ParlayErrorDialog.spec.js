@@ -37,7 +37,7 @@
                 expect(ctrl.more_hidden).toBeTruthy();
             });
 
-            it("toggles visiblity", function() {
+            it("toggles visibility", function() {
                 expect(ctrl.more_hidden).toBeTruthy();
                 ctrl.toggleMore();
                 expect(ctrl.more_hidden).toBeFalsy();

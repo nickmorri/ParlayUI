@@ -3,6 +3,10 @@
 
     /**
      * @module ParlaySettings
+     *
+     * @description
+     * ParlaySettings provides an interface to the [ParlayStore]{@link module:ParlayStore.ParlayStore} that allows other components to get, set and provide
+     * default values for various user configurable settings values used throughout ParlayUI.
      */
 
     var module_dependencies = ["parlay.store"];
@@ -14,12 +18,33 @@
     ParlaySettingsFactory.$inject = ["ParlayStore"];
     function ParlaySettingsFactory (ParlayStore) {
 
-        // Reference to namespace settings ParlayStore.
+        /**
+         * Reference to namespace settings [ParlayStore]{@link module:ParlayStore.ParlayStore}.
+         * @member module:ParlaySettings.ParlaySettings#store
+         * @private
+         */
         var store = ParlayStore("settings");
 
         /**
          * Parlay service which manages access and modification of user configurable settings.
          * @constructor module:ParlaySettings.ParlaySettings
+         *
+         * @example <caption>Register default settings that can be used to restore to a default state.</caption>
+         *
+         * ParlaySettings.registerDefault("graph", {label_size: 12});
+         *
+         * @example <caption>Restore to the default setting registered with ParlaySettings.</caption>
+         *
+         * ParlaySettings.restoreDefault("graph");
+         *
+         * @example <caption>Retrieve the user set value for the given key.</caption>
+         *
+         * ParlaySettings.get("graph")
+         *
+         * @example <caption>Stores the value for the given key.</caption>
+         *
+         * ParlaySettings.set("graph", {label_size: newValue});
+		 *
          */
         function ParlaySettings () {
 
@@ -33,7 +58,7 @@
         }
 
         /**
-         * Retrieves stored setting value from ParlayStore for given key.
+         * Retrieves stored setting value from [ParlayStore]{@link module:ParlayStore.ParlayStore} for given key.
          * @member module:ParlaySettings.ParlaySettings#get
          * @public
          * @param {String} key - Name of setting.
@@ -44,7 +69,7 @@
         };
 
         /**
-         * Stores given setting key/value in ParlayStore.
+         * Stores given setting key/value in [ParlayStore]{@link module:ParlayStore.ParlayStore}.
          * @member module:ParlaySettings.ParlaySettings#set
          * @public
          * @param {String} key - Name of setting.
@@ -61,7 +86,7 @@
         };
 
         /**
-         * Checks if given key exists in ParlayStore.
+         * Checks if given key exists in [ParlayStore]{@link module:ParlayStore.ParlayStore}.
          * @member module:ParlaySettings.ParlaySettings#has
          * @public
          * @param {String} key - Name of setting.

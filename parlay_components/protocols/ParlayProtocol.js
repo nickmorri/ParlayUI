@@ -3,9 +3,14 @@
 
     /**
      * @module ParlayProtocol
+     *
+     * @description
+     * A [ParlayProtocol]{@link ParlayProtocol} represents a connection to a device. [ParlayProtocol]{@link ParlayProtocol}s contain all the
+     * [ParlayItem]{@link module:ParlayItem.ParlayItem}s that are connected to the given protocol instance.
+     * [ParlayProtocol]{@link ParlayProtocol}s are managed by the [ParlayProtocolManager]{@link module:ParlayProtocol.ParlayProtocolManager}.
      */
 
-    var module_dependencies = ["parlay.socket", "parlay.items.item", "promenade.protocols.directmessage", "parlay.settings"];
+    var module_dependencies = ["parlay.socket", "parlay.items.item", "parlay.settings"];
 
     angular
         .module("parlay.protocols.protocol", module_dependencies)
@@ -25,9 +30,10 @@
     function ParlayProtocolFactory (ParlaySocket, ParlayItem, ParlaySettings, $q) {
 
         /**
+         *
          * @abstract
          * @constructor module:ParlayProtocol.ParlayProtocol
-         * @param {Object} configuration - Contains details neccessary to configure a ParlayProtocol.
+         * @param {Object} configuration - Contains details necessary to configure a ParlayProtocol.
          * @param {String} configuration.name - Name used to identify a protocol.
          * @param {String} configuration.protocol_type - String representation of the protocol's type.
          */
@@ -67,7 +73,8 @@
             this.available_items = [];
 
             /**
-             * Contains all messages, up to the limit specified in ParlaySettings, exchanged over the protocol.
+             * Contains all messages, up to the limit specified in [ParlaySettings]{@link module:ParlaySettings.ParlaySettings},
+             * exchanged over the protocol.
              * @member module:ParlayProtocol.ParlayProtocol#log
              * @public
              * @type {Array}
@@ -138,10 +145,10 @@
          * @member module:ParlayProtocol.ParlayProtocol#registerListener
          * @public
          * @param {Object} topics - Map of key/value pairs.
-         * @param {Function} deregistrationFn - Function returned from ParlaySocket that will cancel the onMessage callback.
+         * @param {Function} deregistrationFn - Function returned from [ParlaySocket]{@link module:ParlaySocket.ParlaySocket} that will cancel the onMessage callback.
          */
         ParlayProtocol.prototype.registerListener = function (topics, deregistrationFn) {
-            // JSONify the topics Object so that it can be used as a key in our listeners Object..
+            // JSON stringify the topics Object so that it can be used as a key in our listeners Object..
             var topics_string = JSON.stringify(topics);
 
             // Store the deregistrationFn.
@@ -177,14 +184,14 @@
         };
 
         /**
-         * Sends message through ParlaySocket.
+         * Sends message through [ParlaySocket]{@link module:ParlaySocket.ParlaySocket}.
          * @member module:ParlayProtocol.ParlayProtocol#sendMessage
          * @public
          * @param {Object} topics - Map of key/value pairs.
          * @param {Object} contents - Map of key/value pairs.
          * @param {Object} response_topics - Map of key/value pairs.
          * @param {Boolean} verbose - If true we should invoke callback with full message. If false or undefined invoke with only contents for simplicity.
-         * @returns {$q.defer.Promise} - Resolved if ParlaySocket receives a response, rejected if an error occurs during send.
+         * @returns {$q.defer.Promise} - Resolved if [ParlaySocket]{@link module:ParlaySocket.ParlaySocket} receives a response, rejected if an error occurs during send.
          */
         ParlayProtocol.prototype.sendMessage = function (topics, contents, response_topics, verbose) {
             return $q(function(resolve, reject) {

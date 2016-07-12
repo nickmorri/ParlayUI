@@ -9,15 +9,15 @@
         .controller("PromenadeSmoothieChartController", PromenadeSmoothieChartController)
         .directive('promenadeSmoothieChart', PromenadeSmoothieChart);
 
-
     /**
      * @module PromenadeSmoothieChart
      * @restrict E
      *
      * @description
-     * The '<promenade-smoothie-chart>' creates a SmoothieChart HTML5 Canvas element for graphing values.
+     * Creates a [SmoothieChart]{@link http://smoothiecharts.org/}
+     * [HTML5 Canvas]{@link https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API} element for graphing values.
      *
-     * @usage
+     * @example
      * <promenade-smoothie-chart delay="1000" streams="data" config="chart_config" smoothie-fn="getSmoothieConfig"></promenade-smoothie-chart>
      *
      * @param {Array} enabled_streams - Contains the name of the streams that should be displayed.
@@ -30,11 +30,11 @@
      * 	 }
      * }
      *
-     * @param {Object} config - Contains configuration data. Please reference the SmoothieChart constructor for options. http://smoothiecharts.org/tutorial.html#mycanvas6
+     * @param {Object} config - Contains configuration data. Please reference the SmoothieChart constructor for options.
+     * http://smoothiecharts.org/tutorial.html#mycanvas6
      * @param {Number} [delay=1000] delay - Add delay so upcoming values are known before we need to plot the value.
      * @param {Function} smoothieFn - Configuration retrieval function.
      */
-
 
     PromenadeSmoothieChartRun.$inject = ["ParlaySettings"];
     function PromenadeSmoothieChartRun(ParlaySettings) {
@@ -49,9 +49,7 @@
     /**
      * Controller constructor for the PromenadeSmoothieChart.
      * @constructor
-     * @param {Object} scope - A AngularJS $scope Object.
-     * @param {Object} $interval - AngularJS interval Service.
-     * @param {Object} ParlaySettings - ParlaySettings Service.
+     * @param {Object} scope - AngularJS [$scope]{@link }https://docs.angularjs.org/guide/scope Object.
      */
     function PromenadeSmoothieChartController (scope) {
 
@@ -130,16 +128,16 @@
 
     PromenadeSmoothieChart.$inject = ['$window', "ParlaySettings"];
     /**
-     * Directive constructor for PromenadeStandardItemCardProperty.
-     * @param {Object} $window - AngularJS Window Service.
-     * @param {Object} ParlaySettings - ParlaySettings Service.
-     * @returns {Object} - Directive configuration.
+     * Directive constructor for PromenadeSmoothieChart.
+     * @param {Object} $window - AngularJS [$window]{@link https://docs.angularjs.org/api/ng/service/$window} service.
+     * @param {Object} ParlaySettings - [ParlaySettings]{@link module:ParlaySettings.ParlaySettings} service.
      */
     function PromenadeSmoothieChart ($window, ParlaySettings) {
 
         /**
-         * Returns Function with canvas element in closure.
-         * @param {canvas} canvas - HTML Canvas element.
+         * Returns Function with Canvas element in closure.
+         * @param {Canvas} canvas - [HTML5 Canvas]{@link https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API}
+         * element.
          */
         function buildSetSize(canvas) {
             // Fills parent element with SmoothieChart HTML5 Canvas object.
@@ -211,8 +209,8 @@
                 angular.element($window).on("resize", resize);
 
                 /**
-                 * Returns SmoothieChart object.
-                 * @returns {SmoothieChart} - Reference to SmoothieChart object.
+                 * Returns [SmoothieChart]{@link http://smoothiecharts.org/} Object.
+                 * @returns {SmoothieChart} - Reference to [SmoothieChart]{@link http://smoothiecharts.org/} Object.
                  */
                 scope.getSmoothie = function() {
                     return scope.smoothie;

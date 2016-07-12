@@ -1,6 +1,10 @@
 (function () {
     "use strict";
 
+    /**
+     * @module ParlayItem
+     */
+
     var module_dependencies = ["ui.router", "parlay.items.controller"];
 
     angular
@@ -9,7 +13,8 @@
 
     ItemsConfiguration.$inject = ["$stateProvider"];
     /**
-     * The sets up the items state for ui.router.
+     * The sets up the items state for [ui.router]{@link https://github.com/angular-ui/ui-router}.
+     * @member module:ParlayItem#ItemsConfiguration
      * @param {Object} $stateProvider - Service provided by ui.router
      */
     function ItemsConfiguration ($stateProvider) {

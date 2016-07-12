@@ -7,8 +7,16 @@
         .directive("promenadeStandardItemCardToolbar", PromenadeStandardItemCardToolbar);
 
     /* istanbul ignore next */
-    function PromenadeStandardItemCardToolbar() {
+    /**
+     * Toolbar directive for use in a [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem}.
+     * @constructor module:PromenadeStandardItem.PromenadeStandardItemToolbar
+     *
+     * @example
+     * <promenade-standard-item-card-toolbar item="item"></promenade-standard-item-card-toolbar>
+     */
+    function PromenadeStandardItemCardToolbar () {
         return {
+            restrict: "E",
             scope: {
                 item: "="
             },

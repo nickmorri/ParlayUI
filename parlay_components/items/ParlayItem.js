@@ -1,50 +1,94 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["ngMaterial", "ngMessages", "ngMdIcons", "templates-main", "parlay.item.persistence", "parlay.utility", "parlay.items.item.card"];
+    var module_dependencies = ["ngMaterial", "parlay.items.item.card"];
 
     angular
         .module("parlay.items.item", module_dependencies)
         .factory("ParlayItem", ParlayItemFactory);
 
-    function ParlayItemFactory() {
+    function ParlayItemFactory () {
 
-        function ParlayItem(data, protocol) {
+        /**
+         * Model for a ParlayItem. Intended to be used as a base class that is extended by vendor's representation of
+         * ParlayItem but can stand on its own as well.
+         * @constructor module:ParlayItem.ParlayItem
+         * @abstract
+         * @param {Object} data - A ParlayItem's unique data.
+         * @param {String} data.NAME - Human readable identifier.
+         * @param {(Array|Object)} data.INTERFACES - Potential interfaces that the ParlayItem is compatible with.
+         * @param {ParlayProtocol} protocol - Reference to the [ParlayProtocol]{@link module:ParlayProtocol.ParlayProtocol} instance that the ParlayItem is connected to.
+         *
+         * @example <caption>Initializing a ParlayItem with discovery data.</caption>
+         *
+         * // discovery: Object with the discovery data needed to build the ParlayItem.
+         * // protocol: ParlayProtocol or a prototypical inheritor that the ParlayItem is connected to.
+         *
+         * var item = new ParlayItem(discovery, protocol);
+         * 
+         */
+        function ParlayItem (data, protocol) {
 
+            /**
+             * Unique name used to identify a ParlayItem.
+             * @member module:ParlayItem.ParlayItem#name
+             * @public
+             * @type {String}
+             */
             Object.defineProperty(this, "name", {
                 value: data.NAME,
                 enumerable: true,
-                writeable: false,
+                writable: false,
                 configurable: false
             });
 
+            /**
+             * Reference to the [ParlayProtocol]{@link module:ParlayProtocol.ParlayProtocol} instance that the
+             * ParlayItem is connected to.
+             * @member module:ParlayItem.ParlayItem#protocol
+             * @public
+             * @type {ParlayProtocol}
+             */
             Object.defineProperty(this, "protocol", {
                 value: protocol,
-                writeable: false,
+                writable: false,
                 enumerable: false,
                 configurable: false
             });
 
+            /**
+             * Intended to be overwritten by inheritor with the name of its class.
+             * @member module:ParlayItem.ParlayItem#type
+             * @public
+             * @type {String}
+             */
             this.type = "ParlayItem";
 
+            /**
+             * All the potential interfaces that the ParlayItem is compatible with.
+             * @member module:ParlayItem.ParlayItem#interfaces
+             * @public
+             * @type {(Array|Object)}
+             */
             this.interfaces = data.INTERFACES;
 
+            /**
+             * All the available and default directives that the ParlayItem will compile in toolbar and tabs locations.
+             * @member module:ParlayItem.ParlayItem#directives
+             * @public
+             * @type {Object}
+             */
             this.directives = {
-                toolbar: {
-                    default: [],
-                    available: []
-                },
-                tabs: {
-                    default: [],
-                    available: []
-                },
-                available_cache: {}
+                toolbar: [],
+                tabs: []
             };
-
+            
         }
 
         /**
          * Gets item type.
+         * @member module:ParlayItem.ParlayItem#getType
+         * @public
          * @returns {String} - Item type
          */
         ParlayItem.prototype.getType = function () {
@@ -52,61 +96,37 @@
         };
 
         /**
-         * Adds the given directives as defaults for the specified target.
+         * Adds the given directives for the specified target.
+         * @member module:ParlayItem.ParlayItem#addDirectives
+         * @public
          * @param {String} target - Directive target: toolbar or tabs.
          * @param {Array} directives - Array of directive names.
          */
-        ParlayItem.prototype.addDefaultDirectives = function(target, directives) {
-            this.directives[target].default = this.directives[target].default.concat(directives);
-        };
-
-        /**
-         * Adds the given directives as available for the specified target.
-         * @param {String} target - Directive target: toolbar or tabs.
-         * @param {Array} directives - Array of directive names.
-         */
-        ParlayItem.prototype.addAvailableDirectives = function (target, directives) {
-            this.directives[target].available = this.directives[target].available.concat(directives);
-        };
-
-        /**
-         * Gets the directives that have been added as defaults.
-         * @returns {Object} - Mapping of target -> Array of default directive names.
-         */
-        ParlayItem.prototype.getDefaultDirectives = function () {
-            var item = this;
-            return Object.keys(item.directives).reduce(function (accumulator, target) {
-                if (item.directives[target].hasOwnProperty("default")) {
-                    accumulator[target] = item.directives[target].default;
-                }
-                return accumulator;
-            }, {});
+        ParlayItem.prototype.addDirectives = function (target, directives) {
+            this.directives[target] = this.directives[target].concat(directives);
         };
 
         /**
          * Gets the directives that have been added as available.
-         * @returns {Object} - Mapping of target -> Array of available directive names.
+         * @member module:ParlayItem.ParlayItem#getDirectives
+         * @public
+         * @returns {Object} - Mapping of target -> Array of directive names.
          */
-        ParlayItem.prototype.getAvailableDirectives = function () {
-            var item = this;
-            item.directives.available_cache = Object.keys(item.directives).filter(function (target) {
-                return target.indexOf("cache") === -1;
-            }).reduce(function (accumulator, target) {
-                accumulator[target] = item.directives[target].available;
-                return accumulator;
-            }, {});
-            return this.directives.available_cache;
+        ParlayItem.prototype.getDirectives = function () {
+            return this.directives;
         };
 
         /**
          * Abstract method that should be overwritten by those that prototypically inherit from ParlayItem.
+         * @abstract
+         * @public
+         * @member module:ParlayItem.ParlayItem#matchesQuery
          */
         ParlayItem.prototype.matchesQuery = function () {
             console.warn("matchesQuery is not implemented for " + this.name);
         };
 
         return ParlayItem;
-
     }
 
 }());

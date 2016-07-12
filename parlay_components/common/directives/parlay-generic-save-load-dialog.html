@@ -62,7 +62,7 @@
 
             <md-subheader ng-show="ctrl.getSaved().length">Saved {{option.entries}}</md-subheader>
 
-            <md-list-item class="md-3-line" layout="row" layout-align="space-between center" ng-repeat="entry in ctrl.getSaved() | orderBy:'-timestamp'">
+            <md-list-item class="md-3-line" layout="row" layout-align="space-between center" ng-repeat="entry in ctrl.getSaved() | orderBy:'-timestamp' track by entry.timestamp">
 
                 <md-icon hide-xs hide-sm hide-md ng-if="$index === 0" ng-md-icon icon="dashboard"></md-icon>
 

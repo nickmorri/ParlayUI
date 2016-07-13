@@ -1,14 +1,14 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["parlay.widget.interpreter"];
+    var module_dependencies = ["parlay.widget.interpreter.py"];
 
     angular
         .module("parlay.widget.transformer", module_dependencies)
         .factory("ParlayWidgetTransformer", ParlayWidgetTransformerFactory);
 
-    ParlayWidgetTransformerFactory.$inject = ["ParlayInterpreter"];
-    function ParlayWidgetTransformerFactory (ParlayInterpreter) {
+    ParlayWidgetTransformerFactory.$inject = ["ParlayPyInterpreter"];
+    function ParlayWidgetTransformerFactory (ParlayPyInterpreter) {
 
         /**
          * ParlayWidgetTransformer factory for transforming PromenadeStandardProperty, PromenadeStandardDatastream and
@@ -30,9 +30,8 @@
          * instance.
          */
         function ParlayWidgetTransformer(initialItems) {
-
             // Call our parent constructor first.
-            ParlayInterpreter.call(this);
+            ParlayPyInterpreter.call(this);
 
             /**
              * Result of interpretation of functionString and the state of the interpreter scope.
@@ -91,17 +90,17 @@
 
         }
 
-        // Prototypically inherit from ParlayInterpreter.
-        ParlayWidgetTransformer.prototype = Object.create(ParlayInterpreter.prototype);
+        // Prototypically inherit from ParlayPyInterpreter.
+        ParlayWidgetTransformer.prototype = Object.create(ParlayPyInterpreter.prototype);
 
         /**
-         * Construct the parent ParlayInterpreter with the initFunc to ensure that this.items are attached to the
+         * Construct the parent ParlayPyInterpreter with the initFunc to ensure that this.items are attached to the
          * JS-Interpreter scope.
          * @member module:ParlayWidget.ParlayWidgetTransformer#construct
          * @public
          */
         ParlayWidgetTransformer.prototype.construct = function () {
-            ParlayInterpreter.prototype.construct.call(this);
+            ParlayPyInterpreter.prototype.construct.call(this);
         };
 
         /**
@@ -194,7 +193,7 @@
          * @returns {Object}
          */
         ParlayWidgetTransformer.prototype.toJSON = function () {
-            return angular.merge({}, ParlayInterpreter.prototype.toJSON.call(this));
+            return angular.merge({}, ParlayPyInterpreter.prototype.toJSON.call(this));
         };
 
         return ParlayWidgetTransformer;

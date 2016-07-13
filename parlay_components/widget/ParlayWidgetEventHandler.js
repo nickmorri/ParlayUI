@@ -1,14 +1,14 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["parlay.widget.interpreter"];
+    var module_dependencies = ["parlay.widget.interpreter.py"];
 
     angular
         .module("parlay.widget.eventhandler", module_dependencies)
         .factory("ParlayWidgetEventHandler", ParlayWidgetEventHandlerFactory);
 
-    ParlayWidgetEventHandlerFactory.$inject = ["ParlayInterpreter"];
-    function ParlayWidgetEventHandlerFactory(ParlayInterpreter) {
+    ParlayWidgetEventHandlerFactory.$inject = ["ParlayPyInterpreter"];
+    function ParlayWidgetEventHandlerFactory(ParlayPyInterpreter) {
 
         /**
          * ParlayWidgetEventHandler factory for handling events spawn by <input> and <button> HTMLElements with
@@ -23,7 +23,7 @@
          * error.toString() representation.
          */
         function ParlayWidgetEventHandler () {
-            ParlayInterpreter.call(this);
+            ParlayPyInterpreter.call(this);
 
             /**
              * Reference to the event container Object.
@@ -79,18 +79,18 @@
             
         }
 
-        // Prototypically inherit from ParlayInterpreter.
-        ParlayWidgetEventHandler.prototype = Object.create(ParlayInterpreter.prototype);
+        // Prototypically inherit from ParlayPyInterpreter.
+        ParlayWidgetEventHandler.prototype = Object.create(ParlayPyInterpreter.prototype);
 
         /**
-         * Construct the parent ParlayInterpreter with the initFunc to ensure that domEvent is attached to the
+         * Construct the parent ParlayPyInterpreter with the initFunc to ensure that domEvent is attached to the
          * JS-Interpreter scope.
          * @member module:ParlayWidget.ParlayWidgetEventHandler#construct
          * @public
          * @param {Event} domEvent - Event fired from a HTMLElement.
          */
         ParlayWidgetEventHandler.prototype.construct = function (domEvent) {
-            ParlayInterpreter.prototype.construct.call(this, function initFunc(interpreter, scope) {
+            ParlayPyInterpreter.prototype.construct.call(this, function initFunc(interpreter, scope) {
                 this.attachEvent(scope, interpreter, domEvent);
             });
         };
@@ -145,7 +145,7 @@
          * @returns {{functionString: {String}}}
          */
         ParlayWidgetEventHandler.prototype.toJSON = function () {
-            return angular.merge({}, ParlayInterpreter.prototype.toJSON.call(this));
+            return angular.merge({}, ParlayPyInterpreter.prototype.toJSON.call(this));
         };
 
         return ParlayWidgetEventHandler;

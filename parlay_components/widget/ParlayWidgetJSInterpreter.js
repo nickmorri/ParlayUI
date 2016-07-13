@@ -192,11 +192,14 @@
          * @param {Object} interpreter - [JS-Interpreter]{@link https://github.com/NeilFraser/JS-Interpreter/} instance that will be used to attach the Function.
          * @param {Function} funcRef - JavaScript Function that will be used during interpretation.
          * @param {String} optionalName - If provided this will be the name used on the scope to reference the funcRef.
+         * @param {Boolean} force - If provided and true, this will force the interpreter to add the function
+         *                              whether or not it appears in the code.
          */
-        ParlayInterpreter.prototype.attachFunction = function (scope, interpreter, funcRef, optionalName) {
+        ParlayInterpreter.prototype.attachFunction = function (scope, interpreter, funcRef, optionalName, force) {
             var name = !!optionalName ? optionalName : funcRef.name;
+            force = force || false;
             
-            if (this.functionString.includes(name)) {
+            if (force || this.functionString.includes(name)) {
                 interpreter.setProperty(scope, name, this.makeFunction(interpreter, funcRef));
             }
         };
@@ -209,11 +212,14 @@
          * @param {Object} interpreter - [JS-Interpreter]{@link https://github.com/NeilFraser/JS-Interpreter/} instance that will be used to attach the Object.
          * @param objectRef - JavaScript Object that will be used during interpretation.
          * @param {String} optionalName - If provided this will be the name used on the scope to reference the funcRef.
+         * @param {Boolean} force - If provided and true, this will force the interpreter to add the function
+         *                              whether or not it appears in the code.
          */
-        ParlayInterpreter.prototype.attachObject = function (scope, interpreter, objectRef, optionalName) {
+        ParlayInterpreter.prototype.attachObject = function (scope, interpreter, objectRef, optionalName, force) {
             var name = !!optionalName ? optionalName : objectRef.constructor.name;
+            force = force || false;
 
-            if (this.functionString.includes(name)) {
+            if (force || this.functionString.includes(name) || force) {
                 interpreter.setProperty(scope, name, this.makeObject(interpreter, objectRef));
             }
         };

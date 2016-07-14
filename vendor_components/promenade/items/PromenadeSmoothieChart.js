@@ -68,18 +68,24 @@
             if (!!newValue) {
                 scope.$watchCollection("enabled_streams", function (newValue, oldValue) {
 
-                    var current_lines = Object.keys(ctrl.lines);
+                    // Array of current stream IDs
+                    var current_stream_ids = Object.keys(ctrl.lines);
 
-                    var new_streams, old_streams;
+                    var new_streams = [];
+                    var old_streams = [];
 
-                    // Generate Array of streams that differ and should be disabled.
-                    old_streams = current_lines.filter(function (line) {
-                        return newValue.indexOf(line) === -1;
+                    // Figure out which streams are in the new array of IDs, but not in 
+                    // the list of current stream IDs and add them to the new_streams array
+                    newValue.forEach(function (stream_obj) {
+                        if (current_stream_ids.indexOf(stream_obj.id) == -1)
+                            new_streams.push(stream_obj);
                     });
 
-                    // Generate Array of streams that differ and should be enabled.
-                    new_streams = newValue.filter(function (line) {
-                        return current_lines.indexOf(line) === -1;
+                    // Do the same for the streams that we need to remove
+                    // (they're in the old streams but not the new streams)
+                    oldValue.forEach(function (stream_obj) {
+                        if (newValue.indexOf(stream_obj) == -1)
+                            old_streams.push(stream_obj);
                     });
 
                     old_streams.forEach(removeStream);
@@ -89,39 +95,40 @@
             }
         });
 
-        function addStream (stream_name) {
-            createTimeSeries(stream_name);
+        function addStream (stream) {
+            createTimeSeries(stream);
             // Register an onChange handler that will update the TimeSeries.
-            stream_watchers[stream_name] = scope.stream_data[stream_name].onChange(function (value) {
-                ctrl.lines[stream_name].append((new Date()).getTime(), value);
+            stream_watchers[stream.id] = scope.stream_data[stream.id].onChange(function (value) {
+                ctrl.lines[stream.id].append((new Date()).getTime(), value);
             });
         }
 
-        function removeStream (stream_name) {
+        function removeStream (stream) {
             // Deregister the onChange handler and delete it's entry.
-            stream_watchers[stream_name]();
-            delete stream_watchers[stream_name];
-            pruneTimeSeries(stream_name);
+            stream_watchers[stream.id]();
+            delete stream_watchers[stream.id];
+            pruneTimeSeries(stream);
         }
 
-        function createTimeSeries (stream_name) {
-            ctrl.lines[stream_name] = new TimeSeries();
+        function createTimeSeries (stream) {
+            ctrl.lines[stream.id] = new TimeSeries();
 
-            scope.smoothie.addTimeSeries(ctrl.lines[stream_name], {
+            scope.smoothie.addTimeSeries(ctrl.lines[stream.id], {
                 strokeStyle: ctrl.colors.pop(),
                 lineWidth: 2,
-                streamName: stream_name
+                streamName: stream.name,
+                streamID: stream.id
             });
         }
 
-        function pruneTimeSeries (stream_name) {
+        function pruneTimeSeries (stream) {
             // Re-add the now unused color to available list of colors.
             ctrl.colors.push(scope.smoothie.seriesSet.find(function (series) {
-                return series.options.streamName === stream_name;
+                return series.options.streamID == stream.id;
             }).options.strokeStyle);
 
-            scope.smoothie.removeTimeSeries(ctrl.lines[stream_name]);
-            delete ctrl.lines[stream_name];
+            scope.smoothie.removeTimeSeries(ctrl.lines[stream.id]);
+            delete ctrl.lines[stream.id];
         }
 
     }

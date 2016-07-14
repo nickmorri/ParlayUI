@@ -150,13 +150,13 @@
          * @param {Object} stream - Reference to a [PromenadeStandardDatastream]{@link module:PromenadeStandardItem.PromenadeStandardDatastream}.
          */
         function toggleGraphing (stream) {
-            if (ctrl.enabled_streams.indexOf(stream.name) == -1) {
-                ctrl.enabled_streams.push(stream.name);
+            if (ctrl.enabled_streams.indexOf(stream) == -1) {
+                ctrl.enabled_streams.push(stream);
                 stream.listen(false);
             }
             else {
                 // Remove the stream from the Array of enabled streams.
-                ctrl.enabled_streams.splice(ctrl.enabled_streams.indexOf(stream.name), 1);
+                ctrl.enabled_streams.splice(ctrl.enabled_streams.indexOf(stream), 1);
                 // If stream value currently defined ask the user if they want to cancel the stream.
                 if (stream.value !== undefined) {
                     // Ask the user if they'd like to cancel the stream as well.
@@ -236,7 +236,7 @@
          * @returns {Boolean}
          */
         function isStreamEnabled (stream) {
-            return ctrl.enabled_streams.indexOf(stream.name) >= 0;
+            return ctrl.enabled_streams.indexOf(stream) >= 0;
         }
 
     }

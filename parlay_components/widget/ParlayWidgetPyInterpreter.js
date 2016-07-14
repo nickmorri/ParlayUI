@@ -10,16 +10,6 @@
    ParlayPyInterpreterFactory.$inject = ["ParlayInterpreter", "ParlaySocket"];
     function ParlayPyInterpreterFactory (ParlayInterpreter, ParlaySocket) {
 
-        function builtinRead(x) {
-            if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined)
-                throw "File not found: '" + x + "'";
-            return Sk.builtinFiles["files"][x];
-        }
-
-        function runPyFun(skFun) {
-            return skFun.code + skFun.funcname + "();";
-        }
-
         /**
          * ParlayPyInterpreter factory for running arbitrary Python code in a sandboxed JavaScript interpreter.
          *
@@ -32,12 +22,12 @@
          * error.toString() representation.
          */
         function ParlayPyInterpreter () {
-            ParlayInterpreter.call(this)
+            ParlayInterpreter.call(this);
         }
 
         //Inherit from ParlayInterpreter
-        ParlayPyInterpreter.prototype = Object.create(ParlayInterpreter.prototype)
-        ParlayPyInterpreter.prototype.constructor = ParlayPyInterpreter
+        ParlayPyInterpreter.prototype = Object.create(ParlayInterpreter.prototype);
+        ParlayPyInterpreter.prototype.constructor = ParlayPyInterpreter;
 
         /**
          * Attempts to construct a [JS-Interpreter]{@link https://github.com/NeilFraser/JS-Interpreter/} instance using functionString and the given childInitFunc.
@@ -55,52 +45,110 @@
             if (!this.functionString) {
                 this.constructionError = "Editor is empty. Please enter a valid statement.";
             }
-            else {
-                //TODO: need to set Sk.pre?
-                // configure Skulpt so that the output of the translation is passed to the JS-Interpreter
-                Sk.configure({output: console.log.bind(console), read:builtinRead});
-
-                try {
-                    var prog = Sk.importMainWithBody("user-script", false, this.functionString, true);
-                    // "single" parameter does nothing, but is expected by the Sk.compile documentation
-                    this.program = Sk.misceval.asyncToPromise(function() {
-                        return prog;
-                    });
-                }
-                catch (error) {
-                    this.constructionError = error.toString();
-                }
-
-            }
 
         };
 
+
+    /** This Worker runs an individual Python script in a separate thread.
+     * It is designed to be reusable to avoid repeated script imports.
+     * Messages to this Worker should be Python scripts as strings.
+     * Messages from this Worker will be Objects of one of the following forms:
+     *  {messageType: "print", value: <text>}
+     *  {messageType: "return"}
+     *  {messageType: "error", value: <err>}
+     */
+    function pyWorker() {
+        importScripts("https://raw.githubusercontent.com/skulpt/skulpt-dist/master/skulpt.min.js",
+            "https://raw.githubusercontent.com/skulpt/skulpt-dist/master/skulpt-stdlib.js");
+
+        Sk.configure({
+            output: print,
+            read: builtinRead
+        });
+
+        function print(text) {
+            postMessage({messageType: "print", value: text});
+        }
+
+        function builtinRead(x) {
+            if (Sk.builtinFiles === undefined || Sk.builtinFiles.files[x] === undefined)
+                throw "File not found: '" + x + "'";
+            return Sk.builtinFiles.files[x];
+        }
+
+        //The return continuation, to be called after running a Python script to pass the result
+        // back to the user.
+        // Indicates that this worker is now idle.
+        function ret() {
+             postMessage({messageType: "return"});
+        }
+
+        // Indicates that this worker is now idle.
+        self.onerror = function(err) {
+             postMessage({messageType: "error", value: err});
+        };
+
+        self.onmessage = function(e) {
+            Sk.misceval.asyncToPromise(function () {
+                return Sk.importMainWithBody("user-script", false, e.data, true);
+            }).then(ret, function (err) {
+                throw err;
+            });
+        };
+    }
+
+    //create a Blob containing the worker code
+    var blob = new Blob(['(' + pyWorker + ')();']);
+
+    //create a URL used to pass the Blob to the Worker constructor
+    var blobURL = URL.createObjectURL(blob, {
+        type: 'application/javascript'
+    });
+
     /**
-     * Attempts to run the constructed JavaScript.
+     * Attempts to run the Python script.
      * @member module:ParlayWidget.ParlayPyInterpreter#run
      * @public
-     * @returns {Object} - Result of Python script or error
+     * @returns {Object} - true or error
      */
     ParlayPyInterpreter.prototype.run = function() {
         if (!!this.constructionError) {
                 return this.constructionError;
             }
-            else if (!this.jsCode) {
+            else if (!this.functionString) {
                 return "ParlayInterpreter.construct() must be done before ParlayInterpreter.run()";
             }
             else {
                 try {
-                    this.program.then(function(mod) {
-                        console.log("Script finished.");
-                    }, function(err) {
-                        throw err;
-                    });
+                    var pyWorker = new Worker(blobURL);
+                    //handle 3 kinds of valid messages: print, error, and return
+                    pyWorker.onmessage = function(e) {
+                        var msg = e.data;
+                        switch(msg.messageType) {
+                            case "print":
+                                console.log(msg.value);
+                                break;
+                            case "error":
+                                throw msg.value;
+                            case "return":
+                                return;
+                            default :
+                                return;
+                        }
+                    };
+                    pyWorker.onerror = function(e) {
+                        console.log(e);
+                    };
+                    pyWorker.postMessage(this.functionString);
+
+                    //return true on successful launch
+                    return true;
                 }
                 catch (error) {
                     return error.toString();
                 }
             }
-    }
+    };
 
         return ParlayPyInterpreter;
     }

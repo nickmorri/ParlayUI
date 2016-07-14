@@ -56,14 +56,16 @@
                 this.constructionError = "Editor is empty. Please enter a valid statement.";
             }
             else {
-                Sk.resetCompiler();
                 //TODO: need to set Sk.pre?
                 // configure Skulpt so that the output of the translation is passed to the JS-Interpreter
                 Sk.configure({output: console.log.bind(console), read:builtinRead});
 
                 try {
+                    var prog = Sk.importMainWithBody("user-script", false, this.functionString, true);
                     // "single" parameter does nothing, but is expected by the Sk.compile documentation
-                    this.jsCode = runPyFun(Sk.compile(this.functionString, "user-script", "single"));
+                    this.program = Sk.misceval.asyncToPromise(function() {
+                        return prog;
+                    });
                 }
                 catch (error) {
                     this.constructionError = error.toString();
@@ -88,9 +90,11 @@
             }
             else {
                 try {
-                    //eval is safe because the generated code does not use the external namespace
-                    //TODO: check that return data represents the python data
-                    return eval(this.jsCode);
+                    this.program.then(function(mod) {
+                        console.log("Script finished.");
+                    }, function(err) {
+                        throw err;
+                    });
                 }
                 catch (error) {
                     return error.toString();

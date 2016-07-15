@@ -1,7 +1,7 @@
 (function () {
     "use strict";
     
-    var module_dependencies = ["parlay.widget.interpreter", "parlay.socket", "parlay.widget.workerpool"];
+    var module_dependencies = ["parlay.widget.interpreter", "parlay.socket", "parlay.utility.workerpool"];
     
     angular
         .module("parlay.widget.interpreter.py", module_dependencies)

@@ -4,7 +4,7 @@
     var module_dependencies = [];
 
     angular
-        .module("parlay.widget.workerpool", module_dependencies)
+        .module("parlay.utility.workerpool", module_dependencies)
         .factory("ParlayWorkerPool", ParlayWorkerPoolFactory);
 
    ParlayWorkerPoolFactory.$inject = [];

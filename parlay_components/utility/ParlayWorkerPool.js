@@ -19,8 +19,8 @@
                     //end the worker
                     worker.terminate();
                 }
-            }
-        };
+            };
+        }
 
         // constructs new onmessage and onerror functions that free workers when they are done
         function receiveAndFree(worker, onMorE, isCompleted) {
@@ -31,12 +31,12 @@
                     //free the worker
                     worker.isBusy = false;
                 }
-            }
-        };
+            };
+        }
 
         function ParlayWorkerPool() {
             // worker properties
-            var workerScript = undefined;
+            var workerScript;
             var onmessage = function(e){};
             var onerror = function(e){};
             // by default, close workers
@@ -93,7 +93,7 @@
                 } else {
                     isCompleted = function(e) { return true;};
                 }
-            }
+            };
 
             /**
              * Returns a worker in the pool, creating a new one if necessary.
@@ -102,14 +102,13 @@
              * @returns {Worker} - A Worker from this WorkerPool
              *
              */
-            this.getWorker = function() {//TODO: appears to only create workers 1/2 the time?
+            this.getWorker = function() {
                 // if we have a free worker, use it
                 if (nextAvailable < pool.length) {
                     var last = nextAvailable;
                     // find the next available worker
                     nextAvailable = 0;
-                    while (nextAvailable < pool.length
-                            && pool[nextAvailable].isBusy) {
+                    while (nextAvailable < pool.length && pool[nextAvailable].isBusy) {
                         nextAvailable++;
                     }
                     // mark this worker as in use and return it
@@ -126,7 +125,7 @@
                     worker.isBusy = true;
                     return worker;
                 }
-            }
+            };
 
         }
 

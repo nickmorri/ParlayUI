@@ -45,18 +45,12 @@
                  postMessage({messageType: "return"});
             }
 
-            // Indicates that this worker is now idle.
-            self.onerror = function(err) {
-                 postMessage({messageType: "error", value: err});
-            };
-
             self.onmessage = function(e) {
                 Sk.misceval.asyncToPromise(function () {
                     return Sk.importMainWithBody("user-script", false, e.data, true);
                 }).then(ret, function (err) {
-                    //TODO: is err an error?/Does this do what I want?
                     if (err instanceof Sk.builtin.BaseException) {
-                        postMessage({messageType: "error", value: err});
+                        postMessage({messageType: "error", value: Sk.ffi.remapToJs(err.args)});
                     } else {
                         throw err;
                     }
@@ -64,7 +58,7 @@
             };
         }
 
-        //create a URL used to pass the Blob to the Worker constructor
+        //create a URL used to pass the worker script to the Worker constructor as a Blob
         var blobURL = URL.createObjectURL(new Blob(['(' + pyWorker + ')();']), {
             type: 'application/javascript'
         });
@@ -88,23 +82,23 @@
                 }
             },
             // onerror
-            function(e) {
-                console.log(e);
-            },
+            undefined,
             // isComplete
             function(e) {
-                var msg = e.data;
-                //TODO: account for errors (done?)
-                switch(msg.messageType) {
-                    case "print":
-                        return false;
-                    case "error":
-                        return true;
-                    case "return":
-                        return true;
-                    default :
-                        return false;
+                if (e instanceof MessageEvent) {
+                    var msg = e.data;
+                    switch (msg.messageType) {
+                        case "print":
+                            return false;
+                        case "error":
+                            return true;
+                        case "return":
+                            return true;
+                        default :
+                            return false;
+                    }
                 }
+                return false;
             }
         );
 

@@ -143,7 +143,6 @@
             if (!this.functionString) {
                 this.constructionError = "Editor is empty. Please enter a valid statement.";
             }
-            this.pyWorker = workerPool.getWorker();
 
         };
 
@@ -162,7 +161,7 @@
                     return "ParlayInterpreter.construct() must be done before ParlayInterpreter.run()";
                 }
                 else {
-                    this.pyWorker.postMessage(this.functionString);
+                    workerPool.getWorker().postMessage(this.functionString);
                     //return true on successful launch
                     return true;
                 }

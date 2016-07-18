@@ -513,7 +513,10 @@ module.exports = function (grunt) {
                         {'match': 'vendorIcon', 'replacement': getBase64(getImagePaths(getPrimaryVendor(getVendors())).icon)},
                         {'match': 'primaryPalette', 'replacement': getPrimaryVendor(getVendors()).options.primaryPalette},
                         {'match': 'accentPalette', 'replacement': getPrimaryVendor(getVendors()).options.accentPalette},
-                        {'match': 'debugEnabled', 'replacement': true}
+                        {'match': 'debugEnabled', 'replacement': true},
+                        {'match': 'importSkulpt', 'replacement':
+                            grunt.file.read("bower_components/skulpt/skulpt.min.js") + ";" +
+                            grunt.file.read("bower_components/skulpt/skulpt-stdlib.js")}
                     ]
                 },
                 'files': [
@@ -528,7 +531,10 @@ module.exports = function (grunt) {
                         {'match': 'vendorIcon', 'replacement': getBase64(getImagePaths(getPrimaryVendor(getVendors())).icon)},
                         {'match': 'primaryPalette', 'replacement': getPrimaryVendor(getVendors()).options.primaryPalette},
                         {'match': 'accentPalette', 'replacement': getPrimaryVendor(getVendors()).options.accentPalette},
-                        {'match': 'debugEnabled', 'replacement': false}
+                        {'match': 'debugEnabled', 'replacement': false},
+                        {'match': 'importSkulpt', 'replacement':
+                            grunt.file.read("bower_components/skulpt/skulpt.min.js") + ";" +
+                            grunt.file.read("bower_components/skulpt/skulpt-stdlib.js")}
                     ]
                 },
                 'files': [
@@ -588,8 +594,8 @@ module.exports = function (grunt) {
 	    'jshint:dev',
 	    'csslint:dev',
 	    'clean:dev',
-        'replace:dev',
 	    'bower-install-simple:dev',
+        'replace:dev',
 	    'bower:dev',
 	    'html2js',
 	    'copy:dev',
@@ -606,8 +612,8 @@ module.exports = function (grunt) {
 	    'jshint:dist',
 	    'csslint:dist',
 	    'clean:dist',
-        'replace:dist',
 	    'bower-install-simple:dist',
+        'replace:dist',
         'bower_concat:dist',
 	    'html2js',
 	    'uglify:dist',

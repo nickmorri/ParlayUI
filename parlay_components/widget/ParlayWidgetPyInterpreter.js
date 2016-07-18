@@ -1,14 +1,15 @@
 (function () {
     "use strict";
     
-    var module_dependencies = ["parlay.widget.interpreter", "parlay.socket", "parlay.utility.workerpool"];
+    var module_dependencies = ["parlay.widget.interpreter", "parlay.socket",
+        "parlay.utility.workerpool", "worker.imports"];
     
     angular
         .module("parlay.widget.interpreter.py", module_dependencies)
         .factory("ParlayPyInterpreter", ParlayPyInterpreterFactory);
 
-   ParlayPyInterpreterFactory.$inject = ["ParlayInterpreter", "ParlaySocket", "ParlayWorkerPool"];
-    function ParlayPyInterpreterFactory (ParlayInterpreter, ParlaySocket, ParlayWorkerPool) {
+   ParlayPyInterpreterFactory.$inject = ["ParlayInterpreter", "ParlaySocket", "ParlayWorkerPool", "skulpt"];
+    function ParlayPyInterpreterFactory (ParlayInterpreter, ParlaySocket, ParlayWorkerPool, skulpt) {
 
 
         /** This Worker runs an individual Python script in a separate thread.
@@ -20,12 +21,10 @@
          *  {messageType: "error", value: <err>}
          */
         function pyWorker() {
-            importScripts("https://raw.githubusercontent.com/skulpt/skulpt-dist/master/skulpt.min.js",
-                "https://raw.githubusercontent.com/skulpt/skulpt-dist/master/skulpt-stdlib.js");
-
             Sk.configure({
                 output: print,
-                read: builtinRead
+                read: builtinRead,
+                setTimeout : this.setTimeout.bind(this)
             });
 
             function print(text) {
@@ -57,9 +56,12 @@
                 });
             };
         }
-
+        //create a URL used to pass Skulpt to the worker script
+        var skulptURL = URL.createObjectURL(new Blob([skulpt]), {
+            type: 'application/javascript'
+        });
         //create a URL used to pass the worker script to the Worker constructor as a Blob
-        var blobURL = URL.createObjectURL(new Blob(['(' + pyWorker + ')();']), {
+        var blobURL = URL.createObjectURL(new Blob(['importScripts("' + skulptURL + '");(' + pyWorker + ')();']), {
             type: 'application/javascript'
         });
 

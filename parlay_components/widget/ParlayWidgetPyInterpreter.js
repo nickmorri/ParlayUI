@@ -24,7 +24,7 @@
             Sk.configure({
                 output: print,
                 read: builtinRead,
-                setTimeout : this.setTimeout.bind(this)
+                setTimeout : self.setTimeout.bind(self)
             });
 
             function print(text) {

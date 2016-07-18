@@ -188,7 +188,7 @@ module.exports = function (grunt) {
                     'livereload': true,
                     'interrupt': true
                 },
-                'files': ['vendorDefaults.js', '<%= meta.source %>'],
+                'files': ['vendorDefaults.js', 'workerImports.js', '<%= meta.source %>'],
                 'tasks': ['newer:replace:dev', 'newer:jshint:dev', 'karma:dev', 'newer:copy:dev', 'includeSource:dev', 'wiredep:dev']
             },
             'stylesheets': {
@@ -469,7 +469,10 @@ module.exports = function (grunt) {
 			},
 			'dist': {
 				'files': {
-					'<%= meta.tmp_destination %>/<%= pkg.namelower %>.min.js': ['<%= meta.tmp_destination %>/vendorDefaults.js', '<%= meta.source %>', '<%= meta.compiled_html %>'],
+					'<%= meta.tmp_destination %>/<%= pkg.namelower %>.min.js':
+                        ['<%= meta.tmp_destination %>/vendorDefaults.js',
+                            '<%= meta.tmp_destination %>/workerImports.js',
+                            '<%= meta.source %>', '<%= meta.compiled_html %>'],
                     '<%= meta.tmp_destination %>/lib.min.js': '<%= meta.tmp_destination %>/lib.js'
 				}
 			}
@@ -520,7 +523,8 @@ module.exports = function (grunt) {
                     ]
                 },
                 'files': [
-                    {'expand': true, 'flatten': true, 'src': 'vendorDefaults.js', 'dest': '<%= meta.dev_destination %>'}
+                    {'expand': true, 'flatten': true, 'src': 'vendorDefaults.js', 'dest': '<%= meta.dev_destination %>'},
+                    {'expand': true, 'flatten': true, 'src': 'workerImports.js', 'dest': '<%= meta.dev_destination %>'}
                 ]
             },
             'dist': {
@@ -538,7 +542,8 @@ module.exports = function (grunt) {
                     ]
                 },
                 'files': [
-                    {'expand': true, 'flatten': true, 'src': 'vendorDefaults.js', 'dest': '<%= meta.tmp_destination %>'}
+                    {'expand': true, 'flatten': true, 'src': 'vendorDefaults.js', 'dest': '<%= meta.tmp_destination %>'},
+                    {'expand': true, 'flatten': true, 'src': 'workerImports.js', 'dest': '<%= meta.tmp_destination %>'}
                 ]
             }
         },

@@ -104,6 +104,12 @@
             }
         );
 
+        //collect extra workers every minute
+        (function collectionLoop() {
+            setTimeout(collectionLoop, 60000);
+            workerPool.collect();
+        })();
+
         /**
          * ParlayPyInterpreter factory for running arbitrary Python code in a separate thread.
          *

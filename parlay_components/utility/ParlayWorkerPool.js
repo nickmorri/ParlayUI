@@ -126,6 +126,31 @@
                 }
             };
 
+            /**
+             * Closes all free workers.
+             * @member module:ParlayWidget.ParlayWorkerPool#getWorker
+             * @public
+             *
+             */
+            this.collect = function() {
+                console.log("collecting idle workers:");
+                console.log(pool);
+                var next = 0;
+                // traverse the workers in pool
+                while (next < pool.length) {
+                    // skip busy workers
+                    if (pool[next].isBusy) {
+                        next++;
+                    // remove idle workers
+                    } else {
+                        pool[next].terminate();
+                        pool.splice(next, 1);
+                    }
+                }
+                console.log("After collection:")
+                console.log(pool);
+            }
+
         }
 
         return ParlayWorkerPool;

@@ -44,7 +44,6 @@
 
             //worker pool
             var pool = [];
-            var nextAvailable = 0;
 
             /**
              * Initializes the pool to hold a particular kind of worker.
@@ -103,26 +102,26 @@
              *
              */
             this.getWorker = function() {
-                // if we have a free worker, use it
+                // find the next available worker
+                var nextAvailable = 0;
+                while (nextAvailable < pool.length && pool[nextAvailable].isBusy) {
+                    nextAvailable++;
+                }
+                // If we have a free worker, we use it.
+                // Otherwise, we make a new one.
                 if (nextAvailable < pool.length) {
-                    var last = nextAvailable;
-                    // find the next available worker
-                    nextAvailable = 0;
-                    while (nextAvailable < pool.length && pool[nextAvailable].isBusy) {
-                        nextAvailable++;
-                    }
                     // mark this worker as in use and return it
-                    pool[last].isBusy = true;
-                    return pool[last];
+                    pool[nextAvailable].isBusy = true;
+                    return pool[nextAvailable];
                 } else {
                     // create and initialize a new worker
                     var worker = new Worker(workerScript);
                     worker.onmessage = receiveAndFree(worker, onmessage, isCompleted);
                     worker.onerror = receiveAndFree(worker, onerror, isCompleted);
+                    // mark the worker as in use
+                    worker.isBusy = true;
                     // add the worker to the pool
                     pool.push(worker);
-                    // mark the worker as in use and return it
-                    worker.isBusy = true;
                     return worker;
                 }
             };

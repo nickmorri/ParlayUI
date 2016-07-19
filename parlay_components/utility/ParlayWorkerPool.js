@@ -145,7 +145,7 @@
                         pool.splice(next, 1);
                     }
                 }
-            }
+            };
 
         }
 

@@ -137,7 +137,6 @@ module.exports = function (grunt) {
         // retrieve all JS module files
         return grunt.file.expand(parlay_script_modules_base_path + "**/*.js")
             .reduce(function(rest, filepath){
-                console.log("Importing native parlay library file: " + filepath);
                 return rest + grunt.file.read(filepath);
             }, "");
     }

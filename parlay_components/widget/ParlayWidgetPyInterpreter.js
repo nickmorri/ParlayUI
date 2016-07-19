@@ -8,8 +8,8 @@
         .module("parlay.widget.interpreter.py", module_dependencies)
         .factory("ParlayPyInterpreter", ParlayPyInterpreterFactory);
 
-   ParlayPyInterpreterFactory.$inject = ["ParlayInterpreter", "ParlaySocket", "ParlayWorkerPool", "skulpt"];
-    function ParlayPyInterpreterFactory (ParlayInterpreter, ParlaySocket, ParlayWorkerPool, skulpt) {
+   ParlayPyInterpreterFactory.$inject = ["ParlayInterpreter", "ParlaySocket", "ParlayWorkerPool", "skulpt", "refreshRate"];
+    function ParlayPyInterpreterFactory (ParlayInterpreter, ParlaySocket, ParlayWorkerPool, skulpt, refreshRate) {
 
 
         /** This Worker runs an individual Python script in a separate thread.
@@ -106,7 +106,7 @@
 
         //collect extra workers every minute
         (function collectionLoop() {
-            setTimeout(collectionLoop, 60000);
+            setTimeout(collectionLoop, refreshRate);
             workerPool.collect();
         })();
 

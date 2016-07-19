@@ -18,6 +18,8 @@
 
     angular
         .module("worker.imports", module_dependencies)
-        .constant("skulpt", "(" + initSkulpt + ").call(this);");
+        .constant("skulpt", "(" + initSkulpt + ").call(this);")
+        //the milisecond delay between worker pool collections
+        .constant("refreshRate", 60000);
 
 }());

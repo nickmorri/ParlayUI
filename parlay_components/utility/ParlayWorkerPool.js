@@ -133,8 +133,6 @@
              *
              */
             this.collect = function() {
-                console.log("collecting idle workers:");
-                console.log(pool);
                 var next = 0;
                 // traverse the workers in pool
                 while (next < pool.length) {
@@ -147,8 +145,6 @@
                         pool.splice(next, 1);
                     }
                 }
-                console.log("After collection:")
-                console.log(pool);
             }
 
         }

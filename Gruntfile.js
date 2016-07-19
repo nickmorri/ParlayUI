@@ -201,7 +201,7 @@ module.exports = function (grunt) {
                 },
                 'files': ['vendorDefaults.js', 'workerImports.js', '<%= meta.source %>',
                             "<%= meta.parlay_script_modules_base_path %>/**/*.js"],
-                'tasks': ['newer:replace:dev', 'newer:jshint:dev', 'karma:dev', 'newer:copy:dev', 'includeSource:dev', 'wiredep:dev']
+                'tasks': ['replace:dev', 'newer:jshint:dev', 'karma:dev', 'newer:copy:dev', 'includeSource:dev', 'wiredep:dev']
             },
             'stylesheets': {
                 'options': {

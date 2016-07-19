@@ -3,8 +3,15 @@
 
     var module_dependencies = [];
 
-    var initSkulpt = function() {
+    function initSkulpt() {
         @@importSkulpt
+    }
+
+    function initParlayModules() {
+        function registerModule(path, module) {
+            Sk.builtinFiles.files[path] = "var $builtinmodule = " + module;
+        }
+        @@importParlay
     }
 
     /**
@@ -19,6 +26,7 @@
     angular
         .module("worker.imports", module_dependencies)
         .constant("skulpt", "(" + initSkulpt + ").call(this);")
+        .constant("parlayModules", "(" + initParlayModules + ").call(this);")
         //the milisecond delay between worker pool collections
         .constant("refreshRate", 60000);
 

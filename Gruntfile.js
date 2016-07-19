@@ -4,6 +4,7 @@ module.exports = function (grunt) {
     // Base paths to parlay_components and vendor_components directories.
     var parlay_components_base_path = "parlay_components/";
     var vendor_components_base_path = "vendor_components/";
+    var parlay_script_modules_base_path = "parlay_script_modules/";
 
 	/**
 	 * Loads each vendor configuration file available in vendor_components
@@ -131,6 +132,16 @@ module.exports = function (grunt) {
 	    }, []));
 	}
 
+    // retrieves all JS library files and concatenates them
+    function concatParlayNativeModules() {
+        // retrieve all JS module files
+        return grunt.file.expand(parlay_script_modules_base_path + "**/*.js")
+            .reduce(function(rest, filepath){
+                console.log("Importing native parlay library file: " + filepath);
+                return rest + grunt.file.read(filepath);
+            }, "");
+    }
+
 	// Read the dependencies in package.json and load Grunt tasks that match "grunt-*".
 	require('load-grunt-tasks')(grunt);
 
@@ -144,6 +155,7 @@ module.exports = function (grunt) {
 		'meta': {
             'parlay_component_base_path': parlay_components_base_path,
             'vendor_component_base_path': vendor_components_base_path,
+            'parlay_script_modules_base_path': parlay_script_modules_base_path,
 			'source': getVendorPathGlobs(getVendors(), ['source'], ['app.js', '<%= meta.parlay_component_base_path %>/*/*.js']),
             'vendor_paths': getVendorPaths(getVendors()),
             'bower_files': require('main-bower-files')(),
@@ -188,7 +200,8 @@ module.exports = function (grunt) {
                     'livereload': true,
                     'interrupt': true
                 },
-                'files': ['vendorDefaults.js', 'workerImports.js', '<%= meta.source %>'],
+                'files': ['vendorDefaults.js', 'workerImports.js', '<%= meta.source %>',
+                            "<%= meta.parlay_script_modules_base_path %>/**/*.js"],
                 'tasks': ['newer:replace:dev', 'newer:jshint:dev', 'karma:dev', 'newer:copy:dev', 'includeSource:dev', 'wiredep:dev']
             },
             'stylesheets': {
@@ -518,8 +531,9 @@ module.exports = function (grunt) {
                         {'match': 'accentPalette', 'replacement': getPrimaryVendor(getVendors()).options.accentPalette},
                         {'match': 'debugEnabled', 'replacement': true},
                         {'match': 'importSkulpt', 'replacement':
-                            grunt.file.read("bower_components/skulpt/skulpt.min.js") + ";" +
-                            grunt.file.read("bower_components/skulpt/skulpt-stdlib.js")}
+                            grunt.file.read("bower_components/skulpt/skulpt.min.js") + ";\n" +
+                            grunt.file.read("bower_components/skulpt/skulpt-stdlib.js")},
+                        {'match': 'importParlay', 'replacement': concatParlayNativeModules()}
                     ]
                 },
                 'files': [
@@ -537,8 +551,9 @@ module.exports = function (grunt) {
                         {'match': 'accentPalette', 'replacement': getPrimaryVendor(getVendors()).options.accentPalette},
                         {'match': 'debugEnabled', 'replacement': false},
                         {'match': 'importSkulpt', 'replacement':
-                            grunt.file.read("bower_components/skulpt/skulpt.min.js") + ";" +
-                            grunt.file.read("bower_components/skulpt/skulpt-stdlib.js")}
+                            grunt.file.read("bower_components/skulpt/skulpt.min.js") + ";\n" +
+                            grunt.file.read("bower_components/skulpt/skulpt-stdlib.js")},
+                        {'match': 'importParlay', 'replacement': concatParlayNativeModules()}
                     ]
                 },
                 'files': [

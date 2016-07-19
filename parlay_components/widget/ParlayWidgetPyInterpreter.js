@@ -2,14 +2,16 @@
     "use strict";
     
     var module_dependencies = ["parlay.widget.interpreter", "parlay.socket",
-        "parlay.utility.workerpool", "worker.imports"];
+        "parlay.utility.workerpool", "worker.imports", "parlay.widget.py.modules"];
     
     angular
         .module("parlay.widget.interpreter.py", module_dependencies)
         .factory("ParlayPyInterpreter", ParlayPyInterpreterFactory);
 
-   ParlayPyInterpreterFactory.$inject = ["ParlayInterpreter", "ParlaySocket", "ParlayWorkerPool", "skulpt", "refreshRate"];
-    function ParlayPyInterpreterFactory (ParlayInterpreter, ParlaySocket, ParlayWorkerPool, skulpt, refreshRate) {
+    ParlayPyInterpreterFactory.$inject = ["ParlayInterpreter", "ParlaySocket", "ParlayWorkerPool",
+                                         "skulpt", "refreshRate", "parlayModules"];
+    function ParlayPyInterpreterFactory (ParlayInterpreter, ParlaySocket, ParlayWorkerPool,
+                                         skulpt, refreshRate, parlayModules) {
 
 
         /** This Worker runs an individual Python script in a separate thread.
@@ -56,12 +58,12 @@
                 });
             };
         }
-        //create a URL used to pass Skulpt to the worker script
-        var skulptURL = URL.createObjectURL(new Blob([skulpt]), {
+        //create a URL used to pass Skulpt and the Parlay modules to the worker script
+        var libURL = URL.createObjectURL(new Blob([skulpt + parlayModules]), {
             type: 'application/javascript'
         });
         //create a URL used to pass the worker script to the Worker constructor as a Blob
-        var blobURL = URL.createObjectURL(new Blob(['importScripts("' + skulptURL + '");(' + pyWorker + ')();']), {
+        var blobURL = URL.createObjectURL(new Blob(['importScripts("' + libURL + '");(' + pyWorker + ')();']), {
             type: 'application/javascript'
         });
 

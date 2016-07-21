@@ -13,5 +13,19 @@ function parlay_utils(name) {
         return obj;
     });
 
+    // dummy setup function for ease of portability
+    mod.setup = new Sk.builtin.func(function() {
+        //TODO: check args? (does nothing anyway)
+        //Sk.builtin.pyCheckArgs("setup", arguments, -1, -1);
+        return Sk.builtin.none.none$;
+    });
+
+    // TODO: implement
+    mod.discover = new Sk.builtin.func(function() {
+        //TODO: check args
+        //Sk.builtin.pyCheckArgs("setup", arguments, -1, -1);
+        return Sk.builtin.none.none$;
+    });
+
     return mod;
 }

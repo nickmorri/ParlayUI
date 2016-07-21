@@ -1,9 +1,8 @@
 "use strict";
 
-//TODO: get filepath automatically
-registerModule("/parlay/__init__.js", parlay);
+registerModule("parlay", [], parlay);
 function parlay(name) {
     var mod = {};
 
     return mod;
-};
+}

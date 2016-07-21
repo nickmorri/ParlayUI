@@ -4,14 +4,27 @@
     var module_dependencies = [];
 
     function initSkulpt() {
-        @@importSkulpt
+        @@importSkulpt // jshint ignore:line
     }
 
     function initParlayModules() {
-        function registerModule(path, module) {
-            Sk.builtinFiles.files[path] = "var $builtinmodule = " + module;
+        Sk.externalLibraries = {};
+
+        // format and add the necessary information for Skulpt to use this module
+        function registerModule(name, dependencies, module) {
+            // register this module
+            Sk.externalLibraries[name] = {
+                path: name,
+                dependencies: dependencies,
+                type: "js"
+            };
+            // pre-cache the module since there is no file for it
+            // Skulpt will check the cache first and never look for the file
+            Sk.externalLibraryCache[name] = {funcname: "$builtinmodule", code:"var $builtinmodule = " + module};
         }
-        @@importParlay
+
+        @@importParlay // jshint ignore:line
+
     }
 
     /**

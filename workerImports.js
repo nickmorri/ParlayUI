@@ -11,21 +11,26 @@
         Sk.externalLibraries = {};
 
         // format and add the necessary information for Skulpt to use this module
-        function registerModule(name, module, parent) {
+        function registerModule(name, module, ext) {
 
-            module.$dependencies = module.$dependencies || [];
+            // embed the actual code inside the js wrapper
+            if (ext === "js") {
+                // ("" + module) returns the code of module as a string
+                module = {funcname: module.name, code: "" + module};
+            }
 
             // register this module
             Sk.externalLibraries[name] = {
                 path: name,
-                // for python modules, the parent will be the only dependency
-                // al others will be handled by import
-                dependencies: module.$dependencies,
-                type: "js"
+                // since we're loading all of our own modules locally,
+                // we shouldn't need to list dependencies
+                dependencies: [],
+                type: ext
             };
             // pre-cache the module since there is no file for it
             // Skulpt will check the cache first and never look for the file
-            Sk.externalLibraryCache[name] = {funcname: "$builtinmodule", code:"var $builtinmodule = " + module};
+            Sk.externalLibraryCache[name] = module;
+
         }
 
         @@importParlay // jshint ignore:line

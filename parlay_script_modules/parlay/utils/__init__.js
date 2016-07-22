@@ -1,6 +1,5 @@
 "use strict";
 
-parlay_utils.$dependencies = [];
 function parlay_utils(name) {
     var mod = {};
 

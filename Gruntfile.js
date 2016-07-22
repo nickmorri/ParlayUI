@@ -132,37 +132,40 @@ module.exports = function (grunt) {
 	    }, []));
 	}
 
-    // retrieves all JS library files and concatenates them
+    // Note: this function relies on the implementation of registerModule in workerImports.js
+    // retrieves all module files and concatenates them for inclusion in the worker script
     function concatParlayNativeModules() {
         // retrieve all JS module files
-        return grunt.file.expand(parlay_script_modules_base_path + "**/*.js")
+        return grunt.file.expand(parlay_script_modules_base_path + "**/*.{js,py}")
             .reduce(function(rest, filepath){
-                return rest + grunt.file.read(filepath) + genRegistration(filepath);
+
+                var ext = filepath.slice(-2);
+                // get the filepath relative to parlay_script_modules as an array and with the file extension removed
+                var moduleTree = filepath.slice(0, -3).split("/").slice(1);
+
+                // if this is an init file, generate the registration for the filepath to its parent directory
+                if (moduleTree[moduleTree.length - 1] === "__init__") {
+                    moduleTree.pop();
+                }
+
+                var modPath = moduleTree.join(".");
+                var modName = moduleTree.join("_");
+
+                var registration =  'registerModule("'+ modPath +'", '+ modName +', "' + ext  + '");';
+
+                var body;
+
+                if (ext === "js") {
+                    body = grunt.file.read(filepath);
+                } else {
+                    // assign the Python code to modName as a string
+                    body = modName + '="' + grunt.file.read(filepath)
+                                    .replace(/\"/g, "\\\"")
+                                    .replace(/\n/g, "\\n") + '";\n';
+                }
+
+                return rest + body + registration;
             }, "");
-    }
-
-    // Note: this function relies on the implementation of registerModule in workerImports.js
-    function genRegistration(filepath) {
-        // get the filepath relative to parlay_script_modules as an array and with the file extension removed
-        var moduleTree = filepath.slice(0, -3).split("/").slice(1);
-
-        // if this is an init file, generate the registration for the filepath to its parent directory
-        if (moduleTree[moduleTree.length - 1] === "__init__") {
-            moduleTree.pop();
-        }
-
-        var parentMod;
-        // if this module is at the top level, it has no parent
-        if (moduleTree.length === 1) {
-            parentMod = undefined;
-        } else {
-            parentMod = '"' + moduleTree.slice(0, -1).join(".") + '"';
-        }
-
-        var modPath = '"' + moduleTree.join(".") + '"';
-        var modName = moduleTree.join("_");
-
-        return 'registerModule('+ modPath +', '+ modName +', '+ parentMod +');';
     }
 
     function loadSkulpt(buildType) {
@@ -174,7 +177,6 @@ module.exports = function (grunt) {
 
         // at some point we may want to use the non-minified script for dev
         if(buildType === 'dev') {
-            //TODO: remove skulpt from Bower to reduce filesize (avoids double include)
             //TODO: debug use of skulpt (vs skulpt.min) for easier debugging
             return fileData;
         } else {

@@ -141,6 +141,23 @@ module.exports = function (grunt) {
             }, "");
     }
 
+    function loadSkulpt(buildType) {
+
+        var fileData = grunt.file.read("bower_components/skulpt/skulpt.min.js")
+            // since this file gets inlined, we need to remove the script tags from the quotes
+                            .replace(/<script.{0,40}\/script>/g, "<div>sanitized for compilation</div>") + ";\n" +
+                        grunt.file.read("bower_components/skulpt/skulpt-stdlib.js");
+
+        // at some point we may want to use the non-minified script for dev
+        if(buildType === 'dev') {
+            //TODO: remove skulpt from Bower to reduce filesize (avoids double include)
+            //TODO: debug use of skulpt (vs skulpt.min) for easier debugging
+            return fileData;
+        } else {
+            return fileData;
+        }
+    }
+
 	// Read the dependencies in package.json and load Grunt tasks that match "grunt-*".
 	require('load-grunt-tasks')(grunt);
 
@@ -304,7 +321,8 @@ module.exports = function (grunt) {
                     ],
                     'jsinterpreter': 'acorn_interpreter.js',
                     "Chart.js": "dist/Chart.bundle.min.js"
-                }
+                },
+                'exclude': ["skulpt"]
 			}
 		},
 
@@ -313,7 +331,8 @@ module.exports = function (grunt) {
         // https://github.com/taptapship/wiredep
 		'wiredep': {
 			'dev': {
-				'src': '<%= meta.dev_destination %>/index.html'
+				'src': '<%= meta.dev_destination %>/index.html',
+                'exclude': 'bower_components/skulpt/*'
 			}
 		},
 
@@ -529,9 +548,7 @@ module.exports = function (grunt) {
                         {'match': 'primaryPalette', 'replacement': getPrimaryVendor(getVendors()).options.primaryPalette},
                         {'match': 'accentPalette', 'replacement': getPrimaryVendor(getVendors()).options.accentPalette},
                         {'match': 'debugEnabled', 'replacement': true},
-                        {'match': 'importSkulpt', 'replacement':
-                            grunt.file.read("bower_components/skulpt/skulpt.min.js") + ";\n" +
-                            grunt.file.read("bower_components/skulpt/skulpt-stdlib.js")},
+                        {'match': 'importSkulpt', 'replacement': loadSkulpt('dev')},
                         {'match': 'importParlay', 'replacement': concatParlayNativeModules()}
                     ]
                 },
@@ -549,9 +566,7 @@ module.exports = function (grunt) {
                         {'match': 'primaryPalette', 'replacement': getPrimaryVendor(getVendors()).options.primaryPalette},
                         {'match': 'accentPalette', 'replacement': getPrimaryVendor(getVendors()).options.accentPalette},
                         {'match': 'debugEnabled', 'replacement': false},
-                        {'match': 'importSkulpt', 'replacement':
-                            grunt.file.read("bower_components/skulpt/skulpt.min.js") + ";\n" +
-                            grunt.file.read("bower_components/skulpt/skulpt-stdlib.js")},
+                        {'match': 'importSkulpt', 'replacement': loadSkulpt('dist')},
                         {'match': 'importParlay', 'replacement': concatParlayNativeModules()}
                     ]
                 },

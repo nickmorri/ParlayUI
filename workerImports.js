@@ -15,11 +15,6 @@
 
             module.$dependencies = module.$dependencies || [];
 
-            // if a parent module was provided, add it to the dependencies
-            if (!!parent) {
-                module.$dependencies.push(parent);
-            }
-
             // register this module
             Sk.externalLibraries[name] = {
                 path: name,

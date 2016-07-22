@@ -151,7 +151,7 @@ module.exports = function (grunt) {
                 var modPath = moduleTree.join(".");
                 var modName = moduleTree.join("_");
 
-                var registration =  'registerModule("'+ modPath +'", '+ modName +', "' + ext  + '");';
+                var registration =  '\nregisterModule("'+ modPath +'", '+ modName +', "' + ext  + '");\n';
 
                 var body;
 
@@ -159,9 +159,9 @@ module.exports = function (grunt) {
                     body = grunt.file.read(filepath);
                 } else {
                     // assign the Python code to modName as a string
-                    body = modName + '="' + grunt.file.read(filepath)
+                    body = 'var ' + modName + '="' + grunt.file.read(filepath)
                                     .replace(/\"/g, "\\\"")
-                                    .replace(/\n/g, "\\n") + '";\n';
+                                    .replace(/\n/g, "\\n") + '";';
                 }
 
                 return rest + body + registration;
@@ -243,7 +243,7 @@ module.exports = function (grunt) {
                     'interrupt': true
                 },
                 'files': ['vendorDefaults.js', 'workerImports.js', '<%= meta.source %>',
-                            "<%= meta.parlay_script_modules_base_path %>/**/*.js"],
+                            "<%= meta.parlay_script_modules_base_path %>/**/*.{js,py}"],
                 'tasks': ['replace:dev', 'newer:jshint:dev', 'karma:dev', 'newer:copy:dev', 'includeSource:dev', 'wiredep:dev']
             },
             'stylesheets': {

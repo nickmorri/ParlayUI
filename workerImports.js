@@ -17,6 +17,8 @@
             if (ext === "js") {
                 // ("" + module) returns the code of module as a string
                 module = {funcname: module.name, code: "" + module};
+            } else {
+                module = Sk.compile(module, name, "exec", true);
             }
 
             // register this module

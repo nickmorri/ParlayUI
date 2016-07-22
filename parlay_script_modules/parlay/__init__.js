@@ -1,6 +1,6 @@
 "use strict";
 
-registerModule("parlay", [], parlay);
+parlay.$dependencies = [];
 function parlay(name) {
     var mod = {};
 

@@ -11,11 +11,21 @@
         Sk.externalLibraries = {};
 
         // format and add the necessary information for Skulpt to use this module
-        function registerModule(name, dependencies, module) {
+        function registerModule(name, module, parent) {
+
+            module.$dependencies = module.$dependencies || [];
+
+            // if a parent module was provided, add it to the dependencies
+            if (!!parent) {
+                module.$dependencies.push(parent);
+            }
+
             // register this module
             Sk.externalLibraries[name] = {
                 path: name,
-                dependencies: dependencies,
+                // for python modules, the parent will be the only dependency
+                // al others will be handled by import
+                dependencies: module.$dependencies,
                 type: "js"
             };
             // pre-cache the module since there is no file for it

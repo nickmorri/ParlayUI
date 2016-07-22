@@ -1,6 +1,6 @@
 "use strict";
 
-registerModule("parlay.utils", ["parlay"], parlay_utils);
+parlay_utils.$dependencies = [];
 function parlay_utils(name) {
     var mod = {};
 
@@ -9,7 +9,6 @@ function parlay_utils(name) {
         Sk.builtin.pyCheckType("item_name", "string", Sk.builtin.checkString(item_name));
         //TODO: get item from server
         var obj = new Sk.builtin.object();
-        obj.GenericSetAttr("test", "Hi!");
         return obj;
     });
 

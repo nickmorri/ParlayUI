@@ -137,8 +137,32 @@ module.exports = function (grunt) {
         // retrieve all JS module files
         return grunt.file.expand(parlay_script_modules_base_path + "**/*.js")
             .reduce(function(rest, filepath){
-                return rest + grunt.file.read(filepath);
+                return rest + grunt.file.read(filepath) + genRegistration(filepath);
             }, "");
+    }
+
+    // Note: this function relies on the implementation of registerModule in workerImports.js
+    function genRegistration(filepath) {
+        // get the filepath relative to parlay_script_modules as an array and with the file extension removed
+        var moduleTree = filepath.slice(0, -3).split("/").slice(1);
+
+        // if this is an init file, generate the registration for the filepath to its parent directory
+        if (moduleTree[moduleTree.length - 1] === "__init__") {
+            moduleTree.pop();
+        }
+
+        var parentMod;
+        // if this module is at the top level, it has no parent
+        if (moduleTree.length === 1) {
+            parentMod = undefined;
+        } else {
+            parentMod = '"' + moduleTree.slice(0, -1).join(".") + '"';
+        }
+
+        var modPath = '"' + moduleTree.join(".") + '"';
+        var modName = moduleTree.join("_");
+
+        return 'registerModule('+ modPath +', '+ modName +', '+ parentMod +');';
     }
 
     function loadSkulpt(buildType) {

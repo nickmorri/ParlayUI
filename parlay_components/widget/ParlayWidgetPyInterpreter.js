@@ -51,7 +51,7 @@
                     return Sk.importMainWithBody("user-script", false, e.data, true);
                 }).then(ret, function (err) {
                     if (err instanceof Sk.builtin.BaseException) {
-                        postMessage({messageType: "error", value: Sk.ffi.remapToJs(err.args)});
+                        postMessage({messageType: "error", value: err.toString()});
                     } else {
                         throw err;
                     }

@@ -18,7 +18,11 @@
                 // ("" + module) returns the code of module as a string
                 module = {funcname: module.name, code: "" + module};
             } else {
-                module = Sk.compile(module, name, "exec", true);
+                try {
+                    module = Sk.compile(module, name, "exec", true);
+                } catch (err) {
+                    self.postMessage({messageType:"error", value: err.toString() + " in module " + name});
+                }
             }
 
             // register this module

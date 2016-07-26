@@ -148,18 +148,19 @@ module.exports = function (grunt) {
                     moduleTree.pop();
                 }
 
-                var modPath = moduleTree.join(".");
-                var modName = moduleTree.join("_");
+                var modPath = filepath.slice(filepath.indexOf("/") + 1);
+                var modName = moduleTree.join(".");
+                var modVar = moduleTree.join("_");
 
-                var registration =  '\nregisterModule("'+ modPath +'", '+ modName +', "' + ext  + '");\n';
+                var registration = '\nregisterModule("'+ modPath +'","'+ modName +'", '+ modVar +', "'+ ext +'");\n';
 
                 var body;
 
                 if (ext === "js") {
                     body = grunt.file.read(filepath);
                 } else {
-                    // assign the Python code to modName as a string
-                    body = 'var ' + modName + '="' + grunt.file.read(filepath)
+                    // assign the Python code to modVar as a string
+                    body = 'var ' + modVar + '="' + grunt.file.read(filepath)
                                     .replace(/\"/g, "\\\"")
                                     .replace(/\n/g, "\\n") + '";';
                 }

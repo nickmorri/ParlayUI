@@ -11,15 +11,19 @@
         Sk.externalLibraries = {};
 
         // format and add the necessary information for Skulpt to use this module
-        function registerModule(name, module, ext) {
+        function registerModule(path, name, module, ext) {
+
+            var fileText;
 
             // embed the actual code inside the js wrapper
             if (ext === "js") {
+                fileText = "var $builtinmodule = " + module;
                 // ("" + module) returns the code of module as a string
                 module = {funcname: module.name, code: "" + module};
             } else {
+                fileText = module;
                 try {
-                    module = Sk.compile(module, name, "exec", true);
+                    module = Sk.compile(module, path, "exec", true);
                 } catch (err) {
                     self.postMessage({messageType:"error", value: err.toString() + " in module " + name});
                 }
@@ -27,15 +31,21 @@
 
             // register this module
             Sk.externalLibraries[name] = {
-                path: name,
+                path: path,
                 // since we're loading all of our own modules locally,
                 // we shouldn't need to list dependencies
                 dependencies: [],
                 type: ext
             };
             // pre-cache the module since there is no file for it
-            // Skulpt will check the cache first and never look for the file
+            // Skulpt will check the cache first and never look for the file via HTTP request
             Sk.externalLibraryCache[name] = module;
+
+            // add the file to the builtin files
+            // this makes the file available to Sk.read()
+            Sk.builtinFiles = Sk.builtinFiles || {};
+            Sk.builtinFiles.files = Sk.builtinFiles.files || {};
+            Sk.builtinFiles.files[path] = fileText;
 
         }
 

@@ -5,6 +5,9 @@
 
     function initSkulpt() {
         @@importSkulpt // jshint ignore:line
+        Sk.loadExternalLibraryInternal_ = function (path, inject) {
+            return Sk.read(path);
+        };
     }
 
     function initParlayModules() {
@@ -13,21 +16,6 @@
         // format and add the necessary information for Skulpt to use this module
         function registerModule(path, name, module, ext) {
 
-            var fileText;
-
-            // embed the actual code inside the js wrapper
-            if (ext === "js") {
-                fileText = "var $builtinmodule = " + module;
-                // ("" + module) returns the code of module as a string
-                module = {funcname: module.name, code: "" + module};
-            } else {
-                fileText = module;
-                try {
-                    module = Sk.compile(module, path, "exec", true);
-                } catch (err) {
-                    self.postMessage({messageType:"error", value: err.toString() + " in module " + name});
-                }
-            }
 
             // register this module
             Sk.externalLibraries[name] = {
@@ -37,15 +25,22 @@
                 dependencies: [],
                 type: ext
             };
-            // pre-cache the module since there is no file for it
-            // Skulpt will check the cache first and never look for the file via HTTP request
-            Sk.externalLibraryCache[name] = module;
 
             // add the file to the builtin files
             // this makes the file available to Sk.read()
             Sk.builtinFiles = Sk.builtinFiles || {};
             Sk.builtinFiles.files = Sk.builtinFiles.files || {};
-            Sk.builtinFiles.files[path] = fileText;
+
+
+            if (ext === "js") {
+                // if module is a JS program, it is a function
+                // We concatenate it to "var $builtinmodule = " to form a string
+                // containing code that assigns the function to the variable $builtinmodule
+                Sk.builtinFiles.files[path] = "var $builtinmodule = " + module;
+            } else {
+                // if module is a Python program, it is a string containing the text of that program
+                Sk.builtinFiles.files[path] = module;
+            }
 
         }
 

@@ -1,16 +1,16 @@
 (function () {
     "use strict";
     
-    var module_dependencies = ["parlay.widget.interpreter", "parlay.socket",
+    var module_dependencies = ["parlay.widget.interpreter", "promenade.broker",
         "parlay.utility.workerpool", "worker.imports"];
     
     angular
         .module("parlay.widget.interpreter.py", module_dependencies)
         .factory("ParlayPyInterpreter", ParlayPyInterpreterFactory);
 
-    ParlayPyInterpreterFactory.$inject = ["ParlayInterpreter", "ParlaySocket", "ParlayWorkerPool",
+    ParlayPyInterpreterFactory.$inject = ["ParlayInterpreter", "PromenadeBroker", "ParlayWorkerPool",
                                          "skulpt", "refreshRate", "parlayModules"];
-    function ParlayPyInterpreterFactory (ParlayInterpreter, ParlaySocket, ParlayWorkerPool,
+    function ParlayPyInterpreterFactory (ParlayInterpreter, PromenadeBroker, ParlayWorkerPool,
                                          skulpt, refreshRate, parlayModules) {
 
 
@@ -46,16 +46,33 @@
                  postMessage({messageType: "return"});
             }
 
+            // onResponse is a custom function called when requested data is provided by the main application
+            // scripts can override this to communicate with the main application
+            self.onResponse = undefined;
+
             self.onmessage = function(e) {
-                Sk.misceval.asyncToPromise(function () {
-                    return Sk.importMainWithBody("user-script", false, e.data, true);
-                }).then(ret, function (err) {
-                    if (err instanceof Sk.builtin.BaseException) {
-                        postMessage({messageType: "error", value: err.toString()});
-                    } else {
-                        throw err;
+
+                // data should be one of:
+                //  -{script:<script>, ...}
+                //  -{value: <val>, ...}
+                var data = e.data;
+                if (!!data.script) {
+                    // if this worker receives a script, run it
+                    Sk.misceval.asyncToPromise(function () {
+                        return Sk.importMainWithBody("user-script", false, e.data.script, true);
+                    }).then(ret, function (err) {
+                        if (err instanceof Sk.builtin.BaseException) {
+                            postMessage({messageType: "error", value: err.toString()});
+                        } else {
+                            throw err;
+                        }
+                    });
+                } else {
+                    // otherwise the input is not a script, so call the response handler
+                    if (!!self.onResponse) {
+                        self.onResponse(data.value);
                     }
-                });
+                }
             };
         }
         //create a URL used to pass Skulpt and the Parlay modules to the worker script
@@ -77,6 +94,9 @@
                     case "print":
                         console.log(msg.value);
                         break;
+                    case "pyMessage":
+                        handlePyMessage(this, msg.value);
+                        break;
                     case "error":
                         throw msg.value;
                     case "return":
@@ -94,6 +114,8 @@
                     switch (msg.messageType) {
                         case "print":
                             return false;
+                        case "pyMessage":
+                            return false;
                         case "error":
                             return true;
                         case "return":
@@ -105,6 +127,50 @@
                 return false;
             }
         );
+
+
+        /**
+         * Handles messages sent from Python scripts
+         * To add messaging functionality to
+         * @private
+         * @param {Function} childInitFunc - Initialization function that is given access to the interpreter instance
+         * and it's scope.
+         *
+         * Additionally it attaches a few Objects and functions that may be convenient for the end user.
+         */
+        function handlePyMessage(worker, data) {
+            switch (data.command) {
+                case "discover":
+                    // request the discovery and return a boolean for the success
+                    PromenadeBroker.requestDiscovery(data.force).then(
+                        function (result) {
+                            console.log(PromenadeBroker.getLastDiscovery());
+                            worker.postMessage({value: null});
+                        });
+                    break;
+                case "get_item":
+                    worker.postMessage({value:(function (){
+                        var discovery = PromenadeBroker.getLastDiscovery();
+                        // search through the items in each device to find the one the script selected and return it
+                        for (var i = 0; i < discovery.length; i++){
+                            var children = discovery[i].CHILDREN;
+                            for (var j = 0; j < children.length; j++) {
+                                if (children[j][data.key] == data.value) {
+                                    return children[j];
+                                }
+                            }
+                        }
+                        throw new Error("Requested item not found in discovery");
+                    })()});
+                    break;
+                case "item_contents":
+                    //TODO: returns dummy value for testing
+                    worker.postMessage({value:"Hi there!"});
+                    break;
+                default:
+                    break;
+            }
+        }
 
         //collect extra workers every minute
         (function collectionLoop() {
@@ -165,7 +231,7 @@
                     return "ParlayInterpreter.construct() must be done before ParlayInterpreter.run()";
                 }
                 else {
-                    workerPool.getWorker().postMessage(this.functionString);
+                    workerPool.getWorker().postMessage({script: this.functionString});
                     //return true on successful launch
                     return true;
                 }

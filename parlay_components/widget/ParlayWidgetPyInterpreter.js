@@ -2,15 +2,18 @@
     "use strict";
     
     var module_dependencies = ["parlay.widget.interpreter", "promenade.broker",
+        "parlay.socket", "parlay.protocols.manager",
         "parlay.utility.workerpool", "worker.imports"];
     
     angular
         .module("parlay.widget.interpreter.py", module_dependencies)
         .factory("ParlayPyInterpreter", ParlayPyInterpreterFactory);
 
-    ParlayPyInterpreterFactory.$inject = ["ParlayInterpreter", "PromenadeBroker", "ParlayWorkerPool",
+    ParlayPyInterpreterFactory.$inject = ["ParlayInterpreter", "PromenadeBroker", "ParlaySocket",
+                                         "ParlayWorkerPool", "ParlayProtocolManager",
                                          "skulpt", "refreshRate", "parlayModules"];
-    function ParlayPyInterpreterFactory (ParlayInterpreter, PromenadeBroker, ParlayWorkerPool,
+    function ParlayPyInterpreterFactory (ParlayInterpreter, PromenadeBroker, ParlaySocket,
+                                         ParlayWorkerPool, ParlayProtocolManager,
                                          skulpt, refreshRate, parlayModules) {
 
 
@@ -131,31 +134,29 @@
 
         /**
          * Handles messages sent from Python scripts
-         * To add messaging functionality to
          * @private
-         * @param {Function} childInitFunc - Initialization function that is given access to the interpreter instance
-         * and it's scope.
+         * @param {Worker} worker - the JS Worker handling the message and responsible for receiving a response
+         * @param {Obect} data - the message data to process
          *
-         * Additionally it attaches a few Objects and functions that may be convenient for the end user.
          */
         function handlePyMessage(worker, data) {
             switch (data.command) {
                 case "discover":
-                    // request the discovery and return a boolean for the success
+                    // request the discovery
                     PromenadeBroker.requestDiscovery(data.force).then(
                         function (result) {
-                            console.log(PromenadeBroker.getLastDiscovery());
                             worker.postMessage({value: null});
                         });
                     break;
                 case "get_item":
                     worker.postMessage({value:(function (){
                         var discovery = PromenadeBroker.getLastDiscovery();
+                        var children;
                         // search through the items in each device to find the one the script selected and return it
                         for (var i = 0; i < discovery.length; i++){
-                            var children = discovery[i].CHILDREN;
+                            children = discovery[i].CHILDREN;
                             for (var j = 0; j < children.length; j++) {
-                                if (children[j][data.key] == data.value) {
+                                if (children[j][data.key] === data.value) {
                                     return children[j];
                                 }
                             }
@@ -164,12 +165,54 @@
                     })()});
                     break;
                 case "item_contents":
-                    //TODO: returns dummy value for testing
-                    worker.postMessage({value:"Hi there!"});
+                    var protocols = ParlayProtocolManager.getOpenProtocols();
+                    var item;
+                    var result;
+                    // search through the items in each device to find the one the script selected and return it
+                    for (var i = 0; result === undefined && i < protocols.length; i++) {
+                        item = findByProperty(protocols[i].available_items, "ID", data.item);
+                        if (!!item) {
+
+                            result = item.sendMessage(data.contents);
+
+                            if (result === undefined) {
+                                //TODO: what does item.sendMessage do in this case? will this error be thrown?
+                                throw new Error("Requested item did not have the desired content field")
+                            } else {
+                                result.then(function (result) {
+                                     worker.postMessage({value: result});
+                                },
+                                function (err) {
+                                    //TODO: correct?
+                                    throw new Error(err);
+                                });
+                            }
+                        }
+                    }
                     break;
                 default:
                     break;
             }
+        }
+
+        /**
+         * Finds an object in a list based on the value of one of that object's properties
+         * @private
+         * @param {Array} objects - the list of objects to search
+         * @param {String} key - the property to check
+         * @param {Any} value - the value to check for
+         *
+         */
+        function findByProperty(objects, key, value) {
+            return objects.reduce(function(last, next){
+                if (last !== undefined) {
+                    return last;
+                } else if (next[key] === value) {
+                    return next;
+                } else {
+                    return undefined;
+                }
+            }, undefined);
         }
 
         //collect extra workers every minute

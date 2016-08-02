@@ -2,19 +2,15 @@
     "use strict";
     
     var module_dependencies = ["parlay.widget.interpreter", "promenade.broker",
-        "parlay.socket", "parlay.protocols.manager",
         "parlay.utility.workerpool", "worker.imports", "parlay.data"];
     
     angular
         .module("parlay.widget.interpreter.py", module_dependencies)
         .factory("ParlayPyInterpreter", ParlayPyInterpreterFactory);
 
-    ParlayPyInterpreterFactory.$inject = ["ParlayInterpreter", "PromenadeBroker", "ParlaySocket",
-                                         "ParlayWorkerPool", "ParlayProtocolManager",
-                                         "skulpt", "refreshRate", "parlayModules",
-                                         "ParlayData"];
-    function ParlayPyInterpreterFactory (ParlayInterpreter, PromenadeBroker, ParlaySocket,
-                                         ParlayWorkerPool, ParlayProtocolManager,
+    ParlayPyInterpreterFactory.$inject = ["ParlayInterpreter", "PromenadeBroker","ParlayWorkerPool",
+                                         "skulpt", "refreshRate", "parlayModules", "ParlayData"];
+    function ParlayPyInterpreterFactory (ParlayInterpreter, PromenadeBroker, ParlayWorkerPool,
                                          skulpt, refreshRate, parlayModules, ParlayData) {
 
         /** This Worker runs an individual Python script in a separate thread.

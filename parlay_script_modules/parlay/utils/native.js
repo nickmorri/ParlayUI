@@ -53,7 +53,7 @@ function parlay_utils_native($modname) {
     mod.sendQuery = new Sk.builtin.func(function(data) {
         Sk.builtin.pyCheckArgs("sendMessage", arguments, 1, 1);
         Sk.builtin.pyCheckType("data", "dict", data instanceof Sk.builtin.dict);
-        Sk.builtin.pyCheckType("data['command']", "string",
+        Sk.builtin.pyCheckType("data['command']", "str",
             Sk.builtin.checkString(data.mp$lookup(new Sk.builtin.str("command"))));
         return sendQueryNative(Sk.ffi.remapToJs(data));
     });
@@ -69,30 +69,56 @@ function parlay_utils_native($modname) {
                 Sk.builtin.pyCheckType("desc['CONTENT_FIELDS']", "list", contentFields instanceof Sk.builtin.list);
 
                 var itemName = desc.mp$subscript(new Sk.builtin.str("NAME"));
-                Sk.builtin.pyCheckType("desc['NAME']", "string", Sk.builtin.checkString(itemName));
+                Sk.builtin.pyCheckType("desc['NAME']", "str", Sk.builtin.checkString(itemName));
 
                 var itemID = desc.mp$subscript(new Sk.builtin.str("ID"));
-                Sk.builtin.pyCheckType("desc['ID']", "string", Sk.builtin.checkString(itemID));
+                Sk.builtin.pyCheckType("desc['ID']", "str", Sk.builtin.checkString(itemID));
 
                 // convert the content fields to JS for ease-of-access
                 var fields = Sk.ffi.remapToJs(contentFields);
-                // for each content field, dynamically create a function to access that field
-                for (var i = 0; i < fields.length; i++) {
-                    //TODO: how to handle arguments? (pass array?)
-                    var field = fields[i].DEFAULT;
-                    //TODO: can I use regular dot notation?
-                    self.$d.mp$ass_subscript(new Sk.builtin.str(field), new Sk.builtin.func(function () {
-                        return sendQueryNative({"command" : "item_contents",
-                            "contents" : {'COMMAND' : field}},
+
+                // convert the itemID to Js for ease-of-access
+                var itemIDJS = Sk.ffi.remapToJs(itemID);
+
+                // synchronous parlay commands
+                fields.map(function(field) { field.DROPDOWN_OPTIONS.map(function(opt) {
+                    self.$d.mp$ass_subscript(new Sk.builtin.str(opt[0]), new Sk.builtin.func(function () {
+                        return sendQueryNative({"command": "item_contents",
+                                "item": itemIDJS,
+                                "contents": {'COMMAND': opt[0]}},
                             function (data) {
                                 return Sk.ffi.remapToPy(data.CONTENTS.RESULT);
                             });
                     }));
-                }
+                })});
 
-                //TODO: necessary?
-                self.itemName = itemName;
-                self.itemID = itemID;
+
+                // parlay attributes
+                self.tp$setattr("__setattr__", new Sk.builtin.func(function (name, data) {
+                    Sk.builtin.pyCheckArgs("__setattr__", arguments, 2, 2);
+                    Sk.builtin.pyCheckType("name", "str", Sk.builtin.checkString(name));
+                    //TODO: figure out the appropriate type for data and check it
+                    //TODO: determine whether name is a property or data stream
+                    //Sk.builtin.pyCheckType("data", "", data instanceof );
+                    return sendQueryNative({
+                        'command': "item_property",
+                        'operation': "set",
+                        'item': itemIDJS,
+                        'property': Sk.ffi.remapToJs(name),
+                        'value': Sk.ffi.remapToJs(data)});
+                }));
+
+                self.tp$setattr("__getattr__", new Sk.builtin.func(function (name) {
+                    Sk.builtin.pyCheckArgs("__getattr__", arguments, 1, 1);
+                    Sk.builtin.pyCheckType("name", "str", Sk.builtin.checkString(name));
+                    return sendQueryNative({
+                        'command': "item_property",
+                        'operation': "get",
+                        'item': itemIDJS,
+                        'property': Sk.ffi.remapToJs(name)});
+                }));
+
+
 
             });
         }

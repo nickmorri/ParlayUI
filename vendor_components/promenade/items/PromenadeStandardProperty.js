@@ -143,7 +143,7 @@
                 }
             });
 
-            ParlayData.set(property.name, property);
+            ParlayData.set(property.item_name + "." + property.id, property);
 
             /**
              * Allows for callbacks to be registered, these will be invoked on change of value.
@@ -265,24 +265,8 @@
              * @public
              * @returns {Array.Object} - Objects containing function references.
              */
-            function generateInterpreterWrappers () {
-                return [
-                    {
-                        expression: "get",
-                        type: "function",
-                        reference: property.get
-                    },
-                    {
-                        expression: "set",
-                        type: "function",
-                        reference: property.set
-                    },
-                    {
-                        expression: "value",
-                        type: "value",
-                        reference: property.value
-                    }
-                ];
+            function generateInterpreterWrappers () {//TODO: refactor generateInterpreterWrappers
+                return {getProperty : property.get, setProperty : property.set};
             }
 
         }

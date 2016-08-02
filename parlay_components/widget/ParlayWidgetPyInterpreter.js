@@ -3,7 +3,7 @@
     
     var module_dependencies = ["parlay.widget.interpreter", "promenade.broker",
         "parlay.socket", "parlay.protocols.manager",
-        "parlay.utility.workerpool", "worker.imports"];
+        "parlay.utility.workerpool", "worker.imports", "parlay.data"];
     
     angular
         .module("parlay.widget.interpreter.py", module_dependencies)
@@ -11,11 +11,11 @@
 
     ParlayPyInterpreterFactory.$inject = ["ParlayInterpreter", "PromenadeBroker", "ParlaySocket",
                                          "ParlayWorkerPool", "ParlayProtocolManager",
-                                         "skulpt", "refreshRate", "parlayModules"];
+                                         "skulpt", "refreshRate", "parlayModules",
+                                         "ParlayData"];
     function ParlayPyInterpreterFactory (ParlayInterpreter, PromenadeBroker, ParlaySocket,
                                          ParlayWorkerPool, ParlayProtocolManager,
-                                         skulpt, refreshRate, parlayModules) {
-
+                                         skulpt, refreshRate, parlayModules, ParlayData) {
 
         /** This Worker runs an individual Python script in a separate thread.
          * It is designed to be reusable to avoid repeated script imports.
@@ -46,7 +46,7 @@
             // back to the user.
             // Indicates that this worker is now idle.
             function ret() {
-                 postMessage({messageType: "return"});
+                postMessage({messageType: "return"});
             }
 
             // onResponse is a custom function called when requested data is provided by the main application
@@ -71,13 +71,14 @@
                         }
                     });
                 } else {
-                    // otherwise the input is not a script, so call the response handler
+                    // otherwise the input is a query response, so call the response handler
                     if (!!self.onResponse) {
                         self.onResponse(data.value);
                     }
                 }
             };
         }
+
         //create a URL used to pass Skulpt and the Parlay modules to the worker script
         var libURL = URL.createObjectURL(new Blob([skulpt + parlayModules]), {
             type: 'application/javascript'
@@ -136,7 +137,7 @@
          * Handles messages sent from Python scripts
          * @private
          * @param {Worker} worker - the JS Worker handling the message and responsible for receiving a response
-         * @param {Obect} data - the message data to process
+         * @param {Object} data - the message data to process
          *
          */
         function handlePyMessage(worker, data) {
@@ -164,31 +165,25 @@
                         throw new Error("Requested item not found in discovery");
                     })()});
                     break;
-                case "item_contents":
-                    var protocols = ParlayProtocolManager.getOpenProtocols();
-                    var item;
-                    var result;
-                    // search through the items in each device to find the one the script selected and return it
-                    for (var i = 0; result === undefined && i < protocols.length; i++) {
-                        item = findByProperty(protocols[i].available_items, "ID", data.item);
-                        if (!!item) {
-
-                            result = item.sendMessage(data.contents);
-
-                            if (result === undefined) {
-                                //TODO: what does item.sendMessage do in this case? will this error be thrown?
-                                throw new Error("Requested item did not have the desired content field")
-                            } else {
-                                result.then(function (result) {
-                                     worker.postMessage({value: result});
-                                },
-                                function (err) {
-                                    //TODO: correct?
-                                    throw new Error(err);
-                                });
-                            }
-                        }
-                    }
+                case "item_contents"://TODO: change to 'command'?
+                    ParlayData.get(data.item + "." + data.contents.COMMAND)
+                        .generateInterpreterWrappers(data.contents.COMMAND)(data.contents)
+                        .then(function (result) {
+                            var msg = {value: result};
+                            worker.postMessage(msg);
+                        });
+                    break;
+                case "item_property":
+                    var propObj = ParlayData.get(data.item + "." + data.property)
+                        .generateInterpreterWrappers();
+                    (data.operation === "set" ? propObj.setProperty(data.value) : propObj.getProperty())
+                        .then(function (result) {
+                            var res = result.CONTENTS.VALUE;
+                            // if res is undefined, that means there is no result
+                            // Python expects null for no result
+                            // we check res !== undefined rather than !!res because we want to pass through false
+                            worker.postMessage({value: res !== undefined ? res : null});
+                        });
                     break;
                 default:
                     break;
@@ -239,6 +234,21 @@
         //Inherit from ParlayInterpreter
         ParlayPyInterpreter.prototype = Object.create(ParlayInterpreter.prototype);
         ParlayPyInterpreter.prototype.constructor = ParlayPyInterpreter;
+
+        /**
+         * Helper method which retrieves items from ParlayData.
+         * @member module:ParlayWidget.ParlayInterpreter#getItems
+         * @public
+         * @returns {Array} - Items from [ParlayData]{@link module:ParlayData.ParlayData}.
+         */
+        ParlayInterpreter.prototype.getItems = function () {
+            var iterator = ParlayData.keys();
+            var keys = [];
+            for (var current = iterator.next(); !current.done; current = iterator.next()) {
+                keys.push(current.value);
+            }
+            return keys;
+        };
 
         /**
          * Attempts to construct a [JS-Interpreter]{@link https://github.com/NeilFraser/JS-Interpreter/} instance using functionString and the given childInitFunc.

@@ -30,7 +30,7 @@
             command.type = "command";
 
             /**
-             * Uniquely identifying key for each command.
+             * A key describing the category of message so that the UI knows how to classify it.
              * @member module:PromenadeStandardItem.PromenadeStandardCommand#msg_key
              * @public
              * @type {String}
@@ -44,14 +44,6 @@
              * @type {String}
              */
             command.input = data.INPUT;
-
-            /**
-             * Human readable label that will be displayed instead of the message key if available.
-             * @member module:PromenadeStandardItem.PromenadeStandardCommand#label
-             * @public
-             * @type {String}
-             */
-            command.label =  !!data.LABEL ? data.LABEL : data.MSG_KEY;
 
             /**
              * True if the field is required for submission of the command.
@@ -85,6 +77,9 @@
              * @type {Array}
              */
             command.options = !!data.DROPDOWN_OPTIONS ? data.DROPDOWN_OPTIONS.map(function (option, index) {
+                // by the specification, option should always be a tuple (list in JS)
+                // However, we can still return a meaningful result for a string, so we do so
+                // in the interest of compatibility.
                 return typeof option === "string" ? {
                     name: option,
                     value: option,
@@ -97,6 +92,14 @@
                     }) : undefined
                 };
             }) : undefined;
+
+            /**
+             * Human readable label that will be displayed instead of the command name if available.
+             * @member module:PromenadeStandardItem.PromenadeStandardCommand#label
+             * @public
+             * @type {String}
+             */
+            command.label =  data.LABEL || data.DEFAULT || (!!command.options ? command.options[0].name : undefined);
 
             /**
              * Name of the [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} this
@@ -119,7 +122,9 @@
             command.generateInterpreterWrappers = generateInterpreterWrappers;
 
             if (command.options) {
-                ParlayData.set(command.msg_key, command);
+                command.options.map(function(opt) {
+                ParlayData.set(command.item_name + "." + opt.name, command);
+                });
             }
 
             /**
@@ -169,27 +174,21 @@
              * @public
              * @returns {Array.Object} - Objects containing function references.
              */
-            function generateInterpreterWrappers () {
-                return command.options.map(function (sub_command) {
-                    return {
-                        expression: sub_command.name,
-                        type: "function",
-                        reference: function (args_object) {
+            function generateInterpreterWrappers (sub_command) {//TODO: refactor generateInterpreterWrappers
+                return function (args_object) {
 
-                            var topics = {
-                                TO: command.item_name,
-                                MSG_TYPE: "COMMAND"
-                            };
-
-                            var contents = angular.copy(args_object);
-
-                            contents.COMMAND = sub_command.name;
-
-                            protocol.sendMessage(topics, contents);
-
-                        }
+                    var topics = {
+                        TO: command.item_name,
+                        MSG_TYPE: "COMMAND"
                     };
-                });
+
+                    var contents = angular.copy(args_object);
+
+                    contents.COMMAND = sub_command;
+
+                    return protocol.sendMessage(topics, contents);
+
+                };
             }
 
         }

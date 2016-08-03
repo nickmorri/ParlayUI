@@ -119,11 +119,10 @@
             command.protocol = protocol;
 
             command.generateAutocompleteEntries = generateAutocompleteEntries;
-            command.generateInterpreterWrappers = generateInterpreterWrappers;
 
             if (command.options) {
                 command.options.map(function(opt) {
-                ParlayData.set(command.item_name + "." + opt.name, command);
+                ParlayData.set(command.item_name + "." + opt.name, generateScriptAccess(opt.name));
                 });
             }
 
@@ -170,11 +169,11 @@
 
             /**
              * Generates Objects with Function references to be used in the ParlayWidgetJSInterpreter.
-             * @member PromenadeStandardCommand#generateInterpreterWrappers
+             * @member PromenadeStandardCommand#generateScriptAccess
              * @public
-             * @returns {Array.Object} - Objects containing function references.
+             * @returns {Function} - A function that sends this command and returns a Promise containing the response
              */
-            function generateInterpreterWrappers (sub_command) {//TODO: refactor generateInterpreterWrappers
+            function generateScriptAccess (command_name) {
                 return function (args_object) {
 
                     var topics = {
@@ -184,7 +183,7 @@
 
                     var contents = angular.copy(args_object);
 
-                    contents.COMMAND = sub_command;
+                    contents.COMMAND = command_name;
 
                     return protocol.sendMessage(topics, contents);
 

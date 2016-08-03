@@ -120,7 +120,6 @@
             property.set = set;
             property.onChange = onChange;
             property.generateAutocompleteEntries = generateAutocompleteEntries;
-            property.generateInterpreterWrappers = generateInterpreterWrappers;
 
             /**
              * Requests a listener for the property. Saves a reference to deregistration function returned by
@@ -257,16 +256,6 @@
                 };
 
                 return [get_entry, set_entry, value_entry];
-            }
-
-            /**
-             * Generates Objects with Function references to be used in the ParlayWidgetJSInterpreter.
-             * @member PromenadeStandardProperty#generateInterpreterWrappers
-             * @public
-             * @returns {Array.Object} - Objects containing function references.
-             */
-            function generateInterpreterWrappers () {//TODO: refactor generateInterpreterWrappers
-                return {getProperty : property.get, setProperty : property.set};
             }
 
         }

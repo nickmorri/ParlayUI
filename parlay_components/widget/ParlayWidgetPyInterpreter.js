@@ -1,16 +1,16 @@
 (function () {
     "use strict";
     
-    var module_dependencies = ["parlay.widget.interpreter", "promenade.broker",
+    var module_dependencies = ["promenade.broker",
         "parlay.utility.workerpool", "worker.imports", "parlay.data"];
     
     angular
         .module("parlay.widget.interpreter.py", module_dependencies)
         .factory("ParlayPyInterpreter", ParlayPyInterpreterFactory);
 
-    ParlayPyInterpreterFactory.$inject = ["ParlayInterpreter", "PromenadeBroker","ParlayWorkerPool",
+    ParlayPyInterpreterFactory.$inject = ["PromenadeBroker","ParlayWorkerPool",
                                          "skulpt", "refreshRate", "parlayModules", "ParlayData"];
-    function ParlayPyInterpreterFactory (ParlayInterpreter, PromenadeBroker, ParlayWorkerPool,
+    function ParlayPyInterpreterFactory (PromenadeBroker, ParlayWorkerPool,
                                          skulpt, refreshRate, parlayModules, ParlayData) {
 
         /** This Worker runs an individual Python script in a separate thread.
@@ -162,17 +162,15 @@
                     })()});
                     break;
                 case "item_contents"://TODO: change to 'command'?
-                    ParlayData.get(data.item + "." + data.contents.COMMAND)
-                        .generateInterpreterWrappers(data.contents.COMMAND)(data.contents)
+                    ParlayData.get(data.item + "." + data.contents.COMMAND)(data.contents)
                         .then(function (result) {
                             var msg = {value: result};
                             worker.postMessage(msg);
                         });
                     break;
                 case "item_property":
-                    var propObj = ParlayData.get(data.item + "." + data.property)
-                        .generateInterpreterWrappers();
-                    (data.operation === "set" ? propObj.setProperty(data.value) : propObj.getProperty())
+                    var propObj = ParlayData.get(data.item + "." + data.property);
+                    (data.operation === "set" ? propObj.set(data.value) : propObj.get())
                         .then(function (result) {
                             var res = result.CONTENTS.VALUE;
                             // if res is undefined, that means there is no result
@@ -184,26 +182,6 @@
                 default:
                     break;
             }
-        }
-
-        /**
-         * Finds an object in a list based on the value of one of that object's properties
-         * @private
-         * @param {Array} objects - the list of objects to search
-         * @param {String} key - the property to check
-         * @param {Any} value - the value to check for
-         *
-         */
-        function findByProperty(objects, key, value) {
-            return objects.reduce(function(last, next){
-                if (last !== undefined) {
-                    return last;
-                } else if (next[key] === value) {
-                    return next;
-                } else {
-                    return undefined;
-                }
-            }, undefined);
         }
 
         //collect extra workers every minute
@@ -224,27 +202,25 @@
          * error.toString() representation.
          */
         function ParlayPyInterpreter () {
-            ParlayInterpreter.call(this);
+            /**
+             * Statement to be interpreted.
+             * @member module:ParlayWidget.ParlayInterpreter#functionString
+             * @public
+             * @type {String}
+             * @default {undefined}
+             */
+            this.functionString = undefined;
+
+            /**
+             * Set if a error occurs during the interpreter construction process.
+             * @member module:ParlayWidget.ParlayInterpreter#constructionError
+             * @public
+             * @type {String}
+             * @default {undefined}
+             */
+            //TODO: keep?
+            this.constructionError = undefined;
         }
-
-        //Inherit from ParlayInterpreter
-        ParlayPyInterpreter.prototype = Object.create(ParlayInterpreter.prototype);
-        ParlayPyInterpreter.prototype.constructor = ParlayPyInterpreter;
-
-        /**
-         * Helper method which retrieves items from ParlayData.
-         * @member module:ParlayWidget.ParlayInterpreter#getItems
-         * @public
-         * @returns {Array} - Items from [ParlayData]{@link module:ParlayData.ParlayData}.
-         */
-        ParlayInterpreter.prototype.getItems = function () {
-            var iterator = ParlayData.keys();
-            var keys = [];
-            for (var current = iterator.next(); !current.done; current = iterator.next()) {
-                keys.push(current.value);
-            }
-            return keys;
-        };
 
         /**
          * Attempts to construct a [JS-Interpreter]{@link https://github.com/NeilFraser/JS-Interpreter/} instance using functionString and the given childInitFunc.
@@ -284,6 +260,18 @@
                     //return true on successful launch
                     return true;
                 }
+        };
+
+        /**
+         * Converts ParlayPyInterpreter instance to Object that can be JSON.stringified.
+         * @member module:ParlayWidget.ParlayPyInterpreter#toJSON
+         * @public
+         * @returns {{functionString: {String}}}
+         */
+        ParlayPyInterpreter.prototype.toJSON = function () {
+            return {
+                functionString: this.functionString
+            };
         };
 
         return ParlayPyInterpreter;

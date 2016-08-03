@@ -81,11 +81,35 @@ function parlay_utils_native($modname) {
                 var itemIDJS = Sk.ffi.remapToJs(itemID);
 
                 // synchronous parlay commands
-                fields.map(function(field) { field.DROPDOWN_OPTIONS.map(function(opt) {
+                fields.map(function(field) { field.DROPDOWN_OPTIONS.map(function(opt, i) {
+
+                    var args = field.DROPDOWN_SUB_FIELDS[i];
+
                     self.$d.mp$ass_subscript(new Sk.builtin.str(opt[0]), new Sk.builtin.func(function () {
+
+                        //TODO: optional arguments
+                        //TODO: keyword arguments
+                        Sk.builtin.pyCheckArgs("ProxyItem." + opt[0], arguments, args.length, args.length);
+
+                        var contents = {'COMMAND': opt[0]};
+
+                        // check that the arguments are of the appropriate types and put them into contents
+                        Array.prototype.map.call(arguments, function(arg, i) {
+                            var argDef = args[i];
+                            //TODO: check all types
+                            switch (argDef.INPUT) {
+                                case "STRING":
+                                    Sk.builtin.pyCheckType(argDef.MSG_KEY, "str", Sk.builtin.checkString(arg));
+                                    break;
+                                default:
+                                    break;
+                            }
+                            contents[argDef.MSG_KEY] = Sk.ffi.remapToJs(arg);
+                        });
+
                         return sendQueryNative({"command": "item_contents",
                                 "item": itemIDJS,
-                                "contents": {'COMMAND': opt[0]}},
+                                "contents": contents },
                             function (data) {
                                 return Sk.ffi.remapToPy(data.CONTENTS.RESULT);
                             });

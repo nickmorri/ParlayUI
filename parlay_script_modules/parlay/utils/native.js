@@ -84,6 +84,19 @@ function parlay_utils_native($modname) {
             // convert the itemID to Js for ease-of-access
             var itemIDJS = Sk.ffi.remapToJs(itemID);
 
+            // takes a Parlay Message input type and a Python value and checks that the value matches the type
+            function checkInputType(name, inputType, val) {
+                //TODO: check all types
+                switch (inputType) {
+                    case "STRING":
+                        Sk.builtin.pyCheckType(name, "str", Sk.builtin.checkString(val));
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+
             // takes a command and a sequential list of its arguments
             // and returns a dictionary mapping argument names to values
             // this is the CONTENTS section of a Parlay message
@@ -97,19 +110,22 @@ function parlay_utils_native($modname) {
                 // check that the arguments are of the appropriate types and put them into contents
                 Array.prototype.map.call(args, function(arg, i) {
                     var argDef = fieldArgs[i];
-                    //TODO: check all types
-                    switch (argDef.type) {
-                        case "STRING":
-                            Sk.builtin.pyCheckType(argDef.name, "str", Sk.builtin.checkString(arg));
-                            break;
-                        default:
-                            break;
-                    }
+                    checkInputType(argDef.name, argDef.type, arg);
+
                     contents[argDef.name] = Sk.ffi.remapToJs(arg);
                 });
 
                 return contents;
             };
+
+            Sk.ffi.remapToJs(properties).map(function(prop) {
+               fields.set(prop.PROPERTY, {
+                   dataType: "property",
+                   readOnly: prop.READ_ONLY,
+                   writeOnly: prop.WRITE_ONLY,
+                   type: prop.INPUT
+               });
+            });
 
             // synchronous parlay commands
             // convert the content fields to JS for ease-of-access
@@ -119,6 +135,7 @@ function parlay_utils_native($modname) {
                 var args = field.DROPDOWN_SUB_FIELDS[i].map(function (arg) {
                    return {name: arg.MSG_KEY, type: arg.INPUT};
                 });
+                args.dataType = "command";
 
                 // Store the list of arguments and their types for this command
                 fields.set(opt[0], args);
@@ -167,6 +184,24 @@ function parlay_utils_native($modname) {
             self.tp$setattr("__setattr__", new Sk.builtin.func(function (name, data) {
                 Sk.builtin.pyCheckArgs("__setattr__", arguments, 2, 2);
                 Sk.builtin.pyCheckType("name", "str", Sk.builtin.checkString(name));
+
+                var nameJS = Sk.ffi.remapToJs(name);
+                var propData = fields.get(nameJS);
+
+                // if we couldn't locate the given name, it does not refer to a property,
+                //   or that property is read-only, error
+                if (propData === undefined) {
+                    throw new Sk.builtin.AttributeError(itemIDJS + " does not have a " + nameJS + " property.");
+                } else if (propData.dataType !== "property") {
+                    throw new Sk.builtin.AttributeError(itemIDJS + "." + nameJS
+                        + " is a " + propData.dataType + ", not a property.");
+                } else if (propData.readOnly) {
+                    throw new Sk.builtin.AttributeError(itemIDJS + "." + nameJS
+                        + " is a read-only property.");
+                }
+
+                checkInputType(nameJS, propData.type, data);
+
                 //TODO: figure out the appropriate type for data and check it
                 //TODO: determine whether name is a property or data stream
                 //Sk.builtin.pyCheckType("data", "", data instanceof );
@@ -181,6 +216,22 @@ function parlay_utils_native($modname) {
             self.tp$setattr("__getattr__", new Sk.builtin.func(function (name) {
                 Sk.builtin.pyCheckArgs("__getattr__", arguments, 1, 1);
                 Sk.builtin.pyCheckType("name", "str", Sk.builtin.checkString(name));
+
+                var nameJS = Sk.ffi.remapToJs(name);
+                var propData = fields.get(nameJS);
+
+                // if we couldn't locate the given name, it does not refer to a property,
+                //   or that property is read-only, error
+                if (propData === undefined) {
+                    throw new Sk.builtin.AttributeError(itemIDJS + " does not have a " + nameJS + " property.");
+                } else if (propData.dataType !== "property") {
+                    throw new Sk.builtin.AttributeError(itemIDJS + "." + nameJS
+                        + " is a " + propData.dataType + ", not a property.");
+                } else if (propData.writeOnly) {
+                    throw new Sk.builtin.AttributeError(itemIDJS + "." + nameJS
+                        + " is a write-only property.");
+                }
+
                 return sendQueryNative({
                     'command': "item_property",
                     'operation': "get",

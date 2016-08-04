@@ -109,13 +109,18 @@ function parlay_utils_native($modname) {
 
                         return sendQueryNative({"command": "item_contents",
                                 "item": itemIDJS,
-                                "contents": contents },
-                            function (data) {
-                                return Sk.ffi.remapToPy(data.CONTENTS.RESULT);
-                            });
+                                "contents": contents });
                     }));
                 })});
 
+                // asynchronous parlay commands
+                self.$d.mp$ass_subscript(new Sk.builtin.str("send_parlay_command"), new Sk.builtin.func(function(cmd) {
+                    Sk.builtin.pyCheckArgs("send_parlay_command", arguments, 1, 1);//TODO: command args?
+                    Sk.builtin.pyCheckType("cmd", "str", Sk.builtin.checkString(cmd));
+
+                    return Sk.misceval.callsim(mod.ProxyCommand, itemID, cmd);
+
+                }));
 
                 // parlay attributes
                 self.tp$setattr("__setattr__", new Sk.builtin.func(function (name, data) {
@@ -147,6 +152,72 @@ function parlay_utils_native($modname) {
             });
         }
     }, "ProxyItem", []);
+
+    mod.ProxyCommand = Sk.misceval.buildClass(mod, function($gbl, $loc) {
+
+        var command;
+        var item;
+        var listenerID;
+        var result;
+
+        $loc.__init__ = new Sk.builtin.func(function (self, itm, cmd) {
+            Sk.builtin.pyCheckArgs("ProxyCommand.__init__", arguments, 3, 3);//TODO: command args?
+            Sk.builtin.pyCheckType("itm", "str", Sk.builtin.checkString(itm));
+            Sk.builtin.pyCheckType("cmd", "str", Sk.builtin.checkString(cmd));
+
+            item = Sk.ffi.remapToJs(itm);
+            command = Sk.ffi.remapToJs(cmd);
+            // provided by the worker
+            listenerID = newListenerID();
+            listeners.set(listenerID, function (val) {
+                // remove the listener since we've received the message
+                listeners.delete(listenerID);
+                // set result so that wait_for_complete can return it
+                result = Sk.ffi.remapToPy(val);
+            });
+            postMessage({messageType: "pyMessage", value: {
+                                "command": "item_contents",
+                                "item": item,
+                                "contents": {'COMMAND': command},
+                                "listener": listenerID
+            }});
+        });
+
+        $loc.wait_for_complete = new Sk.builtin.func(function (self) {
+            // if we have the result, we don't need to suspend
+            if (!!result) {
+                return result;
+            }
+            var susp = new Sk.misceval.Suspension();
+
+            // return the result of the command on resumption
+            // the suspension should never resume before result is set, so throw an error if it does
+            susp.resume = function() {
+                if (!!result) {
+                    return result;
+                } else {
+                    throw new Error("Suspension for command '" + command +"' resumed before result was retrieved! This should never happen.");
+                }
+            };
+
+            // replace the old listener with one that resolves the suspension
+            susp.data = {type: "Sk.promise", promise: new Promise(function(resolve) {
+                listeners.set(listenerID, function (val) {
+                    // remove the listener since we've received the message
+                    listeners.delete(listenerID);
+                     // stores the result of the query so that it will be returned by resume()
+                    result = Sk.ffi.remapToPy(val);
+
+                    if (!!onResponse) {
+                        throw new Error("Attempting to simultaneously resolve two code paths. This should never happen.");
+                    }
+
+                    resolve();
+                });
+            })};
+        });
+
+    }, "ProxyCommand", []);
 
     return mod;
 }

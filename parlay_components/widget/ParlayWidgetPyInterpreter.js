@@ -9,6 +9,8 @@
         .factory("ParlayPyInterpreter", ParlayPyInterpreterFactory);
 
     ParlayPyInterpreterFactory.$inject = ["PromenadeBroker","ParlayWorkerPool",
+                                            //Note: The "skulpt" constant is provided by worker.imports.
+                                            //      The skulpt library is never loaded by the main application.
                                          "skulpt", "refreshRate", "parlayModules", "ParlayData"];
     function ParlayPyInterpreterFactory (PromenadeBroker, ParlayWorkerPool,
                                          skulpt, refreshRate, parlayModules, ParlayData) {
@@ -49,13 +51,30 @@
             // scripts can override this to communicate with the main application
             self.onResponse = undefined;
 
-            self.onmessage = function(e) {
+            // generates new IDs for listeners from this script
+            // each listener has an associated ID that identifies it to the main application
+            self.newListenerID = (function() {
+                var nextID = 0;
+                return function() { return nextID++; };
+            })();
 
+            // listeners maps listener IDs to the associated listener functions
+            // listeners are responsible for removing themselves once they are done listening
+            self.listeners = new Map();
+
+            self.onmessage = function(e) {
                 // data should be one of:
                 //  -{script:<script>, ...}
                 //  -{value: <val>, ...}
+                // -{listener:<listenerID>, value: <val>, ...}
                 var data = e.data;
+
+                // if the data is a script, run it
                 if (!!data.script) {
+                    //clear listeners for new script
+                    self.onResponse = undefined;
+                    self.listeners.clear();
+
                     // if this worker receives a script, run it
                     Sk.misceval.asyncToPromise(function () {
                         return Sk.importMainWithBody("user-script", false, e.data.script, true);
@@ -66,12 +85,16 @@
                             throw err;
                         }
                     });
-                } else {
-                    // otherwise the input is a query response, so call the response handler
-                    if (!!self.onResponse) {
-                        self.onResponse(data.value);
-                    }
-                }
+
+                // if the data is for a listener, send it to the right listener
+                // listener is a numeric ID, so we can't use !!listener (it might be 0)
+                } else if (data.listener !== undefined) {
+                    self.listeners.get(data.listener)(data.value);
+
+                // otherwise the input is a query response, so call the response handler if there is one
+                } else if (!!self.onResponse) {
+                    self.onResponse(data.value);
+                } //TODO: drop or error if onresponse undefined? Call ret (might have listeners)?
             };
         }
 
@@ -162,10 +185,11 @@
                     })()});
                     break;
                 case "item_contents"://TODO: change to 'command'?
-                    ParlayData.get(data.item + "." + data.contents.COMMAND)(data.contents)
+                    ParlayData.get(data.item + "." + data.contents.COMMAND).sendCommand(data.contents)
                         .then(function (result) {
-                            var msg = {value: result};
-                            worker.postMessage(msg);
+                            // if data.listener is undefined, listener will be too
+                            // so !!listener will still be false
+                            worker.postMessage({value: result.CONTENTS.RESULT, listener: data.listener});
                         });
                     break;
                 case "item_property":
@@ -173,9 +197,10 @@
                     (data.operation === "set" ? propObj.set(data.value) : propObj.get())
                         .then(function (result) {
                             var res = result.CONTENTS.VALUE;
-                            // if res is undefined, that means there is no result
-                            // Python expects null for no result
-                            // we check res !== undefined rather than !!res because we want to pass through false
+                            // if res is undefined, that means there is no result.
+                            // Python expects null for no result.
+                            // we check res !== undefined rather than !!res
+                            //   because we want to send false if we receive it.
                             worker.postMessage({value: res !== undefined ? res : null});
                         });
                     break;

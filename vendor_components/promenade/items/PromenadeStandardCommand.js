@@ -118,8 +118,6 @@
              */
             command.protocol = protocol;
 
-            command.generateAutocompleteEntries = generateAutocompleteEntries;
-
             if (command.options) {
                 command.options.map(function(opt) {
                 ParlayData.set(command.item_name + "." + opt.name, generateScriptAccess(opt.name));
@@ -171,22 +169,30 @@
              * Generates Objects with Function references to be used in the ParlayWidgetJSInterpreter.
              * @member PromenadeStandardCommand#generateScriptAccess
              * @public
-             * @returns {Function} - A function that sends this command and returns a Promise containing the response
+             * @returns {Object} - An object containing functions for sending this command
+             *                      and generating relevant autocomplete entries.
              */
             function generateScriptAccess (command_name) {
-                return function (args_object) {
+                return {
+                    // sends this command to the server and returns a Promise for the response
+                    sendCommand: function (args_object) {
 
-                    var topics = {
-                        TO: command.item_name,
-                        MSG_TYPE: "COMMAND"
-                    };
+                        var topics = {
+                            TO: command.item_name,
+                            MSG_TYPE: "COMMAND"
+                        };
 
-                    var contents = angular.copy(args_object);
+                        var contents = angular.copy(args_object);
+    
+                        contents.COMMAND = command_name;
 
-                    contents.COMMAND = command_name;
+                        // we make sure that the response has the same message ID
+                        // since UI scripts may make asynchronous requests to the same item
+                        // and we need to match the responses to their original requests
+                        return protocol.sendMessage(topics, contents, undefined, true);
 
-                    return protocol.sendMessage(topics, contents);
-
+                    },
+                    generateAutocompleteEntries : generateAutocompleteEntries
                 };
             }
 

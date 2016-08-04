@@ -78,51 +78,88 @@ function parlay_utils_native($modname) {
             var itemID = desc.mp$subscript(new Sk.builtin.str("ID"));
             Sk.builtin.pyCheckType("desc['ID']", "str", Sk.builtin.checkString(itemID));
 
-            // convert the content fields to JS for ease-of-access
-            var fields = Sk.ffi.remapToJs(contentFields);
+            // create a local Map to hold command and property data
+            var fields = new Map();//TODO: add property data
 
             // convert the itemID to Js for ease-of-access
             var itemIDJS = Sk.ffi.remapToJs(itemID);
 
+            // takes a command and a sequential list of its arguments
+            // and returns a dictionary mapping argument names to values
+            // this is the CONTENTS section of a Parlay message
+            function sequentialToDict(cmd, args) {
+
+                var contents = {'COMMAND': cmd};
+
+                //assume that cmd is a valid command
+                var fieldArgs = fields.get(cmd);
+
+                // check that the arguments are of the appropriate types and put them into contents
+                Array.prototype.map.call(args, function(arg, i) {
+                    var argDef = fieldArgs[i];
+                    //TODO: check all types
+                    switch (argDef.type) {
+                        case "STRING":
+                            Sk.builtin.pyCheckType(argDef.name, "str", Sk.builtin.checkString(arg));
+                            break;
+                        default:
+                            break;
+                    }
+                    contents[argDef.name] = Sk.ffi.remapToJs(arg);
+                });
+
+                return contents;
+            };
+
             // synchronous parlay commands
-            fields.map(function(field) { field.DROPDOWN_OPTIONS.map(function(opt, i) {
+            // convert the content fields to JS for ease-of-access
+            Sk.ffi.remapToJs(contentFields).map(function(field) { field.DROPDOWN_OPTIONS.map(function(opt, i) {
 
-                var args = field.DROPDOWN_SUB_FIELDS[i];
+                // get the arguments for the command represented by opt
+                var args = field.DROPDOWN_SUB_FIELDS[i].map(function (arg) {
+                   return {name: arg.MSG_KEY, type: arg.INPUT};
+                });
 
+                // Store the list of arguments and their types for this command
+                fields.set(opt[0], args);
+
+                // add this command to this object so that it may be called
                 self.$d.mp$ass_subscript(new Sk.builtin.str(opt[0]), new Sk.builtin.func(function () {
 
                     //TODO: optional arguments
                     //TODO: keyword arguments
-                    Sk.builtin.pyCheckArgs("ProxyItem." + opt[0], arguments, args.length, args.length);
-
-                    var contents = {'COMMAND': opt[0]};
-
-                    // check that the arguments are of the appropriate types and put them into contents
-                    Array.prototype.map.call(arguments, function(arg, i) {
-                        var argDef = args[i];
-                        //TODO: check all types
-                        switch (argDef.INPUT) {
-                            case "STRING":
-                                Sk.builtin.pyCheckType(argDef.MSG_KEY, "str", Sk.builtin.checkString(arg));
-                                break;
-                            default:
-                                break;
-                        }
-                        contents[argDef.MSG_KEY] = Sk.ffi.remapToJs(arg);
-                    });
+                    Sk.builtin.pyCheckArgs(itemIDJS + "." + opt[0], arguments, args.length, args.length);
 
                     return sendQueryNative({"command": "item_contents",
                             "item": itemIDJS,
-                            "contents": contents });
+                            "contents": sequentialToDict(opt[0], arguments) });
                 }));
             })});
 
             // asynchronous parlay commands
             self.$d.mp$ass_subscript(new Sk.builtin.str("send_parlay_command"), new Sk.builtin.func(function(cmd) {
-                Sk.builtin.pyCheckArgs("send_parlay_command", arguments, 1, 1);//TODO: command args?
+                //TODO: optional arguments
+                //TODO: keyword arguments
+                // check that we have the minimum number of arguments (1 command)
+                Sk.builtin.pyCheckArgs(itemIDJS + "send_parlay_command", arguments, 1, Infinity);
                 Sk.builtin.pyCheckType("cmd", "str", Sk.builtin.checkString(cmd));
 
-                return Sk.misceval.callsim(mod.ProxyCommand, itemID, cmd);
+                // load the command arguments and check that they exist
+                var commandJS = Sk.ffi.remapToJs(cmd);
+                var argData = fields.get(commandJS);
+                if (argData === undefined) {
+                    throw new Sk.builtin.AttributeError(itemIDJS + " does not have a " + cmd + " command.");
+                }
+
+                // get the arguments for the command
+                var args = Array.prototype.slice.call(arguments, 1);
+
+                // check that this funciton was passed the right number of arguments
+                Sk.builtin.pyCheckArgs("send_parlay_command: " + itemIDJS + "." + commandJS,
+                    args, argData.length, argData.length);
+
+                return Sk.misceval.callsim(mod.ProxyCommand, itemID, cmd,
+                    Sk.ffi.remapToPy(sequentialToDict(Sk.ffi.remapToJs(cmd), args)));
 
             }));
 
@@ -159,58 +196,67 @@ function parlay_utils_native($modname) {
 
     mod.ProxyCommand = Sk.misceval.buildClass(mod, function($gbl, $loc) {
 
-        var command;
-        var item;
-        var listenerID;
-        var result;
 
-        $loc.__init__ = new Sk.builtin.func(function (self, itm, cmd) {
-            Sk.builtin.pyCheckArgs("ProxyCommand.__init__", arguments, 3, 3);//TODO: command args?
+
+        $loc.__init__ = new Sk.builtin.func(function (self, itm, cmd, argsDict) {
+            Sk.builtin.pyCheckArgs("ProxyCommand.__init__", arguments, 3, 4);
             Sk.builtin.pyCheckType("itm", "str", Sk.builtin.checkString(itm));
             Sk.builtin.pyCheckType("cmd", "str", Sk.builtin.checkString(cmd));
 
-            item = Sk.ffi.remapToJs(itm);
-            command = Sk.ffi.remapToJs(cmd);
+            // if there is an argsDict, check its type and convert it to JS. Otherwise, use an empty Object.
+            var argsDictJS;
+            if (argsDict) {
+                Sk.builtin.pyCheckType("argsDict", "dict", argsDict instanceof Sk.builtin.dict);
+                argsDictJS = Sk.ffi.remapToJs(argsDict);
+            } else {
+                argsDictJS = {};
+            };
+
+
+            var item = Sk.ffi.remapToJs(itm);
+            self.command = Sk.ffi.remapToJs(cmd);
             // provided by the worker
-            listenerID = newListenerID();
-            listeners.set(listenerID, function (val) {
+            self.listenerID = newListenerID();
+            listeners.set(self.listenerID, function (val) {
                 // remove the listener since we've received the message
-                listeners.delete(listenerID);
+                listeners.delete(self.listenerID);
                 // set result so that wait_for_complete can return it
-                result = Sk.ffi.remapToPy(val);
+                self.result = Sk.ffi.remapToPy(val);
             });
+            argsDictJS.COMMAND =  self.command;
             postMessage({messageType: "pyMessage", value: {
                                 "command": "item_contents",
                                 "item": item,
-                                "contents": {'COMMAND': command},
-                                "listener": listenerID
+                                "contents": argsDictJS,
+                                "listener": self.listenerID
             }});
         });
 
         $loc.wait_for_complete = new Sk.builtin.func(function (self) {
             // if we have the result, we don't need to suspend
-            if (!!result) {
-                return result;
+            if (!!self.result) {
+                return self.result;
             }
             var susp = new Sk.misceval.Suspension();
 
             // return the result of the command on resumption
             // the suspension should never resume before result is set, so throw an error if it does
             susp.resume = function() {
-                if (!!result) {
-                    return result;
+                if (!!self.result) {
+                    return self.result;
                 } else {
-                    throw new Error("Suspension for command '" + command +"' resumed before result was retrieved! This should never happen.");
+                    throw new Error("Suspension for command '" + self.command
+                        +"' resumed before result was retrieved! This should never happen.");
                 }
             };
 
             // replace the old listener with one that resolves the suspension
             susp.data = {type: "Sk.promise", promise: new Promise(function(resolve) {
-                listeners.set(listenerID, function (val) {
+                listeners.set(self.listenerID, function (val) {
                     // remove the listener since we've received the message
-                    listeners.delete(listenerID);
+                    listeners.delete(self.listenerID);
                      // stores the result of the query so that it will be returned by resume()
-                    result = Sk.ffi.remapToPy(val);
+                    self.result = Sk.ffi.remapToPy(val);
 
                     if (!!onResponse) {
                         throw new Error("Attempting to simultaneously resolve two code paths. This should never happen.");

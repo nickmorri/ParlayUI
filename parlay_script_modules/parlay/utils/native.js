@@ -59,98 +59,102 @@ function parlay_utils_native($modname) {
     });
 
     mod.ProxyItem = Sk.misceval.buildClass(mod, function($gbl, $loc) {
-        {
-            $loc.__init__ = new Sk.builtin.func(function (self, desc) {
-                Sk.builtin.pyCheckArgs("ProxyItem.__init__", arguments, 2, 2);
-                Sk.builtin.pyCheckType("desc", "dict", desc instanceof Sk.builtin.dict);
 
-                // we map content fields to proxy methods, so check that the description specifies them
-                var contentFields = desc.mp$subscript(new Sk.builtin.str("CONTENT_FIELDS"));
-                Sk.builtin.pyCheckType("desc['CONTENT_FIELDS']", "list", contentFields instanceof Sk.builtin.list);
+        $loc.__init__ = new Sk.builtin.func(function (self, desc) {
+            Sk.builtin.pyCheckArgs("ProxyItem.__init__", arguments, 2, 2);
+            Sk.builtin.pyCheckType("desc", "dict", desc instanceof Sk.builtin.dict);
 
-                var itemName = desc.mp$subscript(new Sk.builtin.str("NAME"));
-                Sk.builtin.pyCheckType("desc['NAME']", "str", Sk.builtin.checkString(itemName));
+            // we map content fields to proxy methods, so check that the description specifies them
+            var contentFields = desc.mp$subscript(new Sk.builtin.str("CONTENT_FIELDS"));
+            Sk.builtin.pyCheckType("desc['CONTENT_FIELDS']", "list", contentFields instanceof Sk.builtin.list);
 
-                var itemID = desc.mp$subscript(new Sk.builtin.str("ID"));
-                Sk.builtin.pyCheckType("desc['ID']", "str", Sk.builtin.checkString(itemID));
+            // we expose properties, so check that the description specifies them
+            var properties = desc.mp$subscript(new Sk.builtin.str("PROPERTIES"));
+            Sk.builtin.pyCheckType("desc['PROPERTIES']", "list", properties instanceof Sk.builtin.list);
 
-                // convert the content fields to JS for ease-of-access
-                var fields = Sk.ffi.remapToJs(contentFields);
+            var itemName = desc.mp$subscript(new Sk.builtin.str("NAME"));
+            Sk.builtin.pyCheckType("desc['NAME']", "str", Sk.builtin.checkString(itemName));
 
-                // convert the itemID to Js for ease-of-access
-                var itemIDJS = Sk.ffi.remapToJs(itemID);
+            var itemID = desc.mp$subscript(new Sk.builtin.str("ID"));
+            Sk.builtin.pyCheckType("desc['ID']", "str", Sk.builtin.checkString(itemID));
 
-                // synchronous parlay commands
-                fields.map(function(field) { field.DROPDOWN_OPTIONS.map(function(opt, i) {
+            // convert the content fields to JS for ease-of-access
+            var fields = Sk.ffi.remapToJs(contentFields);
 
-                    var args = field.DROPDOWN_SUB_FIELDS[i];
+            // convert the itemID to Js for ease-of-access
+            var itemIDJS = Sk.ffi.remapToJs(itemID);
 
-                    self.$d.mp$ass_subscript(new Sk.builtin.str(opt[0]), new Sk.builtin.func(function () {
+            // synchronous parlay commands
+            fields.map(function(field) { field.DROPDOWN_OPTIONS.map(function(opt, i) {
 
-                        //TODO: optional arguments
-                        //TODO: keyword arguments
-                        Sk.builtin.pyCheckArgs("ProxyItem." + opt[0], arguments, args.length, args.length);
+                var args = field.DROPDOWN_SUB_FIELDS[i];
 
-                        var contents = {'COMMAND': opt[0]};
+                self.$d.mp$ass_subscript(new Sk.builtin.str(opt[0]), new Sk.builtin.func(function () {
 
-                        // check that the arguments are of the appropriate types and put them into contents
-                        Array.prototype.map.call(arguments, function(arg, i) {
-                            var argDef = args[i];
-                            //TODO: check all types
-                            switch (argDef.INPUT) {
-                                case "STRING":
-                                    Sk.builtin.pyCheckType(argDef.MSG_KEY, "str", Sk.builtin.checkString(arg));
-                                    break;
-                                default:
-                                    break;
-                            }
-                            contents[argDef.MSG_KEY] = Sk.ffi.remapToJs(arg);
-                        });
+                    //TODO: optional arguments
+                    //TODO: keyword arguments
+                    Sk.builtin.pyCheckArgs("ProxyItem." + opt[0], arguments, args.length, args.length);
 
-                        return sendQueryNative({"command": "item_contents",
-                                "item": itemIDJS,
-                                "contents": contents });
-                    }));
-                })});
+                    var contents = {'COMMAND': opt[0]};
 
-                // asynchronous parlay commands
-                self.$d.mp$ass_subscript(new Sk.builtin.str("send_parlay_command"), new Sk.builtin.func(function(cmd) {
-                    Sk.builtin.pyCheckArgs("send_parlay_command", arguments, 1, 1);//TODO: command args?
-                    Sk.builtin.pyCheckType("cmd", "str", Sk.builtin.checkString(cmd));
+                    // check that the arguments are of the appropriate types and put them into contents
+                    Array.prototype.map.call(arguments, function(arg, i) {
+                        var argDef = args[i];
+                        //TODO: check all types
+                        switch (argDef.INPUT) {
+                            case "STRING":
+                                Sk.builtin.pyCheckType(argDef.MSG_KEY, "str", Sk.builtin.checkString(arg));
+                                break;
+                            default:
+                                break;
+                        }
+                        contents[argDef.MSG_KEY] = Sk.ffi.remapToJs(arg);
+                    });
 
-                    return Sk.misceval.callsim(mod.ProxyCommand, itemID, cmd);
-
+                    return sendQueryNative({"command": "item_contents",
+                            "item": itemIDJS,
+                            "contents": contents });
                 }));
+            })});
 
-                // parlay attributes
-                self.tp$setattr("__setattr__", new Sk.builtin.func(function (name, data) {
-                    Sk.builtin.pyCheckArgs("__setattr__", arguments, 2, 2);
-                    Sk.builtin.pyCheckType("name", "str", Sk.builtin.checkString(name));
-                    //TODO: figure out the appropriate type for data and check it
-                    //TODO: determine whether name is a property or data stream
-                    //Sk.builtin.pyCheckType("data", "", data instanceof );
-                    return sendQueryNative({
-                        'command': "item_property",
-                        'operation': "set",
-                        'item': itemIDJS,
-                        'property': Sk.ffi.remapToJs(name),
-                        'value': Sk.ffi.remapToJs(data)});
-                }));
+            // asynchronous parlay commands
+            self.$d.mp$ass_subscript(new Sk.builtin.str("send_parlay_command"), new Sk.builtin.func(function(cmd) {
+                Sk.builtin.pyCheckArgs("send_parlay_command", arguments, 1, 1);//TODO: command args?
+                Sk.builtin.pyCheckType("cmd", "str", Sk.builtin.checkString(cmd));
 
-                self.tp$setattr("__getattr__", new Sk.builtin.func(function (name) {
-                    Sk.builtin.pyCheckArgs("__getattr__", arguments, 1, 1);
-                    Sk.builtin.pyCheckType("name", "str", Sk.builtin.checkString(name));
-                    return sendQueryNative({
-                        'command': "item_property",
-                        'operation': "get",
-                        'item': itemIDJS,
-                        'property': Sk.ffi.remapToJs(name)});
-                }));
+                return Sk.misceval.callsim(mod.ProxyCommand, itemID, cmd);
+
+            }));
+
+            // parlay attributes
+            self.tp$setattr("__setattr__", new Sk.builtin.func(function (name, data) {
+                Sk.builtin.pyCheckArgs("__setattr__", arguments, 2, 2);
+                Sk.builtin.pyCheckType("name", "str", Sk.builtin.checkString(name));
+                //TODO: figure out the appropriate type for data and check it
+                //TODO: determine whether name is a property or data stream
+                //Sk.builtin.pyCheckType("data", "", data instanceof );
+                return sendQueryNative({
+                    'command': "item_property",
+                    'operation': "set",
+                    'item': itemIDJS,
+                    'property': Sk.ffi.remapToJs(name),
+                    'value': Sk.ffi.remapToJs(data)});
+            }));
+
+            self.tp$setattr("__getattr__", new Sk.builtin.func(function (name) {
+                Sk.builtin.pyCheckArgs("__getattr__", arguments, 1, 1);
+                Sk.builtin.pyCheckType("name", "str", Sk.builtin.checkString(name));
+                return sendQueryNative({
+                    'command': "item_property",
+                    'operation': "get",
+                    'item': itemIDJS,
+                    'property': Sk.ffi.remapToJs(name)});
+            }));
 
 
 
-            });
-        }
+        });
+
     }, "ProxyItem", []);
 
     mod.ProxyCommand = Sk.misceval.buildClass(mod, function($gbl, $loc) {

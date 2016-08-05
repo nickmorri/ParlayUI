@@ -42,9 +42,16 @@
 
             //The return continuation, to be called after running a Python script to pass the result
             // back to the user.
-            // Indicates that this worker is now idle.
+            // Indicates that this worker is now idle if it does not have any listeners.
             function ret() {
-                postMessage({messageType: "return"});
+                // if there are no listeners, the script is done
+                if (self.listeners.length === 0) {
+                    postMessage({messageType: "return"});
+                // otherwise, wait a bit and try again
+                } else {
+                    // checks every 10 seconds until there are no listeners left
+                    setTimeout(ret, 10000);
+                }
             }
 
             // onResponse is a custom function called when requested data is provided by the main application

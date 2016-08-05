@@ -87,21 +87,28 @@
                         return Sk.importMainWithBody("user-script", false, e.data.script, true);
                     }).then(ret, function (err) {
                         if (err instanceof Sk.builtin.BaseException) {
-                            postMessage({messageType: "error", value: err.toString()});
+                            //TODO: traceback works?
+                            postMessage({messageType: "error", value: err.toString() + "\n" + err.traceback});
                         } else {
+                            //TODO: should we really throw the error? errors should never be thrown by a worker (pool can't tell)
                             throw err;
                         }
                     });
 
                 // if the data is for a listener, send it to the right listener
-                // listener is a numeric ID, so we can't use !!listener (it might be 0)
+                // data.listener is a numeric ID, so we can't use !!data.listener (it might be 0)
                 } else if (data.listener !== undefined) {
-                    self.listeners.get(data.listener)(data.value);
+                    var listener = self.listeners.get(data.listener);
+                    // sometimes a few messages make it through during listener deregistration.
+                    // Drop them if the listener does not expect them.
+                    if (!!listener) {
+                        listener(data.value);
+                    }
 
                 // otherwise the input is a query response, so call the response handler if there is one
                 } else if (!!self.onResponse) {
                     self.onResponse(data.value);
-                } //TODO: drop or error if onresponse undefined? Call ret (might have listeners)?
+                }
             };
         }
 
@@ -158,7 +165,6 @@
             }
         );
 
-
         /**
          * Handles messages sent from Python scripts
          * @private
@@ -192,6 +198,7 @@
                     })()});
                     break;
                 case "item_contents"://TODO: change to 'command'?
+                    //TODO: type of data is temporary
                     ParlayData.get(data.item + "." + data.contents.COMMAND).sendCommand(data.contents)
                         .then(function (result) {
                             // if data.listener is undefined, listener will be too
@@ -213,15 +220,14 @@
                     break;
                 case "item_datastream":
                     var datastream = ParlayData.get(data.item + "." + data.datastream);
+
                     switch (data.operation) {
+                        case "listen":
+                            datastream.listen();//TODO: ever stop listening?
+                            break;
                         case "get":
                             // Python expects null, not undefined
-                            if (datastream.value !== undefined) {
-                                worker.postMessage({value: datastream.value});
-                                break;
-                            } else {
-                                worker.postMessage({value: null});
-                            }
+                            worker.postMessage({value: datastream.value !== undefined ? datastream.value : null});
                             break;
                         case "wait_for_value":
                             datastream.listen().then(function(result) {
@@ -229,12 +235,23 @@
                             });
                             break;
                         case "attach_listener":
-                            //TODO: allow deregistration
-                            datastream.onChange(function(value) {
-                                worker.postMessage({value: value, listener: data.listener});
-                            });
-                            datastream.listen();
-                            // tell the worker that we've attached the listener
+                            // if the worker doesn't have a deregistration map, create it
+                            worker.listenerDeregistration = worker.listenerDeregistration || new Map();
+
+                            // register the listener with the datastream
+                            // and store its deregistration function in the map
+                            worker.listenerDeregistration.set(data.listener,
+                                datastream.onChange(function(value) {
+                                    worker.postMessage({value: value, listener: data.listener});
+                            }));
+                            // return control to the worker
+                            worker.postMessage({value:null});
+                            break;
+                        case "detach_listener":
+                            // call the deregistration function and remove it
+                            worker.listenerDeregistration.get(data.listener)();
+                            worker.listenerDeregistration.delete(data.listener);
+                            // return control to the worker
                             worker.postMessage({value:null});
                             break;
                         default:

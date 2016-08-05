@@ -268,6 +268,13 @@ function parlay_utils_native($modname) {
             self.itemJS = Sk.ffi.remapToJs(item);
             self.streamJS = Sk.ffi.remapToJs(stream);
 
+            sendQueryNative({
+                command: "item_datastream",
+                item: self.itemJS,
+                datastream: self.streamJS,
+                operation: "listen"
+            });
+
         });
 
         $loc.get = new Sk.builtin.func(function (self) {
@@ -296,10 +303,28 @@ function parlay_utils_native($modname) {
 
             var listenerID = newListenerID();
 
+            // add the Python listener, wrapped in a JS function
             listeners.set(listenerID, function(data) {
-                Sk.misceval.callsim(listener, Sk.ffi.remapToPy(data));
+                // call the Python listener and keep its result
+                var doRemove = Sk.misceval.callsim(listener, Sk.ffi.remapToPy(data));
+
+                // if the listener returns true, it should be removed
+                if (Sk.ffi.remapToJs(doRemove)) {
+                    listeners.delete(listenerID);
+                    // tell the main app to stop listening to the datastream for this listener
+                    sendQueryNative({
+                        command: "item_datastream",
+                        item: self.itemJS,
+                        datastream: self.streamJS,
+                        operation: "detach_listener",
+                        listener: listenerID
+                    });
+                }
+
             });
 
+            // send the listener attachment request to the main app
+            // so that the main app will connect to the server
             return sendQueryNative({
                 command: "item_datastream",
                 item: self.itemJS,

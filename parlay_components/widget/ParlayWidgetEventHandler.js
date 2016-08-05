@@ -91,7 +91,7 @@
          */
         ParlayWidgetEventHandler.prototype.construct = function (domEvent) {
             ParlayPyInterpreter.prototype.construct.call(this, function initFunc(interpreter, scope) {
-                this.attachEvent(scope, interpreter, domEvent);
+                this.attachEvent(scope, interpreter, domEvent);//TODO: edit here to expose initial DOM event that triggered script
             });
         };
 

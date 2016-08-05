@@ -112,9 +112,9 @@
 
                     // Deleting function references as the won't ever be equal.
                     delete ref.generateAutocompleteEntries;
-                    delete ref.generateInterpreterWrappers;
+                    delete ref.generateScriptAccess;
                     delete sub.generateAutocompleteEntries;
-                    delete sub.generateInterpreterWrappers;
+                    delete sub.generateScriptAccess;
 
                     expect(ref).toEqual(sub);
 

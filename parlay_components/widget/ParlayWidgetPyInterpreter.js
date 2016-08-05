@@ -226,6 +226,9 @@
                             datastream.onChange(function(value) {
                                 worker.postMessage({value: value, listener: data.listener});
                             });
+                            datastream.listen();
+                            // tell the worker that we've attached the listener
+                            worker.postMessage({value:null});
                             break;
                         default:
                             break;

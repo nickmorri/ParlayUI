@@ -14,9 +14,7 @@ function parlay_utils_native($modname) {
     // queries the main page for some information and waits for the response
     // we define a "native" JS version separately so that module-internal methods may call it
     // without the overhead of jS->Py->JS conversion.
-    // parseResponse allows native functions to interpret the received data
-    // parseResponse should return a Python result
-    var sendQueryNative = function(data, parseResponse) {
+    var sendQueryNative = function(data) {
         self.postMessage({messageType: "pyMessage", value: data});
 
         var result;
@@ -36,11 +34,8 @@ function parlay_utils_native($modname) {
         susp.data = {type: "Sk.promise", promise: new Promise(function(resolve) {
             self.onResponse = function (data) {
                 // stores the result of the query so that it will be returned by resume()
-                if (!!parseResponse) {
-                    result = parseResponse(data);
-                } else {
-                    result = Sk.ffi.remapToPy(data);
-                }
+                result = Sk.ffi.remapToPy(data);
+
                 // accepts exactly one response
                 self.onResponse = undefined;
                 resolve();
@@ -71,6 +66,10 @@ function parlay_utils_native($modname) {
             // we expose properties, so check that the description specifies them
             var properties = desc.mp$subscript(new Sk.builtin.str("PROPERTIES"));
             Sk.builtin.pyCheckType("desc['PROPERTIES']", "list", properties instanceof Sk.builtin.list);
+
+            // we expose datastreams, so check that the description specifies them
+            var datastreams = desc.mp$subscript(new Sk.builtin.str("DATASTREAMS"));
+            Sk.builtin.pyCheckType("desc['DATASTREAMS']", "list", datastreams instanceof Sk.builtin.list);
 
             var itemName = desc.mp$subscript(new Sk.builtin.str("NAME"));
             Sk.builtin.pyCheckType("desc['NAME']", "str", Sk.builtin.checkString(itemName));
@@ -118,12 +117,20 @@ function parlay_utils_native($modname) {
                 return contents;
             };
 
+            Sk.ffi.remapToJs(datastreams).map(function(stream) {
+               fields.set(stream.ATTR_NAME, {
+                   dataType: "datastream",
+                   datastream: stream.STREAM
+               });
+            });
+
             Sk.ffi.remapToJs(properties).map(function(prop) {
-               fields.set(prop.PROPERTY, {
+               fields.set(prop.ATTR_NAME, {
                    dataType: "property",
                    readOnly: prop.READ_ONLY,
                    writeOnly: prop.WRITE_ONLY,
-                   type: prop.INPUT
+                   type: prop.INPUT,
+                   property: prop.PROPERTY
                });
             });
 
@@ -202,9 +209,8 @@ function parlay_utils_native($modname) {
 
                 checkInputType(nameJS, propData.type, data);
 
-                //TODO: figure out the appropriate type for data and check it
                 //TODO: determine whether name is a property or data stream
-                //Sk.builtin.pyCheckType("data", "", data instanceof );
+
                 return sendQueryNative({
                     'command': "item_property",
                     'operation': "set",
@@ -218,25 +224,32 @@ function parlay_utils_native($modname) {
                 Sk.builtin.pyCheckType("name", "str", Sk.builtin.checkString(name));
 
                 var nameJS = Sk.ffi.remapToJs(name);
-                var propData = fields.get(nameJS);
+                var fieldData = fields.get(nameJS);
 
-                // if we couldn't locate the given name, it does not refer to a property,
-                //   or that property is read-only, error
-                if (propData === undefined) {
-                    throw new Sk.builtin.AttributeError(itemIDJS + " does not have a " + nameJS + " property.");
-                } else if (propData.dataType !== "property") {
+                if (fieldData === undefined) {
+                    throw new Sk.builtin.AttributeError(itemIDJS + " does not have a " + nameJS
+                        + " property or datastream.");
+
+                } else if (fieldData.dataType === "property") {
+                    if (fieldData.writeOnly) {
+                        throw new Sk.builtin.AttributeError(itemIDJS + "." + nameJS
+                            + " is a write-only property.");
+                    }
+
+                    return sendQueryNative({
+                        'command': "item_property",
+                        'operation': "get",
+                        'item': itemIDJS,
+                        'property': fieldData.property});
+
+                } else if (fieldData.dataType === "datastream") {
+                    return Sk.misceval.callsim(mod.ProxyDatastream,
+                        itemID, new Sk.builtin.str(fieldData.datastream));//TODO: args
+                } else {
                     throw new Sk.builtin.AttributeError(itemIDJS + "." + nameJS
-                        + " is a " + propData.dataType + ", not a property.");
-                } else if (propData.writeOnly) {
-                    throw new Sk.builtin.AttributeError(itemIDJS + "." + nameJS
-                        + " is a write-only property.");
+                        + " is a " + fieldData.dataType + ", not a property or datastream.");
                 }
 
-                return sendQueryNative({
-                    'command': "item_property",
-                    'operation': "get",
-                    'item': itemIDJS,
-                    'property': Sk.ffi.remapToJs(name)});
             }));
 
 
@@ -244,6 +257,60 @@ function parlay_utils_native($modname) {
         });
 
     }, "ProxyItem", []);
+
+    mod.ProxyDatastream = Sk.misceval.buildClass(mod, function($gbl, $loc) {
+
+        $loc.__init__ = new Sk.builtin.func(function (self, item, stream) {
+            Sk.builtin.pyCheckArgs("ProxyDatastream.__init__", arguments, 3, 3);
+            Sk.builtin.pyCheckType("item", "str", Sk.builtin.checkString(item));
+            Sk.builtin.pyCheckType("stream", "str", Sk.builtin.checkString(stream));
+
+            self.itemJS = Sk.ffi.remapToJs(item);
+            self.streamJS = Sk.ffi.remapToJs(stream);
+
+        });
+
+        $loc.get = new Sk.builtin.func(function (self) {
+            Sk.builtin.pyCheckArgs("ProxyDatastream.get", arguments, 1, 1);
+            return sendQueryNative({
+                command: "item_datastream",
+                item: self.itemJS,
+                datastream: self.streamJS,
+                operation: "get"
+            });
+        });
+
+        $loc.wait_for_value = new Sk.builtin.func(function (self) {
+            Sk.builtin.pyCheckArgs("ProxyDatastream.wait_for_value", arguments, 1, 1);
+            return sendQueryNative({
+                command: "item_datastream",
+                item: self.itemJS,
+                datastream: self.streamJS,
+                operation: "wait_for_value"
+            });
+        });
+
+        $loc.attach_listener = new Sk.builtin.func(function (self, listener) {
+            Sk.builtin.pyCheckArgs("ProxyDatastream.attach_listener", arguments, 2, 2);
+            Sk.builtin.pyCheckType("listener", "func", listener instanceof Sk.builtin.func);
+
+            var listenerID = newListenerID();
+
+            listeners.set(listenerID, function(data) {
+                Sk.misceval.callsim(listener, Sk.ffi.remapToPy(data));
+            });
+
+            return sendQueryNative({
+                command: "item_datastream",
+                item: self.itemJS,
+                datastream: self.streamJS,
+                operation: "attach_listener",
+                listener: listenerID
+            });
+        });
+
+
+    }, "ProxyDatastream", []);
 
     mod.ProxyCommand = Sk.misceval.buildClass(mod, function($gbl, $loc) {
 

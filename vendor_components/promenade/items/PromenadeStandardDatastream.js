@@ -1,14 +1,14 @@
 (function () {
     "use strict";
 
-    var module_dependencies = [];
+    var module_dependencies = ["parlay.data"];
 
     angular
         .module("promenade.items.datastream", module_dependencies)
         .factory("PromenadeStandardDatastream", PromenadeStandardDatastreamFactory);
 
-    PromenadeStandardDatastreamFactory.$inject = ["$rootScope"];
-    function PromenadeStandardDatastreamFactory ($rootScope) {
+    PromenadeStandardDatastreamFactory.$inject = ["$rootScope", "ParlayData"];
+    function PromenadeStandardDatastreamFactory ($rootScope, ParlayData) {
 
         /**
          * Class that wraps data stream information provided in a discovery.
@@ -103,7 +103,6 @@
             datastream.listen = listen;
             datastream.onChange = onChange;
             datastream.generateAutocompleteEntries = generateAutocompleteEntries;
-            datastream.generateInterpreterWrappers = generateInterpreterWrappers;
 
             /**
              * Requests a listener for the data stream. Saves a reference to deregistration function returned by
@@ -123,6 +122,8 @@
                     datastream.value = response.VALUE;
                 });
             });
+
+            ParlayData.set(datastream.item_name + "." + datastream.id, datastream);
 
             /**
              * Allows for callbacks to be registered, these will be invoked on change of value.
@@ -184,27 +185,6 @@
                 };
 
                 return [value_entry];
-            }
-
-            /**
-             * Generates Objects with Function references to be used in the ParlayWidgetJSInterpreter.
-             * @member PromenadeStandardDatastream#generateInterpreterWrappers
-             * @public
-             * @returns {Array.Object} - Objects containing function references. 
-             */
-            function generateInterpreterWrappers () {
-                return [
-                    {
-                        expression: "listen",
-                        type: "function",
-                        reference: datastream.listen
-                    },
-                    {
-                        expression: "value",
-                        type: "value",
-                        reference: datastream.value
-                    }
-                ];
             }
 
         }

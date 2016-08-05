@@ -204,6 +204,33 @@
                             worker.postMessage({value: res !== undefined ? res : null});
                         });
                     break;
+                case "item_datastream":
+                    var datastream = ParlayData.get(data.item + "." + data.datastream);
+                    switch (data.operation) {
+                        case "get":
+                            // Python expects null, not undefined
+                            if (datastream.value !== undefined) {
+                                worker.postMessage({value: datastream.value});
+                                break;
+                            } else {
+                                worker.postMessage({value: null});
+                            }
+                            break;
+                        case "wait_for_value":
+                            datastream.listen().then(function(result) {
+                                worker.postMessage({value: result.CONTENTS.VALUE});
+                            });
+                            break;
+                        case "attach_listener":
+                            //TODO: allow deregistration
+                            datastream.onChange(function(value) {
+                                worker.postMessage({value: value, listener: data.listener});
+                            });
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
                 default:
                     break;
             }

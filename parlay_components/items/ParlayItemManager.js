@@ -235,9 +235,12 @@
 		 * @returns {Array} - Items available on all protocols.
 		 */
 		ParlayItemManager.prototype.getAvailableItems = function () {
-			return ParlayProtocolManager.getOpenProtocols().reduce(function (previous, current) {
+			var protocol_items = ParlayProtocolManager.getOpenProtocols().reduce(function (previous, current) {
 				return previous.concat(current.getAvailableItems());
 			}, []);
+            //add the broker's protocol-less items
+            PromenadeBroker.items.forEach(function(v){ protocol_items.push(v);});
+            return protocol_items;
 		};
 
 		/**

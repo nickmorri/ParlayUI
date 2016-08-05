@@ -75,7 +75,7 @@ var standard_item_dependencies = ["parlay.items", "promenade.items.standarditem.
             Object.defineProperty(this, 'log', {
                 get: function () {
                     return protocol.getLog().filter(function (message) {
-                        return message.TOPICS.FROM === this.id;
+                        return message.TOPICS.FROM === this.id || message.TOPICS.TO === this.id ;
                     }, this);
                 }
             });

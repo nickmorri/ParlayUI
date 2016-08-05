@@ -327,8 +327,12 @@
              */
             function addDiscoveryInfoToOpenProtocol (info) {
                 var protocol = getOpenProtocol(info.NAME);
+                var protocolless_items = [];
                 if (!!protocol) {
                     protocol.addDiscoveryInfo(info);
+                }
+                else {
+                    PromenadeBroker.addItem(info);
                 }
             }
 
@@ -365,6 +369,7 @@
             PromenadeBroker.onMessage({type: "broker", response: "get_open_protocols_response"}, setOpenProtocols);
 
             PromenadeBroker.onDiscovery(function (response) {
+                PromenadeBroker.items = []; //clear protocoless items
                 response.discovery.forEach(addDiscoveryInfoToOpenProtocol);
             });
 

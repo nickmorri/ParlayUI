@@ -15,7 +15,7 @@
 
     PromenadeBrokerRun.$inject = ["ParlaySettings"];
 	function PromenadeBrokerRun (ParlaySettings) {
-		ParlaySettings.registerDefault("broker", {show_prompt: true, auto_discovery: true});
+		ParlaySettings.registerDefault("broker", {show_prompt: false, auto_discovery: true});
 		if (!ParlaySettings.has("broker")) {
 			ParlaySettings.restoreDefault("broker");
 		}

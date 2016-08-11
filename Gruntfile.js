@@ -162,7 +162,8 @@ module.exports = function (grunt) {
                     // assign the Python code to modVar as a string
                     body = 'var ' + modVar + '="' + grunt.file.read(filepath)
                                     .replace(/\"/g, "\\\"")
-                                    .replace(/\n/g, "\\n") + '";';
+                                    //escape any newlines (and remove possible carriage returns)
+                                    .replace(/\r?\n/g, "\\n") + '";';
                 }
 
                 return rest + body + registration;

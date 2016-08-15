@@ -133,8 +133,10 @@
                 FROM: property.item_name,
                 TO: "UI"
             }, function(response) {
+
                 // TODO: Talk with Daniel about refactoring property API to require property name in topics.
-                if (property.id == response.PROPERTY && response.VALUE) {
+                // Explicitly check to see if the response value is 0, we still want it if it is
+                if (property.id == response.PROPERTY && (response.VALUE || response.VALUE === 0)) {
                     $rootScope.$apply(function () {
                         property.value = response.VALUE;
                     });

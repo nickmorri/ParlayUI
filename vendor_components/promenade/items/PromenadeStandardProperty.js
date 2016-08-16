@@ -135,8 +135,8 @@
             }, function(response) {
 
                 // TODO: Talk with Daniel about refactoring property API to require property name in topics.
-                // Explicitly check to see if the response value is 0, we still want it if it is
-                if (property.id == response.PROPERTY && (response.VALUE || response.VALUE === 0)) {
+                // Check that the response value is not undefined, fixes bug where property is not displayed if value is 0
+                if (property.id == response.PROPERTY && response.VALUE !== undefined) {
                     $rootScope.$apply(function () {
                         property.value = response.VALUE;
                     });

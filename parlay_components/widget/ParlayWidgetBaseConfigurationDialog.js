@@ -238,7 +238,11 @@
                     var entries = [];
 
                     ParlayData.forEach(function (value) {
-                        entries = entries.concat(value.generateAutocompleteEntries());
+                        //if this value has an autocomplete entry then generate it
+                        if(!!value.generateAutocompleteEntries)
+                        {
+                            entries = entries.concat(value.generateAutocompleteEntries());
+                        }
                     });
 
                     entries = entries.concat(initial_entries);

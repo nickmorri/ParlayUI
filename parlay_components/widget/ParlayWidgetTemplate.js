@@ -126,7 +126,7 @@
                 }
 
                 console.log(scope);
-                scope.widgetsCtrl.registerProperties(scope.properties);
+                scope.widgetsCtrl.registerProperties("widget["+scope.uid+"]", scope.properties);
 
                 // ParlayWidgets should notify their parent, ParlayBaseWidget, when they are loaded.
                 scope.$emit("parlayWidgetTemplateLoaded");

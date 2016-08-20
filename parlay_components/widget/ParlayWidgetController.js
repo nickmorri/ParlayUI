@@ -86,14 +86,14 @@
             ParlayWidgetManager.duplicate(uid);
         }
 
-        function registerProperties(scope_properties)
+        function registerProperties(prefix, scope_properties)
         {
 
              for(var key in scope_properties)
                 {   // only keys for this object
                     if(scope_properties.hasOwnProperty(key))
                     {
-                       ParlayData.set(key, scope_properties[key]);
+                       ParlayData.set(prefix +"."+ key, scope_properties[key]);
                     }
                 }
             console.log(ParlayData);

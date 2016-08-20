@@ -11,9 +11,9 @@
     ParlayPyInterpreterFactory.$inject = ["PromenadeBroker","ParlayWorkerPool",
                                             //Note: The "skulpt" constant is provided by worker.imports.
                                             //      The skulpt library is never loaded by the main application.
-                                         "skulpt", "refreshRate", "parlayModules", "ParlayData"];
+                                         "skulpt", "refreshRate", "parlayModules", "ParlayData", "$rootScope"];
     function ParlayPyInterpreterFactory (PromenadeBroker, ParlayWorkerPool,
-                                         skulpt, refreshRate, parlayModules, ParlayData) {
+                                         skulpt, refreshRate, parlayModules, ParlayData, $rootScope) {
 
         /** This Worker runs an individual Python script in a separate thread.
          * It is designed to be reusable to avoid repeated script imports.
@@ -258,6 +258,19 @@
                             break;
                     }
                     break;
+                case "get_parlay_data":
+                    //TODO Get a widget value by widget name and value name
+                    var val = ParlayData.get(data.key).value;
+                    worker.postMessage({value:val});
+                    break;
+
+                case "set_parlay_data":
+                    ParlayData.get(data.key).value = data.value;
+                    worker.postMessage({value: data.value});
+                    // since we've changed the ParlayData, do a digest loop
+                    $rootScope.$digest();
+                    break
+
                 default:
                     break;
             }

@@ -93,7 +93,7 @@
                 {   // only keys for this object
                     if(scope_properties.hasOwnProperty(key))
                     {
-                       ParlayData[key] = scope_properties[key];
+                       ParlayData.set(key, scope_properties[key]);
                     }
                 }
             console.log(ParlayData);

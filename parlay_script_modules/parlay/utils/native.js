@@ -11,9 +11,24 @@ function parlay_utils_native($modname) {
         return Sk.builtin.null.null$;
     });
 
+    mod.getData = new Sk.builtin.func(function(key){
+        return sendQueryNative({
+            command: "get_parlay_data",
+            key: Sk.ffi.remapToJs(key)
+        });
+    });
+
+    mod.setData = new Sk.builtin.func(function(key, value){
+        return sendQueryNative({
+            command: "set_parlay_data",
+            key: Sk.ffi.remapToJs(key),
+            value: Sk.ffi.remapToJs(value)
+        });
+    });
+
     // queries the main page for some information and waits for the response
     // we define a "native" JS version separately so that module-internal methods may call it
-    // without the overhead of jS->Py->JS conversion.
+    // without the overhead of JS->Py->JS conversion.
     var sendQueryNative = function(data) {
         self.postMessage({messageType: "pyMessage", value: data});
 
@@ -115,7 +130,7 @@ function parlay_utils_native($modname) {
                 });
 
                 return contents;
-            };
+            }
 
             Sk.ffi.remapToJs(datastreams).map(function(stream) {
                fields.set(stream.ATTR_NAME, {

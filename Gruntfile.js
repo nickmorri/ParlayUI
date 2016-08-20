@@ -360,7 +360,7 @@ module.exports = function (grunt) {
 		'wiredep': {
 			'dev': {
 				'src': '<%= meta.dev_destination %>/index.html',
-                'exclude': 'bower_components/skulpt/*'
+                'exclude': 'bower_components/skulpt/*',
 			}
 		},
 

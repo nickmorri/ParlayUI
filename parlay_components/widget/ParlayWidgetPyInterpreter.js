@@ -289,7 +289,6 @@
          * and [JS-Interpreter]{@link https://github.com/NeilFraser/JS-Interpreter/} internally for code execution.
          * @constructor module:ParlayWidget.ParlayPyInterpreter
          * @attribute {String} functionString - JavaScript code that should be executed on this.run()
-         * @attribute {Object} interpreter - [JS-Interpreter]{@link https://github.com/NeilFraser/JS-Interpreter/} instance.
          * @attribute {String} constructionError - Initially undefined, if a construction error occurs it will be set
          * error.toString() representation.
          */
@@ -301,7 +300,7 @@
              * @type {String}
              * @default {undefined}
              */
-            this.functionString = undefined;
+            this.functionString = "from parlay.utils import *\nsetup()"; //default the imports to make it easier
 
             /**
              * Set if a error occurs during the interpreter construction process.

@@ -45,25 +45,6 @@
                 }
             });
 
-            /**
-             * The interpreter should be rebuilt whenever the functionString is changed.
-             * This means we will to implement both a custom getter/setter, that requires we store the actual value
-             * of the functionString in cached_functionString.
-             * Contains the items that have been added to the transformer instance.
-             * @member module:ParlayWidget.ParlayWidgetTransformer#functionString
-             * @public
-             * @type {String}
-             */
-            var cached_functionString;
-            Object.defineProperty(this, "functionString", {
-                get: function () {
-                    return cached_functionString;
-                },
-                set: function (value) {
-                    cached_functionString = value;
-                    this.construct();
-                }.bind(this)
-            });
 
             /**
              * Contains the items that have been added to the transformer instance.

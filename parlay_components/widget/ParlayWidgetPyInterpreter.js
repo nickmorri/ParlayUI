@@ -269,7 +269,7 @@
                     worker.postMessage({value: data.value});
                     // since we've changed the ParlayData, do a digest loop
                     $rootScope.$digest();
-                    break
+                    break;
 
                 default:
                     break;

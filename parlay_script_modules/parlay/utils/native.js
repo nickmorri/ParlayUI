@@ -43,7 +43,7 @@ function parlay_utils_native($modname) {
             } else {
                 throw new Error("sendQuery suspension resumed before result was retrieved! This should never happen.");
             }
-        }
+        };
 
         // attach the resolution of the program to receiveResponse
         susp.data = {type: "Sk.promise", promise: new Promise(function(resolve) {
@@ -90,7 +90,6 @@ function parlay_utils_native($modname) {
             Sk.builtin.pyCheckType("desc['NAME']", "str", Sk.builtin.checkString(itemName));
 
             var itemID = desc.mp$subscript(new Sk.builtin.str("ID"));
-            Sk.builtin.pyCheckType("desc['ID']", "str", Sk.builtin.checkString(itemID));
 
             // create a local Map to hold command and property data
             var fields = new Map();//TODO: add property data
@@ -368,7 +367,7 @@ function parlay_utils_native($modname) {
                 argsDictJS = Sk.ffi.remapToJs(argsDict);
             } else {
                 argsDictJS = {};
-            };
+            }
 
 
             var item = Sk.ffi.remapToJs(itm);

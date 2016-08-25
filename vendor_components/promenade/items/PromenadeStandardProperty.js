@@ -238,24 +238,28 @@
             function generateAutocompleteEntries () {
 
                 var get_entry = {
+                    depends_on: "get_item_by_name('"+property.item_name+"')", //wont show unless this string is in script
                     caption: property.item_name + "." + property.name + ".get()",
                     value: property.item_name + "." + property.name + ".get()",
                     meta: "PromenadeStandardProperty method"
                 };
 
                 var set_entry = {
+                    depends_on: "get_item_by_name('"+property.item_name+"')", //wont show unless this string is in script
                     caption: property.item_name + "." + property.name + ".set(" + property.value + ")",
                     value: property.item_name + "." + property.name + ".set(" + property.value + ")",
                     meta: "PromenadeStandardProperty method"
                 };
 
                 var value_entry = {
+                    depends_on: "get_item_by_name('"+property.item_name+"')", //wont show unless this string is in script
                     caption: property.item_name + "." + property.name + ".value",
                     value: property.item_name + "." + property.name + ".value",
                     meta: "PromenadeStandardProperty value"
                 };
 
-                return [get_entry, set_entry, value_entry];
+                //TODO make this more intelligent for python handlers
+                return [];
             }
 
         }

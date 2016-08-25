@@ -135,29 +135,30 @@
                 return command.options.map(function (sub_command) {
 
                     // TestItem.echo(
-                    var entry_prefix = command.item_name + "." + sub_command.name + "(";
+                    var entry_prefix = "get_item_by_name('"+command.item_name+"')." + sub_command.name + "(";
 
                     // if sub_command.sub_fields then {"string": "hello world"}
                     // else ""
-                    var entry_suffix = sub_command.sub_fields ? "{" + sub_command.sub_fields.map(function (current_parameter) {
+                    var entry_suffix = sub_command.sub_fields ?  sub_command.sub_fields.map(function (current_parameter) {
                         if (!!current_parameter.default) {
-                            return '"' + current_parameter.msg_key + '":' + current_parameter.default;
+                            return current_parameter.msg_key + '=' + current_parameter.default;
                         }
                         else if (current_parameter.input == "ARRAY" || current_parameter.input == "STRINGS" || current_parameter.input == "NUMBERS") {
-                            return '"' + current_parameter.msg_key + '":[]';
+                            return current_parameter.msg_key + '=[]';
                         }
                         else if (current_parameter.input == "STRING") {
-                            return '"' + current_parameter.msg_key + '":""';
+                            return current_parameter.msg_key + '=""';
                         }
                         else if (current_parameter.input == "NUMBER") {
-                            return '"' + current_parameter.msg_key + '":0';
+                            return current_parameter.msg_key + '=0';
                         }
                         else {
-                            return '"' + current_parameter.msg_key + '":undefined';
+                            return current_parameter.msg_key + '=undefined';
                         }
-                    }).join(", ") + "}" : "";
+                    }).join(", ") : "";
 
                     return {
+                        depends_on: "get_item_by_name('"+command.item_name+"')", //wont show unless this string is in script
                         caption: entry_prefix + ")",
                         value: entry_prefix + entry_suffix + ")",
                         meta: "PromenadeStandardCommand"

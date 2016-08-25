@@ -62,12 +62,7 @@
              */
             this.handlers = [];
 
-            // On creation we should add all initialItems if provided.
-            if (!!initialItems) {
-                initialItems.forEach(function (item) {
-                    this.addItem(item);
-                }, this);
-            }
+
 
         }
 
@@ -122,50 +117,7 @@
             }
         };
 
-        /**
-         * Request that the item retrieves the latest value, add it to this.items and this.handlers, register a change
-         * handler and finally reconstruct this ParlayWidgetTransformer instance.
-         * @member module:ParlayWidget.ParlayWidgetTransformer#addItem
-         * @public
-         * @param {Object} item - PromenadeStandardProperty, PromenadeStandardDatastream or HTML <input> instance.
-         */
-        ParlayWidgetTransformer.prototype.addItem = function (item) {
 
-            // Retrieve the latest value.
-            if (item.constructor.name == "PromenadeStandardProperty") {
-                item.get();
-            }
-            else if (item.constructor.name == "PromenadeStandardDatastream") {
-                item.listen();
-            }
-
-            // Store in this.items and this.handlers.
-            this.items.push(item);
-            this.handlers.push(this.registerHandler(item));
-
-            // Reconstruct this ParlayWidgetTransformer instance.
-            this.construct();
-        };
-
-        /**
-         * Remove from this.items and this.handlers and reconstruct this ParlayWidgetTransformer instance.
-         * @member module:ParlayWidget.ParlayWidgetTransformer#removeItem
-         * @public
-         * @param {Object} item - PromenadeStandardProperty, PromenadeStandardDatastream or HTML <input> instance.
-         */
-        ParlayWidgetTransformer.prototype.removeItem = function (item) {
-
-            var index = this.items.indexOf(item);
-
-            if (index > -1) {
-                this.handlers[index]();
-                this.handlers.splice(index, 1);
-                this.items.splice(index, 1);
-            }
-
-            // Reconstruct this ParlayWidgetTransformer instance.
-            this.construct();
-        };
 
         /**
          * Converts ParlayWidgetTransformer instance to Object that can be JSON.stringified.

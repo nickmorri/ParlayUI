@@ -202,27 +202,7 @@
         // Attach methods to controller.
         ctrl.onEditorLoad = onEditorLoad;
 
-        var static_completer_entries = [
-            {
-                caption: "ParlaySocket.sendMessage",
-                value: "ParlaySocket.sendMessage({}, {})"
-            },
-            {
-                caption: "log",
-                value: 'log("hello world")',
-                meta: "console.log"
-            },
-            {
-                caption: "alert",
-                value: 'alert("hello world")',
-                meta: "window.alert"
-            },
-            {
-                caption: "event",
-                value: "event",
-                meta: "JavaScript event"
-            }
-        ];
+        var static_completer_entries = [];
 
         /**
          * Creates Object of an [Ace editor]{@link https://ace.c9.io/} auto completer that pulls entries from ParlayData.
@@ -236,12 +216,20 @@
                 getCompletions: function (editor, session, pos, prefix, callback) {
 
                     var entries = [];
+                    var editor_text = editor.getValue();
 
                     ParlayData.forEach(function (value) {
                         //if this value has an autocomplete entry then generate it
                         if(!!value.generateAutocompleteEntries)
                         {
-                            entries = entries.concat(value.generateAutocompleteEntries());
+                            var my_entries = value.generateAutocompleteEntries();
+                            // filter based on dependson if any defne it
+                            my_entries = my_entries.filter(function(val){
+                                return !val.depends_on || editor_text.indexOf(val.depends_on) !=-1
+                            });
+
+
+                            entries = entries.concat(my_entries);
                         }
                     });
 
@@ -262,7 +250,7 @@
             editor.$blockScrolling = Infinity;
             ace.require("ace/ext/language_tools");
             editor.setOptions({enableBasicAutocompletion: true, enableLiveAutocompletion: true});
-            editor.completers = [generateCompleter(static_completer_entries)];
+            editor.completers = editor.completers.concat([generateCompleter(static_completer_entries)]);
         }
 
     }
@@ -382,27 +370,6 @@
         ctrl.onEditorLoad = onEditorLoad;
 
         var static_completer_entries = [];
-
-        /**
-         * Creates Object of an [Ace editor]{@link https://ace.c9.io/} auto completer that pulls entries from configuration.selectedItems.
-         * @member module:ParlayWidget.ParlayWidgetBaseConfigurationTransformController#generateCompleter
-         * @private
-         * @param {Array} initial_entries - Entries that should be included explicitly.
-         * @returns {Object} - [Ace editor]{@link https://ace.c9.io/} auto completer.
-         */
-        function generateCompleter (initial_entries) {
-            return {
-                getCompletions: function (editor, session, pos, prefix, callback) {
-                    callback(null, $scope.configuration.selectedItems.reduce(function (accumulator, item) {
-                        return accumulator.concat([{
-                            caption: item.item_name + "." + item.name + ".value",
-                            value: item.item_name + "." + item.name + ".value",
-                            meta: "Parlay{" + item.type + "} value"
-                        }]);
-                    }, initial_entries));
-                }
-            };
-        }
 
         /**
          * Called when the [Ace editor]{@link https://ace.c9.io/} instance completes loading.

@@ -1,4 +1,4 @@
-(function () {
+/* (function () {
     "use strict";
 
    describe("parlay.widget.transformer", function () {
@@ -164,3 +164,4 @@
    });
 
 }());
+    */

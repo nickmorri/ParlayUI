@@ -300,7 +300,7 @@
              * @type {String}
              * @default {undefined}
              */
-            this.functionString = "from parlay.utils import *\nsetup()"; //default the imports to make it easier
+            this.functionString = "from parlay.utils import *\nsetup()\n\n"; //default the imports to make it easier
 
             /**
              * Set if a error occurs during the interpreter construction process.

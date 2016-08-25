@@ -25,12 +25,12 @@
         // constructs new onmessage and onerror functions that free workers when they are done
         function receiveAndFree(worker, onMorE, isCompleted) {
             return function(e){
+                //are we free?
+                if (isCompleted(e)) worker.isBusy = false;
                 //call the old onmessage or onerror
                 onMorE.bind(worker)(e);
-                if (isCompleted(e)) {
-                    //free the worker
-                    worker.isBusy = false;
-                }
+                //are we free after calling?
+                if (isCompleted(e)) worker.isBusy = false;
             };
         }
 

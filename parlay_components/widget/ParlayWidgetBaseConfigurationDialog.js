@@ -225,7 +225,7 @@
                             var my_entries = value.generateAutocompleteEntries();
                             // filter based on dependson if any defne it
                             my_entries = my_entries.filter(function(val){
-                                return !val.depends_on || editor_text.indexOf(val.depends_on) !=-1
+                                return !val.depends_on || editor_text.indexOf(val.depends_on) !=-1;
                             });
 
 

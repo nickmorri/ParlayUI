@@ -11,6 +11,12 @@ function parlay_utils_native($modname) {
         return Sk.builtin.null.null$;
     });
 
+    //call this when the script is finished to free it and return it to the worker pool
+    mod.scriptFinished = new Sk.builtin.func(function(data) {
+        self.postMessage({messageType: "return", value: Sk.ffi.remapToJs(data)});
+        //return Sk.builtin.null.null$;
+    });
+
     mod.getData = new Sk.builtin.func(function(key){
         return sendQueryNative({
             command: "get_parlay_data",

@@ -45,6 +45,25 @@
                 }
             });
 
+            /**
+             * The interpreter should be rebuilt whenever the functionString is changed.
+             * This means we will to implement both a custom getter/setter, that requires we store the actual value
+             * of the functionString in cached_functionString.
+             * Contains the items that have been added to the transformer instance.
+             * @member module:ParlayWidget.ParlayWidgetTransformer#functionString
+             * @public
+             * @type {String}
+             */
+            var cached_functionString;
+            Object.defineProperty(this, "functionString", {
+                get: function () {
+                    return cached_functionString;
+                },
+                set: function (value) {
+                    cached_functionString = value;
+                    this.construct();
+                }.bind(this)
+            });
 
             /**
              * Contains the items that have been added to the transformer instance.
@@ -62,7 +81,12 @@
              */
             this.handlers = [];
 
-
+            // On creation we should add all initialItems if provided.
+            if (!!initialItems) {
+                initialItems.forEach(function (item) {
+                    this.addItem(item);
+                }, this);
+            }
 
         }
 
@@ -76,7 +100,7 @@
          * @public
          */
         ParlayWidgetTransformer.prototype.construct = function () {
-            ParlayPyInterpreter.prototype.construct.call(this);
+            //ParlayPyInterpreter.prototype.construct.call(this);
         };
 
         /**
@@ -117,7 +141,50 @@
             }
         };
 
+        /**
+         * Request that the item retrieves the latest value, add it to this.items and this.handlers, register a change
+         * handler and finally reconstruct this ParlayWidgetTransformer instance.
+         * @member module:ParlayWidget.ParlayWidgetTransformer#addItem
+         * @public
+         * @param {Object} item - PromenadeStandardProperty, PromenadeStandardDatastream or HTML <input> instance.
+         */
+        ParlayWidgetTransformer.prototype.addItem = function (item) {
 
+            // Retrieve the latest value.
+            if (item.constructor.name == "PromenadeStandardProperty") {
+                item.get();
+            }
+            else if (item.constructor.name == "PromenadeStandardDatastream") {
+                item.listen();
+            }
+
+            // Store in this.items and this.handlers.
+            this.items.push(item);
+            this.handlers.push(this.registerHandler(item));
+
+            // Reconstruct this ParlayWidgetTransformer instance.
+            this.construct();
+        };
+
+        /**
+         * Remove from this.items and this.handlers and reconstruct this ParlayWidgetTransformer instance.
+         * @member module:ParlayWidget.ParlayWidgetTransformer#removeItem
+         * @public
+         * @param {Object} item - PromenadeStandardProperty, PromenadeStandardDatastream or HTML <input> instance.
+         */
+        ParlayWidgetTransformer.prototype.removeItem = function (item) {
+
+            var index = this.items.indexOf(item);
+
+            if (index > -1) {
+                this.handlers[index]();
+                this.handlers.splice(index, 1);
+                this.items.splice(index, 1);
+            }
+
+            // Reconstruct this ParlayWidgetTransformer instance.
+            this.construct();
+        };
 
         /**
          * Converts ParlayWidgetTransformer instance to Object that can be JSON.stringified.

@@ -314,7 +314,7 @@
         }
 
         /**
-         * Attempts to construct a [JS-Interpreter]{@link https://github.com/NeilFraser/JS-Interpreter/} instance using functionString and the given childInitFunc.
+         * Attempts to construct a python interpreter instance using functionString and the given childInitFunc.
          * If construction fails constructionError will be set to the String representation of the caught error.
          * @member module:ParlayWidget.ParlayPyInterpreter#construct
          * @public
@@ -347,7 +347,12 @@
                     return "ParlayInterpreter.construct() must be done before ParlayInterpreter.run()";
                 }
                 else {
-                    workerPool.getWorker().postMessage({script: this.functionString});
+                    //attach the prefix and suffix  to the string to run
+                    var full_func_string = this.functionString +
+                        "\nfrom parlay.utils.native import scriptFinished" +
+                        "\ntry:\n    scriptFinished(result)"+ // try and return wth value 'result'
+                        "\nexcept:\n    scriptFinished(None)"; //else return wth no result
+                    workerPool.getWorker().postMessage({script: full_func_string});
                     //return true on successful launch
                     return true;
                 }

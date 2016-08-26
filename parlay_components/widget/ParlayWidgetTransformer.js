@@ -41,12 +41,16 @@
              */
             var cached_value = undefined;
             ParlayWidgetTransformer.prototype.recalculate = function() {
-                var builtins = {}
+                var builtins = {};
+                var all = {};
                 for(var i=0; i< this.items.length; i++)
                 {
                     var it = this.items[i];
                     builtins[it.name] = it.value;
+                    all[it.name] = it.value;
                 }
+                builtins["__all__"] = all; //special builtin with all args
+
                 this.run(function(result){
                     cached_value = result;
                     $rootScope.$digest(); //do a digest to update the value
@@ -151,7 +155,7 @@
             }
             else {
                 // If the item changes we should re-construct this ParlayWidgetTransformer instance.
-                return item.onChange(this.recalculate());
+                return item.onChange(this.recalculate.bind(this));
             }
         };
 

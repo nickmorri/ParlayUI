@@ -251,6 +251,7 @@
             ace.require("ace/ext/language_tools");
             editor.setOptions({enableBasicAutocompletion: true, enableLiveAutocompletion: true});
             editor.completers = editor.completers.concat([generateCompleter(static_completer_entries)]);
+
         }
 
     }
@@ -381,7 +382,7 @@
             editor.$blockScrolling = Infinity;
             ace.require("ace/ext/language_tools");
             editor.setOptions({enableBasicAutocompletion: true, enableLiveAutocompletion: true});
-            editor.completers = [generateCompleter(static_completer_entries)];
+            //editor.completers = [generateCompleter(static_completer_entries)];
         }
 
     }

@@ -15,7 +15,7 @@
     PromenadeWidgetChartJs.$inject = ["ParlayWidgetTemplate", "$interval", "RandColor"];
     function PromenadeWidgetChartJs (ParlayWidgetTemplate, $interval, RandColor) {
 
-        function customLink (scope, element) {
+        function customLink (scope, element, attrs, controller, transcludeFn) {
 
             var chart, chart_interval, canvas_context;
 
@@ -35,39 +35,8 @@
                 }).concat([{name: "transformed_value", value: scope.transformedValue}]);
             }
 
-            var interval_promise = $interval(function () {
-
-                var items = values(scope.items);
-
-                if (!!items && items.length > 0) {
-                    items.forEach(function (item) {
-
-                        var data = chart.data.datasets.find(function (dataset) {
-                            return dataset.label == item.name;
-                        }).data;
-
-                        data.push(item.value);
-
-                        if (data.length > 20) {
-                            data.shift();
-                        }
-
-                    });
-
-                    chart.data.labels.push("");
-
-                    if (chart.data.labels.length > 20) {
-                        chart.data.labels.shift();
-                    }
-                }
-
-                if (!scope.paused) {
-                    chart.update();
-                }
-
-            }, chart_interval);
-
-            var items_deregistration = scope.$watchCollection("items", function (newValue) {
+            //construct or re-construct the graph based on the items attached
+            var construct = function (newValue) {
 
                 var randColor = new RandColor();
 
@@ -81,11 +50,48 @@
                         labels: [""],
                         datasets: values(newValue).map(function (container) {
                             return {label: container.name, data: [], backgroundColor: randColor.pop().hex()};
-                        }).concat([{label: "transformed_value", data: [], backgroundColor: randColor.pop().hex()}])
+                        })//.concat([{label: "transformed_value", data: [], backgroundColor: randColor.pop().hex()}])
                     }
                 });
 
-            });
+            };
+            //initial construction
+            construct([]);
+            //watch the items and reconstruct on additon/subtraction
+            // return a deregistration function that when called will stop this monitoring.
+            var items_deregistration = scope.$watchCollection("items", construct);
+
+            var interval_promise = $interval(function () {
+
+                var items = values(scope.items);
+
+                if (!!items && items.length > 0) {
+                    items.forEach(function (item) {
+
+                        var data = chart.data.datasets.find(function (dataset) {
+                            return dataset.label == item.name;
+                        }).data;
+                        //don't push data if we don't have any (or if it isnt a number)
+                        if(item.value !== undefined && !isNaN(item.value)) data.push(item.value);
+
+                        if (data.length > 20) {
+                            data.shift();
+                        }
+
+                    });
+
+                    chart.data.labels.push("");
+
+                    if (chart.data.labels.length > 20) {
+                        chart.data.labels.shift();
+                    }
+                }
+                //if we're not paused, and we actually have something to graph, then update the graph
+                if (!scope.paused) {
+                    chart.update();
+                }
+
+            }, chart_interval);
             
             scope.$on("$destroy", function () {
                 $interval.cancel(interval_promise);

@@ -7,8 +7,8 @@
         .module("parlay.widget.transformer", module_dependencies)
         .factory("ParlayWidgetTransformer", ParlayWidgetTransformerFactory);
 
-    ParlayWidgetTransformerFactory.$inject = ["ParlayPyInterpreter"];
-    function ParlayWidgetTransformerFactory (ParlayPyInterpreter) {
+    ParlayWidgetTransformerFactory.$inject = ["ParlayPyInterpreter", "$rootScope"];
+    function ParlayWidgetTransformerFactory (ParlayPyInterpreter, $rootScope) {
 
         /**
          * ParlayWidgetTransformer factory for transforming PromenadeStandardProperty, PromenadeStandardDatastream and
@@ -39,9 +39,23 @@
              * @public
              * @type {*}
              */
+            var cached_value = undefined;
+            ParlayWidgetTransformer.prototype.recalculate = function() {
+                var builtins = {}
+                for(var i=0; i< this.items.length; i++)
+                {
+                    var it = this.items[i];
+                    builtins[it.name] = it.value;
+                }
+                this.run(function(result){
+                    cached_value = result;
+                    $rootScope.$digest(); //do a digest to update the value
+                }, builtins);
+            };
+
             Object.defineProperty(this, "value", {
                 get: function () {
-                    return this.run();
+                    return cached_value;
                 }
             });
 
@@ -61,7 +75,7 @@
                 },
                 set: function (value) {
                     cached_functionString = value;
-                    this.construct();
+                    this.recalculate();
                 }.bind(this)
             });
 
@@ -129,15 +143,15 @@
             if (item.type == "input") {
 
                 // If the item changes we should re-construct this ParlayWidgetTransformer instance.
-                item.element.addEventListener("change", this.construct.bind(this));
+                item.element.addEventListener("change",this.recalculate());
 
                 return function () {
-                    item.element.removeEventListener("change", this.construct);
+                    item.element.removeEventListener("change", this.recalculate());
                 }.bind(this);
             }
             else {
                 // If the item changes we should re-construct this ParlayWidgetTransformer instance.
-                return item.onChange(this.construct.bind(this));
+                return item.onChange(this.recalculate());
             }
         };
 
@@ -162,8 +176,8 @@
             this.items.push(item);
             this.handlers.push(this.registerHandler(item));
 
-            // Reconstruct this ParlayWidgetTransformer instance.
-            this.construct();
+            //we've changed input so recalc
+            this.recalculate();
         };
 
         /**
@@ -182,8 +196,8 @@
                 this.items.splice(index, 1);
             }
 
-            // Reconstruct this ParlayWidgetTransformer instance.
-            this.construct();
+            //we've changed input so recalc
+            this.recalculate();
         };
 
         /**

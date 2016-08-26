@@ -29,6 +29,14 @@
                 read: builtinRead,
                 setTimeout : self.setTimeout.bind(self)
             });
+            //shallow clone the builtins so they're pristine (we'll be messing with them)
+            var default_builtins = {} ;
+            var key;
+            for (key in Sk.builtins)
+            {
+                // copy each property into the clone
+                default_builtins[key] = Sk.builtins[key] ;
+            }
 
             function print(text) {
                 postMessage({messageType: "print", value: text});
@@ -48,9 +56,6 @@
                 if (self.listeners.length === 0) {
                     postMessage({messageType: "return"});
                 // otherwise, wait a bit and try again
-                } else {
-                    // checks every 10 seconds until there are no listeners left
-                    setTimeout(ret, 10000);
                 }
             }
 
@@ -81,6 +86,17 @@
                     //clear listeners for new script
                     self.onResponse = undefined;
                     self.listeners.clear();
+                    //reset builtins and add any builtins we need
+                    Sk.builtins = {};
+                    for (var key in default_builtins)
+                    {
+                        // copy each property into the clone
+                        Sk.builtins[key] = default_builtins[key];
+                    }
+                    //add any builtins we need
+                    for(var key in e.data.builtins){
+                        Sk.builtins[key] = Sk.ffi.remapToPy(e.data.builtins[key]);
+                    }
 
                     // if this worker receives a script, run it
                     Sk.misceval.asyncToPromise(function () {
@@ -148,18 +164,14 @@
             function(e) {
                 if (e instanceof MessageEvent) {
                     var msg = e.data;
-                    switch (msg.messageType) {
-                        case "print":
-                            return false;
-                        case "pyMessage":
-                            return false;
-                        case "error":
-                            return true;
-                        case "return":
-                            return true;
-                        default :
-                            return false;
+                    var complete = msg.messageType === "error" || msg.messageType === "return";
+                    if(complete) // run our onFinished if we're complete
+                    {
+                        if(this.onFinished !== undefined) this.onFinished(msg.value);
+                        this.onFinished = undefined;
                     }
+                    return complete;
+
                 }
                 return false;
             }
@@ -337,9 +349,11 @@
          * Attempts to run the Python script.
          * @member module:ParlayWidget.ParlayPyInterpreter#run
          * @public
+         * @param {Function} onFinished - callback function to call when finished
+         * @param {Object} builtins - extra builtins to add to the environment
          * @returns {Object} - true or error
          */
-        ParlayPyInterpreter.prototype.run = function() {
+        ParlayPyInterpreter.prototype.run = function(onFinished, builtins) {
             if (!!this.constructionError) {
                     return this.constructionError;
                 }
@@ -348,11 +362,15 @@
                 }
                 else {
                     //attach the prefix and suffix  to the string to run
+
                     var full_func_string = this.functionString +
                         "\nfrom parlay.utils.native import scriptFinished" +
                         "\ntry:\n    scriptFinished(result)"+ // try and return wth value 'result'
                         "\nexcept:\n    scriptFinished(None)"; //else return wth no result
-                    workerPool.getWorker().postMessage({script: full_func_string});
+                    var worker = workerPool.getWorker();
+                    worker.onFinished = onFinished;
+                    builtins = builtins || {}
+                    worker.postMessage({script: full_func_string, builtins:builtins});
                     //return true on successful launch
                     return true;
                 }

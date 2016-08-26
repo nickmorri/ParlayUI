@@ -26,11 +26,9 @@
         function receiveAndFree(worker, onMorE, isCompleted) {
             return function(e){
                 //are we free?
-                if (isCompleted(e)) worker.isBusy = false;
+                if (isCompleted.bind(worker)(e)) worker.isBusy = false;
                 //call the old onmessage or onerror
                 onMorE.bind(worker)(e);
-                //are we free after calling?
-                if (isCompleted(e)) worker.isBusy = false;
             };
         }
 

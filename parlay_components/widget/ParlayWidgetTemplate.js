@@ -104,10 +104,7 @@
              */
             function link (scope, element, attrs, controller, transcludeFn) {
 
-                // If the user defined a customLink we should call it.
-                if (!!custom_link) {
-                    custom_link(scope, element, attrs, controller, transcludeFn);
-                }
+
 
                 // If the user defined customizations we should assign them.
                 if (!scope.customizations && !!customization_defaults) {
@@ -127,6 +124,11 @@
 
                 console.log(scope);
                 scope.widgetsCtrl.registerProperties("widget["+scope.uid+"]", scope.properties);
+
+                // If the user defined a customLink we should call it.
+                if (!!custom_link) {
+                    custom_link(scope, element, attrs, controller, transcludeFn);
+                }
 
                 // ParlayWidgets should notify their parent, ParlayBaseWidget, when they are loaded.
                 scope.$emit("parlayWidgetTemplateLoaded");

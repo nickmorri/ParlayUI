@@ -10,6 +10,13 @@
 
         </md-input-container>
 
+        <md-input-container flex flex ng-switch-when="checkbox">
+            <md-checkbox ng-model="option.value" aria-label="{{option.property_name}}" >
+                {{option.property_name}}
+            </md-checkbox>
+        </md-input-container>
+
+
         <md-input-container flex ng-switch-when="number">
 
             <label>{{option.property_name}}</label>

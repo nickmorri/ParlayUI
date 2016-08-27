@@ -24,7 +24,7 @@
         properties:
         {
             text: {
-                default: "Default"
+                default: ""
             }
         }
 

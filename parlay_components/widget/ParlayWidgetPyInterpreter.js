@@ -94,7 +94,7 @@
                         Sk.builtins[key] = default_builtins[key];
                     }
                     //add any builtins we need
-                    for(var key in e.data.builtins){
+                    for(key in e.data.builtins){
                         Sk.builtins[key] = Sk.ffi.remapToPy(e.data.builtins[key]);
                     }
 
@@ -312,7 +312,7 @@
              * @type {String}
              * @default {undefined}
              */
-            this.functionString = "from parlay.utils import *\nsetup()\n\n"; //default the imports to make it easier
+            this.functionString = "from parlay.utils import *\nfrom parlay import widgets\nsetup()\n\n"; //default the imports to make it easier
 
             /**
              * Set if a error occurs during the interpreter construction process.
@@ -321,7 +321,6 @@
              * @type {String}
              * @default {undefined}
              */
-            //TODO: keep?
             this.constructionError = undefined;
         }
 
@@ -369,7 +368,7 @@
                         "\nexcept:\n    scriptFinished(None)"; //else return wth no result
                     var worker = workerPool.getWorker();
                     worker.onFinished = onFinished;
-                    builtins = builtins || {}
+                    builtins = builtins || {};
                     worker.postMessage({script: full_func_string, builtins:builtins});
                     //return true on successful launch
                     return true;

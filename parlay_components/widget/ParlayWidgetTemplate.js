@@ -118,7 +118,6 @@
                     if(custom_properties.hasOwnProperty(key))
                     {
                        scope.properties[key] = {value: custom_properties[key].default};
-                        //parlayData[key] = scope[key];
                     }
                 }
 

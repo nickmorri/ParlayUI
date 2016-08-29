@@ -39,7 +39,7 @@
              * @public
              * @type {*}
              */
-            var cached_value = undefined;
+            var cached_value;
             ParlayWidgetTransformer.prototype.recalculate = function() {
                 var builtins = {};
                 var all = {};
@@ -49,7 +49,7 @@
                     builtins[it.name] = it.value;
                     all[it.name] = it.value;
                 }
-                builtins["__all__"] = all; //special builtin with all args
+                builtins.__all__ = all; //special builtin with all args
 
                 this.run(function(result){
                     cached_value = result;
@@ -72,7 +72,7 @@
              * @public
              * @type {String}
              */
-            var cached_functionString;
+            var cached_functionString = "#Set result = to the value you want displayed\nresult = 5*10" ;
             Object.defineProperty(this, "functionString", {
                 get: function () {
                     return cached_functionString;

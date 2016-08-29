@@ -69,7 +69,7 @@
             //watch the items and reconstruct on additon/subtraction
             // return a deregistration function that when called will stop this monitoring.
             var items_deregistration = scope.$watchCollection("items", function(newValue) {construct(newValue,
-                scope.properties.custom_config.value)});
+                scope.properties.custom_config.value);});
 
             chart_interval = 1000.0 / scope.customizations.poll_rate.value;
             //this does the actual update

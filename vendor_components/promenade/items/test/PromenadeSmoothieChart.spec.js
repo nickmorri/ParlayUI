@@ -151,13 +151,14 @@
 		            value: 5,
 		            ATTR_name: "stream2",
 					name: "stream2",
+					id: "stream2",
 					UNITS: "ms",
 					onChange: function () {
 						return function () { };
 					}
 	            };
 
-                scope.enabled_streams.push("stream2");
+                scope.enabled_streams.push(scope.data.stream2);
 	            
 	            expect(scope.getSmoothie().seriesSet.length).toBe(0);
 	            
@@ -173,13 +174,14 @@
 		            value: 5,
 		            ATTR_name: "stream2",
 					name: "stream2",
+					id: "stream2",
 					UNITS: "ms",
 					onChange: function () {
 						return function () { };
 					}
 	            };
 
-                scope.enabled_streams.push("stream2");
+                scope.enabled_streams.push(scope.data.stream2);
 	            
 	            expect(scope.getSmoothie().seriesSet.length).toBe(0);
 	            
@@ -187,7 +189,7 @@
 	            
 	            expect(scope.getSmoothie().seriesSet.length).toBe(1);
 
-				scope.enabled_streams.splice(scope.enabled_streams.indexOf("stream2"), 1);
+				scope.enabled_streams.splice(scope.enabled_streams.indexOf(scope.data.stream2), 1);
 	            
 	            scope.$digest();
 	            
@@ -204,12 +206,13 @@
 			            value: i * 2,
 			            ATTR_name: "stream" + i,
 						name: "stream" + i,
+						id: "stream" + i,
 						UNITS: "ms",
 						onChange: function () {
 							return function () { };
 						}
 		            };
-                    scope.enabled_streams.push("stream" + i);
+                    scope.enabled_streams.push(scope.data["stream" + i]);
 	            }
 	            
 	            scope.$digest();
@@ -226,12 +229,13 @@
 			            value: i * 2,
 			            ATTR_name: "stream" + i,
 						name: "stream" + i,
+						id: "stream" + i,
 						UNITS: "ms",
 						onChange: function () {
 							return function () { };
 						}
 		            };
-                    scope.enabled_streams.push("stream" + i);
+                    scope.enabled_streams.push(scope.data["stream" + i]);
 	            }
 	            
 	            scope.$digest();
@@ -240,7 +244,7 @@
 	            
 				for (i = 0; i < 10; i++) {
 					delete scope.data["stream" + i];
-                    scope.enabled_streams.splice(scope.enabled_streams.indexOf("stream" + i), 1);
+                    scope.enabled_streams.splice(scope.enabled_streams.indexOf(scope.data["stream" + i]), 1);
 				}
 	            
 	            scope.$digest();
@@ -255,6 +259,7 @@
 		            value: 5,
 		            ATTR_name: "stream",
 					name: "stream",
+					id: "stream",
 					UNITS: "ms",
 				   onChange: function () {
 					   return function () { };
@@ -263,19 +268,19 @@
 	            
 	            expect(scope.getSmoothie().seriesSet.length).toBe(0);
 
-				scope.enabled_streams.push("stream");
+				scope.enabled_streams.push(scope.data.stream);
 
 	            scope.$digest();
 	            
 	            expect(scope.getSmoothie().seriesSet.length).toBe(1);
 
-				scope.enabled_streams.splice(scope.enabled_streams.indexOf("stream"), 1);
+				scope.enabled_streams.splice(scope.enabled_streams.indexOf(scope.data.stream), 1);
 	            
 	            scope.$digest();
 	            
 	            expect(scope.getSmoothie().seriesSet.length).toBe(0);
 
-				scope.enabled_streams.push("stream");
+				scope.enabled_streams.push(scope.data.stream);
 	            
 	            scope.$digest();
 	            
@@ -297,6 +302,7 @@
 		            value: 5,
 		            ATTR_name: "stream",
 					name: "stream",
+					id: "stream",
 					UNITS: "ms",
 					onChange: function (callback) {
 						doCallback = setupCallback(callback);
@@ -307,7 +313,7 @@
 
 				var smoothie = scope.getSmoothie();
 
-                scope.enabled_streams.push("stream");
+                scope.enabled_streams.push(scope.data.stream);
 
 				scope.$digest();
 

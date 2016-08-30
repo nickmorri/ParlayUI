@@ -134,8 +134,10 @@
                 FROM: property.item_name,
                 TO: "UI"
             }, function(response) {
+
                 // TODO: Talk with Daniel about refactoring property API to require property name in topics.
-                if (property.id == response.PROPERTY && response.VALUE) {
+                // Check that the response value is not undefined, fixes bug where property is not displayed if value is 0
+                if (property.id == response.PROPERTY && response.VALUE !== undefined) {
                     $rootScope.$apply(function () {
                         property.value = response.VALUE;
                     });

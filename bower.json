@@ -19,7 +19,7 @@
     "angular-sanitize": "^1.5.5",
     "angular-ui-ace": "bower",
     "jsinterpreter": "*",
-    "Chart.js": "^2.0.0",
+    "chart.js": "npm:chart.js#2.0.0",
     "draggabilly": "^2.1.0",
     "md-color-picker": "^0.2.6",
     "skulpt": "master"
@@ -43,8 +43,9 @@
     },
     "Chart.js": {
       "main": [
-        "dist/Chart.bundle.min.js"
+        "Chart.js"
       ]
     }
   }
 }
+

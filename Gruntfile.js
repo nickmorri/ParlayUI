@@ -347,8 +347,8 @@ module.exports = function (grunt) {
                         "src-noconflict/ext-language_tools.js",
                         "src-noconflict/worker-javascript.js"
                     ],
-                    'jsinterpreter': 'acorn_interpreter.js',
-                    "Chart.js": "dist/Chart.bundle.min.js"
+                    //'jsinterpreter': 'acorn_interpreter.js' //,
+                    "Chart.js": "Chart.js"
                 },
                 'exclude': ["skulpt"]
 			}
@@ -642,6 +642,12 @@ module.exports = function (grunt) {
 				'base': 'doc'
 			},
 			'src': ['**']
+		},
+		//get already minified and bundled versions of some libraries
+		'curl':
+		{
+			//Chart.js
+			'bower_components/chart.js/Chart.js' : 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.2/Chart.bundle.min.js'
 		}
 
 	});
@@ -653,7 +659,8 @@ module.exports = function (grunt) {
     // Generates dev directory containing files needed for development. Launches an express HTTP server and a watch
     // task that monitors the source files for changes.
 	grunt.registerTask('develop', 'Lints and tests JavaScript files, processes HTML and finally starts HTTP server which autoreloads on file changes.', [
-	    'jshint:dev',
+	    'curl',
+		'jshint:dev',
 	    'csslint:dev',
 	    'clean:dev',
 	    'bower-install-simple:dev',

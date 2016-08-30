@@ -41,7 +41,6 @@
     "grunt-release": "^0.13.1",
     "grunt-replace": "^1.0.1",
     "grunt-wiredep": "^2.0.0",
-    "grunt-curl": "",
     "jasmine-core": "^2.4.1",
     "karma": "^0.13.3",
     "karma-coverage": "^0.5.5",

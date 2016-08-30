@@ -114,6 +114,7 @@
 
                     var would_be_base_widget_scope = $rootScope.$new();
 
+
                     would_be_base_widget_scope.$on("parlayWidgetTemplateLoaded", function () {
                         expect(customLink).toHaveBeenCalled();
                         done();

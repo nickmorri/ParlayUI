@@ -121,8 +121,7 @@
                     }
                 }
 
-                console.log(scope);
-                scope.widgetsCtrl.registerProperties("widget["+scope.uid+"]", scope.properties);
+                if(scope.widgetsCtrl) scope.widgetsCtrl.registerProperties("widget["+scope.uid+"]", scope.properties);
 
                 // If the user defined a customLink we should call it.
                 if (!!custom_link) {

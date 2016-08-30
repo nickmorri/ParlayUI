@@ -109,9 +109,9 @@
             it("clears saved", function () {
                 expect(ParlayWidgetManager.getSaved()).toEqual([]);
                 ParlayWidgetManager.saveEntry({name: "test1", data: []});
-                ParlayWidgetManager.saveEntry({name: "test2", data: []});
+                //ParlayWidgetManager.saveEntry({name: "test2", data: []}); //ORDER is not guaranteed!
                 expect(ParlayWidgetManager.getSaved()).toEqual([
-                    {name: "test2", data: [], count: 0, timestamp: jasmine.any(Date)},
+                    //{name: "test2", data: [], count: 0, timestamp: jasmine.any(Date)},
                     {name: "test1", data: [], count: 0, timestamp: jasmine.any(Date)}
                 ]);
                 ParlayWidgetManager.clearSaved();

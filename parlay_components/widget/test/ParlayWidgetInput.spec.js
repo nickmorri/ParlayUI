@@ -5,13 +5,14 @@
 
         beforeEach(module("parlay.widget.input"));
 
+
         describe("<button parlay-widget-input></button>", function () {
             var scope, $compile, ParlayWidgetInputManager;
 
-            beforeEach(inject(function (_$rootScope_, _$compile_, _ParlayWidgetInputManager_) {
-                scope = _$rootScope_.$new();
-                $compile = _$compile_;
-                ParlayWidgetInputManager = _ParlayWidgetInputManager_;
+            beforeEach(angular.mock.inject(function ($injector) {
+                scope = $injector.get("$rootScope").$new();
+                $compile = $injector.get("$compile");
+                ParlayWidgetInputManager = $injector.get("ParlayWidgetInputManager");
             }));
 
             it("compiles and registers", function () {
@@ -22,9 +23,7 @@
                 };
 
                 scope.uid = 0;
-
                 scope.events = JSON.stringify(['click']);
-
                 var element_string = "<button parlay-widget-input widget-name='{{template.name}}' widget-uid='{{uid}}' element-name='test' events='{{events}}'></button>";
 
                 var element = $compile(element_string)(scope);

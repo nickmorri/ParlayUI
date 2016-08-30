@@ -2,7 +2,9 @@
     "use strict";
     
     var module_dependencies = ["promenade.broker",
-        "parlay.utility.workerpool", "worker.imports", "parlay.data"];
+        "parlay.utility.workerpool",
+        "worker.imports",
+        "parlay.data"];
     
     angular
         .module("parlay.widget.interpreter.py", module_dependencies)
@@ -11,7 +13,8 @@
     ParlayPyInterpreterFactory.$inject = ["PromenadeBroker","ParlayWorkerPool",
                                             //Note: The "skulpt" constant is provided by worker.imports.
                                             //      The skulpt library is never loaded by the main application.
-                                         "skulpt", "refreshRate", "parlayModules", "ParlayData", "$rootScope"];
+                                            "skulpt",
+                                            "refreshRate", "parlayModules", "ParlayData", "$rootScope"];
     function ParlayPyInterpreterFactory (PromenadeBroker, ParlayWorkerPool,
                                          skulpt, refreshRate, parlayModules, ParlayData, $rootScope) {
 

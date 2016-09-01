@@ -191,6 +191,7 @@ module.exports = function (grunt) {
 
 	// Load this Grunt task individually since it doesn't match the "grunt-*" pattern.
     grunt.loadNpmTasks('main-bower-files');
+	grunt.loadNpmTasks('grunt-license-bower');
 
 	grunt.initConfig({
 
@@ -642,6 +643,17 @@ module.exports = function (grunt) {
 				'base': 'doc'
 			},
 			'src': ['**']
+		},
+
+		'license': {
+			'dist': {
+				// Target-specific file lists and/or options go here.
+				options: {
+					// Target-specific options go here.
+					directory: 'bower_components',
+					output: 'LICENSES'
+				},
+			},
 		}
 
 	});
@@ -717,5 +729,7 @@ module.exports = function (grunt) {
         'copy:doc',
 		'jsdoc:doc'
 	]);
+
+
 
 };

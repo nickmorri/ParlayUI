@@ -22,6 +22,4 @@ class _widgetDictImpl(object):
     def __getitem__(self, key):
         return _widgetImpl(str(key))
 
-
-
 widgets = _widgetDictImpl()

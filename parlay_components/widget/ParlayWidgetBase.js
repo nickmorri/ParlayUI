@@ -54,6 +54,7 @@
                 // Attach the methods to scope.
                 scope.edit = edit;
 
+
                 // Handle widget initialization on parlayWidgetTemplateLoaded event.
                 scope.$on("parlayWidgetTemplateLoaded", function () {
                     onLoaded(element[0]);
@@ -87,6 +88,7 @@
                 else {
                     scope.initialized = false;
                     scope.item.configuration = {};
+                    scope.item.name = "NN"; //start with no name
                     scope.edit(true);
                 }
 

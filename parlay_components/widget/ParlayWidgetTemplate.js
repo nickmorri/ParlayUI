@@ -120,7 +120,7 @@
                 }
 
                 //if(scope.widgetsCtrl) scope.widgetsCtrl.registerProperties("widget["+scope.uid+"]", scope.properties);
-                console.log(options);
+                console.log(scope);
                 if(scope.widgetsCtrl) scope.name = scope.widgetsCtrl.registerScope(display_name, scope);
                 else scope.name = display_name + "?";
 

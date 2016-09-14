@@ -273,14 +273,16 @@
                             break;
                     }
                     break;
-                case "get_parlay_data":
-                    //TODO Get a widget value by widget name and value name
-                    var val = ParlayData.get(data.key).value;
+                case "get_widget_property":
+                    var widgets_by_name = ParlayData.get("widgets_scope_by_name");
+                    //get the value out of the scope.properties object
+                    var val = widgets_by_name[data.widget_name].properties[data.property_name].value;
                     worker.postMessage({value:val});
                     break;
 
-                case "set_parlay_data":
-                    ParlayData.get(data.key).value = data.value;
+                case "set_widget_property":
+                    var widgets_by_name = ParlayData.get("widgets_scope_by_name");
+                    widgets_by_name[data.widget_name].properties[data.property_name].value = data.value;
                     worker.postMessage({value: data.value});
                     // since we've changed the ParlayData, do a digest loop
                     $rootScope.$digest();

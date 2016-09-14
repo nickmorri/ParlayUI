@@ -7,7 +7,8 @@ var widgetRegistration = (function () {
      * @module ParlayWidget
      */
 
-    var module_dependencies = ["ui.router", "ui.ace", "ngMaterial", "parlay.widget.base", "parlay.widget.collection", "parlay.widget.controller", "parlay.settings"];
+    var module_dependencies = ["ui.router", "ui.ace", "ngMaterial", "parlay.widget.base", "parlay.widget.collection",
+        "parlay.widget.controller", "parlay.settings", "parlay.data"];
 
     angular
         .module("parlay.widget", module_dependencies)
@@ -102,7 +103,7 @@ var widgetRegistration = (function () {
         }
         else {
             directive_function = function (ParlayWidgetTemplate) {
-                return new ParlayWidgetTemplate(directive_definition);
+                return new ParlayWidgetTemplate(directive_definition, display_name);
             };
 
             directive_function.$inject = ["ParlayWidgetTemplate"];
@@ -143,8 +144,11 @@ var widgetRegistration = (function () {
         });
     }
 
-    ParlayWidgetsRun.$inject = ["ParlaySettings", "ParlayWidgetCollection"];
-    function ParlayWidgetsRun (ParlaySettings, ParlayWidgetCollection) {
+    ParlayWidgetsRun.$inject = ["ParlaySettings", "ParlayWidgetCollection", "ParlayData"];
+    function ParlayWidgetsRun (ParlaySettings, ParlayWidgetCollection, ParlayData) {
+        ParlayData.set('registered_widget_types', registered_widgets);
+        console.log(ParlayData);
+
         // Register the default ParlaySettings for widgets.
         ParlaySettings.registerDefault("widgets", {editing: true});
 

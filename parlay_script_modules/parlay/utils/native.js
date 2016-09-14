@@ -17,17 +17,19 @@ function parlay_utils_native($modname) {
         //return Sk.builtin.null.null$;
     });
 
-    mod.getData = new Sk.builtin.func(function(key){
+    mod.getWidgetProperty = new Sk.builtin.func(function(widget_name, prop_name){
         return sendQueryNative({
-            command: "get_parlay_data",
-            key: Sk.ffi.remapToJs(key)
+            command: "get_widget_property",
+            widget_name: Sk.ffi.remapToJs(widget_name),
+            property_name: Sk.ffi.remapToJs(prop_name)
         });
     });
 
-    mod.setData = new Sk.builtin.func(function(key, value){
+    mod.setWidgetProperty = new Sk.builtin.func(function(widget_name, prop_name, value){
         return sendQueryNative({
-            command: "set_parlay_data",
-            key: Sk.ffi.remapToJs(key),
+            command: "set_widget_property",
+            widget_name: Sk.ffi.remapToJs(widget_name),
+            property_name: Sk.ffi.remapToJs(prop_name),
             value: Sk.ffi.remapToJs(value)
         });
     });

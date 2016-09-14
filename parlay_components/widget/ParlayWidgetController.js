@@ -17,6 +17,8 @@
     function ParlayWidgetController (ParlayWidgetManager, ParlayData) {
 
         var ctrl = this;
+        var widget_by_name = {};
+        ParlayData.set("widgets_scope_by_name", widget_by_name);
 
         // Define editing property on the controller to make it more easily accessible by child scopes.
         Object.defineProperty(ctrl, "editing", {
@@ -31,7 +33,7 @@
         ctrl.add = add;
         ctrl.remove = remove;
         ctrl.duplicate = duplicate;
-        ctrl.registerProperties = registerProperties;
+        ctrl.registerScope = registerScope;
 
         /**
          * Requests all active widget configuration Objects from the
@@ -86,17 +88,37 @@
             ParlayWidgetManager.duplicate(uid);
         }
 
-        function registerProperties(prefix, scope_properties)
+        function registerScope(new_widget_name, scope)
         {
+            if(new_widget_name === undefined) new_widget_name = "UNKNOWN NAME";
+            console.log(scope);
+            widget_by_name[new_widget_name] = scope;
+            var number = 1; var new_widget_name_base = new_widget_name;
+            while(new_widget_name in widget_by_name) new_widget_name = new_widget_name_base + " " + number++;
+            widget_by_name[new_widget_name] = scope;
+            //registration.widget_name = new_widget_name;
+            //TODO Reflect name change in scope?
+            return new_widget_name
+        }
 
-             for(var key in scope_properties)
-                {   // only keys for this object
-                    if(scope_properties.hasOwnProperty(key))
-                    {
-                       ParlayData.set(prefix +"."+ key, scope_properties[key]);
-                    }
-                }
-            console.log(ParlayData);
+        /**
+         * Rename an element
+         * @param widget_uid
+         * @param new_widget_name
+         * @result the actual chosen name (could be changed for disambiguation)
+         */
+        function rename_element(old_widget_name,  new_widget_name)
+        {
+            var scope = widget_by_name[old_widget_name];
+            //delete the old reference
+            delete widget_by_name[old_widget_name];
+            //assign it a new name, but add the uid to disambiguate if it was already taken
+            var number = 1; var new_widget_name_base = new_widget_name;
+            while(new_widget_name in widget_by_name) new_widget_name = new_widget_name_base + " " + number++;
+            widget_by_name[new_widget_name] = scope;
+            //registration.widget_name = new_widget_name;
+            //TODO Reflect name change in scope?
+            return new_widget_name
         }
     }
 

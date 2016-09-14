@@ -70,7 +70,7 @@
          * @returns {Object} - Fully configured AngularJS directive definition Object.
          *
          */
-        function ParlayWidgetTemplate(options) {
+        function ParlayWidgetTemplate(options, display_name) {
 
             var custom_link = options.customLink;
             var customization_defaults = options.customizationDefaults;
@@ -104,8 +104,6 @@
              */
             function link (scope, element, attrs, controller, transcludeFn) {
 
-
-
                 // If the user defined customizations we should assign them.
                 if (!scope.customizations && !!customization_defaults) {
                     scope.customizations = angular.copy(customization_defaults);
@@ -121,7 +119,10 @@
                     }
                 }
 
-                if(scope.widgetsCtrl) scope.widgetsCtrl.registerProperties("widget["+scope.uid+"]", scope.properties);
+                //if(scope.widgetsCtrl) scope.widgetsCtrl.registerProperties("widget["+scope.uid+"]", scope.properties);
+                console.log(options);
+                if(scope.widgetsCtrl) scope.name = scope.widgetsCtrl.registerScope(display_name, scope);
+                else scope.name = display_name + "?";
 
                 // If the user defined a customLink we should call it.
                 if (!!custom_link) {

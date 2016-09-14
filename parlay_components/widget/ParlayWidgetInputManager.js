@@ -1,14 +1,14 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["parlay.widget.eventhandler"];
+    var module_dependencies = ["parlay.widget.eventhandler", "parlay.data"];
 
     angular
         .module("parlay.widget.inputmanager", module_dependencies)
         .factory("ParlayWidgetInputManager", ParlayWidgetInputManagerFactory);
 
-    ParlayWidgetInputManagerFactory.$inject = ["ParlayWidgetEventHandler"];
-    function ParlayWidgetInputManagerFactory (ParlayWidgetEventHandler) {
+    ParlayWidgetInputManagerFactory.$inject = ["ParlayWidgetEventHandler", "ParlayData"];
+    function ParlayWidgetInputManagerFactory (ParlayWidgetEventHandler, ParlayData) {
 
         /**
          * ParlayWidgetInputManager service for managing inputs available within widgets.
@@ -113,21 +113,25 @@
                 events: setupEventListeners(element, events)
             };
 
-            if (!this.widgets[widget_name + widget_uid]) {
-                this.widgets[widget_name + widget_uid] = [registration];
+            if (!this.widgets[widget_uid]) {
+                this.widgets[widget_uid] = [registration];
             }
             else {
-                this.widgets[widget_name + widget_uid].push(registration);
+                this.widgets[widget_uid].push(registration);
             }
+            console.log(this.widgets);
 
             scope.$on("$destroy", function () {
                 Object.keys(registration.events).forEach(function (key) {
                     registration.events[key].clearAllListeners();
                 });
-                delete this.widgets[widget_name + widget_uid];
+                delete this.widgets[widget_uid];
             }.bind(this));
 
         };
+
+
+
 
         /**
          * Attaches ParlayWidgetEventHandler to the given Event instance.

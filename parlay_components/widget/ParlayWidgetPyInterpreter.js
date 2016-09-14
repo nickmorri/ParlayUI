@@ -140,7 +140,7 @@
             type: 'application/javascript'
         });
 
-        var workerPool = new ParlayWorkerPool();
+        var workerPool = new ParlayWorkerPool(40); // max 40 workers
         workerPool.initialize(blobURL,
             //handle 3 kinds of valid messages: print, error, and return
             // onmessage
@@ -372,6 +372,7 @@
                         "\ntry:\n    scriptFinished(result)"+ // try and return wth value 'result'
                         "\nexcept:\n    scriptFinished(None)"; //else return wth no result
                     var worker = workerPool.getWorker();
+                    if(worker === undefined) return "Could not get worker";
                     worker.onFinished = onFinished;
                     builtins = builtins || {};
                     worker.postMessage({script: full_func_string, builtins:builtins});

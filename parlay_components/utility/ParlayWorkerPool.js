@@ -32,7 +32,7 @@
             };
         }
 
-        function ParlayWorkerPool() {
+        function ParlayWorkerPool(max_workers) {
             // worker properties
             var workerScript;
             var onmessage = function(e){};
@@ -112,6 +112,8 @@
                     pool[nextAvailable].isBusy = true;
                     return pool[nextAvailable];
                 } else {
+                    //drop the work if we're out of workers
+                    if(pool.length > max_workers) { return undefined;}
                     // create and initialize a new worker
                     var worker = new Worker(workerScript);
                     worker.onmessage = receiveAndFree(worker, onmessage, isCompleted);

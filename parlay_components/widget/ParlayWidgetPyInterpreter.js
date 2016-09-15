@@ -361,18 +361,24 @@
             if (!!this.constructionError) {
                     return this.constructionError;
                 }
-                else if (!this.functionString) {
-                    return "ParlayInterpreter.construct() must be done before ParlayInterpreter.run()";
-                }
                 else {
                     //attach the prefix and suffix  to the string to run
+                    //if there is no function string, then don't bother running it
+                    if(this.functionString === "" || this.functionString === undefined)
+                    {
+                        if(onFinished) onFinished(undefined); //we're already finished
+                        return true;
+                    }
 
                     var full_func_string = this.functionString +
                         "\nfrom parlay.utils.native import scriptFinished" +
                         "\ntry:\n    scriptFinished(result)"+ // try and return wth value 'result'
                         "\nexcept:\n    scriptFinished(None)"; //else return wth no result
                     var worker = workerPool.getWorker();
-                    if(worker === undefined) return "Could not get worker";
+                    if(worker === undefined) {
+                        console.log("background worker pool running out.")
+                        return "Could not get worker";
+                    }
                     worker.onFinished = onFinished;
                     builtins = builtins || {};
                     worker.postMessage({script: full_func_string, builtins:builtins});

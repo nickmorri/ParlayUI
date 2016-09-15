@@ -52,8 +52,11 @@
                 builtins.__all__ = all; //special builtin with all args
 
                 this.run(function(result){
-                    cached_value = result;
-                    $rootScope.$digest(); //do a digest to update the value
+                    if(result !== undefined)
+                    {
+                        cached_value = result;
+                        $rootScope.$digest(); //do a digest to update the value
+                    }
                 }, builtins);
             };
 

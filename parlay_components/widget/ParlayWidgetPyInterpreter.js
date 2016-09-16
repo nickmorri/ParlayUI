@@ -274,15 +274,13 @@
                     }
                     break;
                 case "get_widget_property":
-                    var widgets_by_name = ParlayData.get("widgets_scope_by_name");
                     //get the value out of the scope.properties object
-                    var val = widgets_by_name[data.widget_name].properties[data.property_name].value;
+                    var val = ParlayData.get("widgets_scope_by_name")[data.widget_name].properties[data.property_name].value;
                     worker.postMessage({value:val});
                     break;
 
                 case "set_widget_property":
-                    var widgets_by_name = ParlayData.get("widgets_scope_by_name");
-                    widgets_by_name[data.widget_name].properties[data.property_name].value = data.value;
+                    ParlayData.get("widgets_scope_by_name")[data.widget_name].properties[data.property_name].value = data.value;
                     worker.postMessage({value: data.value});
                     // since we've changed the ParlayData, do a digest loop
                     $rootScope.$digest();
@@ -376,7 +374,7 @@
                         "\nexcept:\n    scriptFinished(None)"; //else return wth no result
                     var worker = workerPool.getWorker();
                     if(worker === undefined) {
-                        console.log("background worker pool running out.")
+                        console.log("background worker pool running out.");
                         return "Could not get worker";
                     }
                     worker.onFinished = onFinished;

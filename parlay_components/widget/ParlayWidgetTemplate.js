@@ -121,8 +121,29 @@
 
                 //if(scope.widgetsCtrl) scope.widgetsCtrl.registerProperties("widget["+scope.uid+"]", scope.properties);
                 console.log(scope);
-                if(scope.widgetsCtrl) scope.name = scope.widgetsCtrl.registerScope(display_name, scope);
-                else scope.name = display_name + "?";
+                if(scope.widgetsCtrl) scope.info.name = scope.widgetsCtrl.registerScope(display_name, scope);
+                else scope.info.name = display_name + "?";
+
+                //function to add the watcher. This trickery is needed because we may modify the
+                // name in the watcher
+                function addWatcher() {
+                    var unwatch =  scope.$watch('info.name', function(newVal, oldVal, scope){
+                        var verified_name = scope.widgetsCtrl.renameScope(newVal, oldVal);
+                        if(verified_name != newVal) //if we had to modify the name to make it unique
+                        {
+                            //un hook the wacher so that it won't recursively trigger
+                            unwatch();
+                            scope.info.name = verified_name;
+
+                            //then re-hook it for the next change
+                            addWatcher();
+                        }
+
+                    }, true);
+                }
+
+                addWatcher();
+
 
                 // If the user defined a customLink we should call it.
                 if (!!custom_link) {
@@ -162,7 +183,8 @@
                     edit: "=",
                     uid: "=",
                     template: "=",
-                    customizations: "="
+                    customizations: "=",
+                    info:"="
                 }
             };
 

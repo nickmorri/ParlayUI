@@ -34,6 +34,7 @@
         ctrl.remove = remove;
         ctrl.duplicate = duplicate;
         ctrl.registerScope = registerScope;
+        ctrl.renameScope = renameScope;
 
         /**
          * Requests all active widget configuration Objects from the
@@ -96,29 +97,26 @@
             var number = 1; var new_widget_name_base = new_widget_name;
             while(new_widget_name in widget_by_name) new_widget_name = new_widget_name_base + " " + number++;
             widget_by_name[new_widget_name] = scope;
-            //registration.widget_name = new_widget_name;
-            //TODO Reflect name change in scope?
-            return new_widget_name
+            return new_widget_name;
         }
 
         /**
          * Rename an element
-         * @param widget_uid
-         * @param new_widget_name
+         * @param new_widget_name : the new name for the widget
+         * @param old_widget_name : The old name for the widget
          * @result the actual chosen name (could be changed for disambiguation)
          */
-        function rename_element(old_widget_name,  new_widget_name)
+        function renameScope(new_widget_name, old_widget_name)
         {
+            if(old_widget_name == new_widget_name) return new_widget_name; // renaming to itself is easy
             var scope = widget_by_name[old_widget_name];
             //delete the old reference
             delete widget_by_name[old_widget_name];
             //assign it a new name, but add the uid to disambiguate if it was already taken
             var number = 1; var new_widget_name_base = new_widget_name;
-            while(new_widget_name in widget_by_name) new_widget_name = new_widget_name_base + " " + number++;
+            while(new_widget_name in widget_by_name) new_widget_name = new_widget_name_base + " " + (number++);
             widget_by_name[new_widget_name] = scope;
-            //registration.widget_name = new_widget_name;
-            //TODO Reflect name change in scope?
-            return new_widget_name
+            return new_widget_name;
         }
     }
 

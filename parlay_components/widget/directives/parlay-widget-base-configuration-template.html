@@ -6,5 +6,6 @@
     </md-select>
 </md-input-container>
 <md-input-container flex>
-    <input type="text" ng-model="name" />
+    <label>Name</label>
+    <input type="text" ng-model="item.name" ng-model-options="{updateOn : 'blur'}" />
 </md-input-container>

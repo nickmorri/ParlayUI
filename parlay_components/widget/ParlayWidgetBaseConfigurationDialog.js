@@ -40,7 +40,7 @@
         };
     }
 
-    ParlayWidgetBaseConfigurationDialogController.$inject = ["$scope", "$mdDialog", "configuration", "widgetCompiler"];
+    ParlayWidgetBaseConfigurationDialogController.$inject = ["$scope", "$mdDialog", "item", "widgetCompiler"];
     /**
      * Base [$mdDialog]{@link https://material.angularjs.org/latest/api/service/$mdDialog} widget configuration controller.
      * @constructor module:ParlayWidget.ParlayWidgetBaseConfigurationDialogController
@@ -50,13 +50,15 @@
      * of the widget.
      * @param {Function} widgetCompiler - [widgetCompiler]{@link module:ParlayWidget.ParlayWidgetBase#compileWrapper}
      */
-    function ParlayWidgetBaseConfigurationDialogController ($scope, $mdDialog, configuration, widgetCompiler) {
+    function ParlayWidgetBaseConfigurationDialogController ($scope, $mdDialog, item, widgetCompiler) {
 
         var ctrl = this;
+        var configuration = item.configuration;
 
         // Attaches the configuration Object to the $scope Object to allow for user configuration.
         // Accessible by all the dialog controllers in the dialog.
         $scope.configuration = configuration;
+        $scope.item = item; //attach the item too for more information
 
         // Attach methods to controller.
         ctrl.cancel = cancel;

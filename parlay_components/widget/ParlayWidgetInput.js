@@ -24,20 +24,16 @@
      * @attribute {Array} events - Event names that should be listened for on the element.
      *
      * @example
-     *      <button parlay-widget-input widget-name='{{template.name}}' widget-uid='{{uid}}' element-name='test' events="['click']"></button>
+     *      <button parlay-widget-input events="['click']"></button>
      */
     function ParlayWidgetInput (ParlayWidgetInputManager) {
         return {
-            scope: {
-                elementName: "@",
-                widgetName: "@",
-                widgetUid: "@",
-                events: "@"
-            },
+            scope: true, //inherit from parent so we have all we need
             restrict: "A",
             link: function (scope, element) {
+                var events = element[0].attributes.events.nodeValue;
                 ParlayWidgetInputManager.registerElement(
-                    scope.widgetName, parseInt(scope.widgetUid, 10), scope.elementName, element[0], scope, JSON.parse(scope.events)
+                    scope.info, element[0], scope, JSON.parse(events)
                 );
             }
         };

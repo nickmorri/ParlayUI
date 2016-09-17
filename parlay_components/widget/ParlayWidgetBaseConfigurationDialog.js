@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["ui.ace", "mdColorPicker", "parlay.widget.collection", "parlay.widget.inputmanager", "parlay.widget.transformer", "parlay.widget.eventhandler", "parlay.data"];
+    var module_dependencies = ["ui.ace", "mdColorPicker", "parlay.widget.manager", "parlay.widget.collection", "parlay.widget.inputmanager", "parlay.widget.transformer", "parlay.widget.eventhandler", "parlay.data"];
 
     angular
         .module("parlay.widget.base.configuration", module_dependencies)
@@ -109,14 +109,14 @@
 
     }
 
-    ParlayWidgetBaseConfigurationEventController.$inject = ["$scope", "ParlayWidgetInputManager"];
+    ParlayWidgetBaseConfigurationEventController.$inject = ["$scope", "ParlayWidgetInputManager", "ParlayWidgetManager"];
     /**
      * Manages the user selection of widget events.
      * @constructor module:ParlayWidget.ParlayWidgetBaseConfigurationEventController
      * @param {Object} $scope - AngularJS [$scope]{@link https://docs.angularjs.org/guide/scope} Object.
      * @param {Object} ParlayWidgetInputManager - [ParlayWidgetInputManager]{@link module:ParlayWidget.ParlayWidgetInputManager} service.
      */
-    function ParlayWidgetBaseConfigurationEventController ($scope, ParlayWidgetInputManager) {
+    function ParlayWidgetBaseConfigurationEventController ($scope, ParlayWidgetInputManager, ParlayWidgetManager) {
 
         var ctrl = this;
 
@@ -124,6 +124,8 @@
         ctrl.queryEvents = queryEvents;
         ctrl.addHandler = addHandler;
         ctrl.removeHandler = removeHandler;
+        //How to call this from directive?
+        ctrl.getActiveWidget = function(uid) { return ParlayWidgetManager.getActiveWidget(uid)} ;
 
         /**
          * Attaches [ParlayWidgetEventHandler]{@link module:ParlayWidget.ParlayWidgetEventHandler} to event.
@@ -155,11 +157,18 @@
         function queryEvents (query) {
             var lowercase_query = angular.lowercase(query);
 
-            return ParlayWidgetInputManager.getEvents().filter(function (event) {
-                var lowercase = angular.lowercase(event.event + event.element.element_name + event.element.widget_name);
+            var events = ParlayWidgetInputManager.getEvents().filter(function (event) {
+                var info = ParlayWidgetManager.getActiveWidget(event.element.uid);
+                var lowercase = angular.lowercase(event.event + info.name);
                 return (lowercase).includes(lowercase_query) &&
                     $scope.configuration.selectedEvents.indexOf(event) === -1;
             });
+
+            for(var i=0; i< events.length;i++)
+            {
+                events[i].info = ParlayWidgetManager.getActiveWidget(events[i].element.uid)
+            }
+            return events;
         }
 
         // When configuration.template.type change the currentTabIndex.

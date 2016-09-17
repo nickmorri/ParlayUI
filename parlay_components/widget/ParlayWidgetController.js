@@ -97,6 +97,8 @@
             var number = 1; var new_widget_name_base = new_widget_name;
             while(new_widget_name in widget_by_name) new_widget_name = new_widget_name_base + " " + number++;
             widget_by_name[new_widget_name] = scope;
+            //registration.widget_name = new_widget_name;
+            //TODO Reflect name change in scope?
             return new_widget_name;
         }
 
@@ -114,7 +116,7 @@
             delete widget_by_name[old_widget_name];
             //assign it a new name, but add the uid to disambiguate if it was already taken
             var number = 1; var new_widget_name_base = new_widget_name;
-            while(new_widget_name in widget_by_name) new_widget_name = new_widget_name_base + " " + (number++);
+            while(new_widget_name in widget_by_name) new_widget_name = new_widget_name_base + " " + number++;
             widget_by_name[new_widget_name] = scope;
             return new_widget_name;
         }

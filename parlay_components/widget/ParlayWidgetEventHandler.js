@@ -95,48 +95,7 @@
             });
         };
 
-        /**
-         * Creates and returns a JS-Interpreter Object that can be attached to a JS-Interpreter scope.
-         * @member module:ParlayWidget.ParlayWidgetEventHandler#makeEvent
-         * @public
-         * @param {Object} interpreter - JS-Interpreter instance that will be used to construct the native Function.
-         * @param {Event} domEvent - Event fired from a HTMLElement.
-         * @returns {Object} - JS-Interpreter Object that can be attached to a JS-Interpreter scope.
-         */
-        ParlayWidgetEventHandler.prototype.makeEvent = function (interpreter, domEvent) {
-            var evt = this.makeObject(interpreter, domEvent);
-            var tag = domEvent.target.tagName.toLowerCase();
 
-            if (tag.includes("input")) {
-                var obj = interpreter.createObject();
-
-                var currentTarget = domEvent.target;
-                var val = currentTarget.type == "number" ? parseInt(currentTarget.value, 10) : currentTarget.value;
-                interpreter.setProperty(obj, "name", interpreter.createPrimitive(currentTarget.name));
-                interpreter.setProperty(obj, "type", interpreter.createPrimitive(currentTarget.type));
-                interpreter.setProperty(obj, "value", interpreter.createPrimitive(val));
-                interpreter.setProperty(evt, "element", obj);
-            }
-
-            return evt;
-        };
-
-        /**
-         * Binds a property on the JS-Interpreter scope to the given domEvent.
-         * @member module:ParlayWidget.ParlayWidgetEventHandler#attachEvent
-         * @public
-         * @param {Object} scope - Execution scope that the Object will be attached to.
-         * @param {Object} interpreter - JS-Interpreter instance that will be used to attach the Object.
-         * @param {Event} domEvent - Event fired from a HTMLElement.
-         * @param {String} optionalName - If provided this will be the name used on the scope to reference the domEvent.
-         */
-        ParlayWidgetEventHandler.prototype.attachEvent = function (scope, interpreter, domEvent, optionalName) {
-            var name = !!optionalName ? optionalName : "event";
-
-            if (this.functionString.includes(name)) {
-                interpreter.setProperty(scope, name, this.makeEvent(interpreter, domEvent));
-            }
-        };
 
         /**
          * Converts ParlayWidgetEventHandler instance to Object that can be JSON.strinfified.

@@ -76,6 +76,9 @@
             var update_chart = function () {
                 //don't push data if we're not using aut_config
                 if(!scope.customizations.auto_config.value) return;
+                //number of points to show on X-Axis
+                var num_pts = scope.customizations.num_points.value;
+
                 var items = values(scope.items);
 
                 if (!!items && items.length > 0) {
@@ -87,7 +90,7 @@
                         //don't push data if we don't have any (or if it isnt a number)
                         if(item.value !== undefined && !isNaN(item.value)) data.push(item.value);
 
-                        if (data.length > 20) {
+                        if (data.length > num_pts) {
                             data.shift();
                         }
 
@@ -95,7 +98,7 @@
 
                     chart.data.labels.push("");
 
-                    if (chart.data.labels.length > 20) {
+                    if (chart.data.labels.length > num_pts) {
                         chart.data.labels.shift();
                     }
                 }
@@ -141,6 +144,11 @@
                     property_name: "Poll Rate (Hz)",
                     type: "text",
                     value: 2
+                },
+                num_points: {
+                  property_name: "Number of Points on X-Axes",
+                    type:"number",
+                    value:20
                 }
             },
             properties:

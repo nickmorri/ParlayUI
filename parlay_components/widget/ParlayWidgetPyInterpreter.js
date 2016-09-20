@@ -140,7 +140,7 @@
             type: 'application/javascript'
         });
 
-        var workerPool = new ParlayWorkerPool();
+        var workerPool = new ParlayWorkerPool(40); // max 40 workers
         workerPool.initialize(blobURL,
             //handle 3 kinds of valid messages: print, error, and return
             // onmessage
@@ -273,14 +273,14 @@
                             break;
                     }
                     break;
-                case "get_parlay_data":
-                    //TODO Get a widget value by widget name and value name
-                    var val = ParlayData.get(data.key).value;
+                case "get_widget_property":
+                    //get the value out of the scope.properties object
+                    var val = ParlayData.get("widgets_scope_by_name")[data.widget_name].properties[data.property_name].value;
                     worker.postMessage({value:val});
                     break;
 
-                case "set_parlay_data":
-                    ParlayData.get(data.key).value = data.value;
+                case "set_widget_property":
+                    ParlayData.get("widgets_scope_by_name")[data.widget_name].properties[data.property_name].value = data.value;
                     worker.postMessage({value: data.value});
                     // since we've changed the ParlayData, do a digest loop
                     $rootScope.$digest();
@@ -359,17 +359,24 @@
             if (!!this.constructionError) {
                     return this.constructionError;
                 }
-                else if (!this.functionString) {
-                    return "ParlayInterpreter.construct() must be done before ParlayInterpreter.run()";
-                }
                 else {
                     //attach the prefix and suffix  to the string to run
+                    //if there is no function string, then don't bother running it
+                    if(this.functionString === "" || this.functionString === undefined)
+                    {
+                        if(onFinished) onFinished(undefined); //we're already finished
+                        return true;
+                    }
 
                     var full_func_string = this.functionString +
                         "\nfrom parlay.utils.native import scriptFinished" +
                         "\ntry:\n    scriptFinished(result)"+ // try and return wth value 'result'
                         "\nexcept:\n    scriptFinished(None)"; //else return wth no result
                     var worker = workerPool.getWorker();
+                    if(worker === undefined) {
+                        console.log("background worker pool running out.");
+                        return "Could not get worker";
+                    }
                     worker.onFinished = onFinished;
                     builtins = builtins || {};
                     worker.postMessage({script: full_func_string, builtins:builtins});

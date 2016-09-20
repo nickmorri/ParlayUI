@@ -10,12 +10,12 @@
                 md-items="event in eventCtrl.queryEvents(eventCtrl.searchText)"
                 md-item-text="event.event"
                 placeholder="Search for events">
-            <md-item-template>
-                <span md-highlight-text="eventCtrl.searchText">{{event.element.widget_name}}{{event.element.widget_uid}}[{{event.element.element_name}}].on('{{event.event}}')</span>
+            <md-item-template >
+                <span md-highlight-text="eventCtrl.searchText">{{eventCtrl.getActiveWidget(event.element.uid).name}} → {{event.event}}</span>
             </md-item-template>
         </md-autocomplete>
         <md-chip-template>
-            <em>{{$chip.element.widget_name}}{{$chip.element.widget_uid}}[{{$chip.element.element_name}}]</em>.on(<strong>'{{$chip.event}}'</strong>)
+            <em>{{eventCtrl.getActiveWidget($chip.element.uid).name}}</em> → <strong>{{$chip.event}}</strong>
         </md-chip-template>
     </md-chips>
 

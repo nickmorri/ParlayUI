@@ -76,6 +76,7 @@
             return this.getActiveWidgets().length;
         };
 
+
         /**
          * Clears reference to active widget objects.
          * @member module:ParlayWidget.ParlayWidgetManager#
@@ -84,6 +85,14 @@
         ParlayWidgetManager.prototype.clearActive = function () {
             this.active_widgets = [];
         };
+
+        ParlayWidgetManager.prototype.getActiveWidget = function (uid) {
+            for(var i =0; i< this.active_widgets.length; i++)
+            {
+                if(this.active_widgets[i].uid == uid) return this.active_widgets[i];
+            }
+        };
+
 
         /**
          * Returns all saved workspaces except for those that were autosaved.

@@ -1,13 +1,10 @@
 <parlay-widget-base-card>
     <parlay-widget-base-card-title>
-        {{template.name}}{{uid}}
+        {{info.name}}
     </parlay-widget-base-card-title>
     <parlay-widget-base-card-content layout="row">
         <md-button flex
                 parlay-widget-input
-                element-name="test"
-                widget-name="{{template.name}}"
-                widget-uid="{{uid}}"
                 events='["click"]'
                 ng-class="customizations.button_class.value"
                 ng-style="{color: customizations.button_text_color.value}">

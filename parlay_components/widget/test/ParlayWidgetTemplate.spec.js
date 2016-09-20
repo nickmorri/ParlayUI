@@ -52,7 +52,8 @@
                             edit: "=",
                             uid: "=",
                             template: "=",
-                            customizations: "="
+                            customizations: "=",
+                            info:"="
                         },
                         templateUrl: "fake/path/to/directive.html"
                     });
@@ -80,7 +81,8 @@
                             edit: "=",
                             uid: "=",
                             template: "=",
-                            customizations: "="
+                            customizations: "=",
+                            info:"="
                         },
                         templateUrl: "fake/path/to/directive.html"
                     });

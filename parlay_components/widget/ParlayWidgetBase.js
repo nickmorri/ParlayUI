@@ -54,6 +54,7 @@
                 // Attach the methods to scope.
                 scope.edit = edit;
 
+
                 // Handle widget initialization on parlayWidgetTemplateLoaded event.
                 scope.$on("parlayWidgetTemplateLoaded", function () {
                     onLoaded(element[0]);
@@ -79,6 +80,7 @@
                     }
                 });
 
+
                 // If an existing configuration Object exists we should restore the configuration, otherwise construct
                 // from scratch.
                 if (!!scope.item.configuration) {
@@ -87,6 +89,7 @@
                 else {
                     scope.initialized = false;
                     scope.item.configuration = {};
+                    scope.item.name = ""; // this turns into scope.info.name in widgettemplate
                     scope.edit(true);
                 }
 
@@ -267,7 +270,8 @@
                         ["edit", "edit"],
                         ["uid", "item.uid"],
                         ["template", "item.configuration.template"],
-                        ["customizations", "item.configuration.customizations"]
+                        ["customizations", "item.configuration.customizations"],
+                        ["info", "item"]
                     ].map(function (attribute) {
                         return attribute[0] + "='" + attribute[1] + "'";
                     }).join(" ");
@@ -317,7 +321,7 @@
                         controller: "ParlayWidgetBaseConfigurationDialogController",
                         controllerAs: "dialogCtrl",
                         locals: {
-                            configuration: scope.item.configuration,
+                            item: scope.item,
                             widgetCompiler: compileWrapper()
                         }
                     }).catch(function () {

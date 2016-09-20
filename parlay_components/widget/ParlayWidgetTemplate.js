@@ -70,7 +70,7 @@
          * @returns {Object} - Fully configured AngularJS directive definition Object.
          *
          */
-        function ParlayWidgetTemplate(options) {
+        function ParlayWidgetTemplate(options, display_name) {
 
             var custom_link = options.customLink;
             var customization_defaults = options.customizationDefaults;
@@ -104,10 +104,32 @@
              */
             function link (scope, element, attrs, controller, transcludeFn) {
 
+                //if we have customizations, we should sycn them with the default
+                if(!!scope.customizations && !!customization_defaults)
+                {
+                    //remove every key from the current scope that is NOT in the default list
+                    for(var sk in scope.customizations)
+                    {
+                        if(!scope.customizations.hasOwnProperty(sk)) continue; //skip builtins
+                        if(!(sk in customization_defaults))
+                        {
+                            delete scope.customizations[sk];
+                        }
+                    }
+                    // add every default that ISNT ins the current scope to the current scope
+                    for(var dk in customization_defaults)
+                    {
+                       if(!customization_defaults.hasOwnProperty(dk)) continue; //skip builtins
+                       if(!(dk in scope.customizations))
+                       {
+                           scope.customizations[dk] = angular.copy(customization_defaults[dk]);
+                       }
+                    }
 
 
-                // If the user defined customizations we should assign them.
-                if (!scope.customizations && !!customization_defaults) {
+                }
+                // If the user defined customizations and we don't have any we should assign them.
+                else if (!scope.customizations && !!customization_defaults) {
                     scope.customizations = angular.copy(customization_defaults);
                 }
 
@@ -121,7 +143,38 @@
                     }
                 }
 
-                if(scope.widgetsCtrl) scope.widgetsCtrl.registerProperties("widget["+scope.uid+"]", scope.properties);
+                if(scope.widgetsCtrl)
+                {
+                    var widgetsCtrl = scope.widgetsCtrl;
+                    //auto assign a name if we don't already have one
+                    if(!scope.info.name) scope.info.name = widgetsCtrl.registerScope(display_name, scope);
+                    //handle deregistration on destruction
+                    scope.$on("$destroy", function(){
+                        widgetsCtrl.deregisterScope(scope.info.name);
+                    });
+                }
+
+
+                //function to add the watcher. This trickery is needed because we may modify the
+                // name in the watcher
+                function addWatcher() {
+                    var unwatch =  scope.$watch('info.name', function(newVal, oldVal, scope){
+                        var verified_name = scope.widgetsCtrl.renameScope(newVal, oldVal);
+                        if(verified_name != newVal) //if we had to modify the name to make it unique
+                        {
+                            //un hook the wacher so that it won't recursively trigger
+                            unwatch();
+                            scope.info.name = verified_name;
+
+                            //then re-hook it for the next change
+                            addWatcher();
+                        }
+
+                    }, true);
+                }
+
+                addWatcher();
+
 
                 // If the user defined a customLink we should call it.
                 if (!!custom_link) {
@@ -161,7 +214,8 @@
                     edit: "=",
                     uid: "=",
                     template: "=",
-                    customizations: "="
+                    customizations: "=",
+                    info:"="
                 }
             };
 

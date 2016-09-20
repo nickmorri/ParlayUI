@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["ui.ace", "mdColorPicker", "parlay.widget.collection", "parlay.widget.inputmanager", "parlay.widget.transformer", "parlay.widget.eventhandler", "parlay.data"];
+    var module_dependencies = ["ui.ace", "mdColorPicker", "parlay.widget.manager", "parlay.widget.collection", "parlay.widget.inputmanager", "parlay.widget.transformer", "parlay.widget.eventhandler", "parlay.data"];
 
     angular
         .module("parlay.widget.base.configuration", module_dependencies)
@@ -40,7 +40,7 @@
         };
     }
 
-    ParlayWidgetBaseConfigurationDialogController.$inject = ["$scope", "$mdDialog", "configuration", "widgetCompiler"];
+    ParlayWidgetBaseConfigurationDialogController.$inject = ["$scope", "$mdDialog", "item", "widgetCompiler"];
     /**
      * Base [$mdDialog]{@link https://material.angularjs.org/latest/api/service/$mdDialog} widget configuration controller.
      * @constructor module:ParlayWidget.ParlayWidgetBaseConfigurationDialogController
@@ -50,13 +50,15 @@
      * of the widget.
      * @param {Function} widgetCompiler - [widgetCompiler]{@link module:ParlayWidget.ParlayWidgetBase#compileWrapper}
      */
-    function ParlayWidgetBaseConfigurationDialogController ($scope, $mdDialog, configuration, widgetCompiler) {
+    function ParlayWidgetBaseConfigurationDialogController ($scope, $mdDialog, item, widgetCompiler) {
 
         var ctrl = this;
+        var configuration = item.configuration;
 
         // Attaches the configuration Object to the $scope Object to allow for user configuration.
         // Accessible by all the dialog controllers in the dialog.
         $scope.configuration = configuration;
+        $scope.item = item; //attach the item too for more information
 
         // Attach methods to controller.
         ctrl.cancel = cancel;
@@ -107,14 +109,14 @@
 
     }
 
-    ParlayWidgetBaseConfigurationEventController.$inject = ["$scope", "ParlayWidgetInputManager"];
+    ParlayWidgetBaseConfigurationEventController.$inject = ["$scope", "ParlayWidgetInputManager", "ParlayWidgetManager"];
     /**
      * Manages the user selection of widget events.
      * @constructor module:ParlayWidget.ParlayWidgetBaseConfigurationEventController
      * @param {Object} $scope - AngularJS [$scope]{@link https://docs.angularjs.org/guide/scope} Object.
      * @param {Object} ParlayWidgetInputManager - [ParlayWidgetInputManager]{@link module:ParlayWidget.ParlayWidgetInputManager} service.
      */
-    function ParlayWidgetBaseConfigurationEventController ($scope, ParlayWidgetInputManager) {
+    function ParlayWidgetBaseConfigurationEventController ($scope, ParlayWidgetInputManager, ParlayWidgetManager) {
 
         var ctrl = this;
 
@@ -122,6 +124,8 @@
         ctrl.queryEvents = queryEvents;
         ctrl.addHandler = addHandler;
         ctrl.removeHandler = removeHandler;
+        //Proxy the rquest to the ParlayWidgetManager. This is so directives can call it
+        ctrl.getActiveWidget = function(uid) { return ParlayWidgetManager.getActiveWidget(uid);} ;
 
         /**
          * Attaches [ParlayWidgetEventHandler]{@link module:ParlayWidget.ParlayWidgetEventHandler} to event.
@@ -152,12 +156,18 @@
          */
         function queryEvents (query) {
             var lowercase_query = angular.lowercase(query);
+            //the uid for the current widget
+            var uid = $scope.item.uid;
 
             return ParlayWidgetInputManager.getEvents().filter(function (event) {
-                var lowercase = angular.lowercase(event.event + event.element.element_name + event.element.widget_name);
+                //only show events for the current widget
+                if(event.element.uid != uid) return false;
+                var lowercase = angular.lowercase(event.event);
+                //only show event matching our query (case insensitive)
                 return (lowercase).includes(lowercase_query) &&
                     $scope.configuration.selectedEvents.indexOf(event) === -1;
             });
+
         }
 
         // When configuration.template.type change the currentTabIndex.
@@ -370,8 +380,6 @@
         // Attach methods to controller.
         ctrl.onEditorLoad = onEditorLoad;
 
-        var static_completer_entries = [];
-
         /**
          * Called when the [Ace editor]{@link https://ace.c9.io/} instance completes loading.
          * @member module:ParlayWidget.ParlayWidgetBaseConfigurationTransformController#onEditorLoad
@@ -388,7 +396,13 @@
     }
 
     ParlayWidgetBaseConfigurationCustomizationController.$inject = ["$scope"];
-    function ParlayWidgetBaseConfigurationCustomizationController ($scope) {}
+    function ParlayWidgetBaseConfigurationCustomizationController ($scope) {
+        //change the customizations when the template name changes to match the widget type
+        $scope.$watch("configuration.template.name", function (newValue, oldValue) {
+
+        });
+
+    }
 
     function ParlayWidgetBaseConfigurationTemplateDirective () {
         return {

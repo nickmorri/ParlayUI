@@ -164,10 +164,10 @@
                     $scope.configuration.selectedEvents.indexOf(event) === -1;
             });
 
-            for(var i=0; i< events.length;i++)
+            /*for(var i=0; i< events.length;i++)
             {
-                events[i].info = ParlayWidgetManager.getActiveWidget(events[i].element.uid)
-            }
+                events[i].widget_name = ParlayWidgetManager.getActiveWidget(events[i].element.uid).name;
+            }*/
             return events;
         }
 

@@ -380,8 +380,6 @@
         // Attach methods to controller.
         ctrl.onEditorLoad = onEditorLoad;
 
-        var static_completer_entries = [];
-
         /**
          * Called when the [Ace editor]{@link https://ace.c9.io/} instance completes loading.
          * @member module:ParlayWidget.ParlayWidgetBaseConfigurationTransformController#onEditorLoad
@@ -398,7 +396,13 @@
     }
 
     ParlayWidgetBaseConfigurationCustomizationController.$inject = ["$scope"];
-    function ParlayWidgetBaseConfigurationCustomizationController ($scope) {}
+    function ParlayWidgetBaseConfigurationCustomizationController ($scope) {
+        //change the customizations when the template name changes to match the widget type
+        $scope.$watch("configuration.template.name", function (newValue, oldValue) {
+
+        });
+
+    }
 
     function ParlayWidgetBaseConfigurationTemplateDirective () {
         return {

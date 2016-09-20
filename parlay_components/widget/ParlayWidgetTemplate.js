@@ -104,8 +104,32 @@
              */
             function link (scope, element, attrs, controller, transcludeFn) {
 
-                // If the user defined customizations we should assign them.
-                if (!scope.customizations && !!customization_defaults) {
+                //if we have customizations, we should sycn them with the default
+                if(!!scope.customizations && !!customization_defaults)
+                {
+                    //remove every key from the current scope that is NOT in the default list
+                    for(var sk in scope.customizations)
+                    {
+                        if(!scope.customizations.hasOwnProperty(sk)) continue; //skip builtins
+                        if(!(sk in customization_defaults))
+                        {
+                            delete scope.customizations[sk];
+                        }
+                    }
+                    // add every default that ISNT ins the current scope to the current scope
+                    for(var dk in customization_defaults)
+                    {
+                       if(!customization_defaults.hasOwnProperty(dk)) continue; //skip builtins
+                       if(!(dk in scope.customizations))
+                       {
+                           scope.customizations[dk] = angular.copy(customization_defaults[dk]);
+                       }
+                    }
+
+
+                }
+                // If the user defined customizations and we don't have any we should assign them.
+                else if (!scope.customizations && !!customization_defaults) {
                     scope.customizations = angular.copy(customization_defaults);
                 }
 
@@ -118,7 +142,7 @@
                        scope.properties[key] = {value: custom_properties[key].default};
                     }
                 }
-                
+
                 if(scope.widgetsCtrl)
                 {
                     var widgetsCtrl = scope.widgetsCtrl;

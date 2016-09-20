@@ -147,7 +147,6 @@ var widgetRegistration = (function () {
     ParlayWidgetsRun.$inject = ["ParlaySettings", "ParlayWidgetCollection", "ParlayData"];
     function ParlayWidgetsRun (ParlaySettings, ParlayWidgetCollection, ParlayData) {
         ParlayData.set('registered_widget_types', registered_widgets);
-        console.log(ParlayData);
 
         // Register the default ParlaySettings for widgets.
         ParlaySettings.registerDefault("widgets", {editing: true});

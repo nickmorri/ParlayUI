@@ -118,9 +118,7 @@
                        scope.properties[key] = {value: custom_properties[key].default};
                     }
                 }
-
-                //if(scope.widgetsCtrl) scope.widgetsCtrl.registerProperties("widget["+scope.uid+"]", scope.properties);
-                console.log(scope);
+                
                 if(scope.widgetsCtrl)
                 {
                     var widgetsCtrl = scope.widgetsCtrl;
@@ -131,7 +129,7 @@
                         widgetsCtrl.deregisterScope(scope.info.name);
                     });
                 }
-                else scope.info.name = display_name + "?";
+
 
                 //function to add the watcher. This trickery is needed because we may modify the
                 // name in the watcher

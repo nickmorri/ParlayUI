@@ -118,7 +118,6 @@
             else {
                 this.widgets[widget_info.uid].push(registration);
             }
-            console.log(this.widgets);
 
             scope.$on("$destroy", function () {
                 Object.keys(registration.events).forEach(function (key) {

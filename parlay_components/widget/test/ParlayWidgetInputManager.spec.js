@@ -24,22 +24,20 @@
                 expect(ParlayWidgetInputManager.widgets).toEqual({});
 
                 scope.widgetName = "testWidget";
-                scope.widgetUid = "0";
+                scope.info = {uid:0};
                 scope.elementName = "test";
-                var element = $compile("<input name='test'/>")(scope);
+                var element = $compile("<input name='test'  />")(scope);
                 scope.events = '["click"]';
 
                 ParlayWidgetInputManager.registerElement(
-                    scope.widgetName, parseInt(scope.widgetUid, 10), scope.elementName, element[0], scope, JSON.parse(scope.events)
+                    scope.info, element[0], scope, JSON.parse(scope.events)
                 );
 
                 expect(ParlayWidgetInputManager.widgets).toEqual({
-                    testWidget0: [
+                    0: [ //list of widgets with that UID (should be just one)
                         {
                             element_ref: element[0],
-                            widget_name: 'testWidget',
-                            element_name: 'test',
-                            widget_uid: 0,
+                            uid: 0,
                             events: {
                                 click: {
                                     event: 'click',
@@ -64,20 +62,21 @@
                 expect(ParlayWidgetInputManager.widgets).toEqual({});
 
                 scope.widgetName = "testWidget";
-                scope.widgetUid = "0";
+                scope.info = {uid:0};
                 scope.elementName = "test";
                 var element = $compile("<input name='test'/>")(scope);
                 scope.events = '["click"]';
 
+
                 ParlayWidgetInputManager.registerElement(
-                    scope.widgetName, parseInt(scope.widgetUid, 10), scope.elementName, element[0], scope, JSON.parse(scope.events)
+                    scope.info, element[0], scope, JSON.parse(scope.events)
                 );
 
-                expect(ParlayWidgetInputManager.widgets.testWidget0[0].events.click.handler).toBe(null);
+                expect(ParlayWidgetInputManager.widgets[0][0].events.click.handler).toBe(null);
 
-                ParlayWidgetInputManager.registerHandler(ParlayWidgetInputManager.widgets.testWidget0[0].events.click);
+                ParlayWidgetInputManager.registerHandler(ParlayWidgetInputManager.widgets[0][0].events.click);
 
-                expect(ParlayWidgetInputManager.widgets.testWidget0[0].events.click.handler).not.toBe(null);
+                expect(ParlayWidgetInputManager.widgets[0][0].events.click.handler).not.toBe(null);
 
             });
 
@@ -86,24 +85,25 @@
                 expect(ParlayWidgetInputManager.widgets).toEqual({});
 
                 scope.widgetName = "testWidget";
-                scope.widgetUid = "0";
+                scope.info = {uid:0};
                 scope.elementName = "test";
                 var element = $compile("<input name='test'/>")(scope);
                 scope.events = '["click"]';
 
+
                 ParlayWidgetInputManager.registerElement(
-                    scope.widgetName, parseInt(scope.widgetUid, 10), scope.elementName, element[0], scope, JSON.parse(scope.events)
+                    scope.info, element[0], scope, JSON.parse(scope.events)
                 );
 
-                expect(ParlayWidgetInputManager.widgets.testWidget0[0].events.click.handler).toBe(null);
+                expect(ParlayWidgetInputManager.widgets[0][0].events.click.handler).toBe(null);
 
-                ParlayWidgetInputManager.registerHandler(ParlayWidgetInputManager.widgets.testWidget0[0].events.click);
+                ParlayWidgetInputManager.registerHandler(ParlayWidgetInputManager.widgets[0][0].events.click);
 
-                expect(ParlayWidgetInputManager.widgets.testWidget0[0].events.click.handler).not.toBe(null);
+                expect(ParlayWidgetInputManager.widgets[0][0].events.click.handler).not.toBe(null);
 
-                ParlayWidgetInputManager.deregisterHandler(ParlayWidgetInputManager.widgets.testWidget0[0].events.click);
+                ParlayWidgetInputManager.deregisterHandler(ParlayWidgetInputManager.widgets[0][0].events.click);
 
-                expect(ParlayWidgetInputManager.widgets.testWidget0[0].events.click.handler).toBe(null);
+                expect(ParlayWidgetInputManager.widgets[0][0].events.click.handler).toBe(null);
             });
 
             it("getElements", function () {
@@ -113,21 +113,20 @@
                 var testWidget1Element = $compile("<input name='test'/>")(scope);
 
                 ParlayWidgetInputManager.registerElement(
-                    "testWidget", 0, "test", testWidget1Element[0], scope, ["click"]
+                    {uid:0}, testWidget1Element[0], scope, ["click"]
                 );
 
                 var testWidget2Element = $compile("<input name='test'/>")(scope);
 
                 ParlayWidgetInputManager.registerElement(
-                    "testWidget", 1, "test", testWidget2Element[0], scope, ["click"]
+                    {uid:1}, testWidget2Element[0], scope, ["click"]
                 );
 
                 expect(ParlayWidgetInputManager.getElements()).toEqual([
                     {
                         element_ref: testWidget1Element[0],
-                        widget_name: 'testWidget',
-                        element_name: 'test',
-                        widget_uid: 0,
+
+                        uid: 0,
                         events: {
                             click: {
                                 event: 'click',
@@ -140,9 +139,7 @@
                     },
                     {
                         element_ref: testWidget2Element[0],
-                        widget_name: 'testWidget',
-                        element_name: 'test',
-                        widget_uid: 1,
+                        uid: 1,
                         events: {
                             click: {
                                 event: 'click',
@@ -161,15 +158,15 @@
                 expect(ParlayWidgetInputManager.getEvents()).toEqual([]);
 
                 var testWidget1Element = $compile("<input name='test'/>")(scope);
-
+                //scope.info, element[0], scope, JSON.parse(events)
                 ParlayWidgetInputManager.registerElement(
-                    "testWidget", 0, "test", testWidget1Element[0], scope, ["click"]
+                    {uid:0}, testWidget1Element[0], scope, ["click"]
                 );
 
                 var testWidget2Element = $compile("<input name='test'/>")(scope);
 
                 ParlayWidgetInputManager.registerElement(
-                    "testWidget", 1, "test", testWidget2Element[0], scope, ["click"]
+                    {uid:1}, testWidget2Element[0], scope, ["click"]
                 );
 
                 expect(ParlayWidgetInputManager.getEvents()).toEqual([
@@ -180,9 +177,7 @@
                         clearAllListeners: jasmine.any(Function),
                         handler: null,
                         element: {
-                            widget_name: 'testWidget',
-                            widget_uid: 0,
-                            element_name: 'test'
+                          uid:0
                         }
                     },
                     {
@@ -192,9 +187,7 @@
                         clearAllListeners: jasmine.any(Function),
                         handler: null,
                         element: {
-                            widget_name: 'testWidget',
-                            widget_uid: 1,
-                            element_name: 'test'
+                            uid:1
                         }
                     }
                 ]);

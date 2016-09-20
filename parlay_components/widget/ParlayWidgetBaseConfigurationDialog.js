@@ -124,8 +124,8 @@
         ctrl.queryEvents = queryEvents;
         ctrl.addHandler = addHandler;
         ctrl.removeHandler = removeHandler;
-        //How to call this from directive?
-        ctrl.getActiveWidget = function(uid) { return ParlayWidgetManager.getActiveWidget(uid)} ;
+        //Proxy the rquest to the ParlayWidgetManager. This is so directives can call it
+        ctrl.getActiveWidget = function(uid) { return ParlayWidgetManager.getActiveWidget(uid);} ;
 
         /**
          * Attaches [ParlayWidgetEventHandler]{@link module:ParlayWidget.ParlayWidgetEventHandler} to event.

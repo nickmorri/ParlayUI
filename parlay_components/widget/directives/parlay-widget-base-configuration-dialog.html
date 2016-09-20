@@ -17,7 +17,7 @@
                         <md-tabs ng-hide="configuration.selectedEvents.length === 0" md-stretch-tabs="always" md-dynamic-height="true" class="md-primary md-hue-2">
                             <md-tab ng-repeat="event in configuration.selectedEvents">
                                 <md-tab-label>
-                                    {{event.element.widget_name}}{{event.element.widget_uid}}[{{event.element.element_name}}]</span>.on('{{event.event}}')
+                                    on_{{event.event}}()
                                 </md-tab-label>
                                 <md-tab-body>
                                     <parlay-widget-base-configuration-handler></parlay-widget-base-configuration-handler>

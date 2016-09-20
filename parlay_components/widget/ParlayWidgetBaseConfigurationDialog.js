@@ -156,19 +156,18 @@
          */
         function queryEvents (query) {
             var lowercase_query = angular.lowercase(query);
+            //the uid for the current widget
+            var uid = $scope.item.uid;
 
-            var events = ParlayWidgetInputManager.getEvents().filter(function (event) {
-                var info = ParlayWidgetManager.getActiveWidget(event.element.uid);
-                var lowercase = angular.lowercase(event.event + info.name);
+            return ParlayWidgetInputManager.getEvents().filter(function (event) {
+                //only show events for the current widget
+                if(event.element.uid != uid) return false;
+                var lowercase = angular.lowercase(event.event);
+                //only show event matching our query (case insensitive)
                 return (lowercase).includes(lowercase_query) &&
                     $scope.configuration.selectedEvents.indexOf(event) === -1;
             });
 
-            /*for(var i=0; i< events.length;i++)
-            {
-                events[i].widget_name = ParlayWidgetManager.getActiveWidget(events[i].element.uid).name;
-            }*/
-            return events;
         }
 
         // When configuration.template.type change the currentTabIndex.

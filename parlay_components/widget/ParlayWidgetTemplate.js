@@ -121,7 +121,16 @@
 
                 //if(scope.widgetsCtrl) scope.widgetsCtrl.registerProperties("widget["+scope.uid+"]", scope.properties);
                 console.log(scope);
-                if(scope.widgetsCtrl) scope.info.name = scope.widgetsCtrl.registerScope(display_name, scope);
+                if(scope.widgetsCtrl)
+                {
+                    var widgetsCtrl = scope.widgetsCtrl;
+                    //auto assign a name if we don't already have one
+                    if(!scope.info.name) scope.info.name = widgetsCtrl.registerScope(display_name, scope);
+                    //handle deregistration on destruction
+                    scope.$on("$destroy", function(){
+                        widgetsCtrl.deregisterScope(scope.info.name);
+                    });
+                }
                 else scope.info.name = display_name + "?";
 
                 //function to add the watcher. This trickery is needed because we may modify the

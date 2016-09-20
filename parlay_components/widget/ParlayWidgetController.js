@@ -35,6 +35,7 @@
         ctrl.duplicate = duplicate;
         ctrl.registerScope = registerScope;
         ctrl.renameScope = renameScope;
+        ctrl.deregisterScope = deregisterScope;
 
         /**
          * Requests all active widget configuration Objects from the
@@ -92,14 +93,16 @@
         function registerScope(new_widget_name, scope)
         {
             if(new_widget_name === undefined) new_widget_name = "UNKNOWN NAME";
-            console.log(scope);
             widget_by_name[new_widget_name] = scope;
             var number = 1; var new_widget_name_base = new_widget_name;
             while(new_widget_name in widget_by_name) new_widget_name = new_widget_name_base + " " + number++;
             widget_by_name[new_widget_name] = scope;
-            //registration.widget_name = new_widget_name;
-            //TODO Reflect name change in scope?
             return new_widget_name;
+        }
+
+        function deregisterScope(widget_name)
+        {
+            delete widget_by_name[widget_name];
         }
 
         /**

@@ -79,7 +79,7 @@
                         draggie.destroy();
                     }
                 });
-                console.log(scope.item);
+
 
                 // If an existing configuration Object exists we should restore the configuration, otherwise construct
                 // from scratch.

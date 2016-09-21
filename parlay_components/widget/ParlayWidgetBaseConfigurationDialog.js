@@ -266,7 +266,7 @@
 
     }
 
-    ParlayWidgetBaseConfigurationSourceController.$inject = ["$scope", "ParlayData", "ParlayWidgetInputManager", "ParlayWidgetTransformer"];
+    ParlayWidgetBaseConfigurationSourceController.$inject = ["$scope", "ParlayData", "ParlayWidgetTransformer"];
     /**
      * Manages the user selection of data sources.
      * @constructor module:ParlayWidget.ParlayWidgetBaseConfigurationSourceController
@@ -275,7 +275,7 @@
      * @param {Object} ParlayWidgetInputManager - [ParlayWidgetInputManager]{@link module:ParlayWidget.ParlayWidgetInputManager} service.
      * @param {Object} ParlayWidgetTransformer - [ParlayWidgetTransformer]{@link module:ParlayWidget.ParlayWidgetTransformer} service.
      */
-    function ParlayWidgetBaseConfigurationSourceController ($scope, ParlayData, ParlayWidgetInputManager, ParlayWidgetTransformer) {
+    function ParlayWidgetBaseConfigurationSourceController ($scope, ParlayData, ParlayWidgetTransformer) {
 
         var ctrl = this;
 
@@ -367,13 +367,13 @@
 
     }
 
-    ParlayWidgetBaseConfigurationTransformController.$inject = ["$scope"];
+    ParlayWidgetBaseConfigurationTransformController.$inject = [];
     /**
      * Manages the transformations of user selected data sources.
      * @constructor module:ParlayWidget.ParlayWidgetBaseConfigurationTransformController
      * @param {Object} $scope - AngularJS [$scope]{@link https://docs.angularjs.org/guide/scope} Object.
      */
-    function ParlayWidgetBaseConfigurationTransformController ($scope) {
+    function ParlayWidgetBaseConfigurationTransformController () {
 
         var ctrl = this;
 
@@ -395,12 +395,8 @@
 
     }
 
-    ParlayWidgetBaseConfigurationCustomizationController.$inject = ["$scope"];
-    function ParlayWidgetBaseConfigurationCustomizationController ($scope) {
-        //change the customizations when the template name changes to match the widget type
-        $scope.$watch("configuration.template.name", function (newValue, oldValue) {
-
-        });
+    ParlayWidgetBaseConfigurationCustomizationController.$inject = [];
+    function ParlayWidgetBaseConfigurationCustomizationController () {
 
     }
 

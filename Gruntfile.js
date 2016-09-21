@@ -345,11 +345,12 @@ module.exports = function (grunt) {
                     'ace-builds': [
                         "src-noconflict/ace.js",
                         "src-noconflict/mode-javascript.js",
+						"src-noconflict/mode-python.js",
                         "src-noconflict/ext-language_tools.js",
                         "src-noconflict/worker-javascript.js"
                     ],
                     //'jsinterpreter': 'acorn_interpreter.js' //,
-                    "Chart.js": "dist/Chart.bundle.min.js"
+                    "chart.js": "dist/Chart.bundle.min.js"
                 },
                 'exclude': ["skulpt"]
 			}

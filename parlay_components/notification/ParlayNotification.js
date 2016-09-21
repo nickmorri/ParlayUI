@@ -355,7 +355,7 @@
                 // Show a dialog to indicate to the user that a discovery is in progress.
                 $mdDialog.show({
                     templateUrl: "../parlay_components/notification/directives/parlay-discovery-dialog.html",
-                    controller: function ($mdDialog) {
+                    controller: function () {
 
                         // Allow the user to hide the dialog.
                         this.hide = function () {

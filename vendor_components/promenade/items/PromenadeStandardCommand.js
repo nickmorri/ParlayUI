@@ -99,7 +99,7 @@
              * @public
              * @type {String}
              */
-            command.label =  data.LABEL || data.DEFAULT || (!!command.options ? command.options[0].name : undefined);
+            command.label =  data.LABEL || data.DEFAULT || data.MSG_KEY ||(!!command.options ? command.options[0].name : undefined);
 
             /**
              * Name of the [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} this

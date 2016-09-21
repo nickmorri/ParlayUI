@@ -1,0 +1,11 @@
+<md-input-container flex>
+    <md-select ng-model="configuration.template" placeholder="Select a template">
+        <md-option ng-value="template_option" ng-repeat="template_option in templateCtrl.getTemplates()">
+            {{template_option.display_name}} ({{template_option.type}})
+        </md-option>
+    </md-select>
+</md-input-container>
+<md-input-container flex>
+    <label>Name</label>
+    <input type="text" ng-model="item.name" ng-model-options="{updateOn : 'blur'}" />
+</md-input-container>

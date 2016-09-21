@@ -1,14 +1,14 @@
 (function () {
     "use strict";
 
-    var module_dependencies = [];
+    var module_dependencies = ["parlay.data"];
 
     angular
         .module("promenade.items.property", module_dependencies)
         .factory("PromenadeStandardProperty", PromenadeStandardPropertyFactory);
 
-    PromenadeStandardPropertyFactory.$inject = ["$rootScope"];
-    function PromenadeStandardPropertyFactory ($rootScope) {
+    PromenadeStandardPropertyFactory.$inject = ["ParlayData", "$rootScope"];
+    function PromenadeStandardPropertyFactory (ParlayData, $rootScope) {
 
         /**
          * Class that wraps property information provided in a discovery.
@@ -119,6 +119,7 @@
             property.get = get;
             property.set = set;
             property.onChange = onChange;
+            property.generateAutocompleteEntries = generateAutocompleteEntries;
 
             /**
              * Requests a listener for the property. Saves a reference to deregistration function returned by
@@ -142,6 +143,8 @@
                     });
                 }
             });
+
+            ParlayData.set(property.item_name + "." + property.id, property);
 
             /**
              * Allows for callbacks to be registered, these will be invoked on change of value.
@@ -226,6 +229,39 @@
                 };
 
                 return protocol.sendMessage(topics, contents, response_topics, true);
+            }
+
+            /**
+             * Generates entry for Ace editor autocomplete consumed by ParlayWidget.
+             * @member PromenadeStandardProperty#generateAutocompleteEntries
+             * @public
+             * @returns {Array.Object} - Entry used to represent the PromenadeStandardProperty.
+             */
+            function generateAutocompleteEntries () {
+
+                var get_entry = {
+                    depends_on: "get_item_by_name('"+property.item_name+"')", //wont show unless this string is in script
+                    caption: property.item_name + "." + property.name + ".get()",
+                    value: property.item_name + "." + property.name + ".get()",
+                    meta: "PromenadeStandardProperty method"
+                };
+
+                var set_entry = {
+                    depends_on: "get_item_by_name('"+property.item_name+"')", //wont show unless this string is in script
+                    caption: property.item_name + "." + property.name + ".set(" + property.value + ")",
+                    value: property.item_name + "." + property.name + ".set(" + property.value + ")",
+                    meta: "PromenadeStandardProperty method"
+                };
+
+                var value_entry = {
+                    depends_on: "get_item_by_name('"+property.item_name+"')", //wont show unless this string is in script
+                    caption: property.item_name + "." + property.name + ".value",
+                    value: property.item_name + "." + property.name + ".value",
+                    meta: "PromenadeStandardProperty value"
+                };
+
+                //TODO make this more intelligent for python handlers
+                return [];
             }
 
         }

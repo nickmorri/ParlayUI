@@ -1,0 +1,161 @@
+{
+    "angular-order-object-by@1.3.0": {
+        "licenses": [
+            "MIT"
+        ]
+    },
+    "angular-recursion@1.0.4": {
+        "licenses": [
+            "MIT"
+        ],
+        "homepage": "https://github.com/marklagendijk/angular-recursion"
+    },
+    "angular-ui-ace@0.2.3": {
+        "licenses": "UNKNOWN"
+    },
+    "angular-ui-router@0.2.18": {
+        "licenses": [
+            "MIT"
+        ]
+    },
+    "draggabilly@undefined": {
+        "licenses": [
+            "MIT"
+        ],
+        "homepage": "http://draggabilly.desandro.com"
+    },
+    "skulpt@0.11.0": {
+        "licenses": "UNKNOWN",
+        "repository": {
+            "type": "git",
+            "url": "git://github.com/skulpt/skulpt.git"
+        }
+    },
+    "get-size@2.0.2": {
+        "licenses": [
+            "MIT"
+        ],
+        "homepage": "https://github.com/desandro/get-size"
+    },
+    "unidragger@undefined": {
+        "licenses": [
+            "MIT"
+        ]
+    },
+    "ace-builds@1.2.3": {
+        "licenses": [
+            "BSD",
+            "MIT*"
+        ],
+        "repository": "git+https://github.com/ajaxorg/ace-builds",
+        "homepage": "https://github.com/ajaxorg/ace-builds"
+    },
+    "angular@1.5.8": {
+        "licenses": [
+            "MIT"
+        ],
+        "repository": "git+https://github.com/angular/angular.js"
+    },
+    "angular-animate@1.5.8": {
+        "licenses": [
+            "MIT"
+        ],
+        "repository": "git+https://github.com/angular/angular.js"
+    },
+    "angular-material-icons@0.7.0": {
+        "licenses": [
+            "MIT"
+        ],
+        "homepage": "https://github.com/klarsys/angular-material-icons",
+        "repository": "git+https://github.com/klarsys/angular-material-icons"
+    },
+    "angular-material@1.1.0-rc.5": {
+        "licenses": [
+            "MIT"
+        ],
+        "repository": "https://github.com/angular/material"
+    },
+    "angular-messages@1.5.8": {
+        "licenses": [
+            "MIT"
+        ],
+        "repository": "git+https://github.com/angular/angular.js"
+    },
+    "angular-mocks@1.5.8": {
+        "licenses": [
+            "MIT"
+        ],
+        "repository": "git+https://github.com/angular/angular.js"
+    },
+    "angular-aria@1.5.8": {
+        "licenses": [
+            "MIT"
+        ],
+        "repository": "git+https://github.com/angular/angular.js"
+    },
+    "angular-sanitize@1.5.8": {
+        "licenses": [
+            "MIT"
+        ],
+        "repository": "git+https://github.com/angular/angular.js"
+    },
+    "angular-scroll-glue@undefined": {
+        "licenses": [
+            "MIT"
+        ],
+        "repository": "git+https://github.com/Luegg/angularjs-scroll-glue",
+        "homepage": "https://github.com/Luegg/angularjs-scroll-glue"
+    },
+    "es6-shim@undefined": {
+        "licenses": [
+            "MIT"
+        ],
+        "repository": "https://github.com/paulmillr/es6-shim"
+    },
+    "Chart.js@2.0.0": {
+        "licenses": [
+            "MIT*"
+        ],
+        "homepage": "https://github.com/nnnick/Chart.js",
+        "repository": "git+https://github.com/nnnick/Chart.js"
+    },
+    "md-color-picker@0.2.6": {
+        "licenses": [
+            "MIT"
+        ],
+        "homepage": "https://github.com/brianpkelley/md-color-picker",
+        "repository": "git+https://github.com/brianpkelley/md-color-picker"
+    },
+    "ev-emitter@undefined": {
+        "licenses": [
+            "MIT"
+        ],
+        "homepage": "https://github.com/metafizzy/ev-emitter",
+        "repository": "git+https://github.com/metafizzy/ev-emitter"
+    },
+    "unipointer@undefined": {
+        "licenses": [
+            "MIT"
+        ],
+        "homepage": "https://github.com/metafizzy/unipointer"
+    },
+    "smoothie@undefined": {
+        "licenses": [
+            "MIT"
+        ],
+        "repository": "https://github.com/joewalnes/smoothie",
+        "homepage": "http://smoothiecharts.org"
+    },
+    "svg-morpheus@0.1.8": {
+        "licenses": [
+            "MIT"
+        ],
+        "repository": "git+https://github.com/alexk111/SVG-Morpheus"
+    },
+    "tinycolor@1.4.1": {
+        "licenses": [
+            "MIT"
+        ],
+        "repository": "https://bgrinshub.com/TinyColor"
+    }
+}

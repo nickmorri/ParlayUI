@@ -1,0 +1,22 @@
+<md-card>
+
+    <md-chips ng-model="configuration.selectedEvents" md-require-match="true" md-on-add="eventCtrl.addHandler($chip)" md-on-remove="eventCtrl.removeHandler($chip)">
+        <md-autocomplete
+                md-min-length="0"
+                md-select-on-match="true"
+                md-match-case-insensitive="true"
+                md-no-cache="true"
+                md-search-text="eventCtrl.searchText"
+                md-items="event in eventCtrl.queryEvents(eventCtrl.searchText)"
+                md-item-text="event.event"
+                placeholder="Search for events">
+            <md-item-template >
+                <span md-highlight-text="eventCtrl.searchText">{{eventCtrl.getActiveWidget(event.element.uid).name}} → {{event.event}}</span>
+            </md-item-template>
+        </md-autocomplete>
+        <md-chip-template>
+            <em>{{eventCtrl.getActiveWidget($chip.element.uid).name}}</em> → <strong>{{$chip.event}}</strong>
+        </md-chip-template>
+    </md-chips>
+
+</md-card>

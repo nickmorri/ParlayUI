@@ -1,0 +1,56 @@
+<div layout="column">
+
+    <div flex ng-repeat="option in customizations" ng-switch="option.type" layout="row">
+
+        <md-input-container flex ng-switch-default>
+
+            <label>{{option.property_name}}</label>
+
+            <input type="text" ng-model="option.value">
+
+        </md-input-container>
+
+        <md-input-container flex flex ng-switch-when="checkbox">
+            <md-checkbox ng-model="option.value" aria-label="{{option.property_name}}" >
+                {{option.property_name}}
+            </md-checkbox>
+        </md-input-container>
+
+
+        <md-input-container flex ng-switch-when="number">
+
+            <label>{{option.property_name}}</label>
+
+            <input type="number" ng-model="option.value">
+
+        </md-input-container>
+
+        <md-input-container flex ng-switch-when="text-multiple">
+
+            <label>{{option.property_name}}</label>
+
+            <md-select ng-model="option.value" multiple="true">
+                <md-option ng-value="choice" ng-repeat="choice in option.choices">
+                    {{choice}}
+                </md-option>
+            </md-select>
+
+        </md-input-container>
+
+        <md-input-container flex ng-switch-when="text-choice">
+
+            <label>{{option.property_name}}</label>
+
+            <md-select ng-model="option.value" multiple="false">
+                <md-option ng-value="choice" ng-repeat="choice in option.choices">
+                    {{choice}}
+                </md-option>
+            </md-select>
+
+        </md-input-container>
+
+        <div flex md-color-picker label="{{option.property_name}}" ng-model="option.value" ng-switch-when="color" preview="false"></div>
+
+    </div>
+
+</div>

@@ -118,6 +118,7 @@ Build Notes
 -----
 
 - vendorDefaults.js is modified by the replace Grunt task during develop and build. Options defined in the primary vendor.json are used to replace the placeholders. The task is described in further detail in Gruntfile.js.
+- workerImports.js is modified by the replace Grunt task during develop and build. Specifically, the Skulpt library and Parlay Python modules are included. See Gruntfile.js for details.
 - index.html is modified by the following Grunt tasks:
     - During develop wiredep will replace the following HTML comment tags:
         - ```<!-- bower:css --><!-- endbower -->``` with the CSS files belonging to the Bower dependencies.

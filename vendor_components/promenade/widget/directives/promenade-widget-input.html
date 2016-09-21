@@ -1,0 +1,11 @@
+<parlay-widget-base-card>
+    <parlay-widget-base-card-title>
+        {{info.name}}
+    </parlay-widget-base-card-title>
+    <parlay-widget-base-card-content layout="column">
+        <md-input-container flex>
+            <label>{{customizations.label.value}}</label>
+            <input type="{{customizations.inputtype.value}}" parlay-widget-input events='["change"]'  ng-model="properties.text.value" ng-change="alert('zys')"/>
+        </md-input-container>
+    </parlay-widget-base-card-content>
+</parlay-widget-base-card>

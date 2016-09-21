@@ -1,12 +1,12 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["ngMaterial", "parlay.items.search", "parlay.protocols.list_controller", "parlay.settings.dialog", "parlay.common.genericsaveloaddialog", "parlay.items.manager"];
+    var module_dependencies = ["ngMaterial", "parlay.items.search", "parlay.protocols.list_controller", "parlay.settings.dialog", "parlay.common.genericsaveloaddialog", "parlay.items.manager", "parlay.widget.manager"];
 
     angular.module("parlay.navigation.sidenav", module_dependencies)
         .controller("ParlayNavigationSidenavController", ParlayNavigationSidenavController);
 
-    ParlayNavigationSidenavController.$inject = ["$mdSidenav", "$mdDialog", "ParlayGenericSaveLoadDialog", "$state", "PromenadeBroker", "ParlayItemManager"];
+    ParlayNavigationSidenavController.$inject = ["$mdSidenav", "$mdDialog", "ParlayGenericSaveLoadDialog", "$state", "PromenadeBroker", "ParlayItemManager", "ParlayWidgetManager"];
     /**
      * Controller for the navigation [$mdSidenav]{@link https://material.angularjs.org/latest/api/service/$mdSidenav}.
      * @constructor module:ParlayNavigation.ParlayNavigationSidenavController
@@ -16,8 +16,9 @@
      * @param {Object} $state - ui.router $stateProvider service.
      * @param {Object} PromenadeBroker - PromenadeBroker service.
      * @param {Object} ParlayItemManager - ParlayItemManager service.
+     * @param {Object} ParlayWidgetManager - ParlayWidgetManager service.
      */
-    function ParlayNavigationSidenavController($mdSidenav, $mdDialog, ParlayGenericSaveLoadDialog, $state, PromenadeBroker, ParlayItemManager) {
+    function ParlayNavigationSidenavController($mdSidenav, $mdDialog, ParlayGenericSaveLoadDialog, $state, PromenadeBroker, ParlayItemManager, ParlayWidgetManager) {
 
         var ctrl = this;
 
@@ -32,6 +33,16 @@
         ctrl.openSettingsDialog = openSettingsDialog;
         ctrl.requestDiscovery = requestDiscovery;
         ctrl.openItemSaveLoadDialog = openItemSaveLoadDialog;
+        ctrl.toggleWidgetEditing = toggleWidgetEditing;
+        ctrl.openWidgetSaveLoadDialog = openWidgetSaveLoadDialog;
+
+        /**
+         * Reference the editing state of the [ParlayWidgetManager]{@link module:ParlayWidget.ParlayWidgetManager}.
+         * @member module:ParlayNavigation.ParlayNavigationSidenavController#editing
+         * @public
+         * @type {Boolean}
+         */
+        ctrl.editing = ParlayWidgetManager.editing;
 
         /**
          * Returns the current state Object from the [ui.router $stateProvider]{@link https://angular-ui.github.io/ui-router/site/#/api/ui.router.state.$stateProvider}.
@@ -64,6 +75,10 @@
          */
         function navigateState (state) {
             $state.go(state);
+        }
+
+        function toggleWidgetEditing  () {
+            ParlayWidgetManager.toggleEditing();
         }
 
         /**
@@ -139,6 +154,23 @@
                 title: "workspaces",
                 child: "item",
                 children: "items"
+            });
+        }
+
+        /**
+         * Launches a [ParlayGenericSaveLoadDialog]{@link module:ParlayCommon.ParlayGenericSaveLoadDialog} for
+         * widgets workspace management.
+         * @member module:ParlayNavigation.ParlayNavigationSidenavController#openWidgetSaveLoadDialog
+         * @public
+         * @param {Event} event - DOM Event that can be used to set an animation source for $mdDialog.
+         */
+        function openWidgetSaveLoadDialog (event) {
+            ParlayGenericSaveLoadDialog.show(event, ParlayWidgetManager, {
+                entry: "workspace",
+                entries: "workspaces",
+                title: "workspaces",
+                child: "widget",
+                children: "widgets"
             });
         }
 

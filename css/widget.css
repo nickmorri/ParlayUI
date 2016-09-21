@@ -1,0 +1,48 @@
+.autocomplete-custom-template li {
+    border-bottom: 1px solid #ccc;
+    height: auto;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    white-space: normal;
+}
+
+.autocomplete-custom-template li:last-child { border-bottom-width: 0; }
+
+.autocomplete-custom-template .item-title,
+.autocomplete-custom-template .item-metadata {
+    display: block;
+    line-height: 2;
+}
+
+.transform-edit { height: 400px; }
+
+._md-chip-input-container { width: 100%; }
+
+/* Prevent widgets effecting other widgets positioning. */
+parlay-widget-base {
+    left:50%; top: 50%; /* start off in the middle of the page. Draggable will override this*/
+    position: absolute !important;
+}
+
+/* Indicate to the user that this element can be dragged. */
+.show-handle { cursor: move; }
+
+parlay-widget-base-menu { margin-right: -15px; }
+
+/* Hide the widget toolbar controls. */
+.parlay-widget-toolbar-view-only { opacity: 0; }
+
+/* Hide widget card UI elements. */
+.parlay-widget-card-view-only {
+    background-color: inherit;
+    box-shadow: none;
+}
+
+/* Allow user to click through translucent elements to widgets beneath hidden elements. */
+.parlay-widget-base-card-view-only { pointer-events: none; }
+
+/* Capture pointer-events from overlapping elements that may have a higher z-index. */
+.parlay-widget-base-card-contents-view-only { pointer-events: auto; }
+
+/* Reduce padding on card contents to make the position and sizing of the widget elements in editing similar to the viewing mode. */
+.parlay-widget-base-card-contents { padding: 0; }

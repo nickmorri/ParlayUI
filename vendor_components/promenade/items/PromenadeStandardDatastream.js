@@ -1,14 +1,14 @@
 (function () {
     "use strict";
 
-    var module_dependencies = [];
+    var module_dependencies = ["parlay.data"];
 
     angular
         .module("promenade.items.datastream", module_dependencies)
         .factory("PromenadeStandardDatastream", PromenadeStandardDatastreamFactory);
 
-    PromenadeStandardDatastreamFactory.$inject = ["$rootScope"];
-    function PromenadeStandardDatastreamFactory ($rootScope) {
+    PromenadeStandardDatastreamFactory.$inject = ["$rootScope", "ParlayData"];
+    function PromenadeStandardDatastreamFactory ($rootScope, ParlayData) {
 
         /**
          * Class that wraps data stream information provided in a discovery.
@@ -102,6 +102,7 @@
             // Attach methods to PromenadeStandardDatastream.
             datastream.listen = listen;
             datastream.onChange = onChange;
+            datastream.generateAutocompleteEntries = generateAutocompleteEntries;
 
             /**
              * Requests a listener for the data stream. Saves a reference to deregistration function returned by
@@ -121,6 +122,8 @@
                     datastream.value = response.VALUE;
                 });
             });
+
+            ParlayData.set(datastream.item_name + "." + datastream.id, datastream);
 
             /**
              * Allows for callbacks to be registered, these will be invoked on change of value.
@@ -165,6 +168,23 @@
                     TO: "UI",
                     FROM: datastream.item_name
                 });
+            }
+
+            /**
+             * Generates entry for Ace editor autocomplete consumed by ParlayWidget.
+             * @member PromenadeStandardDatastream#generateAutocompleteEntries
+             * @public
+             * @returns {Array.Object} - Entry used to represent the PromenadeStandardDatastream.
+             */
+            function generateAutocompleteEntries () {
+
+                var value_entry = {
+                    caption: datastream.item_name + "." + datastream.name + ".value",
+                    value: datastream.item_name + "." + datastream.name + ".value",
+                    meta: "PromenadeDataStream value"
+                };
+
+                return [value_entry];
             }
 
         }

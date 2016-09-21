@@ -1,7 +1,7 @@
 (function () {
     "use strict";
     
-    var module_dependencies = ["ngMaterial", "angularMoment", "parlay.notification"];
+    var module_dependencies = ["ngMaterial", "parlay.notification"];
 
     angular
         .module("parlay.common.genericsaveloaddialog", module_dependencies)
@@ -172,10 +172,11 @@
          */
         function loadEntry (entry) {
 
-            var result = manager.loadEntry(entry);
+            // Ensure that the references are severed to the saved entry and then load.
+            var result = manager.loadEntry(angular.copy(entry));
 
             if (result.failed_items.length === 0) {
-                ParlayNotification.show({content: "Restored " + result.loaded_items.length + " entries from " + entry.name + "."});
+                ParlayNotification.show({content: "Restored " + result.loaded_items.length + " " + options.entries + " from " + entry.name + "."});
             }
             else {
                 var loaded_entry_names = result.loaded_items.length > 0 ? result.loaded_items.map(function (container) {

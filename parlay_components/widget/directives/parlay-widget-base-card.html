@@ -1,0 +1,10 @@
+<md-card class="parlay-item-card" ng-class="{'parlay-widget-card-view-only': !widgetsCtrl.editing}">
+    <md-toolbar class="handle" ng-class="{'show-handle ': widgetsCtrl.editing, 'parlay-widget-toolbar-view-only': !widgetsCtrl.editing}">
+        <div class="md-toolbar-tools">
+            <h2 ng-transclude="title"></h2>
+            <span flex></span>
+            <parlay-widget-base-menu ng-show="widgetsCtrl.editing"></parlay-widget-base-menu>
+        </div>
+    </md-toolbar>
+    <md-card-content class="parlay-widget-base-card-contents" ng-class="{'parlay-widget-base-card-contents-view-only': !widgetsCtrl.editing}" ng-transclude="content"></md-card-content>
+</md-card>

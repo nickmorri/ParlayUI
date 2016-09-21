@@ -5,7 +5,7 @@
 
     angular
         .module("parlay.items.controller", module_dependencies)
-        .directive("parlayEmptyWorkspacePlaceholder", ParlayEmptyWorkspacePlaceholder)
+        .directive("parlayEmptyItemsWorkspacePlaceholder", ParlayEmptyItemsWorkspacePlaceholder)
         .controller("ParlayItemController", ParlayItemController);
 
     ParlayItemController.$inject = ["ParlayItemManager", "$mdSidenav"];
@@ -122,9 +122,9 @@
      * @constructor module:ParlayItem.ParlayEmptyWorkspacePlaceholder
      * @returns {Object}
      */
-    function ParlayEmptyWorkspacePlaceholder () {
+    function ParlayEmptyItemsWorkspacePlaceholder () {
         return {
-            templateUrl: '../parlay_components/items/directives/parlay-empty-workspace-placeholder.html'
+            templateUrl: '../parlay_components/items/directives/parlay-empty-items-workspace-placeholder.html'
         };
     }
 

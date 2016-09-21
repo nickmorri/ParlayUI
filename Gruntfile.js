@@ -4,6 +4,7 @@ module.exports = function (grunt) {
     // Base paths to parlay_components and vendor_components directories.
     var parlay_components_base_path = "parlay_components/";
     var vendor_components_base_path = "vendor_components/";
+    var parlay_script_modules_base_path = "parlay_script_modules/";
 
 	/**
 	 * Loads each vendor configuration file available in vendor_components
@@ -131,11 +132,66 @@ module.exports = function (grunt) {
 	    }, []));
 	}
 
+    // Note: this function relies on the implementation of registerModule in workerImports.js
+    // retrieves all module files and concatenates them for inclusion in the worker script
+    function concatParlayNativeModules() {
+        // retrieve all JS module files
+        return grunt.file.expand(parlay_script_modules_base_path + "**/*.{js,py}")
+            .reduce(function(rest, filepath){
+
+                var ext = filepath.slice(-2);
+                // get the filepath relative to parlay_script_modules as an array and with the file extension removed
+                var moduleTree = filepath.slice(0, -3).split("/").slice(1);
+
+                // if this is an init file, generate the registration for the filepath to its parent directory
+                if (moduleTree[moduleTree.length - 1] === "__init__") {
+                    moduleTree.pop();
+                }
+
+                var modPath = filepath.slice(filepath.indexOf("/") + 1);
+                var modName = moduleTree.join(".");
+                var modVar = moduleTree.join("_");
+
+                var registration = '\nregisterModule("'+ modPath +'","'+ modName +'", '+ modVar +', "'+ ext +'");\n';
+
+                var body;
+
+                if (ext === "js") {
+                    body = grunt.file.read(filepath);
+                } else {
+                    // assign the Python code to modVar as a string
+                    body = 'var ' + modVar + '="' + grunt.file.read(filepath)
+                                    .replace(/\"/g, "\\\"")
+                                    //escape any newlines (and remove possible carriage returns)
+                                    .replace(/\r?\n/g, "\\n") + '";';
+                }
+
+                return rest + body + registration;
+            }, "");
+    }
+
+    function loadSkulpt(buildType) {
+
+        var fileData = grunt.file.read("bower_components/skulpt/skulpt.min.js")
+            // since this file gets inlined, we need to remove the script tags from the quotes
+                            .replace(/<script.{0,40}\/script>/g, "<div>sanitized for compilation</div>") + ";\n" +
+                        grunt.file.read("bower_components/skulpt/skulpt-stdlib.js");
+
+        // at some point we may want to use the non-minified script for dev
+        if(buildType === 'dev') {
+            //TODO: debug use of skulpt (vs skulpt.min) for easier debugging
+            return fileData;
+        } else {
+            return fileData;
+        }
+    }
+
 	// Read the dependencies in package.json and load Grunt tasks that match "grunt-*".
 	require('load-grunt-tasks')(grunt);
 
 	// Load this Grunt task individually since it doesn't match the "grunt-*" pattern.
     grunt.loadNpmTasks('main-bower-files');
+	grunt.loadNpmTasks('grunt-license-bower');
 
 	grunt.initConfig({
 
@@ -144,6 +200,7 @@ module.exports = function (grunt) {
 		'meta': {
             'parlay_component_base_path': parlay_components_base_path,
             'vendor_component_base_path': vendor_components_base_path,
+            'parlay_script_modules_base_path': parlay_script_modules_base_path,
 			'source': getVendorPathGlobs(getVendors(), ['source'], ['app.js', '<%= meta.parlay_component_base_path %>/*/*.js']),
             'vendor_paths': getVendorPaths(getVendors()),
             'bower_files': require('main-bower-files')(),
@@ -188,8 +245,9 @@ module.exports = function (grunt) {
                     'livereload': true,
                     'interrupt': true
                 },
-                'files': ['vendorDefaults.js', '<%= meta.source %>'],
-                'tasks': ['newer:replace:dev', 'newer:jshint:dev', 'karma:dev', 'newer:copy:dev', 'includeSource:dev', 'wiredep:dev']
+                'files': ['vendorDefaults.js', 'workerImports.js', '<%= meta.source %>',
+                            "<%= meta.parlay_script_modules_base_path %>/**/*.{js,py}"],
+                'tasks': ['replace:dev', 'newer:jshint:dev', 'karma:dev', 'newer:copy:dev', 'includeSource:dev', 'wiredep:dev']
             },
             'stylesheets': {
                 'options': {
@@ -282,7 +340,18 @@ module.exports = function (grunt) {
 				'dest': {
 					'js': '<%= meta.tmp_destination %>/lib.js',
                     'css': '<%= meta.tmp_destination %>/lib.css'
-				}
+				},
+                'mainFiles': {
+                    'ace-builds': [
+                        "src-noconflict/ace.js",
+                        "src-noconflict/mode-javascript.js",
+                        "src-noconflict/ext-language_tools.js",
+                        "src-noconflict/worker-javascript.js"
+                    ],
+                    //'jsinterpreter': 'acorn_interpreter.js' //,
+                    "Chart.js": "dist/Chart.bundle.min.js"
+                },
+                'exclude': ["skulpt"]
 			}
 		},
 
@@ -291,7 +360,8 @@ module.exports = function (grunt) {
         // https://github.com/taptapship/wiredep
 		'wiredep': {
 			'dev': {
-				'src': '<%= meta.dev_destination %>/index.html'
+				'src': '<%= meta.dev_destination %>/index.html',
+                'exclude': 'bower_components/skulpt/*',
 			}
 		},
 
@@ -389,13 +459,13 @@ module.exports = function (grunt) {
 			'dev': {
 				'src': '<%= meta.stylesheets %>',
 				'options': {
-					'important': false,
-					'known-properties': false
+					'important': false
 				}
 			},
 			'options': {
 				'adjoining-classes': false,
-				'outline-none': false
+				'outline-none': false,
+                'known-properties': false
 			}
 		},
 
@@ -459,7 +529,10 @@ module.exports = function (grunt) {
 			},
 			'dist': {
 				'files': {
-					'<%= meta.tmp_destination %>/<%= pkg.namelower %>.min.js': ['<%= meta.tmp_destination %>/vendorDefaults.js', '<%= meta.source %>', '<%= meta.compiled_html %>'],
+					'<%= meta.tmp_destination %>/<%= pkg.namelower %>.min.js':
+                        ['<%= meta.tmp_destination %>/vendorDefaults.js',
+                            '<%= meta.tmp_destination %>/workerImports.js',
+                            '<%= meta.source %>', '<%= meta.compiled_html %>'],
                     '<%= meta.tmp_destination %>/lib.min.js': '<%= meta.tmp_destination %>/lib.js'
 				}
 			}
@@ -503,11 +576,14 @@ module.exports = function (grunt) {
                         {'match': 'vendorIcon', 'replacement': getBase64(getImagePaths(getPrimaryVendor(getVendors())).icon)},
                         {'match': 'primaryPalette', 'replacement': getPrimaryVendor(getVendors()).options.primaryPalette},
                         {'match': 'accentPalette', 'replacement': getPrimaryVendor(getVendors()).options.accentPalette},
-                        {'match': 'debugEnabled', 'replacement': true}
+                        {'match': 'debugEnabled', 'replacement': true},
+                        {'match': 'importSkulpt', 'replacement': loadSkulpt('dev')},
+                        {'match': 'importParlay', 'replacement': concatParlayNativeModules()}
                     ]
                 },
                 'files': [
-                    {'expand': true, 'flatten': true, 'src': 'vendorDefaults.js', 'dest': '<%= meta.dev_destination %>'}
+                    {'expand': true, 'flatten': true, 'src': 'vendorDefaults.js', 'dest': '<%= meta.dev_destination %>'},
+                    {'expand': true, 'flatten': true, 'src': 'workerImports.js', 'dest': '<%= meta.dev_destination %>'}
                 ]
             },
             'dist': {
@@ -518,18 +594,21 @@ module.exports = function (grunt) {
                         {'match': 'vendorIcon', 'replacement': getBase64(getImagePaths(getPrimaryVendor(getVendors())).icon)},
                         {'match': 'primaryPalette', 'replacement': getPrimaryVendor(getVendors()).options.primaryPalette},
                         {'match': 'accentPalette', 'replacement': getPrimaryVendor(getVendors()).options.accentPalette},
-                        {'match': 'debugEnabled', 'replacement': false}
+                        {'match': 'debugEnabled', 'replacement': false},
+                        {'match': 'importSkulpt', 'replacement': loadSkulpt('dist')},
+                        {'match': 'importParlay', 'replacement': concatParlayNativeModules()}
                     ]
                 },
                 'files': [
-                    {'expand': true, 'flatten': true, 'src': 'vendorDefaults.js', 'dest': '<%= meta.tmp_destination %>'}
+                    {'expand': true, 'flatten': true, 'src': 'vendorDefaults.js', 'dest': '<%= meta.tmp_destination %>'},
+                    {'expand': true, 'flatten': true, 'src': 'workerImports.js', 'dest': '<%= meta.tmp_destination %>'}
                 ]
             }
         },
 
         // Automatically include JavaScript and CSS references in index.html during development.
         // https://github.com/jwvdiermen/grunt-include-source
-		'includeSource': {
+        'includeSource': {
 			'options': {
 				'baseUrl': ""
 			},
@@ -564,6 +643,17 @@ module.exports = function (grunt) {
 				'base': 'doc'
 			},
 			'src': ['**']
+		},
+
+		'license': {
+			'dist': {
+				// Target-specific file lists and/or options go here.
+				options: {
+					// Target-specific options go here.
+					directory: 'bower_components',
+					output: 'LICENSES'
+				},
+			},
 		}
 
 	});
@@ -575,11 +665,11 @@ module.exports = function (grunt) {
     // Generates dev directory containing files needed for development. Launches an express HTTP server and a watch
     // task that monitors the source files for changes.
 	grunt.registerTask('develop', 'Lints and tests JavaScript files, processes HTML and finally starts HTTP server which autoreloads on file changes.', [
-	    'jshint:dev',
+		'jshint:dev',
 	    'csslint:dev',
 	    'clean:dev',
-        'replace:dev',
 	    'bower-install-simple:dev',
+        'replace:dev',
 	    'bower:dev',
 	    'html2js',
 	    'copy:dev',
@@ -593,11 +683,11 @@ module.exports = function (grunt) {
 
     // Generates dist/index.html with all Parlay, vendor and library source inlined.
 	grunt.registerTask('dist', 'Generates tested and linted minified JavaScript and CSS files with HTML templates included in JavaScript.', [
-	    'jshint:dist',
+		'jshint:dist',
 	    'csslint:dist',
 	    'clean:dist',
-        'replace:dist',
 	    'bower-install-simple:dist',
+        'replace:dist',
         'bower_concat:dist',
 	    'html2js',
 	    'uglify:dist',
@@ -622,6 +712,7 @@ module.exports = function (grunt) {
 	]);
 
     grunt.registerTask('test', 'Lints and tests JavaScript files.', [
+		'bower:dev',
         'jshint:dev',
         'csslint:dev',
         'html2js',
@@ -638,5 +729,7 @@ module.exports = function (grunt) {
         'copy:doc',
 		'jsdoc:doc'
 	]);
+
+
 
 };

@@ -121,8 +121,8 @@ function parlay_utils_native($modname) {
             // takes a command and a sequential list of its arguments
             // and returns a dictionary mapping argument names to values
             // this is the CONTENTS section of a Parlay message
-            function sequentialToDict(cmd, args) {
-
+            function sequentialToDict(cmd, args, kwargs) {
+                if(kwargs === undefined) kwargs = []; //default to empty kwargs list
                 var contents = {'COMMAND': cmd};
 
                 //assume that cmd is a valid command
@@ -135,6 +135,15 @@ function parlay_utils_native($modname) {
 
                     contents[argDef.name] = Sk.ffi.remapToJs(arg);
                 });
+
+                //now add the kwargs
+                for(var k in kwargs)
+                {
+                    if(kwargs.hasOwnProperty(k))
+                    {
+                        contents[k] = Sk.ffi.remapToJs(kwargs[k]);
+                    }
+                }
 
                 return contents;
             }
@@ -159,7 +168,6 @@ function parlay_utils_native($modname) {
             // synchronous parlay commands
             // convert the content fields to JS for ease-of-access
             Sk.ffi.remapToJs(contentFields).map(function(field) { field.DROPDOWN_OPTIONS.map(function(opt, i) {
-
                 // get the arguments for the command represented by opt
                 var args = field.DROPDOWN_SUB_FIELDS[i].map(function (arg) {
                    return {name: arg.MSG_KEY, type: arg.INPUT};
@@ -170,16 +178,17 @@ function parlay_utils_native($modname) {
                 fields.set(opt[0], args);
 
                 // add this command to this object so that it may be called
-                self.$d.mp$ass_subscript(new Sk.builtin.str(opt[0]), new Sk.builtin.func(function () {
-
-                    //TODO: optional arguments
-                    //TODO: keyword arguments
-                    Sk.builtin.pyCheckArgs(itemIDJS + "." + opt[0], arguments, args.length, args.length);
-
+                var command = function (kwa) {
+                    Sk.builtin.pyCheckArgs(itemIDJS + "." + opt[0], arguments, 0, Infinity, true, false);
+                    var kwargs = Sk.ffi.remapToJs(new Sk.builtins['dict'](kwa)); //turn it into a dict then map to JS obj
+                    var args = Array.prototype.slice.call(arguments, 1); //slice off only the variable length args
                     return sendQueryNative({"command": "item_contents",
-                            "item": itemIDJS,
-                            "contents": sequentialToDict(opt[0], arguments) });
-                }));
+                        "item": itemIDJS,
+                        "contents": sequentialToDict(opt[0], args, kwargs) });
+                };
+                command["co_kwargs"] = true;
+
+                self.$d.mp$ass_subscript(new Sk.builtin.str(opt[0]), new Sk.builtin.func(command));
             })});
 
             // asynchronous parlay commands

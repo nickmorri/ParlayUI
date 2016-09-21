@@ -317,10 +317,10 @@
                     $scope.configuration.selectedItems.indexOf(item) === -1
                 );
             });
-
+            /* TODO: Add ability for transformer widgets to be able totake input from input widgets
             var filtered_elements = ParlayWidgetInputManager.getElements().filter(function (element) {
-                return element.element_name.indexOf(lowercase_query) > -1 && $scope.configuration.selectedItems.indexOf(element) === -1;
-            });
+                return element.element_name.indexOf(lowercase_query) > -1 &&  $scope.configuration.selectedItems.indexOf(element) === -1;
+            });*/
 
             return filtered_items.concat(filtered_elements);
         }

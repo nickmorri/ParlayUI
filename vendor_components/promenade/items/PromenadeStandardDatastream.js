@@ -123,7 +123,7 @@
                 });
             });
 
-            ParlayData.set(datastream.item_name + "." + datastream.id, datastream);
+            ParlayData.set(datastream.item_name + "." + datastream.name, datastream);
 
             /**
              * Allows for callbacks to be registered, these will be invoked on change of value.

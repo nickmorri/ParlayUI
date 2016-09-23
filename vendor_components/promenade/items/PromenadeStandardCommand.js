@@ -120,7 +120,7 @@
 
             if (command.options) {
                 command.options.map(function(opt) {
-                ParlayData.set(command.item_name + "." + opt.name, generateScriptAccess(opt.name));
+                ParlayData.set(command.item_name + "." + opt.name, generateScriptAccess(opt.value));
                 });
             }
 
@@ -167,7 +167,7 @@
             }
 
             /**
-             * Generates Objects with Function references to be used in the ParlayWidgetJSInterpreter.
+             * Generates Objects with Function references to be used in the ParlayWidgetPyInterpreter.
              * @member PromenadeStandardCommand#generateScriptAccess
              * @public
              * @returns {Object} - An object containing functions for sending this command

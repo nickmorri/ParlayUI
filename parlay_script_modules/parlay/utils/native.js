@@ -182,8 +182,10 @@ function parlay_utils_native($modname) {
                     Sk.builtin.pyCheckArgs(itemIDJS + "." + opt[0], arguments, 0, Infinity, true, false);
                     var kwargs = Sk.ffi.remapToJs(new Sk.builtins['dict'](kwa)); //turn it into a dict then map to JS obj
                     var args = Array.prototype.slice.call(arguments, 1); //slice off only the variable length args
+
                     return sendQueryNative({"command": "item_contents",
                         "item": itemIDJS,
+
                         "contents": sequentialToDict(opt[0], args, kwargs) });
                 };
                 command["co_kwargs"] = true;

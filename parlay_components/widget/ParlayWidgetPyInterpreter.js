@@ -4,7 +4,9 @@
     var module_dependencies = ["promenade.broker",
         "parlay.utility.workerpool",
         "worker.imports",
-        "parlay.data"];
+        "parlay.data",
+    "parlay.notification.error",
+    "parlay.notification"];
     
     angular
         .module("parlay.widget.interpreter.py", module_dependencies)
@@ -14,9 +16,9 @@
                                             //Note: The "skulpt" constant is provided by worker.imports.
                                             //      The skulpt library is never loaded by the main application.
                                             "skulpt",
-                                            "refreshRate", "parlayModules", "ParlayData", "$rootScope"];
+                                            "refreshRate", "parlayModules", "ParlayData", "ParlayErrorDialog", "ParlayNotification", "$rootScope"];
     function ParlayPyInterpreterFactory (PromenadeBroker, ParlayWorkerPool,
-                                         skulpt, refreshRate, parlayModules, ParlayData, $rootScope) {
+                                         skulpt, refreshRate, parlayModules, ParlayData, ParlayErrorDialog, ParlayNotification, $rootScope) {
 
         /** This Worker runs an individual Python script in a separate thread.
          * It is designed to be reusable to avoid repeated script imports.
@@ -107,7 +109,7 @@
                     }).then(ret, function (err) {
                         if (err instanceof Sk.builtin.BaseException) {
                             //TODO: traceback works?
-                            postMessage({messageType: "error", value: err.toString() + "\n" + err.traceback});
+                            postMessage({messageType: "error", value: err.toString(), traceback: JSON.stringify(err.traceback)});
                         } else {
                             //TODO: should we really throw the error? errors should never be thrown by a worker (pool can't tell)
                             throw err;
@@ -142,19 +144,23 @@
 
         var workerPool = new ParlayWorkerPool(40); // max 40 workers
         workerPool.initialize(blobURL,
-            //handle 3 kinds of valid messages: print, error, and return
             // onmessage
             function(e) {
                 var msg = e.data;
                 switch(msg.messageType) {
                     case "print":
+                        //ignore empty messages
+                        if(msg.value === "" || msg.value === "\n") return;
+                        ParlayNotification.show({content:msg.value});
                         console.log(msg.value);
                         break;
                     case "pyMessage":
                         handlePyMessage(this, msg.value);
                         break;
                     case "error":
-                        throw msg.value;
+                        ParlayErrorDialog.show("Python", msg.value, JSON.parse(msg.traceback));
+                        //throw msg.value;
+                        break;
                     case "return":
                         return;
                     default :

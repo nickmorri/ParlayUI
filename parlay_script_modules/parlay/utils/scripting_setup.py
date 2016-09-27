@@ -40,7 +40,6 @@ def setup(ip='localhost', port=DEFAULT_ENGINE_WEBSOCKET_PORT, timeout=3):
     """
     global script
     # **ON IMPORT** start the reactor in a separate thread
-    print "setting up script"
     if script is None:
         ThreadedParlayScript()._start_script()
 

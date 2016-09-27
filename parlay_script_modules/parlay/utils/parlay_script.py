@@ -8,14 +8,10 @@ from native import ProxyItem, sendQuery
 
 DEFAULT_ENGINE_WEBSOCKET_PORT = 8085
 
-class TestItem:
-    def say_hello(self):
-        return "Hi!"
-
 class ParlayScript():
 
     def __init__(self, item_id=None, name=None, _reactor=None, adapter=None):
-        print "ParlayScript initialized!"
+        pass
 
     def discover(self, force=True):
         # TODO: what to do with the result?
@@ -36,6 +32,6 @@ class ParlayScript():
 
 def start_script(script_class, engine_ip='localhost', engine_port=DEFAULT_ENGINE_WEBSOCKET_PORT,
                  stop_reactor_on_close=None, skip_checks=False, reactor=None):
+    pass
 
-    print "Starting script!"
 

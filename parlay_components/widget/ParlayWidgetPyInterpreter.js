@@ -151,7 +151,7 @@
                     case "print":
                         //ignore empty messages
                         if(msg.value === "" || msg.value === "\n") return;
-                        ParlayNotification.show({content:msg.value});
+                        ParlayNotification.show({content:msg.value, hideDelay: 75 * msg.value.length + 500});
                         console.log(msg.value);
                         break;
                     case "pyMessage":

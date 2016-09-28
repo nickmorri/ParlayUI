@@ -242,6 +242,8 @@
              */
             function prepToast (configuration) {
                 var toast = $mdToast.simple().content(configuration.content).position(NotificationLocation);
+                //if the config has a custom, hideDelay, then use that
+                if(configuration.hideDelay !== undefined)  toast._options.hideDelay = configuration.hideDelay;
 
                 // If the warning option is true we should theme the toast to indicate that a warning has occurred.
                 if (configuration.warning) {

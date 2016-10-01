@@ -158,7 +158,7 @@
                         handlePyMessage(this, msg.value);
                         break;
                     case "error":
-                        ParlayErrorDialog.show("Python", msg.value, JSON.parse(msg.traceback));
+                        this.onerror(msg);
                         //throw msg.value;
                         break;
                     case "return":
@@ -361,7 +361,8 @@
          * @param {Object} builtins - extra builtins to add to the environment
          * @returns {Object} - true or error
          */
-        ParlayPyInterpreter.prototype.run = function(onFinished, builtins) {
+        ParlayPyInterpreter.prototype.run = function(onFinished, builtins, on_error) {
+
             if (!!this.constructionError) {
                     return this.constructionError;
                 }
@@ -379,10 +380,18 @@
                         "\ntry:\n    scriptFinished(result)"+ // try and return wth value 'result'
                         "\nexcept:\n    scriptFinished(None)"; //else return wth no result
                     var worker = workerPool.getWorker();
+
                     if(worker === undefined) {
                         console.log("background worker pool running out.");
+                        ParlayErrorDialog.show("PyInterpreter", "Background worker pool ran out.", "Widget Scripts are taking too long");
                         return "Could not get worker";
                     }
+                    //launch a dialog on error by default
+                    if(on_error === undefined)
+                        worker.onerror = function(msg) { ParlayErrorDialog.show("Python", msg.value, JSON.parse(msg.traceback)); };
+                    else
+                        worker.onerror =on_error;
+
                     worker.onFinished = onFinished;
                     builtins = builtins || {};
                     worker.postMessage({script: full_func_string, builtins:builtins});

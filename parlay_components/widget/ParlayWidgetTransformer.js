@@ -57,7 +57,7 @@
                         cached_value = result;
                         $rootScope.$digest(); //do a digest to update the value
                     }
-                }, builtins);
+                }, builtins, function(){});
             };
 
             Object.defineProperty(this, "value", {

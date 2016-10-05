@@ -16,47 +16,31 @@
 
         function customLink(scope) {
 
-            scope.checkList = {
-                list: [
-                    /* format for objects in checklist:
-                     * {
-                     *     value: value (string),
-                     *     isChecked: isChecked (bool),
-                     *     index: index (int)
-                     * }
-                     */
-                        // {
-                        //     value: "",
-                        //     isChecked: false,
-                        //     index: 0
-                        // }
-                    ],
-                checked: 0,
-                toggle: false
-            };
-
-            scope.checkListCopy = {                
-                list: [],
-                checked: 0,
-                toggle: false
-            };
-
             scope.oldNum = 0;
 
             scope.checkListItems = function checkListItems(num) {
 
-                var checkList = scope.checkList;
-                var copyList = scope.checkListCopy;
+                var checkList = scope.customizations.checkList.value;
+                var copyList = scope.customizations.checkListCopy.value;
 
-                if (num != scope.oldNum) {
-                    if (num === "")
-                        angular.copy(checkList, copyList);
-                    else {
-                        checkList = {};
-                        angular.copy(copyList, checkList);
-                    }
+                /**
+                 * if the configuration change is detected
+                 * copy the existing list's data into a new object.
+                 * Once the change is completed, copy the copied
+                 * list back in the main storage container
+                 */
+                if (num != checkList.list.length) {
+
+                    if (num === "") angular.copy(checkList, copyList);
+                    else if (num !== scope.oldNum) angular.copy(copyList, checkList);
                 }
 
+                /**
+                 * Determine the amount of elements needed to add to the
+                 * checkList and push them on the checkList.list array.
+                 * Number needed to add is calculated by the input arg,
+                 * "num" subtracted by the length of checkList.list.length
+                 */
                 for (var i = 0; i < num - checkList.list.length; ++i)
                     checkList.list.push({
                         value: "", 
@@ -64,16 +48,25 @@
                         index: checkList.list.length
                     });
                 
+                /**
+                 * If any the checkList size becomes a smaller number
+                 * less than the previous configuration, remove the
+                 * last elements that are extending past the maximum
+                 * list size
+                 */
                 for (i = 0; i < checkList.list.length - num; ++i) {
-                    checkList.list.pop();
+                    var popped = checkList.list.pop();
+                    if (popped.isChecked)
+                        --checkList.checked;
                 }
 
-                if (scope.oldNum != num) {
+                /**
+                 * reset the checkAll toggle if a change is detected
+                 */
+                if (num != checkList.list.length) {
                     checkList.toggle = (checkList.checked === checkList.list.length) ? true : false;
-                    scope.oldNum = num;
-
-                    console.log("checked count: " + checkList.checked);
-                    console.log("list length count: " + checkList.list.length);
+                    if (num !== "")
+                        scope.oldNum = num;
                 }
 
                 return checkList.list;
@@ -81,7 +74,7 @@
 
             scope.checkBox = function checkBox(item) {
 
-                var checkList = scope.checkList;
+                var checkList = scope.customizations.checkList.value;
 
                 checkList.checked += (item.isChecked) ? -1 : 1;
                 checkList.toggle = (checkList.checked === checkList.list.length) ? true : false;
@@ -89,7 +82,7 @@
 
             scope.checkAll = function checkAll() {
                
-                var checkList = scope.checkList;
+                var checkList = scope.customizations.checkList.value;
 
                 for (var i = 0; i < checkList.list.length; ++i)
                     checkList.list[i].isChecked = !checkList.toggle;
@@ -105,8 +98,29 @@
             customizationDefaults: {
                 number: {
                     property_name: "Check List Size",
-                    value: 0
-                }
+                    value: 0,
+                },
+                inputtype: {
+                    hidden: true,
+                    property_name: "inputtype",
+                    value: "number"
+                },
+                checkList: {
+                    hidden: true,
+                    value: {
+                        list: [],
+                        checked: 0,
+                        toggle: false
+                    }
+                },
+                checkListCopy: {
+                    hidden: true,
+                    value: {
+                        list: [],
+                        checked: 0,
+                        toggle: false
+                    }
+                },
             },
             properties: {
                 text: {

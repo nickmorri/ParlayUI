@@ -6,11 +6,11 @@
     <parlay-widget-base-card-content>
         
         <div class="checkListPadding">
-            <md-checkbox class="checkListMargin" ng-model="checkList.toggle" ng-click="checkAll()">
+            <md-checkbox class="checkListMargin" ng-model="customizations.checkList.value.toggle" ng-click="checkAll()" aria-label="check all">
                 <strong>
                     <p class="checkListAll">
-                        <span ng-if="checkList.toggle">Unselect All</span>
-                        <span ng-if="!checkList.toggle">Select All</span>
+                        <span ng-if="customizations.checkList.value.toggle">Unselect All</span>
+                        <span ng-if="!customizations.checkList.value.toggle">Select All</span>
                     </p>
                 </strong>
             </md-checkbox>
@@ -18,21 +18,11 @@
 
         <!-- Checklist -->
         <div ng-repeat="item in checkListItems(customizations.number.value)" class="checkListPadding checkListMargin checkListItem" layout="row">
-            <md-checkbox ng-model="item.isChecked" ng-click="checkBox(item)" class="checkListMargin"></md-checkbox>
+            <md-checkbox ng-model="item.isChecked" ng-click="checkBox(item)" class="checkListMargin" aria-label="{{item.value}}"></md-checkbox>
             <md-input-container class="checkListMargin" md-no-float flex>
                 <input flex ng-model="item.value" type="text" placeholder="Item {{item.index + 1}}" ng-class="{checkedItem: item.isChecked}"/>
             </md-input-container>
         </div>
-<!-- 
-        <button class="md-fab md-fab-bottom-right md-button md-ink-ripple" type="button" ng-transclude="" ng-show="widgetsCtrl.editing" ng-click="" aria-label="Add widget" aria-hidden="false">
-            <md-icon ng-md-icon="" icon="add" class="ng-scope material-icons" aria-hidden="true">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path>
-                </svg>
-            </md-icon>
-            <div class="md-ripple-container"></div></button>
-
- -->
 
     </parlay-widget-base-card-content>
 </parlay-widget-base-card>

@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var display_name = "Checklist Input";
+    var display_name = "Check List";
     var module_dependencies = ["parlay.data"];
     var module_name = "promenade.widget.checklist";
     var directive_name = "promenadeWidgetChecklist";
@@ -85,7 +85,7 @@
         }
 
         return new ParlayWidgetTemplate({
-            title: "Checklist",
+            title: "Check List",
             templateUrl: "../vendor_components/promenade/widget/directives/promenade-widget-checklist.html",
             customizationDefaults: {
                 number: {
@@ -107,12 +107,7 @@
                     }
                 }
             },
-            properties: {
-                text: {
-                    default: "",
-                }
-            },
             customLink: customLink
-        });
+        }, display_name);
     }
 }());

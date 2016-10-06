@@ -11,8 +11,8 @@
     widgetRegistration(display_name, module_name, module_dependencies, directive_name, wigdet_type, directive_definition, []);
 
 
-    promenadeWidgetChecklistJs.$inject = ["ParlayWidgetTemplate", "$compile"];
-    function promenadeWidgetChecklistJs(ParlayWidgetTemplate, $compile) {
+    promenadeWidgetChecklistJs.$inject = ["ParlayWidgetTemplate"];
+    function promenadeWidgetChecklistJs(ParlayWidgetTemplate) {
 
         function customLink(scope) {
 
@@ -91,12 +91,6 @@
                 number: {
                     property_name: "Check List Size",
                     value: 0,
-                },
-                inputtype: {
-                    hidden: true,
-                    type: "text-choice",
-                    property_name: "inputtype",
-                    value: ["number"]
                 },
                 checkList: {
                     hidden: true,

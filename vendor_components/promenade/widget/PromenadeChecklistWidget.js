@@ -16,62 +16,54 @@
 
         function customLink(scope) {
 
-            scope.oldNum = 0;
+            var checkList = scope.customizations.checkList.value;
 
-            scope.checkListItems = function checkListItems(num) {
-
-                var checkList = scope.customizations.checkList.value;
-                var copyList = scope.customizations.checkListCopy.value;
+            scope.checkListItems = function checkListItems(listSize) {
 
                 /**
-                 * if the configuration change is detected
-                 * copy the existing list's data into a new object.
-                 * Once the change is completed, copy the copied
-                 * list back in the main storage container
+                 * If a change is detected but a number is not specified
+                 * do nothing and return the list
                  */
-                if (num != checkList.list.length) {
-
-                    if (num === "") angular.copy(checkList, copyList);
-                    else if (num !== scope.oldNum) angular.copy(copyList, checkList);
-                }
+                if (listSize === "")
+                    return checkList.list;
 
                 /**
                  * Determine the amount of elements needed to add to the
                  * checkList and push them on the checkList.list array.
                  * Number needed to add is calculated by the input arg,
-                 * "num" subtracted by the length of checkList.list.length
+                 * "listSize" subtracted by the length of checkList.list.length
                  */
-                for (var i = 0; i < num - checkList.list.length; ++i)
+                for (var i = 0; i < listSize - checkList.list.length; ++i) {
                     checkList.list.push({
                         value: "", 
                         isChecked: false, 
                         index: checkList.list.length
                     });
-                
+                }
+
                 /**
                  * If any the checkList size becomes a smaller number
                  * less than the previous configuration, remove the
                  * last elements that are extending past the maximum
                  * list size
                  */
-                for (i = 0; i < checkList.list.length - num; ++i) {
-                    var popped = checkList.list.pop();
-                    if (popped.isChecked)
+                for (i = 0; i < checkList.list.length - listSize; ++i) {
+                    var poppedItem = checkList.list.pop();
+                    if (poppedItem.isChecked)
                         --checkList.checked;
                 }
 
-                /**
-                 * reset the checkAll toggle if a change is detected
-                 */
-                if (num != checkList.list.length) {
-                    checkList.toggle = (checkList.checked === checkList.list.length) ? true : false;
-                    if (num !== "")
-                        scope.oldNum = num;
-                }
+                /* reset the checkAll toggle if a change is detected */
+                var checked = checkList.checked;
+                var listLength = checkList.list.length;
+                checkList.toggle = (checked === listLength && listLength !== 0) ? true : false;
 
                 return checkList.list;
             };
 
+            /**
+
+             */
             scope.checkBox = function checkBox(item) {
 
                 var checkList = scope.customizations.checkList.value;
@@ -102,8 +94,9 @@
                 },
                 inputtype: {
                     hidden: true,
+                    type: "text-choice",
                     property_name: "inputtype",
-                    value: "number"
+                    value: ["number"]
                 },
                 checkList: {
                     hidden: true,
@@ -112,15 +105,7 @@
                         checked: 0,
                         toggle: false
                     }
-                },
-                checkListCopy: {
-                    hidden: true,
-                    value: {
-                        list: [],
-                        checked: 0,
-                        toggle: false
-                    }
-                },
+                }
             },
             properties: {
                 text: {

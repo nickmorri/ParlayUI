@@ -2,10 +2,39 @@
     <parlay-widget-base-card-title>
         {{info.name}}
     </parlay-widget-base-card-title>
-    <parlay-widget-base-card-content layout="column">
-        <md-input-container flex>
-            <label>{{customizations.label.value}}</label>
-            <input type="{{customizations.inputtype.value}}" parlay-widget-input events='["change"]'  ng-model="properties.text.value" ng-change="alert('zys')"/>
-        </md-input-container>
+
+    <parlay-widget-base-card-content>
+        <table>
+            <!-- Table Headers -->
+            <tr>
+                <th ng-repeat="header in headerItems(customizations.columns.value)">
+                    <md-input-container md-no-float flex>
+                        <input flex ng-model="header.value" type="text" placeholder="Header Name" class="headerItem"/>
+                    </md-input-container>
+                </th>
+            </tr>
+            
+            <!--Table Rows -->
+            <tr ng-repeat="row in tableData(customizations.rows.value, customizations.columns.value)">
+                <td ng-repeat="col in row">
+                    <md-input-container md-no-float flex>
+                        <input flex ng-model="col.value" type="text" placeholder="Value" class="dataItem"/>
+                    </md-input-container>
+                </td>
+            </tr>
+        </table>
+
     </parlay-widget-base-card-content>
 </parlay-widget-base-card>
+
+<style type="text/css">
+
+    .headerItem {
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .dataItem {
+        text-align: center;
+    }
+</style>

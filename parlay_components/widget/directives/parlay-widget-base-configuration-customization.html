@@ -6,7 +6,13 @@
 
             <label>{{option.property_name}}</label>
 
-            <input type="{{option.type}}" ng-model="option.value">
+            <div ng-if="!!option.type === true">
+                <input type="{{option.type}}" ng-model="option.value">
+            </div>
+
+            <div ng-if="!!option.type === false">
+                <input type="text" ng-model="option.value">
+            </div>
 
         </md-input-container>
 

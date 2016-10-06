@@ -24,8 +24,9 @@
                  * If a change is detected but a number is not specified
                  * do nothing and return the list
                  */
-                if (listSize === "")
-                    return checkList.list;
+                if (listSize === null) return checkList.list;
+                if (listSize < 0) scope.customizations.number.value = 0;
+
 
                 /**
                  * Determine the amount of elements needed to add to the
@@ -91,6 +92,7 @@
                 number: {
                     property_name: "Check List Size",
                     value: 0,
+                    type: "number"
                 },
                 checkList: {
                     hidden: true,

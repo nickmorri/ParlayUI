@@ -43,6 +43,10 @@
                 if (row === null || row === 0 || col === null || col === 0)
                     return data;
 
+                if (row < 1) scope.customizations.rows.value = 1;
+                if (col < 1) scope.customizations.columns.value = 1;
+
+
 
                 /* add/subtract rows from table */
                 var rowsToAdd = row - data.length;

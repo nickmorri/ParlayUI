@@ -4,30 +4,50 @@
     </parlay-widget-base-card-title>
 
     <parlay-widget-base-card-content>
-        <table>
+        <table class="tableWidget">
             <!-- Table Headers -->
-            <tr class="tableHeader">
+            <tr ng-class="{tableHeader: customizations.edit.value}">
                 <th ng-repeat="header in headerItems(customizations.columns.value)">
-                    <md-input-container md-no-float flex class="tableRow">
-                        <input flex ng-model="header.value" type="text" placeholder="Header Name" class="headerItem"/>
-                    </md-input-container>
+                    <div ng-switch="customizations.edit.value">
+                        <md-input-container md-no-float ng-switch-when="false" flex class="tableRow">
+                            <input flex ng-model="header.value" type="text" placeholder="Header Name" class="headerItem"/>
+                        </md-input-container>
+
+                        <div ng-switch-when="true" flex>
+                            <p flex class="dataItem">{{header.value}}</p>
+                        <div>
+                    </div>
                 </th>
             </tr>
             
             <!--Table Rows -->
             <tr ng-repeat="row in tableData(customizations.rows.value, customizations.columns.value)">
                 <td ng-repeat="col in row">
-                    <md-input-container md-no-float flex class="tableRow">
-                        <input flex ng-model="col.value" type="text" placeholder="Value" class="dataItem"/>
-                    </md-input-container>
+                    <div ng-switch="customizations.edit.value">
+                        <md-input-container md-no-float ng-switch-when="false" flex class="tableRow">
+                            <input flex ng-model="col.value" type="text" placeholder="Value" class="dataItem"/>
+                        </md-input-container>
+
+                        <div ng-switch-when="true" flex class="tableRow">
+                            <p flex class="dataItem">{{col.value}}</p>
+                        <div>
+                    </div>
                 </td>
             </tr>
         </table>
-
     </parlay-widget-base-card-content>
 </parlay-widget-base-card>
 
 <style type="text/css">
+
+    .tableWidget {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    .tableHeader {
+        border-bottom: 1px solid #E1E1E1;
+    }
 
     .headerItem {
         font-weight: bold;
@@ -35,6 +55,7 @@
     }
 
     .dataItem {
+        padding: 0px 16px 0px 16px;
         text-align: center;
     }
 

@@ -103,6 +103,11 @@
                     value: 1,
                     type: "number"
                 },
+                edit: {
+                    property_name: "Disable Edits",
+                    value: false,
+                    type: "checkbox"
+                },
                 headers: {
                     hidden: true,
                     value: []

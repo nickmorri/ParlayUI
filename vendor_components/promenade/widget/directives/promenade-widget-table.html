@@ -6,9 +6,9 @@
     <parlay-widget-base-card-content>
         <table>
             <!-- Table Headers -->
-            <tr>
+            <tr class="tableHeader">
                 <th ng-repeat="header in headerItems(customizations.columns.value)">
-                    <md-input-container md-no-float flex>
+                    <md-input-container md-no-float flex class="tableRow">
                         <input flex ng-model="header.value" type="text" placeholder="Header Name" class="headerItem"/>
                     </md-input-container>
                 </th>
@@ -17,7 +17,7 @@
             <!--Table Rows -->
             <tr ng-repeat="row in tableData(customizations.rows.value, customizations.columns.value)">
                 <td ng-repeat="col in row">
-                    <md-input-container md-no-float flex>
+                    <md-input-container md-no-float flex class="tableRow">
                         <input flex ng-model="col.value" type="text" placeholder="Value" class="dataItem"/>
                     </md-input-container>
                 </td>
@@ -36,5 +36,10 @@
 
     .dataItem {
         text-align: center;
+    }
+
+    .tableRow {
+        margin-top: 0px;
+        margin-bottom: 0px;
     }
 </style>

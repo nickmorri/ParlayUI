@@ -1,6 +1,6 @@
 <div layout="column">
 
-    <div flex ng-repeat="option in customizations" ng-switch="option.type" layout="row">
+    <div flex ng-repeat="option in customizations" ng-switch="option.type" layout="row" ng-hide="option.hidden">
 
         <md-input-container flex ng-switch-default>
 

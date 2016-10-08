@@ -1,0 +1,53 @@
+<parlay-widget-base-card>
+    <parlay-widget-base-card-title>
+        {{info.name}}
+    </parlay-widget-base-card-title>
+
+    <parlay-widget-base-card-content>
+        
+        <div class="promenade-widget-checklist-padding">
+            <md-checkbox class="promenade-widget-checklist-margin" ng-model="customizations.checkList.value.toggle" ng-click="checkAll()" aria-label="check all">
+                <strong>
+                    <p class="promenade-widget-checklist-checklist-all">
+                        <span ng-if="customizations.checkList.value.toggle">Unselect All</span>
+                        <span ng-if="!customizations.checkList.value.toggle">Select All</span>
+                    </p>
+                </strong>
+            </md-checkbox>
+        </div>
+
+        <!-- Checklist -->
+        <div ng-repeat="item in checkListItems(customizations.number.value)" class="promenade-widget-checklist-padding promenade-widget-checklist-margin promenade-widget-checklist-item" layout="row">
+            <md-checkbox ng-model="item.isChecked" ng-click="checkBox(item)" class="promenade-widget-checklist-margin" aria-label="{{item.value}}"></md-checkbox>
+            <md-input-container class="promenade-widget-checklist-margin" md-no-float flex>
+                <input flex ng-model="item.value" type="text" placeholder="Item {{item.index + 1}}" ng-class="{'promenade-widget-checklist-checked-item': item.isChecked}"/>
+            </md-input-container>
+        </div>
+
+    </parlay-widget-base-card-content>
+</parlay-widget-base-card>
+
+<style type="text/css">
+
+    .promenade-widget-checklist-checklist-all {
+        margin-top: 8px;
+        margin-bottom: 8px;
+    }
+
+    .promenade-widget-checklist-item {
+        height: 36.5px;
+    }
+
+    .promenade-widget-checklist-checked-item {
+        text-decoration: line-through;
+    }
+
+    .promenade-widget-checklist-padding {
+        padding: 0px 10px 0px 10px; 
+    }
+
+    .promenade-widget-checklist-margin {
+        margin-top: 0px;
+        margin-bottom: 0px;
+    }
+</style>

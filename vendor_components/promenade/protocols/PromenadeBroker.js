@@ -31,7 +31,7 @@
 		 * @constructor module:PromenadeBroker.PromenadeBroker
 		 */
 		function PromenadeBroker() {
-			
+
 			var broker = this;
             /**
              * List of all items
@@ -115,7 +115,7 @@
             broker.getLastDiscovery = getLastDiscovery;
             broker.applySavedDiscovery = applySavedDiscovery;
             broker.getBrokerAddress = getBrokerAddress;
-            
+
             // Register a callback on get_discovery_response. Call all registered discovery callbacks.
             broker.onMessage({"response": "get_discovery_response"}, function (response) {
                 broker.invokeDiscoveryCallbacks(response);
@@ -197,7 +197,7 @@
                 // When socket is closed we should show a notification giving the user the option to reconnect.
                 // If socket failed to open we should show a notification giving the user the option to connect.
                 ParlayNotification.show(broker.hasConnectedPreviously() ? {
-                    content: "Disconnected from Parlay Broker!",
+                    content: "Disconnected from Parlay Connect!",
                     action: {
                         text: "Reconnect",
                         callback: broker.connect
@@ -205,7 +205,7 @@
                     permanent: true,
                     warning: true
                 } : {
-                    content: "Failed to connect to Parlay Broker!",
+                    content: "Failed to connect to Parlay Connect!",
                     action: {
                         text: "Connect",
                         callback: broker.connect

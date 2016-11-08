@@ -9,7 +9,7 @@
             </md-button>
         </div>
     </md-toolbar>
-    
+
     <md-progress-linear ng-show="ctrl.connecting" md-mode="indeterminate"></md-progress-linear>
 
     <md-dialog-content>
@@ -21,7 +21,7 @@
                 <md-icon hide-xs hide-sm hide-md ng-md-icon icon="group_work"></md-icon>
 
                 <div class="md-list-item-text">
-                    <h3>Broker</h3>
+                    <h3>Parlay Connect</h3>
                     <p>{{ctrl.broker_version}}</p>
                 </div>
 
@@ -93,7 +93,7 @@
 
 
     </md-dialog-content>
-    
+
     <md-dialog-actions ng-if="ctrl.isBrokerConnected()" layout="row">
         <span flex></span>
         <md-button ng-click="ctrl.openConfiguration($event)" class="md-primary">

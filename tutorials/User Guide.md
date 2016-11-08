@@ -1,4 +1,4 @@
-When ParlayUI first loads it will request from the Broker all available and currently connected protocol connections. It will then perform an automatic discovery.
+When ParlayUI first loads it will request from Parlay Connect all available and currently connected protocol connections. It will then perform an automatic discovery.
 
 Navigation between different components of the ParlayUI may be done by clicking the navigation menu, the first item beneath the Parlay logo.
 This will list all available components. By default ParlayUI will load the ```Items``` component.
@@ -8,15 +8,15 @@ This will list all available components. By default ParlayUI will load the ```It
 ###### Protocol List Dialog
 
 Protocol connections can be viewed by selecting the ```Protocols``` navigation item. This will launch a dialog with a list of all currently connected and saved protocol connections.
-From here you can manage open and saved protocol connections as well as open new connections to available protocols. 
-A open protocol is a protocol connection that is actively connected to the broker, this protocols items are available for communication.
-A saved protocol is a protocol connection that has been connected previously to the broker and is available for connection but is not currently connected. 
+From here you can manage open and saved protocol connections as well as open new connections to available protocols.
+A open protocol is a protocol connection that is actively connected to Parlay Connect, this protocols items are available for communication.
+A saved protocol is a protocol connection that has been connected previously to Parlay Connect and is available for connection but is not currently connected.
 New connections to available protocols can be opened by selecting the ```open protocol``` button at the bottom of the dialog.
 
 ###### Protocol Configuration Dialog
 
 A new protocol connection can be made to an available protocol by completing the form for protocol configuration.
- 
+
 _Further documentation on how to use Protocols is available in the [Protocols Use tutorial.]{@tutorial Protocols}_
 _Further documentation on how to develop Protocols is available in the Protocols Development tutorial._
 

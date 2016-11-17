@@ -201,7 +201,7 @@ module.exports = function (grunt) {
             'parlay_component_base_path': parlay_components_base_path,
             'vendor_component_base_path': vendor_components_base_path,
             'parlay_script_modules_base_path': parlay_script_modules_base_path,
-			'source': getVendorPathGlobs(getVendors(), ['source'], ['app.js', '<%= meta.parlay_component_base_path %>/*/*.js']),
+			'source': getVendorPathGlobs(getVendors(), ['source'], ['app.js',  '<%= meta.parlay_component_base_path %>/*/*.js']),
             'vendor_paths': getVendorPaths(getVendors()),
             'bower_files': require('main-bower-files')(),
 			'dist_destination': 'dist',
@@ -473,9 +473,10 @@ module.exports = function (grunt) {
         // Clears files and folders.
         // https://github.com/gruntjs/grunt-contrib-clean
 		'clean': {
-			'dist': '<%= meta.dist_destination %>',
+			'dist': ['<%= meta.dist_destination %>', '**/*/*.autogen.js'],
             'post_dist': ['<%= meta.dist_destination %>/*.css', '<%= meta.dist_destination %>/*.js'],
-			'dev': '<%= meta.dev_destination %>',
+			// clean anything thats auto generated and the dev dest
+			'dev': ['<%= meta.dev_destination %>', '**/*/*.autogen.js'],
 			'tmp': '<%= meta.tmp_destination %>',
 			'coverage': '<%= meta.coverage_destination %>',
 			'doc': ['doc', '<%= meta.tmp_destination %>/tutorials']
@@ -491,7 +492,8 @@ module.exports = function (grunt) {
                         'src': [
                             '<%= meta.source %>',
                             '<%= meta.compiled_html %>',
-                            '<%= meta.stylesheets %>'
+                            '<%= meta.stylesheets %>',
+							'*.autogen.js'
                         ],
                         'dest': '<%= meta.dev_destination %>'
                     }
@@ -655,6 +657,34 @@ module.exports = function (grunt) {
 					output: 'LICENSES'
 				},
 			},
+		},
+		'modernizr': {
+			dev: {
+				"parseFiles": true,
+				"customTests": [],
+				//"devFile": "/PATH/TO/modernizr-dev.js",
+				"dest": "modernizr.autogen.js",
+				"tests": [
+					// Tests
+				],
+				"options": [
+					"setClasses"
+				],
+				"uglify": false
+			},
+			dist: {
+				"parseFiles": true,
+				"customTests": [],
+				//"devFile": "/PATH/TO/modernizr-dev.js",
+				"dest": "modernizr.autogen.js",
+				"tests": [
+					// Tests
+				],
+				"options": [
+					"setClasses"
+				],
+				"uglify": true
+			}
 		}
 
 	});
@@ -665,10 +695,14 @@ module.exports = function (grunt) {
 
     // Generates dev directory containing files needed for development. Launches an express HTTP server and a watch
     // task that monitors the source files for changes.
-	grunt.registerTask('develop', 'Lints and tests JavaScript files, processes HTML and finally starts HTTP server which autoreloads on file changes.', [
+	grunt.registerTask
+	('develop', 'Lints and tests JavaScript files, processes HTML and finally starts HTTP server which autoreloads on file changes.', [
+		'clean:dev',
+        'clean:dist',
+        'clean:tmp',
 		'jshint:dev',
 	    'csslint:dev',
-	    'clean:dev',
+		'modernizr:dev',
 	    'bower-install-simple:dev',
         'replace:dev',
 	    'bower:dev',
@@ -684,9 +718,12 @@ module.exports = function (grunt) {
 
     // Generates dist/index.html with all Parlay, vendor and library source inlined.
 	grunt.registerTask('dist', 'Generates tested and linted minified JavaScript and CSS files with HTML templates included in JavaScript.', [
+        'clean:dev',
+	    'clean:dist',
+        'clean:tmp',
 		'jshint:dist',
 	    'csslint:dist',
-	    'clean:dist',
+		'modernizr:dist',
 	    'bower-install-simple:dist',
         'replace:dist',
         'bower_concat:dist',

@@ -125,8 +125,6 @@
                            scope.customizations[dk] = angular.copy(customization_defaults[dk]);
                        }
                     }
-
-
                 }
                 // If the user defined customizations and we don't have any we should assign them.
                 else if (!scope.customizations && !!customization_defaults) {

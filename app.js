@@ -51,6 +51,12 @@
             ParlayStore("route").set("last", toState.name);
         });
 
+        if (Modernizr.websqldatabase) {
+            console.log("supported");
+        } else {
+            console.log("unsupported");
+        }
+
     }
 
     ParlayHeadController.$inject = ["$sce", "vendorIcon", "themeColor"];

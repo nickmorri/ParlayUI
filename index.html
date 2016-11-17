@@ -27,6 +27,13 @@
         <!-- build:css:dist inline tmp/parlayui.min.css --><!-- /build -->
         <!-- /project stylesheets for dist task -->
 
+
+        <!-- modernizer needs to be included FIRST-->
+        <!-- include for dev -->
+        <!-- include: "type": "js", "files": ["modernizr.autogen.js"] -->
+        <!-- include for dist -->
+        <!-- build:js:dist inline modernizr.autogen.js --><!-- /build -->
+
     </head>
     <body layout="column" layout-gt-sm="row">
 
@@ -49,6 +56,7 @@
         <!-- project JavaScript source for dist task -->
         <!-- build:js:dist inline tmp/parlayui.min.js --><!-- /build -->
         <!-- /project JavaScript source for dist task -->
+
 
         <!-- project JavaScript source for develop task -->
         <!-- include: "type": "js", "files": ["vendorDefaults.js", "workerImports.js",

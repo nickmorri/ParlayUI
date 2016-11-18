@@ -51,11 +51,21 @@
             ParlayStore("route").set("last", toState.name);
         });
 
-        if (Modernizr.websqldatabase) {
-            console.log("supported");
-        } else {
-            console.log("unsupported");
+        //check the minimum requirements
+        var min_reqs = [Modernizr.websqldatabase, Modernizr.cookies, Modernizr.canvas, Modernizr.json,
+            Modernizr.unicode, Modernizr.websockets,Modernizr.flexbox,Modernizr.datauri,Modernizr.webworkers,Modernizr.localstorage];
+        var alerted = false;
+        for(var i=0; i< min_reqs.length; i++)
+        {
+            if(!min_reqs[i]) {
+                if(!alerted) alert("Warning: Your browser does not support the minimum requirements for Parlay. Please upgrade to the latest version of Chrome or Fireforx");
+                alerted = true;
+                console.log(i + " - UNSUPPORTED");
+            }
+
         }
+
+
 
     }
 

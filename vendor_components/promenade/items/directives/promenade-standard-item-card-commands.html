@@ -93,8 +93,6 @@
                 <p flex="10" flex-offset="0" class="md-body-2">Ack</p>
                 <!-- Column 2: Success status -->
                 <p flex="10" flex-offset="0" class="md-body-2">Done</p>
-                <!-- Column 3: MSG ID -->
-                <p flex="15" class="md-body-2">ID</p>
                 <!-- Column 4: Contents -->
                 <p flex flex-offset="5" class="md-body-2">Contents</p>
 
@@ -110,9 +108,7 @@
                     <!-- Column 2: Success status -->
                     <md-progress-circular flex="10" flex-offset="0" ng-hide="response.complete" md-mode="indeterminate" md-diameter="30px"></md-progress-circular>
                     <md-icon flex="10" flex-offset="0" ng-md-icon ng-show="response.complete" icon="{{response.success ? 'check' : 'clear'}}" options='{"rotation": "none"}'></md-icon>
-
-                    <!-- Column 3: MSG ID -->
-                    <p flex="15" class="md-body-1">{{response.MSG_ID}}</p>
+                    
 
                     <!-- Column 4: Contents -->
 

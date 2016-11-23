@@ -1,8 +1,8 @@
 (function () {
     'use strict';
-    
+
     describe('parlay.socket', function() {
-    
+
         beforeEach(module('parlay.socket'));
 
         describe("CallbackContainer", function () {
@@ -580,9 +580,9 @@
                 });
 
             });
-                        
+
             describe('destructs', function () {
-                
+
                 it('is closed', function (done) {
                     ParlaySocket.onOpen(function () {
                         ParlaySocket.onClose(function () {
@@ -603,16 +603,16 @@
                         ParlaySocket.open();
                     }).toThrowError(Error);
                 });
-                
+
                 it('closes and reopens', function (done) {
                     var has_closed = false;
-                    
+
                     ParlaySocket.onOpen(function () {
-                        
+
                         expect(ParlaySocket.isConnected()).toBeTruthy();
-                        
+
                         if (has_closed) done();
-                        
+
                         ParlaySocket.onClose(function () {
                             has_closed = true;
                             expect(ParlaySocket.isConnected()).toBeFalsy();
@@ -621,7 +621,7 @@
                         });
 
                         if (!has_closed) ParlaySocket.close(false);
-                        
+
                     });
 
                     MockSocket.force_open();
@@ -645,9 +645,9 @@
 
                     MockSocket.force_open();
                 });
-                
+
             });
-            
+
             describe('sends', function () {
 
                 beforeEach(function () {
@@ -673,7 +673,7 @@
                         ParlaySocket.sendMessage({"type":"motor"}, undefined, {"type":"motor"});
                     }).toThrowError(TypeError);
                 });
-                
+
                 it('multiple messages', function (done) {
                     var count = 0;
                     function checkDone (done) {
@@ -698,25 +698,25 @@
                         checkDone(done);
                     });
                 });
-                
+
                 it('includes response topics but not response callback', function() {
                     expect(function () {
                         ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"}, {"type":"motor"});
                     }).toThrowError(TypeError);
                 });
-                
+
                 it('includes response callback but not response topics', function() {
                     expect(function () {
                         ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"}, undefined, function () {});
                     }).toThrowError(TypeError);
                 });
-                
+
                 it('invalid topics type', function () {
                     expect(function () {
                         ParlaySocket.sendMessage('test topics');
                     }).toThrowError(TypeError);
                 });
-                
+
                 it('invalid contents type', function () {
                     expect(function () {
                         ParlaySocket.sendMessage({"type":"motor"}, 0, {"type":"motor"}, function (response) {});
@@ -724,13 +724,13 @@
                 });
 
             });
-            
+
             describe('listens for', function () {
 
                 beforeEach(function () {
                     MockSocket.force_open();
                 });
-                
+
                 it('a message', function (done) {
                     ParlaySocket.onMessage({"type":"motor"}, function (response) {
                         expect(response.data).toBe("test");
@@ -739,10 +739,10 @@
                     MockSocket.force_open();
                     ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"});
                 });
-                
+
                 it('multiple messages', function (done) {
                     var count = 0;
-                    
+
                     ParlaySocket.onMessage({"type":"motor"}, function () {
                         count++;
                         if (count === 4) done();
@@ -753,13 +753,13 @@
                     ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"});
                     ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"});
                 });
-                
+
                 it('invalid topics type', function () {
                     expect(function () {
                         ParlaySocket.onMessage('test topics');
                     }).toThrowError(TypeError);
                 });
-                
+
                 it('verbose message', function (done) {
                     ParlaySocket.onMessage({"type":"motor"}, function (response) {
                         expect(response.TOPICS).toEqual({"type":"motor"});
@@ -768,7 +768,7 @@
                     }, true);
                     ParlaySocket.sendMessage({"type":"motor"}, {"data":"test"});
                 });
-                
+
                 it('subset of a message', function (done) {
                     ParlaySocket.onMessage({"subtype":"stepper"}, function (response) {
                         expect(response.data).toBe(10);
@@ -776,15 +776,15 @@
                     });
                     ParlaySocket.sendMessage({"type":"motor","subtype":"stepper","from_device":1,"from_system":10}, {"data": 10});
                 });
-                
+
             });
-            
+
             describe('queues', function () {
 
                 beforeEach(function () {
                     MockSocket.close();
                 });
-                
+
                 it('a message', function (done) {
 
                     ParlaySocket.sendMessage({type: "motor"}, {data: "queue"});
@@ -797,7 +797,7 @@
                     MockSocket.force_open();
 
                 });
-                
+
                 it('multiple messages', function (done) {
                     var count = 0;
 
@@ -813,41 +813,41 @@
                     MockSocket.force_open();
 
                 });
-                
+
             });
-            
+
             describe('deregisters', function () {
 
                 beforeEach(function () {
                     MockSocket.force_open();
                 });
-                
+
                 it('one listener', function (done) {
-                    
+
                     var update = false;
-                    
+
                     ParlaySocket.onMessage({type: "motor"}, function () {
                         update = true;
                     })();
 
                     ParlaySocket.sendMessage({type: "motor"}, {});
-                    
+
                     setTimeout(function () {
                         expect(update).toBeFalsy();
                         done();
                     }, 100);
-                    
+
                 });
-                
+
                 it('multiple listeners', function (done) {
-                    
+
                     var registrations = [];
                     var update_count = 0;
-                    
+
                     registrations.push(ParlaySocket.onMessage({type: "motor"}, function () {
                         update_count++;
                     }));
-                    
+
                     registrations.push(ParlaySocket.onMessage({type: "motor"}, function () {
                         update_count++;
                     }));
@@ -855,23 +855,23 @@
                     registrations.pop()();
 
                     ParlaySocket.sendMessage({type: "motor"}, {});
-                    
+
                     setTimeout(function () {
                         expect(update_count).toBe(1);
                         done();
                     }, 100);
-                    
+
                 });
-                
+
                 it('all listeners', function (done) {
                     var update_count = 0;
-                    
+
                     var registrations = [];
-                    
+
                     function do_update() {
                         update_count++;
                     }
-                    
+
                     for (var i = 0; i < 10; i++) {
                         registrations.push(ParlaySocket.onMessage({"type":"motor"}, do_update));
                     }
@@ -879,14 +879,14 @@
                     while (registrations.length) registrations.pop()();
 
                     ParlaySocket.sendMessage({"type":"motor"}, {});
-                    
+
                     setTimeout(function () {
                         expect(update_count).toBe(0);
                         done();
                     }, 100);
-                    
+
                 });
-                
+
             });
 
         });
@@ -899,7 +899,7 @@
                 }));
 
                 it('gets address', inject(function (_ParlaySocket_) {
-                    expect(_ParlaySocket_.getAddress()).toBe('ws://localhost:8085');
+                    expect(_ParlaySocket_.getAddress()).toBe('ws://localhost:58085');
                 }));
             });
 
@@ -909,7 +909,7 @@
                 }));
 
                 it('gets address https', inject(function (_ParlaySocket_) {
-                    expect(_ParlaySocket_.getAddress()).toBe('wss://localhost:8086');
+                    expect(_ParlaySocket_.getAddress()).toBe('wss://localhost:58086');
                 }));
             });
 
@@ -920,5 +920,5 @@
         }));
 
     });
-        
+
 }());

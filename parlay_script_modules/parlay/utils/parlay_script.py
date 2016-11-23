@@ -6,7 +6,7 @@ import time
 
 from native import ProxyItem, sendQuery
 
-DEFAULT_ENGINE_WEBSOCKET_PORT = 8085
+DEFAULT_ENGINE_WEBSOCKET_PORT = 58085
 
 class ParlayScript():
 
@@ -33,5 +33,3 @@ class ParlayScript():
 def start_script(script_class, engine_ip='localhost', engine_port=DEFAULT_ENGINE_WEBSOCKET_PORT,
                  stop_reactor_on_close=None, skip_checks=False, reactor=None):
     pass
-
-

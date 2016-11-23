@@ -89,7 +89,7 @@
         };
 
         MockParlaySocket.prototype.getAddress = function () {
-            return 'ws://localhost:8080';
+            return 'ws://localhost:58080';
         };
 
         MockParlaySocket.prototype.sendMessage = function (topics, contents, response_topics, response_callback) {

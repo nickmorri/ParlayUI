@@ -31,7 +31,7 @@
 		 * @constructor module:PromenadeBroker.PromenadeBroker
 		 */
 		function PromenadeBroker() {
-			
+
 			var broker = this;
             /**
              * List of all items
@@ -115,7 +115,7 @@
             broker.getLastDiscovery = getLastDiscovery;
             broker.applySavedDiscovery = applySavedDiscovery;
             broker.getBrokerAddress = getBrokerAddress;
-            
+
             // Register a callback on get_discovery_response. Call all registered discovery callbacks.
             broker.onMessage({"response": "get_discovery_response"}, function (response) {
                 broker.invokeDiscoveryCallbacks(response);
@@ -305,7 +305,7 @@
              * @public
 			 */
 			function connect () {
-				ParlaySocket.open($location.protocol === 'https:' ? 'wss://' + BrokerAddress + ':8086' : 'ws://' + BrokerAddress + ':8085');
+				ParlaySocket.open($location.protocol === 'https:' ? 'wss://' + BrokerAddress + ':58086' : 'ws://' + BrokerAddress + ':58085');
 			}
 
 			/**

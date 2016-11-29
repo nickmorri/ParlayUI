@@ -17,7 +17,7 @@
                         return this.connected;
                     },
                     getBrokerAddress: function () {
-                        return 'ws://localhost:58080';
+                        return 'ws://localhost:8080';
                     },
                     disconnect: function () {
                         this.connected = false;
@@ -45,7 +45,7 @@
 
                 it('tests connection', function () {
                     expect(ctrl.isBrokerConnected()).toBeFalsy();
-                    expect(ctrl.getBrokerAddress()).toBe('ws://localhost:58080');
+                    expect(ctrl.getBrokerAddress()).toBe('ws://localhost:8080');
                     expect(ctrl.broker_version).toBe('0.0.1');
                 });
 

@@ -528,7 +528,7 @@
             parlay_socket.isConnected = isConnected;
 
             // Opens ParlaySocket as soon as possible.
-            parlay_socket.open($location.protocol === 'https:' ? 'wss://' + BrokerAddress + ':58086' : 'ws://' + BrokerAddress + ':58085');
+            parlay_socket.open($location.protocol === 'https:' ? 'wss://' + BrokerAddress + ':8086' : 'ws://' + BrokerAddress + ':8085');
 
             /**
              * Opens [HTML WebSocket]{@link https://developer.mozilla.org/en-US/docs/Web/API/WebSocket} and returns

@@ -131,6 +131,11 @@
                 ParlayNotification.show({content: response, warning: true});
             });
 
+            broker.onMessage({"MSG_TYPE": "EVENT"}, function (response) {
+                if (response.EVENT === "ParlaySendFileEvent")
+                    response.INFO.download(response.DESCRIPTION, false);
+            });
+
             // Register PromenadeBroker's notification callback for discovery.
             broker.onDiscovery(function (contents) {
 
@@ -173,6 +178,7 @@
                 // Request a subscription from the Broker for this protocol.
                 ParlaySocket.sendMessage({"type": "subscribe"}, {"TOPICS": {"TO": 61953}});
                 ParlaySocket.sendMessage({"type": "subscribe"}, {"TOPICS": {"TO": "UI"}});
+                ParlaySocket.sendMessage({"type": "subscribe"}, {"TOPICS": {"TX_TYPE": "BROADCAST"}});
 
                 broker.setConnectedPreviously();
 
@@ -305,7 +311,7 @@
              * @public
 			 */
 			function connect () {
-				ParlaySocket.open($location.protocol === 'https:' ? 'wss://' + BrokerAddress + ':58086' : 'ws://' + BrokerAddress + ':58085');
+				ParlaySocket.open($location.protocol === 'https:' ? 'wss://' + BrokerAddress + ':8086' : 'ws://' + BrokerAddress + ':8085');
 			}
 
 			/**

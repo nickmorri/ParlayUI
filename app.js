@@ -58,7 +58,7 @@
         for(var i=0; i< min_reqs.length; i++)
         {
             if(!min_reqs[i]) {
-                if(!alerted) alert("Warning: Your browser does not support the minimum requirements for Parlay. Please upgrade to the latest version of Chrome or Fireforx");
+                if(!alerted) alert("Warning: Your browser does not support the minimum requirements for Parlay. \nPlease upgrade to the latest version of Chrome or Firefox");
                 alerted = true;
                 console.log(i + " - UNSUPPORTED");
             }

@@ -71,6 +71,13 @@
 		writable: false,
 		enumerable: false,
 		value: function(filename, stringify) {
+			// Check if browser supports blob constructor
+		    if (!Modernizr.blobconstructor) {
+                alert("WARNING:  Your browser does not support blob file downloading. Please upgrade your browser.");
+                return;
+			}
+
+
 			if (stringify === undefined)
 				stringify = true;
 

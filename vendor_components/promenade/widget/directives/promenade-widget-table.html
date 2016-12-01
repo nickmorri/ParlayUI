@@ -1,0 +1,66 @@
+<parlay-widget-base-card>
+    <parlay-widget-base-card-title>
+        {{info.name}}
+    </parlay-widget-base-card-title>
+
+    <parlay-widget-base-card-content>
+        <table class="promenade-widget-table-table">
+            <!-- Table Headers -->
+            <tr ng-class="{'promenade-widget-table-header': customizations.edit.value}">
+                <th ng-repeat="header in headerItems(customizations.columns.value)">
+                    <div ng-switch="customizations.edit.value">
+                        <md-input-container md-no-float ng-switch-when="false" flex class="promenade-widget-table-row">
+                            <input flex ng-model="header.value" type="text" placeholder="Header Name" class="promenade-widget-table-header-item"/>
+                        </md-input-container>
+
+                        <div ng-switch-when="true" flex>
+                            <p flex class="promenade-widget-table-data-item">{{header.value}}</p>
+                        <div>
+                    </div>
+                </th>
+            </tr>
+            
+            <!--Table Rows -->
+            <tr ng-repeat="row in tableData(customizations.rows.value, customizations.columns.value)">
+                <td ng-repeat="col in row">
+                    <div ng-switch="customizations.edit.value">
+                        <md-input-container md-no-float ng-switch-when="false" flex class="promenade-widget-table-row">
+                            <input flex ng-model="col.value" type="text" placeholder="Value" class="promenade-widget-table-data-item"/>
+                        </md-input-container>
+
+                        <div ng-switch-when="true" flex class="promenade-widget-table-row">
+                            <p flex class="promenade-widget-table-data-item">{{col.value}}</p>
+                        <div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </parlay-widget-base-card-content>
+</parlay-widget-base-card>
+
+<style type="text/css">
+
+    .promenade-widget-table-table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    .promenade-widget-table-header {
+        border-bottom: 1px solid #E1E1E1;
+    }
+
+    .promenade-widget-table-header-item {
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .promenade-widget-table-row {
+        margin-top: 0px;
+        margin-bottom: 0px;
+    }
+
+    .promenade-widget-table-data-item {
+        padding: 0px 16px 0px 16px;
+        text-align: center;
+    }    
+</style>

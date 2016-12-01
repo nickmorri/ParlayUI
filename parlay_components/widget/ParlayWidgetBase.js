@@ -271,7 +271,8 @@
                         ["uid", "item.uid"],
                         ["template", "item.configuration.template"],
                         ["customizations", "item.configuration.customizations"],
-                        ["info", "item"]
+                        ["info", "item"],
+
                     ].map(function (attribute) {
                         return attribute[0] + "='" + attribute[1] + "'";
                     }).join(" ");

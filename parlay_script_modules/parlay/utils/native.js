@@ -124,14 +124,14 @@ function parlay_utils_native($modname) {
             function sequentialToDict(cmd, args, kwargs) {
                 if(kwargs === undefined) kwargs = []; //default to empty kwargs list
                 var contents = {'COMMAND': cmd};
-
+                debugger;
                 //assume that cmd is a valid command
                 var fieldArgs = fields.get(cmd);
 
                 // check that the arguments are of the appropriate types and put them into contents
                 Array.prototype.map.call(args, function(arg, i) {
                     var argDef = fieldArgs[i];
-                    checkInputType(argDef.name, argDef.type, arg);
+                    //checkInputType(argDef.name, argDef.type, arg);
 
                     contents[argDef.name] = Sk.ffi.remapToJs(arg);
                 });
@@ -141,7 +141,8 @@ function parlay_utils_native($modname) {
                 {
                     if(kwargs.hasOwnProperty(k))
                     {
-                        contents[k] = Sk.ffi.remapToJs(kwargs[k]);
+                        //bug with kwargs where we get nromal JS strings instead of python strings for values.
+                        contents[k] = typeof kwargs[k] === "string" ? kwargs[k] : Sk.ffi.remapToJs(kwargs[k]);
                     }
                 }
 

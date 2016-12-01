@@ -28,7 +28,7 @@ class ParlayScript():
         time.sleep(secs)
 
     def shutdown_broker(self):
-        print "Pretending to shut down broker"
+        print "Pretending to shut down Parlay Connect"
 
 def start_script(script_class, engine_ip='localhost', engine_port=DEFAULT_ENGINE_WEBSOCKET_PORT,
                  stop_reactor_on_close=None, skip_checks=False, reactor=None):

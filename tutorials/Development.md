@@ -13,7 +13,7 @@ There are two primary tasks that the developer may want to run, develop and buil
 Prepare the source files, ensure all dependencies are available, perform JavaScript and CSS linting, compile all HTML into a JavaScript module, run the unit test suites, launch a http server and watch the source files files for changes. If the source files are changed which the develop task is still running the page will be reloaded in the user’s browser.
 
     grunt build
-    
+
 Prepare the source files, ensure all dependencies are available, perform JavaScript and CSS listing, compile all HTML into a JavaScript module, concatenate and uglify the dependencies and all source files, run the unit test suites, minify the CSS, and inline the uglified JavaScript and minified CSS into the index.html file. The index.html file is all that is required for deployment.
 
 -------------------
@@ -41,7 +41,7 @@ When installed a new dependency be sure to use the save flag so that the require
 vendor_components
 -----------------
 
-The vendor_components directory is intended to contain a directory for each vendor that wishes to extend the functionality of Parlay. A promenade directory is included in the distribution that contains code that may be domain specific to the Promenade software. It is included by default because it contains protocols that allow for interaction with the Promenade broker. If a vendor wants to extend the functionality of Parlay by adding support for custom protocols or implementing custom user interface elements they should include their files in the appropriate sub-directory inside their vendor directory.
+The vendor_components directory is intended to contain a directory for each vendor that wishes to extend the functionality of Parlay. A promenade directory is included in the distribution that contains code that may be domain specific to the Promenade software. It is included by default because it contains protocols that allow for interaction with the Promenade broker (also known as Parlay Connect on the UI front). If a vendor wants to extend the functionality of Parlay by adding support for custom protocols or implementing custom user interface elements they should include their files in the appropriate sub-directory inside their vendor directory.
 
 The files available in the paths specified within the vendor.json file will be automatically included during the build process. An example directory structure is provided:
 
@@ -70,8 +70,8 @@ The files available in the paths specified within the vendor.json file will be a
                 - *.spec.js
             - *.js
         - vendor.json
-        
-        
+
+
 ***vendor.json***
 
 There are a number of options available for the vendor.json file.

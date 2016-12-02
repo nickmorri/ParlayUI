@@ -103,6 +103,7 @@
             datastream.listen = listen;
             datastream.onChange = onChange;
             datastream.generateAutocompleteEntries = generateAutocompleteEntries;
+            datastream.getValue = getValue;
 
             /**
              * Requests a listener for the data stream. Saves a reference to deregistration function returned by
@@ -185,6 +186,17 @@
                 };
 
                 return [value_entry];
+            }
+
+            /**
+             * If the digit length of the number is greater than 10 digits, return the number
+             * in its scientific notation form
+             * @returns {number | string} - Representation of current datastream value
+             */
+            function getValue() {
+                if (internal_value.toString().length >= 10)
+                    return internal_value.toExponential();
+                return internal_value;
             }
 
         }

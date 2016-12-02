@@ -157,22 +157,7 @@
             else {
                 // Remove the stream from the Array of enabled streams.
                 ctrl.enabled_streams.splice(ctrl.enabled_streams.indexOf(stream), 1);
-                // If stream value currently defined ask the user if they want to cancel the stream.
-                if (stream.value !== undefined) {
-                    // Ask the user if they'd like to cancel the stream as well.
-                    $mdDialog.show($mdDialog.confirm()
-                        .title("Cancel streaming " + stream.name + "?")
-                        .content("End the current stream request.")
-                        .ok("End")
-                        .cancel("Dismiss")
-                    ).then(function () {
-                        stream.listen(true);
-                    });
-                }
-                // Otherwise silently cancel the stream.
-                else {
-                    stream.listen(true);
-                }
+                stream.listen(true);
             }
         }
 

@@ -31,24 +31,15 @@
 
     <md-list layout="column" flex class="parlay-navigation-list" ng-controller="ParlayNavigationSidenavController as ctrl">
 
-        <md-menu class="parlay-navigation-menu">
+        <md-list-item ng-click="ctrl.openItemsDialog($event)">
+            <md-icon ng-md-icon class="parlay-nav-icon" icon="extension"></md-icon>
+            <p>Items</p>
+        </md-list-item>
 
-            <md-list-item ng-click="$mdOpenMenu($event)" title="Available views menu">
-                <md-icon ng-md-icon class="parlay-nav-icon" icon="apps"></md-icon>
-                <p style="text-transform: capitalize">{{ctrl.getCurrentState().data.displayName}}</p>
-                <md-icon ng-md-icon class="parlay-nav-icon" icon="keyboard_arrow_down"></md-icon>
-            </md-list-item>
-
-            <md-menu-content width="4">
-                <md-menu-item ng-repeat="state in ctrl.getAllStates()">
-                    <md-button ng-click="ctrl.navigateState(state)">
-                        <md-icon ng-md-icon icon="{{state.data.displayIcon}}"></md-icon>
-                        {{state.data.displayName}}
-                    </md-button>
-                </md-menu-item>
-            </md-menu-content>
-
-        </md-menu>
+        <md-list-item ng-click="ctrl.navigateState('Widgets')">
+            <md-icon ng-md-icon class="parlay-nav-icon" icon="create"></md-icon>
+            <p>Widgets</p>
+        </md-list-item>
 
         <md-divider></md-divider>
         
@@ -66,8 +57,6 @@
             <p>Workspaces</p>
         </md-list-item>
 
-        <parlay-item-search ng-show="ctrl.getCurrentState().name == 'items'" layout="row"></parlay-item-search>
-
         <!-- /ONLY FOR ITEMS STATE -->
 
         <!-- ONLY FOR WIDGETS STATE -->
@@ -84,7 +73,7 @@
         </md-list-item>
 
 
-        <!-- /ONLY FOR ITEMS STATE -->
+        <!-- /ONLY FOR WIDGETS STATE -->
 
         <!-- State specific list items -->
 

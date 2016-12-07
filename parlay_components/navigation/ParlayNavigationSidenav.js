@@ -21,6 +21,7 @@
     function ParlayNavigationSidenavController($mdSidenav, $mdDialog, ParlayGenericSaveLoadDialog, $state, PromenadeBroker, ParlayItemManager, ParlayWidgetManager) {
 
         var ctrl = this;
+        // ctrl.search_text = null;
 
         // Attach methods to controller.
         ctrl.getCurrentState = getCurrentState;
@@ -35,6 +36,7 @@
         ctrl.openItemSaveLoadDialog = openItemSaveLoadDialog;
         ctrl.toggleWidgetEditing = toggleWidgetEditing;
         ctrl.openWidgetSaveLoadDialog = openWidgetSaveLoadDialog;
+        ctrl.openItemsDialog = openItemsDialog;
 
         /**
          * Reference the editing state of the [ParlayWidgetManager]{@link module:ParlayWidget.ParlayWidgetManager}.
@@ -135,6 +137,16 @@
                 templateUrl: "../parlay_components/settings/directives/parlay-settings-dialog.html",
                 targetEvent: event,
                 controller: "ParlaySettingsDialogController",
+                controllerAs: "ctrl",
+                clickOutsideToClose: true
+            });
+        }
+
+        function openItemsDialog (event) {
+            $mdDialog.show({
+                templateUrl: "../parlay_components/items/directives/parlay-item-library-dialog.html",
+                targetEvent: event,
+                controller: "ParlayItemSearchController",
                 controllerAs: "ctrl",
                 clickOutsideToClose: true
             });

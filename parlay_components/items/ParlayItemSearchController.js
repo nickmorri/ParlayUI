@@ -6,17 +6,21 @@
     angular
         .module('parlay.items.search', module_dependencies)
         .controller('ParlayItemSearchController', ParlayItemSearchController)
-        .directive('parlayItemSearch', ParlayItemSearch);
+        // .directive('parlayItemSearch', ParlayItemSearch)
+        .directive('parlayItemLibrary', ParlayItemLibrary);
 
-    ParlayItemSearchController.$inject = ['$scope', '$mdSidenav', 'ParlayItemManager'];
+    ParlayItemSearchController.$inject = ['$scope', '$mdSidenav', 'ParlayItemManager', '$mdDialog'];
     /**
      * Handles providing [ParlayItem]{@link module:ParlayItem.ParlayItem}s to the mdAutocomplete directive.
      * @constructor module:ParlayItem.ParlayItemSearchController
      * @param {Object} $scope - AngularJS $scope Object.
      * @param {Object} $mdSidenav - Angular Material sidenav service.
+     * @param {Object} $mdDialog - Angular Material dialog service.
      * @param {Object} ParlayItemManager - ParlayItemManager service.
      */
-    function ParlayItemSearchController ($scope, $mdSidenav, ParlayItemManager) {
+    function ParlayItemSearchController ($scope, $mdSidenav, ParlayItemManager, $mdDialog) {
+
+        console.log("search controller loaded");
 
         var ctrl = this;
 
@@ -40,6 +44,7 @@
         ctrl.selectItem = selectItem;
         ctrl.querySearch = querySearch;
         ctrl.hasDiscovered = hasDiscovered;
+        ctrl.closeSearch = $mdDialog.hide();
 
         /**
          * On event handler for user selection of [ParlayItem]{@link module:ParlayItem.ParlayItem}.
@@ -69,7 +74,12 @@
          * @param {String} query - Name of item to find.
          */
         function querySearch (query) {
-            return query ? ParlayItemManager.getAvailableItems().filter(createFilterFor(query)) : ParlayItemManager.getAvailableItems();
+            function compare(item1, item2) {
+                return item1.name > item2.name;
+            }
+
+            var items = ParlayItemManager.getAvailableItems().sort(compare);
+            return query ? items.filter(createFilterFor(query)) : items;
         }
 
         /**
@@ -84,11 +94,20 @@
 
     }
 
-    function ParlayItemSearch() {
+    // function ParlayItemSearch() {
+    //     return {
+    //         scope: {},
+    //         templateUrl: '../parlay_components/items/directives/parlay-item-search.html',
+    //         controller: 'ParlayItemSearchController',
+    //         controllerAs: "ctrl"
+    //     };
+    // }
+
+    function ParlayItemLibrary() {
         return {
             scope: {},
-            templateUrl: '../parlay_components/items/directives/parlay-item-search.html',
-            controller: 'ParlayItemSearchController',
+            templateUrl: '../parlay_components/items/directives/parlay-item-library.html',
+            controller: ctrl,
             controllerAs: "ctrl"
         };
     }

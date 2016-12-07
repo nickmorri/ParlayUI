@@ -1,0 +1,24 @@
+<md-dialog flex="65" style="min-height: 55%; max-height: 55%">
+    <md-toolbar class="md-toolbar-tools">
+        <h1>Items</h1>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="$ctrl.closeSearch()" aria-label="Hide dialog">
+            <md-icon ng-md-icon icon="close" aria-label="Close dialog"></md-icon>
+        </md-button>
+    </md-toolbar>
+        <md-content style="min-height: 63px">
+            <md-input-container md-no-float class="md-block">
+                <md-icon ng-md-icon icon="search"></md-icon>
+                <input ng-model="ctrl.search_text" type="text" placeholder="Search for a connected Item">
+            </md-input-container>
+        </md-content>
+        <md-divider></md-divider>
+        <md-content>
+            <md-list ng-repeat="item in ctrl.querySearch(ctrl.search_text)">
+                <md-list-item ng-click="ctrl.selectItem(item)">
+                    {{item.name}}
+                </md-list-item>
+                <md-divider></md-divider>
+            </md-list>
+        </md-content>
+</md-dialog>

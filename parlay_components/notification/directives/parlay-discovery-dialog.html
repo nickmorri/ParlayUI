@@ -1,8 +1,10 @@
-<md-dialog aria-label="Discovery dialog" flex="20" >
+<md-dialog aria-label="Discovery dialog" flex="45" >
 
     <md-toolbar>
         <div class="md-toolbar-tools">
-            <h2>Waiting on discovery response...</h2>
+            <div hide-sm hide-xs>Waiting for Discovery Response...</div>
+            <div hide-gt-sm>Discovering...</div>
+
             <span flex></span>
             <md-button class="md-icon-button" ng-click="ctrl.hide()">
                 <md-tooltip>Hide</md-tooltip>
@@ -11,8 +13,9 @@
         </div>
     </md-toolbar>
 
-    <md-dialog-content flex layout="column" layout-align="center center" layout-padding style="padding:50px">
-        <md-progress-circular md-diameter="200" md-mode="indeterminate"></md-progress-circular>
+    <md-dialog-content flex layout="column" layout-align="center center" style="padding: 40px 30px 40px 30px">
+        <md-progress-linear md-mode="indeterminate"></md-progress-linear>
+        <!--<md-progress-circular md-diameter="100" md-mode="indeterminate"></md-progress-circular>-->
     </md-dialog-content>
 
 </md-dialog>

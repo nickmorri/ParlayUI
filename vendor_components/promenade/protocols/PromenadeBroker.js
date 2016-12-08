@@ -176,7 +176,7 @@
 
                 broker.setConnectedPreviously();
 
-                ParlayNotification.show({content: "Connected to Parlay Broker!"});
+                ParlayNotification.show({content: "Connected to Parlay Connect!"});
 
                 // Wait for Broker's discovery request and respond with a empty discovery message.
                 broker.onMessage({'type': "get_protocol_discovery"}, function() {
@@ -445,9 +445,9 @@
                     });
                 }
                 else {
-                    ParlayNotification.show({content: "Cannot discover while not connected to Broker."});
+                    ParlayNotification.show({content: "Cannot discover while not connected to Parlay Connect."});
 
-                    return $q(function (resolve, reject) { reject("Cannot discover while not connected to Broker."); });
+                    return $q(function (resolve, reject) { reject("Cannot discover while not connected to Parlay Connect."); });
                 }
             }
 

@@ -20,8 +20,6 @@
      */
     function ParlayItemSearchController ($scope, $mdSidenav, ParlayItemManager, $mdDialog) {
 
-        console.log("search controller loaded");
-
         var ctrl = this;
 
         /**
@@ -44,7 +42,8 @@
         ctrl.selectItem = selectItem;
         ctrl.querySearch = querySearch;
         ctrl.hasDiscovered = hasDiscovered;
-        ctrl.closeSearch = $mdDialog.hide();
+        ctrl.toggle = toggle;
+        ctrl.closeSearch = $mdDialog.hide;
 
         /**
          * On event handler for user selection of [ParlayItem]{@link module:ParlayItem.ParlayItem}.
@@ -110,6 +109,10 @@
             controller: ctrl,
             controllerAs: "ctrl"
         };
+    }
+
+    function toggle(item) {
+        console.log(item);
     }
 
 }());

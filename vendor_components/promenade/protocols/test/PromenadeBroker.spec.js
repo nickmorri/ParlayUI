@@ -214,7 +214,7 @@
                             expect(PromenadeBroker.connected).toBeFalsy();
                             spyOn(ParlayNotification, "show");
                             PromenadeBroker.requestDiscovery();
-                            expect(ParlayNotification.show).toHaveBeenCalledWith({content: "Cannot discover while not connected to Broker."});
+                            expect(ParlayNotification.show).toHaveBeenCalledWith({content: "Cannot discover while not connected to Parlay Connect."});
                         });
 
                     });

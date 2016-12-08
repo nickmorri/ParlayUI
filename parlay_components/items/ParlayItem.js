@@ -72,6 +72,24 @@
              */
             this.interfaces = data.INTERFACES;
 
+
+            /**
+             * This ParlayItem's datastreams
+             * @member module:ParlayItem.ParlayItem#datastreams
+             * @public
+             * @type {(Array|Object)}
+             */
+            this.datastreams = data.DATASTREAMS;
+
+
+            /**
+             * All the children ParalyItems of this ParlayItem
+             * @member module:ParlayItem.ParlayItem#children
+             * @public
+             * @type {(Array|Object)}
+             */
+            this.children = data.CHILDREN;
+
             /**
              * All the available and default directives that the ParlayItem will compile in toolbar and tabs locations.
              * @member module:ParlayItem.ParlayItem#directives

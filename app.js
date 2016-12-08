@@ -20,8 +20,10 @@
         // Needed for warning toast.
         $mdThemingProvider.theme("warning-toast").primaryPalette("amber");
 
+
+        // DEPRECATED with Widgets and Items merge
         // Default state for unmatched URLs.
-        $urlRouterProvider.otherwise("/items");
+        // $urlRouterProvider.otherwise("/items");
 
         // Disable debug info in distribution for a performance boost.
         // https://docs.angularjs.org/guide/production#disabling-debug-data

@@ -66,9 +66,9 @@
             <p>Workspaces</p>
         </md-list-item>
 
-        <md-list-item ng-show="ctrl.getCurrentState().name == 'widgets'" title="Toggle editing">
+        <md-list-item title="Toggle editing">
             <md-icon ng-md-icon class="parlay-nav-icon" icon="edit"></md-icon>
-            Editing
+            Widget Editing
             <md-switch class="md-secondary" ng-model="ctrl.editing" ng-change="ctrl.toggleWidgetEditing()" aria-label="Editing"></md-switch>
         </md-list-item>
 

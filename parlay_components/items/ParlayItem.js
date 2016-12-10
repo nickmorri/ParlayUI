@@ -88,7 +88,12 @@
              * @public
              * @type {(Array|Object)}
              */
-            this.children = data.CHILDREN;
+            this.children = [];
+            if (data.CHILDREN !== undefined) {
+                for (var i = 0; i < data.CHILDREN.length; i++) {
+                    this.children.push(new ParlayItem(data.CHILDREN[i]));
+                }
+            }
 
             /**
              * All the available and default directives that the ParlayItem will compile in toolbar and tabs locations.

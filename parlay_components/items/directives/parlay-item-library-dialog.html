@@ -19,7 +19,7 @@
                     </md-button>
                     {{item.name}}
                     <span flex></span>
-                    <md-button class="md-icon-button" ng-click="ctrl.toggle(item)" aria-label="Expand {{item.name}}'s children">
+                    <md-button ng-show="item.children.length" class="md-icon-button" ng-click="ctrl.toggle(item)" aria-label="Expand {{item.name}}'s children">
                         <md-icon ng-md-icon icon="expand_more"></md-icon>
                     </md-button>
                 </md-list-item>

@@ -37,6 +37,7 @@
         ctrl.toggleWidgetEditing = toggleWidgetEditing;
         ctrl.openWidgetSaveLoadDialog = openWidgetSaveLoadDialog;
         ctrl.openItemsDialog = openItemsDialog;
+        ctrl.openWidgetsDialog = openWidgetsDialog;
 
         /**
          * Reference the editing state of the [ParlayWidgetManager]{@link module:ParlayWidget.ParlayWidgetManager}.
@@ -81,6 +82,10 @@
 
         function toggleWidgetEditing  () {
             ParlayWidgetManager.toggleEditing();
+        }
+
+        function openWidgetsDialog() {
+            ParlayWidgetManager.add();
         }
 
         /**

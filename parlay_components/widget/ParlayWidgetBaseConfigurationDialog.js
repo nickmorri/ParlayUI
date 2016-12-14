@@ -175,7 +175,7 @@
             if (!angular.equals(newValue, oldValue)) {
                 if (newValue == "input") {
                     $scope.configuration.selectedEvents = [];
-                    $scope.currentTabIndex = 1;
+                    $scope.currentTabIndex = 0;
                 }
                 else if (!!$scope.configuration.selectedEvents) {
                     $scope.configuration.selectedEvents.forEach(function (event) {

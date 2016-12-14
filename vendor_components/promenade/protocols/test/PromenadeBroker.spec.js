@@ -1,17 +1,17 @@
 (function () {
     "use strict";
-    
+
     describe("promenade.broker", function() {
-        
+
         beforeEach(module("promenade.broker"));
         beforeEach(module("parlay.settings"));
         beforeEach(module("mock.parlay.socket"));
         beforeEach(module("parlay.notification"));
         beforeEach(module("parlay.notification.error"));
-        
+
         describe("PromenadeBroker", function () {
             var PromenadeBroker, ParlaySettings, ParlaySocket, ParlayErrorDialog, ParlayNotification, $q, $timeout, $rootScope;
-            
+
             beforeEach(inject(function(_$rootScope_, _$q_, _$timeout_, _ParlaySocket_, _ParlaySettings_, _PromenadeBroker_, _ParlayErrorDialog_, _ParlayNotification_) {
                 $rootScope = _$rootScope_;
                 $q =_$q_;
@@ -258,10 +258,10 @@
                 });
 
             });
-            
+
         });
 
     });
-    
-    
+
+
 }());

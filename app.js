@@ -52,8 +52,8 @@
         });
 
         //check the minimum requirements
-        var min_reqs = [Modernizr.websqldatabase, Modernizr.cookies, Modernizr.canvas, Modernizr.json,
-            Modernizr.unicode, Modernizr.websockets,Modernizr.flexbox,Modernizr.datauri,Modernizr.webworkers,Modernizr.localstorage];
+        var min_reqs = [Modernizr.cookies, Modernizr.canvas, Modernizr.json,
+            Modernizr.unicode, Modernizr.websockets,Modernizr.flexbox,Modernizr.blobconstructor,Modernizr.webworkers,Modernizr.localstorage];
         var alerted = false;
         for(var i=0; i< min_reqs.length; i++)
         {

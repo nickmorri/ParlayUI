@@ -293,7 +293,6 @@
          * @public
          */
         ParlayWidgetManager.prototype.add = function () {
-
             var uid = 0;
 
             var active_uids = this.active_widgets.map(function (container) {
@@ -305,6 +304,8 @@
             }
 
             this.active_widgets.push({uid: uid, zIndex: ++widgetLastZIndex.value});
+            return uid;
+
         };
 
         /**

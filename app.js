@@ -3,7 +3,6 @@
 
     var module_dependencies = ["ui.router", "ngMaterial", "ngSanitize", "vendor.defaults", "parlay.items", "parlay.widget",
                                "parlay.navigation.container", "parlay.notification.sidenav", "parlay.store"];
-    // module_dependencies.push("parlay.workspaces");
 
     angular
         .module("parlay.main", module_dependencies)
@@ -25,7 +24,7 @@
 
         // DEPRECATED with Widgets and Items merge
         // Default state for unmatched URLs.
-        // $urlRouterProvider.otherwise("/workspaces");
+        $urlRouterProvider.otherwise("/widgets");
 
         // Disable debug info in distribution for a performance boost.
         // https://docs.angularjs.org/guide/production#disabling-debug-data
@@ -66,11 +65,7 @@
                 alerted = true;
                 console.log(i + " - UNSUPPORTED");
             }
-
         }
-
-
-
     }
 
     ParlayHeadController.$inject = ["$sce", "vendorIcon", "themeColor"];

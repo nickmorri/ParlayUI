@@ -5,9 +5,7 @@
 
     angular
         .module('parlay.items.search', module_dependencies)
-        .controller('ParlayItemSearchController', ParlayItemSearchController)
-        // .directive('parlayItemSearch', ParlayItemSearch)
-        .directive('parlayItemLibrary', ParlayItemLibrary);
+        .controller('ParlayItemSearchController', ParlayItemSearchController);
 
     ParlayItemSearchController.$inject = ['$scope', '$mdSidenav', 'ParlayItemManager', '$mdDialog'];
     /**
@@ -91,28 +89,9 @@
             return ParlayItemManager.hasDiscovered();
         }
 
+        function toggle(item) {
+            console.log(item);
+        }
+
     }
-
-    // function ParlayItemSearch() {
-    //     return {
-    //         scope: {},
-    //         templateUrl: '../parlay_components/items/directives/parlay-item-search.html',
-    //         controller: 'ParlayItemSearchController',
-    //         controllerAs: "ctrl"
-    //     };
-    // }
-
-    function ParlayItemLibrary() {
-        return {
-            scope: {},
-            templateUrl: '../parlay_components/items/directives/parlay-item-library.html',
-            controller: ctrl,
-            controllerAs: "ctrl"
-        };
-    }
-
-    function toggle(item) {
-        console.log(item);
-    }
-
 }());

@@ -5,13 +5,13 @@
                                "parlay.settings.dialog", "parlay.common.genericsaveloaddialog", "parlay.items.manager",
                                "parlay.widget.manager"];
 
-    // module_dependencies.push("parlay.workspaces.controller");
+    // module_dependencies.push("parlay.workspaces.manager");
 
     angular.module("parlay.navigation.sidenav", module_dependencies)
         .controller("ParlayNavigationSidenavController", ParlayNavigationSidenavController);
 
     ParlayNavigationSidenavController.$inject = ["$mdSidenav", "$mdDialog", "ParlayGenericSaveLoadDialog", "$state",
-                                                 "PromenadeBroker", "ParlayItemManager", "ParlayWidgetManager"];//, "ParlayWorkspacesController"];
+                                                 "PromenadeBroker", "ParlayWidgetManager", "ParlayItemManager"];
     /**
      * Controller for the navigation [$mdSidenav]{@link https://material.angularjs.org/latest/api/service/$mdSidenav}.
      * @constructor module:ParlayNavigation.ParlayNavigationSidenavController
@@ -23,10 +23,9 @@
      * @param {Object} ParlayItemManager - ParlayItemManager service.
      * @param {Object} ParlayWidgetManager - ParlayWidgetManager service.
      */
-    function ParlayNavigationSidenavController($mdSidenav, $mdDialog, ParlayGenericSaveLoadDialog, $state, PromenadeBroker, ParlayItemManager, ParlayWidgetManager){//}, ParlayWorkspacesController) {
+    function ParlayNavigationSidenavController($mdSidenav, $mdDialog, ParlayGenericSaveLoadDialog, $state, PromenadeBroker, ParlayWidgetManager, ParlayItemManager) {
 
         var ctrl = this;
-        // ctrl.search_text = null;
 
         // Attach methods to controller.
         ctrl.getCurrentState = getCurrentState;
@@ -89,9 +88,12 @@
             ParlayWidgetManager.toggleEditing();
         }
 
+        function openItemsDialog (event) {
+            ParlayItemManager.add(event);
+        }
+
         function openWidgetsDialog() {
-            // ParlayWidgetManager.add();
-            ParlayWorkspacesController.addWidget();
+            ParlayWidgetManager.add();
         }
 
         /**
@@ -151,17 +153,6 @@
                 controllerAs: "ctrl",
                 clickOutsideToClose: true
             });
-        }
-
-        function openItemsDialog (event) {
-            ParlayWorkspacesController.addItem();
-            // $mdDialog.show({
-            //     templateUrl: "../parlay_components/items/directives/parlay-item-library-dialog.html",
-            //     targetEvent: event,
-            //     controller: "ParlayItemSearchController",
-            //     controllerAs: "ctrl",
-            //     clickOutsideToClose: true
-            // });
         }
 
         /**

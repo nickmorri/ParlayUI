@@ -15,7 +15,6 @@
      * @param {ParlayWidgetManager} ParlayWidgetManager - [ParlayWidgetManager]{@link module:ParlayWidget.ParlayWidgetManager} service.
      */
     function ParlayWidgetController (ParlayWidgetManager, ParlayData) {
-
         var ctrl = this;
         var widget_by_name = {};
         ParlayData.set("widgets_scope_by_name", widget_by_name);

@@ -1,14 +1,15 @@
 (function () {
-	"use strict";
+    "use strict";
 
-    var module_dependencies = ["parlay.protocols.manager", "promenade.broker", "parlay.store", "parlay.item.persistence"];
+    var module_dependencies = ["parlay.protocols.manager", "promenade.broker", "parlay.store", "parlay.item.persistence",
+        "ngMaterial", "parlay.items.search", "ngMaterial"];
 
     angular
         .module("parlay.items.manager", module_dependencies)
         .factory("ParlayItemManager", ParlayItemManagerFactory);
 
-    ParlayItemManagerFactory.$inject = ["PromenadeBroker", "ParlayProtocolManager", "ParlayStore", "ParlayItemPersistence", "$window"];
-	function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager, ParlayStore, ParlayItemPersistence, $window) {
+    ParlayItemManagerFactory.$inject = ["PromenadeBroker", "ParlayProtocolManager", "ParlayStore", "ParlayItemPersistence", "$window", "$mdDialog"];
+    function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager, ParlayStore, ParlayItemPersistence, $window, $mdDialog) {
 
         /**
          * Holds container Objects for items currently active in workspace.
@@ -35,19 +36,19 @@
          */
         var store = ParlayStore("items");
 
-		/**
-		 * Manages [ParlayItem]{@link module:ParlayItem.ParlayItem}s active in the workspace.
+        /**
+         * Manages [ParlayItem]{@link module:ParlayItem.ParlayItem}s active in the workspace.
          * Interacts with [ParlayProtocolManager]{@link module:ParlayProtocol.ParlayProtocolManager} to
          * retrieve available [ParlayItem]{@link module:ParlayItem.ParlayItem}s.
          * Also interacts with [ParlayStore]{@link module:ParlayStore.ParlayStore} to retrieve any previous workspace
          * sessions.
-		 * @constructor module:ParlayItem.ParlayItemManager
+         * @constructor module:ParlayItem.ParlayItemManager
          */
-		function ParlayItemManager () {
+        function ParlayItemManager () {
             this.saved_workspaces = this.getWorkspaces();
-			// Add event handler before window unload to auto save items.
-			$window.addEventListener("beforeunload", ParlayItemManager.prototype.autoSave.bind(this));
-		}
+            // Add event handler before window unload to auto save items.
+            $window.addEventListener("beforeunload", ParlayItemManager.prototype.autoSave.bind(this));
+        }
 
         /**
          * Returns the number of items currently active.
@@ -208,72 +209,72 @@
             this.saved_workspaces = this.getWorkspaces();
         };
 
-		/**
-		 * Returns Object of active item containers.
+        /**
+         * Returns Object of active item containers.
          * @member module:ParlayItem.ParlayItemManager#getActiveItems
          * @public
-		 * @returns {Object} key: order, value: active item containers
-		 */
-		ParlayItemManager.prototype.getActiveItems = function () {
-			return active_items;
-		};
+         * @returns {Object} key: order, value: active item containers
+         */
+        ParlayItemManager.prototype.getActiveItems = function () {
+            return active_items;
+        };
 
-		/**
-		 * Checks if we currently have active items.
+        /**
+         * Checks if we currently have active items.
          * @member module:ParlayItem.ParlayItemManager#hasActiveItems
          * @public
-		 * @returns {Boolean} true if we have items, false otherwise.
-		 */
-		ParlayItemManager.prototype.hasActiveItems = function () {
-			return this.countActive() > 0;
-		};
+         * @returns {Boolean} true if we have items, false otherwise.
+         */
+        ParlayItemManager.prototype.hasActiveItems = function () {
+            return this.countActive() > 0;
+        };
 
-		/**
-		 * Returns the available items from all connected protocols.
+        /**
+         * Returns the available items from all connected protocols.
          * @member module:ParlayItem.ParlayItemManager#getAvailableItems
          * @public
-		 * @returns {Array} - Items available on all protocols.
-		 */
-		ParlayItemManager.prototype.getAvailableItems = function () {
-			var protocol_items = ParlayProtocolManager.getOpenProtocols().reduce(function (previous, current) {
-				return previous.concat(current.getAvailableItems());
-			}, []);
+         * @returns {Array} - Items available on all protocols.
+         */
+        ParlayItemManager.prototype.getAvailableItems = function () {
+            var protocol_items = ParlayProtocolManager.getOpenProtocols().reduce(function (previous, current) {
+                return previous.concat(current.getAvailableItems());
+            }, []);
             //add the broker's protocol-less items
             PromenadeBroker.items.forEach(function(v){ protocol_items.push(v);});
             return protocol_items;
-		};
+        };
 
-		/**
-		 * Check whether any discovery request has been made.
+        /**
+         * Check whether any discovery request has been made.
          * @member module:ParlayItem.ParlayItemManager#hasDiscovered
          * @public
-		 * @returns {Boolean} - True if we have successfully completed a discovery, false otherwise.
-		 */
-		ParlayItemManager.prototype.hasDiscovered = function () {
-			return PromenadeBroker.getLastDiscovery() !== undefined;
-		};
+         * @returns {Boolean} - True if we have successfully completed a discovery, false otherwise.
+         */
+        ParlayItemManager.prototype.hasDiscovered = function () {
+            return PromenadeBroker.getLastDiscovery() !== undefined;
+        };
 
-		/** Passes discovery request along to PromenadeBroker.
+        /** Passes discovery request along to PromenadeBroker.
          * @member module:ParlayItem.ParlayItemManager#requestDiscovery
          * @public
-		 * @returns {Promise} - Resolved when a response is received.
-		 */
-		ParlayItemManager.prototype.requestDiscovery = function () {
-			return PromenadeBroker.requestDiscovery();
-		};
+         * @returns {Promise} - Resolved when a response is received.
+         */
+        ParlayItemManager.prototype.requestDiscovery = function () {
+            return PromenadeBroker.requestDiscovery();
+        };
 
-		/**
-		 * Swaps the item at the specified index with the item at index + distance.
+        /**
+         * Swaps the item at the specified index with the item at index + distance.
          * @member module:ParlayItem.ParlayItemManager#reorder
          * @public
-		 * @param {Number} index - position of item to swap.
-		 * @param {Number} distance - How far to move target item.
-		 */
-		ParlayItemManager.prototype.reorder = function (index, distance) {
-			var temp = active_items[index + distance];
-			active_items[index + distance] = active_items[index];
-			active_items[index] = temp;
-		};
+         * @param {Number} index - position of item to swap.
+         * @param {Number} distance - How far to move target item.
+         */
+        ParlayItemManager.prototype.reorder = function (index, distance) {
+            var temp = active_items[index + distance];
+            active_items[index + distance] = active_items[index];
+            active_items[index] = temp;
+        };
 
         /**
          * Swaps the items at the given indices.
@@ -282,23 +283,23 @@
          * @param {Number} indexA - Index of item A.
          * @param {Number} indexB - Index of item B.
          */
-		ParlayItemManager.prototype.swap = function (indexA, indexB) {
-			var temp = active_items[parseInt(indexA, 10)];
-			active_items[parseInt(indexA, 10)] = active_items[parseInt(indexB, 10)];
-			active_items[parseInt(indexB, 10)] = temp;
-		};
+        ParlayItemManager.prototype.swap = function (indexA, indexB) {
+            var temp = active_items[parseInt(indexA, 10)];
+            active_items[parseInt(indexA, 10)] = active_items[parseInt(indexB, 10)];
+            active_items[parseInt(indexB, 10)] = temp;
+        };
 
-		/**
-		 * Activates item in workspace by creating a container Object that has a reference to the
+        /**
+         * Activates item in workspace by creating a container Object that has a reference to the
          * [ParlayItem]{@link module:ParlayItem.ParlayItem}, a unique ID and any previously stored values.
          * @member module:ParlayItem.ParlayItemManager#activateItem
          * @public
-		 * @param {ParlayItem} item - Reference to the item object we want to activate.
-		 * @param {Number} [uid] - If given a uid we will use the provided one. Otherwise randomly generate one.
-		 * @param {Object} stored_values - Values that may have been stored from a origin card or previous session.
-		 * @param {Number} [index] - Position in active_items Array.
-		 */
-		ParlayItemManager.prototype.activateItem = function (item, uid, stored_values, index) {
+         * @param {ParlayItem} item - Reference to the item object we want to activate.
+         * @param {Number} [uid] - If given a uid we will use the provided one. Otherwise randomly generate one.
+         * @param {Object} stored_values - Values that may have been stored from a origin card or previous session.
+         * @param {Number} [index] - Position in active_items Array.
+         */
+        ParlayItemManager.prototype.activateItem = function (item, uid, stored_values, index) {
 
             // If a uid is not provided search for an unused one.
             if (!uid) {
@@ -313,30 +314,31 @@
                 }
             }
 
-			var container = {
-				ref: item,
-				uid: uid,
-				stored_values: stored_values
-			};
 
-			if (!!index) {
-				// Update the $index in the active items container.
-				container.stored_values.$index = index;
+            var container = {
+                ref: item,
+                uid: uid, //ParlayWidgetManager.add(),
+                stored_values: stored_values
+            };
 
-				active_items.splice(index, 0, container);
-			}
-			else {
-				active_items.push(container);
-			}
-		};
+            if (!!index) {
+                // Update the $index in the active items container.
+                container.stored_values.$index = index;
 
-		/**
-		 * Creates a duplicate item container that references the same item available at the given index.
+                active_items.splice(index, 0, container);
+            }
+            else {
+                active_items.push(container);
+            }
+        };
+
+        /**
+         * Creates a duplicate item container that references the same item available at the given index.
          * @member module:ParlayItem.ParlayItemManager#duplicateItem
          * @public
-		 * @param {Number} index - Position of the item we want to duplicate.
-		 */
-		ParlayItemManager.prototype.duplicateItem = function (index) {
+         * @param {Number} index - Position of the item we want to duplicate.
+         */
+        ParlayItemManager.prototype.duplicateItem = function (index) {
             var used_ids = active_items.map(function (container) {
                 return container.uid;
             });
@@ -349,20 +351,20 @@
 
             var container = active_items[index];
 
-			var old_directive = 'parlayItemCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
+            var old_directive = 'parlayItemCard.' + container.ref.name.replace(' ', '_') + '_' + container.uid;
 
-			this.activateItem(container.ref, new_uid, ParlayItemPersistence.collectDirective(old_directive), index + 1);
-		};
+            this.activateItem(container.ref, new_uid, ParlayItemPersistence.collectDirective(old_directive), index + 1);
+        };
 
-		/**
-		 * Deactivates an item that is currently active.
+        /**
+         * Deactivates an item that is currently active.
          * @member module:ParlayItem.ParlayItemManager#deactivateItem
          * @public
-		 * @param {Number} index - Position of item to be deactivated.
-		 */
-		ParlayItemManager.prototype.deactivateItem = function (index) {
-			active_items.splice(index, 1);
-		};
+         * @param {Number} index - Position of item to be deactivated.
+         */
+        ParlayItemManager.prototype.deactivateItem = function (index) {
+            active_items.splice(index, 1);
+        };
 
         /**
          * Gets all saved workspace objects.
@@ -382,17 +384,27 @@
         };
 
         /**
-		 * Saves active items to a workspace titled AutoSave automatically.
+         * Saves active items to a workspace titled AutoSave automatically.
          * @member module:ParlayItem.ParlayItemManager#autoSave
          * @public
-		 */
-		ParlayItemManager.prototype.autoSave = function() {
-			if (this.hasActiveItems()) {
-				ParlayItemPersistence.store("AutoSave", true);
-			}
-		};
+         */
+        ParlayItemManager.prototype.autoSave = function() {
+            if (this.hasActiveItems()) {
+                ParlayItemPersistence.store("AutoSave", true);
+            }
+        };
 
-		return new ParlayItemManager();
-	}
+        ParlayItemManager.prototype.add = function(event) {
+            $mdDialog.show({
+                templateUrl: "../parlay_components/items/directives/parlay-item-library-dialog.html",
+                controller: "ParlayItemSearchController",
+                controllerAs: "ctrl",
+                clickOutsideToClose: true,
+                targetEvent: event
+            });
+        };
+
+        return new ParlayItemManager();
+    }
 
 }());

@@ -394,16 +394,6 @@
             }
         };
 
-        ParlayItemManager.prototype.add = function(event) {
-            $mdDialog.show({
-                templateUrl: "../parlay_components/items/directives/parlay-item-library-dialog.html",
-                controller: "ParlayItemSearchController",
-                controllerAs: "ctrl",
-                clickOutsideToClose: true,
-                targetEvent: event
-            });
-        };
-
         return new ParlayItemManager();
     }
 

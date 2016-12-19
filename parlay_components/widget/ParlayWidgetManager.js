@@ -314,38 +314,40 @@
          * @member module:ParlayWidget.ParlayWidgetManager#add
          * @public
          */
-        ParlayWidgetManager.prototype.add = function () {
+        ParlayWidgetManager.prototype.add = function (type) {
             console.log("CALL:  add() *widget*");
 
             var uid = this.generateUID();
-            this.active_widgets.push({uid: uid, zIndex: ++widgetLastZIndex.value});
+            this.active_widgets.push({uid: uid, zIndex: ++widgetLastZIndex.value, type: type});
+
+            console.log(this.active_widgets);
         };
 
-        ParlayWidgetManager.prototype.addParlayItem = function (item) {
-            console.log("CALL:  addParlayItem()");
-            var itemWidget = {};
-            var itemWidgetConfig = {};
-            var itemWidgetTemplate = {};
-            var uid = this.generateUID();
-
-            itemWidgetTemplate.configuration_tabs = [];
-            itemWidgetTemplate.display_name = item.id;
-            itemWidgetTemplate.name = "ParlayItemCard";
-            itemWidgetTemplate.type = "ParlayItem";
-            itemWidgetTemplate.item = item;
-            itemWidgetTemplate.uid = uid;
-
-            itemWidgetConfig.selectedEvents = [];
-            itemWidgetConfig.customizations = [];
-            itemWidgetConfig.template = itemWidgetTemplate;
-
-            itemWidget.uid = uid;
-            itemWidget.zIndex = ++widgetLastZIndex.value;
-            itemWidget.name = item.id;
-            itemWidget.configuration = itemWidgetConfig;
-
-            this.active_widgets.push(itemWidget);
-        };
+        // ParlayWidgetManager.prototype.addParlayItem = function (item) {
+        //     console.log("CALL:  addParlayItem()");
+        //     var itemWidget = {};
+        //     var itemWidgetConfig = {};
+        //     var itemWidgetTemplate = {};
+        //     var uid = this.generateUID();
+        //
+        //     itemWidgetTemplate.configuration_tabs = [];
+        //     itemWidgetTemplate.display_name = item.id;
+        //     itemWidgetTemplate.name = "ParlayItemCard";
+        //     itemWidgetTemplate.type = "ParlayItem";
+        //     itemWidgetTemplate.item = item;
+        //     itemWidgetTemplate.uid = uid;
+        //
+        //     itemWidgetConfig.selectedEvents = [];
+        //     itemWidgetConfig.customizations = [];
+        //     itemWidgetConfig.template = itemWidgetTemplate;
+        //
+        //     itemWidget.uid = uid;
+        //     itemWidget.zIndex = ++widgetLastZIndex.value;
+        //     itemWidget.name = item.id;
+        //     itemWidget.configuration = itemWidgetConfig;
+        //
+        //     this.active_widgets.push(itemWidget);
+        // };
 
         /**
          * Removes the widget that corresponds to the given uid.

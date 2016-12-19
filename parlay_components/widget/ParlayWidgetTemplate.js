@@ -73,8 +73,6 @@
         function ParlayWidgetTemplate(options, display_name) {
 
             console.log("CONSTRUCTOR: ParlayWidgetTemplate");
-            console.log(options);
-            console.log(display_name);
 
             var custom_link = options.customLink;
             var customization_defaults = options.customizationDefaults;

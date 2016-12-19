@@ -88,12 +88,12 @@
             ParlayWidgetManager.toggleEditing();
         }
 
-        function openItemsDialog (event) {
-            ParlayItemManager.add(event);
+        function openItemsDialog () {
+            ParlayWidgetManager.add("StandardItem");
         }
 
         function openWidgetsDialog() {
-            ParlayWidgetManager.add();
+            ParlayWidgetManager.add("StandardWidget");
         }
 
         /**

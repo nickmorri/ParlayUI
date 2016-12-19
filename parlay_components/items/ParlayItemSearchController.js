@@ -1,13 +1,13 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ['templates-main', 'parlay.items.manager', 'parlay.widget.manager'];
+    var module_dependencies = ['templates-main', 'parlay.items.manager'];
 
     angular
         .module('parlay.items.search', module_dependencies)
         .controller('ParlayItemSearchController', ParlayItemSearchController);
 
-    ParlayItemSearchController.$inject = ['$scope', '$mdSidenav', 'ParlayItemManager', '$mdDialog', 'ParlayWidgetManager'];
+    ParlayItemSearchController.$inject = ['$scope', '$mdSidenav', 'ParlayItemManager', '$mdDialog', 'itemCompiler'];
     /**
      * Handles providing [ParlayItem]{@link module:ParlayItem.ParlayItem}s to the mdAutocomplete directive.
      * @constructor module:ParlayItem.ParlayItemSearchController
@@ -16,7 +16,7 @@
      * @param {Object} $mdDialog - Angular Material dialog service.
      * @param {Object} ParlayItemManager - ParlayItemManager service.
      */
-    function ParlayItemSearchController ($scope, $mdSidenav, ParlayItemManager, $mdDialog, ParlayWidgetManager) {
+    function ParlayItemSearchController ($scope, $mdSidenav, ParlayItemManager, $mdDialog, itemCompiler) {
 
         var ctrl = this;
 
@@ -34,14 +34,13 @@
             };
         }
 
-        $scope.selected_item = null;
         $scope.search_text = null;
 
         ctrl.selectItem = selectItem;
         ctrl.querySearch = querySearch;
         ctrl.hasDiscovered = hasDiscovered;
         ctrl.toggle = toggle;
-        ctrl.closeSearch = $mdDialog.hide;
+        ctrl.closeSearch = $mdDialog.cancel;
 
         /**
          * On event handler for user selection of [ParlayItem]{@link module:ParlayItem.ParlayItem}.
@@ -55,16 +54,13 @@
                 return;
             }
 
-            ParlayItemManager.activateItem(item);
-            $scope.selected_item = null;
             $scope.search_text = null;
 
             // Hide sidenav after selecting item on smaller screen sizes where the sidenav is initially hidden.
             if (!$mdSidenav("navigation").isLockedOpen()) {
                 $mdSidenav("navigation").close();
             }
-
-            ParlayWidgetManager.addParlayItem(item);
+            itemCompiler(item);
         }
 
         /**

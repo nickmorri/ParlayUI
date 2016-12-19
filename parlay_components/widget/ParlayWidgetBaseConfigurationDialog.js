@@ -60,17 +60,6 @@
         $scope.configuration = configuration;
         $scope.item = item; //attach the item too for more information
 
-        // Attach methods to controller.
-        ctrl.cancel = cancel;
-        ctrl.hide = hide;
-
-        function cancel () {
-            $mdDialog.cancel();
-        }
-
-        function hide () {
-            $mdDialog.hide();
-        }
         // Attach $mdDialog controls to controller.
         ctrl.cancel = $mdDialog.cancel;
         ctrl.hide = $mdDialog.hide;

@@ -1,13 +1,13 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ['templates-main', 'parlay.items.manager'];
+    var module_dependencies = ['templates-main', 'parlay.items.manager', 'parlay.widget.manager'];
 
     angular
         .module('parlay.items.search', module_dependencies)
         .controller('ParlayItemSearchController', ParlayItemSearchController);
 
-    ParlayItemSearchController.$inject = ['$scope', '$mdSidenav', 'ParlayItemManager', '$mdDialog'];
+    ParlayItemSearchController.$inject = ['$scope', '$mdSidenav', 'ParlayItemManager', '$mdDialog', 'ParlayWidgetManager'];
     /**
      * Handles providing [ParlayItem]{@link module:ParlayItem.ParlayItem}s to the mdAutocomplete directive.
      * @constructor module:ParlayItem.ParlayItemSearchController
@@ -16,7 +16,7 @@
      * @param {Object} $mdDialog - Angular Material dialog service.
      * @param {Object} ParlayItemManager - ParlayItemManager service.
      */
-    function ParlayItemSearchController ($scope, $mdSidenav, ParlayItemManager, $mdDialog) {
+    function ParlayItemSearchController ($scope, $mdSidenav, ParlayItemManager, $mdDialog, ParlayWidgetManager) {
 
         var ctrl = this;
 
@@ -54,6 +54,7 @@
             if (item === null || item === undefined) {
                 return;
             }
+
             ParlayItemManager.activateItem(item);
             $scope.selected_item = null;
             $scope.search_text = null;
@@ -62,6 +63,8 @@
             if (!$mdSidenav("navigation").isLockedOpen()) {
                 $mdSidenav("navigation").close();
             }
+
+            ParlayWidgetManager.addParlayItem(item);
         }
 
         /**

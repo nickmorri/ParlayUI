@@ -31,27 +31,44 @@
 
     <md-list layout="column" flex class="parlay-navigation-list" ng-controller="ParlayNavigationSidenavController as ctrl">
 
-        <md-list-item ng-click="ctrl.openItemsDialog($event)">
-            <md-icon ng-md-icon class="parlay-nav-icon" icon="extension"></md-icon>
-            <p>Items</p>
-        </md-list-item>
+        <div ng-show="ctrl.editing">
+            <md-list-item ng-click="ctrl.openItemsDialog($event)">
+                <md-icon ng-md-icon class="parlay-nav-icon" icon="apps"></md-icon>
+                <p>Items</p>
+            </md-list-item>
 
-        <md-list-item ng-click="ctrl.openWidgetsDialog($event)">
-            <md-icon ng-md-icon class="parlay-nav-icon" icon="create"></md-icon>
-            <p>Widgets</p>
-        </md-list-item>
+            <md-list-item ng-click="ctrl.openWidgetsDialog($event)">
+                <md-icon ng-md-icon class="parlay-nav-icon" icon="extension"></md-icon>
+                <p>Widgets</p>
+            </md-list-item>
 
-        <md-divider></md-divider>
+            <md-divider></md-divider>
+        </div>
 
         <md-list-item ng-click="ctrl.requestDiscovery()" title="Request discovery">
             <md-icon ng-md-icon class="parlay-nav-icon" icon="autorenew"></md-icon>
             <p>Discovery</p>
         </md-list-item>
 
+        <md-list-item ng-click="ctrl.openWidgetSaveLoadDialog($event)" title="Open widget save/load dialog">
+            <md-icon ng-md-icon class="parlay-nav-icon" icon="dashboard"></md-icon>
+            <p>Workspaces</p>
+        </md-list-item>
+
         <md-list-item title="Toggle editing">
             <md-icon ng-md-icon class="parlay-nav-icon" icon="edit"></md-icon>
-            Widget Editing
+                Edit
             <md-switch class="md-secondary" ng-model="ctrl.editing" ng-change="ctrl.toggleWidgetEditing()" aria-label="Editing"></md-switch>
+        </md-list-item>
+
+        <md-divider></md-divider>
+
+        <md-list-item ng-show="ctrl.getCurrentState().name == 'widgets'" title="Items State" ng-click="ctrl.navigateState('items')">
+            <p>Go to Items State</p>
+        </md-list-item>
+
+        <md-list-item ng-show="ctrl.getCurrentState().name == 'items'" title="Widgets State" ng-click="ctrl.navigateState('widgets')">
+            <p>Go to Widgets State</p>
         </md-list-item>
 
         <span flex></span>

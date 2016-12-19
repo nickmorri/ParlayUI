@@ -287,12 +287,14 @@
             }
         };
 
+
         /**
-         * Creates container Object for a widget and assigns it a unique ID.
-         * @member module:ParlayWidget.ParlayWidgetManager#add
-         * @public
+         * generates an unused UID to assigned to a new widget
+         * @returns {number}
          */
-        ParlayWidgetManager.prototype.add = function () {
+        ParlayWidgetManager.prototype.generateUID = function () {
+            console.log("CALL:  generateUID()");
+
             var uid = 0;
 
             var active_uids = this.active_widgets.map(function (container) {
@@ -303,9 +305,46 @@
                 uid++;
             }
 
-            this.active_widgets.push({uid: uid, zIndex: ++widgetLastZIndex.value});
             return uid;
+        };
 
+
+        /**
+         * Creates container Object for a widget and assigns it a unique ID.
+         * @member module:ParlayWidget.ParlayWidgetManager#add
+         * @public
+         */
+        ParlayWidgetManager.prototype.add = function () {
+            console.log("CALL:  add() *widget*");
+
+            var uid = this.generateUID();
+            this.active_widgets.push({uid: uid, zIndex: ++widgetLastZIndex.value});
+        };
+
+        ParlayWidgetManager.prototype.addParlayItem = function (item) {
+            console.log("CALL:  addParlayItem()");
+            var itemWidget = {};
+            var itemWidgetConfig = {};
+            var itemWidgetTemplate = {};
+            var uid = this.generateUID();
+
+            itemWidgetTemplate.configuration_tabs = [];
+            itemWidgetTemplate.display_name = item.id;
+            itemWidgetTemplate.name = "ParlayItemCard";
+            itemWidgetTemplate.type = "ParlayItem";
+            itemWidgetTemplate.item = item;
+            itemWidgetTemplate.uid = uid;
+
+            itemWidgetConfig.selectedEvents = [];
+            itemWidgetConfig.customizations = [];
+            itemWidgetConfig.template = itemWidgetTemplate;
+
+            itemWidget.uid = uid;
+            itemWidget.zIndex = ++widgetLastZIndex.value;
+            itemWidget.name = item.id;
+            itemWidget.configuration = itemWidgetConfig;
+
+            this.active_widgets.push(itemWidget);
         };
 
         /**
@@ -326,6 +365,8 @@
          * @public
          * @param {Number} old_uid - Unique ID given to widget on add.
          */
+        // TODO: need to initialize coordinates when making new widget
+        // duplicating a brand new widget that has not been moved does not duplicate
         ParlayWidgetManager.prototype.duplicate = function (old_uid) {
             var copy = angular.copy(this.active_widgets.find(function (container) {
                 return container.uid === old_uid;

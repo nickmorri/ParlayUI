@@ -38,7 +38,9 @@
             restrict: "E",
             templateUrl: "../parlay_components/widget/directives/parlay-widget-base-card.html",
             link: function (scope, element) {
+                console.log("CONSTRUCTOR: ParlayWidgetBaseCard");
                 // Dispatch an event upwards notifying all listeners registered for the given event.
+                console.log("EVENT: parlayWidgetBaseCardLoaded emitted");
                 scope.$emit("parlayWidgetBaseCardLoaded", element);
             }
         };

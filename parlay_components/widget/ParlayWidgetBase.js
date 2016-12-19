@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["ngMaterial", "parlay.widget.base.configuration"];
+    var module_dependencies = ["ngMaterial", "parlay.widget.base.configuration", "parlay.items.search"];
 
     angular
         .module("parlay.widget.base", module_dependencies)
@@ -44,6 +44,7 @@
              */
             link: function (scope, element) {
 
+                console.log("CONSTRUCTOR: ParlayWidgetBase");
                 /**
                  * Reference to the [Draggabilly]{@link http://draggabilly.desandro.com/} instance that is attached to the element.
                  * @member module:ParlayWidget.ParlayWidgetBase#draggie
@@ -57,11 +58,13 @@
 
                 // Handle widget initialization on parlayWidgetTemplateLoaded event.
                 scope.$on("parlayWidgetTemplateLoaded", function () {
+                    console.log("EVENT: parlayWidgetTemplateLoaded");
                     onLoaded(element[0]);
                 });
 
                 // Handle widget initialization on parlayWidgetBaseCardLoaded event.
                 scope.$on("parlayWidgetBaseCardLoaded", function (event, element) {
+                    console.log("EVENT: parlayWidgetBaseCardLoaded");
                     onLoaded(element[0].parentElement.parentElement);
                 });
 
@@ -84,9 +87,11 @@
                 // If an existing configuration Object exists we should restore the configuration, otherwise construct
                 // from scratch.
                 if (!!scope.item.configuration) {
+                    console.log("CALL:  Loading existing configuration");
                     compileWrapper()(angular.copy(scope.item.configuration.template));
                 }
                 else {
+                    console.log("CALL:  Creating new widget from scratch");
                     scope.initialized = false;
                     scope.item.configuration = {};
                     scope.item.name = ""; // this turns into scope.info.name in widgettemplate
@@ -166,6 +171,8 @@
                  * @param {Object} [initialPosition] - Optional position that we should set the ParlayWidget to.
                  */
                 function enableDraggabilly (element, initialPosition) {
+
+                    console.log("CALL:  enableDraggabilly()");
 
                     // If a Draggabilly instance already exists we should destroy it.
                     if (!!draggie) {
@@ -258,6 +265,9 @@
                  * @returns {Function} - Attaches the specified ParlayWidget template as a child of the ParlayBaseWidget.
                  */
                 function compileWrapper () {
+
+                    console.log("CALL:  compileWrapper()");
+
                     var scope_ref = scope;
                     var element_ref = element;
 
@@ -285,6 +295,18 @@
                      * @param {Object} template - ParlayBaseWidget template definition Object.
                      */
                     function templateCompiler (template) {
+
+                        // console.log(scope);
+                        console.log("CALL:  templateCompiler()");
+                        console.log("TEMPLATE: ");
+                        console.log(template);
+
+                        if (template.type === "ParlayItem") {
+                            scope.container = {};
+                            scope.container.uid = template.uid;
+                            scope.container.ref = template.item;
+                        }
+
                         // Destroys the $scopes beneath ParlayBaseWidget element and removes the child elements before
                         // compiling any new template.
                         while (element_ref[0].firstChild) {
@@ -298,12 +320,17 @@
                         // Generate String of template name and the attribute String.
                         var element_tag_with_attributes = "<" + snake_case + " " + attributes + "></" + snake_case + ">";
 
+                        console.log(element_tag_with_attributes);
+
                         // HTML Element of the ParlayWidget template that will be attached as a child to the ParlayBaseWidget Element.
                         var child_element = $compile(element_tag_with_attributes)(scope_ref.$new())[0];
 
-                        element_ref[0].appendChild(child_element);
-                    }
+                        console.log(child_element);
 
+                        element_ref[0].appendChild(child_element);
+
+                        console.log("end of function templateCompiler()");
+                    }
                     return templateCompiler;
                 }
 
@@ -316,6 +343,7 @@
                  * the user hit the edit button.
                  */
                 function edit (initializing) {
+                    console.log("CALL:  edit()");
                     $mdDialog.show({
                         templateUrl: "../parlay_components/widget/directives/parlay-widget-base-configuration-dialog.html",
                         clickOutsideToClose: true,
@@ -332,6 +360,14 @@
                         }
                     });
                 }
+
+                // TODO: create a way to add items to widget workspace with a custom compiler
+                // Compiling is easy with the base and template loading because of widget registrations
+                // some magic that happens in the widget registration injects the WidgetTemplate constructor
+                // as a dependency, but we cannot register the ParlayItemCard without breaking things
+                // Thus we will need a special compiler that will do the same stuff that the registration of
+                // widgets does automatically
+
             }
         };
     }

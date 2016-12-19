@@ -21,8 +21,12 @@
             templateUrl: "../parlay_components/items/directives/parlay-item-card.html",
             link: function (scope, element) {
 
-                // Setup drag handlers for ParlayItemCard drag and drop rearrange functionality.
-                setupDragHandlers(element, scope);
+                // console.log("scope:");
+                // console.log(scope);
+                // console.log("scope.container");
+                // console.log(scope.container);
+                // console.log("element");
+                // console.log(element);
 
                 // Grab the item reference from the container for convenience of using scope.item.
                 scope.item = scope.container.ref;
@@ -36,49 +40,6 @@
                 ParlayItemPersistence.monitor(directive_name, "$index", scope);
                 ParlayItemPersistence.monitor(directive_name, "active_tab_index", scope);
 
-                /**
-                 * Setup drag event handlers to allow cards to by rearranged by dragging.
-                 * @member module:ParlayItem.ParlayItemCard#setupDragHandlers
-                 * @private
-                 * @param {HTMLElement} element - ParlayItemCard HTML element.
-                 * @param {Object} scope - AngularJS $scope Object.
-                 */
-                function setupDragHandlers (element, scope) {
-
-                    // Fired when drag event begins on a ParlayItemCard.
-                    element.on('dragstart', function (event) {
-                        // Set the card index in the event.
-                        event.dataTransfer.setData("text/plain", scope.$index);
-
-                        // Specify the type of drop zone that can accept the event.
-                        event.dataTransfer.effectAllowed = "link";
-                    });
-
-                    // Fired as a ParlayItemCard is dragged over a ParlayItemCard.
-                    element.on('dragover', function (event) {
-                        // Specify the type of draggable this element can accept.
-                        event.dataTransfer.dropEffect = "link";
-
-                        // Indicates the element is a valid drop zone.
-                        event.preventDefault();
-                        event.stopPropagation();
-                        return false;
-                    });
-
-                    // Fired when a ParlayItemCard is dropped on a ParlayItemCard.
-                    element.on('drop', function (event) {
-                        // Indices of the source and destination ParlayItemCard of the drag event.
-                        var this_index = scope.$index;
-                        var that_index = event.dataTransfer.getData("text/plain");
-
-                        // Swap the ParlayItemCards.
-                        scope.$apply(function () {
-                            scope.itemCtrl.swap(this_index, that_index);
-                        });
-
-                    });
-
-                }
 
                 /**
                  * Compiles the toolbar set on the item.
@@ -132,9 +93,7 @@
                         });
                     });
                 }
-
             }
         };
     }
-
 }());

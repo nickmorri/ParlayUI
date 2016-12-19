@@ -72,6 +72,10 @@
          */
         function ParlayWidgetTemplate(options, display_name) {
 
+            console.log("CONSTRUCTOR: ParlayWidgetTemplate");
+            console.log(options);
+            console.log(display_name);
+
             var custom_link = options.customLink;
             var customization_defaults = options.customizationDefaults;
             var custom_properties = !!options.properties ? options.properties : {};
@@ -176,10 +180,12 @@
 
                 // If the user defined a customLink we should call it.
                 if (!!custom_link) {
+                    console.log("CALL:  custom link");
                     custom_link(scope, element, attrs, controller, transcludeFn);
                 }
 
                 // ParlayWidgets should notify their parent, ParlayBaseWidget, when they are loaded.
+                console.log("EVENT: parlayWidgetTemplateLoaded emitted ");
                 scope.$emit("parlayWidgetTemplateLoaded");
             }
 

@@ -78,7 +78,10 @@
         // When the configuration.template changes compile the widget template.
         $scope.$watch("configuration.template", function (newValue, oldValue) {
 
+            console.log("WATCH: configuration.template changed");
+
             if (!angular.equals(newValue, oldValue)) {
+                console.log("CALL: invoking widgetCompiler()");
                 widgetCompiler($scope.configuration.template);
             }
         });

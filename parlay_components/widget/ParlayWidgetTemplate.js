@@ -72,8 +72,6 @@
          */
         function ParlayWidgetTemplate(options, display_name) {
 
-            console.log("CONSTRUCTOR: ParlayWidgetTemplate");
-
             var custom_link = options.customLink;
             var customization_defaults = options.customizationDefaults;
             var custom_properties = !!options.properties ? options.properties : {};
@@ -121,11 +119,11 @@
                     // add every default that ISNT ins the current scope to the current scope
                     for(var dk in customization_defaults)
                     {
-                       if(!customization_defaults.hasOwnProperty(dk)) continue; //skip builtins
-                       if(!(dk in scope.customizations))
-                       {
-                           scope.customizations[dk] = angular.copy(customization_defaults[dk]);
-                       }
+                        if(!customization_defaults.hasOwnProperty(dk)) continue; //skip builtins
+                        if(!(dk in scope.customizations))
+                        {
+                            scope.customizations[dk] = angular.copy(customization_defaults[dk]);
+                        }
                     }
                 }
                 // If the user defined customizations and we don't have any we should assign them.
@@ -139,7 +137,7 @@
                 {   // only keys for this object
                     if(custom_properties.hasOwnProperty(key))
                     {
-                       scope.properties[key] = {value: custom_properties[key].default};
+                        scope.properties[key] = {value: custom_properties[key].default};
                     }
                 }
 
@@ -175,15 +173,12 @@
 
                 addWatcher();
 
-
                 // If the user defined a customLink we should call it.
                 if (!!custom_link) {
-                    console.log("CALL:  custom link");
                     custom_link(scope, element, attrs, controller, transcludeFn);
                 }
 
                 // ParlayWidgets should notify their parent, ParlayBaseWidget, when they are loaded.
-                console.log("EVENT: parlayWidgetTemplateLoaded emitted ");
                 scope.$emit("parlayWidgetTemplateLoaded");
             }
 

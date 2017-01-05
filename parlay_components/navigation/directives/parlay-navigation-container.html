@@ -63,11 +63,11 @@
 
         <md-divider></md-divider>
 
-        <md-list-item ng-show="ctrl.getCurrentState().name == 'widgets'" title="Items State" ng-click="ctrl.navigateState('items')">
+        <md-list-item ng-show="ctrl.getCurrentState().name != 'items'" title="Items State" ng-click="ctrl.navigateState('items')">
             <p>Go to Items State</p>
         </md-list-item>
 
-        <md-list-item ng-show="ctrl.getCurrentState().name == 'items'" title="Widgets State" ng-click="ctrl.navigateState('widgets')">
+        <md-list-item ng-show="ctrl.getCurrentState().name != 'widgets'" title="Widgets State" ng-click="ctrl.navigateState('widgets')">
             <p>Go to Widgets State</p>
         </md-list-item>
 

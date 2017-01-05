@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["ngMaterial", "parlay.widget.base.configuration", "parlay.items.search"];
+    var module_dependencies = ["ngMaterial", "parlay.widget.base.configuration", "parlay.items.search", "parlay.widget.controller"];
 
     angular
         .module("parlay.widget.base", module_dependencies)
@@ -44,8 +44,6 @@
              */
             link: function (scope, element) {
 
-                console.log("CONSTRUCTOR: ParlayWidgetBase");
-
                 /**
                  * Reference to the [Draggabilly]{@link http://draggabilly.desandro.com/} instance that is attached to the element.
                  * @member module:ParlayWidget.ParlayWidgetBase#draggie
@@ -58,16 +56,22 @@
 
                 // Handle widget initialization on parlayWidgetTemplateLoaded event.
                 scope.$on("parlayWidgetTemplateLoaded", function () {
-                    console.log("EVENT: parlayWidgetTemplateLoaded");
                     onLoaded(element[0]);
-                    console.log(element[0]);
                 });
 
                 // Handle widget initialization on parlayWidgetBaseCardLoaded event.
                 scope.$on("parlayWidgetBaseCardLoaded", function (event, element) {
-                    console.log("EVENT: parlayWidgetBaseCardLoaded");
                     onLoaded(element[0].parentElement.parentElement);
-                    console.log(element[0]);
+                });
+
+                scope.$on("parlayItemCardLoaded", function(event, element) {
+
+                    onLoaded(element[0].parentElement);
+
+                    // var dragElement = element[0].parentElement;
+                    //
+                    // enableDraggabilly(dragElement);
+
                 });
 
                 // Handle $destroy event.
@@ -89,16 +93,12 @@
                 // If an existing configuration Object exists we should restore the configuration, otherwise construct
                 // from scratch.
 
-                console.log(scope);
-
                 if (!!scope.item.configuration) {
-                    console.log("CALL:  Loading existing configuration");
                     compileWrapper()(angular.copy(scope.item.configuration.template));
                 } else if (scope.item.type === "StandardItem") {
                     scope.initialized = false;
                     addItem();
                 } else {
-                    console.log("CALL:  Creating new widget from scratch");
                     scope.initialized = false;
                     scope.item.configuration = {};
                     scope.item.name = ""; // this turns into scope.info.name in widgettemplate
@@ -125,6 +125,9 @@
                  * @param {Array} configuration.selected_events - User selected element events that should have handlers reattached.
                  */
                 function restoreHandlers (configuration) {
+                    if (!configuration)
+                        return;
+
                     if (!!configuration.selectedEvents) {
                         configuration.selectedEvents = configuration.selectedEvents.map(function (shallow_event) {
 
@@ -158,6 +161,9 @@
                  * @param {ParlayWidgetTransformer} configuration.transformer
                  */
                 function restoreTransformer (configuration) {
+                    if (!configuration)
+                        return;
+
                     if (!!configuration.transformer) {
                         configuration.selectedItems = configuration.selectedItems.map(function (item) {
                             return ParlayData.get(item.name);
@@ -179,9 +185,6 @@
                  */
                 function enableDraggabilly (element, initialPosition) {
 
-                    console.log("CALL:  enableDraggabilly()");
-                    console.log(element);
-
                     // If a Draggabilly instance already exists we should destroy it.
                     if (!!draggie) {
                         draggie.destroy();
@@ -190,6 +193,7 @@
                     // Create a Draggabilly instance for the given element. If a handle CSS class is included on any
                     // child element we should use that as the handle. Contain widget dragging to enclosing div with
                     // .view-container class.
+
                     draggie = new Draggabilly(element, {
                         handle: ".handle",
                         containment: ".view-container"
@@ -210,13 +214,8 @@
                     var card = angular.element(element).find("md-card");
                     if (!!card) {
 
-                        console.log("this element is a card");
-
                         // Dropping animation.
                         draggie.on("dragEnd", function () {
-
-                            console.log("dragEnd");
-
                             var height = 24;
                             var promise = $interval(function () {
                                 if (height == 1) {
@@ -232,9 +231,6 @@
 
                         // Picking up animation.
                         draggie.on("dragStart", function () {
-
-                            console.log("Drag start");
-
                             var height = 1;
                             if (angular.element(element)[0].style.zIndex === "" || parseInt(angular.element(element)[0].style.zIndex, 10) < widgetLastZIndex.value) {
                                 angular.element(element)[0].style.zIndex = ++widgetLastZIndex.value;
@@ -250,10 +246,6 @@
                                     height++;
                                 }
                             }, 5);
-                        });
-
-                        draggie.on("pointerDown", function() {
-                            console.log("pointerDown");
                         });
                     }
 
@@ -271,8 +263,7 @@
                     scope.$watch("widgetsCtrl.editing", function (editing) {
                         if (editing) {
                             draggie.enable();
-                        }
-                        else {
+                        } else {
                             draggie.disable();
                         }
                     });
@@ -286,8 +277,6 @@
                  * @returns {Function} - Attaches the specified ParlayWidget template as a child of the ParlayBaseWidget.
                  */
                 function compileWrapper () {
-                    console.log("CALL:  compileWrapper()");
-
                     var scope_ref = scope;
                     var element_ref = element;
 
@@ -316,11 +305,6 @@
                      */
                     function templateCompiler (template) {
 
-                        // console.log(scope);
-                        console.log("CALL:  templateCompiler()");
-                        console.log("TEMPLATE: ");
-                        console.log(template);
-
                         // Destroys the $scopes beneath ParlayBaseWidget element and removes the child elements before
                         // compiling any new template.
                         while (element_ref[0].firstChild) {
@@ -334,13 +318,8 @@
                         // Generate String of template name and the attribute String.
                         var element_tag_with_attributes = "<" + snake_case + " " + attributes + "></" + snake_case + ">";
 
-                        console.log("element created");
-
                         // HTML Element of the ParlayWidget template that will be attached as a child to the ParlayBaseWidget Element.
                         var child_element = $compile(element_tag_with_attributes)(scope_ref.$new())[0];
-
-                        console.log("element compiled");
-                        console.log(child_element);
 
                         element_ref[0].appendChild(child_element);
                     }
@@ -349,30 +328,17 @@
 
 
                 function compileItem() {
-                    console.log("CALL: compileItem()");
-
                     var scope_ref = scope;
                     var element_ref = element;
 
                     var attributes = [
-                        ["items", "item.configuration.transformer.items"],
-                        ["transformed-value", "item.configuration.transformer.value"],
-                        ["widgets-ctrl", "widgetsCtrl"],
                         ["edit", "edit"],
-                        ["uid", "item.uid"],
-                        ["flex-xs", "100"],
-                        ["flex-sm", "50"],
-                        ["flex-md", "50"],
-                        ["flex", "33"]
+                        ["uid", "item.uid"]
                     ].map(function (attribute) {
                         return attribute[0] + "='" + attribute[1] + "'";
                     }).join(" ");
 
                     function itemCompiler(item) {
-
-                        console.log("CALL: itemCompiler");
-                        console.log("ITEM:");
-                        console.log(item);
 
                         scope.container = {};
                         scope.container.uid = scope.uid;
@@ -384,20 +350,10 @@
                         }
 
                         var itemElement = "<parlay-item-card " + attributes + " ></parlay-item-card>";
-                        console.log("item element created");
-
                         var child_element =  $compile(itemElement)(scope_ref.$new())[0];
 
                         element_ref[0].appendChild(child_element);
                         scope.initialized = true;
-
-                        var draggie = new Draggabilly(element_ref[0], {
-                            containment: ".view-container"
-                        });
-                        draggie.enable();
-
-                        // onLoaded(element_ref[0]);
-
                     }
                     return itemCompiler;
                 }
@@ -411,7 +367,6 @@
                  * the user hit the edit button.
                  */
                 function edit (initializing) {
-                    console.log("CALL:  edit()");
                     $mdDialog.show({
                         templateUrl: "../parlay_components/widget/directives/parlay-widget-base-configuration-dialog.html",
                         clickOutsideToClose: true,
@@ -430,7 +385,6 @@
                 }
 
                 function addItem() {
-                    console.log("CALL: addItem()");
                     $mdDialog.show({
                         templateUrl: "../parlay_components/items/directives/parlay-item-library-dialog.html",
                         controller: "ParlayItemSearchController",

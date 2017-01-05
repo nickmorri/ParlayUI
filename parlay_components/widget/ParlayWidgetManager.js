@@ -4,7 +4,7 @@
     var module_dependencies = ["parlay.store", "parlay.settings"];
 
     var widgetLastZIndex = {
-      value: 0
+        value: 0
     };
 
     angular
@@ -293,8 +293,6 @@
          * @returns {number}
          */
         ParlayWidgetManager.prototype.generateUID = function () {
-            console.log("CALL:  generateUID()");
-
             var uid = 0;
 
             var active_uids = this.active_widgets.map(function (container) {
@@ -315,39 +313,15 @@
          * @public
          */
         ParlayWidgetManager.prototype.add = function (type) {
-            console.log("CALL:  add() *widget*");
-
             var uid = this.generateUID();
-            this.active_widgets.push({uid: uid, zIndex: ++widgetLastZIndex.value, type: type});
+            var new_widget ={uid: uid, zIndex: ++widgetLastZIndex.value};
 
-            console.log(this.active_widgets);
+            if (!!type)
+                new_widget.type = type;
+
+
+            this.active_widgets.push(new_widget);
         };
-
-        // ParlayWidgetManager.prototype.addParlayItem = function (item) {
-        //     console.log("CALL:  addParlayItem()");
-        //     var itemWidget = {};
-        //     var itemWidgetConfig = {};
-        //     var itemWidgetTemplate = {};
-        //     var uid = this.generateUID();
-        //
-        //     itemWidgetTemplate.configuration_tabs = [];
-        //     itemWidgetTemplate.display_name = item.id;
-        //     itemWidgetTemplate.name = "ParlayItemCard";
-        //     itemWidgetTemplate.type = "ParlayItem";
-        //     itemWidgetTemplate.item = item;
-        //     itemWidgetTemplate.uid = uid;
-        //
-        //     itemWidgetConfig.selectedEvents = [];
-        //     itemWidgetConfig.customizations = [];
-        //     itemWidgetConfig.template = itemWidgetTemplate;
-        //
-        //     itemWidget.uid = uid;
-        //     itemWidget.zIndex = ++widgetLastZIndex.value;
-        //     itemWidget.name = item.id;
-        //     itemWidget.configuration = itemWidgetConfig;
-        //
-        //     this.active_widgets.push(itemWidget);
-        // };
 
         /**
          * Removes the widget that corresponds to the given uid.

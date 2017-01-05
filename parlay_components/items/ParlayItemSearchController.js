@@ -35,6 +35,7 @@
         }
 
         $scope.search_text = null;
+        $scope.selected_item = null;
 
         ctrl.selectItem = selectItem;
         ctrl.querySearch = querySearch;
@@ -55,6 +56,7 @@
             }
 
             $scope.search_text = null;
+            $scope.selected_item = null;
 
             // Hide sidenav after selecting item on smaller screen sizes where the sidenav is initially hidden.
             if (!$mdSidenav("navigation").isLockedOpen()) {

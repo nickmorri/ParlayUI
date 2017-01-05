@@ -4,7 +4,7 @@
     var module_dependencies = ["ngMdIcons", "templates-main", "parlay.item.persistence"];
 
     angular
-        .module("parlay.items.item.card", module_dependencies)
+        .module("parlay.items.card", module_dependencies)
         .directive("parlayItemCard", ParlayItemCard);
 
     ParlayItemCard.$inject = ["$compile", "ParlayItemPersistence"];
@@ -21,13 +21,6 @@
             templateUrl: "../parlay_components/items/directives/parlay-item-card.html",
             link: function (scope, element) {
 
-                // console.log("scope:");
-                // console.log(scope);
-                // console.log("scope.container");
-                // console.log(scope.container);
-                // console.log("element");
-                // console.log(element);
-
                 // Grab the item reference from the container for convenience of using scope.item.
                 scope.item = scope.container.ref;
 
@@ -40,6 +33,7 @@
                 ParlayItemPersistence.monitor(directive_name, "$index", scope);
                 ParlayItemPersistence.monitor(directive_name, "active_tab_index", scope);
 
+                scope.$emit("parlayItemCardLoaded", element);
 
                 /**
                  * Compiles the toolbar set on the item.

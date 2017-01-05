@@ -66,11 +66,7 @@
 
         // When the configuration.template changes compile the widget template.
         $scope.$watch("configuration.template", function (newValue, oldValue) {
-
-            console.log("WATCH: configuration.template changed");
-
             if (!angular.equals(newValue, oldValue)) {
-                console.log("CALL: invoking widgetCompiler()");
                 widgetCompiler($scope.configuration.template);
             }
         });
@@ -311,9 +307,9 @@
                 );
             });
             /* TODO: Add ability for transformer widgets to be able totake input from input widgets
-            var filtered_elements = ParlayWidgetInputManager.getElements().filter(function (element) {
-                return element.element_name.indexOf(lowercase_query) > -1 &&  $scope.configuration.selectedItems.indexOf(element) === -1;
-            });*/
+             var filtered_elements = ParlayWidgetInputManager.getElements().filter(function (element) {
+             return element.element_name.indexOf(lowercase_query) > -1 &&  $scope.configuration.selectedItems.indexOf(element) === -1;
+             });*/
 
             return filtered_items;//.concat(filtered_elements);
         }

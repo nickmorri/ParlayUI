@@ -326,8 +326,7 @@
                 container.stored_values.$index = index;
 
                 active_items.splice(index, 0, container);
-            }
-            else {
+            } else {
                 active_items.push(container);
             }
         };
@@ -392,6 +391,16 @@
             if (this.hasActiveItems()) {
                 ParlayItemPersistence.store("AutoSave", true);
             }
+        };
+
+
+        ParlayItemManager.prototype.openItemsDialog = function() {
+            $mdDialog.show({
+                templateUrl: "../parlay_components/items/directives/parlay-item-library-dialog.html",
+                controller: "ParlayItemSearchController",
+                controllerAs: "ctrl",
+                clickOutsideToClose: true
+            })
         };
 
         return new ParlayItemManager();

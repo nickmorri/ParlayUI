@@ -2,8 +2,8 @@
     "use strict";
 
     var module_dependencies = ["ngMaterial", "parlay.items.search", "parlay.protocols.list_controller",
-                               "parlay.settings.dialog", "parlay.common.genericsaveloaddialog", "parlay.items.manager",
-                               "parlay.widget.manager"];
+        "parlay.settings.dialog", "parlay.common.genericsaveloaddialog", "parlay.items.manager",
+        "parlay.widget.manager"];
 
     // module_dependencies.push("parlay.workspaces.manager");
 
@@ -11,7 +11,7 @@
         .controller("ParlayNavigationSidenavController", ParlayNavigationSidenavController);
 
     ParlayNavigationSidenavController.$inject = ["$mdSidenav", "$mdDialog", "ParlayGenericSaveLoadDialog", "$state",
-                                                 "PromenadeBroker", "ParlayWidgetManager", "ParlayItemManager"];
+        "PromenadeBroker", "ParlayWidgetManager", "ParlayItemManager"];
     /**
      * Controller for the navigation [$mdSidenav]{@link https://material.angularjs.org/latest/api/service/$mdSidenav}.
      * @constructor module:ParlayNavigation.ParlayNavigationSidenavController
@@ -93,7 +93,7 @@
         }
 
         function openWidgetsDialog() {
-            ParlayWidgetManager.add("StandardWidget");
+            ParlayWidgetManager.add();
         }
 
         /**

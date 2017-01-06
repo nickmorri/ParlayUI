@@ -22,7 +22,9 @@
             link: function (scope, element) {
 
                 // Grab the item reference from the container for convenience of using scope.item.
+                scope.uid = scope.container.uid;
                 scope.item = scope.container.ref;
+                scope.type = "StandardItem";
 
                 // Compile all the toolbar and tab directives.
                 compileDirectives();

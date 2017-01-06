@@ -93,7 +93,7 @@
         }
 
         function openWidgetsDialog() {
-            ParlayWidgetManager.add();
+            ParlayWidgetManager.add("StandardWidget");
         }
 
         /**

@@ -1,5 +1,4 @@
 <md-card>
-
     <md-chips ng-model="configuration.selectedEvents" md-require-match="true" md-on-add="eventCtrl.addHandler($chip)" md-on-remove="eventCtrl.removeHandler($chip)">
         <md-autocomplete
                 md-min-length="0"
@@ -18,5 +17,4 @@
             <em>{{eventCtrl.getActiveWidget($chip.element.uid).name}}</em> → <strong>{{$chip.event}}</strong>
         </md-chip-template>
     </md-chips>
-
 </md-card>

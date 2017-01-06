@@ -314,12 +314,7 @@
          */
         ParlayWidgetManager.prototype.add = function (type) {
             var uid = this.generateUID();
-            var new_widget ={uid: uid, zIndex: ++widgetLastZIndex.value};
-
-            if (!!type)
-                new_widget.type = type;
-
-
+            var new_widget ={uid: uid, zIndex: ++widgetLastZIndex.value, type: type};
             this.active_widgets.push(new_widget);
         };
 

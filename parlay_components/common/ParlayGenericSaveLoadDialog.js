@@ -161,7 +161,7 @@
          */
         function saveEntry (entry) {
             manager.saveEntry(entry);
-            ParlayNotification.show({content: "Saved '" + entry.name + "."});
+            ParlayNotification.show({content: "Saved " + entry.name + "."});
         }
 
         /**

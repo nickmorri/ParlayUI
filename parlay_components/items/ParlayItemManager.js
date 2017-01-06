@@ -245,6 +245,19 @@
         };
 
         /**
+         * Returns a ParlayItem searched by the name
+         * @param name {String} - name of the ParlayItem
+         */
+        ParlayItemManager.prototype.getItemByName = function (name) {
+            var items = this.getAvailableItems();
+            for (var i = 0; i < items.length; ++i) {
+                if (items[i].name === name)
+                    return items[i];
+            }
+        };
+
+
+        /**
          * Check whether any discovery request has been made.
          * @member module:ParlayItem.ParlayItemManager#hasDiscovered
          * @public
@@ -400,7 +413,7 @@
                 controller: "ParlayItemSearchController",
                 controllerAs: "ctrl",
                 clickOutsideToClose: true
-            })
+            });
         };
 
         return new ParlayItemManager();

@@ -63,6 +63,7 @@
                 $mdSidenav("navigation").close();
             }
             itemCompiler(item);
+            ParlayItemManager.activateItem(item);
         }
 
         /**
@@ -93,6 +94,5 @@
         function toggle(item) {
             console.log(item);
         }
-
     }
 }());

@@ -1,13 +1,13 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["ngMaterial", "parlay.widget.base.configuration", "parlay.items.search", "parlay.widget.controller"];
+    var module_dependencies = ["ngMaterial", "parlay.widget.base.configuration", "parlay.items.search", "parlay.widget.controller", "parlay.items.manager"];
 
     angular
         .module("parlay.widget.base", module_dependencies)
         .directive("parlayWidgetBase", ParlayWidgetBase);
 
-    ParlayWidgetBase.$inject = ["$mdDialog", "$compile", "$interval", "ParlayWidgetInputManager", "ParlayData", "ParlayWidgetTransformer", "widgetLastZIndex"];
+    ParlayWidgetBase.$inject = ["$mdDialog", "$compile", "$interval", "ParlayWidgetInputManager", "ParlayData", "ParlayWidgetTransformer", "widgetLastZIndex", "ParlayItemManager"];
     /**
      * Base directive of a ParlayWidget. Repeated inside the widget workspace and contains the chosen compiled widget
      * template.
@@ -21,7 +21,7 @@
      * @param {Object} ParlayWidgetTransformer - [ParlayWidgetTransformer]{@link module:ParlayWidget.ParlayWidgetTransformer} factory.
      * @param {Object} widgetLastZIndex - zIndex of the highest ParlayWidget.
      */
-    function ParlayWidgetBase ($mdDialog, $compile, $interval, ParlayWidgetInputManager, ParlayData, ParlayWidgetTransformer, widgetLastZIndex) {
+    function ParlayWidgetBase ($mdDialog, $compile, $interval, ParlayWidgetInputManager, ParlayData, ParlayWidgetTransformer, widgetLastZIndex, ParlayItemManager) {
         return {
             scope: true,
             restrict: "E",
@@ -64,19 +64,15 @@
                     onLoaded(element[0].parentElement.parentElement);
                 });
 
-                scope.$on("parlayItemCardLoaded", function(event, element) {
-
+                // Handle widget initialization on parlayItemCardLoaded event
+                scope.$on("parlayItemCardLoaded", function (event, element) {
                     onLoaded(element[0].parentElement);
-
-                    // var dragElement = element[0].parentElement;
-                    //
-                    // enableDraggabilly(dragElement);
-
                 });
 
                 // Handle $destroy event.
                 scope.$on("$destroy", function () {
-                    if (scope.initialized) {
+
+                    if (scope.initialized && !!scope.item.configuration) {
                         if (!!scope.item.configuration.transformer) {
                             scope.item.configuration.transformer.cleanHandlers();
                         }
@@ -93,8 +89,12 @@
                 // If an existing configuration Object exists we should restore the configuration, otherwise construct
                 // from scratch.
 
+                console.log(scope.item);
+
                 if (!!scope.item.configuration) {
                     compileWrapper()(angular.copy(scope.item.configuration.template));
+                } else if (!!scope.item.itemName) {
+                    compileItem()(ParlayItemManager.getItemByName(scope.item.itemName));
                 } else if (scope.item.type === "StandardItem") {
                     scope.initialized = false;
                     addItem();
@@ -251,6 +251,7 @@
 
                     // If an initialPosition is given we should move the widget to that location.
                     if (!!initialPosition) {
+
                         element.style.left = scope.item.position.left;
                         element.style.top = scope.item.position.top;
                         element.style.right = scope.item.position.right;
@@ -333,16 +334,21 @@
 
                     var attributes = [
                         ["edit", "edit"],
-                        ["uid", "item.uid"]
+                        ["uid", "item.uid"],
+                        ["widgets-ctrl", "widgetsCtrl"],
                     ].map(function (attribute) {
                         return attribute[0] + "='" + attribute[1] + "'";
                     }).join(" ");
 
                     function itemCompiler(item) {
 
+                        console.log(item);
+
                         scope.container = {};
-                        scope.container.uid = scope.uid;
+                        scope.container.uid = scope.item.uid;
                         scope.container.ref = item;
+
+                        scope.item.itemName = item.name;
 
                         while (element_ref[0].firstChild) {
                             angular.element(element_ref[0].firstChild).scope().$destroy();
@@ -353,6 +359,8 @@
                         var child_element =  $compile(itemElement)(scope_ref.$new())[0];
 
                         element_ref[0].appendChild(child_element);
+                        element_ref.attr("style", "top: 0%;");
+
                         scope.initialized = true;
                     }
                     return itemCompiler;
@@ -379,7 +387,7 @@
                     }).catch(function () {
                         // If the widget was just created and the dialog was canceled we should remove the widget.
                         if (initializing) {
-                            scope.widgetsCtrl.remove(scope.uid);
+                            scope.widgetsCtrl.remove(scope.item.uid);
                         }
                     });
                 }
@@ -395,7 +403,7 @@
                         }
                     }).catch(function () {
                         if (!scope.initialized)
-                            scope.widgetsCtrl.remove(scope.uid);
+                            scope.widgetsCtrl.remove(scope.item.uid);
                     });
                 }
             }

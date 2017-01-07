@@ -4,14 +4,10 @@
     <md-toolbar class="md-primary show-handle handle">
         <div class="md-toolbar-tools" layout="row">
             <!-- Vendor specific item toolbar-tools directives are automatically inserted here -->
-            <!--<md-button aria-label="Close card" class="md-icon-button" ng-click="itemCtrl.deactivate($index)">-->
-                <!--<md-tooltip>Close card</md-tooltip>-->
-                <!--<md-icon ng-md-icon icon="clear"></md-icon>-->
-            <!--</md-button>-->
-            <parlay-widget-base-menu></parlay-widget-base-menu>
+            <parlay-widget-base-menu ng-show="widgetsCtrl.editing"></parlay-widget-base-menu>
         </div>
     </md-toolbar>
-    <md-tabs class="md-primary md-hue-1" md-selected="active_tab_index" md-dynamic-height="true" md-autoselect="true" md-stretch-tabs="auto" md-enable-disconnect="true">
+    <md-tabs class="md-primary md-hue-1" style="pointer-events: auto;" md-selected="active_tab_index" md-dynamic-height="true" md-autoselect="true" md-stretch-tabs="auto" md-enable-disconnect="true">
         <!-- Vendor specific item tab directives are automatically inserted here -->
     </md-tabs>
 </md-card>

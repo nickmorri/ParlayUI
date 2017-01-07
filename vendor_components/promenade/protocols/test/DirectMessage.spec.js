@@ -71,7 +71,7 @@
                     $rootScope.$apply();
 
                     expect(protocol.buildMessageTopics).toHaveBeenCalledWith({TO: 100});
-                    expect(protocol.buildResponseTopics).toHaveBeenCalledWith({TO: 100, MSG_ID: 201, FROM: 'UI'}, {FROM: 100}, false);
+                    expect(protocol.buildResponseTopics).toHaveBeenCalledWith({TO: 100, MSG_ID: 201, FROM: 'UI'}, {FROM: 200}, false);
 
                     expect(socket.sendMessage).toHaveBeenCalledWith(jasmine.objectContaining({
                             TO: 100,
@@ -79,7 +79,7 @@
                             MSG_ID: protocol.getMessageId()
                         }), jasmine.objectContaining({}), jasmine.objectContaining({
                             TO: "UI",
-                            FROM: 100
+                            FROM: 200
                         }), jasmine.any(Function),
                         undefined);
                 });

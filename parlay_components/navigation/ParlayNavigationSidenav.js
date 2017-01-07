@@ -37,7 +37,6 @@
         ctrl.openHelpTab = openHelpTab;
         ctrl.openSettingsDialog = openSettingsDialog;
         ctrl.requestDiscovery = requestDiscovery;
-        ctrl.openItemSaveLoadDialog = openItemSaveLoadDialog;
         ctrl.toggleWidgetEditing = toggleWidgetEditing;
         ctrl.openWidgetSaveLoadDialog = openWidgetSaveLoadDialog;
         ctrl.openItemsDialog = openItemsDialog;
@@ -155,22 +154,6 @@
             });
         }
 
-        /**
-         * Launches a [ParlayGenericSaveLoadDialog]{@link module:ParlayCommon.ParlayGenericSaveLoadDialog} for
-         * item workspace management.
-         * @member module:ParlayNavigation.ParlayNavigationSidenavController#openWorkspaceManagementDialog
-         * @public
-         * @param {Event} event - DOM Event that can be used to set an animation source for $mdDialog.
-         */
-        function openItemSaveLoadDialog (event) {
-            ParlayGenericSaveLoadDialog.show(event, ParlayItemManager, {
-                entry: "workspace",
-                entries: "workspaces",
-                title: "workspaces",
-                child: "item",
-                children: "items"
-            });
-        }
 
         /**
          * Launches a [ParlayGenericSaveLoadDialog]{@link module:ParlayCommon.ParlayGenericSaveLoadDialog} for

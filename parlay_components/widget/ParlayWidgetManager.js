@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["parlay.store", "parlay.settings"];
+    var module_dependencies = ["parlay.store", "parlay.settings", "parlay.item.persistence"];
 
     var widgetLastZIndex = {
         value: 0
@@ -12,8 +12,8 @@
         .value("widgetLastZIndex", widgetLastZIndex)
         .factory("ParlayWidgetManager", ParlayWidgetManagerFactory);
 
-    ParlayWidgetManagerFactory.$inject = ["$window", "ParlayStore", "ParlaySettings", "widgetLastZIndex"];
-    function ParlayWidgetManagerFactory ($window, ParlayStore, ParlaySettings, widgetLastZIndex) {
+    ParlayWidgetManagerFactory.$inject = ["$window", "ParlayStore", "ParlaySettings", "widgetLastZIndex", "ParlayItemPersistence"];
+    function ParlayWidgetManagerFactory ($window, ParlayStore, ParlaySettings, widgetLastZIndex, ParlayItemPersistence) {
 
         /**
          * Manages [ParlayWidgetBase]{@link module:ParlayWidget.ParlayWidgetBase}s active in the workspace.
@@ -124,9 +124,14 @@
          * @public
          * @param {Object} workspace - Workspace container Object.
          */
+        // TODO:  Store stored_values in the item container object so that workspaces save current tabs
+
         ParlayWidgetManager.prototype.saveEntry = function (workspace) {
 
             // Copy active widgets so that when we sort and modify indices we aren't modifying the active widgets.
+
+            console.log(ParlayItemPersistence.collectAll());
+
             var copy = angular.copy(this.active_widgets);
 
             // Sort the widgets by their zIndex and compact the zIndices so that they don't get too big.

@@ -31,19 +31,17 @@
 
     <md-list layout="column" flex class="parlay-navigation-list" ng-controller="ParlayNavigationSidenavController as ctrl">
 
-        <div ng-show="ctrl.editing">
-            <md-list-item ng-click="ctrl.openItemsDialog($event)">
-                <md-icon ng-md-icon class="parlay-nav-icon" icon="apps"></md-icon>
-                <p>Items</p>
-            </md-list-item>
+        <md-list-item ng-click="ctrl.openItemsDialog($event)" ng-disabled="!ctrl.editing">
+            <md-icon ng-md-icon class="parlay-nav-icon" icon="apps"></md-icon>
+            <p>Items</p>
+        </md-list-item>
 
-            <md-list-item ng-click="ctrl.openWidgetsDialog($event)">
-                <md-icon ng-md-icon class="parlay-nav-icon" icon="extension"></md-icon>
-                <p>Widgets</p>
-            </md-list-item>
+        <md-list-item ng-click="ctrl.openWidgetsDialog($event)" ng-disabled="!ctrl.editing">
+            <md-icon ng-md-icon class="parlay-nav-icon" icon="extension"></md-icon>
+            <p>Widgets</p>
+        </md-list-item>
 
-            <md-divider></md-divider>
-        </div>
+        <md-divider></md-divider>
 
         <md-list-item ng-click="ctrl.requestDiscovery()" title="Request discovery">
             <md-icon ng-md-icon class="parlay-nav-icon" icon="autorenew"></md-icon>
@@ -59,16 +57,6 @@
             <md-icon ng-md-icon class="parlay-nav-icon" icon="edit"></md-icon>
                 Edit
             <md-switch class="md-secondary" ng-model="ctrl.editing" ng-change="ctrl.toggleWidgetEditing()" aria-label="Editing"></md-switch>
-        </md-list-item>
-
-        <md-divider></md-divider>
-
-        <md-list-item ng-show="ctrl.getCurrentState().name != 'items'" title="Items State" ng-click="ctrl.navigateState('items')">
-            <p>Go to Items State</p>
-        </md-list-item>
-
-        <md-list-item ng-show="ctrl.getCurrentState().name != 'widgets'" title="Widgets State" ng-click="ctrl.navigateState('widgets')">
-            <p>Go to Widgets State</p>
         </md-list-item>
 
         <span flex></span>

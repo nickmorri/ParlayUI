@@ -7,7 +7,7 @@
         .module('parlay.items.search', module_dependencies)
         .controller('ParlayItemSearchController', ParlayItemSearchController);
 
-    ParlayItemSearchController.$inject = ['$scope', '$mdSidenav', 'ParlayItemManager', '$mdDialog', 'itemCompiler'];
+    ParlayItemSearchController.$inject = ['$scope', '$mdSidenav', '$mdDialog', 'ParlayItemManager', 'itemCompiler'];
     /**
      * Handles providing [ParlayItem]{@link module:ParlayItem.ParlayItem}s to the mdAutocomplete directive.
      * @constructor module:ParlayItem.ParlayItemSearchController
@@ -16,7 +16,7 @@
      * @param {Object} $mdDialog - Angular Material dialog service.
      * @param {Object} ParlayItemManager - ParlayItemManager service.
      */
-    function ParlayItemSearchController ($scope, $mdSidenav, ParlayItemManager, $mdDialog, itemCompiler) {
+    function ParlayItemSearchController ($scope, $mdSidenav, $mdDialog, ParlayItemManager, itemCompiler) {
 
         var ctrl = this;
 
@@ -63,7 +63,6 @@
                 $mdSidenav("navigation").close();
             }
             itemCompiler(item);
-            ParlayItemManager.activateItem(item);
         }
 
         /**

@@ -1,13 +1,13 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["ngMaterial", "parlay.widget.base.configuration", "parlay.items.search", "parlay.widget.controller", "parlay.items.manager"];
+    var module_dependencies = ["ngMaterial", "parlay.widget.base.configuration", "parlay.items.search", "parlay.widget.controller", "parlay.items.manager", "parlay.item.persistence"];
 
     angular
         .module("parlay.widget.base", module_dependencies)
         .directive("parlayWidgetBase", ParlayWidgetBase);
 
-    ParlayWidgetBase.$inject = ["$mdDialog", "$compile", "$interval", "ParlayWidgetInputManager", "ParlayData", "ParlayWidgetTransformer", "widgetLastZIndex", "ParlayItemManager"];
+    ParlayWidgetBase.$inject = ["$mdDialog", "$compile", "$interval", "ParlayWidgetInputManager", "ParlayData", "ParlayWidgetTransformer", "widgetLastZIndex", "ParlayItemManager", "ParlayItemPersistence"];
     /**
      * Base directive of a ParlayWidget. Repeated inside the widget workspace and contains the chosen compiled widget
      * template.
@@ -21,7 +21,7 @@
      * @param {Object} ParlayWidgetTransformer - [ParlayWidgetTransformer]{@link module:ParlayWidget.ParlayWidgetTransformer} factory.
      * @param {Object} widgetLastZIndex - zIndex of the highest ParlayWidget.
      */
-    function ParlayWidgetBase ($mdDialog, $compile, $interval, ParlayWidgetInputManager, ParlayData, ParlayWidgetTransformer, widgetLastZIndex, ParlayItemManager) {
+    function ParlayWidgetBase ($mdDialog, $compile, $interval, ParlayWidgetInputManager, ParlayData, ParlayWidgetTransformer, widgetLastZIndex, ParlayItemManager, ParlayItemPersistence) {
         return {
             scope: true,
             restrict: "E",
@@ -53,6 +53,7 @@
 
                 // Attach the methods to scope.
                 scope.edit = edit;
+                scope.addItem = addItem;
 
                 // Handle widget initialization on parlayWidgetTemplateLoaded event.
                 scope.$on("parlayWidgetTemplateLoaded", function () {
@@ -89,15 +90,13 @@
                 // If an existing configuration Object exists we should restore the configuration, otherwise construct
                 // from scratch.
 
-                console.log(scope.item);
-
                 if (!!scope.item.configuration) {
                     compileWrapper()(angular.copy(scope.item.configuration.template));
-                } else if (!!scope.item.itemName) {
-                    compileItem()(ParlayItemManager.getItemByName(scope.item.itemName));
+                } else if (!!scope.item.id) {
+                    compileItem()(ParlayItemManager.getItemByID(scope.item.id));
                 } else if (scope.item.type === "StandardItem") {
                     scope.initialized = false;
-                    addItem();
+                    scope.addItem();
                 } else {
                     scope.initialized = false;
                     scope.item.configuration = {};
@@ -341,14 +340,13 @@
                     }).join(" ");
 
                     function itemCompiler(item) {
-
-                        console.log(item);
-
                         scope.container = {};
                         scope.container.uid = scope.item.uid;
                         scope.container.ref = item;
 
-                        scope.item.itemName = item.name;
+                        // scope.container.stored_values = {active_tab_index: 1};
+
+                        scope.item.id = item.id;
 
                         while (element_ref[0].firstChild) {
                             angular.element(element_ref[0].firstChild).scope().$destroy();

@@ -120,6 +120,7 @@
              */
             function restore () {
                 // Object that may contain values that have been previously stored.
+
                 var container_scope = find_scope('container', $scope);
 
                 if (container_scope !== undefined) {

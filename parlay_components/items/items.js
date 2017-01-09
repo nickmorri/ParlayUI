@@ -18,15 +18,15 @@
      * @param {Object} $stateProvider - Service provided by ui.router
      */
     function ItemsConfiguration ($stateProvider) {
-        $stateProvider.state("items", {
-            url: "/items",
-            templateUrl: "../parlay_components/items/views/base.html",
-            controller: "ParlayItemController",
-            controllerAs: "itemCtrl",
-            data: {
-                displayName: "Items",
-                displayIcon: "extension"
-            }
-        });
+        // $stateProvider.state("items", {
+        //     url: "/items",
+        //     templateUrl: "../parlay_components/items/views/base.html",
+        //     controller: "ParlayItemController",
+        //     controllerAs: "itemCtrl",
+        //     data: {
+        //         displayName: "Items",
+        //         displayIcon: "extension"
+        //     }
+        // });
     }
 }());

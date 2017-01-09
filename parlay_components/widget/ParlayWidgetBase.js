@@ -68,6 +68,7 @@
                 // Handle widget initialization on parlayItemCardLoaded event
                 scope.$on("parlayItemCardLoaded", function (event, element) {
                     onLoaded(element[0].parentElement);
+                    // debugger;
                 });
 
                 // Handle $destroy event.
@@ -340,13 +341,14 @@
                     }).join(" ");
 
                     function itemCompiler(item) {
-                        scope.container = {};
-                        scope.container.uid = scope.item.uid;
-                        scope.container.ref = item;
-
-                        // scope.container.stored_values = {active_tab_index: 1};
+                        var container = {};
+                        container.uid = scope.item.uid;
+                        container.ref = item;
 
                         scope.item.id = item.id;
+
+                        if (!!scope.item.stored_values)
+                            container.stored_values = scope.item.stored_values;
 
                         while (element_ref[0].firstChild) {
                             angular.element(element_ref[0].firstChild).scope().$destroy();
@@ -354,7 +356,11 @@
                         }
 
                         var itemElement = "<parlay-item-card " + attributes + " ></parlay-item-card>";
-                        var child_element =  $compile(itemElement)(scope_ref.$new())[0];
+                        var new_scope = scope_ref.$new();
+
+                        new_scope.container = container;
+
+                        var child_element =  $compile(itemElement)(new_scope)[0];
 
                         element_ref[0].appendChild(child_element);
                         element_ref.attr("style", "top: 0%;");

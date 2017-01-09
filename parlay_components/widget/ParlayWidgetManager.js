@@ -130,17 +130,24 @@
 
             // Copy active widgets so that when we sort and modify indices we aren't modifying the active widgets.
 
-            console.log(ParlayItemPersistence.collectAll());
-
             var copy = angular.copy(this.active_widgets);
 
             // Sort the widgets by their zIndex and compact the zIndices so that they don't get too big.
             angular.copy(this.active_widgets).sort(function (widget1, widget2) {
                 return widget1.zIndex - widget2.zIndex;
             }).forEach(function (element, index) {
-                copy.find(function (widget) {
+
+                var toSave = copy.find(function (widget) {
                     return widget.uid === element.uid;
-                }).zIndex = index + 1;
+                });
+                toSave.zIndex = index + 1;
+
+                if (!!element.type && element.type === "StandardItem"){
+                    var directive = "parlayItemCard." + element.id + "_" + element.uid;
+                    var stored_values = ParlayItemPersistence.collectDirective(directive);
+                    toSave.stored_values = stored_values;
+                }
+
             });
 
             workspace.data = JSON.stringify(copy, function (key, value) {
@@ -149,7 +156,9 @@
 
             workspace.count = copy.length;
             workspace.timestamp = new Date();
+
             ParlayStore("widgets").set(workspace.name, workspace);
+            ParlayItemPersistence.store(workspace.name);
             this.saved_workspaces = this.getWorkspaces();
         };
 
@@ -160,6 +169,8 @@
          * @param {Object} workspace - Saved workspace to be loaded.
          */
         ParlayWidgetManager.prototype.loadEntry = function (workspace) {
+
+            console.log(workspace);
 
             var next_uid = 0;
 

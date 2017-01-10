@@ -194,6 +194,10 @@
              * @returns {number | string} - Representation of current datastream value
              */
             function getValue() {
+                // safety check to prevent error-ing when streams are not enabled
+                if (internal_value === undefined)
+                    return internal_value;
+
                 if (internal_value.toString().length >= 10)
                     return internal_value.toExponential();
                 return internal_value;

@@ -157,8 +157,10 @@
             workspace.count = copy.length;
             workspace.timestamp = new Date();
 
+            console.log(workspace);
+
+            // ParlayItemPersistence.store(workspace.name);
             ParlayStore("widgets").set(workspace.name, workspace);
-            ParlayItemPersistence.store(workspace.name);
             this.saved_workspaces = this.getWorkspaces();
         };
 
@@ -169,8 +171,6 @@
          * @param {Object} workspace - Saved workspace to be loaded.
          */
         ParlayWidgetManager.prototype.loadEntry = function (workspace) {
-
-            console.log(workspace);
 
             var next_uid = 0;
 

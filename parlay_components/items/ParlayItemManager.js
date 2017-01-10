@@ -8,8 +8,8 @@
         .module("parlay.items.manager", module_dependencies)
         .factory("ParlayItemManager", ParlayItemManagerFactory);
 
-    ParlayItemManagerFactory.$inject = ["PromenadeBroker", "ParlayProtocolManager", "ParlayItemPersistence", "$mdDialog"];
-    function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager, ParlayItemPersistence, $mdDialog) {
+    ParlayItemManagerFactory.$inject = ["PromenadeBroker", "ParlayProtocolManager", "$mdDialog"];
+    function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager, $mdDialog) {
 
         /**
          * Holds container Objects for items currently active in workspace.

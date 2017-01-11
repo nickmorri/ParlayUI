@@ -53,7 +53,6 @@
 
                 // Attach the methods to scope.
                 scope.edit = edit;
-                scope.addItem = addItem;
 
                 // Handle widget initialization on parlayWidgetTemplateLoaded event.
                 scope.$on("parlayWidgetTemplateLoaded", function () {
@@ -68,7 +67,6 @@
                 // Handle widget initialization on parlayItemCardLoaded event
                 scope.$on("parlayItemCardLoaded", function (event, element) {
                     onLoaded(element[0].parentElement);
-                    // debugger;
                 });
 
                 // Handle $destroy event.
@@ -97,7 +95,7 @@
                     compileItem()(ParlayItemManager.getItemByID(scope.item.id));
                 } else if (scope.item.type === "StandardItem") {
                     scope.initialized = false;
-                    scope.addItem();
+                    compileItem()(scope.item.item);
                 } else {
                     scope.initialized = false;
                     scope.item.configuration = {};
@@ -115,7 +113,18 @@
                     enableDraggabilly(drag_element, scope.item.position);
                     restoreHandlers(scope.item.configuration);
                     restoreTransformer(scope.item.configuration);
+                    initPosition(drag_element);
                     scope.initialized = true;
+                }
+
+                function initPosition(element) {
+
+                    var DOMElement = angular.element(element);
+
+                    scope.item.position = {
+                        left: parseInt(DOMElement.prop('offsetLeft'), 10) + "px",
+                        top: parseInt(DOMElement.prop('offsetTop'), 10) + "px"
+                    };
                 }
 
                 /**
@@ -204,8 +213,6 @@
                         scope.item.position = {
                             left: element.style.left,
                             top: element.style.top,
-                            right: element.style.right,
-                            bottom: element.style.bottom
                         };
                         scope.item.zIndex = parseInt(angular.element(element)[0].style.zIndex, 10);
                     });
@@ -251,11 +258,8 @@
 
                     // If an initialPosition is given we should move the widget to that location.
                     if (!!initialPosition) {
-
                         element.style.left = scope.item.position.left;
                         element.style.top = scope.item.position.top;
-                        element.style.right = scope.item.position.right;
-                        element.style.bottom = scope.item.position.bottom;
                         angular.element(element)[0].style.zIndex = scope.item.zIndex;
                     }
 
@@ -393,21 +397,6 @@
                         if (initializing) {
                             scope.widgetsCtrl.remove(scope.item.uid);
                         }
-                    });
-                }
-
-                function addItem() {
-                    $mdDialog.show({
-                        templateUrl: "../parlay_components/items/directives/parlay-item-library-dialog.html",
-                        controller: "ParlayItemSearchController",
-                        controllerAs: "ctrl",
-                        clickOutsideToClose: true,
-                        locals: {
-                            itemCompiler: compileItem()
-                        }
-                    }).catch(function () {
-                        if (!scope.initialized)
-                            scope.widgetsCtrl.remove(scope.item.uid);
                     });
                 }
             }

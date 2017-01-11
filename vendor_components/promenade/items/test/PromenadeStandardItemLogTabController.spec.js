@@ -10,7 +10,7 @@
 
             beforeEach(inject(function ($rootScope, $controller, _ParlayItemPersistence_) {
                 $scope = $rootScope.$new();
-                $scope.container = {ref: {name: "test"}, uid: 100};
+                $scope.container = {ref: {id: "test"}, uid: 100};
                 ParlayItemPersistence = _ParlayItemPersistence_;
                 spyOn(ParlayItemPersistence, "monitor").and.callThrough();
                 controller = $controller("PromenadeStandardItemCardLogTabController", {$scope: $scope});
@@ -27,7 +27,7 @@
 
             it("has initial values", function () {
                 expect(controller.filter_text).toBe(null);
-                expect(ParlayItemPersistence.monitor).toHaveBeenCalledWith("parlayItemCard.test_100", "filter_text", $scope);
+                expect(ParlayItemPersistence.monitor).toHaveBeenCalledWith("parlayItemCard.test_100", "ctrl.filter_text", $scope);
             });
 
             it("getLog", function () {

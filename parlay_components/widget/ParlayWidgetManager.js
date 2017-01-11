@@ -124,8 +124,6 @@
          * @public
          * @param {Object} workspace - Workspace container Object.
          */
-        // TODO:  Store stored_values in the item container object so that workspaces save current tabs
-
         ParlayWidgetManager.prototype.saveEntry = function (workspace) {
 
             // Copy active widgets so that when we sort and modify indices we aren't modifying the active widgets.
@@ -157,9 +155,6 @@
             workspace.count = copy.length;
             workspace.timestamp = new Date();
 
-            console.log(workspace);
-
-            // ParlayItemPersistence.store(workspace.name);
             ParlayStore("widgets").set(workspace.name, workspace);
             this.saved_workspaces = this.getWorkspaces();
         };
@@ -328,9 +323,14 @@
          * @member module:ParlayWidget.ParlayWidgetManager#add
          * @public
          */
-        ParlayWidgetManager.prototype.add = function (type) {
+        ParlayWidgetManager.prototype.add = function (type, item) {
             var uid = this.generateUID();
             var new_widget ={uid: uid, zIndex: ++widgetLastZIndex.value, type: type};
+
+            if (!!item)
+                new_widget.item = item;
+
+
             this.active_widgets.push(new_widget);
         };
 
@@ -352,8 +352,6 @@
          * @public
          * @param {Number} old_uid - Unique ID given to widget on add.
          */
-        // TODO: need to initialize coordinates when making new widget
-        // duplicating a brand new widget that has not been moved does not duplicate
         ParlayWidgetManager.prototype.duplicate = function (old_uid) {
             var copy = angular.copy(this.active_widgets.find(function (container) {
                 return container.uid === old_uid;
@@ -377,6 +375,7 @@
 
             // Shift a few pixels over so that the duplicate widget doesn't completely overlap the original so that the
             // user is aware a new widget has been created.
+
             copy.position.left = (parseInt(copy.position.left, 10) + 20) + "px";
             copy.position.top = (parseInt(copy.position.top, 10) + 20) + "px";
 

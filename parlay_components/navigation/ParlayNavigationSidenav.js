@@ -2,8 +2,8 @@
     "use strict";
 
     var module_dependencies = ["ngMaterial", "parlay.items.search", "parlay.protocols.list_controller",
-        "parlay.settings.dialog", "parlay.common.genericsaveloaddialog", "parlay.items.manager",
-        "parlay.widget.manager"];
+        "parlay.settings.dialog", "parlay.common.genericsaveloaddialog",
+        "parlay.widget.manager", "parlay.items.library"];
 
     // module_dependencies.push("parlay.workspaces.manager");
 
@@ -23,7 +23,7 @@
      * @param {Object} ParlayItemManager - ParlayItemManager service.
      * @param {Object} ParlayWidgetManager - ParlayWidgetManager service.
      */
-    function ParlayNavigationSidenavController($mdSidenav, $mdDialog, ParlayGenericSaveLoadDialog, $state, PromenadeBroker, ParlayWidgetManager, ParlayItemManager) {
+    function ParlayNavigationSidenavController($mdSidenav, $mdDialog, ParlayGenericSaveLoadDialog, $state, PromenadeBroker, ParlayWidgetManager, ParlayItemLibraryDialog) {
 
         var ctrl = this;
 
@@ -88,7 +88,7 @@
         }
 
         function openItemsDialog () {
-            ParlayWidgetManager.add("StandardItem");
+            ParlayItemLibraryDialog.openItemsDialog();
         }
 
         function openWidgetsDialog() {

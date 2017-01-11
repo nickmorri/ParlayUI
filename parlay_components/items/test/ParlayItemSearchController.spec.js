@@ -6,6 +6,7 @@
         beforeEach(module("parlay.items.search"));
         beforeEach(module("mock.parlay.items.manager"));
 
+
         describe("ParlayItemSearchController", function () {
             var scope, ParlayItemSearchController, ParlayItemManager, mockSidenav;
 
@@ -26,8 +27,6 @@
     
                 it("selects item", function () {
 
-                    spyOn(ParlayItemManager, "activateItem");
-
                     var item = {name: "test"};
 
                     scope.search_text = "still here";
@@ -36,13 +35,10 @@
 
                     expect(scope.selected_item).toBe(null);
                     expect(scope.search_text).toBe(null);
-                    expect(ParlayItemManager.activateItem).toHaveBeenCalledWith(item);
 
                 });
 
                 it("handles undefined item selection", function () {
-                    spyOn(ParlayItemManager, "activateItem");
-
                     scope.search_text = "still here";
 
                     var item = null;

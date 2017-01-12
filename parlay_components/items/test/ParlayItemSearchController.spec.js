@@ -2,7 +2,7 @@
     "use strict";
 
     describe("parlay.items.search", function() {
-        
+
         beforeEach(module("parlay.items.search"));
         beforeEach(module("mock.parlay.items.manager"));
 
@@ -24,7 +24,7 @@
             }));
 
             describe("search state", function () {
-    
+
                 it("selects item", function () {
 
                     var item = {name: "test"};
@@ -47,7 +47,7 @@
 
                     expect(scope.search_text).toBe("still here");
                 });
-    
+
             });
 
             describe("searching", function () {

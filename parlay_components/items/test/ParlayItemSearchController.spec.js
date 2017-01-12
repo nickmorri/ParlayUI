@@ -3,8 +3,16 @@
 
     describe("parlay.items.search", function() {
 
+        var ParlaySettings;
+
         beforeEach(module("parlay.items.search"));
         beforeEach(module("mock.parlay.items.manager"));
+
+        beforeEach(inject(function (_ParlaySettings_) {
+            ParlaySettings = _ParlaySettings_;
+            ParlaySettings.registerDefault("widgets", {editing: true});
+            ParlaySettings.restoreDefault("widgets");
+        }));
 
 
         describe("ParlayItemSearchController", function () {

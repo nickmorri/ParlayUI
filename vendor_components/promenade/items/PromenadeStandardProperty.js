@@ -15,10 +15,10 @@
          * @constructor module:PromenadeStandardItem.PromenadeStandardProperty
          * @param {Object} data - Discovery information used to initialize the PromenadeStandardProperty instance with.
          * @param {Object} data.NAME - Name of the property.
-         * @param {String} item_name - Name of the [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} this command belongs to.
+         * @param {String} item_id - Name of the [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} this command belongs to.
          * @param {Object} protocol - Reference to the [PromenadeDirectMessage]{@link module:PromenadeDirectMessage.PromenadeDirectMessage} the [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} belongs to.
          */
-        function PromenadeStandardProperty (data, item_name, protocol) {
+        function PromenadeStandardProperty (data, item_id, protocol, item_name) {
 
             var property = this;
 
@@ -101,10 +101,12 @@
             /**
              * Name of the [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} this 
              * property belongs to.
-             * @member module:PromenadeStandardItem.PromenadeStandardProperty#item_name
+             * @member module:PromenadeStandardItem.PromenadeStandardProperty#item_id
              * @public
              * @type {String}
              */
+            property.item_id = item_id;
+
             property.item_name = item_name;
 
             /**
@@ -131,7 +133,7 @@
             property.listener = protocol.onMessage({
                 TX_TYPE: "DIRECT",
                 MSG_TYPE: "RESPONSE",
-                FROM: property.item_name,
+                FROM: property.item_id,
                 TO: "UI"
             }, function(response) {
 
@@ -144,7 +146,7 @@
                 }
             });
             //add to parlayData so that we can access them remotely
-            ParlayData.set(property.item_name + "." + property.name, property);
+            ParlayData.set(property.item_id + "." + property.name, property);
 
             /**
              * Allows for callbacks to be registered, these will be invoked on change of value.
@@ -179,7 +181,7 @@
                 var topics = {
                     TX_TYPE: "DIRECT",
                     MSG_TYPE: "PROPERTY",
-                    TO: property.item_name
+                    TO: property.id
                 };
                 var contents = {
                     PROPERTY: property.id,
@@ -189,7 +191,7 @@
                 var response_topics = {
                     TX_TYPE: "DIRECT",
                     MSG_TYPE: "RESPONSE",
-                    FROM: property.item_name,
+                    FROM: property.id,
                     TO: "UI"
                 };
 
@@ -212,7 +214,7 @@
                 var topics = {
                     TX_TYPE: "DIRECT",
                     MSG_TYPE: "PROPERTY",
-                    TO: property.item_name
+                    TO: property.id
                 };
 
                 var contents = {
@@ -224,7 +226,7 @@
                 var response_topics = {
                     TX_TYPE: "DIRECT",
                     MSG_TYPE: "RESPONSE",
-                    FROM: property.item_name,
+                    FROM: property.id,
                     TO: "UI"
                 };
 
@@ -242,21 +244,21 @@
                 var get_entry = {
                     depends_on: "get_item_by_name('"+property.item_name+"')", //wont show unless this string is in script
                     caption: property.item_name + "." + property.name + ".get()",
-                    value: property.item_name + "." + property.name + ".get()",
+                    value: property.item_id + "." + property.id + ".get()",
                     meta: "PromenadeStandardProperty method"
                 };
 
                 var set_entry = {
                     depends_on: "get_item_by_name('"+property.item_name+"')", //wont show unless this string is in script
                     caption: property.item_name + "." + property.name + ".set(" + property.value + ")",
-                    value: property.item_name + "." + property.name + ".set(" + property.value + ")",
+                    value: property.item_id + "." + property.id + ".set(" + property.value + ")",
                     meta: "PromenadeStandardProperty method"
                 };
 
                 var value_entry = {
                     depends_on: "get_item_by_name('"+property.item_name+"')", //wont show unless this string is in script
                     caption: property.item_name + "." + property.name + ".value",
-                    value: property.item_name + "." + property.name + ".value",
+                    value: property.item_id + "." + property.id + ".value",
                     meta: "PromenadeStandardProperty value"
                 };
 

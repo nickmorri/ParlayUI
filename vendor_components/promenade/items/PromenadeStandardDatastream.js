@@ -14,10 +14,10 @@
          * Class that wraps data stream information provided in a discovery.
          * @constructor module:PromenadeStandardItem.PromenadeStandardDatastream
          * @param {Object} data - Discovery information used to initialize the PromenadeStandardDatastream instance with.
-         * @param {String} item_name - Name of the [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} this command belongs to.
+         * @param {String} item_id - Name of the [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} this command belongs to.
          * @param {Object} protocol - Reference to the [PromenadeDirectMessage]{@link module:PromenadeDirectMessage.PromenadeDirectMessage} the [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} belongs to.
          */
-        function PromenadeStandardDatastream (data, item_name, protocol) {
+        function PromenadeStandardDatastream (data, item_id, protocol, item_name) {
 
             var datastream = this;
 
@@ -89,6 +89,8 @@
              * @public
              * @type {String}
              */
+            datastream.item_id = item_id;
+
             datastream.item_name = item_name;
 
             /**
@@ -116,7 +118,7 @@
             TX_TYPE: "DIRECT",
                 MSG_TYPE: "STREAM",
                 TO: "UI",
-                FROM: datastream.item_name,
+                FROM: datastream.item_id,
                 STREAM: datastream.id
             }, function(response) {
                 $rootScope.$apply(function () {
@@ -124,7 +126,7 @@
                 });
             });
 
-            ParlayData.set(datastream.item_name + "." + datastream.name, datastream);
+            ParlayData.set(datastream.item_id + "." + datastream.name, datastream);
 
             /**
              * Allows for callbacks to be registered, these will be invoked on change of value.
@@ -157,7 +159,7 @@
                 return protocol.sendMessage({
                     TX_TYPE: "DIRECT",
                     MSG_TYPE: "STREAM",
-                    TO: datastream.item_name
+                    TO: datastream.item_id
                 },
                 {
                     STREAM: datastream.id,
@@ -167,7 +169,7 @@
                     TX_TYPE: "DIRECT",
                     MSG_TYPE: "STREAM",
                     TO: "UI",
-                    FROM: datastream.item_name
+                    FROM: datastream.item_id
                 });
             }
 
@@ -181,7 +183,7 @@
 
                 var value_entry = {
                     caption: datastream.item_name + "." + datastream.name + ".value",
-                    value: datastream.item_name + "." + datastream.name + ".value",
+                    value: datastream.item_id + "." + datastream.id + ".value",
                     meta: "PromenadeDataStream value"
                 };
 

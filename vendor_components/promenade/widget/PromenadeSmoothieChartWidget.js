@@ -8,7 +8,7 @@
     var widget_type = "display";
     var directive_function = PromenadeWidgetSmoothieChart;
 
-    widgetRegistration(display_name, module_name, module_dependencies, directive_name, widget_type, directive_function);
+    // widgetRegistration(display_name, module_name, module_dependencies, directive_name, widget_type, directive_function);
 
     PromenadeWidgetSmoothieChart.$inject = ["ParlayWidgetTemplate", "$interval", "RandColor"];
     /**

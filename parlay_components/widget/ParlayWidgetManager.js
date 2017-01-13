@@ -322,13 +322,15 @@
          * Creates container Object for a widget and assigns it a unique ID.
          * @member module:ParlayWidget.ParlayWidgetManager#add
          * @public
+         * @param {String} type - type of the widget.  Either StandardWidget or StandardItem
+         * @param {itemID} [itemID] - item ID of a parlay item.  Conditionally required: pass if type === "StandardItem"
          */
-        ParlayWidgetManager.prototype.add = function (type, item) {
+        ParlayWidgetManager.prototype.add = function (type, itemID) {
             var uid = this.generateUID();
             var new_widget ={uid: uid, zIndex: ++widgetLastZIndex.value, type: type};
 
-            if (!!item)
-                new_widget.item = item;
+            if (!!itemID)
+                new_widget.id = itemID;
 
 
             this.active_widgets.push(new_widget);

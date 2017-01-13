@@ -31,7 +31,7 @@
 
                 // ParlayItemPersistence will restore any values available if the card was duplicated or from a previous
                 // session. It will then register them for persistence across sessions.
-                var directive_name = "parlayItemCard." + scope.item.id.replace(" ", "_") + "_" + scope.container.uid;
+                var directive_name = "parlayItemCard." + scope.item.id.toString().replace(" ", "_") + "_" + scope.container.uid;
                 ParlayItemPersistence.monitor(directive_name, "$index", scope);
                 ParlayItemPersistence.monitor(directive_name, "active_tab_index", scope);
 

@@ -55,6 +55,9 @@
                 return;
             }
 
+            console.log(item);
+
+
             $scope.search_text = null;
             $scope.selected_item = null;
 
@@ -62,7 +65,7 @@
             if (!$mdSidenav("navigation").isLockedOpen()) {
                 $mdSidenav("navigation").close();
             }
-            ParlayWidgetManager.add("StandardItem", item);
+            ParlayWidgetManager.add("StandardItem", item.id);
         }
 
         /**
@@ -90,6 +93,13 @@
             return ParlayItemManager.hasDiscovered();
         }
 
+        /**
+         * Toggles the item to show its children in the item modal
+         * TODO:  probally need to move this to the ItemLibrary module
+         * @member module:ParlayItem.ParlayItemSearchController#toggle
+         * @public
+         * @param item
+         */
         function toggle(item) {
             console.warn("toggle(): not yet implemented");
         }

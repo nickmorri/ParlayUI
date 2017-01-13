@@ -21,7 +21,7 @@
      * @param {Object} ParlayWidgetTransformer - [ParlayWidgetTransformer]{@link module:ParlayWidget.ParlayWidgetTransformer} factory.
      * @param {Object} widgetLastZIndex - zIndex of the highest ParlayWidget.
      */
-    function ParlayWidgetBase ($mdDialog, $compile, $interval, ParlayWidgetInputManager, ParlayData, ParlayWidgetTransformer, widgetLastZIndex, ParlayItemManager, ParlayItemPersistence) {
+    function ParlayWidgetBase ($mdDialog, $compile, $interval, ParlayWidgetInputManager, ParlayData, ParlayWidgetTransformer, widgetLastZIndex, ParlayItemManager) {
         return {
             scope: true,
             restrict: "E",
@@ -86,17 +86,15 @@
                 });
 
 
-                // If an existing configuration Object exists we should restore the configuration, otherwise construct
-                // from scratch.
-
+                // If an existing configuration Object exists we should restore the configuration
                 if (!!scope.item.configuration) {
                     compileWrapper()(angular.copy(scope.item.configuration.template));
-                } else if (!!scope.item.id) {
+                } else if (scope.item.type === "StandardItem" && !!scope.item.id) {
+                    // if the container object has a reference to the ParlayItem id, then create the item
+                    // If there are stored values that need to be restored, the itemCompiler will handle that
                     compileItem()(ParlayItemManager.getItemByID(scope.item.id));
-                } else if (scope.item.type === "StandardItem") {
-                    scope.initialized = false;
-                    compileItem()(scope.item.item);
                 } else {
+                    // if all else fails, then we should be adding a widget from scratch
                     scope.initialized = false;
                     scope.item.configuration = {};
                     scope.item.name = ""; // this turns into scope.info.name in widgettemplate
@@ -351,8 +349,9 @@
 
                         scope.item.id = item.id;
 
-                        if (!!scope.item.stored_values)
+                        if (!!scope.item.stored_values) {
                             container.stored_values = scope.item.stored_values;
+                        }
 
                         while (element_ref[0].firstChild) {
                             angular.element(element_ref[0].firstChild).scope().$destroy();

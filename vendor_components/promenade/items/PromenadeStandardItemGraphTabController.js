@@ -49,7 +49,7 @@
         ctrl.streamCount = streamCount;
 
         var container = ParlayUtility.relevantScope($scope, 'container').container;
-        var directive_name = 'parlayItemCard.' + container.ref.id.replace(' ', '_') + '_' + container.uid;
+        var directive_name = 'parlayItemCard.' + container.ref.id.toString().replace(' ', '_') + '_' + container.uid;
 
         // Persist enabled streams across sessions.
         ParlayItemPersistence.monitor(directive_name, "ctrl.enabled_streams", $scope);

@@ -472,7 +472,7 @@
      */
     function PromenadeStandardItemCardCommandContainerController ($scope, ParlayItemPersistence, PromenadeStandardCommandMessage, ParlayUtility) {
         var container = ParlayUtility.relevantScope($scope, 'container').container;
-        var directive_name = 'parlayItemCard.' + container.ref.id.replace(' ', '_') + '_' + container.uid;
+        var directive_name = 'parlayItemCard.' + container.ref.id.toString().replace(' ', '_') + '_' + container.uid;
 
         // Request that $scope.wrapper.message is monitored for persistence. Also pass a custom restoration function
         // that will instantiate a PromenadeStandardCommandMessage instead of a JavaScript Object on when the persisted

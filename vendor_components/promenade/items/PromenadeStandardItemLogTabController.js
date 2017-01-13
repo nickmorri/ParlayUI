@@ -51,7 +51,7 @@
         ctrl.getLog = getLog;
 
         var container = ParlayUtility.relevantScope($scope, 'container').container;
-        var directive_name = 'parlayItemCard.' + container.ref.id.replace(' ', '_') + '_' + container.uid;
+        var directive_name = 'parlayItemCard.' + container.ref.id.toString().replace(' ', '_') + '_' + container.uid;
 
         // Persist filter text across sessions.
         ParlayItemPersistence.monitor(directive_name, "ctrl.filter_text", $scope);

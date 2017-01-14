@@ -18,7 +18,7 @@
                 var protocol = { onMessage: function () {}, sendMessage: function () {} };
                 spyOn(protocol, "onMessage");
 
-                var datastream = new PromenadeStandardDatastream(data, "TestItem", protocol);
+                var datastream = new PromenadeStandardDatastream(data, "TestItem", "TestItem", protocol);
 
                 expect(datastream.name).toBe(data.STREAM);
                 expect(datastream.item_name).toBe("TestItem");
@@ -36,7 +36,7 @@
             it("starts listening", function () {
                 var data = {STREAM: "datastream"};
                 var protocol = { onMessage: function () {}, sendMessage: function () {} };
-                var datastream = new PromenadeStandardDatastream(data, "TestItem", protocol);
+                var datastream = new PromenadeStandardDatastream(data, "TestItem", "TestItem", protocol);
 
                 spyOn(protocol, "sendMessage");
 
@@ -62,7 +62,7 @@
             it("stops listening", function () {
                 var data = {STREAM: "datastream"};
                 var protocol = { onMessage: function () {}, sendMessage: function () {} };
-                var datastream = new PromenadeStandardDatastream(data, "TestItem", protocol);
+                var datastream = new PromenadeStandardDatastream(data, "TestItem", "TestItem", protocol);
 
                 spyOn(protocol, "sendMessage");
 
@@ -89,7 +89,7 @@
 
                 var stored_callback;
 
-                var datastream = new PromenadeStandardDatastream({STREAM: "datastream"}, "TestItem", { onMessage: function (topics, callback) {
+                var datastream = new PromenadeStandardDatastream({STREAM: "datastream"}, "TestItem", "TestItem", { onMessage: function (topics, callback) {
                     stored_callback = callback;
                 }});
 

@@ -18,7 +18,7 @@
          * @param {String} item_id - Name of the [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} this command belongs to.
          * @param {Object} protocol - Reference to the [PromenadeDirectMessage]{@link module:PromenadeDirectMessage.PromenadeDirectMessage} the [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} belongs to.
          */
-        function PromenadeStandardProperty (data, item_id, protocol, item_name) {
+        function PromenadeStandardProperty (data, item_id, item_name, protocol) {
 
             var property = this;
 
@@ -60,6 +60,9 @@
              * @type {Boolean}
              */
             property.read_only = data.READ_ONLY;
+
+            property.write_only = data.WRITE_ONLY;
+
 
             /**
              * Holds internal value in the constructor closure scope.
@@ -181,7 +184,7 @@
                 var topics = {
                     TX_TYPE: "DIRECT",
                     MSG_TYPE: "PROPERTY",
-                    TO: property.id
+                    TO: property.item_id
                 };
                 var contents = {
                     PROPERTY: property.id,
@@ -191,7 +194,7 @@
                 var response_topics = {
                     TX_TYPE: "DIRECT",
                     MSG_TYPE: "RESPONSE",
-                    FROM: property.id,
+                    FROM: property.item_id,
                     TO: "UI"
                 };
 
@@ -207,6 +210,8 @@
              */
             function set (value) {
 
+
+
                 if (!!value) {
                     property.value = value;
                 }
@@ -214,7 +219,7 @@
                 var topics = {
                     TX_TYPE: "DIRECT",
                     MSG_TYPE: "PROPERTY",
-                    TO: property.id
+                    TO: property.item_id
                 };
 
                 var contents = {
@@ -226,7 +231,7 @@
                 var response_topics = {
                     TX_TYPE: "DIRECT",
                     MSG_TYPE: "RESPONSE",
-                    FROM: property.id,
+                    FROM: property.item_id,
                     TO: "UI"
                 };
 

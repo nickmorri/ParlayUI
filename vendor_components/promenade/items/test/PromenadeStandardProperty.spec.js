@@ -46,7 +46,7 @@
                     }
                 };
 
-                property = new PromenadeStandardProperty(data, "TestItem", protocol);
+                property = new PromenadeStandardProperty(data, "TestItem", "TestItem", protocol);
 
             }));
 

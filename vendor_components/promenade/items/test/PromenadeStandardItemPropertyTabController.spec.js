@@ -26,7 +26,7 @@
                     PROPERTY: "test_property1",
                     INPUT: "STRING",
                     READ_ONLY: false
-                }, "TestItem", protocol);
+                }, "TestItem", "TestItem", protocol);
 
     			item = { properties: { "property1": property } };
                 

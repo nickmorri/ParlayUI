@@ -17,7 +17,7 @@
          * @param {String} item_id - Name of the [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} this command belongs to.
          * @param {Object} protocol - Reference to the [PromenadeDirectMessage]{@link module:PromenadeDirectMessage.PromenadeDirectMessage} the [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} belongs to.
          */
-        function PromenadeStandardDatastream (data, item_id, protocol, item_name) {
+        function PromenadeStandardDatastream (data, item_id, item_name, protocol) {
 
             var datastream = this;
 

@@ -55,9 +55,6 @@
                 return;
             }
 
-            console.log(item);
-
-
             $scope.search_text = null;
             $scope.selected_item = null;
 
@@ -75,11 +72,12 @@
          * @param {String} query - Name of item to find.
          */
         function querySearch (query) {
-            function compare(item1, item2) {
-                return item1.name > item2.name;
-            }
+            // function compare(item1, item2) {
+            //     return item1.name.toString().toLowerCase() > item2.name.toString().toLowerCase();
+            // }
 
-            var items = ParlayItemManager.getAvailableItems().sort(compare);
+            var items = ParlayItemManager.getAvailableItems();
+
             return query ? items.filter(createFilterFor(query)) : items;
         }
 

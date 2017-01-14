@@ -8,8 +8,8 @@
         .module("parlay.items.manager", module_dependencies)
         .factory("ParlayItemManager", ParlayItemManagerFactory);
 
-    ParlayItemManagerFactory.$inject = ["PromenadeBroker", "ParlayProtocolManager", "$mdDialog"];
-    function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager, $mdDialog) {
+    ParlayItemManagerFactory.$inject = ["PromenadeBroker", "ParlayProtocolManager"];
+    function ParlayItemManagerFactory(PromenadeBroker, ParlayProtocolManager) {
 
         /**
          * Holds container Objects for items currently active in workspace.
@@ -124,17 +124,6 @@
             } else {
                 active_items.push(container);
             }
-        };
-
-
-
-        ParlayItemManager.prototype.openItemsDialog = function() {
-            $mdDialog.show({
-                templateUrl: "../parlay_components/items/directives/parlay-item-library-dialog.html",
-                controller: "ParlayItemSearchController",
-                controllerAs: "ctrl",
-                clickOutsideToClose: true
-            });
         };
 
         return new ParlayItemManager();

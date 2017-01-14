@@ -46,7 +46,6 @@
                 for(var i=0; i< this.items.length; i++)
                 {
                     var it = this.items[i];
-                    console.log(it);
                     builtins[it.name] = it.value;
                     all[it.name] = it.value;
                 }

@@ -384,7 +384,7 @@
                 function edit (initializing) {
                     $mdDialog.show({
                         templateUrl: "../parlay_components/widget/directives/parlay-widget-base-configuration-dialog.html",
-                        clickOutsideToClose: true,
+                        clickOutsideToClose: false,
                         controller: "ParlayWidgetBaseConfigurationDialogController",
                         controllerAs: "dialogCtrl",
                         locals: {

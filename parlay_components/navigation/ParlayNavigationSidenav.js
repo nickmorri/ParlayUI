@@ -11,7 +11,7 @@
         .controller("ParlayNavigationSidenavController", ParlayNavigationSidenavController);
 
     ParlayNavigationSidenavController.$inject = ["$mdSidenav", "$mdDialog", "ParlayGenericSaveLoadDialog", "$state",
-        "PromenadeBroker", "ParlayWidgetManager", "ParlayItemManager"];
+        "PromenadeBroker", "ParlayWidgetManager", "ParlayItemLibraryDialog"];
     /**
      * Controller for the navigation [$mdSidenav]{@link https://material.angularjs.org/latest/api/service/$mdSidenav}.
      * @constructor module:ParlayNavigation.ParlayNavigationSidenavController

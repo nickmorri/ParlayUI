@@ -7,7 +7,7 @@
         .module('parlay.items.library', module_dependencies)
         .factory('ParlayItemLibraryDialog', ParlayItemLibraryDialogFactory);
 
-    ParlayItemLibraryDialogFactory.$inject = ['$scope', '$mdDialog'];
+    ParlayItemLibraryDialogFactory.$inject = ['$mdDialog'];
     /**
      * Handles providing [ParlayItem]{@link module:ParlayItem.ParlayItem}s to the mdAutocomplete directive.
      * @constructor module:ParlayItem.ParlayItemLibraryDialog
@@ -19,16 +19,18 @@
     function ParlayItemLibraryDialogFactory ($mdDialog) {
 
         function ParlayItemLibraryDialog() {
-
-            function openItemsDialog() {
-                $mdDialog.show({
-                    templateUrl: "../parlay_components/items/directives/parlay-item-library-dialog.html",
-                    controller: "ParlayItemSearchController",
-                    controllerAs: "ctrl",
-                    clickOutsideToClose: true
-                });
-            }
         }
+
+        ParlayItemLibraryDialog.prototype.openItemsDialog = function() {
+            $mdDialog.show({
+                templateUrl: "../parlay_components/items/directives/parlay-item-library-dialog.html",
+                controller: "ParlayItemSearchController",
+                controllerAs: "ctrl",
+                clickOutsideToClose: false
+            });
+        };
+
+
         return new ParlayItemLibraryDialog();
     }
 }());

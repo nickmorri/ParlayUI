@@ -149,7 +149,7 @@
                 }
             });
             //add to parlayData so that we can access them remotely
-            ParlayData.set(property.item_id + "." + property.name, property);
+            ParlayData.set(property.item_id + "." + property.id, property);
 
             /**
              * Allows for callbacks to be registered, these will be invoked on change of value.

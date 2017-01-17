@@ -126,7 +126,8 @@
                 });
             });
 
-            ParlayData.set(datastream.item_id + "." + datastream.name, datastream);
+            ParlayData.set(datastream.item_id + "." + datastream.id, datastream);
+            console.log(datastream.item_id + "." + datastream.id);
 
             /**
              * Allows for callbacks to be registered, these will be invoked on change of value.

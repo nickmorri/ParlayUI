@@ -150,20 +150,20 @@ function parlay_utils_native($modname) {
             }
 
             Sk.ffi.remapToJs(datastreams).map(function(stream) {
-               fields.set(stream.ATTR_NAME, {
-                   dataType: "datastream",
-                   datastream: stream.STREAM
-               });
+                fields.set(stream.ATTR_NAME, {
+                    dataType: "datastream",
+                    datastream: stream.STREAM
+                });
             });
 
             Sk.ffi.remapToJs(properties).map(function(prop) {
-               fields.set(prop.ATTR_NAME, {
-                   dataType: "property",
-                   readOnly: prop.READ_ONLY,
-                   writeOnly: prop.WRITE_ONLY,
-                   type: prop.INPUT,
-                   property: prop.PROPERTY
-               });
+                fields.set(prop.ATTR_NAME, {
+                    dataType: "property",
+                    readOnly: prop.READ_ONLY,
+                    writeOnly: prop.WRITE_ONLY,
+                    type: prop.INPUT,
+                    property: prop.PROPERTY
+                });
             });
 
             // synchronous parlay commands
@@ -171,7 +171,7 @@ function parlay_utils_native($modname) {
             Sk.ffi.remapToJs(contentFields).map(function(field) { field.DROPDOWN_OPTIONS.map(function(opt, i) {
                 // get the arguments for the command represented by opt
                 var args = field.DROPDOWN_SUB_FIELDS[i].map(function (arg) {
-                   return {name: arg.MSG_KEY, type: arg.INPUT};
+                    return {name: arg.MSG_KEY, type: arg.INPUT};
                 });
                 args.dataType = "command";
 
@@ -221,37 +221,7 @@ function parlay_utils_native($modname) {
 
             }));
 
-            // parlay attributes
-            self.tp$setattr("__setattr__", new Sk.builtin.func(function (name, data) {
-                Sk.builtin.pyCheckArgs("__setattr__", arguments, 2, 2);
-                Sk.builtin.pyCheckType("name", "str", Sk.builtin.checkString(name));
 
-                var nameJS = Sk.ffi.remapToJs(name);
-                var propData = fields.get(nameJS);
-
-                // if we couldn't locate the given name, it does not refer to a property,
-                //   or that property is read-only, error
-                if (propData === undefined) {
-                    throw new Sk.builtin.AttributeError(itemIDJS + " does not have a " + nameJS + " property.");
-                } else if (propData.dataType !== "property") {
-                    throw new Sk.builtin.AttributeError(itemIDJS + "." + nameJS
-                        + " is a " + propData.dataType + ", not a property.");
-                } else if (propData.readOnly) {
-                    throw new Sk.builtin.AttributeError(itemIDJS + "." + nameJS
-                        + " is a read-only property.");
-                }
-
-                checkInputType(nameJS, propData.type, data);
-
-                //TODO: determine whether name is a property or data stream
-
-                return sendQueryNative({
-                    'command': "item_property",
-                    'operation': "set",
-                    'item': itemIDJS,
-                    'property': Sk.ffi.remapToJs(name),
-                    'value': Sk.ffi.remapToJs(data)});
-            }));
 
             self.tp$setattr("__getattr__", new Sk.builtin.func(function (name) {
                 Sk.builtin.pyCheckArgs("__getattr__", arguments, 1, 1);
@@ -284,6 +254,39 @@ function parlay_utils_native($modname) {
                         + " is a " + fieldData.dataType + ", not a property or datastream.");
                 }
 
+            }));
+
+            // parlay attributes
+            self.tp$setattr("__setattr__", new Sk.builtin.func(function (name, data) {
+                Sk.builtin.pyCheckArgs("__setattr__", arguments, 2, 2);
+                Sk.builtin.pyCheckType("name", "str", Sk.builtin.checkString(name));
+
+                var nameJS = Sk.ffi.remapToJs(name);
+                var propData = fields.get(nameJS);
+
+                // if we couldn't locate the given name, it does not refer to a property,
+                //   or that property is read-only, error
+                if (propData === undefined) {
+                    //if(nameJS.startsWith("__")) return; // we're erroring out here trying to use setattr to set getattr? is this a new skulpt bug?
+                    throw new Sk.builtin.AttributeError(itemIDJS + " does not have a " + nameJS + " property.");
+                } else if (propData.dataType !== "property") {
+                    throw new Sk.builtin.AttributeError(itemIDJS + "." + nameJS
+                        + " is a " + propData.dataType + ", not a property.");
+                } else if (propData.readOnly) {
+                    throw new Sk.builtin.AttributeError(itemIDJS + "." + nameJS
+                        + " is a read-only property.");
+                }
+
+                checkInputType(nameJS, propData.type, data);
+
+                //TODO: determine whether name is a property or data stream
+
+                return sendQueryNative({
+                    'command': "item_property",
+                    'operation': "set",
+                    'item': itemIDJS,
+                    'property': Sk.ffi.remapToJs(name),
+                    'value': Sk.ffi.remapToJs(data)});
             }));
 
 
@@ -402,10 +405,10 @@ function parlay_utils_native($modname) {
             });
             argsDictJS.COMMAND =  self.command;
             postMessage({messageType: "pyMessage", value: {
-                                "command": "item_contents",
-                                "item": item,
-                                "contents": argsDictJS,
-                                "listener": self.listenerID
+                "command": "item_contents",
+                "item": item,
+                "contents": argsDictJS,
+                "listener": self.listenerID
             }});
         });
 
@@ -432,7 +435,7 @@ function parlay_utils_native($modname) {
                 listeners.set(self.listenerID, function (val) {
                     // remove the listener since we've received the message
                     listeners.delete(self.listenerID);
-                     // stores the result of the query so that it will be returned by resume()
+                    // stores the result of the query so that it will be returned by resume()
                     self.result = Sk.ffi.remapToPy(val);
 
                     if (!!onResponse) {

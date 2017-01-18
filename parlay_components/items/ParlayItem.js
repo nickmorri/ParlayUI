@@ -81,20 +81,6 @@
              */
             this.datastreams = data.DATASTREAMS;
 
-
-            /**
-             * All the children ParalyItems of this ParlayItem
-             * @member module:ParlayItem.ParlayItem#children
-             * @public
-             * @type {(Array|Object)}
-             */
-            this.children = [];
-            if (data.CHILDREN !== undefined) {
-                for (var i = 0; i < data.CHILDREN.length; i++) {
-                    this.children.push(new ParlayItem(data.CHILDREN[i]));
-                }
-            }
-
             /**
              * All the available and default directives that the ParlayItem will compile in toolbar and tabs locations.
              * @member module:ParlayItem.ParlayItem#directives

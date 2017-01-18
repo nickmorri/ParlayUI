@@ -1,6 +1,6 @@
 // Holds the module dependencies for StandardItem. Creating this Array on the Global scope allows for other modules,
 // such as tabs to include themselves as StandardItem dependencies.
-var standard_item_dependencies = ["parlay.items", "promenade.items.standarditem.toolbar", "promenade.items.datastream", "promenade.items.property", "promenade.items.command", "ngOrderObjectBy"];
+var standard_item_dependencies = ["parlay.items.item", "promenade.items.standarditem.toolbar", "promenade.items.datastream", "promenade.items.property", "promenade.items.command", "ngOrderObjectBy"];
 
 (function (module_dependencies) {
     "use strict";
@@ -113,6 +113,12 @@ var standard_item_dependencies = ["parlay.items", "promenade.items.standarditem.
                 }.bind(this), {});
             }
 
+            this.children = [];
+            if (data.CHILDREN) {
+                for (var i = 0; i < data.CHILDREN.length; i++) {
+                    this.children.push(new PromenadeStandardItem(data.CHILDREN[i], protocol));
+                }
+            }
         }
 
         // Prototypically inherit from ParlayItem.

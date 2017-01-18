@@ -3,7 +3,7 @@
 
     describe('promenade.items.standarditem', function() {
     
-        beforeEach(module('parlay.items'));
+        beforeEach(module('promenade.items.standarditem'));
 
         describe('PromenadeStandardItem', function() {
             var rootScope, item, MockProtocol;

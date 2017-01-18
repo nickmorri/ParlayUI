@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["ui.router", "ngMaterial", "ngSanitize", "vendor.defaults", "parlay.items", "parlay.widget",
+    var module_dependencies = ["ui.router", "ngMaterial", "ngSanitize", "vendor.defaults", "parlay.widget",
                                "parlay.navigation.container", "parlay.notification.sidenav", "parlay.store"];
 
     angular

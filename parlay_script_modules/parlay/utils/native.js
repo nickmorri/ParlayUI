@@ -124,7 +124,6 @@ function parlay_utils_native($modname) {
             function sequentialToDict(cmd, args, kwargs) {
                 if(kwargs === undefined) kwargs = []; //default to empty kwargs list
                 var contents = {'COMMAND': cmd};
-                debugger;
                 //assume that cmd is a valid command
                 var fieldArgs = fields.get(cmd);
 
@@ -298,9 +297,8 @@ function parlay_utils_native($modname) {
     mod.ProxyDatastream = Sk.misceval.buildClass(mod, function($gbl, $loc) {
 
         $loc.__init__ = new Sk.builtin.func(function (self, item, stream) {
+
             Sk.builtin.pyCheckArgs("ProxyDatastream.__init__", arguments, 3, 3);
-            Sk.builtin.pyCheckType("item", "str", Sk.builtin.checkString(item));
-            Sk.builtin.pyCheckType("stream", "str", Sk.builtin.checkString(stream));
 
             self.itemJS = Sk.ffi.remapToJs(item);
             self.streamJS = Sk.ffi.remapToJs(stream);
@@ -379,6 +377,7 @@ function parlay_utils_native($modname) {
 
 
         $loc.__init__ = new Sk.builtin.func(function (self, itm, cmd, argsDict) {
+
             Sk.builtin.pyCheckArgs("ProxyCommand.__init__", arguments, 3, 4);
             Sk.builtin.pyCheckType("itm", "str", Sk.builtin.checkString(itm));
             Sk.builtin.pyCheckType("cmd", "str", Sk.builtin.checkString(cmd));

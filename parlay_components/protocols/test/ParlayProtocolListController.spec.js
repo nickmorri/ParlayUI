@@ -1,15 +1,15 @@
 (function () {
     'use strict';
-    
+
     describe('parlay.protocols.list_controller', function() {
-    
+
         beforeEach(module('parlay.protocols.list_controller'));
-        
+
         describe('ParlayProtocolListController', function () {
             var rootScope, scope, ctrl, MockPromenadeBroker, ParlayProtocolManager;
-            
+
             beforeEach(inject(function ($rootScope, $controller, $q, _ParlayProtocolManager_) {
-                
+
                 MockPromenadeBroker = {
                     connected: false,
                     version: '0.0.1',
@@ -40,9 +40,9 @@
                 scope = $rootScope.$new();
                 ctrl = $controller('ParlayProtocolListController', {$scope: scope, PromenadeBroker: MockPromenadeBroker, ParlayProtocolManager: ParlayProtocolManager});
             }));
-            
+
             describe('PromenadeBroker interactions', function () {
-                
+
                 it('tests connection', function () {
                     expect(ctrl.isBrokerConnected()).toBeFalsy();
                     expect(ctrl.getBrokerAddress()).toBe('ws://localhost:8080');
@@ -56,7 +56,7 @@
                     ctrl.shutdownBroker();
                     expect(ctrl.isBrokerConnected()).toBeFalsy();
                 });
-                
+
                 it('connects to broker', function () {
                     expect(ctrl.isBrokerConnected()).toBeFalsy();
                     ctrl.connectBroker();
@@ -87,11 +87,11 @@
                     rootScope.$apply();
                     expect(ctrl.connecting).toBeFalsy();
                 });
-                
+
             });
-            
+
         });
-        
+
     });
-    
+
 }());

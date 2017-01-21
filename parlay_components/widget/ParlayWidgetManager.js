@@ -323,15 +323,19 @@
          * @member module:ParlayWidget.ParlayWidgetManager#add
          * @public
          * @param {String} type - type of the widget.  Either StandardWidget or StandardItem
-         * @param {itemID} [itemID] - item ID of a parlay item.  Conditionally required: pass if type === "StandardItem"
+         * @param {item} [item] - item ID of a parlay item. OR a widget template.
          */
-        ParlayWidgetManager.prototype.add = function (type, itemID) {
+        ParlayWidgetManager.prototype.add = function (type, item) {
             var uid = this.generateUID();
             var new_widget ={uid: uid, zIndex: ++widgetLastZIndex.value, type: type};
 
-            if (!!itemID)
-                new_widget.id = itemID;
-
+            if (!!item) {
+                if (type === "StandardItem") {
+                    new_widget.id = item;
+                } else if (type === "StandardWidget") {
+                    new_widget.widget = item;
+                }
+            }
 
             this.active_widgets.push(new_widget);
         };

@@ -93,12 +93,17 @@
                     // if the container object has a reference to the ParlayItem id, then create the item
                     // If there are stored values that need to be restored, the itemCompiler will handle that
                     compileItem()(ParlayItemManager.getItemByID(scope.item.id));
-                } else {
+                } else if (scope.item.type === "StandardWidget") {
                     // if all else fails, then we should be adding a widget from scratch
                     scope.initialized = false;
                     scope.item.configuration = {};
                     scope.item.name = ""; // this turns into scope.info.name in widgettemplate
-                    scope.edit(true);
+                    if (!!scope.item.widget) {
+                        scope.item.configuration.template = scope.item.widget;
+                        compileWrapper()(scope.item.configuration.template);
+                    } else {
+                        scope.edit(true);
+                    }
                 }
 
                 /**
@@ -366,11 +371,16 @@
                         var child_element =  $compile(itemElement)(new_scope)[0];
 
                         element_ref[0].appendChild(child_element);
-                        element_ref.attr("style", "top: 0%;");
+                        element_ref.attr("style", "top: 50%; left: " + randomNumberString() + "%;");
 
                         scope.initialized = true;
                     }
                     return itemCompiler;
+                }
+
+
+                function randomNumberString() {
+                    return Math.round(Math.random() * 100).toString();
                 }
 
                 /**

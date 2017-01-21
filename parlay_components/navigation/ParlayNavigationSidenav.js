@@ -3,11 +3,10 @@
 
     var module_dependencies = ["ngMaterial", "parlay.items.search", "parlay.protocols.list_controller",
         "parlay.settings.dialog", "parlay.common.genericsaveloaddialog",
-        "parlay.widget.manager", "parlay.items.library"];
+        "parlay.widget.manager", "parlay.items.library", "parlay.widget.search"];
 
-    // module_dependencies.push("parlay.workspaces.manager");
-
-    angular.module("parlay.navigation.sidenav", module_dependencies)
+    angular
+        .module("parlay.navigation.sidenav", module_dependencies)
         .controller("ParlayNavigationSidenavController", ParlayNavigationSidenavController);
 
     ParlayNavigationSidenavController.$inject = ["$mdSidenav", "$mdDialog", "ParlayGenericSaveLoadDialog", "$state",
@@ -41,6 +40,8 @@
         ctrl.openWidgetSaveLoadDialog = openWidgetSaveLoadDialog;
         ctrl.openItemsDialog = openItemsDialog;
         ctrl.openWidgetsDialog = openWidgetsDialog;
+        ctrl.openItemsSidenav = openItemsSidenav;
+        ctrl.openWidgetsSidenav = openWidgetsSidenav;
 
         /**
          * Reference the editing state of the [ParlayWidgetManager]{@link module:ParlayWidget.ParlayWidgetManager}.
@@ -170,6 +171,14 @@
                 child: "widget",
                 children: "widgets"
             });
+        }
+
+        function openItemsSidenav() {
+            $mdSidenav("itemNav").toggle();
+        }
+
+        function openWidgetsSidenav() {
+            $mdSidenav("widgetNav").toggle();
         }
 
     }

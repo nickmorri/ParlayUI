@@ -20,6 +20,11 @@ parlay-item-search {
 	min-height: 48px;
 }
 
+.parlay-item-list {
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
 /* Indicate to the user that the card is moveable. */
 .movable-parlay-item-card > md-toolbar { cursor: move; }
 

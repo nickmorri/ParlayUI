@@ -29,14 +29,17 @@
         </div>
     </md-toolbar>
 
+    <parlay-item-library-sidenav></parlay-item-library-sidenav>
+    <parlay-widget-library-sidenav></parlay-widget-library-sidenav>
+
     <md-list layout="column" flex class="parlay-navigation-list" ng-controller="ParlayNavigationSidenavController as ctrl">
 
-        <md-list-item ng-click="ctrl.openItemsDialog($event)" ng-disabled="!ctrl.editing">
+        <md-list-item ng-click="ctrl.openItemsSidenav()" ng-disabled="!ctrl.editing">
             <md-icon ng-md-icon class="parlay-nav-icon" icon="apps"></md-icon>
             <p>Items</p>
         </md-list-item>
 
-        <md-list-item ng-click="ctrl.openWidgetsDialog($event)" ng-disabled="!ctrl.editing">
+        <md-list-item ng-click="ctrl.openWidgetsSidenav()" ng-disabled="!ctrl.editing">
             <md-icon ng-md-icon class="parlay-nav-icon" icon="extension"></md-icon>
             <p>Widgets</p>
         </md-list-item>

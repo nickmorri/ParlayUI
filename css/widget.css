@@ -20,7 +20,7 @@
 
 /* Prevent widgets effecting other widgets positioning. */
 parlay-widget-base {
-    left:50%; top: 50%;/* start off in the middle of the page. Draggable will override this*/
+    /*left:50%; top: 50%;!* start off in the middle of the page. Draggable will override this*!*/
     position: absolute !important;
 }
 

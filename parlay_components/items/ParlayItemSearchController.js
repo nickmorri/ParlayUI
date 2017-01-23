@@ -5,9 +5,10 @@
 
     angular
         .module('parlay.items.search', module_dependencies)
+        .directive('parlayItemLibrarySidenav', ParlayItemLibrarySidenav)
         .controller('ParlayItemSearchController', ParlayItemSearchController);
 
-    ParlayItemSearchController.$inject = ['$scope', '$mdSidenav', '$mdDialog', 'ParlayItemManager', 'ParlayWidgetManager'];
+    ParlayItemSearchController.$inject = ['$scope', '$mdSidenav', 'ParlayItemManager', 'ParlayWidgetManager'];
     /**
      * Handles providing [ParlayItem]{@link module:ParlayItem.ParlayItem}s to the mdAutocomplete directive.
      * @constructor module:ParlayItem.ParlayItemSearchController
@@ -16,7 +17,7 @@
      * @param {Object} $mdDialog - Angular Material dialog service.
      * @param {Object} ParlayItemManager - ParlayItemManager service.
      */
-    function ParlayItemSearchController ($scope, $mdSidenav, $mdDialog, ParlayItemManager, ParlayWidgetManager) {
+    function ParlayItemSearchController ($scope, $mdSidenav, ParlayItemManager, ParlayWidgetManager) {
 
         var ctrl = this;
 
@@ -41,7 +42,7 @@
         ctrl.querySearch = querySearch;
         ctrl.hasDiscovered = hasDiscovered;
         ctrl.toggle = toggle;
-        ctrl.closeSearch = $mdDialog.cancel;
+        ctrl.closeSearch = closeSearch;
 
         /**
          * On event handler for user selection of [ParlayItem]{@link module:ParlayItem.ParlayItem}.
@@ -72,11 +73,11 @@
          * @param {String} query - Name of item to find.
          */
         function querySearch (query) {
-            // function compare(item1, item2) {
-            //     return item1.name.toString().toLowerCase() > item2.name.toString().toLowerCase();
-            // }
+            function compare(item1, item2) {
+                return item1.name.toString().toLowerCase() > item2.name.toString().toLowerCase();
+            }
 
-            var items = ParlayItemManager.getAvailableItems();
+            var items = ParlayItemManager.getAvailableItems().sort(compare);
 
             return query ? items.filter(createFilterFor(query)) : items;
         }
@@ -101,5 +102,18 @@
         function toggle(item) {
             console.warn("toggle(): not yet implemented");
         }
+
+        function closeSearch() {
+            $mdSidenav('itemNav').toggle();
+        }
+    }
+
+    function ParlayItemLibrarySidenav () {
+        return {
+            restrict: "E",
+            templateUrl: "../parlay_components/items/directives/parlay-item-library-sidenav.html",
+            controller: "ParlayItemSearchController",
+            controllerAs: "itemNav"
+        };
     }
 }());

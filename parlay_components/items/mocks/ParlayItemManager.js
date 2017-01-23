@@ -19,16 +19,19 @@
             getAvailableItems: function() {
                 return [
                     {
+                        name: "test",
                         matchesQuery: function () {
                             return true;
                         }
                     },
                     {
+                        name: "test1",
                         matchesQuery: function () {
                             return true;
                         }
                     },
                     {
+                        name: "",
                         matchesQuery: function () {
                             return false;
                         }

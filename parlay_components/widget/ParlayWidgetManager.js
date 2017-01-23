@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["parlay.store", "parlay.settings", "parlay.item.persistence"];
+    var module_dependencies = ["parlay.store", "parlay.settings", "parlay.item.persistence", "parlay.data"];
 
     var widgetLastZIndex = {
         value: 0
@@ -12,8 +12,8 @@
         .value("widgetLastZIndex", widgetLastZIndex)
         .factory("ParlayWidgetManager", ParlayWidgetManagerFactory);
 
-    ParlayWidgetManagerFactory.$inject = ["$window", "ParlayStore", "ParlaySettings", "widgetLastZIndex", "ParlayItemPersistence"];
-    function ParlayWidgetManagerFactory ($window, ParlayStore, ParlaySettings, widgetLastZIndex, ParlayItemPersistence) {
+    ParlayWidgetManagerFactory.$inject = ["$window", "ParlayStore", "ParlaySettings", "widgetLastZIndex", "ParlayItemPersistence", "ParlayData"];
+    function ParlayWidgetManagerFactory ($window, ParlayStore, ParlaySettings, widgetLastZIndex, ParlayItemPersistence, ParlayData) {
 
         /**
          * Manages [ParlayWidgetBase]{@link module:ParlayWidget.ParlayWidgetBase}s active in the workspace.
@@ -84,6 +84,9 @@
          */
         ParlayWidgetManager.prototype.clearActive = function () {
             this.active_widgets = [];
+            ParlayData.set("widget_left_position", 5);
+            ParlayData.set("widget_top_position", 5);
+            ParlayData.set('widget_iterations', 1);
         };
 
         ParlayWidgetManager.prototype.getActiveWidget = function (uid) {
@@ -323,15 +326,19 @@
          * @member module:ParlayWidget.ParlayWidgetManager#add
          * @public
          * @param {String} type - type of the widget.  Either StandardWidget or StandardItem
-         * @param {itemID} [itemID] - item ID of a parlay item.  Conditionally required: pass if type === "StandardItem"
+         * @param {item} [item] - item ID of a parlay item. OR a widget template.
          */
-        ParlayWidgetManager.prototype.add = function (type, itemID) {
+        ParlayWidgetManager.prototype.add = function (type, item) {
             var uid = this.generateUID();
             var new_widget ={uid: uid, zIndex: ++widgetLastZIndex.value, type: type};
 
-            if (!!itemID)
-                new_widget.id = itemID;
-
+            if (!!item) {
+                if (type === "StandardItem") {
+                    new_widget.id = item;
+                } else if (type === "StandardWidget") {
+                    new_widget.widget = item;
+                }
+            }
 
             this.active_widgets.push(new_widget);
         };

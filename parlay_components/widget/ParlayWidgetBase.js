@@ -7,7 +7,7 @@
         .module("parlay.widget.base", module_dependencies)
         .directive("parlayWidgetBase", ParlayWidgetBase);
 
-    ParlayWidgetBase.$inject = ["$mdDialog", "$compile", "$interval", "ParlayWidgetInputManager", "ParlayData", "ParlayWidgetTransformer", "widgetLastZIndex", "ParlayItemManager", "ParlayItemPersistence"];
+    ParlayWidgetBase.$inject = ["$window", "$mdDialog", "$compile", "$interval", "ParlayWidgetInputManager", "ParlayData", "ParlayWidgetTransformer", "widgetLastZIndex", "ParlayItemManager", "ParlayItemPersistence"];
     /**
      * Base directive of a ParlayWidget. Repeated inside the widget workspace and contains the chosen compiled widget
      * template.
@@ -21,7 +21,7 @@
      * @param {Object} ParlayWidgetTransformer - [ParlayWidgetTransformer]{@link module:ParlayWidget.ParlayWidgetTransformer} factory.
      * @param {Object} widgetLastZIndex - zIndex of the highest ParlayWidget.
      */
-    function ParlayWidgetBase ($mdDialog, $compile, $interval, ParlayWidgetInputManager, ParlayData, ParlayWidgetTransformer, widgetLastZIndex, ParlayItemManager) {
+    function ParlayWidgetBase ($window, $mdDialog, $compile, $interval, ParlayWidgetInputManager, ParlayData, ParlayWidgetTransformer, widgetLastZIndex, ParlayItemManager) {
         return {
             scope: true,
             restrict: "E",
@@ -93,12 +93,13 @@
                     // if the container object has a reference to the ParlayItem id, then create the item
                     // If there are stored values that need to be restored, the itemCompiler will handle that
                     compileItem()(ParlayItemManager.getItemByID(scope.item.id));
-                } else {
+                } else if (scope.item.type === "StandardWidget") {
                     // if all else fails, then we should be adding a widget from scratch
                     scope.initialized = false;
                     scope.item.configuration = {};
                     scope.item.name = ""; // this turns into scope.info.name in widgettemplate
-                    scope.edit(true);
+                    initConfig();
+                    compileWrapper()(scope.item.configuration.template);
                 }
 
                 /**
@@ -108,21 +109,45 @@
                  * @param {HTMLElement} drag_element - Element that the Draggabilly will attach to.
                  */
                 function onLoaded (drag_element) {
+                    initPosition(drag_element);
                     enableDraggabilly(drag_element, scope.item.position);
                     restoreHandlers(scope.item.configuration);
                     restoreTransformer(scope.item.configuration);
-                    initPosition(drag_element);
                     scope.initialized = true;
                 }
 
                 function initPosition(element) {
 
                     var DOMElement = angular.element(element);
+                    var leftOffset = (parseInt(DOMElement.prop('offsetLeft'), 10));
+
+                    var left = ParlayData.get("widget_left_position");
+                    var top = ParlayData.get("widget_top_position");
 
                     scope.item.position = {
-                        left: parseInt(DOMElement.prop('offsetLeft'), 10) + "px",
-                        top: parseInt(DOMElement.prop('offsetTop'), 10) + "px"
+                        left: (leftOffset + left) + "px",
+                        top: top + "px"
                     };
+
+                    var setLeft = left + 10;
+                    var setTop = top + 10;
+
+                    if (setLeft + leftOffset > $window.innerWidth - 400) {
+                        var iter = ParlayData.get("widget_iterations") + 1;
+                        setLeft = 20;
+                        setTop = 20 * iter;
+                        ParlayData.set("widget_iterations", iter);
+                    }
+
+                    ParlayData.set("widget_left_position", setLeft);
+                    ParlayData.set("widget_top_position", setTop);
+                }
+
+                function initConfig() {
+                    scope.item.configuration.selectedEvents = [];
+                    scope.item.configuration.selectedItems = [];
+                    scope.item.configuration.template = scope.item.widget;
+                    scope.item.configuration.transformer = new ParlayWidgetTransformer();
                 }
 
                 /**
@@ -337,7 +362,7 @@
                     var attributes = [
                         ["edit", "edit"],
                         ["uid", "item.uid"],
-                        ["widgets-ctrl", "widgetsCtrl"],
+                        ["widgets-ctrl", "widgetsCtrl"]
                     ].map(function (attribute) {
                         return attribute[0] + "='" + attribute[1] + "'";
                     }).join(" ");
@@ -366,11 +391,15 @@
                         var child_element =  $compile(itemElement)(new_scope)[0];
 
                         element_ref[0].appendChild(child_element);
-                        element_ref.attr("style", "top: 0%;");
 
                         scope.initialized = true;
                     }
                     return itemCompiler;
+                }
+
+
+                function randomNumberString() {
+                    return Math.round(Math.random() * 100).toString();
                 }
 
                 /**

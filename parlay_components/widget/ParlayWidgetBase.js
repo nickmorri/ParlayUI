@@ -397,11 +397,6 @@
                     return itemCompiler;
                 }
 
-
-                function randomNumberString() {
-                    return Math.round(Math.random() * 100).toString();
-                }
-
                 /**
                  * Launches the widget configuration dialog with a reference to the configuration Object to allow the
                  * user to configure the widget.

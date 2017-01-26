@@ -20,8 +20,7 @@
             scope: {
                 item: "="
             },
-            template: '<div>{{::item.name}}</div>' +
-            '<div class="md-subhead" layout="column">ID: {{::item.id}}</div>'
+            templateUrl: '../vendor_components/promenade/items/directives/promenade-standard-item-card-toolbar.html'
         };
     }
 

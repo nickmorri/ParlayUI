@@ -1,20 +1,5 @@
 <md-tab label="Commands">
 
-	<md-toolbar class="md-hue-2">
-		<div class="md-toolbar-tools">
-
-			<h6>Command Builder</h6>
-
-			<span flex></span>
-
-            <md-button ng-click="ctrl.toggleCommandBuilder($event)" class="md-icon-button" aria-label="Collapse command builder">
-                <md-tooltip>Collapse command builder</md-tooltip>
-                <md-icon ng-md-icon icon="{{ctrl.collapsible_state.command_builder ? 'expand_less' : 'expand_more'}}"></md-icon>
-            </md-button>
-
-		</div>
-	</md-toolbar>
-
     <form name="commandform" layout="column" ng-submit="ctrl.send($event)" ng-hide="ctrl.collapsible_state.command_builder">
 
         <promenade-standard-item-card-command-container

@@ -20,6 +20,10 @@ parlay-item-search {
 	min-height: 48px;
 }
 
+.parlay-item-card-buttons {
+	margin: 0 !important;
+}
+
 .parlay-item-list {
 	padding-top: 0;
 	padding-bottom: 0;

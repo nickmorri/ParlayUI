@@ -1,4 +1,15 @@
 <div layout="column">
-    <span class="md-subhead">{{::item.name}}</span>
+    <span >{{::item.name}}</span>
     <span class="md-caption">ID: {{::item.id}}</span>
+</div>
+<span flex></span>
+<div ng-disabled="!widgetsCtrl.editing" layout="row">
+    <md-button class="md-icon-button parlay-item-card-buttons" ng-click="widgetsCtrl.duplicate(uid)">
+        <md-icon ng-md-icon icon="content_copy"></md-icon>
+        <md-tooltip>Copy</md-tooltip>
+    </md-button>
+    <md-button class="md-icon-button parlay-item-card-buttons" ng-click="widgetsCtrl.remove(uid)">
+        <md-icon ng-md-icon icon="close"></md-icon>
+        <md-tooltip>Close Item</md-tooltip>
+    </md-button>
 </div>

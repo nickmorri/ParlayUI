@@ -15,6 +15,14 @@
     min-height: 0;
 }
 
+.promenade-command-container .md-chip-input-container{
+    width: 100%;
+}
+
+.promenade-command-container input {
+    width: 100%;
+}
+
 /* Style auto-generated Python code for better readability. */
 .promenade-script-builder-text {
     white-space: pre-line;

@@ -211,6 +211,7 @@
             });
         }
 
+
         // Watch for new fields to fill with defaults.
         $scope.$watchCollection("wrapper.message", function () {
 
@@ -237,7 +238,7 @@
                 if (!$scope.wrapper.message[field.msg_key + '_' + field.input] && ['NUMBERS', 'STRINGS', 'ARRAY'].indexOf(field.input) > -1) {
                     $scope.wrapper.message[field.msg_key + '_' + field.input] = field.default.map(prepChip);
                 }
-                else if (!$scope.wrapper.message[field.msg_key + '_' + field.input]) {
+                else if ($scope.wrapper.message[field.msg_key + '_' + field.input] === undefined) {
                     $scope.wrapper.message[field.msg_key + '_' + field.input] = field.default;
                 }
             });

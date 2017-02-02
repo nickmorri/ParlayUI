@@ -8,7 +8,7 @@
 /* Reduce margins to allow for better information density. */
 .promenade-command-container {
     /*margin-top: 0;*/
-    margin-bottom: 0px;
+    margin-bottom: 0;
 }
 
 .promenade-command-container > md-input-container .md-errors-spacer {

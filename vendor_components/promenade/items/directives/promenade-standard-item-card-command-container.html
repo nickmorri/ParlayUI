@@ -4,7 +4,7 @@
             flex md-is-error="commandform[field.msg_key].$invalid" ng-hide="field.hidden" class="promenade-command-container">
 
 		<!-- Label that is displayed above input for all inputs that don't use md-chips. -->
-        <label>{{::field.label}}</label>
+        <label ng-if="field.input === 'DROPDOWN'">{{::field.label}}</label>
 
 		<!-- DROPDOWN input type. -->
         <md-select ng-if="field.input === 'DROPDOWN'"
@@ -15,7 +15,8 @@
                    placeholder="{{field.label}}">
             <md-option ng-repeat="option in field.options"
                        ng-value="option"
-                       ng-selected="option.name === field.default">
+                       ng-selected="option.name === field.default"
+                       ng-click="console.log(option)">
                 {{::option.name}}
             </md-option>
         </md-select>

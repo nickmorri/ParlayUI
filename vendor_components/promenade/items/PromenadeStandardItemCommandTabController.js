@@ -417,7 +417,6 @@
             templateUrl: "../vendor_components/promenade/items/directives/promenade-standard-item-card-commands.html",
             controller: "PromenadeStandardItemCardCommandTabController",
             controllerAs: "ctrl"
-            // bindToController: true
         };
     }
 

@@ -131,6 +131,11 @@
                 ParlayNotification.show({content: response, warning: true});
             });
 
+            broker.onMessage({"MSG_TYPE": "EVENT"}, function (response) {
+                if (response.EVENT === "ParlaySendFileEvent")
+                    response.INFO.download(response.DESCRIPTION, false);
+            });
+
             // Register PromenadeBroker's notification callback for discovery.
             broker.onDiscovery(function (contents) {
 
@@ -173,6 +178,7 @@
                 // Request a subscription from the Broker for this protocol.
                 ParlaySocket.sendMessage({"type": "subscribe"}, {"TOPICS": {"TO": 61953}});
                 ParlaySocket.sendMessage({"type": "subscribe"}, {"TOPICS": {"TO": "UI"}});
+                ParlaySocket.sendMessage({"type": "subscribe"}, {"TOPICS": {"TX_TYPE": "BROADCAST"}});
 
                 broker.setConnectedPreviously();
 
@@ -196,23 +202,7 @@
 
                 // When socket is closed we should show a notification giving the user the option to reconnect.
                 // If socket failed to open we should show a notification giving the user the option to connect.
-                ParlayNotification.show(broker.hasConnectedPreviously() ? {
-                    content: "Disconnected from Parlay Connect!",
-                    action: {
-                        text: "Reconnect",
-                        callback: broker.connect
-                    },
-                    permanent: true,
-                    warning: true
-                } : {
-                    content: "Failed to connect to Parlay Connect!",
-                    action: {
-                        text: "Connect",
-                        callback: broker.connect
-                    },
-                    permanent: true,
-                    warning: true
-                });
+                connectNotification();
             });
 
             /**
@@ -446,7 +436,7 @@
                 }
                 else {
                     ParlayNotification.show({content: "Cannot discover while not connected to Parlay Connect."});
-
+                    connectNotification();
                     return $q(function (resolve, reject) { reject("Cannot discover while not connected to Parlay Connect."); });
                 }
             }
@@ -497,6 +487,27 @@
                 return broker.sendMessage({request: "close_protocol"}, {"protocol": protocol_name}, {response: "close_protocol_response"}).then(function (response) {
                     return response.STATUS === "ok" ? $q.resolve(response) : $q.reject(response.STATUS);
                 });
+            }
+
+            function connectNotification() {
+                ParlayNotification.show(broker.hasConnectedPreviously() ? {
+                        content: "Disconnected from Parlay Connect!",
+                        action: {
+                            text: "Reconnect",
+                            callback: broker.connect
+                        },
+                        permanent: true,
+                        warning: true
+                    } : {
+                        content: "Failed to connect to Parlay Connect!",
+                        action: {
+                            text: "Connect",
+                            callback: broker.connect
+                        },
+                        permanent: true,
+                        warning: true
+                    }
+                );
             }
 
 		}

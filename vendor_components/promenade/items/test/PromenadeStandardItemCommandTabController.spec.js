@@ -36,7 +36,6 @@
             }));
 
             it("initial values", function () {
-                console.log("TEST " + ctrl.test);
                 expect(ctrl.sending).toBeFalsy();
             });
 

@@ -67,17 +67,33 @@
 	 * @returns {Boolean} - Status of download operation.
 	 */
 	/* istanbul ignore next */
-	Object.defineProperty(Object.prototype, "download", {
-		writable: false,
-		enumerable: false,
-		value: function(filename) {
-			var pom = document.createElement('a');
-			pom.setAttribute('href', 'data:text/python;base64,' + window.btoa(JSON.stringify(this)));
-			pom.setAttribute('download', filename);
-			pom.setAttribute('target', '_newtab');
-			return pom.dispatchEvent(new MouseEvent("click"));
-		}
-	});
+    Object.defineProperty(Object.prototype, "download", {
+        writable: false,
+        enumerable: false,
+        value: function(filename, stringify) {
+            // Check if browser supports blob constructor
+            if (!Modernizr.blobconstructor) {
+                alert("WARNING:  Your browser does not support blob file downloading. Please upgrade your browser.");
+                return;
+            }
+
+
+            if (stringify === undefined)
+                stringify = true;
+
+            var pom = document.createElement('a');
+            var contents = (!!stringify ? JSON.stringify(this) : this);
+            var url = URL.createObjectURL(new Blob([contents]));
+
+            pom.setAttribute('href', url);
+            pom.setAttribute('download', filename);
+            pom.setAttribute('target', '_blank');
+            var status = pom.dispatchEvent(new MouseEvent("click"));
+
+            URL.revokeObjectURL(url);
+            return status;
+        }
+    });
 
 	function RandColorFactory () {
 

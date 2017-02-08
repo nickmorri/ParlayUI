@@ -2,15 +2,10 @@
 .parlay-item-card-tab-content { max-height: 600px; }
 
 /* Reduce padding between tabs and font size to allow more tabs to fit in toolbar. */
-
-.parlay-item-card {
-	max-height: 600px;
-}
-
 .parlay-item-card > md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item {
-    font-size: 12px;
-    padding-left: 8px;
-    padding-right: 8px;
+	font-size: 12px;
+	padding-left: 8px;
+	padding-right: 8px;
 }
 
 parlay-item-search {

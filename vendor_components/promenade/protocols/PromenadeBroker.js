@@ -5,7 +5,7 @@
      * @module PromenadeBroker
      */
 
-	var module_dependencies = ["parlay.socket", "parlay.notification",
+	var module_dependencies = ["parlay.socket", "parlay.notification", "parlay.utility",
         "parlay.notification.error", "parlay.settings", "promenade.items.standarditem",
         "promenade.protocols.directmessage", "ngMaterial"];
 
@@ -21,8 +21,12 @@
 		}
 	}
 
-    PromenadeBrokerFactory.$inject = ["ParlaySocket", "BrokerAddress", "ParlayNotification", "ParlayErrorDialog", "ParlaySettings", "PromenadeStandardItem", "PromenadeDirectMessageProtocol", "$q", "$location", "$timeout", "$window", "$mdDialog"];
-	function PromenadeBrokerFactory (ParlaySocket, BrokerAddress, ParlayNotification, ParlayErrorDialog, ParlaySettings, PromenadeStandardItem,PromenadeDirectMessageProtocol, $q, $location, $timeout, $window, $mdDialog) {
+    PromenadeBrokerFactory.$inject = ["ParlaySocket", "BrokerAddress", "ParlayNotification", "ParlayErrorDialog",
+        "ParlaySettings", "PromenadeStandardItem", "PromenadeDirectMessageProtocol", "$q", "$location", "$timeout", "$window",
+        "$mdDialog", "ParlayObject"];
+	function PromenadeBrokerFactory (ParlaySocket, BrokerAddress, ParlayNotification, ParlayErrorDialog, ParlaySettings,
+                                     PromenadeStandardItem, PromenadeDirectMessageProtocol, $q, $location, $timeout, $window,
+                                     $mdDialog, ParlayObject) {
 
 		/**
 		 * The PromenadeBroker is a implementation of a Broker that communicates using the Parlay communication
@@ -132,8 +136,10 @@
             });
 
             broker.onMessage({"MSG_TYPE": "EVENT"}, function (response) {
-                if (response.EVENT === "ParlaySendFileEvent")
-                    response.INFO.download(response.DESCRIPTION, false);
+                if (response.EVENT === "ParlaySendFileEvent") {
+                    var file = new ParlayObject(response.INFO);
+                    file.download(response.DESCRIPTION, false);
+                }
             });
 
             // Register PromenadeBroker's notification callback for discovery.

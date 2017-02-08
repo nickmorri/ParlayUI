@@ -311,7 +311,14 @@
              * @public
 			 */
 			function connect () {
-				ParlaySocket.open($location.protocol === 'https:' ? 'wss://' + BrokerAddress + ':8086' : 'ws://' + BrokerAddress + ':8085');
+                if($window.parlay_overrides !== undefined && $window.parlay_overrides.websocket_address !== undefined)
+                {
+                    ParlaySocket.open($window.parlay_overrides.websocket_address);
+
+                }
+                else {
+                    ParlaySocket.open($location.protocol === 'https:' ? 'wss://' + BrokerAddress + ':8086' : 'ws://' + BrokerAddress + ':8085');
+                }
 			}
 
 			/**

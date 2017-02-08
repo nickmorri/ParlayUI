@@ -400,8 +400,8 @@
         return CallbackContainer;
     }
 
-    ParlaySocketFactory.$inject = ['BrokerAddress', '$location', '$q', 'CallbackContainer'];
-    function ParlaySocketFactory (BrokerAddress, $location, $q, CallbackContainer) {
+    ParlaySocketFactory.$inject = ['BrokerAddress', '$location', '$window','$q', 'CallbackContainer'];
+    function ParlaySocketFactory (BrokerAddress, $location, $window, $q, CallbackContainer) {
 
         /**
          * [ParlaySocket]{@link module:ParlaySocket.ParlaySocket} specific Error type that is thrown on invalid messages.
@@ -528,7 +528,15 @@
             parlay_socket.isConnected = isConnected;
 
             // Opens ParlaySocket as soon as possible.
-            parlay_socket.open($location.protocol === 'https:' ? 'wss://' + BrokerAddress + ':8086' : 'ws://' + BrokerAddress + ':8085');
+            // if we have an over-ridden Broker address, use that instead
+            if($window.parlay_overrides !== undefined && $window.parlay_overrides.websocket_address !== undefined)
+            {
+                parlay_socket.open($window.parlay_overrides.websocket_address);
+
+            }
+            else {
+                parlay_socket.open($location.protocol === 'https:' ? 'wss://' + BrokerAddress + ':8086' : 'ws://' + BrokerAddress + ':8085');
+            }
 
             /**
              * Opens [HTML WebSocket]{@link https://developer.mozilla.org/en-US/docs/Web/API/WebSocket} and returns

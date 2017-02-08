@@ -15,8 +15,7 @@
                    placeholder="{{field.label}}">
             <md-option ng-repeat="option in field.options"
                        ng-value="option"
-                       ng-selected="option.name === field.default"
-                       ng-click="console.log(option)">
+                       ng-selected="option.name === field.default">
                 {{::option.name}}
             </md-option>
         </md-select>

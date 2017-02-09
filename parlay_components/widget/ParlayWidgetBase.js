@@ -318,8 +318,7 @@
                         ["uid", "item.uid"],
                         ["template", "item.configuration.template"],
                         ["customizations", "item.configuration.customizations"],
-                        ["info", "item"],
-
+                        ["info", "item"]
                     ].map(function (attribute) {
                         return attribute[0] + "='" + attribute[1] + "'";
                     }).join(" ");
@@ -395,11 +394,6 @@
                         scope.initialized = true;
                     }
                     return itemCompiler;
-                }
-
-
-                function randomNumberString() {
-                    return Math.round(Math.random() * 100).toString();
                 }
 
                 /**

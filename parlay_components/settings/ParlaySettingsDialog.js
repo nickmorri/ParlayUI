@@ -1,14 +1,14 @@
 (function () {
     "use strict";
     
-    var module_dependencies = ["parlay.settings", "promenade.broker"];
+    var module_dependencies = ["parlay.settings", "parlay.utility", "promenade.broker"];
 
     angular
         .module("parlay.settings.dialog", module_dependencies)
         .controller("ParlaySettingsDialogController", ParlaySettingsDialogController);
 
     /* istanbul ignore next */
-    ParlaySettingsDialogController.$inject = ["$scope", "$mdDialog", "ParlaySettings", "PromenadeBroker"];
+    ParlaySettingsDialogController.$inject = ["$scope", "$mdDialog", "ParlaySettings", "PromenadeBroker", "ParlayObject"];
     /**
      * @constructor module:ParlaySettings.ParlaySettingsDialogController
      * @param {Object} $scope - AngularJS [$scope]{@link https://docs.angularjs.org/guide/scope} Object.
@@ -16,7 +16,7 @@
      * @param {Object} ParlaySettings - [ParlaySettings]{@link module:ParlaySettings.ParlaySettings} service.
      * @param {Object} PromenadeBroker - [PromenadeBroker]{@link module:PromenadeBroker.PromenadeBroker} service.
      */
-    function ParlaySettingsDialogController ($scope, $mdDialog, ParlaySettings, PromenadeBroker) {
+    function ParlaySettingsDialogController ($scope, $mdDialog, ParlaySettings, PromenadeBroker, ParlayObject) {
 
         var ctrl = this;
 
@@ -74,7 +74,11 @@
          * @public
          */
         function saveDiscovery () {
-            PromenadeBroker.getLastDiscovery().download("discovery_" + (new Date()).toISOString() + ".txt");
+
+
+
+            var last_discovery = new ParlayObject(PromenadeBroker.getLastDiscovery());
+            last_discovery.download("discovery_" + (new Date()).toISOString() + ".txt");
         }
 
         /**

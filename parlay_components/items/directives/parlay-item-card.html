@@ -1,10 +1,11 @@
 <!-- TODO: create ng conditional classes for width based on screen percentages -->
+<!--flex-xs="100" flex-sm="50" flex-md="50" flex="33"-->
+
 
 <md-card style="width: 350px;" class="md-whiteframe-2dp parlay-item-card">
     <md-toolbar class="md-primary show-handle handle">
-        <div class="md-toolbar-tools" layout="row">
+        <div class="md-toolbar-tools" layout="row" style="padding-right: 0px;">
             <!-- Vendor specific item toolbar-tools directives are automatically inserted here -->
-            <parlay-widget-base-menu ng-show="widgetsCtrl.editing"></parlay-widget-base-menu>
         </div>
     </md-toolbar>
     <md-tabs class="md-primary md-hue-1" style="pointer-events: auto;" md-selected="active_tab_index" md-dynamic-height="true" md-autoselect="true" md-stretch-tabs="auto" md-enable-disconnect="true">

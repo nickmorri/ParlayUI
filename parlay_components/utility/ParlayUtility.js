@@ -63,7 +63,6 @@
     });
 
     function RandColorFactory () {
-
         /**
          * Convert the given hex color code to RGB.
          * @member module:ParlayUtility.RandColorItem#hexToRgb

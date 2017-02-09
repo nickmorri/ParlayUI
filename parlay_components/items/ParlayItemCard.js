@@ -24,7 +24,6 @@
                 // Grab the item reference from the container for convenience of using scope.item.
                 scope.uid = scope.container.uid;
                 scope.item = scope.container.ref;
-                scope.type = "StandardItem";
 
                 // Compile all the toolbar and tab directives.
                 compileDirectives();
@@ -48,7 +47,7 @@
                     var toolbar = element[0].querySelector("div.md-toolbar-tools");
 
                     directives.map(function (directive) {
-                        return "<" + directive.snakeCase() + " flex item='item' layout-fill layout='row' layout-align='space-between center'></" + directive.snakeCase() + ">";
+                        return "<" + directive.snakeCase() + " flex item='item' uid='uid' layout-fill layout='row' layout-align='space-between center'></" + directive.snakeCase() + ">";
                     }).forEach(function (directive_string) {
                         toolbar.insertBefore($compile(directive_string)(scope)[0], toolbar.firstChild);
                     });

@@ -5,11 +5,11 @@
     <md-menu-content width="2">
         <md-menu-item>
             <md-button ng-click="widgetsCtrl.remove(uid)">
-                <md-icon ng-md-icon icon="delete"></md-icon>
-                Delete
+                <md-icon ng-md-icon icon="close"></md-icon>
+                Close
             </md-button>
         </md-menu-item>
-        <md-menu-item ng-show="type !== 'StandardItem'">
+        <md-menu-item ng-if="type !== 'StandardItem'">
             <md-button ng-click="edit(false)">
                 <md-icon ng-md-icon icon="edit"></md-icon>
                 Edit

@@ -3,7 +3,7 @@
 	<md-toolbar class="md-hue-2">
 		<div class="md-toolbar-tools">
 
-            <h1 ng-hide="ctrl.hasProperties()">No properties available</h1>
+            <h5 ng-hide="ctrl.hasProperties()">No properties available</h5>
 
 			<md-button ng-show="ctrl.hasProperties()" class="md-primary md-hue-3" aria-label="Get all" ng-click="ctrl.getAllProperties()">Get All</md-button>
 			<md-button ng-show="ctrl.hasProperties()" class="md-primary md-hue-3" aria-label="Set all" ng-click="ctrl.setAllProperties()">Set All</md-button>

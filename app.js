@@ -10,9 +10,9 @@
         .config(ParlayConfig)
         .run(ParlayRun);
 
-    ParlayConfig.$inject = ["$provide", "$urlRouterProvider", "$mdThemingProvider", "$compileProvider", "vendorPalette",
+    ParlayConfig.$inject = ["$provide", "$urlRouterProvider", "$mdThemingProvider", "$compileProvider", "$qProvider", "vendorPalette",
         "$animateProvider", "debugEnabled"];
-    function ParlayConfig ($provide, $urlRouterProvider, $mdThemingProvider, $compileProvider, vendorPalette,
+    function ParlayConfig ($provide, $urlRouterProvider, $mdThemingProvider, $compileProvider, $qProvider, vendorPalette,
                            $animateProvider, debugEnabled) {
 
         // Theme configuration.
@@ -33,6 +33,8 @@
         $compileProvider.debugInfoEnabled(debugEnabled);
         // Make the primary theme color available as a value.
         $provide.value("themeColor", $mdThemingProvider._PALETTES[vendorPalette.primary][500]);
+
+        $qProvider.errorOnUnhandledRejections(false);
 
         //optimize animations
         //$animateProvider.classNameFilter( /\banimated\b/ );

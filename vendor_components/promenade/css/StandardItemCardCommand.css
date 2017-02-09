@@ -1,20 +1,26 @@
 /* Style contents inside tab for better user experience. */
 .promenade-item-card-tab-content {
-    padding-top: 16px;
+    /*padding-top: 16px;*/
     padding-left: 8px;
     padding-right: 8px;
 }
 
 /* Reduce margins to allow for better information density. */
 .promenade-command-container {
-    margin-top: 0;
-    margin-bottom: -10px;
+    /*margin-top: 0;*/
+    margin-bottom: 0;
 }
 
-/* Tighten margins so md-select matches the other inputs in the command container. */
-.promenade-command-container > md-select {
-    margin-top: -5px;
-    margin-bottom: 25px;
+.promenade-command-container > md-input-container .md-errors-spacer {
+    min-height: 0;
+}
+
+.promenade-command-container .md-chip-input-container{
+    width: 100%;
+}
+
+.promenade-command-container input {
+    width: 100%;
 }
 
 /* Style auto-generated Python code for better readability. */

@@ -163,6 +163,8 @@
         ctrl.toggleScriptBuilder = toggleScriptBuilder;
         ctrl.toggleResponseContents = toggleResponseContents;
 
+        ctrl.item = $scope.item;
+
         // Due to the way JavaScript prototypical inheritance works and AngularJS scoping we want to enclose the message Object within another object.
         // Reference AngularJS "dot rule": http://jimhoskins.com/2012/12/14/nested-scopes-in-angularjs.html
         $scope.wrapper = {
@@ -211,6 +213,7 @@
             });
         }
 
+
         // Watch for new fields to fill with defaults.
         $scope.$watchCollection("wrapper.message", function () {
 
@@ -237,7 +240,7 @@
                 if (!$scope.wrapper.message[field.msg_key + '_' + field.input] && ['NUMBERS', 'STRINGS', 'ARRAY'].indexOf(field.input) > -1) {
                     $scope.wrapper.message[field.msg_key + '_' + field.input] = field.default.map(prepChip);
                 }
-                else if (!$scope.wrapper.message[field.msg_key + '_' + field.input]) {
+                else if ($scope.wrapper.message[field.msg_key + '_' + field.input] === undefined) {
                     $scope.wrapper.message[field.msg_key + '_' + field.input] = field.default;
                 }
             });
@@ -413,8 +416,7 @@
             },
             templateUrl: "../vendor_components/promenade/items/directives/promenade-standard-item-card-commands.html",
             controller: "PromenadeStandardItemCardCommandTabController",
-            controllerAs: "ctrl",
-            bindToController: true
+            controllerAs: "ctrl"
         };
     }
 

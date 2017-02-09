@@ -150,7 +150,7 @@
             // Fills parent element with SmoothieChart HTML5 Canvas object.
             return function setSize() {
                 canvas.style.width = "100%";
-                canvas.style.height = "100%";
+                canvas.style.height = "auto";
                 canvas.width = canvas.offsetWidth;
                 canvas.height = 300;
             };

@@ -3,14 +3,14 @@
 
     var module_dependencies = ["ngMaterial", "parlay.items.search", "parlay.protocols.list_controller",
         "parlay.settings.dialog", "parlay.common.genericsaveloaddialog",
-        "parlay.widget.manager", "parlay.items.library", "parlay.widget.search"];
+        "parlay.widget.manager", "parlay.widget.search"];
 
     angular
         .module("parlay.navigation.sidenav", module_dependencies)
         .controller("ParlayNavigationSidenavController", ParlayNavigationSidenavController);
 
     ParlayNavigationSidenavController.$inject = ["$mdSidenav", "$mdDialog", "ParlayGenericSaveLoadDialog", "$state",
-        "PromenadeBroker", "ParlayWidgetManager", "ParlayItemLibraryDialog"];
+        "PromenadeBroker", "ParlayWidgetManager"];
     /**
      * Controller for the navigation [$mdSidenav]{@link https://material.angularjs.org/latest/api/service/$mdSidenav}.
      * @constructor module:ParlayNavigation.ParlayNavigationSidenavController
@@ -22,7 +22,7 @@
      * @param {Object} ParlayItemManager - ParlayItemManager service.
      * @param {Object} ParlayWidgetManager - ParlayWidgetManager service.
      */
-    function ParlayNavigationSidenavController($mdSidenav, $mdDialog, ParlayGenericSaveLoadDialog, $state, PromenadeBroker, ParlayWidgetManager, ParlayItemLibraryDialog) {
+    function ParlayNavigationSidenavController($mdSidenav, $mdDialog, ParlayGenericSaveLoadDialog, $state, PromenadeBroker, ParlayWidgetManager) {
 
         var ctrl = this;
 
@@ -38,7 +38,6 @@
         ctrl.requestDiscovery = requestDiscovery;
         ctrl.toggleWidgetEditing = toggleWidgetEditing;
         ctrl.openWidgetSaveLoadDialog = openWidgetSaveLoadDialog;
-        ctrl.openItemsDialog = openItemsDialog;
         ctrl.openWidgetsDialog = openWidgetsDialog;
         ctrl.openItemsSidenav = openItemsSidenav;
         ctrl.openWidgetsSidenav = openWidgetsSidenav;
@@ -86,10 +85,6 @@
 
         function toggleWidgetEditing  () {
             ParlayWidgetManager.toggleEditing();
-        }
-
-        function openItemsDialog () {
-            ParlayItemLibraryDialog.openItemsDialog();
         }
 
         function openWidgetsDialog() {

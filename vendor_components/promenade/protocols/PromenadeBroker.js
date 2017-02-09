@@ -1,42 +1,42 @@
 (function () {
-	"use strict";
+    "use strict";
 
     /**
      * @module PromenadeBroker
      */
 
-	var module_dependencies = ["parlay.socket", "parlay.notification", "parlay.utility",
+    var module_dependencies = ["parlay.socket", "parlay.notification", "parlay.utility",
         "parlay.notification.error", "parlay.settings", "promenade.items.standarditem",
         "promenade.protocols.directmessage", "ngMaterial"];
 
-	angular.module("promenade.broker", module_dependencies)
-		.run(PromenadeBrokerRun)
-		.factory("PromenadeBroker", PromenadeBrokerFactory);
+    angular.module("promenade.broker", module_dependencies)
+        .run(PromenadeBrokerRun)
+        .factory("PromenadeBroker", PromenadeBrokerFactory);
 
     PromenadeBrokerRun.$inject = ["ParlaySettings"];
-	function PromenadeBrokerRun (ParlaySettings) {
-		ParlaySettings.registerDefault("broker", {show_prompt: false, auto_discovery: true});
-		if (!ParlaySettings.has("broker")) {
-			ParlaySettings.restoreDefault("broker");
-		}
-	}
+    function PromenadeBrokerRun (ParlaySettings) {
+        ParlaySettings.registerDefault("broker", {show_prompt: false, auto_discovery: true});
+        if (!ParlaySettings.has("broker")) {
+            ParlaySettings.restoreDefault("broker");
+        }
+    }
 
     PromenadeBrokerFactory.$inject = ["ParlaySocket", "BrokerAddress", "ParlayNotification", "ParlayErrorDialog",
         "ParlaySettings", "PromenadeStandardItem", "PromenadeDirectMessageProtocol", "$q", "$location", "$timeout", "$window",
         "$mdDialog", "ParlayObject"];
-	function PromenadeBrokerFactory (ParlaySocket, BrokerAddress, ParlayNotification, ParlayErrorDialog, ParlaySettings,
+    function PromenadeBrokerFactory (ParlaySocket, BrokerAddress, ParlayNotification, ParlayErrorDialog, ParlaySettings,
                                      PromenadeStandardItem, PromenadeDirectMessageProtocol, $q, $location, $timeout, $window,
                                      $mdDialog, ParlayObject) {
 
-		/**
-		 * The PromenadeBroker is a implementation of a Broker that communicates using the Parlay communication
+        /**
+         * The PromenadeBroker is a implementation of a Broker that communicates using the Parlay communication
          * publish/subscribe model.
          *
-		 * @constructor module:PromenadeBroker.PromenadeBroker
-		 */
-		function PromenadeBroker() {
+         * @constructor module:PromenadeBroker.PromenadeBroker
+         */
+        function PromenadeBroker() {
 
-			var broker = this;
+            var broker = this;
             /**
              * List of all items
              * @member module:PromenadeBroker.PromenadeBroker#items
@@ -69,7 +69,7 @@
              * @private
              * @type {Boolean}
              */
-			var connected_previously = false;
+            var connected_previously = false;
 
             /**
              * Cached copy of the most recent discovery Object received from the PromenadeBroker.
@@ -77,7 +77,7 @@
              * @private
              * @type {Object}
              */
-			var last_discovery;
+            var last_discovery;
 
             /**
              * Container for registered on_discovery callbacks.
@@ -85,7 +85,7 @@
              * @private
              * @type {Array}
              */
-			var on_discovery_callbacks = [];
+            var on_discovery_callbacks = [];
 
             /**
              * True if the [ParlaySocket]{@link module:ParlaySocket.ParlaySocket} is connected, false otherwise.
@@ -93,11 +93,11 @@
              * @private
              * @type {Boolean}
              */
-			Object.defineProperty(broker, "connected", {
-				get: function () {
-					return ParlaySocket.isConnected();
-				}
-			});
+            Object.defineProperty(broker, "connected", {
+                get: function () {
+                    return ParlaySocket.isConnected();
+                }
+            });
 
             // Attach methods to the PromenadeBroker.
             broker.connect = connect;
@@ -295,77 +295,77 @@
                 return ParlaySocket.close(reason);
             }
 
-			/**
-			 * Requests [ParlaySocket]{@link module:ParlaySocket.ParlaySocket} to open a new connection.
+            /**
+             * Requests [ParlaySocket]{@link module:ParlaySocket.ParlaySocket} to open a new connection.
              * @member module:PromenadeBroker.PromenadeBroker#connect
              * @public
-			 */
-			function connect () {
-				ParlaySocket.open($location.protocol === 'https:' ? 'wss://' + BrokerAddress + ':8086' : 'ws://' + BrokerAddress + ':8085');
-			}
+             */
+            function connect () {
+                ParlaySocket.open($location.protocol === 'https:' ? 'wss://' + BrokerAddress + ':8086' : 'ws://' + BrokerAddress + ':8085');
+            }
 
-			/**
-			 * Registers a callback on discovery.
+            /**
+             * Registers a callback on discovery.
              * @member module:PromenadeBroker.PromenadeBroker#onDiscovery
              * @public
-			 * @param {Function} callbackFunc - Callback function to be called on message receipt.
-			 */
-			function onDiscovery (callbackFunc) {
-				on_discovery_callbacks.push(callbackFunc);
-			}
+             * @param {Function} callbackFunc - Callback function to be called on message receipt.
+             */
+            function onDiscovery (callbackFunc) {
+                on_discovery_callbacks.push(callbackFunc);
+            }
 
-			/**
-			 * Call all callbacks registered onDiscovery with the given discovery Object.
+            /**
+             * Call all callbacks registered onDiscovery with the given discovery Object.
              * @member module:PromenadeBroker.PromenadeBroker#invokeDiscoveryCallbacks
              * @public
-			 * @param {Object} discovery - Object that contains discovery information.
-			 * @returns {Number} - Count of callbacks invoked.
-			 */
-			function invokeDiscoveryCallbacks (discovery) {
-				on_discovery_callbacks.forEach(function (callback) {
-					callback(discovery);
-				});
-				return on_discovery_callbacks.length;
-			}
+             * @param {Object} discovery - Object that contains discovery information.
+             * @returns {Number} - Count of callbacks invoked.
+             */
+            function invokeDiscoveryCallbacks (discovery) {
+                on_discovery_callbacks.forEach(function (callback) {
+                    callback(discovery);
+                });
+                return on_discovery_callbacks.length;
+            }
 
-			/**
-			 * Checks if we have connected successfully in the past.
+            /**
+             * Checks if we have connected successfully in the past.
              * @member module:PromenadeBroker.PromenadeBroker#hasConnectedPreviously
              * @public
-			 * @returns {Boolean} - True if we have connected successfully, false otherwise.
-			 */
-			function hasConnectedPreviously () {
-				return connected_previously;
-			}
+             * @returns {Boolean} - True if we have connected successfully, false otherwise.
+             */
+            function hasConnectedPreviously () {
+                return connected_previously;
+            }
 
-			/**
-			 * Sets our previous connection status to true.
+            /**
+             * Sets our previous connection status to true.
              * @member module:PromenadeBroker.PromenadeBroker#setConnectedPreviously
              * @public
-			 */
-			function setConnectedPreviously () {
-				connected_previously = true;
-			}
+             */
+            function setConnectedPreviously () {
+                connected_previously = true;
+            }
 
-			/**
-			 * Retrieves latest private discovery data.
+            /**
+             * Retrieves latest private discovery data.
              * @member module:PromenadeBroker.PromenadeBroker#getLastDiscovery
              * @public
-			 * @returns {Object} - Latest discovery data object
-			 */
-			function getLastDiscovery () {
-				return last_discovery;
-			}
+             * @returns {Object} - Latest discovery data object
+             */
+            function getLastDiscovery () {
+                return last_discovery;
+            }
 
-			/**
-			 * Invoke the registered on_discovery callbacks with the given Object of saved discovery data.
+            /**
+             * Invoke the registered on_discovery callbacks with the given Object of saved discovery data.
              * @member module:PromenadeBroker.PromenadeBroker#applySavedDiscovery
              * @public
-			 * @param {Object} data - previously saved discovery Object.
-			 */
-			function applySavedDiscovery (data) {
-				broker.invokeDiscoveryCallbacks({discovery: data});
-			}
+             * @param {Object} data - previously saved discovery Object.
+             */
+            function applySavedDiscovery (data) {
+                broker.invokeDiscoveryCallbacks({discovery: data});
+            }
 
             /**
              * Sends message to the Broker adding relevant topic fields.
@@ -516,9 +516,9 @@
                 );
             }
 
-		}
+        }
 
-		return new PromenadeBroker();
-	}
+        return new PromenadeBroker();
+    }
 
 }());

@@ -1,7 +1,7 @@
 <md-tab label="Graph">
 
-	<md-toolbar class="md-hue-2">
-		<div class="md-toolbar-tools" layout="row">
+    <md-toolbar class="md-hue-2">
+        <div class="md-toolbar-tools" layout="row">
             <h5 ng-hide="ctrl.hasStreamsAvailable()">No datastreams available</h5>
             <h5 ng-show="ctrl.hasStreamsAvailable()" ng-pluralize count="ctrl.streamCount()" when="{'0': 'No streams graphing', 'one': '1 stream graphing', 'other': '{} streams graphing'}"></h5>
             <span flex></span>
@@ -11,7 +11,7 @@
                 <md-icon ng-md-icon icon="settings"></md-icon>
             </md-button>
         </div>
-	</md-toolbar>
+    </md-toolbar>
 
     <md-toolbar class="md-hue-3" ng-show="ctrl.streamCount()">
         <div class="md-toolbar-tools" layout="row" style="overflow-y: hidden; overflow-x: auto">
@@ -28,13 +28,13 @@
                 <pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">from</span> <span style="color: #0e84b5; font-weight: bold">parlay</span> <span style="color: #008800; font-weight: bold">import</span> ParlayCommandItem, ParlayDatastream
 
 <span style="color: #008800; font-weight: bold">class</span> <span style="color: #BB0066; font-weight: bold">MyItem</span>(ParlayCommandItem):
-	data1 <span style="color: #333333">=</span> ParlayDatastream(default<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>)
+    data1 <span style="color: #333333">=</span> ParlayDatastream(default<span style="color: #333333">=</span><span style="color: #0000DD; font-weight: bold">0</span>)
 </pre>
             </div>
         </div>
     </md-content>
 
-	<promenade-smoothie-chart
+    <promenade-smoothie-chart
             ng-show="ctrl.streamCount()"
             class="parlay-item-card-tab-content"
             delay="1000"

@@ -1,13 +1,13 @@
 <md-tab label="Log" layout="column">
 
-	<md-toolbar class="md-hue-2">
-		<div class="md-toolbar-tools">
-			<h5 ng-if="ctrl.filter_text" ng-pluralize count="ctrl.getFilteredLog(ctrl.filter_text, ctrl.descending).length" when="{'0': 'No messages match filter', 'one': '1 message matches', 'other': '{} messages match'}"></h5>
-			<h5 ng-if="!ctrl.filter_text" ng-pluralize count="ctrl.getFilteredLog(ctrl.filter_text, ctrl.descending).length" when="{'0': 'No messages logged', 'one': '1 message logged', 'other': '{} messages logged'}"></h5>
-			<span flex></span>
-			
-		</div>
-	</md-toolbar>
+    <md-toolbar class="md-hue-2">
+        <div class="md-toolbar-tools">
+            <h5 ng-if="ctrl.filter_text" ng-pluralize count="ctrl.getFilteredLog(ctrl.filter_text, ctrl.descending).length" when="{'0': 'No messages match filter', 'one': '1 message matches', 'other': '{} messages match'}"></h5>
+            <h5 ng-if="!ctrl.filter_text" ng-pluralize count="ctrl.getFilteredLog(ctrl.filter_text, ctrl.descending).length" when="{'0': 'No messages logged', 'one': '1 message logged', 'other': '{} messages logged'}"></h5>
+            <span flex></span>
+
+        </div>
+    </md-toolbar>
 
     <div ng-show="ctrl.getLog().length" layout="row" class="log-control-container md-whiteframe-2dp">
         <md-input-container flex class="filter-input-container" aria-label="Filter log messages">
@@ -21,14 +21,14 @@
         </md-button>
     </div>
 
-	<md-content ng-show="ctrl.getLog().length" class="parlay-item-card-tab-content" layout="column" scroll-glue>
+    <md-content ng-show="ctrl.getLog().length" class="parlay-item-card-tab-content" layout="column" scroll-glue>
 
-		<md-virtual-repeat-container style="height: 292px;">
-			<div md-virtual-repeat="message in ctrl.getFilteredLog(ctrl.filter_text, ctrl.descending)" md-auto-shrink>
+        <md-virtual-repeat-container style="height: 292px;">
+            <div md-virtual-repeat="message in ctrl.getFilteredLog(ctrl.filter_text, ctrl.descending)" md-auto-shrink>
                 <promenade-standard-item-card-log-item message="message"></promenade-standard-item-card-log-item>
-			</div>
-		</md-virtual-repeat-container>
+            </div>
+        </md-virtual-repeat-container>
 
-	</md-content>
+    </md-content>
     
 </md-tab>

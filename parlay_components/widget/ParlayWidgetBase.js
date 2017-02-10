@@ -117,6 +117,8 @@
                 }
 
                 function initPosition(element) {
+                    // if a position already exists, don't initialize it
+                    if (!!scope.item.position) return;
 
                     var DOMElement = angular.element(element);
                     var leftOffset = (parseInt(DOMElement.prop('offsetLeft'), 10));

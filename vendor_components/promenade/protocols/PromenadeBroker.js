@@ -7,7 +7,7 @@
 
     var module_dependencies = ["parlay.socket", "parlay.notification", "parlay.utility",
         "parlay.notification.error", "parlay.settings", "promenade.items.standarditem",
-        "promenade.protocols.directmessage", "ngMaterial"];
+        "promenade.protocols.directmessage", "ngMaterial", "parlay.widget.manager"];
 
     angular.module("promenade.broker", module_dependencies)
         .run(PromenadeBrokerRun)
@@ -23,10 +23,10 @@
 
     PromenadeBrokerFactory.$inject = ["ParlaySocket", "BrokerAddress", "ParlayNotification", "ParlayErrorDialog",
         "ParlaySettings", "PromenadeStandardItem", "PromenadeDirectMessageProtocol", "$q", "$location", "$timeout", "$window",
-        "$mdDialog", "ParlayObject"];
+        "$mdDialog", "ParlayObject", "ParlayWidgetManager"];
     function PromenadeBrokerFactory (ParlaySocket, BrokerAddress, ParlayNotification, ParlayErrorDialog, ParlaySettings,
                                      PromenadeStandardItem, PromenadeDirectMessageProtocol, $q, $location, $timeout, $window,
-                                     $mdDialog, ParlayObject) {
+                                     $mdDialog, ParlayObject, ParlayWidgetManager) {
 
         /**
          * The PromenadeBroker is a implementation of a Broker that communicates using the Parlay communication
@@ -175,6 +175,10 @@
                     }
 
                 }
+
+                var autosave = ParlayWidgetManager.getAutosave();
+                if (!!autosave)
+                    ParlayWidgetManager.loadEntry(autosave);
 
             });
 
@@ -417,6 +421,8 @@
              */
             function requestDiscovery (is_forced) {
 
+                ParlayWidgetManager.autoSave();
+
                 // Check we are connected first, otherwise display ParlayNotification.
                 if (broker.connected) {
 
@@ -428,6 +434,7 @@
                         // Show progress and pass deferred so that we can hide dialog when it is resolved.
                         ParlayNotification.showProgress(deferred);
                     }, 500);
+
 
                     return $q.all([broker.requestAvailableProtocols(), broker.requestOpenProtocols()]).then(function () {
                         return broker.sendMessage({request: "get_discovery"}, {"force": !!is_forced}, {response: "get_discovery_response"}).then(function (response) {

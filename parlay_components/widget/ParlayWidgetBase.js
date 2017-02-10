@@ -245,7 +245,7 @@
                     if (!!card) {
 
                         // Dropping animation.
-                        draggie.on("dragEnd", function () {
+                        draggie.on("pointerUp", function () {
                             var height = 24;
                             var promise = $interval(function () {
                                 if (height == 1) {
@@ -260,7 +260,7 @@
                         });
 
                         // Picking up animation.
-                        draggie.on("dragStart", function () {
+                        draggie.on("pointerDown", function () {
                             var height = 1;
                             if (angular.element(element)[0].style.zIndex === "" || parseInt(angular.element(element)[0].style.zIndex, 10) < widgetLastZIndex.value) {
                                 angular.element(element)[0].style.zIndex = ++widgetLastZIndex.value;

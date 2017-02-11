@@ -35,7 +35,7 @@
 
                 it("selects item", function () {
 
-                    var item = {name: "test"};
+                    var item = {name: "test", id: 1};
 
                     scope.search_text = "still here";
 

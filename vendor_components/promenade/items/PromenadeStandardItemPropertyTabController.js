@@ -71,7 +71,6 @@
          */
         function setAllProperties () {
             ctrl.waiting = true;
-            debugger;
             return $q.all(Object.keys(ctrl.item.properties).filter(function(key) {return !ctrl.item.properties[key].read_only;}).map(function (key) {
                 return ctrl.item.properties[key].set();
             }, ctrl)).then(function () {

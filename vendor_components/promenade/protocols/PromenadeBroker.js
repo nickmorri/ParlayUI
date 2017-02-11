@@ -55,11 +55,6 @@
                 if(data !== {} && data.TEMPLATE !== "Broker")
                 {
                     broker.items.push(new broker.default_item_factory(data, broker.default_protocol));
-                    //add CHILDREN, if any
-                    if(data.CHILDREN)
-                    {
-                        data.CHILDREN.forEach(function(v){broker.items.push(new broker.default_item_factory(v, broker.default_protocol));});
-                    }
                 }
             };
 
@@ -177,7 +172,7 @@
                 }
 
                 var autosave = ParlayWidgetManager.getAutosave();
-                if (!!autosave)
+                if (!!autosave && ParlayWidgetManager.hasActiveWidgets())
                     ParlayWidgetManager.loadEntry(autosave);
 
             });

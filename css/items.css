@@ -29,6 +29,10 @@ parlay-item-search {
     padding-bottom: 0;
 }
 
+.parlay-item-list > div{
+    padding-right: 0 !important;
+}
+
 /* Indicate to the user that the card is moveable. */
 .movable-parlay-item-card > md-toolbar { cursor: move; }
 

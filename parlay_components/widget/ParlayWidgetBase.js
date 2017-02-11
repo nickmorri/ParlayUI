@@ -89,10 +89,13 @@
                 // If an existing configuration Object exists we should restore the configuration
                 if (!!scope.item.configuration) {
                     compileWrapper()(angular.copy(scope.item.configuration.template));
-                } else if (scope.item.type === "StandardItem" && !!scope.item.id) {
+                } else if (scope.item.type === "StandardItem") {
                     // if the container object has a reference to the ParlayItem id, then create the item
                     // If there are stored values that need to be restored, the itemCompiler will handle that
-                    compileItem()(ParlayItemManager.getItemByID(scope.item.id));
+                    if (!!scope.item.id)
+                        compileItem()(ParlayItemManager.getItemByID(scope.item.id));
+                    else
+                        compileItem()(scope.item.item);
                 } else if (scope.item.type === "StandardWidget") {
                     // if all else fails, then we should be adding a widget from scratch
                     scope.initialized = false;
@@ -373,7 +376,7 @@
                         container.uid = scope.item.uid;
                         container.ref = item;
 
-                        scope.item.id = item.id;
+                        scope.item.id = !!item.id ? item.id : "Undefined";
 
                         if (!!scope.item.stored_values) {
                             container.stored_values = scope.item.stored_values;

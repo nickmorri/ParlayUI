@@ -1,11 +1,13 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ['templates-main', 'parlay.items.manager', 'parlay.widget.manager'];
+    var module_dependencies = ['templates-main', 'parlay.items.manager', 'parlay.widget.manager', 'RecursionHelper'];
 
     angular
         .module('parlay.items.search', module_dependencies)
         .directive('parlayItemLibrarySidenav', ParlayItemLibrarySidenav)
+        .directive('parlayItemList', ParlayItemList)
+        .controller('ParlayItemListController', ParlayItemListController)
         .controller('ParlayItemSearchController', ParlayItemSearchController);
 
     ParlayItemSearchController.$inject = ['$scope', '$mdSidenav', 'ParlayItemManager', 'ParlayWidgetManager'];
@@ -41,7 +43,6 @@
         ctrl.selectItem = selectItem;
         ctrl.querySearch = querySearch;
         ctrl.hasDiscovered = hasDiscovered;
-        ctrl.toggle = toggle;
         ctrl.closeSearch = closeSearch;
 
         /**
@@ -52,7 +53,7 @@
          */
         function selectItem (item) {
             // Change is detected after we set item to null.
-            if (item === null || item === undefined) {
+            if (item === null || item === undefined || !item.id) {
                 return;
             }
 
@@ -63,7 +64,7 @@
             if (!$mdSidenav("navigation").isLockedOpen()) {
                 $mdSidenav("navigation").close();
             }
-            ParlayWidgetManager.add("StandardItem", item.id);
+            ParlayWidgetManager.add("StandardItem", item);
         }
 
         /**
@@ -92,17 +93,6 @@
             return ParlayItemManager.hasDiscovered();
         }
 
-        /**
-         * Toggles the item to show its children in the item modal
-         * TODO:  probally need to move this to the ItemLibrary module
-         * @member module:ParlayItem.ParlayItemSearchController#toggle
-         * @public
-         * @param item
-         */
-        function toggle(item) {
-            console.warn("toggle(): not yet implemented");
-        }
-
         function closeSearch() {
             $mdSidenav('itemNav').toggle();
         }
@@ -114,6 +104,59 @@
             templateUrl: "../parlay_components/items/directives/parlay-item-library-sidenav.html",
             controller: "ParlayItemSearchController",
             controllerAs: "itemNav"
+        };
+    }
+
+    ParlayItemListController.$inject = ["$scope", "$mdSidenav", "ParlayWidgetManager"];
+    function ParlayItemListController($scope, $mdSidenav, ParlayWidgetManager) {
+        var ctrl = this;
+        ctrl.toggle = toggle;
+        ctrl.selectItem = selectItem;
+
+        $scope.hidden = true;
+        $scope.icon = "expand_more";
+
+        /**
+         * Toggles the item to show its children in the item sidenav
+         * @member module:ParlayItem.ParlayItemSearchController#toggle
+         * @public
+         * @param item
+         */
+        function toggle() {
+            $scope.hidden = !$scope.hidden;
+            $scope.icon = $scope.hidden ? "expand_more" : "expand_less";
+        }
+
+        function selectItem (item) {
+            // Change is detected after we set item to null.
+            if (item === null || item === undefined || !item.id) {
+                return;
+            }
+
+            $scope.search_text = null;
+            $scope.selected_item = null;
+
+            // Hide sidenav after selecting item on smaller screen sizes where the sidenav is initially hidden.
+            if (!$mdSidenav("navigation").isLockedOpen()) {
+                $mdSidenav("navigation").close();
+            }
+            ParlayWidgetManager.add("StandardItem", item);
+        }
+    }
+
+    ParlayItemList.$inject = ["RecursionHelper"];
+    function ParlayItemList(RecursionHelper) {
+        return {
+            restrict: "E",
+            templateUrl: "../parlay_components/items/directives/parlay-item-list.html",
+            controller: "ParlayItemListController",
+            controllerAs: "itemList",
+            compile: RecursionHelper.compile,
+            scope: {
+                item: "=",
+                searchCtrl: "=",
+                depth: "="
+            }
         };
     }
 }());

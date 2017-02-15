@@ -21,3 +21,10 @@
     min-height: 35px;
     height: 35px;
 }
+
+.parlay-navigation-list-input {
+    margin-top: 8px;
+    margin-bottom: 0;
+    min-width: 80%;
+    height: 40px;
+}

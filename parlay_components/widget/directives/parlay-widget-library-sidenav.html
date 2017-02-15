@@ -8,13 +8,13 @@
             <md-icon ng-md-icon icon="close"></md-icon>
         </md-button>
     </md-toolbar>
-    <md-input-container md-no-float style="margin-bottom: 0px; min-width: 80%">
+    <md-input-container md-no-float class="parlay-navigation-list-input">
         <md-icon ng-md-icon icon="search"></md-icon>
-        <input ng-model="search_text" type="text" placeholder="Search for a widget template">
+        <input ng-model="widget_search_text" type="text" placeholder="Search for a widget template">
     </md-input-container>
     <md-divider></md-divider>
     <md-content flex>
-        <md-list class="parlay-item-list" ng-repeat="widget in widgetNav.querySearch(search_text)">
+        <md-list class="parlay-item-list" ng-repeat="widget in widgetNav.querySearch(widget_search_text)">
             <md-list-item class="parlay-navigation-list-small" ng-click="widgetNav.selectWidget(widget)">
                 <div class="md-body-1">
                     {{widget.display_name}}

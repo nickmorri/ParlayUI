@@ -16,8 +16,7 @@
        ctrl.closeSearch = closeSearch;
        ctrl.selectWidget = selectWidget;
 
-       $scope.search_text = null;
-       $scope.selected_widget = null;
+       $scope.widget_search_text = null;
 
        function querySearch(query) {
            if (query !== null && query !== undefined) {
@@ -46,8 +45,7 @@
                return;
            }
 
-           $scope.search_text = null;
-           $scope.selected_widget = null;
+           $scope.widget_search_text = null;
 
            if (!$mdSidenav("navigation").isLockedOpen()) {
                $mdSidenav("navigation").close();

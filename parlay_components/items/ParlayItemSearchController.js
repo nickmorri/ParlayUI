@@ -10,6 +10,30 @@
         .controller('ParlayItemListController', ParlayItemListController)
         .controller('ParlayItemSearchController', ParlayItemSearchController);
 
+
+    function createFilterFor (query) {
+        var lowercase_query = angular.lowercase(query);
+
+        return function filterFn(item) {
+            return item.matchesQuery(lowercase_query);
+        };
+    }
+
+    function queryMatchesBranch(item, query) {
+        if (query === null || query === undefined || query === "")
+            return true;
+        if (createFilterFor(query)(item))
+            return true;
+        if (!!item.children) {
+            for (var i = 0; i < item.children.length; ++i) {
+                if (queryMatchesBranch(item.children[i], query))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+
     ParlayItemSearchController.$inject = ['$scope', '$mdSidenav', 'ParlayItemManager', 'ParlayWidgetManager'];
     /**
      * Handles providing [ParlayItem]{@link module:ParlayItem.ParlayItem}s to the mdAutocomplete directive.
@@ -29,21 +53,14 @@
          * @private
          * @param {String} query - Name of item to query by.
          */
-        function createFilterFor (query) {
-            var lowercase_query = angular.lowercase(query);
-
-            return function filterFn(item) {
-                return item.matchesQuery(lowercase_query);
-            };
-        }
-
         $scope.search_text = null;
 
         ctrl.selectItem = selectItem;
         ctrl.querySearch = querySearch;
         ctrl.hasDiscovered = hasDiscovered;
         ctrl.closeSearch = closeSearch;
-
+        ctrl.items = allItems;
+        ctrl.filter = filter;
 
         $scope.$on("ParlayItemSelected", function(event, item) {
             ctrl.selectItem(item);
@@ -70,24 +87,11 @@
             ParlayWidgetManager.add("StandardItem", item);
         }
 
-
         function breadthFirstFilter(items, query) {
             var results = [];
 
-            function queryMatchesBranch(item) {
-                if (createFilterFor(query)(item))
-                    return true;
-                if (!!item.children) {
-                    for (var i = 0; i < item.children.length; ++i) {
-                        if (queryMatchesBranch(item.children[i]))
-                            return true;
-                    }
-                }
-                return false;
-            }
-
             items.forEach(function(item) {
-                if (queryMatchesBranch(item))
+                if (queryMatchesBranch(item, query))
                     results.push(item);
             });
 
@@ -125,6 +129,15 @@
         function closeSearch() {
             $mdSidenav('parlay-item-library').toggle();
         }
+
+        function allItems() {
+            return ParlayItemManager.getAvailableItems();
+        }
+
+        function filter(item) {
+            var query = $scope.search_text;
+            return queryMatchesBranch(item, query);
+        }
     }
 
     ParlayItemListController.$inject = ["$scope"];
@@ -132,8 +145,10 @@
         var ctrl = this;
         ctrl.toggle = toggle;
         ctrl.select = select;
+        ctrl.filter = filter;
 
         $scope.hidden = true;
+
 
         /**
          * Toggles the item to show its children in the item sidenav
@@ -147,6 +162,11 @@
 
         function select() {
             $scope.$emit("ParlayItemSelected", $scope.item);
+        }
+
+        function filter(item) {
+            var query = angular.element(document.getElementById("parlay-item-library")).scope().search_text;
+            return queryMatchesBranch(item, query);
         }
     }
 
@@ -169,7 +189,8 @@
             compile: RecursionHelper.compile,
             scope: {
                 item: "=",
-                depth: "="
+                depth: "=",
+                children: "="
             }
         };
     }

@@ -9,7 +9,7 @@
     </md-button>
 </md-list-item>
 <md-list class="parlay-item-list" ng-slide-down="!hidden" duration=".75" timing-function="cubic-bezier(0.35, 0, 0.25, 1)">
-    <div ng-repeat="item in item.children">
-        <parlay-item-list item="item" depth="depth + 1"></parlay-item-list>
+    <div ng-repeat="child in item.children" ng-show="children">
+        <parlay-item-list item="child" depth="depth + 1" children="children ? true : itemList.filter(child)"></parlay-item-list>
     </div>
 </md-list>

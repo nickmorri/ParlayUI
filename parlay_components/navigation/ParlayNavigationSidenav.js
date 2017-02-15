@@ -169,11 +169,11 @@
         }
 
         function openItemsSidenav() {
-            $mdSidenav("itemNav").toggle();
+            $mdSidenav("parlay-item-library").toggle();
         }
 
         function openWidgetsSidenav() {
-            $mdSidenav("widgetNav").toggle();
+            $mdSidenav("parlay-widget-library").toggle();
         }
 
     }

@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ['templates-main', 'parlay.items.manager', 'parlay.widget.manager', 'RecursionHelper'];
+    var module_dependencies = ['templates-main', 'parlay.items.manager', 'parlay.widget.manager', 'RecursionHelper', 'ngAnimate', 'ng-slide-down'];
 
     angular
         .module('parlay.items.search', module_dependencies)
@@ -38,12 +38,16 @@
         }
 
         $scope.search_text = null;
-        $scope.selected_item = null;
 
         ctrl.selectItem = selectItem;
         ctrl.querySearch = querySearch;
         ctrl.hasDiscovered = hasDiscovered;
         ctrl.closeSearch = closeSearch;
+
+
+        $scope.$on("ParlayItemSelected", function(event, item) {
+            ctrl.selectItem(item);
+        });
 
         /**
          * On event handler for user selection of [ParlayItem]{@link module:ParlayItem.ParlayItem}.
@@ -58,13 +62,36 @@
             }
 
             $scope.search_text = null;
-            $scope.selected_item = null;
 
             // Hide sidenav after selecting item on smaller screen sizes where the sidenav is initially hidden.
             if (!$mdSidenav("navigation").isLockedOpen()) {
                 $mdSidenav("navigation").close();
             }
             ParlayWidgetManager.add("StandardItem", item);
+        }
+
+
+        function breadthFirstFilter(items, query) {
+            var results = [];
+
+            function queryMatchesBranch(item) {
+                if (createFilterFor(query)(item))
+                    return true;
+                if (!!item.children) {
+                    for (var i = 0; i < item.children.length; ++i) {
+                        if (queryMatchesBranch(item.children[i]))
+                            return true;
+                    }
+                }
+                return false;
+            }
+
+            items.forEach(function(item) {
+                if (queryMatchesBranch(item))
+                    results.push(item);
+            });
+
+            return results;
         }
 
         /**
@@ -80,8 +107,10 @@
 
             var items = ParlayItemManager.getAvailableItems().sort(compare);
 
-            return query ? items.filter(createFilterFor(query)) : items;
+            return query ? breadthFirstFilter(items, query) : items;
         }
+
+        // function hasMatchingDescendant(item, query)
 
         /**
          * True if discovered, false otherwise.
@@ -94,27 +123,17 @@
         }
 
         function closeSearch() {
-            $mdSidenav('itemNav').toggle();
+            $mdSidenav('parlay-item-library').toggle();
         }
     }
 
-    function ParlayItemLibrarySidenav () {
-        return {
-            restrict: "E",
-            templateUrl: "../parlay_components/items/directives/parlay-item-library-sidenav.html",
-            controller: "ParlayItemSearchController",
-            controllerAs: "itemNav"
-        };
-    }
-
-    ParlayItemListController.$inject = ["$scope", "$mdSidenav", "ParlayWidgetManager"];
-    function ParlayItemListController($scope, $mdSidenav, ParlayWidgetManager) {
+    ParlayItemListController.$inject = ["$scope"];
+    function ParlayItemListController($scope) {
         var ctrl = this;
         ctrl.toggle = toggle;
-        ctrl.selectItem = selectItem;
+        ctrl.select = select;
 
         $scope.hidden = true;
-        $scope.icon = "expand_more";
 
         /**
          * Toggles the item to show its children in the item sidenav
@@ -124,24 +143,20 @@
          */
         function toggle() {
             $scope.hidden = !$scope.hidden;
-            $scope.icon = $scope.hidden ? "expand_more" : "expand_less";
         }
 
-        function selectItem (item) {
-            // Change is detected after we set item to null.
-            if (item === null || item === undefined || !item.id) {
-                return;
-            }
-
-            $scope.search_text = null;
-            $scope.selected_item = null;
-
-            // Hide sidenav after selecting item on smaller screen sizes where the sidenav is initially hidden.
-            if (!$mdSidenav("navigation").isLockedOpen()) {
-                $mdSidenav("navigation").close();
-            }
-            ParlayWidgetManager.add("StandardItem", item);
+        function select() {
+            $scope.$emit("ParlayItemSelected", $scope.item);
         }
+    }
+
+    function ParlayItemLibrarySidenav () {
+        return {
+            restrict: "E",
+            templateUrl: "../parlay_components/items/directives/parlay-item-library-sidenav.html",
+            controller: "ParlayItemSearchController",
+            controllerAs: "searchCtrl"
+        };
     }
 
     ParlayItemList.$inject = ["RecursionHelper"];
@@ -154,7 +169,6 @@
             compile: RecursionHelper.compile,
             scope: {
                 item: "=",
-                searchCtrl: "=",
                 depth: "="
             }
         };

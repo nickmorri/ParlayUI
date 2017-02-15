@@ -1,14 +1,14 @@
-<md-list-item class="parlay-navigation-list-small parlay-item-list" ng-click="itemList.selectItem(item)">
+<md-list-item class="parlay-navigation-list-small parlay-item-list" ng-click="itemList.select()">
     <div class="md-body-1" style="padding-left: calc({{depth * 15}}px">
         {{item.name}}
     </div>
     <span flex></span>
-    <md-button class="md-icon-button" ng-show="item.children.length" ng-click="itemList.toggle()" aria-label="Expand {{item.name}}'s children">
-        <md-tooltip>Expand {{item.name}}</md-tooltip>
-        <md-icon ng-md-icon icon="{{icon}}"></md-icon>
+    <md-button md-no-ink class="md-button-toggle md-icon-button" ng-if="item.children.length" ng-click="itemList.toggle()"
+               ng-class="{'parlay-item-toggled-open': !hidden, 'parlay-item-toggled-closed': hidden}" aria-label="Expand {{item.name}}'s children">
+        <md-icon ng-md-icon icon="expand_more"></md-icon>
     </md-button>
 </md-list-item>
-<md-list class="parlay-item-list" ng-hide="hidden">
+<md-list class="parlay-item-list" ng-slide-down="!hidden" duration=".75" timing-function="cubic-bezier(0.35, 0, 0.25, 1)">
     <div ng-repeat="item in item.children">
         <parlay-item-list item="item" depth="depth + 1"></parlay-item-list>
     </div>

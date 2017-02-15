@@ -14,6 +14,16 @@ parlay-item-search {
     padding-top: 10px;
 }
 
+.parlay-item-toggled-closed {
+    transform: rotate(0deg);
+    transition: .25s;
+}
+
+.parlay-item-toggled-open {
+    transform: rotate(-180deg);
+    transition: .25s;
+}
+
 /* Limit height of toolbars in ParlayItemCard to allow for greater information density. */
 .parlay-item-card > md-toolbar {
     height: 48px;

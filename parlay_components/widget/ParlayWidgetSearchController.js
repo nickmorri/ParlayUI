@@ -38,7 +38,7 @@
        }
 
        function closeSearch() {
-           $mdSidenav('widgetNav').toggle();
+           $mdSidenav('parlay-widget-library').toggle();
        }
 
        function selectWidget(widget) {

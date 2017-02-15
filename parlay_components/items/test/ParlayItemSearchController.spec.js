@@ -40,8 +40,6 @@
                     scope.search_text = "still here";
 
                     ParlayItemSearchController.selectItem(item);
-
-                    expect(scope.selected_item).toBe(null);
                     expect(scope.search_text).toBe(null);
 
                 });

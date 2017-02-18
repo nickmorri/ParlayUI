@@ -10,20 +10,20 @@
         .controller('ParlayItemListController', ParlayItemListController)
         .controller('ParlayItemSearchController', ParlayItemSearchController);
 
-
     function createFilterFor (query) {
         var lowercase_query = angular.lowercase(query);
-
         return function filterFn(item) {
+            if (query === null || query === undefined || query === "")
+                return true;
             return item.matchesQuery(lowercase_query);
         };
     }
 
-    function queryMatchesBranch(item, query) {
-        if (query === null || query === undefined || query === "")
-            return true;
-        if (createFilterFor(query)(item))
-            return true;
+    function queryMatchesNode(item, query) {
+        return createFilterFor(query)(item);
+    }
+
+    function queryMatchesChildren(item, query) {
         if (!!item.children) {
             for (var i = 0; i < item.children.length; ++i) {
                 if (queryMatchesBranch(item.children[i], query))
@@ -33,6 +33,15 @@
         return false;
     }
 
+    function queryMatchesBranch(item, query) {
+        if (queryMatchesNode(item, query))
+            return true;
+        return queryMatchesChildren(item, query);
+    }
+
+    function queryExists(query) {
+        return query !== "" && query !== null && query !== undefined;
+    }
 
     ParlayItemSearchController.$inject = ['$scope', '$mdSidenav', 'ParlayItemManager', 'ParlayWidgetManager'];
     /**
@@ -59,11 +68,17 @@
         ctrl.querySearch = querySearch;
         ctrl.hasDiscovered = hasDiscovered;
         ctrl.closeSearch = closeSearch;
-        ctrl.items = allItems;
-        ctrl.filter = filter;
+        ctrl.getItems = getItems;
+        ctrl.filterNode = filterNode;
+        ctrl.querySearchLinear = querySearchLinear;
+        ctrl.querySearchTree = querySearchTree;
 
         $scope.$on("ParlayItemSelected", function(event, item) {
             ctrl.selectItem(item);
+        });
+
+        $scope.$watch("search_text", function() {
+           $scope.$broadcast("ParlayItemLibraryQueryChanged", $scope.search_text);
         });
 
         /**
@@ -78,24 +93,13 @@
                 return;
             }
 
-            $scope.search_text = null;
+            // $scope.search_text = null;
 
             // Hide sidenav after selecting item on smaller screen sizes where the sidenav is initially hidden.
             if (!$mdSidenav("navigation").isLockedOpen()) {
                 $mdSidenav("navigation").close();
             }
             ParlayWidgetManager.add("StandardItem", item);
-        }
-
-        function breadthFirstFilter(items, query) {
-            var results = [];
-
-            items.forEach(function(item) {
-                if (queryMatchesBranch(item, query))
-                    results.push(item);
-            });
-
-            return results;
         }
 
         /**
@@ -110,11 +114,45 @@
             }
 
             var items = ParlayItemManager.getAvailableItems().sort(compare);
-
-            return query ? breadthFirstFilter(items, query) : items;
+            return query ? items.filter(createFilterFor(query)) : items;
         }
 
-        // function hasMatchingDescendant(item, query)
+        function querySearchLinear(query) {
+            var results = [];
+            function BFSLinearFilter(items) {
+                items.forEach(function(item) {
+                    if (createFilterFor(query)(item)) {
+                        results.push(item);
+                    }
+                    if (!!item.children) {
+                        BFSLinearFilter(item.children);
+                    }
+                });
+            }
+            var items = ParlayItemManager.getAvailableItems();
+            if (query === null || query === undefined || query === "")
+                return items;
+
+            BFSLinearFilter(items);
+            return results;
+        }
+
+        function querySearchTree(query) {
+            function BFSTreeFilter(items) {
+                for (var i = items.length - 1; i >= 0; i--) {
+                    var item = items[i];
+                    if (!queryMatchesBranch(item, query)) {
+                        items.splice(i, 1);
+                    }
+                    if (!!item.children) {
+                        BFSFilter(item.children);
+                    }
+                }
+            }
+            var filtered_items = angular.copy(ParlayItemManager.getAvailableItems());
+            BFSTreeFilter(filtered_items);
+            return filtered_items;
+        }
 
         /**
          * True if discovered, false otherwise.
@@ -130,25 +168,39 @@
             $mdSidenav('parlay-item-library').toggle();
         }
 
-        function allItems() {
+        function getItems() {
             return ParlayItemManager.getAvailableItems();
         }
 
-        function filter(item) {
+        function filterNode(item) {
             var query = $scope.search_text;
-            return queryMatchesBranch(item, query);
+            return queryMatchesNode(item, query);
         }
     }
 
     ParlayItemListController.$inject = ["$scope"];
     function ParlayItemListController($scope) {
         var ctrl = this;
+
         ctrl.toggle = toggle;
         ctrl.select = select;
-        ctrl.filter = filter;
+        ctrl.filterBranch = filterBranch;
+        ctrl.filterNode = filterNode;
 
         $scope.hidden = true;
+        $scope.search_text = null;
 
+        $scope.user_override = false;
+        $scope.sys_override = false;
+
+        $scope.$on("ParlayItemLibraryQueryChanged", function(event, data) {
+            $scope.search_text = data;
+            $scope.sys_override = true;
+
+            if (data === "" || data === null || data === undefined)
+               if (!$scope.user_override)
+                   $scope.hidden = true;
+        });
 
         /**
          * Toggles the item to show its children in the item sidenav
@@ -157,16 +209,32 @@
          * @param item
          */
         function toggle() {
+            $scope.user_override = $scope.hidden;
             $scope.hidden = !$scope.hidden;
+            $scope.sys_override = false;
         }
 
         function select() {
             $scope.$emit("ParlayItemSelected", $scope.item);
         }
 
-        function filter(item) {
-            var query = angular.element(document.getElementById("parlay-item-library")).scope().search_text;
-            return queryMatchesBranch(item, query);
+        function filterBranch(item) {
+            var query = $scope.search_text;
+            var is_matching = queryMatchesNode(item, query);
+            var has_matching_children = queryMatchesChildren(item, query);
+
+            var match = has_matching_children || is_matching;
+
+            if (queryExists(query) && has_matching_children) {
+                if ($scope.sys_override)
+                    $scope.hidden = !has_matching_children;
+            }
+            return match;
+        }
+
+        function filterNode(item) {
+            var query = $scope.search_text;
+            return queryMatchesNode(item, query);
         }
     }
 
@@ -190,7 +258,7 @@
             scope: {
                 item: "=",
                 depth: "=",
-                children: "="
+                parent: "="
             }
         };
     }

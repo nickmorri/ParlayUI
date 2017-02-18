@@ -65,13 +65,11 @@
         $scope.search_text = null;
 
         ctrl.selectItem = selectItem;
-        ctrl.querySearch = querySearch;
         ctrl.hasDiscovered = hasDiscovered;
         ctrl.closeSearch = closeSearch;
         ctrl.getItems = getItems;
         ctrl.filterNode = filterNode;
         ctrl.querySearchLinear = querySearchLinear;
-        ctrl.querySearchTree = querySearchTree;
 
         $scope.$on("ParlayItemSelected", function(event, item) {
             ctrl.selectItem(item);
@@ -88,12 +86,10 @@
          * @param item
          */
         function selectItem (item) {
-            // Change is detected after we set item to null.
+            // if item selected does not actually exist, or does not have an item id, do not instantiate it
             if (item === null || item === undefined || !item.id) {
                 return;
             }
-
-            // $scope.search_text = null;
 
             // Hide sidenav after selecting item on smaller screen sizes where the sidenav is initially hidden.
             if (!$mdSidenav("navigation").isLockedOpen()) {
@@ -103,20 +99,11 @@
         }
 
         /**
-         * Search for items.
-         * @member module:ParlayItem.ParlayItemSearchController#querySearch
+         * Linear BFS search. Will return ALL items in the item tree that match query
+         * @member module:ParlayItem.ParlayItemSearchController#querySearchLinear
          * @public
          * @param {String} query - Name of item to find.
          */
-        function querySearch (query) {
-            function compare(item1, item2) {
-                return item1.name.toString().toLowerCase() > item2.name.toString().toLowerCase();
-            }
-
-            var items = ParlayItemManager.getAvailableItems().sort(compare);
-            return query ? items.filter(createFilterFor(query)) : items;
-        }
-
         function querySearchLinear(query) {
             var results = [];
             function BFSLinearFilter(items) {
@@ -137,22 +124,6 @@
             return results;
         }
 
-        function querySearchTree(query) {
-            function BFSTreeFilter(items) {
-                for (var i = items.length - 1; i >= 0; i--) {
-                    var item = items[i];
-                    if (!queryMatchesBranch(item, query)) {
-                        items.splice(i, 1);
-                    }
-                    if (!!item.children) {
-                        BFSFilter(item.children);
-                    }
-                }
-            }
-            var filtered_items = angular.copy(ParlayItemManager.getAvailableItems());
-            BFSTreeFilter(filtered_items);
-            return filtered_items;
-        }
 
         /**
          * True if discovered, false otherwise.
@@ -214,10 +185,18 @@
             $scope.sys_override = false;
         }
 
+        /**
+         * function that emits an event to the root scope containing the item to be instantiated into the workspace
+         */
         function select() {
             $scope.$emit("ParlayItemSelected", $scope.item);
         }
 
+        /**
+         * a filter function returning true if the item node provided or ANY descendants matches the query
+         * @param item - PromenadeStandardItem
+         * @returns {Boolean}
+         */
         function filterBranch(item) {
             var query = $scope.search_text;
             var is_matching = queryMatchesNode(item, query);
@@ -232,12 +211,21 @@
             return match;
         }
 
+        /**
+         * A function that returns true if the item passed matches the provided query and false if otherwise
+         * @param item
+         * @returns {Boolean}
+         */
         function filterNode(item) {
             var query = $scope.search_text;
             return queryMatchesNode(item, query);
         }
     }
 
+    /**
+     * Container Directive that has filter input form for filtering items and a hierarchical
+     * display of all items in the discovery tree
+     */
     function ParlayItemLibrarySidenav () {
         return {
             restrict: "E",
@@ -248,6 +236,10 @@
     }
 
     ParlayItemList.$inject = ["RecursionHelper"];
+    /**
+     * Recursive directive that will produce a menu list of children items until the item has no children to display
+     * @param RecursionHelper
+     */
     function ParlayItemList(RecursionHelper) {
         return {
             restrict: "E",
@@ -258,7 +250,7 @@
             scope: {
                 item: "=",
                 depth: "=",
-                parent: "="
+                matchingAncestor: "="
             }
         };
     }

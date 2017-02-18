@@ -16,17 +16,9 @@
     <md-divider></md-divider>
     <md-content flex>
         <md-list>
-            <!--&lt;!&ndash; filter on the fly implementation &ndash;&gt;-->
             <div ng-repeat="item in searchCtrl.getItems()">
-                <parlay-item-list item="item" depth="0" parent="searchCtrl.filterNode(item)"></parlay-item-list>
+                <parlay-item-list item="item" depth="0" matching-ancestor="searchCtrl.filterNode(item)"></parlay-item-list>
             </div>
-
         </md-list>
     </md-content>
 </md-sidenav>
-
-
-<!--Linear filtered implementation -->
-<!--<div ng-repeat="item in searchCtrl.querySearchLinear(search_text)">-->
-<!--<parlay-item-list item="item" depth="0"></parlay-item-list>-->
-<!--</div>-->

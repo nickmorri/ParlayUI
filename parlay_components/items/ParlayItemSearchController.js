@@ -69,7 +69,6 @@
         ctrl.closeSearch = closeSearch;
         ctrl.getItems = getItems;
         ctrl.filterNode = filterNode;
-        ctrl.querySearchLinear = querySearchLinear;
 
         $scope.$on("ParlayItemSelected", function(event, item) {
             ctrl.selectItem(item);
@@ -99,33 +98,6 @@
         }
 
         /**
-         * Linear BFS search. Will return ALL items in the item tree that match query
-         * @member module:ParlayItem.ParlayItemSearchController#querySearchLinear
-         * @public
-         * @param {String} query - Name of item to find.
-         */
-        function querySearchLinear(query) {
-            var results = [];
-            function BFSLinearFilter(items) {
-                items.forEach(function(item) {
-                    if (createFilterFor(query)(item)) {
-                        results.push(item);
-                    }
-                    if (!!item.children) {
-                        BFSLinearFilter(item.children);
-                    }
-                });
-            }
-            var items = ParlayItemManager.getAvailableItems();
-            if (query === null || query === undefined || query === "")
-                return items;
-
-            BFSLinearFilter(items);
-            return results;
-        }
-
-
-        /**
          * True if discovered, false otherwise.
          * @member module:ParlayItem.ParlayItemSearchController#querySearch
          * @public
@@ -144,8 +116,7 @@
         }
 
         function filterNode(item) {
-            var query = $scope.search_text;
-            return queryMatchesNode(item, query);
+            return queryMatchesNode(item, $scope.search_text);
         }
     }
 
@@ -158,19 +129,17 @@
         ctrl.filterBranch = filterBranch;
         ctrl.filterNode = filterNode;
 
-        $scope.hidden = true;
+        $scope.show_children = false;
+        $scope.filter_state = null;
+        $scope.user_state = false;
         $scope.search_text = null;
-
-        $scope.user_override = false;
-        $scope.sys_override = false;
 
         $scope.$on("ParlayItemLibraryQueryChanged", function(event, data) {
             $scope.search_text = data;
-            $scope.sys_override = true;
-
-            if (data === "" || data === null || data === undefined)
-               if (!$scope.user_override)
-                   $scope.hidden = true;
+            if (!queryExists($scope.search_text)) {
+                $scope.show_children = $scope.user_state;
+                $scope.filter_state = null;
+            }
         });
 
         /**
@@ -180,9 +149,14 @@
          * @param item
          */
         function toggle() {
-            $scope.user_override = $scope.hidden;
-            $scope.hidden = !$scope.hidden;
-            $scope.sys_override = false;
+
+            if (queryExists($scope.search_text)) {
+                $scope.filter_state = !$scope.filter_state;
+                $scope.show_children = $scope.filter_state;
+            } else {
+                $scope.show_children = !$scope.show_children;
+                $scope.user_state = $scope.show_children;
+            }
         }
 
         /**
@@ -198,17 +172,19 @@
          * @returns {Boolean}
          */
         function filterBranch(item) {
-            var query = $scope.search_text;
-            var is_matching = queryMatchesNode(item, query);
-            var has_matching_children = queryMatchesChildren(item, query);
+            if (!queryExists($scope.search_text))
+                return true;
 
-            var match = has_matching_children || is_matching;
+            var is_matching = queryMatchesNode(item, $scope.search_text);
+            var has_matching_children = queryMatchesChildren(item, $scope.search_text);
 
-            if (queryExists(query) && has_matching_children) {
-                if ($scope.sys_override)
-                    $scope.hidden = !has_matching_children;
+            if (has_matching_children) {
+                if ($scope.filter_state === null)
+                    $scope.filter_state = true;
+                $scope.show_children = $scope.filter_state;
             }
-            return match;
+
+            return has_matching_children || is_matching;
         }
 
         /**
@@ -217,8 +193,7 @@
          * @returns {Boolean}
          */
         function filterNode(item) {
-            var query = $scope.search_text;
-            return queryMatchesNode(item, query);
+            return queryMatchesNode(item, $scope.search_text);
         }
     }
 

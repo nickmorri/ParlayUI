@@ -56,16 +56,16 @@
 
             });
 
-            describe("searching", function () {
-
-                it("filters correctly", function () {
-                    expect(ParlayItemSearchController.querySearchLinear("test").length).toBe(2);
-                });
-
-                it("defaults to no filter if query not provided", function () {
-                    expect(ParlayItemSearchController.querySearchLinear("").length).toBe(3);
-                });
-            });
+            // describe("searching", function () {
+            //
+            //     it("filters correctly", function () {
+            //         expect(ParlayItemSearchController.querySearchLinear("test").length).toBe(2);
+            //     });
+            //
+            //     it("defaults to no filter if query not provided", function () {
+            //         expect(ParlayItemSearchController.querySearchLinear("").length).toBe(3);
+            //     });
+            // });
         });
     });
 }());

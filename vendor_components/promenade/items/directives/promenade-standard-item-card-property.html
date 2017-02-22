@@ -33,8 +33,12 @@
                 <label>{{property.name}}</label>
                 <input ng-switch-when="STRING" type="text" ng-model="property.value" ng-disabled="property.read_only">
                 <input ng-switch-when="NUMBER" type="number" ng-model="property.value" ng-disabled="property.read_only">
-                <md-chips ng-switch-when="STRINGS" ng-model="property.value" readonly="property.read_only"></md-chips>
-                <md-chips ng-switch-when="NUMBERS" ng-model="property.value" readonly="property.read_only"></md-chips>
+                <md-chips ng-switch-when="STRINGS|NUMBERS|ARRAY"
+                          ng-model="property.value"
+                          readonly="property.read_only"
+                          ng-switch-when-separator="|"
+                          md-separator-keys="[188, 32]">
+                </md-chips>
             </md-input-container>
             <md-button class="md-primary promenade-property-button" ng-click="property.get()">Get</md-button>
             <md-button class="md-primary promenade-property-button" ng-click="property.set()">Set</md-button>

@@ -72,6 +72,9 @@
              */
             var internal_value;
 
+            if (property.input === "STRINGS" || property.input === "NUMBERS" || property.input === "ARRAY")
+                internal_value = [];
+
             /**
              * Holds callbacks that are invoked on every value change.
              * @member module:PromenadeStandardItem.PromenadeStandardProperty#on_change_callbacks

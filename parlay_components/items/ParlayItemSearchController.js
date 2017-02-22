@@ -7,9 +7,16 @@
         .module('parlay.items.search', module_dependencies)
         .directive('parlayItemLibrarySidenav', ParlayItemLibrarySidenav)
         .directive('parlayItemList', ParlayItemList)
-        .controller('ParlayItemListController', ParlayItemListController)
-        .controller('ParlayItemSearchController', ParlayItemSearchController);
+        .controller('ParlayItemSearchController', ParlayItemSearchController)
+        .controller('ParlayItemListController', ParlayItemListController);
 
+
+    /**
+     * Create filter function for a query string
+     * @member module:ParlayItem.ParlayItemSearchController#createFilterFor
+     * @private
+     * @param {String} query - Name of item to query by.
+     */
     function createFilterFor (query) {
         var lowercase_query = angular.lowercase(query);
         return function filterFn(item) {
@@ -19,10 +26,22 @@
         };
     }
 
+    /**
+     * Helper function which returns true if the query provided matches with the item
+     * @param item - ParlayItem/PromenadeStandardItem
+     * @param query - String
+     * @returns {Boolean}
+     */
     function queryMatchesNode(item, query) {
         return createFilterFor(query)(item);
     }
 
+    /**
+     * Helper function which returns true if the query provided matches with the item's children
+     * @param item - ParlayItem/PromenadeStandardItem
+     * @param query - String
+     * @returns {Boolean}
+     */
     function queryMatchesChildren(item, query) {
         if (!!item.children) {
             for (var i = 0; i < item.children.length; ++i) {
@@ -33,12 +52,23 @@
         return false;
     }
 
+    /**
+     * Helper function which returns true if the query provided matches with the item or its children
+     * @param item - ParlayItem/PromenadeStandardItem
+     * @param query - String
+     * @returns {Boolean}
+     */
     function queryMatchesBranch(item, query) {
         if (queryMatchesNode(item, query))
             return true;
         return queryMatchesChildren(item, query);
     }
 
+    /**
+     * Returns true if a query variable exists.
+     * @param query
+     * @returns {boolean}
+     */
     function queryExists(query) {
         return query !== "" && query !== null && query !== undefined;
     }
@@ -55,13 +85,6 @@
     function ParlayItemSearchController ($scope, $mdSidenav, ParlayItemManager, ParlayWidgetManager) {
 
         var ctrl = this;
-
-        /**
-         * Create filter function for a query string
-         * @member module:ParlayItem.ParlayItemSearchController#createFilterFor
-         * @private
-         * @param {String} query - Name of item to query by.
-         */
         $scope.search_text = null;
 
         ctrl.selectItem = selectItem;
@@ -70,10 +93,17 @@
         ctrl.getItems = getItems;
         ctrl.filterNode = filterNode;
 
+        /**
+         * When a child controller alerts that an item has been selected,
+         * instantiate the item into the workspace
+         */
         $scope.$on("ParlayItemSelected", function(event, item) {
             ctrl.selectItem(item);
         });
 
+        /**
+         * When the search query is changed, alert the children controllers of the change
+         */
         $scope.$watch("search_text", function() {
            $scope.$broadcast("ParlayItemLibraryQueryChanged", $scope.search_text);
         });
@@ -99,7 +129,7 @@
 
         /**
          * True if discovered, false otherwise.
-         * @member module:ParlayItem.ParlayItemSearchController#querySearch
+         * @member module:ParlayItem.ParlayItemSearchController#hasDiscovered
          * @public
          * @returns {Boolean}
          */
@@ -107,20 +137,43 @@
             return ParlayItemManager.hasDiscovered();
         }
 
+        /**
+         * Controller function to close the item library sidenav
+         * @member module:ParlayItem.ParlayItemSearchController#closeSearch
+         */
         function closeSearch() {
             $mdSidenav('parlay-item-library').toggle();
         }
 
+        /**
+         * General Function which will return all items from the current discovery
+         * @member module:ParlayItem.ParlayItemSearchController#getItems
+         * @returns {*|Array}
+         */
         function getItems() {
             return ParlayItemManager.getAvailableItems();
         }
 
+        /**
+         * Returns true if the item passed to it directly matches the query.
+         * Does not check children for query matching
+         * @member module:ParlayItem.ParlayItemSearchController#filterNode
+         * @param item
+         * @returns {Boolean}
+         */
         function filterNode(item) {
             return queryMatchesNode(item, $scope.search_text);
         }
     }
 
     ParlayItemListController.$inject = ["$scope"];
+    /**
+     * Controller for an item and its children.  This controller works with the Item Library controller to communicate
+     * items needed to be created in the workspace, and for filtering with the search queries provided by the Search/Library
+     * controller
+     * @param $scope - AngularJS scope object
+     * @constructor
+     */
     function ParlayItemListController($scope) {
         var ctrl = this;
 
@@ -134,6 +187,9 @@
         $scope.user_state = false;
         $scope.search_text = null;
 
+        /**
+         *
+         */
         $scope.$on("ParlayItemLibraryQueryChanged", function(event, data) {
             $scope.search_text = data;
             if (!queryExists($scope.search_text)) {
@@ -214,6 +270,7 @@
     /**
      * Recursive directive that will produce a menu list of children items until the item has no children to display
      * @param RecursionHelper
+     *
      */
     function ParlayItemList(RecursionHelper) {
         return {

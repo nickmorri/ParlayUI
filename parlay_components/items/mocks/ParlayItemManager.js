@@ -1,9 +1,9 @@
 (function () {
-	"use strict";
+    "use strict";
 
     var module_dependencies = [];
 
-	angular
+    angular
         .module('mock.parlay.items.manager', module_dependencies)
         .factory('ParlayItemManager', MockParlayItemManager);
 

@@ -3,30 +3,44 @@
 
 /* Reduce padding between tabs and font size to allow more tabs to fit in toolbar. */
 .parlay-item-card > md-tabs > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item {
-	font-size: 12px;
-	padding-left: 8px;
-	padding-right: 8px;
+    font-size: 12px;
+    padding-left: 8px;
+    padding-right: 8px;
 }
 
 parlay-item-search {
-	padding-left: 25px;
-	padding-right: 25px;
-	padding-top: 10px;
+    padding-left: 25px;
+    padding-right: 25px;
+    padding-top: 10px;
+}
+
+.parlay-item-toggled-closed {
+    transform: rotate(0deg);
+    transition: .25s;
+}
+
+.parlay-item-toggled-open {
+    transform: rotate(-180deg);
+    transition: .25s;
 }
 
 /* Limit height of toolbars in ParlayItemCard to allow for greater information density. */
 .parlay-item-card > md-toolbar {
-	height: 48px;
-	min-height: 48px;
+    height: 48px;
+    min-height: 48px;
 }
 
 .parlay-item-card-buttons {
-	margin: 0 !important;
+    margin: 0 !important;
 }
 
 .parlay-item-list {
-	padding-top: 0;
-	padding-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.parlay-item-list > div{
+    padding-right: 0 !important;
 }
 
 /* Indicate to the user that the card is moveable. */
@@ -34,6 +48,6 @@ parlay-item-search {
 
 /* Limit height of toolbars in ParlayItemCard to allow for greater information density. */
 md-tab-content > div > md-toolbar {
-	height: 48px;
-	min-height: 48px;
+    height: 48px;
+    min-height: 48px;
 }

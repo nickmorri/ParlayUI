@@ -1,0 +1,19 @@
+<md-list-item class="parlay-navigation-list-small parlay-item-list" ng-click="itemList.select()"
+              ng-show="itemList.filterBranch(item) || matchingAncestor">
+    <div class="md-body-1" style="padding-left: calc({{depth * 15}}px">
+        {{item.name}}
+    </div>
+    <span flex></span>
+    <md-button md-no-ink class="md-button-toggle md-icon-button" ng-if="item.children.length" ng-click="itemList.toggle()"
+               ng-class="{'parlay-item-toggled-open': show_children, 'parlay-item-toggled-closed': !show_children}"
+               aria-label="Expand {{item.name}}'s children">
+        <md-icon ng-md-icon icon="expand_more"></md-icon>
+    </md-button>
+</md-list-item>
+
+<md-list class="parlay-item-list" ng-slide-down="show_children" duration=".75" timing-function="cubic-bezier(0.35, 0, 0.25, 1)">
+    <div ng-repeat="child in item.children">
+        <parlay-item-list item="child" depth="depth + 1"
+                          matching-ancestor="matchingAncestor || itemList.filterNode(item)"></parlay-item-list>
+    </div>
+</md-list>

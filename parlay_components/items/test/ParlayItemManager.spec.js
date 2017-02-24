@@ -17,20 +17,20 @@
             }));
             
             beforeEach(function () {
-	            // Clear localStorage and sessionStorage in case anything persisted from previous test cases.
-		        localStorage.clear();
-		        sessionStorage.clear();
+                // Clear localStorage and sessionStorage in case anything persisted from previous test cases.
+                localStorage.clear();
+                sessionStorage.clear();
             });
 
             describe('PromenadeBroker interactions', function () {
 
                 // it("has discovered", function (done) {
-					// expect(ParlayItemManager.hasDiscovered()).toBe(PromenadeBroker.getLastDiscovery() !== undefined);
-					// PromenadeBroker.requestDiscovery(true).then(function () {
-					// 	expect(ParlayItemManager.hasDiscovered()).toBe(PromenadeBroker.getLastDiscovery() !== undefined);
-					// 	done();
-					// });
-					// $rootScope.$digest();
+                    // expect(ParlayItemManager.hasDiscovered()).toBe(PromenadeBroker.getLastDiscovery() !== undefined);
+                    // PromenadeBroker.requestDiscovery(true).then(function () {
+                    // 	expect(ParlayItemManager.hasDiscovered()).toBe(PromenadeBroker.getLastDiscovery() !== undefined);
+                    // 	done();
+                    // });
+                    // $rootScope.$digest();
                 // });
                 //
                 // it('requestDiscovery', function (done) {

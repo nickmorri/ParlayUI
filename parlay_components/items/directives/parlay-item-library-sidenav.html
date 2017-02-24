@@ -1,29 +1,24 @@
-<md-sidenav md-component-id="itemNav" layout="column">
+<md-sidenav md-component-id="parlay-item-library" id="parlay-item-library" layout="column">
     <md-toolbar class="md-toolbar-tools">
         <h1>Items</h1>
         <span flex></span>
 
-        <md-button class="md-icon-button" ng-click="itemNav.closeSearch()" aria-label="Opens side navigation">
+        <md-button class="md-icon-button" ng-click="searchCtrl.closeSearch()" aria-label="Opens side navigation">
             <md-tooltip>Close menu</md-tooltip>
             <md-icon ng-md-icon icon="close"></md-icon>
         </md-button>
     </md-toolbar>
-    <md-input-container md-no-float style="margin-bottom: 0px; min-width: 80%">
+    <md-input-container md-no-float class="parlay-navigation-list-input">
         <md-icon ng-md-icon icon="search"></md-icon>
-        <input ng-model="search_text" type="text" placeholder="Search for a connected Item">
+        <input ng-model="search_text" type="text" placeholder="Search for a connected Item"
+               ng-model-options="{debounce: 500}">
     </md-input-container>
     <md-divider></md-divider>
     <md-content flex>
-        <md-list class="parlay-item-list" ng-repeat="item in itemNav.querySearch(search_text)">
-            <md-list-item class="parlay-navigation-list-small" ng-click="itemNav.selectItem(item)">
-                <div class="md-body-1">
-                    {{item.name}}
-                </div>
-                <span flex></span>
-                <!--<md-button class="primary" ng-show="item.children.length" ng-click="itemNav.toggle(item)" aria-label="Expand {{item.name}}'s children">-->
-                <!--Expand-->
-                <!--</md-button>-->
-            </md-list-item>
+        <md-list>
+            <div ng-repeat="item in searchCtrl.getItems()">
+                <parlay-item-list item="item" depth="0" matching-ancestor="searchCtrl.filterNode(item)"></parlay-item-list>
+            </div>
         </md-list>
     </md-content>
 </md-sidenav>

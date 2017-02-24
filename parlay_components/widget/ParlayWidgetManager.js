@@ -334,7 +334,7 @@
 
             if (!!item) {
                 if (type === "StandardItem") {
-                    new_widget.id = item;
+                    new_widget.item = item;
                 } else if (type === "StandardWidget") {
                     new_widget.widget = item;
                 }

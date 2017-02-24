@@ -115,9 +115,10 @@ var standard_item_dependencies = ["parlay.items.item", "promenade.items.standard
 
             this.children = [];
             if (data.CHILDREN) {
-                for (var i = 0; i < data.CHILDREN.length; i++) {
-                    this.children.push(new PromenadeStandardItem(data.CHILDREN[i], protocol));
-                }
+
+                data.CHILDREN.forEach(function(child) {
+                   this.children.push(new PromenadeStandardItem(child, protocol));
+                }.bind(this));
             }
         }
 

@@ -25,6 +25,16 @@
 
         </md-input-container>
 
+        <md-input-container flex ng-switch-when="file">
+
+            <md-button ng-click="customizationCtrl.uploadImageFile($event)">
+                <md-icon ng-md-icon icon="file_upload"></md-icon>
+                <input type="file" ng-model="option.value" style="display: None" custom-on-change="customizationCtrl.imageFileChanged">
+                {{option.property_name}}
+            </md-button>
+
+        </md-input-container>
+
         <md-input-container flex ng-switch-when="text-multiple">
 
             <label>{{option.property_name}}</label>

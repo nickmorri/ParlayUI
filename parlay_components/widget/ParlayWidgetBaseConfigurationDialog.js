@@ -1,7 +1,8 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["ui.ace", "mdColorPicker", "parlay.widget.manager", "parlay.widget.collection", "parlay.widget.inputmanager", "parlay.widget.transformer", "parlay.widget.eventhandler", "parlay.data"];
+    var module_dependencies = ["ui.ace", "mdColorPicker", "parlay.widget.manager", "parlay.widget.collection", "parlay.widget.inputmanager",
+        "parlay.widget.transformer", "parlay.widget.eventhandler", "parlay.data", "parlay.utility"];
 
     angular
         .module("parlay.widget.base.configuration", module_dependencies)
@@ -11,7 +12,7 @@
         .controller("ParlayWidgetBaseConfigurationHandlerController", ParlayWidgetBaseConfigurationHandlerController)
         .controller("ParlayWidgetBaseConfigurationSourceController", ParlayWidgetBaseConfigurationSourceController)
         .controller("ParlayWidgetBaseConfigurationTransformController", ParlayWidgetBaseConfigurationTransformController)
-        .controller("ParlayWidgetBaseConfigurationCustomizationController", ParlayWidgetBaseConfigurationTransformController)
+        .controller("ParlayWidgetBaseConfigurationCustomizationController", ParlayWidgetBaseConfigurationCustomizationController)
         .directive("parlayWidgetBaseConfigurationTemplate", ParlayWidgetBaseConfigurationTemplateDirective)
         .directive("parlayWidgetBaseConfigurationEvent", ParlayWidgetBaseConfigurationEventDirective)
         .directive("parlayWidgetBaseConfigurationHandler", ParlayWidgetBaseConfigurationHandlerDirective)
@@ -384,8 +385,26 @@
 
     }
 
-    ParlayWidgetBaseConfigurationCustomizationController.$inject = [];
-    function ParlayWidgetBaseConfigurationCustomizationController () {
+    ParlayWidgetBaseConfigurationCustomizationController.$inject = ["$scope", "ParlayUtility"];
+    function ParlayWidgetBaseConfigurationCustomizationController ($scope, ParlayUtility) {
+
+        this.uploadImageFile = uploadImageFile;
+        this.imageFileChanged = imageFileChanged;
+
+        function uploadImageFile(event) {
+            event.target.parentElement.getElementsByTagName("input")[0].click();
+        }
+
+        function imageFileChanged (event) {
+            // Instantiate FileReader object
+            var fileReader = new FileReader();
+
+            fileReader.addEventListener("load", function() {
+                $scope.customizations.image.src = fileReader.result;
+            });
+
+            fileReader.readAsDataURL(event.target.files[0]);
+        }
 
     }
 

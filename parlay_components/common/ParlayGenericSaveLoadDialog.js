@@ -1,7 +1,7 @@
 (function () {
     "use strict";
     
-    var module_dependencies = ["ngMaterial", "parlay.notification"];
+    var module_dependencies = ["ngMaterial", "parlay.notification", "parlay.utility"];
 
     angular
         .module("parlay.common.genericsaveloaddialog", module_dependencies)
@@ -59,7 +59,8 @@
         };
     }
 
-    ParlayGenericSaveLoadDialogController.$inject = ["$scope", "$mdDialog", "$mdMedia", "ParlayNotification", "manager", "options"];
+    ParlayGenericSaveLoadDialogController.$inject = ["$scope", "$mdDialog", "$mdMedia", "ParlayNotification", "ParlayObject",
+        "manager", "options"];
     /**
      * Controller for the {@link ParlayGenericSaveLoadDialog} $mdDialog.
      * @constructor ParlayGenericSaveLoadDialogController
@@ -70,7 +71,7 @@
      * @param {Object} manager - A manager instance where entries will be interacted with.
      * @param {Object} options - Contains manager specific terminology.
      */
-    function ParlayGenericSaveLoadDialogController ($scope, $mdDialog, $mdMedia, ParlayNotification, manager, options) {
+    function ParlayGenericSaveLoadDialogController ($scope, $mdDialog, $mdMedia, ParlayNotification, ParlayObject, manager, options) {
 
         var ctrl = this;
 
@@ -236,7 +237,8 @@
          * @public
          */
         function exportAll () {
-            manager.export().download("saved_entries_" + new Date().toISOString() + ".txt");
+            var toExport = new ParlayObject(manager.export());
+            toExport.download("saved_entries_" + new Date().toISOString() + ".txt");
         }
 
         /**

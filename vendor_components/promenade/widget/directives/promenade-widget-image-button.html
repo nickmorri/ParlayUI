@@ -10,6 +10,7 @@
                 ng-class="customizations.button_class.value">
             <img ng-hide="!customizations.image.src"
                  src="{{customizations.image.src}}"
+                 oncontextmenu="return false"
                  alt="Image Button" height="{{customizations.image_height.value}}" width="{{customizations.image_width.value}}"
                  style="vertical-align: middle">
             <p ng-hide="customizations.image.src">Upload an image in edit menu</p>

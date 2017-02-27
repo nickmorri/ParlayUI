@@ -146,6 +146,7 @@
                     var widgetsCtrl = scope.widgetsCtrl;
                     //auto assign a name if we don't already have one
                     if(!scope.info.name) scope.info.name = widgetsCtrl.registerScope(display_name, scope);
+                    else widgetsCtrl.registerScope(scope.info.name, scope);
                     //handle deregistration on destruction
                     scope.$on("$destroy", function(){
                         widgetsCtrl.deregisterScope(scope.info.name);

@@ -29,7 +29,8 @@
 
             <md-button ng-click="customizationCtrl.uploadImageFile($event)">
                 <md-icon ng-md-icon icon="file_upload"></md-icon>
-                <input type="file" ng-model="option.value" style="display: None" custom-on-change="customizationCtrl.imageFileChanged">
+                <input type="file" ng-model="option.value" style="display: None" custom-on-change="customizationCtrl.imageFileChanged"
+                       accept="image/*">
                 {{option.property_name}}
             </md-button>
 

@@ -16,15 +16,15 @@
 
         function customLink(scope) {
 
-            var checkList = scope.customizations.checkList.value;
-
             scope.checkListItems = function checkListItems(listSize) {
 
+                var checkList = scope.properties.list.value;
+                var checked = scope.properties.checked.value;
                 /**
                  * If a change is detected but a number is not specified
                  * do nothing and return the list
                  */
-                if (listSize === null) return checkList.list;
+                if (listSize === null) return checkList;
                 if (listSize < 0) scope.customizations.number.value = 0;
 
 
@@ -34,11 +34,11 @@
                  * Number needed to add is calculated by the input arg,
                  * "listSize" subtracted by the length of checkList.list.length
                  */
-                for (var i = 0; i < listSize - checkList.list.length; ++i) {
-                    checkList.list.push({
+                for (var i = 0; i < listSize - checkList.length; ++i) {
+                    checkList.push({
                         value: "", 
                         isChecked: false, 
-                        index: checkList.list.length
+                        index: checkList.length
                     });
                 }
 
@@ -48,39 +48,40 @@
                  * last elements that are extending past the maximum
                  * list size
                  */
-                for (i = 0; i < checkList.list.length - listSize; ++i) {
-                    var poppedItem = checkList.list.pop();
+                for (i = 0; i < checkList.length - listSize; ++i) {
+                    var poppedItem = checkList.pop();
                     if (poppedItem.isChecked)
-                        --checkList.checked;
+                        --scope.properties.checked.value;
                 }
 
                 /* reset the checkAll toggle if a change is detected */
-                var checked = checkList.checked;
-                var listLength = checkList.list.length;
-                checkList.toggle = (checked === listLength && listLength !== 0) ? true : false;
+                var listLength = checkList.length;
+                scope.properties.toggle.value = checked === listLength && listLength !== 0;
 
-                return checkList.list;
+                return checkList;
             };
 
             /**
 
              */
             scope.checkBox = function checkBox(item) {
+                var checkList = scope.properties.list.value;
+                var checked = scope.properties.checked.value;
 
-                var checkList = scope.customizations.checkList.value;
-
-                checkList.checked += (item.isChecked) ? -1 : 1;
-                checkList.toggle = (checkList.checked === checkList.list.length) ? true : false;
+                scope.properties.checked.value += (item.isChecked) ? -1 : 1;
+                scope.properties.toggle.value = checked === checkList.length;
             };
 
             scope.checkAll = function checkAll() {
-               
-                var checkList = scope.customizations.checkList.value;
 
-                for (var i = 0; i < checkList.list.length; ++i)
-                    checkList.list[i].isChecked = !checkList.toggle;
+                var checkList = scope.properties.list.value;
+                var checked = scope.properties.checked.value;
+                var toggle = scope.properties.toggle.value;
 
-                checkList.checked = (checkList.checked === checkList.list.length) ? 0 : checkList.list.length;
+                for (var i = 0; i < checkList.length; ++i)
+                    checkList[i].isChecked = !toggle;
+
+                scope.properties.checked.value = (checked === checkList.length) ? 0 : checkList.length;
             };
 
         }
@@ -88,22 +89,25 @@
         return new ParlayWidgetTemplate({
             title: "Check List",
             templateUrl: "../vendor_components/promenade/widget/directives/promenade-widget-checklist.html",
+            customLink: customLink,
             customizationDefaults: {
                 number: {
                     property_name: "Check List Size",
-                    value: 0,
+                    value: 5,
                     type: "number"
-                },
-                checkList: {
-                    hidden: true,
-                    value: {
-                        list: [],
-                        checked: 0,
-                        toggle: false
-                    }
                 }
             },
-            customLink: customLink
+            properties: {
+                checked: {
+                    default: 0
+                },
+                list: {
+                    default: []
+                },
+                toggle: {
+                    default: false
+                }
+            }
         }, display_name);
     }
 }());

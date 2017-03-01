@@ -55,7 +55,11 @@
                 scope.edit = edit;
 
                 // Handle widget initialization on parlayWidgetTemplateLoaded event.
-                scope.$on("parlayWidgetTemplateLoaded", function () {
+                scope.$on("parlayWidgetTemplateLoaded", function (event, properties) {
+                    // Keep track of properties if a templated widget has them
+                    if (!scope.item.configuration.properties) {
+                        scope.item.configuration.properties = properties;
+                    }
                     onLoaded(element[0]);
                 });
 
@@ -323,6 +327,7 @@
                         ["uid", "item.uid"],
                         ["template", "item.configuration.template"],
                         ["customizations", "item.configuration.customizations"],
+                        ["properties", "item.configuration.properties"],
                         ["info", "item"]
                     ].map(function (attribute) {
                         return attribute[0] + "='" + attribute[1] + "'";

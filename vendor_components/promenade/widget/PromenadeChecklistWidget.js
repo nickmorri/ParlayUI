@@ -16,23 +16,21 @@
 
         function customLink(scope) {
 
-            scope.checkListItems = function checkListItems(listSize) {
+            scope.checked = 0;
+
+            scope.checkListItems = function checkListItems() {
+
+                var listSize = scope.customizations.number.value;
 
                 var checkList = scope.properties.list.value;
-                var checked = scope.properties.checked.value;
-                /**
-                 * If a change is detected but a number is not specified
-                 * do nothing and return the list
-                 */
+                // If a change is detected but a number is not specified do nothing and return the list
                 if (listSize === null) return checkList;
                 if (listSize < 0) scope.customizations.number.value = 0;
 
 
                 /**
-                 * Determine the amount of elements needed to add to the
-                 * checkList and push them on the checkList.list array.
-                 * Number needed to add is calculated by the input arg,
-                 * "listSize" subtracted by the length of checkList.list.length
+                 * Determine the amount of elements needed to add to the checkList and push them on the checkList.list array.
+                 * Number needed to add is calculated by the input arg, "listSize" subtracted by the length of checkList.length
                  */
                 for (var i = 0; i < listSize - checkList.length; ++i) {
                     checkList.push({
@@ -43,46 +41,47 @@
                 }
 
                 /**
-                 * If any the checkList size becomes a smaller number
-                 * less than the previous configuration, remove the
-                 * last elements that are extending past the maximum
-                 * list size
+                 * If any the checkList size becomes a smaller number less than the previous configuration, remove the
+                 * last elements that are extending past the maximum list size
                  */
                 for (i = 0; i < checkList.length - listSize; ++i) {
                     var poppedItem = checkList.pop();
                     if (poppedItem.isChecked)
-                        --scope.properties.checked.value;
+                        --scope.checked;
                 }
-
-                /* reset the checkAll toggle if a change is detected */
-                var listLength = checkList.length;
-                scope.properties.toggle.value = checked === listLength && listLength !== 0;
 
                 return checkList;
             };
 
             /**
-
+             * Function to process the checking of a single checkbox
              */
             scope.checkBox = function checkBox(item) {
-                var checkList = scope.properties.list.value;
-                var checked = scope.properties.checked.value;
-
-                scope.properties.checked.value += (item.isChecked) ? -1 : 1;
-                scope.properties.toggle.value = checked === checkList.length;
+                scope.checked += (item.isChecked) ? -1 : 1;
+                var listLength = scope.properties.list.value.length;
+                scope.properties.toggle.value = scope.checked === listLength && listLength !== 0;
             };
 
+            /**
+             * Function handler to process checking every box in the list
+             */
             scope.checkAll = function checkAll() {
-
-                var checkList = scope.properties.list.value;
-                var checked = scope.properties.checked.value;
-                var toggle = scope.properties.toggle.value;
-
-                for (var i = 0; i < checkList.length; ++i)
-                    checkList[i].isChecked = !toggle;
-
-                scope.properties.checked.value = (checked === checkList.length) ? 0 : checkList.length;
+                for (var i = 0; i < scope.properties.list.value.length; ++i) {
+                    scope.properties.list.value[i].isChecked = scope.properties.toggle.value;
+                }
+                scope.checked = scope.properties.toggle.value ? scope.properties.list.value.length : 0;
             };
+
+            /**
+             * function handler to process a change in the toggle value
+             */
+            scope.$watch("properties.toggle.value", function (newVal, oldVal) {
+                if (oldVal !== newVal) {
+                    if (!(newVal === true && scope.properties.list.value.length === scope.checked) &&
+                        !(newVal === false && scope.properties.list.value.length - 1 === scope.checked))
+                        scope.checkAll();
+                }
+            });
 
         }
 
@@ -98,9 +97,6 @@
                 }
             },
             properties: {
-                checked: {
-                    default: 0
-                },
                 list: {
                     default: []
                 },

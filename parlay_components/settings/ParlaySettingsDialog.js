@@ -8,7 +8,7 @@
         .controller("ParlaySettingsDialogController", ParlaySettingsDialogController);
 
     /* istanbul ignore next */
-    ParlaySettingsDialogController.$inject = ["$scope", "$mdDialog", "ParlaySettings", "PromenadeBroker", "ParlayObject"];
+    ParlaySettingsDialogController.$inject = ["$scope", "$timeout", "$mdDialog", "ParlaySettings", "PromenadeBroker", "ParlayObject"];
     /**
      * @constructor module:ParlaySettings.ParlaySettingsDialogController
      * @param {Object} $scope - AngularJS [$scope]{@link https://docs.angularjs.org/guide/scope} Object.
@@ -16,7 +16,7 @@
      * @param {Object} ParlaySettings - [ParlaySettings]{@link module:ParlaySettings.ParlaySettings} service.
      * @param {Object} PromenadeBroker - [PromenadeBroker]{@link module:PromenadeBroker.PromenadeBroker} service.
      */
-    function ParlaySettingsDialogController ($scope, $mdDialog, ParlaySettings, PromenadeBroker, ParlayObject) {
+    function ParlaySettingsDialogController ($scope, $timeout, $mdDialog, ParlaySettings, PromenadeBroker, ParlayObject) {
 
         var ctrl = this;
 
@@ -87,7 +87,9 @@
          * @public
          */
         function loadDiscovery (event) {
-            event.target.parentElement.getElementsByTagName("input")[0].click();
+            $timeout(function() {
+                event.target.parentElement.getElementsByTagName("input")[0].click();
+            });
         }
 
         /**

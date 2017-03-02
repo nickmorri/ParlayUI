@@ -385,14 +385,16 @@
 
     }
 
-    ParlayWidgetBaseConfigurationCustomizationController.$inject = ["$scope", "ParlayUtility"];
-    function ParlayWidgetBaseConfigurationCustomizationController ($scope, ParlayUtility) {
+    ParlayWidgetBaseConfigurationCustomizationController.$inject = ["$scope", "ParlayUtility", "$timeout"];
+    function ParlayWidgetBaseConfigurationCustomizationController ($scope, ParlayUtility, $timeout) {
 
         this.uploadImageFile = uploadImageFile;
         this.imageFileChanged = imageFileChanged;
 
         function uploadImageFile(event) {
-            event.target.parentElement.getElementsByTagName("input")[0].click();
+            $timeout(function(){
+                event.target.parentElement.getElementsByTagName("input")[0].click();
+            });
         }
 
         function imageFileChanged (event) {

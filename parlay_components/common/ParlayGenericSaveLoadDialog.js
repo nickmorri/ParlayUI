@@ -59,7 +59,7 @@
         };
     }
 
-    ParlayGenericSaveLoadDialogController.$inject = ["$scope", "$mdDialog", "$mdMedia", "ParlayNotification", "ParlayObject",
+    ParlayGenericSaveLoadDialogController.$inject = ["$scope", "$timeout", "$mdDialog", "$mdMedia", "ParlayNotification", "ParlayObject",
         "manager", "options"];
     /**
      * Controller for the {@link ParlayGenericSaveLoadDialog} $mdDialog.
@@ -71,7 +71,7 @@
      * @param {Object} manager - A manager instance where entries will be interacted with.
      * @param {Object} options - Contains manager specific terminology.
      */
-    function ParlayGenericSaveLoadDialogController ($scope, $mdDialog, $mdMedia, ParlayNotification, ParlayObject, manager, options) {
+    function ParlayGenericSaveLoadDialogController ($scope, $timeout, $mdDialog, $mdMedia, ParlayNotification, ParlayObject, manager, options) {
 
         var ctrl = this;
 
@@ -248,7 +248,9 @@
          * @param {Event} event - Mouse click event
          */
         function importAll (event) {
-            event.target.parentElement.parentElement.getElementsByTagName("input")[0].click();
+            $timeout(function() {
+                event.target.parentElement.parentElement.getElementsByTagName("input")[0].click();
+            });
         }
 
         /**

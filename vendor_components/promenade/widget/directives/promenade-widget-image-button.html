@@ -5,16 +5,19 @@
     <parlay-widget-base-card-content layout="row">
         <span flex></span>
         <md-button
+                oncontextmenu="return false"
                 parlay-widget-input
-                events='["click", "mousedown", "mouseup"]'
-                ng-class="customizations.button_class.value">
-            <img ng-hide="!customizations.image.src"
-                 src="{{customizations.image.src}}"
-                 oncontextmenu="return false"
-                 alt="Image Button" height="{{customizations.image_height.value}}" width="{{customizations.image_width.value}}"
-                 style="vertical-align: middle">
+                events='["click", "mousedown", "mouseup", "touchstart", "touchend"]'
+                ng-class="customizations.button_class.value"
+                style="background-image: url({{customizations.image.src}});
+                       background-repeat: no-repeat;
+                       background-position: center;
+                       background-size: calc(100% - 12px) 100%;
+                       height: {{customizations.image_height.value}}px;
+                       width: {{customizations.image_width.value}}px;">
             <p ng-hide="customizations.image.src">Upload an image in edit menu</p>
         </md-button>
         <span flex></span>
     </parlay-widget-base-card-content>
 </parlay-widget-base-card>
+

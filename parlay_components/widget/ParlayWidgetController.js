@@ -1,20 +1,20 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["parlay.widget.manager", "parlay.data"];
+    var module_dependencies = ["parlay.widget.manager", "parlay.data", "ui.router"];
 
     angular
         .module("parlay.widget.controller", module_dependencies)
         .controller("ParlayWidgetController", ParlayWidgetController)
         .directive("parlayEmptyWidgetsWorkspacePlaceholder", ParlayEmptyWidgetsWorkspacePlaceholder);
 
-    ParlayWidgetController.$inject = ["ParlayWidgetManager", "ParlayData"];
+    ParlayWidgetController.$inject = ["ParlayWidgetManager", "ParlayData", "$stateParams"];
     /**
      * Controller for the widget workspace.
      * @constructor module:ParlayWidget.ParlayWidgetController
      * @param {ParlayWidgetManager} ParlayWidgetManager - [ParlayWidgetManager]{@link module:ParlayWidget.ParlayWidgetManager} service.
      */
-    function ParlayWidgetController (ParlayWidgetManager, ParlayData) {
+    function ParlayWidgetController (ParlayWidgetManager, ParlayData, $stateParams) {
         var ctrl = this;
         var widget_by_name = {};
         ParlayData.set("widgets_scope_by_name", widget_by_name);
@@ -35,6 +35,21 @@
         ctrl.registerScope = registerScope;
         ctrl.renameScope = renameScope;
         ctrl.deregisterScope = deregisterScope;
+
+        var workspace_name = $stateParams.workspace;
+        if (!!workspace_name) {
+            var workspace_to_load;
+            var workspaces = ParlayWidgetManager.getWorkspaces();
+            for (var i = 0; i < workspaces.length; i++) {
+                if (workspaces[i].name === workspace_name) {
+                    workspace_to_load = workspaces[i];
+                    break;
+                }
+            }
+            if (!!workspace_to_load) {
+                ParlayWidgetManager.loadEntry(workspace_to_load);
+            }
+        }
 
         /**
          * Requests all active widget configuration Objects from the

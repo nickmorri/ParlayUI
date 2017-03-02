@@ -124,27 +124,6 @@
          * @param {Object} event - Container of input event data.
          */
         function addHandler (event) {
-            var touch_translation;
-
-            switch(event.event) {
-                case "click":
-                case "mousedown":
-                    touch_translation = "touchstart";
-                    break;
-                case "mouseup":
-                    touch_translation = "touchend";
-                    break;
-                case "mousemove":
-                    touch_translation = "touchmove";
-                    break;
-            }
-
-            if (!!touch_translation) {
-                var event_copy = angular.copy(event);
-                event_copy.event = touch_translation;
-                ParlayWidgetInputManager.registerHandler(event_copy);
-            }
-
             ParlayWidgetInputManager.registerHandler(event);
         }
 

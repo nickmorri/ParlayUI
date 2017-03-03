@@ -92,6 +92,7 @@
         ctrl.closeSearch = closeSearch;
         ctrl.getItems = getItems;
         ctrl.filterNode = filterNode;
+        ctrl.queryCheck = queryCheck;
 
         /**
          * When a child controller alerts that an item has been selected,
@@ -163,6 +164,16 @@
          */
         function filterNode(item) {
             return queryMatchesNode(item, $scope.search_text);
+        }
+
+        function queryCheck() {
+            var items = ctrl.getItems();
+            var count = 0;
+            for (var i = 0; i < items.length; i++) {
+                if (queryMatchesBranch(items[i], $scope.search_text))
+                    count++;
+            }
+            return count > 0;
         }
     }
 

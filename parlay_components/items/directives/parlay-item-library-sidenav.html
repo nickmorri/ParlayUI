@@ -14,6 +14,13 @@
                ng-model-options="{debounce: 500}">
     </md-input-container>
     <md-divider></md-divider>
+    <md-content layout-padding ng-if="!searchCtrl.queryCheck()">
+        <p class="md-body-1">No Matches Found!
+            <span ng-show="!searchCtrl.hasDiscovered()">
+                Ensure protocols are connected, request discovery and try again.
+            </span>
+        </p>
+    </md-content>
     <md-content flex>
         <md-list>
             <div ng-repeat="item in searchCtrl.getItems()">

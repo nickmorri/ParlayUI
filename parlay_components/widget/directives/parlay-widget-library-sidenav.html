@@ -13,6 +13,9 @@
         <input ng-model="widget_search_text" type="text" placeholder="Search for a widget template">
     </md-input-container>
     <md-divider></md-divider>
+    <md-content layout-padding ng-show="!widgetNav.querySearch(widget_search_text).length">
+        <p class="md-body-1">No Matches Found!</p>
+    </md-content>
     <md-content flex>
         <md-list class="parlay-item-list" ng-repeat="widget in widgetNav.querySearch(widget_search_text)">
             <md-list-item class="parlay-navigation-list-small" ng-click="widgetNav.selectWidget(widget)">
@@ -20,9 +23,6 @@
                     {{widget.display_name}}
                 </div>
                 <span flex></span>
-                <!--<md-button class="primary" ng-show="item.children.length" ng-click="itemNav.toggle(item)" aria-label="Expand {{item.name}}'s children">-->
-                <!--Expand-->
-                <!--</md-button>-->
             </md-list-item>
         </md-list>
     </md-content>

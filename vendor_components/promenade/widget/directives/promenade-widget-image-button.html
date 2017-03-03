@@ -8,7 +8,7 @@
                 oncontextmenu="return false"
                 parlay-widget-input
                 events='["click", "mousedown", "mouseup", "touchstart", "touchend"]'
-                ng-class="customizations.button_class.value"
+                ng-class="[customizations.button_class.value, {'promenade-widget-image-button-no-src': !customizations.image.src}]"
                 style="background-image: url({{customizations.image.src}});
                        background-repeat: no-repeat;
                        background-position: center;
@@ -20,4 +20,11 @@
         <span flex></span>
     </parlay-widget-base-card-content>
 </parlay-widget-base-card>
+
+<style>
+    .promenade-widget-image-button-no-src {
+        height: auto !important;
+        width: auto !important;
+    }
+</style>
 

@@ -5,7 +5,7 @@
     var module_dependencies = ["parlay.data"];
     var module_name = "promenade.widget.table";
     var directive_name = "promenadeWidgetTable";
-    var wigdet_type = "input";
+    var wigdet_type = "display";
     var directive_definition = promenadeWidgetTableJs;
 
     widgetRegistration(display_name, module_name, module_dependencies, directive_name, wigdet_type, directive_definition, []);
@@ -92,6 +92,7 @@
         return new ParlayWidgetTemplate({
             title: "Check List",
             templateUrl: "../vendor_components/promenade/widget/directives/promenade-widget-table.html",
+            customLink: customLink,
             customizationDefaults: {
                 rows: {
                     property_name: "Table Rows",
@@ -116,8 +117,7 @@
                     hidden: true,
                     value: [] // should be 2D array
                 }
-            },
-            customLink: customLink
+            }
         }, display_name);
     }
 }());

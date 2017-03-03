@@ -160,6 +160,13 @@
 
         }
 
+        // debugger;
+        var availableEvents = queryEvents("");
+        if (availableEvents.length > 0) {
+            $scope.configuration.selectedEvents.push(availableEvents[0]);
+            addHandler(availableEvents[0]);
+        }
+
         // When configuration.template.type change the currentTabIndex.
         $scope.$watch("configuration.template.type", function (newValue, oldValue) {
             if (!angular.equals(newValue, oldValue)) {
@@ -453,7 +460,8 @@
     function ParlayWidgetBaseConfigurationCustomizationDirective () {
         return {
             scope: {
-                customizations: "="
+                customizations: "=",
+                item: "="
             },
             templateUrl: "../parlay_components/widget/directives/parlay-widget-base-configuration-customization.html",
             controller: "ParlayWidgetBaseConfigurationCustomizationController",

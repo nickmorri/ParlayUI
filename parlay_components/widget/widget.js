@@ -142,17 +142,17 @@ var widgetRegistration = (function () {
                     displayName: "Widgets",
                     displayIcon: "create"
                 }
-            })
-            .state("widgetsWorkspace", {
-                url: "/widgets/:workspace",
-                templateUrl: "../parlay_components/widget/views/base.html",
-                controller: "ParlayWidgetController",
-                controllerAs: "widgetsCtrl",
-                data: {
-                    displayName: "Widgets",
-                    displayIcon: "create"
-                }
             });
+            // .state("widgetsWorkspace", {
+            //     url: "/widgets/:workspace",
+            //     templateUrl: "../parlay_components/widget/views/base.html",
+            //     controller: "ParlayWidgetController",
+            //     controllerAs: "widgetsCtrl",
+            //     data: {
+            //         displayName: "Widgets",
+            //         displayIcon: "create"
+            //     }
+            // });
     }
 
     ParlayWidgetsRun.$inject = ["ParlaySettings", "ParlayWidgetCollection", "ParlayData"];

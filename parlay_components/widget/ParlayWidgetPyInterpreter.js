@@ -207,15 +207,18 @@
                         var discovery = PromenadeBroker.getLastDiscovery();
                         var children;
                         // search through the items in each device to find the one the script selected and return it
-                        for (var i = 0; i < discovery.length; i++){
-                            children = discovery[i].CHILDREN;
-                            for (var j = 0; j < children.length; j++) {
-                                if (children[j][data.key] === data.value) {
-                                    return children[j];
+                        if (!!discovery) {
+                            for (var i = 0; i < discovery.length; i++) {
+                                children = discovery[i].CHILDREN;
+                                for (var j = 0; j < children.length; j++) {
+                                    if (children[j][data.key] === data.value) {
+                                        return children[j];
+                                    }
                                 }
                             }
                         }
-                        throw new Error("Requested item not found in discovery");
+                        return null;
+                        // throw new Error("Requested item not found in discovery");
                     })()});
                     break;
                 case "item_contents"://TODO: change to 'command'?

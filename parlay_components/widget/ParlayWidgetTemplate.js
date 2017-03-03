@@ -135,7 +135,7 @@
                     //inject all of the custom properties into the scope
                     for (var key in custom_properties) {   // only keys for this object
                         if (custom_properties.hasOwnProperty(key)) {
-                            scope.properties[key] = {value: custom_properties[key].default};
+                            scope.properties[key] = {value: angular.copy(custom_properties[key].default)};
                         }
                     }
                 }

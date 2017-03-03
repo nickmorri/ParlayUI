@@ -2,13 +2,6 @@
     <md-dialog-content>
         <md-tabs md-stretch-tabs="always" md-dynamic-height="true" class="md-primary" md-selected="currentTabIndex">
 
-            <md-tab>
-                <md-tab-label>Template</md-tab-label>
-                <md-tab-body>
-                    <parlay-widget-base-configuration-template layout="row"></parlay-widget-base-configuration-template>
-                </md-tab-body>
-            </md-tab>
-
             <md-tab ng-disabled="!configuration.template || configuration.template.type == 'display'">
                 <md-tab-label>Handlers</md-tab-label>
                 <md-tab-body>
@@ -41,7 +34,7 @@
                     Customization
                 </md-tab-label>
                 <md-tab-body>
-                    <parlay-widget-base-configuration-customization customizations="configuration.customizations"></parlay-widget-base-configuration-customization>
+                    <parlay-widget-base-configuration-customization item="item" customizations="configuration.customizations"></parlay-widget-base-configuration-customization>
                 </md-tab-body>
             </md-tab>
 

@@ -5,7 +5,7 @@
     var module_dependencies = ["parlay.data"];
     var module_name = "promenade.widget.checklist";
     var directive_name = "promenadeWidgetChecklist";
-    var wigdet_type = "input";
+    var wigdet_type = "display";
     var directive_definition = promenadeWidgetChecklistJs;
 
     widgetRegistration(display_name, module_name, module_dependencies, directive_name, wigdet_type, directive_definition, []);
@@ -16,7 +16,7 @@
 
         function customLink(scope) {
 
-            scope.checked = 0;
+            var checked = 0;
 
             scope.checkListItems = function checkListItems() {
 
@@ -47,7 +47,7 @@
                 for (i = 0; i < checkList.length - listSize; ++i) {
                     var poppedItem = checkList.pop();
                     if (poppedItem.isChecked)
-                        --scope.checked;
+                        --checked;
                 }
 
                 return checkList;
@@ -57,9 +57,9 @@
              * Function to process the checking of a single checkbox
              */
             scope.checkBox = function checkBox(item) {
-                scope.checked += (item.isChecked) ? -1 : 1;
+                checked += (item.isChecked) ? -1 : 1;
                 var listLength = scope.properties.list.value.length;
-                scope.properties.toggle.value = scope.checked === listLength && listLength !== 0;
+                scope.properties.toggle.value = checked === listLength && listLength !== 0;
             };
 
             /**
@@ -69,7 +69,7 @@
                 for (var i = 0; i < scope.properties.list.value.length; ++i) {
                     scope.properties.list.value[i].isChecked = scope.properties.toggle.value;
                 }
-                scope.checked = scope.properties.toggle.value ? scope.properties.list.value.length : 0;
+                checked = scope.properties.toggle.value ? scope.properties.list.value.length : 0;
             };
 
             /**
@@ -77,8 +77,8 @@
              */
             scope.$watch("properties.toggle.value", function (newVal, oldVal) {
                 if (oldVal !== newVal) {
-                    if (!(newVal === true && scope.properties.list.value.length === scope.checked) &&
-                        !(newVal === false && scope.properties.list.value.length - 1 === scope.checked))
+                    if (!(newVal === true && scope.properties.list.value.length === checked) &&
+                        !(newVal === false && scope.properties.list.value.length - 1 === checked))
                         scope.checkAll();
                 }
             });

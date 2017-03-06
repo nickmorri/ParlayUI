@@ -8,13 +8,13 @@
         .controller("ParlayWidgetController", ParlayWidgetController)
         .directive("parlayEmptyWidgetsWorkspacePlaceholder", ParlayEmptyWidgetsWorkspacePlaceholder);
 
-    ParlayWidgetController.$inject = ["ParlayWidgetManager", "ParlayData", "$stateParams"];
+    ParlayWidgetController.$inject = ["ParlayWidgetManager", "ParlayData", "$location"];
     /**
      * Controller for the widget workspace.
      * @constructor module:ParlayWidget.ParlayWidgetController
      * @param {ParlayWidgetManager} ParlayWidgetManager - [ParlayWidgetManager]{@link module:ParlayWidget.ParlayWidgetManager} service.
      */
-    function ParlayWidgetController (ParlayWidgetManager, ParlayData, $stateParams) {
+    function ParlayWidgetController (ParlayWidgetManager, ParlayData, $location) {
         var ctrl = this;
         var widget_by_name = {};
         ParlayData.set("widgets_scope_by_name", widget_by_name);
@@ -36,7 +36,7 @@
         ctrl.renameScope = renameScope;
         ctrl.deregisterScope = deregisterScope;
 
-        var workspace_name = $stateParams.workspace;
+        var workspace_name = $location.search().workspace;
         if (!!workspace_name) {
             var workspace_to_load;
             var workspaces = ParlayWidgetManager.getWorkspaces();

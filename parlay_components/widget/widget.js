@@ -134,7 +134,7 @@ var widgetRegistration = (function () {
     function ParlayWidgetsConfiguration ($stateProvider) {
         $stateProvider
             .state("widgets", {
-                url: "/widgets",
+                url: "/widgets?workspace",
                 templateUrl: "../parlay_components/widget/views/base.html",
                 controller: "ParlayWidgetController",
                 controllerAs: "widgetsCtrl",
@@ -143,16 +143,6 @@ var widgetRegistration = (function () {
                     displayIcon: "create"
                 }
             });
-            // .state("widgetsWorkspace", {
-            //     url: "/widgets/:workspace",
-            //     templateUrl: "../parlay_components/widget/views/base.html",
-            //     controller: "ParlayWidgetController",
-            //     controllerAs: "widgetsCtrl",
-            //     data: {
-            //         displayName: "Widgets",
-            //         displayIcon: "create"
-            //     }
-            // });
     }
 
     ParlayWidgetsRun.$inject = ["ParlaySettings", "ParlayWidgetCollection", "ParlayData"];

@@ -3,7 +3,7 @@
     
     describe('parlay.protocols.manager', function() {
     
-		beforeEach(module('parlay.protocols.manager'));
+        beforeEach(module('parlay.protocols.manager'));
         beforeEach(module('mock.promenade.broker'));
         beforeEach(module('mock.parlay.socket'));
         

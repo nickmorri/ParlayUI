@@ -19,10 +19,16 @@ class ParlayScript():
         sendQuery({"command":"discover", "force": force})
 
     def get_item_by_name(self, item_name):
-        return ProxyItem(sendQuery({"command": "get_item", "key": "NAME", "value": item_name}))
+        response = sendQuery({"command": "get_item", "key": "NAME", "value": item_name})
+        if response is None:
+            raise TypeError("Could not find item " + str(item_name) + " in discovery")
+        return ProxyItem(response)
 
     def get_item_by_id(self, item_id):
-        return ProxyItem(sendQuery({"command": "get_item", "key": "ID", "value": item_id}))
+        response = sendQuery({"command": "get_item", "key": "ID", "value": item_id})
+        if response is None:
+            raise TypeError("Could not find item " + str(item_id) + " in discovery")
+        return ProxyItem(response)
 
     def sleep(self, secs):
         time.sleep(secs)

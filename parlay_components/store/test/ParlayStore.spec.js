@@ -16,40 +16,40 @@
             describe('constructs or retrieves', function () {
                 
                 it('constructs new object for distinct namespace', function () {
-	                /*jshint newcap: false */
-	                expect(ParlayStore('test1')).not.toBe(ParlayStore('test2'));
+                    /*jshint newcap: false */
+                    expect(ParlayStore('test1')).not.toBe(ParlayStore('test2'));
                 });
                 
                 it('retrieves the same instance for same namespace', function () {
-	                /*jshint newcap: false */
-	                expect(ParlayStore('test1')).toBe(ParlayStore('test1'));
+                    /*jshint newcap: false */
+                    expect(ParlayStore('test1')).toBe(ParlayStore('test1'));
                 });
                 
-    		});
-    		
+            });
+
         });
         
         describe('ParlayStoreService', function () {
-	        var ParlayStoreService;
-	        
-	        beforeEach(inject(function (_ParlayStoreService_) {
-		        // clearSession localStorage in case anything persisted from previous test cases.
-		        localStorage.clear();
-		        /*jshint newcap: false */
-		        ParlayStoreService = new _ParlayStoreService_('test');
-	        }));
-	        
-	        describe('initially', function () {
-		        
-		        it('is empty', function () {
-			        expect(ParlayStoreService.length).toBe(0);
-			        expect(ParlayStoreService.keys()).toEqual([]);
-			        expect(ParlayStoreService.values()).toEqual({});
-		        });
-		        
-	        });
-	        
-	        describe("localStorage accessors", function () {
+            var ParlayStoreService;
+
+            beforeEach(inject(function (_ParlayStoreService_) {
+                // clearSession localStorage in case anything persisted from previous test cases.
+                localStorage.clear();
+                /*jshint newcap: false */
+                ParlayStoreService = new _ParlayStoreService_('test');
+            }));
+
+            describe('initially', function () {
+
+                it('is empty', function () {
+                    expect(ParlayStoreService.length).toBe(0);
+                    expect(ParlayStoreService.keys()).toEqual([]);
+                    expect(ParlayStoreService.values()).toEqual({});
+                });
+
+            });
+
+            describe("localStorage accessors", function () {
 
                 it('set', function () {
                     expect(ParlayStoreService.length).toBe(0);
@@ -107,8 +107,8 @@
                     });
                 });
 
-			});
-	        
+            });
+
         });
         
     });

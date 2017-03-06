@@ -9,13 +9,13 @@
             var ParlayItem;
             
             var data = {
-        		NAME: 'TestProtocol',
-        		INTERFACES: []
-    		};
-    		
-    		var protocol = {
-        		activateItem: function (item) {}
-    		};
+                NAME: 'TestProtocol',
+                INTERFACES: []
+            };
+
+            var protocol = {
+                activateItem: function (item) {}
+            };
 
             beforeEach(inject(function(_ParlayItem_) {
                 /*jshint newcap: false */
@@ -39,9 +39,9 @@
                     expect(ParlayItem.protocol).toEqual(protocol);
                 });
                 
-    		});
+            });
 
-			describe("accessors", function () {
+            describe("accessors", function () {
 
                 it("type", function () {
                     expect(ParlayItem.getType()).toBe("ParlayItem");
@@ -65,7 +65,7 @@
                 expect(ParlayItem.getDirectives()).toEqual({toolbar:["test1", "test2"], tabs:[]});
 
             });
-    		
+
         });
         
     });

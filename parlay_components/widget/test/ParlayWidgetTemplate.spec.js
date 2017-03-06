@@ -53,6 +53,7 @@
                             uid: "=",
                             template: "=",
                             customizations: "=",
+                            properties: "=",
                             info:"="
                         },
                         templateUrl: "fake/path/to/directive.html"
@@ -82,6 +83,7 @@
                             uid: "=",
                             template: "=",
                             customizations: "=",
+                            properties: "=",
                             info:"="
                         },
                         templateUrl: "fake/path/to/directive.html"

@@ -55,7 +55,11 @@
                 scope.edit = edit;
 
                 // Handle widget initialization on parlayWidgetTemplateLoaded event.
-                scope.$on("parlayWidgetTemplateLoaded", function () {
+                scope.$on("parlayWidgetTemplateLoaded", function (event, properties) {
+                    // Keep track of properties if a templated widget has them
+                    if (!scope.item.configuration.properties) {
+                        scope.item.configuration.properties = properties;
+                    }
                     onLoaded(element[0]);
                 });
 
@@ -89,10 +93,13 @@
                 // If an existing configuration Object exists we should restore the configuration
                 if (!!scope.item.configuration) {
                     compileWrapper()(angular.copy(scope.item.configuration.template));
-                } else if (scope.item.type === "StandardItem" && !!scope.item.id) {
+                } else if (scope.item.type === "StandardItem") {
                     // if the container object has a reference to the ParlayItem id, then create the item
                     // If there are stored values that need to be restored, the itemCompiler will handle that
-                    compileItem()(ParlayItemManager.getItemByID(scope.item.id));
+                    if (!!scope.item.id)
+                        compileItem()(ParlayItemManager.getItemByID(scope.item.id));
+                    else
+                        compileItem()(scope.item.item);
                 } else if (scope.item.type === "StandardWidget") {
                     // if all else fails, then we should be adding a widget from scratch
                     scope.initialized = false;
@@ -117,6 +124,8 @@
                 }
 
                 function initPosition(element) {
+                    // if a position already exists, don't initialize it
+                    if (!!scope.item.position) return;
 
                     var DOMElement = angular.element(element);
                     var leftOffset = (parseInt(DOMElement.prop('offsetLeft'), 10));
@@ -245,7 +254,7 @@
                     if (!!card) {
 
                         // Dropping animation.
-                        draggie.on("dragEnd", function () {
+                        draggie.on("pointerUp", function () {
                             var height = 24;
                             var promise = $interval(function () {
                                 if (height == 1) {
@@ -260,7 +269,7 @@
                         });
 
                         // Picking up animation.
-                        draggie.on("dragStart", function () {
+                        draggie.on("pointerDown", function () {
                             var height = 1;
                             if (angular.element(element)[0].style.zIndex === "" || parseInt(angular.element(element)[0].style.zIndex, 10) < widgetLastZIndex.value) {
                                 angular.element(element)[0].style.zIndex = ++widgetLastZIndex.value;
@@ -318,6 +327,7 @@
                         ["uid", "item.uid"],
                         ["template", "item.configuration.template"],
                         ["customizations", "item.configuration.customizations"],
+                        ["properties", "item.configuration.properties"],
                         ["info", "item"]
                     ].map(function (attribute) {
                         return attribute[0] + "='" + attribute[1] + "'";
@@ -371,7 +381,7 @@
                         container.uid = scope.item.uid;
                         container.ref = item;
 
-                        scope.item.id = item.id;
+                        scope.item.id = !!item.id ? item.id : "Undefined";
 
                         if (!!scope.item.stored_values) {
                             container.stored_values = scope.item.stored_values;

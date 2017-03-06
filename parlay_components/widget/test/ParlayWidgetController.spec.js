@@ -5,6 +5,7 @@
 
         beforeEach(module("parlay.widget.controller"));
         beforeEach(module("parlay.settings"));
+        beforeEach(module("ui.router"));
 
         beforeEach(inject(function (_ParlaySettings_) {
             _ParlaySettings_.registerDefault("widgets", {editing: true});

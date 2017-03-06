@@ -35,15 +35,15 @@
 
                 expect($scope.$index).toBe(0);
                 expect($scope.active_tab_index).toBe(0);
-	            
+
             });
             
             it("persists attributes", function () {
 
-	            ParlayItemPersistence.monitor("parlayItem", "$index", $scope);
+                ParlayItemPersistence.monitor("parlayItem", "$index", $scope);
                 ParlayItemPersistence.monitor("parlayItem", "active_tab_index", $scope);
-	            
-	            $scope.$index = 10;
+
+                $scope.$index = 10;
                 $scope.active_tab_index = 10;
 
                 ParlayItemPersistence.store("test");
@@ -171,7 +171,7 @@
                 }));
 
             });
-    		
+
         });
         
     });

@@ -46,11 +46,7 @@ function parlay_utils_native($modname) {
         // return the result of the query on resumption
         // the suspension should never resume before result is set, so throw an error if it does
         susp.resume = function() {
-            if (!!result) {
-                return result;
-            } else {
-                throw new Error("sendQuery suspension resumed before result was retrieved! This should never happen.");
-            }
+            return result;
         };
 
         // attach the resolution of the program to receiveResponse

@@ -29,9 +29,6 @@
         </div>
     </md-toolbar>
 
-    <parlay-item-library-sidenav></parlay-item-library-sidenav>
-    <parlay-widget-library-sidenav></parlay-widget-library-sidenav>
-
     <md-list layout="column" flex class="parlay-navigation-list" ng-controller="ParlayNavigationSidenavController as ctrl">
 
         <md-list-item ng-click="ctrl.openItemsSidenav()" ng-disabled="!ctrl.editing">
@@ -90,3 +87,6 @@
     </md-list>
 
 </md-sidenav>
+
+<parlay-item-library-sidenav></parlay-item-library-sidenav>
+<parlay-widget-library-sidenav></parlay-widget-library-sidenav>

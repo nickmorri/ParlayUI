@@ -145,8 +145,7 @@
 
                 if (!!element.type && element.type === "StandardItem"){
                     var directive = "parlayItemCard." + element.id + "_" + element.uid;
-                    var stored_values = ParlayItemPersistence.collectDirective(directive);
-                    toSave.stored_values = stored_values;
+                    toSave.stored_values = ParlayItemPersistence.collectDirective(directive);
                 }
 
             });
@@ -334,7 +333,7 @@
 
             if (!!item) {
                 if (type === "StandardItem") {
-                    new_widget.id = item;
+                    new_widget.item = item;
                 } else if (type === "StandardWidget") {
                     new_widget.widget = item;
                 }

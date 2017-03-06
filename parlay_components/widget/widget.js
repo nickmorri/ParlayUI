@@ -7,8 +7,8 @@ var widgetRegistration = (function () {
      * @module ParlayWidget
      */
 
-    var module_dependencies = ["ui.router", "ui.ace", "ngMaterial", "parlay.widget.base", "parlay.widget.collection",
-        "parlay.widget.controller", "parlay.settings", "parlay.data"];
+    var module_dependencies = ["ui.router", "ui.router.state", "ui.ace", "ngMaterial", "parlay.widget.base", "parlay.widget.collection",
+        "parlay.widget.controller", "parlay.settings", "parlay.data", "parlay.widget.manager"];
 
     angular
         .module("parlay.widget", module_dependencies)
@@ -132,16 +132,17 @@ var widgetRegistration = (function () {
      */
     ParlayWidgetsConfiguration.$inject = ["$stateProvider"];
     function ParlayWidgetsConfiguration ($stateProvider) {
-        $stateProvider.state("widgets", {
-            url: "/widgets",
-            templateUrl: "../parlay_components/widget/views/base.html",
-            controller: "ParlayWidgetController",
-            controllerAs: "widgetsCtrl",
-            data: {
-                displayName: "Widgets",
-                displayIcon: "create"
-            }
-        });
+        $stateProvider
+            .state("widgets", {
+                url: "/widgets?workspace",
+                templateUrl: "../parlay_components/widget/views/base.html",
+                controller: "ParlayWidgetController",
+                controllerAs: "widgetsCtrl",
+                data: {
+                    displayName: "Widgets",
+                    displayIcon: "create"
+                }
+            });
     }
 
     ParlayWidgetsRun.$inject = ["ParlaySettings", "ParlayWidgetCollection", "ParlayData"];
@@ -161,6 +162,5 @@ var widgetRegistration = (function () {
 
         ParlayWidgetCollection.registerWidgets(registered_widgets);
     }
-
     return widgetRegistration;
 }());

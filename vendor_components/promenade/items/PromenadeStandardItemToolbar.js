@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["parlay.widget.controller"];
+    var module_dependencies = [];
 
     angular.module("promenade.items.standarditem.toolbar", module_dependencies)
         .directive("promenadeStandardItemCardToolbar", PromenadeStandardItemCardToolbar);
@@ -19,10 +19,9 @@
             restrict: "E",
             scope: {
                 item: "=",
-                uid: "="
+                uid: "=",
+                widgetsCtrl: "="
             },
-            controller: "ParlayWidgetController",
-            controllerAs: "widgetsCtrl",
             templateUrl: '../vendor_components/promenade/items/directives/promenade-standard-item-card-toolbar.html'
         };
     }

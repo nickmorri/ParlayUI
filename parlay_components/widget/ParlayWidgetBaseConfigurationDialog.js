@@ -1,7 +1,8 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["ui.ace", "mdColorPicker", "parlay.widget.manager", "parlay.widget.collection", "parlay.widget.inputmanager", "parlay.widget.transformer", "parlay.widget.eventhandler", "parlay.data"];
+    var module_dependencies = ["ui.ace", "mdColorPicker", "parlay.widget.manager", "parlay.widget.collection", "parlay.widget.inputmanager",
+        "parlay.widget.transformer", "parlay.widget.eventhandler", "parlay.data", "parlay.utility"];
 
     angular
         .module("parlay.widget.base.configuration", module_dependencies)
@@ -11,7 +12,7 @@
         .controller("ParlayWidgetBaseConfigurationHandlerController", ParlayWidgetBaseConfigurationHandlerController)
         .controller("ParlayWidgetBaseConfigurationSourceController", ParlayWidgetBaseConfigurationSourceController)
         .controller("ParlayWidgetBaseConfigurationTransformController", ParlayWidgetBaseConfigurationTransformController)
-        .controller("ParlayWidgetBaseConfigurationCustomizationController", ParlayWidgetBaseConfigurationTransformController)
+        .controller("ParlayWidgetBaseConfigurationCustomizationController", ParlayWidgetBaseConfigurationCustomizationController)
         .directive("parlayWidgetBaseConfigurationTemplate", ParlayWidgetBaseConfigurationTemplateDirective)
         .directive("parlayWidgetBaseConfigurationEvent", ParlayWidgetBaseConfigurationEventDirective)
         .directive("parlayWidgetBaseConfigurationHandler", ParlayWidgetBaseConfigurationHandlerDirective)
@@ -157,6 +158,13 @@
                     $scope.configuration.selectedEvents.indexOf(event) === -1;
             });
 
+        }
+
+        // debugger;
+        var availableEvents = queryEvents("");
+        if (availableEvents.length > 0) {
+            $scope.configuration.selectedEvents.push(availableEvents[0]);
+            addHandler(availableEvents[0]);
         }
 
         // When configuration.template.type change the currentTabIndex.
@@ -384,8 +392,28 @@
 
     }
 
-    ParlayWidgetBaseConfigurationCustomizationController.$inject = [];
-    function ParlayWidgetBaseConfigurationCustomizationController () {
+    ParlayWidgetBaseConfigurationCustomizationController.$inject = ["$scope", "ParlayUtility", "$timeout"];
+    function ParlayWidgetBaseConfigurationCustomizationController ($scope, ParlayUtility, $timeout) {
+
+        this.uploadImageFile = uploadImageFile;
+        this.imageFileChanged = imageFileChanged;
+
+        function uploadImageFile(event) {
+            $timeout(function(){
+                event.target.parentElement.getElementsByTagName("input")[0].click();
+            });
+        }
+
+        function imageFileChanged (event) {
+            // Instantiate FileReader object
+            var fileReader = new FileReader();
+
+            fileReader.addEventListener("load", function() {
+                $scope.customizations.image.src = fileReader.result;
+            });
+
+            fileReader.readAsDataURL(event.target.files[0]);
+        }
 
     }
 
@@ -432,7 +460,8 @@
     function ParlayWidgetBaseConfigurationCustomizationDirective () {
         return {
             scope: {
-                customizations: "="
+                customizations: "=",
+                item: "="
             },
             templateUrl: "../parlay_components/widget/directives/parlay-widget-base-configuration-customization.html",
             controller: "ParlayWidgetBaseConfigurationCustomizationController",

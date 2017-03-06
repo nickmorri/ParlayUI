@@ -65,7 +65,6 @@
             }
         };
 
-
         /**
          * Check whether any discovery request has been made.
          * @member module:ParlayItem.ParlayItemManager#hasDiscovered
@@ -85,46 +84,6 @@
             return PromenadeBroker.requestDiscovery();
         };
 
-        /**
-         * Activates item in workspace by creating a container Object that has a reference to the
-         * [ParlayItem]{@link module:ParlayItem.ParlayItem}, a unique ID and any previously stored values.
-         * @member module:ParlayItem.ParlayItemManager#activateItem
-         * @public
-         * @param {ParlayItem} item - Reference to the item object we want to activate.
-         * @param {Number} [uid] - If given a uid we will use the provided one. Otherwise randomly generate one.
-         * @param {Object} stored_values - Values that may have been stored from a origin card or previous session.
-         * @param {Number} [index] - Position in active_items Array.
-         */
-        ParlayItemManager.prototype.activateItem = function (item, uid, stored_values, index) {
-
-            // If a uid is not provided search for an unused one.
-            if (!uid) {
-                var used_ids = active_items.map(function (container) {
-                    return container.uid;
-                });
-
-                uid = 0;
-
-                while (used_ids.indexOf(uid) !== -1) {
-                    uid++;
-                }
-            }
-
-            var container = {
-                ref: item,
-                uid: uid,
-                stored_values: stored_values
-            };
-
-            if (!!index) {
-                // Update the $index in the active items container.
-                container.stored_values.$index = index;
-
-                active_items.splice(index, 0, container);
-            } else {
-                active_items.push(container);
-            }
-        };
 
         return new ParlayItemManager();
     }

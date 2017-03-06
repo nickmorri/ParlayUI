@@ -1,26 +1,26 @@
 (function () {
     'use strict';
 
-	var sample_items = function () {
-	    var items = [];
-	    
-	    for (var i = 0; i < 50; i++) {
-	        items.push({
-	            ID: 100 + i,
-	            INTERFACES: [],
-	            NAME: 'TEST' + i,
-	            TEMPLATE: 'STD_ITEM'
-	        });
-	    }
-	    
-	    return items;
-	}();
-	
-	var sample_discovery = {
-	    CHILDREN: sample_items,
-	    NAME: 'TestProtocol',
-	    TEMPLATE: 'Protocol'
-	};
+    var sample_items = function () {
+        var items = [];
+
+        for (var i = 0; i < 50; i++) {
+            items.push({
+                ID: 100 + i,
+                INTERFACES: [],
+                NAME: 'TEST' + i,
+                TEMPLATE: 'STD_ITEM'
+            });
+        }
+
+        return items;
+    }();
+
+    var sample_discovery = {
+        CHILDREN: sample_items,
+        NAME: 'TestProtocol',
+        TEMPLATE: 'Protocol'
+    };
 
     describe('parlay.protocols.protocol', function() {
     

@@ -24,10 +24,10 @@
      *
      * @param {Object} stream_data - Contains references to the stream data.
      * {
-     *	 stream1: {
-     *	 	value: 10,
-     *		rate: 5
-     * 	 }
+     *  stream1: {
+     *      value: 10,
+     *      rate: 5
+     *  }
      * }
      *
      * @param {Object} config - Contains configuration data. Please reference the SmoothieChart constructor for options.

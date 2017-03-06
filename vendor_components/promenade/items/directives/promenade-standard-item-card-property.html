@@ -1,25 +1,25 @@
 <md-tab label="Property">
 
-	<md-toolbar class="md-hue-2">
-		<div class="md-toolbar-tools">
+    <md-toolbar class="md-hue-2">
+        <div class="md-toolbar-tools">
 
             <h5 ng-hide="ctrl.hasProperties()">No properties available</h5>
 
-			<md-button ng-show="ctrl.hasProperties()" class="md-primary md-hue-3" aria-label="Get all" ng-click="ctrl.getAllProperties()">Get All</md-button>
-			<md-button ng-show="ctrl.hasProperties()" class="md-primary md-hue-3" aria-label="Set all" ng-click="ctrl.setAllProperties()">Set All</md-button>
-			
-			<md-progress-linear md-mode="indeterminate" ng-show="ctrl.waiting"></md-progress-linear>
-			
-			<span flex></span>
-			
-		</div>
-	</md-toolbar>
+            <md-button ng-show="ctrl.hasProperties()" class="md-primary md-hue-3" aria-label="Get all" ng-click="ctrl.getAllProperties()">Get All</md-button>
+            <md-button ng-show="ctrl.hasProperties()" class="md-primary md-hue-3" aria-label="Set all" ng-click="ctrl.setAllProperties()">Set All</md-button>
 
-	<md-content layout="column" class="parlay-item-card-tab-content">
+            <md-progress-linear md-mode="indeterminate" ng-show="ctrl.waiting"></md-progress-linear>
 
-		<div flex layout="column" ng-hide="ctrl.hasProperties()">
-			<p>Here is an example of a local_item with a property called <i>prop1</i></p>
-			<!-- HTML generated using hilite.me -->
+            <span flex></span>
+
+        </div>
+    </md-toolbar>
+
+    <md-content layout="column" class="parlay-item-card-tab-content">
+
+        <div flex layout="column" ng-hide="ctrl.hasProperties()">
+            <p>Here is an example of a local_item with a property called <i>prop1</i></p>
+            <!-- HTML generated using hilite.me -->
             <!-- HTML generated using hilite.me -->
             <div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">from</span> <span style="color: #0e84b5; font-weight: bold">parlay</span> <span style="color: #008800; font-weight: bold">import</span> ParlayCommandItem, ParlayProperty
 
@@ -28,17 +28,21 @@
 </pre></div>
         </div>
 
-		<div class="promenade-property-container" layout="row" ng-repeat="property in ctrl.item.properties">
-			<md-input-container class="promenade-property-input" flex ng-switch="property.input">
-				<label>{{property.name}}</label>
-				<input ng-switch-when="STRING" type="text" ng-model="property.value" ng-disabled="property.read_only">
-				<input ng-switch-when="NUMBER" type="number" ng-model="property.value" ng-disabled="property.read_only">
-				<md-chips ng-switch-when="STRINGS" ng-model="property.value" readonly="property.read_only"></md-chips>
-				<md-chips ng-switch-when="NUMBERS" ng-model="property.value" readonly="property.read_only"></md-chips>
-			</md-input-container>
-			<md-button class="md-primary promenade-property-button" ng-click="property.get()">Get</md-button>
-			<md-button class="md-primary promenade-property-button" ng-click="property.set()">Set</md-button>
-		</div>
-	</md-content>
-	
+        <div class="promenade-property-container" layout="row" ng-repeat="property in ctrl.item.properties">
+            <md-input-container class="promenade-property-input" flex ng-switch="property.input">
+                <label>{{property.name}}</label>
+                <input ng-switch-when="STRING" type="text" ng-model="property.value" ng-disabled="property.read_only">
+                <input ng-switch-when="NUMBER" type="number" ng-model="property.value" ng-disabled="property.read_only">
+                <md-chips ng-switch-when="STRINGS|NUMBERS|ARRAY"
+                          ng-model="property.value"
+                          readonly="property.read_only"
+                          ng-switch-when-separator="|"
+                          md-separator-keys="[188, 32]">
+                </md-chips>
+            </md-input-container>
+            <md-button class="md-primary promenade-property-button" ng-click="property.get()">Get</md-button>
+            <md-button class="md-primary promenade-property-button" ng-click="property.set()">Set</md-button>
+        </div>
+    </md-content>
+
 </md-tab>

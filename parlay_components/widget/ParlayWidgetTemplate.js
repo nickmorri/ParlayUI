@@ -91,7 +91,6 @@
                 delete options.properties;
             }
 
-
             /**
              * If customLink available, calls the user provided link function during directive linking.
              * Notifies parent that linking is complete.
@@ -131,13 +130,13 @@
                     scope.customizations = angular.copy(customization_defaults);
                 }
 
-                scope.properties = {};
-                //inject all of the custom properties into the scope
-                for(var key in custom_properties)
-                {   // only keys for this object
-                    if(custom_properties.hasOwnProperty(key))
-                    {
-                        scope.properties[key] = {value: custom_properties[key].default};
+                if (!scope.properties) {
+                    scope.properties = {};
+                    //inject all of the custom properties into the scope
+                    for (var key in custom_properties) {   // only keys for this object
+                        if (custom_properties.hasOwnProperty(key)) {
+                            scope.properties[key] = {value: angular.copy(custom_properties[key].default)};
+                        }
                     }
                 }
 
@@ -146,6 +145,7 @@
                     var widgetsCtrl = scope.widgetsCtrl;
                     //auto assign a name if we don't already have one
                     if(!scope.info.name) scope.info.name = widgetsCtrl.registerScope(display_name, scope);
+                    else widgetsCtrl.registerScope(scope.info.name, scope);
                     //handle deregistration on destruction
                     scope.$on("$destroy", function(){
                         widgetsCtrl.deregisterScope(scope.info.name);
@@ -179,7 +179,7 @@
                 }
 
                 // ParlayWidgets should notify their parent, ParlayBaseWidget, when they are loaded.
-                scope.$emit("parlayWidgetTemplateLoaded");
+                scope.$emit("parlayWidgetTemplateLoaded", scope.properties);
             }
 
             /**
@@ -212,6 +212,7 @@
                     uid: "=",
                     template: "=",
                     customizations: "=",
+                    properties: "=",
                     info:"="
                 }
             };

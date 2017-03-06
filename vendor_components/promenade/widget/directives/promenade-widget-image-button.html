@@ -1,0 +1,30 @@
+<parlay-widget-base-card>
+    <parlay-widget-base-card-title>
+        {{info.name}}
+    </parlay-widget-base-card-title>
+    <parlay-widget-base-card-content layout="row">
+        <span flex></span>
+        <md-button
+                oncontextmenu="return false"
+                parlay-widget-input
+                events='["click", "mousedown", "mouseup", "touchstart", "touchend"]'
+                ng-class="[customizations.button_class.value, {'promenade-widget-image-button-no-src': !customizations.image.src}]"
+                style="background-image: url({{customizations.image.src}});
+                       background-repeat: no-repeat;
+                       background-position: center;
+                       background-size: calc(100% - 12px) 100%;
+                       height: {{customizations.image_height.value}}px;
+                       width: {{customizations.image_width.value}}px;">
+            <p ng-hide="customizations.image.src">Upload an image in edit menu</p>
+        </md-button>
+        <span flex></span>
+    </parlay-widget-base-card-content>
+</parlay-widget-base-card>
+
+<style>
+    .promenade-widget-image-button-no-src {
+        height: auto !important;
+        width: auto !important;
+    }
+</style>
+

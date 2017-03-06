@@ -5,7 +5,7 @@
     var module_dependencies = ["parlay.data"];
     var module_name = "promenade.widget.checklist";
     var directive_name = "promenadeWidgetChecklist";
-    var wigdet_type = "input";
+    var wigdet_type = "display";
     var directive_definition = promenadeWidgetChecklistJs;
 
     widgetRegistration(display_name, module_name, module_dependencies, directive_name, wigdet_type, directive_definition, []);
@@ -16,94 +16,94 @@
 
         function customLink(scope) {
 
-            var checkList = scope.customizations.checkList.value;
+            var checked = 0;
 
-            scope.checkListItems = function checkListItems(listSize) {
+            scope.checkListItems = function checkListItems() {
 
-                /**
-                 * If a change is detected but a number is not specified
-                 * do nothing and return the list
-                 */
-                if (listSize === null) return checkList.list;
+                var listSize = scope.customizations.number.value;
+
+                var checkList = scope.properties.list.value;
+                // If a change is detected but a number is not specified do nothing and return the list
+                if (listSize === null) return checkList;
                 if (listSize < 0) scope.customizations.number.value = 0;
 
 
                 /**
-                 * Determine the amount of elements needed to add to the
-                 * checkList and push them on the checkList.list array.
-                 * Number needed to add is calculated by the input arg,
-                 * "listSize" subtracted by the length of checkList.list.length
+                 * Determine the amount of elements needed to add to the checkList and push them on the checkList.list array.
+                 * Number needed to add is calculated by the input arg, "listSize" subtracted by the length of checkList.length
                  */
-                for (var i = 0; i < listSize - checkList.list.length; ++i) {
-                    checkList.list.push({
+                for (var i = 0; i < listSize - checkList.length; ++i) {
+                    checkList.push({
                         value: "", 
                         isChecked: false, 
-                        index: checkList.list.length
+                        index: checkList.length
                     });
                 }
 
                 /**
-                 * If any the checkList size becomes a smaller number
-                 * less than the previous configuration, remove the
-                 * last elements that are extending past the maximum
-                 * list size
+                 * If any the checkList size becomes a smaller number less than the previous configuration, remove the
+                 * last elements that are extending past the maximum list size
                  */
-                for (i = 0; i < checkList.list.length - listSize; ++i) {
-                    var poppedItem = checkList.list.pop();
+                for (i = 0; i < checkList.length - listSize; ++i) {
+                    var poppedItem = checkList.pop();
                     if (poppedItem.isChecked)
-                        --checkList.checked;
+                        --checked;
                 }
 
-                /* reset the checkAll toggle if a change is detected */
-                var checked = checkList.checked;
-                var listLength = checkList.list.length;
-                checkList.toggle = (checked === listLength && listLength !== 0) ? true : false;
-
-                return checkList.list;
+                return checkList;
             };
 
             /**
-
+             * Function to process the checking of a single checkbox
              */
             scope.checkBox = function checkBox(item) {
-
-                var checkList = scope.customizations.checkList.value;
-
-                checkList.checked += (item.isChecked) ? -1 : 1;
-                checkList.toggle = (checkList.checked === checkList.list.length) ? true : false;
+                checked += (item.isChecked) ? -1 : 1;
+                var listLength = scope.properties.list.value.length;
+                scope.properties.toggle.value = checked === listLength && listLength !== 0;
             };
 
+            /**
+             * Function handler to process checking every box in the list
+             */
             scope.checkAll = function checkAll() {
-               
-                var checkList = scope.customizations.checkList.value;
-
-                for (var i = 0; i < checkList.list.length; ++i)
-                    checkList.list[i].isChecked = !checkList.toggle;
-
-                checkList.checked = (checkList.checked === checkList.list.length) ? 0 : checkList.list.length;
+                for (var i = 0; i < scope.properties.list.value.length; ++i) {
+                    scope.properties.list.value[i].isChecked = scope.properties.toggle.value;
+                }
+                checked = scope.properties.toggle.value ? scope.properties.list.value.length : 0;
             };
+
+            /**
+             * function handler to process a change in the toggle value
+             */
+            scope.$watch("properties.toggle.value", function (newVal, oldVal) {
+                if (oldVal !== newVal) {
+                    if (!(newVal === true && scope.properties.list.value.length === checked) &&
+                        !(newVal === false && scope.properties.list.value.length - 1 === checked))
+                        scope.checkAll();
+                }
+            });
 
         }
 
         return new ParlayWidgetTemplate({
             title: "Check List",
             templateUrl: "../vendor_components/promenade/widget/directives/promenade-widget-checklist.html",
+            customLink: customLink,
             customizationDefaults: {
                 number: {
                     property_name: "Check List Size",
-                    value: 0,
+                    value: 5,
                     type: "number"
-                },
-                checkList: {
-                    hidden: true,
-                    value: {
-                        list: [],
-                        checked: 0,
-                        toggle: false
-                    }
                 }
             },
-            customLink: customLink
+            properties: {
+                list: {
+                    default: []
+                },
+                toggle: {
+                    default: false
+                }
+            }
         }, display_name);
     }
 }());

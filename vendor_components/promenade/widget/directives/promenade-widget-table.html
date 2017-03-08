@@ -6,29 +6,28 @@
     <parlay-widget-base-card-content>
         <table class="promenade-widget-table-table">
             <!-- Table Headers -->
-            <tr ng-class="{'promenade-widget-table-header': customizations.edit.value}">
-                <th ng-repeat="header in headerItems(customizations.columns.value)">
-                    <div ng-switch="customizations.edit.value">
-                        <md-input-container md-no-float ng-switch-when="false" flex class="promenade-widget-table-row">
+            <tr ng-class="{'promenade-widget-table-header': !pwm.editing}">
+                <th ng-repeat="header in headerItems()">
+                    <div ng-switch="pwm.editing">
+                        <md-input-container md-no-float ng-switch-when="true" flex class="promenade-widget-table-row">
                             <input flex ng-model="header.value" type="text" placeholder="Header Name" class="promenade-widget-table-header-item"/>
                         </md-input-container>
 
-                        <div ng-switch-when="true" flex>
+                        <div ng-switch-when="false" flex>
                             <p flex class="promenade-widget-table-data-item">{{header.value}}</p>
                         <div>
                     </div>
                 </th>
             </tr>
-            
             <!--Table Rows -->
-            <tr ng-repeat="row in tableData(customizations.rows.value, customizations.columns.value)">
+            <tr ng-repeat="row in tableData()">
                 <td ng-repeat="col in row">
-                    <div ng-switch="customizations.edit.value">
-                        <md-input-container md-no-float ng-switch-when="false" flex class="promenade-widget-table-row">
+                    <div ng-switch="pwm.editing">
+                        <md-input-container md-no-float ng-switch-when="true" flex class="promenade-widget-table-row">
                             <input flex ng-model="col.value" type="text" placeholder="Value" class="promenade-widget-table-data-item"/>
                         </md-input-container>
 
-                        <div ng-switch-when="true" flex class="promenade-widget-table-row">
+                        <div ng-switch-when="false" flex class="promenade-widget-table-row">
                             <p flex class="promenade-widget-table-data-item">{{col.value}}</p>
                         <div>
                     </div>
@@ -55,12 +54,17 @@
     }
 
     .promenade-widget-table-row {
-        margin-top: 0px;
-        margin-bottom: 0px;
+        margin-top: 0;
+        margin-bottom: 0;
+        min-height: 40px;
+        height: 40px;
+        min-width: 125px;
+        width: 125px;
     }
 
     .promenade-widget-table-data-item {
-        padding: 0px 16px 0px 16px;
+        padding: 0 16px 0 16px;
+        margin: 0;
         text-align: center;
     }    
 </style>

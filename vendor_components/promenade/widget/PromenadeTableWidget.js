@@ -2,23 +2,25 @@
     "use strict";
 
     var display_name = "Table";
-    var module_dependencies = ["parlay.data"];
+    var module_dependencies = ["parlay.data", "parlay.widget.manager"];
     var module_name = "promenade.widget.table";
     var directive_name = "promenadeWidgetTable";
-    var wigdet_type = "display";
+    var wigdet_type = "input";
     var directive_definition = promenadeWidgetTableJs;
 
     widgetRegistration(display_name, module_name, module_dependencies, directive_name, wigdet_type, directive_definition, []);
 
-    promenadeWidgetTableJs.$inject = ["ParlayWidgetTemplate"];
-    function promenadeWidgetTableJs(ParlayWidgetTemplate) {
+    promenadeWidgetTableJs.$inject = ["ParlayWidgetTemplate", "ParlayWidgetManager"];
+    function promenadeWidgetTableJs(ParlayWidgetTemplate, ParlayWidgetManager) {
 
         function customLink(scope) {
 
-            var headers = scope.customizations.headers.value;
-            var data = scope.customizations.data.value;
+            scope.pwm = ParlayWidgetManager; // reference to parlay widget manager to enable/disabled editing
 
-            scope.headerItems = function headerItems(col) {
+            scope.headerItems = function headerItems() {
+
+                var headers = scope.properties.headers.value;
+                var col = scope.customizations.columns.value;
 
                 // Fail safe checking for customizations input.  If the value is null
                 // or zero, the table size should not auto adjust until the user
@@ -40,7 +42,11 @@
             };
 
 
-            scope.tableData = function tableData(row, col) {
+            scope.tableData = function tableData() {
+                var data = scope.properties.data.value;
+
+                var row = scope.customizations.rows.value;
+                var col = scope.customizations.columns.value;
 
                 // Fail safe checking for customizations input.  If the value is null
                 // or zero, the table size should not auto adjust until the user
@@ -103,19 +109,14 @@
                     property_name: "Table Columns",
                     value: 1,
                     type: "number"
-                },
-                edit: {
-                    property_name: "Disable Edits",
-                    value: false,
-                    type: "checkbox"
+                }
+            },
+            properties: {
+                data: {
+                    default: [[]] // should be a 2d array
                 },
                 headers: {
-                    hidden: true,
-                    value: []
-                },
-                data: {
-                    hidden: true,
-                    value: [] // should be 2D array
+                    default: []
                 }
             }
         }, display_name);

@@ -162,7 +162,7 @@
 
         // debugger;
         var availableEvents = queryEvents("");
-        if (availableEvents.length > 0) {
+        if (availableEvents.length > 0 && $scope.configuration.selectedEvents.length === 0) {
             $scope.configuration.selectedEvents.push(availableEvents[0]);
             addHandler(availableEvents[0]);
         }

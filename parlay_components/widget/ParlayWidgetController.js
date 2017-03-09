@@ -1,20 +1,20 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["parlay.widget.manager", "parlay.data", "ui.router"];
+    var module_dependencies = ["parlay.widget.manager", "parlay.data", "ui.router", "parlay.notification"];
 
     angular
         .module("parlay.widget.controller", module_dependencies)
         .controller("ParlayWidgetController", ParlayWidgetController)
         .directive("parlayEmptyWidgetsWorkspacePlaceholder", ParlayEmptyWidgetsWorkspacePlaceholder);
 
-    ParlayWidgetController.$inject = ["ParlayWidgetManager", "ParlayData", "$location"];
+    ParlayWidgetController.$inject = ["ParlayWidgetManager", "ParlayData", "$location", "ParlayNotification"];
     /**
      * Controller for the widget workspace.
      * @constructor module:ParlayWidget.ParlayWidgetController
      * @param {ParlayWidgetManager} ParlayWidgetManager - [ParlayWidgetManager]{@link module:ParlayWidget.ParlayWidgetManager} service.
      */
-    function ParlayWidgetController (ParlayWidgetManager, ParlayData, $location) {
+    function ParlayWidgetController (ParlayWidgetManager, ParlayData, $location, ParlayNotification) {
         var ctrl = this;
         var widget_by_name = {};
         ParlayData.set("widgets_scope_by_name", widget_by_name);
@@ -48,6 +48,11 @@
             }
             if (!!workspace_to_load) {
                 ParlayWidgetManager.loadEntry(workspace_to_load);
+            } else {
+                ParlayNotification.show({
+                    content: "URL referenced Workspace '" + workspace_name + "' could not be loaded",
+                    warning: true
+                });
             }
         }
 

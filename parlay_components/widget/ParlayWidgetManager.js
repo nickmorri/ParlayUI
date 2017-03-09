@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["parlay.store", "parlay.settings", "parlay.item.persistence", "parlay.data"];
+    var module_dependencies = ["parlay.store", "parlay.settings", "parlay.item.persistence", "parlay.data", "parlay.protocols.protocol"];
 
     var widgetLastZIndex = {
         value: 0
@@ -12,8 +12,8 @@
         .value("widgetLastZIndex", widgetLastZIndex)
         .factory("ParlayWidgetManager", ParlayWidgetManagerFactory);
 
-    ParlayWidgetManagerFactory.$inject = ["$window", "ParlayStore", "ParlaySettings", "widgetLastZIndex", "ParlayItemPersistence", "ParlayData"];
-    function ParlayWidgetManagerFactory ($window, ParlayStore, ParlaySettings, widgetLastZIndex, ParlayItemPersistence, ParlayData) {
+    ParlayWidgetManagerFactory.$inject = ["$window", "ParlayStore", "ParlaySettings", "widgetLastZIndex", "ParlayItemPersistence", "ParlayData", "ParlayProtocol"];
+    function ParlayWidgetManagerFactory ($window, ParlayStore, ParlaySettings, widgetLastZIndex, ParlayItemPersistence, ParlayData, ParlayProtocol) {
 
         /**
          * Manages [ParlayWidgetBase]{@link module:ParlayWidget.ParlayWidgetBase}s active in the workspace.
@@ -151,7 +151,7 @@
             });
 
             workspace.data = JSON.stringify(copy, function (key, value) {
-                return !!value && value.constructor && value.constructor.name == "ParlayProtocol" ? value.protocol_name : value;
+                return !!value && value.constructor && value.constructor == ParlayProtocol ? value.protocol_name : value;
             });
 
             workspace.count = copy.length;

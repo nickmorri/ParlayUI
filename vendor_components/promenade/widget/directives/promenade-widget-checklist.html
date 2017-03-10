@@ -17,10 +17,10 @@
         </div>
 
         <!-- Checklist -->
-        <div ng-repeat="item in checkListItems()" class="promenade-widget-checklist-padding promenade-widget-checklist-margin promenade-widget-checklist-item" layout="row">
+        <div ng-repeat="item in checkListItems() track by $index" class="promenade-widget-checklist-padding promenade-widget-checklist-margin promenade-widget-checklist-item" layout="row">
             <md-checkbox ng-model="item.isChecked" ng-click="checkBox(item)" class="promenade-widget-checklist-margin" aria-label="{{item.value}}"></md-checkbox>
             <md-input-container class="promenade-widget-checklist-margin" md-no-float flex>
-                <input flex ng-model="item.value" type="text" placeholder="Item {{item.index + 1}}" ng-class="{'promenade-widget-checklist-checked-item': item.isChecked}"/>
+                <input flex ng-model="item.value" type="text" placeholder="Item {{$index + 1}}" ng-class="{'promenade-widget-checklist-checked-item': item.isChecked}"/>
             </md-input-container>
         </div>
 

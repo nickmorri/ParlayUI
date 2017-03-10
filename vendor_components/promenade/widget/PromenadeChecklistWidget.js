@@ -34,9 +34,8 @@
                  */
                 for (var i = 0; i < listSize - checkList.length; ++i) {
                     checkList.push({
-                        value: "", 
-                        isChecked: false, 
-                        index: checkList.length
+                        value: "",
+                        isChecked: false
                     });
                 }
 

@@ -45,7 +45,7 @@
                     for (j = 0; j < colsToAdd; ++j)
                         data[i].push("");
 
-                    for (j = 0; j < colsToSub; ++k)
+                    for (j = 0; j < colsToSub; ++j)
                         data[i].pop();
                 }
             });

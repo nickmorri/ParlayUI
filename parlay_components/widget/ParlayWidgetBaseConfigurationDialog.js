@@ -12,11 +12,13 @@
         .controller("ParlayWidgetBaseConfigurationHandlerController", ParlayWidgetBaseConfigurationHandlerController)
         .controller("ParlayWidgetBaseConfigurationSourceController", ParlayWidgetBaseConfigurationSourceController)
         .controller("ParlayWidgetBaseConfigurationTransformController", ParlayWidgetBaseConfigurationTransformController)
+        .controller("ParlayWidgetBaseConfigurationApiHelperController", ParlayWidgetBaseConfigurationApiHelperController)
         .controller("ParlayWidgetBaseConfigurationCustomizationController", ParlayWidgetBaseConfigurationCustomizationController)
         .directive("parlayWidgetBaseConfigurationTemplate", ParlayWidgetBaseConfigurationTemplateDirective)
         .directive("parlayWidgetBaseConfigurationEvent", ParlayWidgetBaseConfigurationEventDirective)
         .directive("parlayWidgetBaseConfigurationHandler", ParlayWidgetBaseConfigurationHandlerDirective)
         .directive("parlayWidgetBaseConfigurationTransform", ParlayWidgetBaseConfigurationTransformDirective)
+        .directive("parlayWidgetBaseConfigurationApiHelper", ParlayWidgetBaseConfigurationApiHelperDirective)
         .directive("parlayWidgetBaseConfigurationSource", ParlayWidgetBaseConfigurationSourceDirective)
         .directive("parlayWidgetBaseConfigurationCustomization", ParlayWidgetBaseConfigurationCustomizationDirective)
         .directive("tabCompiler", tabCompiler);
@@ -392,6 +394,22 @@
 
     }
 
+    ParlayWidgetBaseConfigurationApiHelperController.$inject = [];
+    /**
+     * Managers the api helper tab of the edit menu
+     * @constructor module:ParlayWidget.ParlayWidgetBaseConfigurationTransformController
+     */
+    function ParlayWidgetBaseConfigurationApiHelperController() {
+        var ctrl = this;
+        this.onEditorLoad = onEditorLoad;
+
+        function onEditorLoad(editor) {
+            editor.$blockScrolling = Infinity;
+            ace.require("ace/ext/language_tools");
+            editor.setReadOnly(true);
+        }
+    }
+
     ParlayWidgetBaseConfigurationCustomizationController.$inject = ["$scope", "ParlayUtility", "$timeout"];
     function ParlayWidgetBaseConfigurationCustomizationController ($scope, ParlayUtility, $timeout) {
 
@@ -446,6 +464,14 @@
             templateUrl: "../parlay_components/widget/directives/parlay-widget-base-configuration-transform.html",
             controller: "ParlayWidgetBaseConfigurationTransformController",
             controllerAs: "transformCtrl"
+        };
+    }
+
+    function ParlayWidgetBaseConfigurationApiHelperDirective() {
+        return {
+            templateUrl: "../parlay_components/widget/directives/parlay-widget-base-configuration-api-helper.html",
+            controller: "ParlayWidgetBaseConfigurationApiHelperController",
+            controllerAs: "apiHelperCtrl"
         };
     }
 

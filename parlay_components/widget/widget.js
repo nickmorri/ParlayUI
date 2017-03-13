@@ -86,12 +86,12 @@ var widgetRegistration = (function () {
      * widgetRegistration(module_name, module_dependencies, directive_name, widget_type, directive_definition, configuration_tabs);
      *
      */
-    function widgetRegistration (display_name, module_name, submodule_dependencies, directive_name, widget_type, directive_definition, configuration_tabs) {
+    function widgetRegistration (display_name, module_name, submodule_dependencies, directive_name, widget_type, directive_definition, configuration_tabs, api_helper) {
         // Ensure that parlay.widget includes the given module as a dependency.
         module_dependencies.push(module_name);
 
         // Register the record Object for the given widget.
-        registered_widgets.push({display_name:display_name,  directive_name: directive_name, widget_type: widget_type, configuration_tabs: configuration_tabs});
+        registered_widgets.push({display_name:display_name,  directive_name: directive_name, widget_type: widget_type, configuration_tabs: configuration_tabs, api_helper: api_helper});
 
         var directive_function;
 

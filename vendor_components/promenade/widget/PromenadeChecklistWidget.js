@@ -104,11 +104,11 @@
     }
 
     var api_helper = "# Example script for the check list widget\nfrom parlay.utils import *\nfrom parlay import widgets\n" +
-        "setup()\n\n# Setting the value of the nth item (zero based indexing) in the checklist:n\n" +
+        "setup()\n\n# Setting the value of the nth item (zero based indexing) in the checklist\n" +
         "widgets[{name}].list[n].value = \"new value\"\n\n# Getting the value of the nth item in the checklist:\n" +
         "retrieved_value = widgets[{name}].list[n].value\n\n# Checking the nth item in the checklist:\n" +
         "widgets[{name}].list[n].isChecked = True # Set to False to uncheck\n\n# Checking all items in the checklist\n" +
-        "widgets[{name}].toggle = True # Set to False to uncheck all\n\n";
+        "widgets[{name}].toggle = True # Set to False to uncheck all\n";
 
     widgetRegistration(display_name, module_name, module_dependencies, directive_name, widget_type, directive_definition, [], api_helper);
 }());

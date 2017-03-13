@@ -5,10 +5,10 @@
     var module_dependencies = ["parlay.data", "parlay.widget.manager"];
     var module_name = "promenade.widget.table";
     var directive_name = "promenadeWidgetTable";
-    var wigdet_type = "input";
+    var widget_type = "multi";
     var directive_definition = promenadeWidgetTableJs;
 
-    widgetRegistration(display_name, module_name, module_dependencies, directive_name, wigdet_type, directive_definition, []);
+    widgetRegistration(display_name, module_name, module_dependencies, directive_name, widget_type, directive_definition, []);
 
     promenadeWidgetTableJs.$inject = ["ParlayWidgetTemplate", "ParlayWidgetManager"];
     function promenadeWidgetTableJs(ParlayWidgetTemplate, ParlayWidgetManager) {

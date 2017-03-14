@@ -67,7 +67,7 @@
         }
 
         function convenienceOpen() {
-            if (ctrl.hasStreamsAvailable() && ctrl.enabled_streams.length == 0)
+            if (ctrl.hasStreamsAvailable() && ctrl.enabled_streams.length === 0)
                 openConfigurationDialog();
 
         }

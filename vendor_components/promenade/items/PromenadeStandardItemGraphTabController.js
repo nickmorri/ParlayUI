@@ -47,6 +47,7 @@
         ctrl.hasStreamsAvailable = hasStreamsAvailable;
         ctrl.openConfigurationDialog = openConfigurationDialog;
         ctrl.streamCount = streamCount;
+        ctrl.convenienceOpen = convenienceOpen;
 
         var container = ParlayUtility.relevantScope($scope, 'container').container;
         var directive_name = 'parlayItemCard.' + container.ref.id.toString().replace(' ', '_') + '_' + container.uid;
@@ -62,6 +63,13 @@
          */
         function hasStreamsAvailable () {
             return Object.keys(ctrl.item.data_streams).length > 0;
+
+        }
+
+        function convenienceOpen() {
+            if (ctrl.hasStreamsAvailable() && ctrl.enabled_streams.length == 0)
+                openConfigurationDialog();
+
         }
 
         /**

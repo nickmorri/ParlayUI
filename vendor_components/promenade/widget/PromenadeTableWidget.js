@@ -8,8 +8,6 @@
     var widget_type = "multi";
     var directive_definition = promenadeWidgetTableJs;
 
-    widgetRegistration(display_name, module_name, module_dependencies, directive_name, widget_type, directive_definition, []);
-
     promenadeWidgetTableJs.$inject = ["ParlayWidgetTemplate", "ParlayWidgetManager"];
     function promenadeWidgetTableJs(ParlayWidgetTemplate, ParlayWidgetManager) {
 
@@ -82,12 +80,12 @@
             customizationDefaults: {
                 rows: {
                     property_name: "Table Rows",
-                    value: 5,
+                    value: 3,
                     type: "number"
                 },
                 columns: {
                     property_name: "Table Columns",
-                    value: 5,
+                    value: 3,
                     type: "number"
                 }
             },
@@ -101,4 +99,13 @@
             }
         }, display_name);
     }
+
+    var api_helper = "# Example script for the table widget\nfrom parlay.utils import *\nfrom parlay import widgets\n" +
+        "setup()\n\n# Setting the value of the Nth Header Column (zero based indexing) in the table\n" +
+        "widgets[{name}].headers[n] = \"new value\"\n\n# Getting the value of the Nth header column:\n" +
+        "retrieved_value = widgets[{name}].headers[n]\n\n# Setting the value of the item at Row x and Column y\n" +
+        "widgets[{name}].data[x][y] = \"new value\"\n\n# Getting the value of the item ar Row x and Column y:\n" +
+        "retrieved_value = widgets[{name}].data[x][y]\n";
+
+    widgetRegistration(display_name, module_name, module_dependencies, directive_name, widget_type, directive_definition, [], api_helper);
 }());

@@ -29,7 +29,10 @@
         }
 
     };
+    var api_helper = "# Example script for the text input widget\nfrom parlay.utils import *\nfrom parlay import widgets\n" +
+        "setup()\n\n# Setting the value of the text input\nwidgets[{name}].text = \"new value\"\n\n" +
+        "# Getting the value of the text input:\nretrieved_value = widgets[{name}].text\n\n";
 
-    widgetRegistration(display_name, module_name, module_dependencies, directive_name, widget_type, directive_definition, []);
+    widgetRegistration(display_name, module_name, module_dependencies, directive_name, widget_type, directive_definition, [], api_helper);
 
 }());

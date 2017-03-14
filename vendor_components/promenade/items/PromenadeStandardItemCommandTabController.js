@@ -47,7 +47,8 @@
             var message = this.collect(true);
 
             // Replace all spaces in the item name with underscores.
-            var var_name = "e_" + this.item_name.replace(/\s+/g, "_");
+            var var_name = "e_" + this.item_name.replace(/[^0-9a-zA-Z_]/g, "");
+            var_name = var_name.replace(/\s+/g, "_");
             var setup = var_name + " = get_item_by_name('" + this.item_name + "')";
 
             // If we are given an empty message return only the setup.

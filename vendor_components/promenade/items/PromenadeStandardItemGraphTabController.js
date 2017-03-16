@@ -49,11 +49,25 @@
         ctrl.streamCount = streamCount;
         ctrl.convenienceOpen = convenienceOpen;
 
-        var container = ParlayUtility.relevantScope($scope, 'container').container;
-        var directive_name = 'parlayItemCard.' + container.ref.id.toString().replace(' ', '_') + '_' + container.uid;
-
         // Persist enabled streams across sessions.
-        ParlayItemPersistence.monitor(directive_name, "ctrl.enabled_streams", $scope);
+        ctrl.$postLink = function() {
+            var container = ParlayUtility.relevantScope($scope, 'container').container;
+            var directive_name = 'parlayItemCard.' + container.ref.id.toString().replace(' ', '_') + '_' + container.uid;
+
+            ParlayItemPersistence.monitor(directive_name, "ctrl.enabled_streams", $scope, function (meta_streams) {
+                var item = ctrl.item;
+                var enabled_streams = [];
+                for (var i = 0; i < meta_streams.length; i++) {
+                    var keys = Object.keys(item.data_streams);
+                    for (var j = 0; j < keys.length; j++) {
+                        if (item.data_streams[keys[j]].item_id === meta_streams[i].item_id &&
+                            item.data_streams[keys[j]].id === meta_streams[i].id)
+                            enabled_streams.push(item.data_streams[keys[j]]);
+                    }
+                }
+                return enabled_streams;
+            });
+        };
 
         /**
          * True if streams are available, false otherwise.
@@ -93,12 +107,12 @@
                 clickOutsideToClose: true
             }).finally(function () {
                 ctrl.streamColors = ctrl.getSmoothie() ? ctrl.getSmoothie().seriesSet.map(function (series) {
-                    return {
-                        name: series.options.streamName,
-                        color: series.options.strokeStyle
-                    };
-                }) : [];
-            });
+                        return {
+                            name: series.options.streamName,
+                            color: series.options.strokeStyle
+                        };
+                    }) : [];
+                });
         }
 
         /**
@@ -231,7 +245,6 @@
         function isStreamEnabled (stream) {
             return ctrl.enabled_streams.indexOf(stream) >= 0;
         }
-
     }
 
     /**

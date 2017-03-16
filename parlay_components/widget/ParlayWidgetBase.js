@@ -97,9 +97,8 @@
                     // if the container object has a reference to the ParlayItem id, then create the item
                     // If there are stored values that need to be restored, the itemCompiler will handle that
                     if (!!scope.item.id)
-                        compileItem()(ParlayItemManager.getItemByID(scope.item.id));
-                    else
-                        compileItem()(scope.item.item);
+                        scope.item.item = ParlayItemManager.getItemByID(scope.item.id);
+                    compileItem()(scope.item.item);
                 } else if (scope.item.type === "StandardWidget") {
                     // if all else fails, then we should be adding a widget from scratch
                     scope.initialized = false;

@@ -69,6 +69,13 @@
             });
         };
 
+        var smoothieInitializer = $scope.$watch("ctrl.getSmoothie", function(newVal) {
+            if (!!newVal) {
+                setStreamColors();
+                smoothieInitializer();
+            }
+        });
+
         /**
          * True if streams are available, false otherwise.
          * @member module:PromenadeStandardItem.PromenadeStandardItemCardGraphTabController#hasStreamsAvailable
@@ -80,11 +87,32 @@
 
         }
 
+        /**
+         * open the configuration dialog if no streams have been selected
+         * @member module:PromenadeStandardItem.PromenadeStandardItemCardGraphTabController#convenienceOpen
+         * @private
+         */
         function convenienceOpen() {
             if (ctrl.hasStreamsAvailable() && ctrl.enabled_streams.length === 0)
                 openConfigurationDialog();
 
         }
+
+
+        /**
+         * set the labels on the graph tab for active streams
+         * @member module:PromenadeStandardItem.PromenadeStandardItemCardGraphTabController#setStreamColors
+         * @private
+         */
+        function setStreamColors() {
+            ctrl.streamColors = ctrl.getSmoothie() ? ctrl.getSmoothie().seriesSet.map(function (series) {
+                    return {
+                        name: series.options.streamName,
+                        color: series.options.strokeStyle
+                    };
+                }) : [];
+        }
+
 
         /**
          * Launches graph configuration $mdDialog modal.
@@ -106,13 +134,8 @@
                 targetEvent: $event,
                 clickOutsideToClose: true
             }).finally(function () {
-                ctrl.streamColors = ctrl.getSmoothie() ? ctrl.getSmoothie().seriesSet.map(function (series) {
-                        return {
-                            name: series.options.streamName,
-                            color: series.options.strokeStyle
-                        };
-                    }) : [];
-                });
+                setStreamColors();
+            });
         }
 
         /**

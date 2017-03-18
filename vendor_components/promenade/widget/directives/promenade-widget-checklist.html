@@ -1,4 +1,4 @@
-<parlay-widget-base-card>
+<parlay-widget-base-card parlay-widget-input events='["checked"]'>
     <parlay-widget-base-card-title>
         {{info.name}}
     </parlay-widget-base-card-title>
@@ -17,8 +17,17 @@
         </div>
 
         <!-- Checklist -->
-        <div ng-repeat="item in checkListItems() track by $index" class="promenade-widget-checklist-padding promenade-widget-checklist-margin promenade-widget-checklist-item" layout="row">
-            <md-checkbox ng-model="item.isChecked" ng-click="checkBox(item)" class="promenade-widget-checklist-margin" aria-label="{{item.value}}"></md-checkbox>
+        <div ng-repeat="item in checkListItems() track by $index" layout="row"
+             class="promenade-widget-checklist-padding promenade-widget-checklist-margin promenade-widget-checklist-item">
+            <md-checkbox parlay-widget-custom-event
+                         base-event="click"
+                         event="checked"
+                         model="{{item}}"
+                         ng-model="item.isChecked"
+                         ng-click="checkBox(item)"
+                         class="promenade-widget-checklist-margin"
+                         aria-label="{{item.value}}">
+            </md-checkbox>
             <md-input-container class="promenade-widget-checklist-margin" md-no-float flex>
                 <input flex ng-model="item.value" type="text" placeholder="Item {{$index + 1}}" ng-class="{'promenade-widget-checklist-checked-item': item.isChecked}"/>
             </md-input-container>

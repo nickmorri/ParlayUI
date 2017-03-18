@@ -69,9 +69,11 @@
             });
         };
 
+        // wait until the getSmoothie function is linked, then set the labels of the graph
         var smoothieInitializer = $scope.$watch("ctrl.getSmoothie", function(newVal) {
             if (!!newVal) {
                 setStreamColors();
+                // unwatch the getSmoothie function
                 smoothieInitializer();
             }
         });

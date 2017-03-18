@@ -2,16 +2,16 @@
     "use strict";
 
     var display_name = "Check List";
-    var module_dependencies = ["parlay.data"];
+    var module_dependencies = ["parlay.data", "parlay.widget.customevent"];
     var module_name = "promenade.widget.checklist";
     var directive_name = "promenadeWidgetChecklist";
-    var widget_type = "multi";
+    var widget_type = "input";
     var directive_definition = promenadeWidgetChecklistJs;
 
     promenadeWidgetChecklistJs.$inject = ["ParlayWidgetTemplate"];
     function promenadeWidgetChecklistJs(ParlayWidgetTemplate) {
 
-        function customLink(scope) {
+        function customLink(scope, element) {
 
             var checked = 0;
 
@@ -52,7 +52,7 @@
             /**
              * Function to process the checking of a single checkbox
              */
-            scope.checkBox = function checkBox(item) {
+            scope.checkBox = function checkBox(item, index) {
                 checked += (item.isChecked) ? -1 : 1;
                 var listLength = scope.properties.list.value.length;
                 scope.properties.toggle.value = checked === listLength && listLength !== 0;

@@ -30,8 +30,9 @@
         return {
             scope: true, //inherit from parent so we have all we need
             restrict: "A",
-            link: function (scope, element) {
-                var events = element[0].attributes.events.nodeValue;
+            link: function (scope, element, attrs) {
+                var events = attrs.events;
+
                 ParlayWidgetInputManager.registerElement(
                     scope.info, element[0], scope, JSON.parse(events)
                 );

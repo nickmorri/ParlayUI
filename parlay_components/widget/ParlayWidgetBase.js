@@ -206,7 +206,7 @@
 
                     if (!!configuration.transformer) {
                         configuration.selectedItems = configuration.selectedItems.map(function (item) {
-                            return ParlayData.get(item.name);
+                            return ParlayData.get(item.item_id + "." + item.name);
                         });
 
                         var actual_transformer = new ParlayWidgetTransformer(configuration.selectedItems);

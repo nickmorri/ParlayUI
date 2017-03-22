@@ -382,6 +382,7 @@
 
                         var new_scope = scope_ref.$new();
                         new_scope.container = container;
+                        element_ref[0].appendChild($compile("<parlay-item-card></parlay-item-card>")(new_scope)[0]);
                         scope.initialized = true;
                     }
                     return itemCompiler;

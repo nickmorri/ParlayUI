@@ -174,12 +174,10 @@
                 var autosave = ParlayWidgetManager.getAutosave();
                 if (!!autosave && ParlayWidgetManager.hasActiveWidgets())
                     ParlayWidgetManager.loadEntry(autosave);
-
             });
 
             // Actions that PromenadeBroker needs to perform on ParlaySocket open.
             broker.onOpen(function () {
-
                 // Request a subscription from the Broker for this protocol.
                 ParlaySocket.sendMessage({"type": "subscribe"}, {"TOPICS": {"TO": 61953}});
                 ParlaySocket.sendMessage({"type": "subscribe"}, {"TOPICS": {"TO": "UI"}});
@@ -198,13 +196,13 @@
                 /* istanbul ignore else */
                 if (ParlaySettings.get("broker").auto_discovery) {
                     broker.requestDiscovery(false);
+                    ParlayWidgetManager.loadEntryByName($location.search().workspace);
                 }
 
             });
 
             // Actions that PromenadeBroker needs to perform on ParlaySocket close.
             broker.onClose(function () {
-
                 // When socket is closed we should show a notification giving the user the option to reconnect.
                 // If socket failed to open we should show a notification giving the user the option to connect.
                 connectNotification();

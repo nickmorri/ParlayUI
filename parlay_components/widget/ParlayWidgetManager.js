@@ -1,7 +1,8 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["parlay.store", "parlay.settings", "parlay.item.persistence", "parlay.data", "parlay.protocols.protocol"];
+    var module_dependencies = ["parlay.store", "parlay.settings", "parlay.item.persistence", "parlay.data",
+        "parlay.protocols.protocol", "parlay.notification"];
 
     var widgetLastZIndex = {
         value: 0
@@ -12,8 +13,9 @@
         .value("widgetLastZIndex", widgetLastZIndex)
         .factory("ParlayWidgetManager", ParlayWidgetManagerFactory);
 
-    ParlayWidgetManagerFactory.$inject = ["$window", "ParlayStore", "ParlaySettings", "widgetLastZIndex", "ParlayItemPersistence", "ParlayData", "ParlayProtocol"];
-    function ParlayWidgetManagerFactory ($window, ParlayStore, ParlaySettings, widgetLastZIndex, ParlayItemPersistence, ParlayData, ParlayProtocol) {
+    ParlayWidgetManagerFactory.$inject = ["$window", "ParlayStore", "ParlaySettings", "widgetLastZIndex", "ParlayItemPersistence",
+        "ParlayData", "ParlayProtocol", "ParlayNotification"];
+    function ParlayWidgetManagerFactory ($window, ParlayStore, ParlaySettings, widgetLastZIndex, ParlayItemPersistence, ParlayData, ParlayProtocol, ParlayNotification) {
 
         /**
          * Manages [ParlayWidgetBase]{@link module:ParlayWidget.ParlayWidgetBase}s active in the workspace.
@@ -208,6 +210,28 @@
                 loaded_items: loaded_items,
                 failed_items: failed_items
             };
+        };
+
+        ParlayWidgetManager.prototype.loadEntryByName = function(workspace_name) {
+            if (!workspace_name) return;
+
+            var workspace_to_load;
+            var workspaces = this.getWorkspaces();
+            for (var i = 0; i < workspaces.length; i++) {
+                if (workspaces[i].name === workspace_name) {
+                    workspace_to_load = workspaces[i];
+                    break;
+                }
+            }
+            if (!!workspace_to_load) {
+                this.loadEntry(workspace_to_load);
+            } else {
+                this.clearActive();
+                ParlayNotification.show({
+                    content: "URL referenced Workspace '" + workspace_name + "' could not be loaded",
+                    warning: true
+                });
+            }
         };
 
         /**

@@ -93,13 +93,12 @@
                 // If an existing configuration Object exists we should restore the configuration
                 if (!!scope.item.configuration) {
                     compileWrapper()(angular.copy(scope.item.configuration.template));
-                } else if (scope.item.type === "StandardItem") {
+                } else if (scope.item.widget.name === "promenadeStandardItem") {
                     // if the container object has a reference to the ParlayItem id, then create the item
                     // If there are stored values that need to be restored, the itemCompiler will handle that
-                    if (!!scope.item.id)
-                        scope.item.item = ParlayItemManager.getItemByID(scope.item.id);
-                    compileItem()(scope.item.item);
-                } else if (scope.item.type === "StandardWidget") {
+                    var itemToCompile = ParlayItemManager.getItemByID(scope.item.widget.id);
+                    compileItem()(itemToCompile);
+                } else {
                     // if all else fails, then we should be adding a widget from scratch
                     scope.initialized = false;
                     scope.item.configuration = {};
@@ -155,7 +154,8 @@
                     scope.item.configuration.selectedEvents = [];
                     scope.item.configuration.selectedItems = [];
                     scope.item.configuration.template = scope.item.widget;
-                    scope.item.configuration.transformer = new ParlayWidgetTransformer();
+                    if (scope.item.widget.type === "display")
+                        scope.item.configuration.transformer = new ParlayWidgetTransformer();
                 }
 
                 /**
@@ -297,11 +297,10 @@
                     // If the widgetsCtrl is editing the user should be free to rearrange ParlayWidgets, otherwise
                     // the widgets should not be draggable.
                     scope.$watch("widgetsCtrl.editing", function (editing) {
-                        if (editing) {
+                        if (editing)
                             draggie.enable();
-                        } else {
+                        else
                             draggie.disable();
-                        }
                     });
 
                 }
@@ -367,20 +366,10 @@
                     var scope_ref = scope;
                     var element_ref = element;
 
-                    var attributes = [
-                        ["edit", "edit"],
-                        ["uid", "item.uid"],
-                        ["widgets-ctrl", "widgetsCtrl"]
-                    ].map(function (attribute) {
-                        return attribute[0] + "='" + attribute[1] + "'";
-                    }).join(" ");
-
                     function itemCompiler(item) {
                         var container = {};
                         container.uid = scope.item.uid;
                         container.ref = item;
-
-                        scope.item.id = !!item.id ? item.id : "Undefined";
 
                         if (!!scope.item.stored_values) {
                             container.stored_values = scope.item.stored_values;
@@ -391,15 +380,8 @@
                             element_ref[0].removeChild(element_ref[0].firstChild);
                         }
 
-                        var itemElement = "<parlay-item-card " + attributes + " ></parlay-item-card>";
                         var new_scope = scope_ref.$new();
-
                         new_scope.container = container;
-
-                        var child_element =  $compile(itemElement)(new_scope)[0];
-
-                        element_ref[0].appendChild(child_element);
-
                         scope.initialized = true;
                     }
                     return itemCompiler;

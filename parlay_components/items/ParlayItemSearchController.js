@@ -125,7 +125,7 @@
             if (!$mdSidenav("navigation").isLockedOpen()) {
                 $mdSidenav("navigation").close();
             }
-            ParlayWidgetManager.add("StandardItem", item);
+            ParlayWidgetManager.add("StandardItem", item.id);
         }
 
         /**

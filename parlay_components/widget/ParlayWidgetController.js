@@ -29,7 +29,6 @@
         // Attach methods to controller.
         ctrl.getActiveWidgets = getActiveWidgets;
         ctrl.hasWidgets = hasWidgets;
-        ctrl.add = add;
         ctrl.remove = remove;
         ctrl.duplicate = duplicate;
         ctrl.registerScope = registerScope;
@@ -70,9 +69,9 @@
          * @member module:ParlayWidget.ParlayWidgetController#add
          * @public
          */
-        function add () {
-            ParlayWidgetManager.add();
-        }
+        // function add () {
+        //     ParlayWidgetManager.add();
+        // }
 
         /**
          * Requests the [ParlayWidgetManager]{@link module:ParlayWidget.ParlayWidgetManager} to remove the widget

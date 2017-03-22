@@ -40,16 +40,16 @@
 
             it("adds widget", function () {
                 expect(ParlayWidgetManager.getActiveWidgets()).toEqual([]);
-                ParlayWidgetManager.add("StandardWidget");
-                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0, zIndex: 1, type: "StandardWidget"}]);
-                ParlayWidgetManager.add("StandardWidget");
-                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0, zIndex: 1, type: "StandardWidget"}, {uid: 1, zIndex: 2, type: "StandardWidget"}]);
+                ParlayWidgetManager.add();
+                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0, zIndex: 1}]);
+                ParlayWidgetManager.add();
+                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0, zIndex: 1}, {uid: 1, zIndex: 2}]);
             });
 
             it("removes widget", function () {
                 expect(ParlayWidgetManager.getActiveWidgets()).toEqual([]);
-                ParlayWidgetManager.add("StandardWidget");
-                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0, zIndex: 1, type: "StandardWidget"}]);
+                ParlayWidgetManager.add();
+                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0, zIndex: 1}]);
                 ParlayWidgetManager.remove(0);
                 expect(ParlayWidgetManager.getActiveWidgets()).toEqual([]);
 
@@ -57,11 +57,11 @@
 
             it("duplicates widget", function () {
                 expect(ParlayWidgetManager.getActiveWidgets()).toEqual([]);
-                ParlayWidgetManager.add("StandardWidget");
+                ParlayWidgetManager.add();
                 ParlayWidgetManager.active_widgets[0].position = {left: "10px", top: "10px"};
-                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0, zIndex: 1, type: "StandardWidget", position: {left: "10px", top: "10px"}}]);
+                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0, zIndex: 1, position: {left: "10px", top: "10px"}}]);
                 ParlayWidgetManager.duplicate(0);
-                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0, zIndex: 1, type: "StandardWidget", position: {left: "10px", top: "10px"}}, {uid: 1, zIndex: 2, type: "StandardWidget", position: {left: "30px", top: "30px"}}]);
+                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0, zIndex: 1, position: {left: "10px", top: "10px"}}, {uid: 1, zIndex: 2, position: {left: "30px", top: "30px"}}]);
             });
 
             it("has active widgets", function () {
@@ -95,7 +95,7 @@
             it("loads entry", function () {
                 expect(ParlayWidgetManager.getActiveWidgets()).toEqual([]);
                 ParlayWidgetManager.loadEntry({name: "test", data: [{}], timestamp: new Date(), count: 0});
-                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{}]);
+                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0}]);
             });
 
             it("deletes entry", function () {

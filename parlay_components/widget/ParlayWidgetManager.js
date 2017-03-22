@@ -132,7 +132,6 @@
         ParlayWidgetManager.prototype.saveEntry = function (workspace) {
 
             // Copy active widgets so that when we sort and modify indices we aren't modifying the active widgets.
-
             var copy = angular.copy(this.active_widgets);
 
             // Sort the widgets by their zIndex and compact the zIndices so that they don't get too big.
@@ -145,17 +144,15 @@
                 });
                 toSave.zIndex = index + 1;
 
-                if (!!element.type && element.type === "StandardItem"){
-                    var directive = "parlayItemCard." + element.id + "_" + element.uid;
+                if (!!element.widget && element.widget.name === "promenadeStandardItem"){
+                    var directive = "parlayItemCard." + element.widget.id + "_" + element.uid;
                     toSave.stored_values = ParlayItemPersistence.collectDirective(directive);
                 }
 
             });
-
             workspace.data = JSON.stringify(copy, function (key, value) {
                 return !!value && value.constructor && value.constructor == ParlayProtocol ? value.protocol_name : value;
             });
-
             workspace.count = copy.length;
             workspace.timestamp = new Date();
 
@@ -182,23 +179,9 @@
                 return greatest_index > current_widget.zIndex ? greatest_index : parseInt(current_widget.zIndex, 10);
             }, widgetLastZIndex.value);
 
-            // Collect all UIDs in use.
-            var uids_in_use = this.active_widgets.map(function (widget) {
-                return widget.uid;
-            });
-
             this.active_widgets = workspace.data.map(function (widget) {
 
-                // If the widget's uid is already in use assign it another.
-                if (uids_in_use.indexOf(widget.uid) > -1) {
-                    // Ensure that the uid we generate isn't in use.
-                    while (uids_in_use.indexOf(next_uid) > -1) {
-                        next_uid++;
-                    }
-                    // Record the new uid that was generated.
-                    uids_in_use.push(next_uid);
-                    widget.uid = next_uid;
-                }
+                widget.uid = next_uid++;
 
                 return widget;
             });
@@ -226,7 +209,6 @@
             if (!!workspace_to_load) {
                 this.loadEntry(workspace_to_load);
             } else {
-                this.clearActive();
                 ParlayNotification.show({
                     content: "URL referenced Workspace '" + workspace_name + "' could not be loaded",
                     warning: true
@@ -353,16 +335,19 @@
          */
         ParlayWidgetManager.prototype.add = function (type, item) {
             var uid = this.generateUID();
-            var new_widget ={uid: uid, zIndex: ++widgetLastZIndex.value, type: type};
+            var new_widget ={uid: uid, zIndex: ++widgetLastZIndex.value};
 
-            if (!!item) {
-                if (type === "StandardItem") {
-                    new_widget.item = item;
-                } else if (type === "StandardWidget") {
+            switch(type) {
+                case "StandardItem":
+                    new_widget.widget = {
+                        name: "promenadeStandardItem",
+                        id: item
+                    };
+                    break;
+                case "StandardWidget":
                     new_widget.widget = item;
-                }
+                    break;
             }
-
             this.active_widgets.push(new_widget);
         };
 
@@ -389,17 +374,7 @@
                 return container.uid === old_uid;
             }));
 
-            var new_uid = 0;
-
-            var active_uids = this.active_widgets.map(function (container) {
-                return container.uid;
-            });
-
-            while (active_uids.indexOf(new_uid) !== -1) {
-                new_uid++;
-            }
-
-            copy.uid = new_uid;
+            copy.uid = this.generateUID();
 
             // TODO: Not following best practices here by mixing model management and view definition here.
             // If possible this should be moved down to be a directive responsibility.

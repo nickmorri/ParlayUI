@@ -406,7 +406,7 @@
 
 
         $scope.$watch(function() {
-            // Every time the diaply name changes, we should update the script
+            // Every time the display name changes, we should update the script
             $scope.$$postDigest(function(){
                 var displayed_name = $scope.$parent.item.name;
                 var base_script = $scope.$parent.configuration.template.api_helper;

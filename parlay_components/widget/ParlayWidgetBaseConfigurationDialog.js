@@ -43,7 +43,7 @@
         };
     }
 
-    ParlayWidgetBaseConfigurationDialogController.$inject = ["$scope", "$mdDialog", "item", "widgetCompiler"];
+    ParlayWidgetBaseConfigurationDialogController.$inject = ["$scope", "$mdDialog", "item"];
     /**
      * Base [$mdDialog]{@link https://material.angularjs.org/latest/api/service/$mdDialog} widget configuration controller.
      * @constructor module:ParlayWidget.ParlayWidgetBaseConfigurationDialogController
@@ -53,27 +53,18 @@
      * of the widget.
      * @param {Function} widgetCompiler - [widgetCompiler]{@link module:ParlayWidget.ParlayWidgetBase#compileWrapper}
      */
-    function ParlayWidgetBaseConfigurationDialogController ($scope, $mdDialog, item, widgetCompiler) {
+    function ParlayWidgetBaseConfigurationDialogController ($scope, $mdDialog, item) {
 
         var ctrl = this;
-        var configuration = item.configuration;
 
         // Attaches the configuration Object to the $scope Object to allow for user configuration.
         // Accessible by all the dialog controllers in the dialog.
-        $scope.configuration = configuration;
+        $scope.configuration = item.configuration;
         $scope.item = item; //attach the item too for more information
 
         // Attach $mdDialog controls to controller.
         ctrl.cancel = $mdDialog.cancel;
         ctrl.hide = $mdDialog.hide;
-
-        // When the configuration.template changes compile the widget template.
-        $scope.$watch("configuration.template", function (newValue, oldValue) {
-            if (!angular.equals(newValue, oldValue)) {
-                widgetCompiler($scope.configuration.template);
-            }
-        });
-
     }
 
     ParlayWidgetBaseConfigurationTemplateController.$inject = ["ParlayWidgetCollection"];
@@ -347,23 +338,6 @@
         function onRemove ($chip) {
             $scope.configuration.transformer.removeItem($chip);
         }
-
-        // When the configuration.template.type changes to display prepare the configuration Object and switch tabs.
-        // If the type changes to anything else we should clear the transformer's handlers if it has any.
-        $scope.$watch("configuration.template.type", function (newValue, oldValue) {
-            if (!angular.equals(newValue, oldValue)) {
-                if (newValue == "display") {
-                    $scope.configuration.selectedItems = [];
-                    $scope.configuration.transformer = new ParlayWidgetTransformer();
-                    $scope.currentTabIndex = 2;
-                }
-                else if (!!$scope.configuration.transformer) {
-                    $scope.configuration.transformer.cleanHandlers();
-                    $scope.configuration.selectedItems = [];
-                }
-            }
-        });
-
     }
 
     ParlayWidgetBaseConfigurationTransformController.$inject = [];

@@ -153,12 +153,11 @@
 
         }
 
-        // debugger;
-        var availableEvents = queryEvents("");
-        if (availableEvents.length > 0 && $scope.configuration.selectedEvents.length === 0) {
-            $scope.configuration.selectedEvents.push(availableEvents[0]);
-            addHandler(availableEvents[0]);
-        }
+        // var availableEvents = queryEvents("");
+        // if (availableEvents.length > 0 && $scope.configuration.selectedEvents.length === 0) {
+        //     $scope.configuration.selectedEvents.push(availableEvents[0]);
+        //     addHandler(availableEvents[0]);
+        // }
 
         // When configuration.template.type change the currentTabIndex.
         $scope.$watch("configuration.template.type", function (newValue, oldValue) {

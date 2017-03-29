@@ -50,7 +50,6 @@
             var draggie;
 
             // Attach the methods to scope.
-            scope.loaded = false;
             scope.edit = edit;
 
             // Handle widget initialization on parlayWidgetTemplateLoaded event.
@@ -97,7 +96,8 @@
             } else {
                 // if all else fails, then we should be adding a widget from scratch
                 scope.item.configuration = {};
-                scope.item.name = ""; // this turns into scope.info.name in widgettemplate
+                if (!scope.item.name)
+                    scope.item.name = ""; // this turns into scope.info.name in widgettemplate
                 createWidgetObject();
                 compileWrapper()(scope.item.configuration.template);
             }
@@ -109,6 +109,7 @@
              * @param {HTMLElement} drag_element - Element that the Draggabilly will attach to.
              */
             function onLoaded (drag_element) {
+                initEventHandler();
                 initPosition(drag_element);
                 enableDraggabilly(drag_element, scope.item.position);
                 restoreHandlers(scope.item.configuration);
@@ -142,6 +143,21 @@
 
                 ParlayData.set("widget_left_position", setLeft);
                 ParlayData.set("widget_top_position", setTop);
+            }
+
+            function initEventHandler() {
+                if (scope.item.widget.type !== "input")
+                    return;
+
+                var availableEvents = ParlayWidgetInputManager.getEvents();
+                if (availableEvents.length > 0 && scope.item.configuration.selectedEvents.length === 0) {
+                    scope.item.configuration.selectedEvents.push(availableEvents[0]);
+                    ParlayWidgetInputManager.registerHandler(availableEvents[0]);
+                    if (!!scope.item.widget.script) {
+                        scope.item.configuration.selectedEvents[0].handler.functionString += scope.item.widget.script;
+                    }
+
+                }
             }
 
             function createWidgetObject() {

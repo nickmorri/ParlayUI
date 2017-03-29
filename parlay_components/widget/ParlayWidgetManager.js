@@ -2,7 +2,7 @@
     "use strict";
 
     var module_dependencies = ["parlay.store", "parlay.settings", "parlay.item.persistence", "parlay.data",
-        "parlay.protocols.protocol", "parlay.notification"];
+        "parlay.protocols.protocol", "parlay.notification", "parlay.widget.collection"];
 
     var widgetLastZIndex = {
         value: 0
@@ -14,8 +14,9 @@
         .factory("ParlayWidgetManager", ParlayWidgetManagerFactory);
 
     ParlayWidgetManagerFactory.$inject = ["$window", "ParlayStore", "ParlaySettings", "widgetLastZIndex", "ParlayItemPersistence",
-        "ParlayData", "ParlayProtocol", "ParlayNotification"];
-    function ParlayWidgetManagerFactory ($window, ParlayStore, ParlaySettings, widgetLastZIndex, ParlayItemPersistence, ParlayData, ParlayProtocol, ParlayNotification) {
+        "ParlayData", "ParlayProtocol", "ParlayNotification", "ParlayWidgetCollection"];
+    function ParlayWidgetManagerFactory ($window, ParlayStore, ParlaySettings, widgetLastZIndex, ParlayItemPersistence,
+                                         ParlayData, ParlayProtocol, ParlayNotification, ParlayWidgetCollection) {
 
         /**
          * Manages [ParlayWidgetBase]{@link module:ParlayWidget.ParlayWidgetBase}s active in the workspace.
@@ -333,9 +334,11 @@
          * @param {String} type - type of the widget.  Either StandardWidget or StandardItem
          * @param {item} [item] - item ID of a parlay item. OR a widget template.
          */
-        ParlayWidgetManager.prototype.add = function (type, item) {
+        ParlayWidgetManager.prototype.add = function (type, item, options) {
             var uid = this.generateUID();
             var new_widget ={uid: uid, zIndex: ++widgetLastZIndex.value};
+
+
 
             switch(type) {
                 case "StandardItem":
@@ -346,9 +349,23 @@
                     break;
                 case "StandardWidget":
                     new_widget.widget = item;
+                    if (!!options) {
+                        new_widget.name = options.name;
+                        new_widget.widget.script = options.script;
+                    }
                     break;
             }
             this.active_widgets.push(new_widget);
+            return new_widget;
+        };
+
+        ParlayWidgetManager.prototype.addWidgetByName = function(widget_name, options) {
+            var widgets = ParlayWidgetCollection.getAvailableWidgets();
+            for (var i = 0; i < widgets.length; i++) {
+                if (widgets[i].name === widget_name) {
+                    return this.add("StandardWidget", widgets[i], options);
+                }
+            }
         };
 
         /**

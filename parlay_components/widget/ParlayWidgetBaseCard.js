@@ -38,7 +38,6 @@
             restrict: "E",
             templateUrl: "../parlay_components/widget/directives/parlay-widget-base-card.html",
             link: function (scope, element) {
-                scope.type = "StandardWidget";
                 // Dispatch an event upwards notifying all listeners registered for the given event.
                 scope.$emit("parlayWidgetBaseCardLoaded", element);
             }

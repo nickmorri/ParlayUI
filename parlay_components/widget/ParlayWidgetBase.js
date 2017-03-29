@@ -22,6 +22,24 @@
      * @param {Object} widgetLastZIndex - zIndex of the highest ParlayWidget.
      */
     function ParlayWidgetBase ($window, $mdDialog, $compile, $interval, ParlayWidgetInputManager, ParlayData, ParlayWidgetTransformer, widgetLastZIndex, ParlayItemManager) {
+        /**
+         * @member module:ParlayWidget.ParlayWidgetBase#link
+         * @param {Object} scope - AngularJS [$scope]{@link https://docs.angularjs.org/guide/scope} Object.
+         * @param {Boolean} scope.initialized - True if the template has been selected and compiled, false otherwise.
+         * @param {Function} scope.edit - Launches the widget configuration $mdDialog.
+         * @param {Object} scope.item - Widget Object wrapper containing UID and template info
+         * @param {Number} scope.item.uid - Unique ID assigned by the ParlayWidgetController and used by ng-repeat track by.
+         * @param {Object} scope.item.position - Coordinates of the last position of the widget.
+         * @param {Object} scope.item.configuration - Holds user selected configuration details used to define behavior and appearence
+         * of the widget.
+         * @param {Object} scope.item.configuration.template - Widget template selected by the user during the configuration process.
+         * @param {Array} scope.item.configuration.template.configuration_tabs - @see {@link module:ParlayWidget#widgetRegistration} for more information.
+         * @param {String} scope.item.configuration.template.name - Widget name used for identification.
+         * @param {String} scope.item.configuration.template.type - Widget type, can be display or input.
+         * @param {ParlayWidgetEventHandler} scope.item.configuration.handler - [ParlayWidgetEventHandler]{@link module:ParlayWidget.ParlayWidgetEventHandler} instance.
+         * @param {ParlayWidgetTransformer} scope.item.configuration.transformer - [ParlayWidgetTransformer]{@link module:ParlayWidget.ParlayWidgetTransformer} instance.
+         * @param {HTMLElement} element - Element the directive created and link is attache to.
+         */
         function linkFn(scope, element) {
 
             /**
@@ -32,14 +50,14 @@
             var draggie;
 
             // Attach the methods to scope.
+            scope.loaded = false;
             scope.edit = edit;
 
             // Handle widget initialization on parlayWidgetTemplateLoaded event.
             scope.$on("parlayWidgetTemplateLoaded", function (event, properties) {
                 // Keep track of properties if a templated widget has them
-                if (!scope.item.configuration.properties) {
+                if (!scope.item.configuration.properties)
                     scope.item.configuration.properties = properties;
-                }
                 onLoaded(element[0]);
             });
 
@@ -57,12 +75,11 @@
             scope.$on("$destroy", function () {
 
                 if (!!scope.item.configuration) {
-                    if (!!scope.item.configuration.transformer) {
+                    if (!!scope.item.configuration.transformer)
                         scope.item.configuration.transformer.cleanHandlers();
-                    }
-                    if (!!scope.item.configuration.handler) {
+
+                    if (!!scope.item.configuration.handler)
                         scope.item.configuration.handler.detach();
-                    }
                 }
                 if (!!draggie) {
                     draggie.destroy();
@@ -76,13 +93,12 @@
             } else if (scope.item.widget.name === "promenadeStandardItem") {
                 // if the container object has a reference to the ParlayItem id, then create the item
                 // If there are stored values that need to be restored, the itemCompiler will handle that
-                var itemToCompile = ParlayItemManager.getItemByID(scope.item.widget.id);
-                compileItem()(itemToCompile);
+                compileItem()(ParlayItemManager.getItemByID(scope.item.widget.id));
             } else {
                 // if all else fails, then we should be adding a widget from scratch
                 scope.item.configuration = {};
                 scope.item.name = ""; // this turns into scope.info.name in widgettemplate
-                initConfig();
+                createWidgetObject();
                 compileWrapper()(scope.item.configuration.template);
             }
 
@@ -104,7 +120,7 @@
                 if (!!scope.item.position) return;
 
                 var DOMElement = angular.element(element);
-                var leftOffset = (parseInt(DOMElement.prop('offsetLeft'), 10));
+                var leftOffset = (parseInt(DOMElement.prop("offsetLeft"), 10));
 
                 var left = ParlayData.get("widget_left_position");
                 var top = ParlayData.get("widget_top_position");
@@ -128,7 +144,7 @@
                 ParlayData.set("widget_top_position", setTop);
             }
 
-            function initConfig() {
+            function createWidgetObject() {
                 scope.item.configuration.selectedEvents = [];
                 scope.item.configuration.selectedItems = [];
                 scope.item.configuration.template = scope.item.widget;
@@ -216,11 +232,69 @@
                     containment: ".view-container"
                 });
 
+                /**
+                 * touchTranslate given a touch event will translate the event into a related mouse event
+                 * @param event
+                 * @returns {Event}
+                 */
+                function touchTranslate(event) {
+                    var translated;
+                    switch (event.type) {
+                        case "touchstart":
+                            translated = "mousedown";
+                            break;
+                        case "touchend":
+                        case "touchcancel":
+                            translated = "mouseup";
+                            break;
+                        case "touchmove":
+                            translated = "mousemove";
+                            break;
+                    }
+
+                    var positioning = event.changedTouches[0];
+                    return new MouseEvent(translated, {
+                        clientX: positioning.clientX,
+                        clientY: positioning.clientY,
+                        screenX: positioning.screenX,
+                        screenY: positioning.screenY,
+                        pageX: positioning.pageX,
+                        pageY: positioning.pageY
+                    });
+                }
+
+                /**
+                 * Any time a touch event gets registered by draggie, convert it into a mouse event
+                 * and dispatch the event to the window.  Prevent the default behavior of the touch event
+                 * @param event
+                 */
+                function handleTouchEvent(event) {
+                    event.preventDefault();
+                    var mouse_event = touchTranslate(event);
+                    window.dispatchEvent(mouse_event);
+                }
+
+                /**
+                 * If the user is running Android version of Chrome, we need to override the
+                 * touch events that get registered with the draggie instance.  Touch start already gets
+                 * converted to mousedown so we only need to re-register touch end, cancel and move
+                 */
+                function handleDragAndroidChrome() {
+                    if (!(/android/i.test(navigator.userAgent) && /chrome/i.test(navigator.userAgent)))
+                        return;
+                    var touch_events = ["touchend", "touchcancel", "touchmove"];
+                    touch_events.forEach(function(touch_event) {
+                        element.addEventListener(touch_event, handleTouchEvent);
+                    });
+                }
+
+                handleDragAndroidChrome();
+
                 // Record the position of the card when dragging ends.
                 draggie.on("dragEnd", function () {
                     scope.item.position = {
                         left: element.style.left,
-                        top: element.style.top,
+                        top: element.style.top
                     };
                     scope.item.zIndex = parseInt(angular.element(element)[0].style.zIndex, 10);
                 });
@@ -246,6 +320,7 @@
 
                     // Picking up animation.
                     draggie.on("pointerDown", function () {
+
                         var height = 1;
                         if (angular.element(element)[0].style.zIndex === "" || parseInt(angular.element(element)[0].style.zIndex, 10) < widgetLastZIndex.value) {
                             angular.element(element)[0].style.zIndex = ++widgetLastZIndex.value;
@@ -279,7 +354,6 @@
                     else
                         draggie.disable();
                 });
-
             }
 
             /**
@@ -385,23 +459,6 @@
         return {
             scope: true,
             restrict: "E",
-            /**
-             * @member module:ParlayWidget.ParlayWidgetBase#link
-             * @param {Object} scope - AngularJS [$scope]{@link https://docs.angularjs.org/guide/scope} Object.
-             * @param {Boolean} scope.initialized - True if the template has been selected and compiled, false otherwise.
-             * @param {Function} scope.edit - Launches the widget configuration $mdDialog.
-             * @param {Number} scope.item.uid - Unique ID assigned by the ParlayWidgetController and used by ng-repeat track by.
-             * @param {Object} scope.item.position - Coordinates of the last position of the widget.
-             * @param {Object} scope.item.configuration - Holds user selected configuration details used to define behavior and appearence
-             * of the widget.
-             * @param {Object} scope.item.configuration.template - Widget template selected by the user during the configuration process.
-             * @param {Array} scope.item.configuration.template.configuration_tabs - @see {@link module:ParlayWidget#widgetRegistration} for more information.
-             * @param {String} scope.item.configuration.template.name - Widget name used for identification.
-             * @param {String} scope.item.configuration.template.type - Widget type, can be display or input.
-             * @param {ParlayWidgetEventHandler} scope.item.configuration.handler - [ParlayWidgetEventHandler]{@link module:ParlayWidget.ParlayWidgetEventHandler} instance.
-             * @param {ParlayWidgetTransformer} scope.item.configuration.transformer - [ParlayWidgetTransformer]{@link module:ParlayWidget.ParlayWidgetTransformer} instance.
-             * @param {HTMLElement} element - Element the directive created and link is attache to.
-             */
             link: linkFn
         };
     }

@@ -103,12 +103,21 @@
         }, display_name);
     }
 
-    var api_helper = "# Example script for the check list widget\nfrom parlay.utils import *\nfrom parlay import widgets\n" +
+    var property_helper = "# Example script for the check list widget\nfrom parlay.utils import *\nfrom parlay import widgets\n" +
         "setup()\n\n# Setting the value of the nth item (zero based indexing) in the checklist\n" +
         "widgets[{name}].list[n].value = \"new value\"\n\n# Getting the value of the nth item in the checklist:\n" +
         "retrieved_value = widgets[{name}].list[n].value\n\n# Checking the nth item in the checklist:\n" +
         "widgets[{name}].list[n].isChecked = True # Set to False to uncheck\n\n# Checking all items in the checklist\n" +
         "widgets[{name}].toggle = True # Set to False to uncheck all\n";
+
+    var local_data_helper = "# To access the checked box's data on a captured event, use the variable local_data\n" +
+            "# Access the value of the data: local_data[\"value\"]\n# Check to see if the data was checked(True) or unchecked(False)" +
+            ": local_data[\"isChecked\"]\n";
+
+    var api_helper = {
+        property: property_helper,
+        local_data: local_data_helper
+    };
 
     widgetRegistration(display_name, module_name, module_dependencies, directive_name, widget_type, directive_definition, [], api_helper);
 }());

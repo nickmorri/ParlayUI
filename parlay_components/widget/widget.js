@@ -40,6 +40,9 @@ var widgetRegistration = (function () {
      * @param {String} configuration_tabs[].label - Text to fill md-tab-label element with.
      * @param {String} configuration_tabs[].directive_name - Directive name.
      * @param {Function} configuration_tabs[].directive_function - Factory function for creating new instance of directives.
+     * @param {Object} api_helper - object that contains how to use the property api of a widget in other widgets in the form of python comments
+     * @param {String} api_helper.property - String tutorial on how to use the property api in other widgets
+     * @param {String} api_helper.local_data - String tutorial on how to use the bound local data in this widget (multi dimensional widget)
      *
      * @example
      *
@@ -82,8 +85,13 @@ var widgetRegistration = (function () {
      *          };
      *      }
      * }];
+     *
+     * var api_helper = {
+     *      property: "#how to use the properties in other widgets",
+     *      local_data: "#how to use the bound local data in this widget"
+     * }
      * 
-     * widgetRegistration(module_name, module_dependencies, directive_name, widget_type, directive_definition, configuration_tabs);
+     * widgetRegistration(module_name, module_dependencies, directive_name, widget_type, directive_definition, configuration_tabs, api_helper);
      *
      */
     function widgetRegistration (display_name, module_name, submodule_dependencies, directive_name, widget_type, directive_definition, configuration_tabs, api_helper) {

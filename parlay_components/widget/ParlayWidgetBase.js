@@ -146,17 +146,26 @@
             }
 
             function initEventHandler() {
-                if (scope.item.widget.type !== "input")
+                var widget = scope.item.widget;
+
+                if (widget.type !== "input")
                     return;
 
                 var availableEvents = ParlayWidgetInputManager.getEvents();
                 if (availableEvents.length > 0 && scope.item.configuration.selectedEvents.length === 0) {
                     scope.item.configuration.selectedEvents.push(availableEvents[0]);
                     ParlayWidgetInputManager.registerHandler(availableEvents[0]);
-                    if (!!scope.item.widget.script) {
-                        scope.item.configuration.selectedEvents[0].handler.functionString += scope.item.widget.script;
+
+                    if (!!widget.api_helper && !!scope.item.widget.api_helper.local_data) {
+                        scope.item.configuration.selectedEvents[0].handler.functionString += widget.api_helper.local_data;
                     }
 
+                    if (!!scope.item.widget.script) {
+                        scope.item.configuration.selectedEvents[0].handler.functionString += widget.script + "\n";
+                        delete widget.script;
+                    }
+
+                    scope.item.configuration.selectedEvents[0].handler.functionString += "\n";
                 }
             }
 

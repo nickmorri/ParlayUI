@@ -338,8 +338,6 @@
             var uid = this.generateUID();
             var new_widget ={uid: uid, zIndex: ++widgetLastZIndex.value};
 
-
-
             switch(type) {
                 case "StandardItem":
                     new_widget.widget = {

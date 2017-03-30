@@ -37,7 +37,6 @@
      *                      model="{{item.name}}"/>
      *          </parlay-widget-base-card-content>
      *      </parlay-widget-base-card>
-     *      <button parlay-widget-input events="['click']"></button>
      */
     function ParlayWidgetCustomEvent () {
         return {

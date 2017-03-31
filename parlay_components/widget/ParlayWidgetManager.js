@@ -46,6 +46,9 @@
              */
             this.active_widgets = [];
 
+            this.position_map_x = new Map();
+            this.position_map_y = new Map();
+
             /**
              * If true the user can move, add, and remove widgets.
              * Restores the state of the previous session to current session.

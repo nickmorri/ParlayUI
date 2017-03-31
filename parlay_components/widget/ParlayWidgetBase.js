@@ -1,13 +1,15 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["ngMaterial", "parlay.widget.base.configuration", "parlay.items.search", "parlay.widget.controller", "parlay.items.manager", "parlay.item.persistence"];
+    var module_dependencies = ["ngMaterial", "parlay.widget.base.configuration", "parlay.items.search",
+        "parlay.widget.controller", "parlay.items.manager", "parlay.item.persistence", "parlay.widget.manager"];
 
     angular
         .module("parlay.widget.base", module_dependencies)
         .directive("parlayWidgetBase", ParlayWidgetBase);
 
-    ParlayWidgetBase.$inject = ["$window", "$mdDialog", "$timeout", "$compile", "$interval", "ParlayWidgetInputManager", "ParlayData", "ParlayWidgetTransformer", "widgetLastZIndex", "ParlayItemManager", "ParlayItemPersistence"];
+    ParlayWidgetBase.$inject = ["$mdDialog", "$timeout", "$compile", "$interval", "ParlayWidgetInputManager", "ParlayData",
+        "ParlayWidgetTransformer", "widgetLastZIndex", "ParlayItemManager", "ParlayWidgetManager"];
     /**
      * Base directive of a ParlayWidget. Repeated inside the widget workspace and contains the chosen compiled widget
      * template.
@@ -21,7 +23,8 @@
      * @param {Object} ParlayWidgetTransformer - [ParlayWidgetTransformer]{@link module:ParlayWidget.ParlayWidgetTransformer} factory.
      * @param {Object} widgetLastZIndex - zIndex of the highest ParlayWidget.
      */
-    function ParlayWidgetBase ($window, $mdDialog, $timeout, $compile, $interval, ParlayWidgetInputManager, ParlayData, ParlayWidgetTransformer, widgetLastZIndex, ParlayItemManager) {
+    function ParlayWidgetBase ($mdDialog, $timeout, $compile, $interval, ParlayWidgetInputManager, ParlayData,
+                               ParlayWidgetTransformer, widgetLastZIndex, ParlayItemManager, ParlayWidgetManager) {
         /**
          * @member module:ParlayWidget.ParlayWidgetBase#link
          * @param {Object} scope - AngularJS [$scope]{@link https://docs.angularjs.org/guide/scope} Object.
@@ -88,7 +91,7 @@
 
             // Wait for digest loop to complete to get accurate dimensions of cards
             $timeout(function() {
-                onLoaded(element[0]);
+                onLoaded();
             });
 
             /**
@@ -97,44 +100,135 @@
              * @private
              * @param {HTMLElement} drag_element - Element that the Draggabilly will attach to.
              */
-            function onLoaded (drag_element) {
+            function onLoaded () {
                 initEventHandler();
                 initPosition();
-                enableDraggabilly(drag_element, scope.item.position);
+                enableDraggabilly();
                 restoreHandlers(scope.item.configuration);
                 restoreTransformer(scope.item.configuration);
             }
+
+
+            function widgetsIntersect(widget1, widget2) {
+                var x_share = ((widget1.x + widget1.w) > widget2.x) && (widget1.x < (widget2.x + widget2.w));
+                var y_share = ((widget1.y + widget1.h) > widget2.y) && (widget1.y < (widget2.y + widget2.h));
+                var intersect = x_share && y_share;
+                return intersect;
+
+
+
+                // return ((widget1.x + widget1.w) > widget2.x) && (widget1.x < (widget2.x + widget2.w)) &&
+                //     ((widget1.y + widget1.h) > widget2.y) && (widget1.y < (widget2.y + widget2.h));
+            }
+
+
+            function findEmptyRectangle(viewContainerPosition) {
+
+                function coordinateSort(a,b) {
+                    return a - b;
+                }
+
+                var active_widgets = document.querySelectorAll("parlay-widget-base");
+                var x_coords = [viewContainerPosition.left];
+                Array.from(ParlayWidgetManager.position_map_x.values()).forEach(function (value) {
+                    x_coords = x_coords.concat([value.left, value.right]);
+                });
+                var y_coords = [viewContainerPosition.top];
+                Array.from(ParlayWidgetManager.position_map_y.values()).forEach(function (value) {
+                    y_coords = y_coords.concat([value.top, value.bottom]);
+                });
+                x_coords.sort(coordinateSort);
+                y_coords.sort(coordinateSort);
+
+                for (var j = 0; j < y_coords.length; j++) {
+                    for (var i = 0; i < x_coords.length; i++) {
+                        var intersections = 0;
+                        for (var k = 0; k < active_widgets.length; k++) {
+                            if (active_widgets[k].offsetLeft < 0)
+                                continue;
+
+                            var this_widget = {
+                                x: x_coords[i],
+                                y: y_coords[j],
+                                w: element[0].offsetWidth,
+                                h: element[0].offsetHeight
+                            };
+
+                            var compare_widget = {
+                                x: active_widgets[k].offsetLeft,
+                                y: active_widgets[k].offsetTop,
+                                w: active_widgets[k].offsetWidth,
+                                h: active_widgets[k].offsetHeight
+                            };
+
+                            if (widgetsIntersect(this_widget, compare_widget)) {
+                                intersections++;
+                            }
+                        }
+                        if (((x_coords[i] + element[0].offsetWidth) > viewContainerPosition.right) ||
+                            ((y_coords[j] + element[0].offsetHeight) > viewContainerPosition.bottom))
+                            continue;
+
+                        if (intersections === 0) {
+                            return {
+                                left: x_coords[i] + "px",
+                                top: y_coords[j] + "px"
+                            };
+                        }
+                    }
+                }
+                return undefined;
+            }
+
+
+            function markPosition() {
+                var position_x = {
+                    left: element[0].offsetLeft,
+                    right: element[0].offsetLeft + element[0].offsetWidth
+                };
+
+                var position_y = {
+                    top: element[0].offsetTop,
+                    bottom: element[0].offsetTop + element[0].offsetHeight
+                };
+
+                ParlayWidgetManager.position_map_x.set(scope.item.uid, position_x);
+                ParlayWidgetManager.position_map_y.set(scope.item.uid, position_y);
+            }
+
 
             function initPosition() {
                 // if a position already exists, don't initialize it
                 if (!!scope.item.position) return;
 
-                var left = ParlayData.get("widget_left_position");
-                var top = ParlayData.get("widget_top_position");
                 var viewContainer = document.querySelector(".view-container");
-
-                if (!left || !top) {
-                    left = viewContainer.offsetLeft;
-                    top = viewContainer.offsetTop;
-                }
-
-                scope.item.position = {
-                    left: left + "px",
-                    top: top + "px"
+                var viewContainerPosition = {
+                    left: viewContainer.offsetLeft,
+                    top: viewContainer.offsetTop,
+                    right: viewContainer.offsetLeft + viewContainer.offsetWidth,
+                    bottom: viewContainer.offsetTop + viewContainer.offsetHeight
                 };
 
-                var setLeft = left + 10;
-                var setTop = top + 10;
-
-                if (setLeft > viewContainer.offsetWidth - 100) {
-                    var iterations = ParlayData.get("widget_iterations") + 1;
-                    setLeft = viewContainer.offsetLeft;
-                    setTop = (viewContainer.offsetTop + 40) * iterations;
-                    ParlayData.set("widget_iterations", iterations);
+                if (ParlayWidgetManager.getActiveWidgets().length === 1) {
+                    scope.item.position = {
+                        left: viewContainerPosition.left + "px",
+                        top: viewContainerPosition.top + "px"
+                    };
+                } else {
+                    var empty_spot = findEmptyRectangle(viewContainerPosition);
+                    if (!!empty_spot) {
+                        scope.item.position = empty_spot;
+                    } else {
+                        scope.item.position = {
+                            left: viewContainerPosition.left+ "px",
+                            top: viewContainerPosition.top + "px"
+                        };
+                    }
                 }
+                element[0].style.left = scope.item.position.left;
+                element[0].style.top = scope.item.position.top;
 
-                ParlayData.set("widget_left_position", setLeft);
-                ParlayData.set("widget_top_position", setTop);
+                markPosition();
             }
 
             function initEventHandler() {
@@ -233,7 +327,7 @@
              * @param {HTMLElement} element - ParlayWidget element to attach a Draggabilly instance to.
              * @param {Object} [initialPosition] - Optional position that we should set the ParlayWidget to.
              */
-            function enableDraggabilly (element, initialPosition) {
+            function enableDraggabilly () {
 
                 // If a Draggabilly instance already exists we should destroy it.
                 if (!!draggie) {
@@ -244,7 +338,7 @@
                 // child element we should use that as the handle. Contain widget dragging to enclosing div with
                 // .view-container class.
 
-                draggie = new Draggabilly(element, {
+                draggie = new Draggabilly(element[0], {
                     handle: ".handle",
                     containment: ".view-container"
                 });
@@ -301,7 +395,7 @@
                         return;
                     var touch_events = ["touchend", "touchcancel", "touchmove"];
                     touch_events.forEach(function(touch_event) {
-                        element.addEventListener(touch_event, handleTouchEvent);
+                        element[0].addEventListener(touch_event, handleTouchEvent);
                     });
                 }
 
@@ -310,14 +404,16 @@
                 // Record the position of the card when dragging ends.
                 draggie.on("dragEnd", function () {
                     scope.item.position = {
-                        left: element.style.left,
-                        top: element.style.top
+                        left: element[0].style.left,
+                        top: element[0].style.top
                     };
-                    scope.item.zIndex = parseInt(angular.element(element)[0].style.zIndex, 10);
+                    scope.item.zIndex = parseInt(element[0].style.zIndex, 10);
+
+                    markPosition();
                 });
 
                 // If the widget is a card we should add some feedback during dragging.
-                var card = angular.element(element).find("md-card");
+                var card = angular.element(element[0]).find("md-card");
                 if (!!card) {
 
                     // Dropping animation.
@@ -339,8 +435,8 @@
                     draggie.on("pointerDown", function () {
 
                         var height = 1;
-                        if (angular.element(element)[0].style.zIndex === "" || parseInt(angular.element(element)[0].style.zIndex, 10) < widgetLastZIndex.value) {
-                            angular.element(element)[0].style.zIndex = ++widgetLastZIndex.value;
+                        if (element[0].style.zIndex === "" || parseInt(element[0].style.zIndex, 10) < widgetLastZIndex.value) {
+                            element[0].style.zIndex = ++widgetLastZIndex.value;
                         }
 
                         var promise = $interval(function () {
@@ -354,13 +450,6 @@
                             }
                         }, 5);
                     });
-                }
-
-                // If an initialPosition is given we should move the widget to that location.
-                if (!!initialPosition) {
-                    element.style.left = scope.item.position.left;
-                    element.style.top = scope.item.position.top;
-                    angular.element(element)[0].style.zIndex = scope.item.zIndex;
                 }
 
                 // If the widgetsCtrl is editing the user should be free to rearrange ParlayWidgets, otherwise

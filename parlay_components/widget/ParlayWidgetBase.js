@@ -7,7 +7,7 @@
         .module("parlay.widget.base", module_dependencies)
         .directive("parlayWidgetBase", ParlayWidgetBase);
 
-    ParlayWidgetBase.$inject = ["$window", "$mdDialog", "$compile", "$interval", "ParlayWidgetInputManager", "ParlayData", "ParlayWidgetTransformer", "widgetLastZIndex", "ParlayItemManager", "ParlayItemPersistence"];
+    ParlayWidgetBase.$inject = ["$window", "$mdDialog", "$timeout", "$compile", "$interval", "ParlayWidgetInputManager", "ParlayData", "ParlayWidgetTransformer", "widgetLastZIndex", "ParlayItemManager", "ParlayItemPersistence"];
     /**
      * Base directive of a ParlayWidget. Repeated inside the widget workspace and contains the chosen compiled widget
      * template.
@@ -21,7 +21,7 @@
      * @param {Object} ParlayWidgetTransformer - [ParlayWidgetTransformer]{@link module:ParlayWidget.ParlayWidgetTransformer} factory.
      * @param {Object} widgetLastZIndex - zIndex of the highest ParlayWidget.
      */
-    function ParlayWidgetBase ($window, $mdDialog, $compile, $interval, ParlayWidgetInputManager, ParlayData, ParlayWidgetTransformer, widgetLastZIndex, ParlayItemManager) {
+    function ParlayWidgetBase ($window, $mdDialog, $timeout, $compile, $interval, ParlayWidgetInputManager, ParlayData, ParlayWidgetTransformer, widgetLastZIndex, ParlayItemManager) {
         /**
          * @member module:ParlayWidget.ParlayWidgetBase#link
          * @param {Object} scope - AngularJS [$scope]{@link https://docs.angularjs.org/guide/scope} Object.
@@ -57,17 +57,6 @@
                 // Keep track of properties if a templated widget has them
                 if (!scope.item.configuration.properties)
                     scope.item.configuration.properties = properties;
-                onLoaded(element[0]);
-            });
-
-            // Handle widget initialization on parlayWidgetBaseCardLoaded event.
-            scope.$on("parlayWidgetBaseCardLoaded", function (event, element) {
-                onLoaded(element[0].parentElement.parentElement);
-            });
-
-            // Handle widget initialization on parlayItemCardLoaded event
-            scope.$on("parlayItemCardLoaded", function (event, element) {
-                onLoaded(element[0].parentElement);
             });
 
             // Handle $destroy event.
@@ -85,22 +74,22 @@
                 }
             });
 
-
-            // If an existing configuration Object exists we should restore the configuration
-            if (!!scope.item.configuration) {
-                compileWrapper()(angular.copy(scope.item.configuration.template));
-            } else if (scope.item.widget.name === "promenadeStandardItem") {
+            element[0].style.left = element[0].style.top = "-100000" + "px";
+            if (scope.item.widget.name === "promenadeStandardItem") {
                 // if the container object has a reference to the ParlayItem id, then create the item
                 // If there are stored values that need to be restored, the itemCompiler will handle that
                 compileItem()(ParlayItemManager.getItemByID(scope.item.widget.id));
             } else {
-                // if all else fails, then we should be adding a widget from scratch
-                scope.item.configuration = {};
-                if (!scope.item.name)
-                    scope.item.name = ""; // this turns into scope.info.name in widgettemplate
-                createWidgetObject();
+                // If a configuration Object does not exist, create widget from scratch
+                if (angular.equals(scope.item.configuration, {}))
+                    configureWidget();
                 compileWrapper()(scope.item.configuration.template);
             }
+
+            // Wait for digest loop to complete to get accurate dimensions of cards
+            $timeout(function() {
+                onLoaded(element[0]);
+            });
 
             /**
              * Event handler for loaded events emitted from ParlayWidgets.
@@ -110,35 +99,38 @@
              */
             function onLoaded (drag_element) {
                 initEventHandler();
-                initPosition(drag_element);
+                initPosition();
                 enableDraggabilly(drag_element, scope.item.position);
                 restoreHandlers(scope.item.configuration);
                 restoreTransformer(scope.item.configuration);
             }
 
-            function initPosition(element) {
+            function initPosition() {
                 // if a position already exists, don't initialize it
                 if (!!scope.item.position) return;
 
-                var DOMElement = angular.element(element);
-                var leftOffset = (parseInt(DOMElement.prop("offsetLeft"), 10));
-
                 var left = ParlayData.get("widget_left_position");
                 var top = ParlayData.get("widget_top_position");
+                var viewContainer = document.querySelector(".view-container");
+
+                if (!left || !top) {
+                    left = viewContainer.offsetLeft;
+                    top = viewContainer.offsetTop;
+                }
 
                 scope.item.position = {
-                    left: (leftOffset + left) + "px",
+                    left: left + "px",
                     top: top + "px"
                 };
 
                 var setLeft = left + 10;
                 var setTop = top + 10;
 
-                if (setLeft + leftOffset > $window.innerWidth - 400) {
-                    var iter = ParlayData.get("widget_iterations") + 1;
-                    setLeft = 20;
-                    setTop = 20 * iter;
-                    ParlayData.set("widget_iterations", iter);
+                if (setLeft > viewContainer.offsetWidth - 100) {
+                    var iterations = ParlayData.get("widget_iterations") + 1;
+                    setLeft = viewContainer.offsetLeft;
+                    setTop = (viewContainer.offsetTop + 40) * iterations;
+                    ParlayData.set("widget_iterations", iterations);
                 }
 
                 ParlayData.set("widget_left_position", setLeft);
@@ -169,7 +161,7 @@
                 }
             }
 
-            function createWidgetObject() {
+            function configureWidget() {
                 scope.item.configuration.selectedEvents = [];
                 scope.item.configuration.selectedItems = [];
                 scope.item.configuration.template = scope.item.widget;
@@ -429,7 +421,6 @@
                     for (var i = 0; i < scope_params.length; i++) {
                         element_to_compile.attr(scope_params[i][0], scope_params[i][1]);
                     }
-
                     // HTML Element of the ParlayWidget template that will be attached as a child to the ParlayBaseWidget Element.
                     element_ref[0].appendChild($compile(element_to_compile)(scope_ref.$new())[0]);
                 }

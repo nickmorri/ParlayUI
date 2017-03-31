@@ -156,8 +156,8 @@ var widgetRegistration = (function () {
     ParlayWidgetsRun.$inject = ["ParlaySettings", "ParlayWidgetCollection", "ParlayData"];
     function ParlayWidgetsRun (ParlaySettings, ParlayWidgetCollection, ParlayData) {
         ParlayData.set('registered_widget_types', registered_widgets);
-        ParlayData.set('widget_top_position', 5);
-        ParlayData.set('widget_left_position', 5);
+        // ParlayData.set('widget_top_position', 5);
+        // ParlayData.set('widget_left_position', 5);
         ParlayData.set('widget_iterations', 1);
 
         // Register the default ParlaySettings for widgets.

@@ -347,8 +347,9 @@
                     break;
                 case "StandardWidget":
                     new_widget.widget = item;
+                    new_widget.configuration = {};
                     if (!!options) {
-                        new_widget.name = options.name;
+                        new_widget.name = !!options.name ? options.name : "";
                         new_widget.widget.script = options.script;
                     }
                     break;

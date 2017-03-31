@@ -110,19 +110,12 @@
 
 
             function widgetsIntersect(widget1, widget2) {
-                var x_share = ((widget1.x + widget1.w) > widget2.x) && (widget1.x < (widget2.x + widget2.w));
-                var y_share = ((widget1.y + widget1.h) > widget2.y) && (widget1.y < (widget2.y + widget2.h));
-                var intersect = x_share && y_share;
-                return intersect;
-
-
-
-                // return ((widget1.x + widget1.w) > widget2.x) && (widget1.x < (widget2.x + widget2.w)) &&
-                //     ((widget1.y + widget1.h) > widget2.y) && (widget1.y < (widget2.y + widget2.h));
+                return ((widget1.x + widget1.w) > widget2.x) && (widget1.x < (widget2.x + widget2.w)) &&
+                    ((widget1.y + widget1.h) > widget2.y) && (widget1.y < (widget2.y + widget2.h));
             }
 
 
-            function findEmptyRectangle(viewContainerPosition) {
+            function findEmptySpot(viewContainerPosition) {
 
                 function coordinateSort(a,b) {
                     return a - b;
@@ -130,72 +123,64 @@
 
                 var active_widgets = document.querySelectorAll("parlay-widget-base");
                 var x_coords = [viewContainerPosition.left];
-                Array.from(ParlayWidgetManager.position_map_x.values()).forEach(function (value) {
-                    x_coords = x_coords.concat([value.left, value.right]);
-                });
                 var y_coords = [viewContainerPosition.top];
-                Array.from(ParlayWidgetManager.position_map_y.values()).forEach(function (value) {
-                    y_coords = y_coords.concat([value.top, value.bottom]);
-                });
+
+                for (var w = 0; w < active_widgets.length; w++) {
+                    if (active_widgets[w].offsetLeft < 0)
+                        continue;
+
+                    x_coords.push(active_widgets[w].offsetLeft);
+                    x_coords.push(active_widgets[w].offsetLeft + active_widgets[w].offsetWidth);
+                    y_coords.push(active_widgets[w].offsetTop);
+                    y_coords.push(active_widgets[w].offsetTop + active_widgets[w].offsetHeight);
+                }
+
                 x_coords.sort(coordinateSort);
                 y_coords.sort(coordinateSort);
 
-                for (var j = 0; j < y_coords.length; j++) {
-                    for (var i = 0; i < x_coords.length; i++) {
+                x_coords = new Set(x_coords);
+                y_coords = new Set(y_coords);
+
+                for (var y_vals = y_coords.keys(), y = y_vals.next().value; y !== undefined; y = y_vals.next().value) {
+                    for (var x_vals = x_coords.keys(), x = x_vals.next().value; x !== undefined; x = x_vals.next().value) {
                         var intersections = 0;
-                        for (var k = 0; k < active_widgets.length; k++) {
-                            if (active_widgets[k].offsetLeft < 0)
+                        for (var z = 0; z < active_widgets.length; z++) {
+                            if (active_widgets[z].offsetLeft < 0)
                                 continue;
 
                             var this_widget = {
-                                x: x_coords[i],
-                                y: y_coords[j],
+                                x: x,
+                                y: y,
                                 w: element[0].offsetWidth,
                                 h: element[0].offsetHeight
                             };
 
                             var compare_widget = {
-                                x: active_widgets[k].offsetLeft,
-                                y: active_widgets[k].offsetTop,
-                                w: active_widgets[k].offsetWidth,
-                                h: active_widgets[k].offsetHeight
+                                x: active_widgets[z].offsetLeft,
+                                y: active_widgets[z].offsetTop,
+                                w: active_widgets[z].offsetWidth,
+                                h: active_widgets[z].offsetHeight
                             };
 
                             if (widgetsIntersect(this_widget, compare_widget)) {
                                 intersections++;
+                                break;
                             }
                         }
-                        if (((x_coords[i] + element[0].offsetWidth) > viewContainerPosition.right) ||
-                            ((y_coords[j] + element[0].offsetHeight) > viewContainerPosition.bottom))
+                        if (((x + element[0].offsetWidth) > viewContainerPosition.right) ||
+                            ((y + element[0].offsetHeight) > viewContainerPosition.bottom))
                             continue;
 
                         if (intersections === 0) {
                             return {
-                                left: x_coords[i] + "px",
-                                top: y_coords[j] + "px"
+                                left: x + "px",
+                                top: y + "px"
                             };
                         }
                     }
                 }
                 return undefined;
             }
-
-
-            function markPosition() {
-                var position_x = {
-                    left: element[0].offsetLeft,
-                    right: element[0].offsetLeft + element[0].offsetWidth
-                };
-
-                var position_y = {
-                    top: element[0].offsetTop,
-                    bottom: element[0].offsetTop + element[0].offsetHeight
-                };
-
-                ParlayWidgetManager.position_map_x.set(scope.item.uid, position_x);
-                ParlayWidgetManager.position_map_y.set(scope.item.uid, position_y);
-            }
-
 
             function initPosition() {
                 // if a position already exists, don't initialize it
@@ -215,7 +200,7 @@
                         top: viewContainerPosition.top + "px"
                     };
                 } else {
-                    var empty_spot = findEmptyRectangle(viewContainerPosition);
+                    var empty_spot = findEmptySpot(viewContainerPosition);
                     if (!!empty_spot) {
                         scope.item.position = empty_spot;
                     } else {
@@ -227,8 +212,6 @@
                 }
                 element[0].style.left = scope.item.position.left;
                 element[0].style.top = scope.item.position.top;
-
-                markPosition();
             }
 
             function initEventHandler() {
@@ -408,8 +391,6 @@
                         top: element[0].style.top
                     };
                     scope.item.zIndex = parseInt(element[0].style.zIndex, 10);
-
-                    markPosition();
                 });
 
                 // If the widget is a card we should add some feedback during dragging.

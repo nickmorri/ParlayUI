@@ -220,7 +220,7 @@
                 if (widget.type !== "input")
                     return;
 
-                var availableEvents = ParlayWidgetInputManager.getEvents();
+                var availableEvents = ParlayWidgetInputManager.getEvents(element);
                 if (availableEvents.length > 0 && scope.item.configuration.selectedEvents.length === 0) {
                     scope.item.configuration.selectedEvents.push(availableEvents[0]);
                     ParlayWidgetInputManager.registerHandler(availableEvents[0]);

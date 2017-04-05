@@ -77,7 +77,17 @@
                 }
             });
 
-            element[0].style.left = element[0].style.top = "-100000" + "px";
+            // if someone else changes my zIndex store, update the element's zindex value
+            scope.$watch("item.zIndex", function(newVal) {
+                element[0].style.zIndex = newVal;
+            });
+
+
+            // hide the element if the position is not already established.  It will unhide once the compilation
+            // of the element is complete
+            if (!scope.item.position)
+                element[0].style.left = element[0].style.top = "-100000" + "px";
+
             if (scope.item.widget.name === "promenadeStandardItem") {
                 // if the container object has a reference to the ParlayItem id, then create the item
                 // If there are stored values that need to be restored, the itemCompiler will handle that
@@ -94,11 +104,22 @@
                 onLoaded();
             });
 
+
+            /**
+             * initialize the widget's configuration object for advanced features
+             */
+            function configureWidget() {
+                scope.item.configuration.selectedEvents = [];
+                scope.item.configuration.selectedItems = [];
+                scope.item.configuration.template = scope.item.widget;
+                if (scope.item.widget.type === "display")
+                    scope.item.configuration.transformer = new ParlayWidgetTransformer();
+            }
+
             /**
              * Event handler for loaded events emitted from ParlayWidgets.
              * @member module:ParlayWidget.ParlayWidgetBase#onLoaded
              * @private
-             * @param {HTMLElement} drag_element - Element that the Draggabilly will attach to.
              */
             function onLoaded () {
                 initEventHandler();
@@ -108,13 +129,51 @@
                 restoreTransformer(scope.item.configuration);
             }
 
+            /**
+             * initialize the event handler of the widget by attaching a default event as well as any helper scripts available
+             */
+            function initEventHandler() {
+                var widget = scope.item.widget;
 
+                if (widget.type !== "input")
+                    return;
+
+                var availableEvents = ParlayWidgetInputManager.getEvents(element);
+                if (availableEvents.length > 0 && scope.item.configuration.selectedEvents.length === 0) {
+                    scope.item.configuration.selectedEvents.push(availableEvents[0]);
+                    ParlayWidgetInputManager.registerHandler(availableEvents[0]);
+
+                    if (!!widget.api_helper && !!scope.item.widget.api_helper.local_data) {
+                        scope.item.configuration.selectedEvents[0].handler.functionString += widget.api_helper.local_data;
+                    }
+
+                    if (!!scope.item.widget.script) {
+                        scope.item.configuration.selectedEvents[0].handler.functionString += widget.script + "\n";
+                        delete widget.script;
+                    }
+
+                    scope.item.configuration.selectedEvents[0].handler.functionString += "\n";
+                }
+            }
+
+            /**
+             * returns true if two widgets intersect
+             * @param widget1
+             * @param widget2
+             * @returns {boolean}
+             */
             function widgetsIntersect(widget1, widget2) {
                 return ((widget1.x + widget1.w) > widget2.x) && (widget1.x < (widget2.x + widget2.w)) &&
                     ((widget1.y + widget1.h) > widget2.y) && (widget1.y < (widget2.y + widget2.h));
             }
 
 
+            /**
+             * Given the coordinates of the view container of all the widgets, return the spot where this widget would
+             * perfectly fit
+             * @param viewContainerPosition
+             * @returns {*}
+             */
             function findEmptySpot(viewContainerPosition) {
 
                 function coordinateSort(a,b) {
@@ -182,68 +241,256 @@
                 return undefined;
             }
 
-            function initPosition() {
-                // if a position already exists, don't initialize it
-                if (!!scope.item.position) return;
-
+            /**
+             * given any element, return the elements dimensions/coordinates
+             * @param element
+             * @returns {{left, top: (Number|number), right: *, bottom: *}}
+             */
+            function getViewContainerDimensions() {
                 var viewContainer = document.querySelector(".view-container");
-                var viewContainerPosition = {
-                    left: viewContainer.offsetLeft,
-                    top: viewContainer.offsetTop,
-                    right: viewContainer.offsetLeft + viewContainer.offsetWidth,
-                    bottom: viewContainer.offsetTop + viewContainer.offsetHeight
+                var heightStyle = viewContainer.style.height;
+                return {
+                    left: 0,
+                    top: 0,
+                    right: viewContainer.offsetWidth,
+                    bottom: heightStyle === "" ? viewContainer.offsetHeight : parseInt(heightStyle, 10)
                 };
 
-                if (ParlayWidgetManager.getActiveWidgets().length === 1) {
-                    scope.item.position = {
-                        left: viewContainerPosition.left + "px",
-                        top: viewContainerPosition.top + "px"
-                    };
-                } else {
-                    var empty_spot = findEmptySpot(viewContainerPosition);
-                    if (!!empty_spot) {
-                        scope.item.position = empty_spot;
-                    } else {
+            }
+
+            /**
+             * on construction of the widget element, initialize the position of the element.
+             * TODO: if a spot cnanot be found during initialization, expand the view container
+             */
+            function initPosition() {
+                // if a position already exists, don't initialize it
+                if (!scope.item.position) {
+                    var viewContainer = document.querySelector(".view-container");
+                    var viewContainerPosition = getViewContainerDimensions();
+                    if (ParlayWidgetManager.getActiveWidgets().length === 1) {
                         scope.item.position = {
-                            left: viewContainerPosition.left+ "px",
-                            top: viewContainerPosition.top + "px"
+                            left: 0 + "px",
+                            top: 0 + "px"
                         };
+                    } else {
+                        var empty_spot = findEmptySpot(viewContainerPosition);
+
+                        while (!empty_spot) {
+                            var oldHeight = viewContainerPosition.bottom;
+                            var oldWidth = viewContainer.right;
+
+                            if (viewContainer.hasAttribute("flex")) {
+                                viewContainer.removeAttribute("flex");
+                                viewContainer.classList.remove("flex");
+                            }
+
+                            viewContainer.style.height = (oldHeight * 2) + "px";
+                            if (viewContainer.style.width === "")
+                                viewContainer.style.width = oldWidth + "px";
+
+                            viewContainerPosition = getViewContainerDimensions();
+                            empty_spot = findEmptySpot(viewContainerPosition);
+                        }
+                        scope.item.position = empty_spot;
                     }
                 }
                 element[0].style.left = scope.item.position.left;
                 element[0].style.top = scope.item.position.top;
             }
 
-            function initEventHandler() {
-                var widget = scope.item.widget;
 
-                if (widget.type !== "input")
-                    return;
-
-                var availableEvents = ParlayWidgetInputManager.getEvents(element);
-                if (availableEvents.length > 0 && scope.item.configuration.selectedEvents.length === 0) {
-                    scope.item.configuration.selectedEvents.push(availableEvents[0]);
-                    ParlayWidgetInputManager.registerHandler(availableEvents[0]);
-
-                    if (!!widget.api_helper && !!scope.item.widget.api_helper.local_data) {
-                        scope.item.configuration.selectedEvents[0].handler.functionString += widget.api_helper.local_data;
-                    }
-
-                    if (!!scope.item.widget.script) {
-                        scope.item.configuration.selectedEvents[0].handler.functionString += widget.script + "\n";
-                        delete widget.script;
-                    }
-
-                    scope.item.configuration.selectedEvents[0].handler.functionString += "\n";
+            /**
+             * touchTranslate given a touch event will translate the event into a related mouse event
+             * @param event
+             * @returns {Event}
+             */
+            function touchTranslate(event) {
+                var translated;
+                switch (event.type) {
+                    case "touchstart":
+                        translated = "mousedown";
+                        break;
+                    case "touchend":
+                    case "touchcancel":
+                        translated = "mouseup";
+                        break;
+                    case "touchmove":
+                        translated = "mousemove";
+                        break;
                 }
+
+                var positioning = event.changedTouches[0];
+                return new MouseEvent(translated, {
+                    clientX: positioning.clientX,
+                    clientY: positioning.clientY,
+                    screenX: positioning.screenX,
+                    screenY: positioning.screenY,
+                    pageX: positioning.pageX,
+                    pageY: positioning.pageY
+                });
             }
 
-            function configureWidget() {
-                scope.item.configuration.selectedEvents = [];
-                scope.item.configuration.selectedItems = [];
-                scope.item.configuration.template = scope.item.widget;
-                if (scope.item.widget.type === "display")
-                    scope.item.configuration.transformer = new ParlayWidgetTransformer();
+            /**
+             * Any time a touch event gets registered by draggie, convert it into a mouse event
+             * and dispatch the event to the window.  Prevent the default behavior of the touch event
+             * @param event
+             */
+            function handleTouchEvent(event) {
+                event.preventDefault();
+                var mouse_event = touchTranslate(event);
+                window.dispatchEvent(mouse_event);
+            }
+
+            /**
+             * If the user is running Android version of Chrome, we need to override the
+             * touch events that get registered with the draggie instance.  Touch start already gets
+             * converted to mousedown so we only need to re-register touch end, cancel and move
+             */
+            function handleDragAndroidChrome() {
+                if (!(/android/i.test(navigator.userAgent) && /chrome/i.test(navigator.userAgent)))
+                    return;
+                var touch_events = ["touchend", "touchcancel", "touchmove"];
+                touch_events.forEach(function(touch_event) {
+                    element[0].addEventListener(touch_event, handleTouchEvent);
+                });
+            }
+
+
+
+            /**
+             * Allows the user to reposition the ParlayWidget freely in the workspace.
+             * @member module:ParlayWidget.ParlayWidgetBase#enableDraggabilly
+             * @private
+             * @param {HTMLElement} element - ParlayWidget element to attach a Draggabilly instance to.
+             * @param {Object} [initialPosition] - Optional position that we should set the ParlayWidget to.
+             */
+            function enableDraggabilly () {
+
+                // If a Draggabilly instance already exists we should destroy it.
+                if (!!draggie) {
+                    draggie.destroy();
+                }
+
+                // Create a Draggabilly instance for the given element. If a handle CSS class is included on any
+                // child element we should use that as the handle. Contain widget dragging to enclosing div with
+                // .view-container class.
+                draggie = new Draggabilly(element[0], {
+                    handle: ".handle",
+                    containment: ".view-container"
+                });
+
+                // If the user is running chrome on android, override the touch events with mouse events
+                handleDragAndroidChrome();
+
+                // Function handler to store position coordinates when a drag ends
+                function dragEnd() {
+                    scope.item.position = {
+                        left: element[0].style.left,
+                        top: element[0].style.top
+                    };
+
+                    var viewContainer = document.querySelector(".view-container");
+                    var left = viewContainer.offsetLeft + element[0].offsetLeft;
+                    var right = viewContainer.offsetLeft + element[0].offsetLeft + element[0].offsetWidth;
+                    var top = viewContainer.offsetTop + element[0].offsetTop;
+                    var bottom = viewContainer.offsetTop + element[0].offsetTop + element[0].offsetHeight;
+
+                    var potentialOverlap = [
+                        document.elementsFromPoint(left, top),
+                        document.elementsFromPoint(left, bottom),
+                        document.elementsFromPoint(right, top),
+                        document.elementsFromPoint(right, bottom)
+                    ];
+
+                    var maxZIndex = 0;
+                    var overlappedElements = 0;
+
+                    for (var i = 0; i < potentialOverlap.length; i++) {
+                        for (var j = 0; j < potentialOverlap[i].length; j++) {
+
+                            var potentialOverlapElement = potentialOverlap[i][j];
+
+                            if (potentialOverlapElement.nodeName !== "PARLAY-WIDGET-BASE" || potentialOverlapElement === element[0])
+                                continue;
+
+                            var overlappedZIndex = parseInt(potentialOverlap[i][j].style.zIndex, 10);
+                            overlappedElements++;
+                            if (overlappedZIndex > maxZIndex)
+                                maxZIndex = overlappedZIndex;
+                        }
+                    }
+                    scope.item.zIndex = (overlappedElements > 0) ? maxZIndex + 1 : 0;
+                    element[0].zIndex = scope.item.zIndex;
+                }
+
+                // Function handler to process animation of card dropping
+                function dropAnimation(event) {
+                    // Dont do animation if the clicked element is the menu
+                    if (event.srcElement.nodeName === "MD-ICON")
+                        return;
+
+                    var height = 24;
+                    var promise = $interval(function () {
+                        if (height == 1) {
+                            $interval.cancel(promise);
+                        }
+                        else {
+                            card[0].classList.remove("md-whiteframe-" + (height + 1) + "dp");
+                            card[0].classList.add("md-whiteframe-" + height + "dp");
+                            height--;
+                        }
+                    }, 2);
+                }
+
+                // Function handler to process animation of card being picked up
+                function pickUpAnimation(event) {
+                    // Dont do animation if the clicked element is the menu
+                    if (event.srcElement.nodeName === "MD-ICON")
+                        return;
+
+                    var height = 1;
+                    var active_widgets = ParlayWidgetManager.active_widgets;
+
+                    for (var i = 0; i < active_widgets.length; i++) {
+                        if (active_widgets[i].uid === scope.item.uid)
+                            continue;
+                        if (active_widgets[i].zIndex >= widgetLastZIndex.value)
+                            active_widgets[i].zIndex--;
+                    }
+                    scope.item.zIndex = widgetLastZIndex.value;
+                    element[0].style.zIndex = scope.item.zIndex;
+
+                    var promise = $interval(function () {
+                        if (height == 24) {
+                            $interval.cancel(promise);
+                        }
+                        else {
+                            card[0].classList.remove("md-whiteframe-" + (height - 1) + "dp");
+                            card[0].classList.add("md-whiteframe-" + height + "dp");
+                            height++;
+                        }
+                    }, 5);
+                }
+
+                // Record the position of the card when dragging ends.
+                draggie.on("dragEnd", dragEnd);
+                // If the widget is a card we should add some feedback during dragging.
+                var card = angular.element(element[0]).find("md-card");
+                if (!!card) {
+                    // Dropping animation.
+                    draggie.on("pointerUp", dropAnimation);
+                    // Picking up animation.
+                    draggie.on("pointerDown", pickUpAnimation);
+                }
+
+                // If the widgetsCtrl is editing the user should be free to rearrange ParlayWidgets, otherwise
+                // the widgets should not be draggable.
+                scope.$watch("widgetsCtrl.editing", function (editing) {
+                    if (editing)
+                        draggie.enable();
+                    else
+                        draggie.disable();
+                });
             }
 
             /**
@@ -301,146 +548,6 @@
 
                     configuration.transformer = actual_transformer;
                 }
-            }
-
-            /**
-             * Allows the user to reposition the ParlayWidget freely in the workspace.
-             * @member module:ParlayWidget.ParlayWidgetBase#enableDraggabilly
-             * @private
-             * @param {HTMLElement} element - ParlayWidget element to attach a Draggabilly instance to.
-             * @param {Object} [initialPosition] - Optional position that we should set the ParlayWidget to.
-             */
-            function enableDraggabilly () {
-
-                // If a Draggabilly instance already exists we should destroy it.
-                if (!!draggie) {
-                    draggie.destroy();
-                }
-
-                // Create a Draggabilly instance for the given element. If a handle CSS class is included on any
-                // child element we should use that as the handle. Contain widget dragging to enclosing div with
-                // .view-container class.
-
-                draggie = new Draggabilly(element[0], {
-                    handle: ".handle",
-                    containment: ".view-container"
-                });
-
-                /**
-                 * touchTranslate given a touch event will translate the event into a related mouse event
-                 * @param event
-                 * @returns {Event}
-                 */
-                function touchTranslate(event) {
-                    var translated;
-                    switch (event.type) {
-                        case "touchstart":
-                            translated = "mousedown";
-                            break;
-                        case "touchend":
-                        case "touchcancel":
-                            translated = "mouseup";
-                            break;
-                        case "touchmove":
-                            translated = "mousemove";
-                            break;
-                    }
-
-                    var positioning = event.changedTouches[0];
-                    return new MouseEvent(translated, {
-                        clientX: positioning.clientX,
-                        clientY: positioning.clientY,
-                        screenX: positioning.screenX,
-                        screenY: positioning.screenY,
-                        pageX: positioning.pageX,
-                        pageY: positioning.pageY
-                    });
-                }
-
-                /**
-                 * Any time a touch event gets registered by draggie, convert it into a mouse event
-                 * and dispatch the event to the window.  Prevent the default behavior of the touch event
-                 * @param event
-                 */
-                function handleTouchEvent(event) {
-                    event.preventDefault();
-                    var mouse_event = touchTranslate(event);
-                    window.dispatchEvent(mouse_event);
-                }
-
-                /**
-                 * If the user is running Android version of Chrome, we need to override the
-                 * touch events that get registered with the draggie instance.  Touch start already gets
-                 * converted to mousedown so we only need to re-register touch end, cancel and move
-                 */
-                function handleDragAndroidChrome() {
-                    if (!(/android/i.test(navigator.userAgent) && /chrome/i.test(navigator.userAgent)))
-                        return;
-                    var touch_events = ["touchend", "touchcancel", "touchmove"];
-                    touch_events.forEach(function(touch_event) {
-                        element[0].addEventListener(touch_event, handleTouchEvent);
-                    });
-                }
-
-                handleDragAndroidChrome();
-
-                // Record the position of the card when dragging ends.
-                draggie.on("dragEnd", function () {
-                    scope.item.position = {
-                        left: element[0].style.left,
-                        top: element[0].style.top
-                    };
-                    scope.item.zIndex = parseInt(element[0].style.zIndex, 10);
-                });
-
-                // If the widget is a card we should add some feedback during dragging.
-                var card = angular.element(element[0]).find("md-card");
-                if (!!card) {
-
-                    // Dropping animation.
-                    draggie.on("pointerUp", function () {
-                        var height = 24;
-                        var promise = $interval(function () {
-                            if (height == 1) {
-                                $interval.cancel(promise);
-                            }
-                            else {
-                                card[0].classList.remove("md-whiteframe-" + (height + 1) + "dp");
-                                card[0].classList.add("md-whiteframe-" + height + "dp");
-                                height--;
-                            }
-                        }, 2);
-                    });
-
-                    // Picking up animation.
-                    draggie.on("pointerDown", function () {
-
-                        var height = 1;
-                        if (element[0].style.zIndex === "" || parseInt(element[0].style.zIndex, 10) < widgetLastZIndex.value) {
-                            element[0].style.zIndex = ++widgetLastZIndex.value;
-                        }
-
-                        var promise = $interval(function () {
-                            if (height == 24) {
-                                $interval.cancel(promise);
-                            }
-                            else {
-                                card[0].classList.remove("md-whiteframe-" + (height - 1) + "dp");
-                                card[0].classList.add("md-whiteframe-" + height + "dp");
-                                height++;
-                            }
-                        }, 5);
-                    });
-                }
-
-                // If the widgetsCtrl is editing the user should be free to rearrange ParlayWidgets, otherwise
-                // the widgets should not be draggable.
-                scope.$watch("widgetsCtrl.editing", function (editing) {
-                    if (editing)
-                        draggie.enable();
-                    else
-                        draggie.disable();
-                });
             }
 
             /**

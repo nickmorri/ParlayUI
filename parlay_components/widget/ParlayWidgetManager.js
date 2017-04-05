@@ -87,9 +87,7 @@
          */
         ParlayWidgetManager.prototype.clearActive = function () {
             this.active_widgets = [];
-            ParlayData.set("widget_left_position", 5);
-            ParlayData.set("widget_top_position", 5);
-            ParlayData.set('widget_iterations', 1);
+            widgetLastZIndex.value = 0;
         };
 
         ParlayWidgetManager.prototype.getActiveWidget = function (uid) {
@@ -172,13 +170,13 @@
             var next_uid = 0;
 
             // Locate the highest zIndex.
-            widgetLastZIndex.value = this.active_widgets.reduce(function (greatest_index, current_widget) {
-                return greatest_index > current_widget.zIndex ? greatest_index : parseInt(current_widget.zIndex, 10);
-            }, 0);
-
-            widgetLastZIndex.value = workspace.data.reduce(function (greatest_index, current_widget) {
-                return greatest_index > current_widget.zIndex ? greatest_index : parseInt(current_widget.zIndex, 10);
-            }, widgetLastZIndex.value);
+            // widgetLastZIndex.value = this.active_widgets.reduce(function (greatest_index, current_widget) {
+            //     return greatest_index > current_widget.zIndex ? greatest_index : parseInt(current_widget.zIndex, 10);
+            // }, 0);
+            //
+            // widgetLastZIndex.value = workspace.data.reduce(function (greatest_index, current_widget) {
+            //     return greatest_index > current_widget.zIndex ? greatest_index : parseInt(current_widget.zIndex, 10);
+            // }, widgetLastZIndex.value);
 
             this.active_widgets = workspace.data.map(function (widget) {
 
@@ -186,6 +184,8 @@
 
                 return widget;
             });
+
+            widgetLastZIndex.value = this.active_widgets.length;
 
             var loaded_items = this.active_widgets;
             var failed_items = [];
@@ -336,7 +336,8 @@
          */
         ParlayWidgetManager.prototype.add = function (type, item, options) {
             var uid = this.generateUID();
-            var new_widget ={uid: uid, zIndex: ++widgetLastZIndex.value};
+            var new_widget ={uid: uid, zIndex: 0};
+            ++widgetLastZIndex.value;
 
             switch(type) {
                 case "StandardItem":
@@ -374,6 +375,7 @@
          * @param {Number} uid - Unique ID given to a widget on add.
          */
         ParlayWidgetManager.prototype.remove = function (uid) {
+            widgetLastZIndex.value--;
             this.active_widgets.splice(this.active_widgets.findIndex(function (container) {
                 return container.uid === uid;
             }), 1);
@@ -394,7 +396,8 @@
 
             // TODO: Not following best practices here by mixing model management and view definition here.
             // If possible this should be moved down to be a directive responsibility.
-            copy.zIndex = ++widgetLastZIndex.value;
+            copy.zIndex++;
+            ++widgetLastZIndex.value;
 
             // Shift a few pixels over so that the duplicate widget doesn't completely overlap the original so that the
             // user is aware a new widget has been created.

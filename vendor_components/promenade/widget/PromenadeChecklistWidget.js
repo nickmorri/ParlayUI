@@ -2,19 +2,16 @@
     "use strict";
 
     var display_name = "Check List";
-    var module_dependencies = ["parlay.data"];
+    var module_dependencies = ["parlay.data", "parlay.widget.customevent"];
     var module_name = "promenade.widget.checklist";
     var directive_name = "promenadeWidgetChecklist";
-    var wigdet_type = "display";
+    var widget_type = "input";
     var directive_definition = promenadeWidgetChecklistJs;
-
-    widgetRegistration(display_name, module_name, module_dependencies, directive_name, wigdet_type, directive_definition, []);
-
 
     promenadeWidgetChecklistJs.$inject = ["ParlayWidgetTemplate"];
     function promenadeWidgetChecklistJs(ParlayWidgetTemplate) {
 
-        function customLink(scope) {
+        function customLink(scope, element) {
 
             var checked = 0;
 
@@ -34,9 +31,8 @@
                  */
                 for (var i = 0; i < listSize - checkList.length; ++i) {
                     checkList.push({
-                        value: "", 
-                        isChecked: false, 
-                        index: checkList.length
+                        value: "",
+                        isChecked: false
                     });
                 }
 
@@ -56,7 +52,7 @@
             /**
              * Function to process the checking of a single checkbox
              */
-            scope.checkBox = function checkBox(item) {
+            scope.checkBox = function checkBox(item, index) {
                 checked += (item.isChecked) ? -1 : 1;
                 var listLength = scope.properties.list.value.length;
                 scope.properties.toggle.value = checked === listLength && listLength !== 0;
@@ -106,4 +102,22 @@
             }
         }, display_name);
     }
+
+    var property_helper = "# Example script for the check list widget\nfrom parlay.utils import *\nfrom parlay import widgets\n" +
+        "setup()\n\n# Setting the value of the nth item (zero based indexing) in the checklist\n" +
+        "widgets[{name}].list[n].value = \"new value\"\n\n# Getting the value of the nth item in the checklist:\n" +
+        "retrieved_value = widgets[{name}].list[n].value\n\n# Checking the nth item in the checklist:\n" +
+        "widgets[{name}].list[n].isChecked = True # Set to False to uncheck\n\n# Checking all items in the checklist\n" +
+        "widgets[{name}].toggle = True # Set to False to uncheck all\n";
+
+    var local_data_helper = "# To access the checked box's data on a captured event, use the variable local_data\n" +
+            "# Access the value of the data: local_data[\"value\"]\n# Check to see if the data was checked(True) or unchecked(False)" +
+            ": local_data[\"isChecked\"]\n";
+
+    var api_helper = {
+        property: property_helper,
+        local_data: local_data_helper
+    };
+
+    widgetRegistration(display_name, module_name, module_dependencies, directive_name, widget_type, directive_definition, [], api_helper);
 }());

@@ -2,7 +2,7 @@
     <md-dialog-content>
         <md-tabs md-stretch-tabs="always" md-dynamic-height="true" class="md-primary" md-selected="currentTabIndex">
 
-            <md-tab ng-disabled="!configuration.template || configuration.template.type == 'display'">
+            <md-tab ng-if="!!configuration.template && configuration.template.type === 'input'">
                 <md-tab-label>Handlers</md-tab-label>
                 <md-tab-body>
                     <parlay-widget-base-configuration-event></parlay-widget-base-configuration-event>
@@ -21,7 +21,7 @@
                 </md-tab-body>
             </md-tab>
 
-            <md-tab ng-disabled="!configuration.template || configuration.template.type == 'input'">
+            <md-tab ng-if="!!configuration.template && configuration.template.type === 'display'">
                 <md-tab-label>Transform</md-tab-label>
                 <md-tab-body>
                     <parlay-widget-base-configuration-source></parlay-widget-base-configuration-source>
@@ -29,12 +29,21 @@
                 </md-tab-body>
             </md-tab>
 
-            <md-tab ng-if="configuration.customizations && configuration.template.configuration_tabs.length === 0">
+            <md-tab>
                 <md-tab-label>
                     Customization
                 </md-tab-label>
                 <md-tab-body>
                     <parlay-widget-base-configuration-customization item="item" customizations="configuration.customizations"></parlay-widget-base-configuration-customization>
+                </md-tab-body>
+            </md-tab>
+
+            <md-tab ng-if="!!configuration.template.api_helper && !!configuration.template.api_helper.property">
+                <md-tab-label>
+                    Script Tutorial
+                </md-tab-label>
+                <md-tab-body>
+                    <parlay-widget-base-configuration-api-helper layout="column"></parlay-widget-base-configuration-api-helper>
                 </md-tab-body>
             </md-tab>
 
@@ -46,6 +55,7 @@
                     <span tab-compiler="tab.directive_name"></span>
                 </md-tab-body>
             </md-tab>
+
 
         </md-tabs>
     </md-dialog-content>

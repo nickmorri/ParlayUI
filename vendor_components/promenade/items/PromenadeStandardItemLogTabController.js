@@ -2,7 +2,7 @@
     "use strict";
 
     var module_name = "promenade.items.standarditem.log";
-    var module_dependencies = ['parlay.utility', 'parlay.notification', 'parlay.item.persistence', 'luegg.directives'];
+    var module_dependencies = ['parlay.utility', 'parlay.notification', 'parlay.item.persistence', 'parlay.utility', 'luegg.directives'];
 
     // Register module as [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} dependency.
     standard_item_dependencies.push(module_name);
@@ -15,7 +15,7 @@
         .directive('promenadeStandardItemCardLogItem', PromenadeStandardItemCardLogItem);
 
 
-    PromenadeStandardItemCardLogTabController.$inject = ['$scope', 'ParlayItemPersistence', 'ParlayUtility'];
+    PromenadeStandardItemCardLogTabController.$inject = ['$scope', 'ParlayItemPersistence', 'ParlayUtility', 'ParlayObject'];
     /**
      * Controller constructor for PromenadeStandardItemCardLogTabController.
      * @constructor module:PromenadeStandardItem.PromenadeStandardItemCardLogTabController
@@ -23,7 +23,7 @@
      * @param {Object} ParlayItemPersistence - [ParlayItemPersistence]{@link module:ParlayItem.ParlayItemPersistence} service.
      * @param {Object} ParlayUtility - [ParlayUtility]{@link module:ParlayUtility.ParlayUtility} service.
      */
-    function PromenadeStandardItemCardLogTabController ($scope, ParlayItemPersistence, ParlayUtility) {
+    function PromenadeStandardItemCardLogTabController ($scope, ParlayItemPersistence, ParlayUtility, ParlayObject) {
 
         var ctrl = this;
 
@@ -49,6 +49,7 @@
         // Attach methods to controller.
         ctrl.getFilteredLog = getFilteredLog;
         ctrl.getLog = getLog;
+        ctrl.downloadLogs = downloadLogs;
 
         var container = ParlayUtility.relevantScope($scope, 'container').container;
         var directive_name = 'parlayItemCard.' + container.ref.id.toString().replace(' ', '_') + '_' + container.uid;
@@ -96,6 +97,16 @@
          */
         function getLog () {
             return ctrl.item.log;
+        }
+
+
+        /**
+         * Downloads the filtered logs as a text file
+         */
+        function downloadLogs() {
+            var to_download = new ParlayObject(getFilteredLog(ctrl.filter_text, ctrl.descending));
+            var filename = ctrl.item.name + "_" + ctrl.item.id + "_" + "_logs_" + (new Date().toISOString()) + ".txt";
+            to_download.download(filename);
         }
 
     }

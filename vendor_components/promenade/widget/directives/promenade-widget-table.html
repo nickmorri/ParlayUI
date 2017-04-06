@@ -7,29 +7,29 @@
         <table class="promenade-widget-table-table">
             <!-- Table Headers -->
             <tr ng-class="{'promenade-widget-table-header': !pwm.editing}">
-                <th ng-repeat="header in headerItems()">
+                <th ng-repeat="header in properties.headers.value track by $index">
                     <div ng-switch="pwm.editing">
                         <md-input-container md-no-float ng-switch-when="true" flex class="promenade-widget-table-row">
-                            <input flex ng-model="header.value" type="text" placeholder="Header Name" class="promenade-widget-table-header-item"/>
+                            <input flex ng-model="properties.headers.value[$index]" type="text" placeholder="Header Name" class="promenade-widget-table-header-item"/>
                         </md-input-container>
 
                         <div ng-switch-when="false" flex>
-                            <p flex class="promenade-widget-table-data-item">{{header.value}}</p>
-                        <div>
+                            <p flex class="promenade-widget-table-data-item">{{header}}</p>
+                        </div>
                     </div>
                 </th>
             </tr>
             <!--Table Rows -->
-            <tr ng-repeat="row in tableData()">
-                <td ng-repeat="col in row">
+            <tr ng-repeat="row in properties.data.value track by $index" ng-init="rowIndex = $index">
+                <td ng-repeat="col in row track by $index" ng-init="colIndex = $index">
                     <div ng-switch="pwm.editing">
                         <md-input-container md-no-float ng-switch-when="true" flex class="promenade-widget-table-row">
-                            <input flex ng-model="col.value" type="text" placeholder="Value" class="promenade-widget-table-data-item"/>
+                            <input flex ng-model="properties.data.value[rowIndex][colIndex]" type="text" placeholder="Value" class="promenade-widget-table-data-item"/>
                         </md-input-container>
 
                         <div ng-switch-when="false" flex class="promenade-widget-table-row">
-                            <p flex class="promenade-widget-table-data-item">{{col.value}}</p>
-                        <div>
+                            <p flex class="promenade-widget-table-data-item">{{col}}</p>
+                        </div>
                     </div>
                 </td>
             </tr>

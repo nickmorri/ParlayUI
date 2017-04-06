@@ -34,8 +34,6 @@
                 ParlayItemPersistence.monitor(directive_name, "$index", scope);
                 ParlayItemPersistence.monitor(directive_name, "active_tab_index", scope);
 
-                scope.$emit("parlayItemCardLoaded", element);
-
                 /**
                  * Compiles the toolbar set on the item.
                  * @member module:ParlayItem.ParlayItemCard#compileToolbar

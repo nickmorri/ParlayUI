@@ -47,12 +47,36 @@
         ctrl.hasStreamsAvailable = hasStreamsAvailable;
         ctrl.openConfigurationDialog = openConfigurationDialog;
         ctrl.streamCount = streamCount;
-
-        var container = ParlayUtility.relevantScope($scope, 'container').container;
-        var directive_name = 'parlayItemCard.' + container.ref.id.toString().replace(' ', '_') + '_' + container.uid;
+        ctrl.convenienceOpen = convenienceOpen;
 
         // Persist enabled streams across sessions.
-        ParlayItemPersistence.monitor(directive_name, "ctrl.enabled_streams", $scope);
+        ctrl.$postLink = function() {
+            var container = ParlayUtility.relevantScope($scope, 'container').container;
+            var directive_name = 'parlayItemCard.' + container.ref.id.toString().replace(' ', '_') + '_' + container.uid;
+
+            ParlayItemPersistence.monitor(directive_name, "ctrl.enabled_streams", $scope, function (meta_streams) {
+                var item = ctrl.item;
+                var enabled_streams = [];
+                for (var i = 0; i < meta_streams.length; i++) {
+                    var keys = Object.keys(item.data_streams);
+                    for (var j = 0; j < keys.length; j++) {
+                        if (item.data_streams[keys[j]].item_id === meta_streams[i].item_id &&
+                            item.data_streams[keys[j]].id === meta_streams[i].id)
+                            enabled_streams.push(item.data_streams[keys[j]]);
+                    }
+                }
+                return enabled_streams;
+            });
+        };
+
+        // wait until the getSmoothie function is linked, then set the labels of the graph
+        var smoothieInitializer = $scope.$watch("ctrl.getSmoothie", function(newVal) {
+            if (!!newVal) {
+                setStreamColors();
+                // unwatch the getSmoothie function
+                smoothieInitializer();
+            }
+        });
 
         /**
          * True if streams are available, false otherwise.
@@ -62,7 +86,35 @@
          */
         function hasStreamsAvailable () {
             return Object.keys(ctrl.item.data_streams).length > 0;
+
         }
+
+        /**
+         * open the configuration dialog if no streams have been selected
+         * @member module:PromenadeStandardItem.PromenadeStandardItemCardGraphTabController#convenienceOpen
+         * @private
+         */
+        function convenienceOpen() {
+            if (ctrl.hasStreamsAvailable() && ctrl.enabled_streams.length === 0)
+                openConfigurationDialog();
+
+        }
+
+
+        /**
+         * set the labels on the graph tab for active streams
+         * @member module:PromenadeStandardItem.PromenadeStandardItemCardGraphTabController#setStreamColors
+         * @private
+         */
+        function setStreamColors() {
+            ctrl.streamColors = ctrl.getSmoothie() ? ctrl.getSmoothie().seriesSet.map(function (series) {
+                    return {
+                        name: series.options.streamName,
+                        color: series.options.strokeStyle
+                    };
+                }) : [];
+        }
+
 
         /**
          * Launches graph configuration $mdDialog modal.
@@ -84,12 +136,7 @@
                 targetEvent: $event,
                 clickOutsideToClose: true
             }).finally(function () {
-                ctrl.streamColors = ctrl.getSmoothie() ? ctrl.getSmoothie().seriesSet.map(function (series) {
-                    return {
-                        name: series.options.streamName,
-                        color: series.options.strokeStyle
-                    };
-                }) : [];
+                setStreamColors();
             });
         }
 
@@ -223,7 +270,6 @@
         function isStreamEnabled (stream) {
             return ctrl.enabled_streams.indexOf(stream) >= 0;
         }
-
     }
 
     /**

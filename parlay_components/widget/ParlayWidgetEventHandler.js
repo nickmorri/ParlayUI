@@ -52,7 +52,14 @@
              */
             function listenerCallback (domEvent) {
                 handlerRef.construct(domEvent);
-                handlerRef.run();
+                var builtins = {};
+                // if the dispatched event is a Custom Widget Event, we should bind the data
+                // to the ParlayPyInterpreter that handles our event
+                if (domEvent.detail.type === "ParlayWidgetCustomEvent") {
+                    builtins.local_data = JSON.parse(domEvent.detail.data);
+                    // builtins["__type"] = domEvent.detail.type;
+                }
+                handlerRef.run(function(){}, builtins, function() {});
             }
 
             /**

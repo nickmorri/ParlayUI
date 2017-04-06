@@ -12,11 +12,13 @@
         .controller("ParlayWidgetBaseConfigurationHandlerController", ParlayWidgetBaseConfigurationHandlerController)
         .controller("ParlayWidgetBaseConfigurationSourceController", ParlayWidgetBaseConfigurationSourceController)
         .controller("ParlayWidgetBaseConfigurationTransformController", ParlayWidgetBaseConfigurationTransformController)
+        .controller("ParlayWidgetBaseConfigurationApiHelperController", ParlayWidgetBaseConfigurationApiHelperController)
         .controller("ParlayWidgetBaseConfigurationCustomizationController", ParlayWidgetBaseConfigurationCustomizationController)
         .directive("parlayWidgetBaseConfigurationTemplate", ParlayWidgetBaseConfigurationTemplateDirective)
         .directive("parlayWidgetBaseConfigurationEvent", ParlayWidgetBaseConfigurationEventDirective)
         .directive("parlayWidgetBaseConfigurationHandler", ParlayWidgetBaseConfigurationHandlerDirective)
         .directive("parlayWidgetBaseConfigurationTransform", ParlayWidgetBaseConfigurationTransformDirective)
+        .directive("parlayWidgetBaseConfigurationApiHelper", ParlayWidgetBaseConfigurationApiHelperDirective)
         .directive("parlayWidgetBaseConfigurationSource", ParlayWidgetBaseConfigurationSourceDirective)
         .directive("parlayWidgetBaseConfigurationCustomization", ParlayWidgetBaseConfigurationCustomizationDirective)
         .directive("tabCompiler", tabCompiler);
@@ -41,7 +43,7 @@
         };
     }
 
-    ParlayWidgetBaseConfigurationDialogController.$inject = ["$scope", "$mdDialog", "item", "widgetCompiler"];
+    ParlayWidgetBaseConfigurationDialogController.$inject = ["$scope", "$mdDialog", "item"];
     /**
      * Base [$mdDialog]{@link https://material.angularjs.org/latest/api/service/$mdDialog} widget configuration controller.
      * @constructor module:ParlayWidget.ParlayWidgetBaseConfigurationDialogController
@@ -51,27 +53,18 @@
      * of the widget.
      * @param {Function} widgetCompiler - [widgetCompiler]{@link module:ParlayWidget.ParlayWidgetBase#compileWrapper}
      */
-    function ParlayWidgetBaseConfigurationDialogController ($scope, $mdDialog, item, widgetCompiler) {
+    function ParlayWidgetBaseConfigurationDialogController ($scope, $mdDialog, item) {
 
         var ctrl = this;
-        var configuration = item.configuration;
 
         // Attaches the configuration Object to the $scope Object to allow for user configuration.
         // Accessible by all the dialog controllers in the dialog.
-        $scope.configuration = configuration;
+        $scope.configuration = item.configuration;
         $scope.item = item; //attach the item too for more information
 
         // Attach $mdDialog controls to controller.
         ctrl.cancel = $mdDialog.cancel;
         ctrl.hide = $mdDialog.hide;
-
-        // When the configuration.template changes compile the widget template.
-        $scope.$watch("configuration.template", function (newValue, oldValue) {
-            if (!angular.equals(newValue, oldValue)) {
-                widgetCompiler($scope.configuration.template);
-            }
-        });
-
     }
 
     ParlayWidgetBaseConfigurationTemplateController.$inject = ["ParlayWidgetCollection"];
@@ -160,12 +153,11 @@
 
         }
 
-        // debugger;
-        var availableEvents = queryEvents("");
-        if (availableEvents.length > 0 && $scope.configuration.selectedEvents.length === 0) {
-            $scope.configuration.selectedEvents.push(availableEvents[0]);
-            addHandler(availableEvents[0]);
-        }
+        // var availableEvents = queryEvents("");
+        // if (availableEvents.length > 0 && $scope.configuration.selectedEvents.length === 0) {
+        //     $scope.configuration.selectedEvents.push(availableEvents[0]);
+        //     addHandler(availableEvents[0]);
+        // }
 
         // When configuration.template.type change the currentTabIndex.
         $scope.$watch("configuration.template.type", function (newValue, oldValue) {
@@ -345,23 +337,6 @@
         function onRemove ($chip) {
             $scope.configuration.transformer.removeItem($chip);
         }
-
-        // When the configuration.template.type changes to display prepare the configuration Object and switch tabs.
-        // If the type changes to anything else we should clear the transformer's handlers if it has any.
-        $scope.$watch("configuration.template.type", function (newValue, oldValue) {
-            if (!angular.equals(newValue, oldValue)) {
-                if (newValue == "display") {
-                    $scope.configuration.selectedItems = [];
-                    $scope.configuration.transformer = new ParlayWidgetTransformer();
-                    $scope.currentTabIndex = 2;
-                }
-                else if (!!$scope.configuration.transformer) {
-                    $scope.configuration.transformer.cleanHandlers();
-                    $scope.configuration.selectedItems = [];
-                }
-            }
-        });
-
     }
 
     ParlayWidgetBaseConfigurationTransformController.$inject = [];
@@ -390,6 +365,33 @@
             //editor.completers = [generateCompleter(static_completer_entries)];
         }
 
+    }
+
+    ParlayWidgetBaseConfigurationApiHelperController.$inject = ["$scope", "$timeout"];
+    /**
+     * Managers the api helper tab of the edit menu
+     * @constructor module:ParlayWidget.ParlayWidgetBaseConfigurationTransformController
+     */
+    function ParlayWidgetBaseConfigurationApiHelperController($scope, $timeout) {
+        var ctrl = this;
+        ctrl.onEditorLoad = onEditorLoad;
+        ctrl.sampleScript = "";
+
+
+        $scope.$watch(function() {
+            // Every time the display name changes, we should update the script
+            $scope.$$postDigest(function(){
+                var displayed_name = $scope.$parent.item.name;
+                var base_script = $scope.$parent.configuration.template.api_helper.property;
+                ctrl.sampleScript = base_script.split("{name}").join("\"" + displayed_name + "\"");
+            });
+        });
+
+        function onEditorLoad(editor) {
+            editor.$blockScrolling = Infinity;
+            ace.require("ace/ext/language_tools");
+            editor.setReadOnly(true);
+        }
     }
 
     ParlayWidgetBaseConfigurationCustomizationController.$inject = ["$scope", "ParlayUtility", "$timeout"];
@@ -446,6 +448,14 @@
             templateUrl: "../parlay_components/widget/directives/parlay-widget-base-configuration-transform.html",
             controller: "ParlayWidgetBaseConfigurationTransformController",
             controllerAs: "transformCtrl"
+        };
+    }
+
+    function ParlayWidgetBaseConfigurationApiHelperDirective() {
+        return {
+            templateUrl: "../parlay_components/widget/directives/parlay-widget-base-configuration-api-helper.html",
+            controller: "ParlayWidgetBaseConfigurationApiHelperController",
+            controllerAs: "apiHelperCtrl"
         };
     }
 

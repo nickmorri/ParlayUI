@@ -1,7 +1,8 @@
 (function () {
     "use strict";
 
-    var module_dependencies = ["parlay.store", "parlay.settings", "parlay.item.persistence", "parlay.data", "parlay.protocols.protocol"];
+    var module_dependencies = ["parlay.store", "parlay.settings", "parlay.item.persistence", "parlay.data",
+        "parlay.protocols.protocol", "parlay.notification", "parlay.widget.collection"];
 
     var widgetLastZIndex = {
         value: 0
@@ -12,8 +13,10 @@
         .value("widgetLastZIndex", widgetLastZIndex)
         .factory("ParlayWidgetManager", ParlayWidgetManagerFactory);
 
-    ParlayWidgetManagerFactory.$inject = ["$window", "ParlayStore", "ParlaySettings", "widgetLastZIndex", "ParlayItemPersistence", "ParlayData", "ParlayProtocol"];
-    function ParlayWidgetManagerFactory ($window, ParlayStore, ParlaySettings, widgetLastZIndex, ParlayItemPersistence, ParlayData, ParlayProtocol) {
+    ParlayWidgetManagerFactory.$inject = ["$window", "ParlayStore", "ParlaySettings", "widgetLastZIndex", "ParlayItemPersistence",
+        "ParlayData", "ParlayProtocol", "ParlayNotification", "ParlayWidgetCollection"];
+    function ParlayWidgetManagerFactory ($window, ParlayStore, ParlaySettings, widgetLastZIndex, ParlayItemPersistence,
+                                         ParlayData, ParlayProtocol, ParlayNotification, ParlayWidgetCollection) {
 
         /**
          * Manages [ParlayWidgetBase]{@link module:ParlayWidget.ParlayWidgetBase}s active in the workspace.
@@ -84,9 +87,7 @@
          */
         ParlayWidgetManager.prototype.clearActive = function () {
             this.active_widgets = [];
-            ParlayData.set("widget_left_position", 5);
-            ParlayData.set("widget_top_position", 5);
-            ParlayData.set('widget_iterations', 1);
+            widgetLastZIndex.value = 0;
         };
 
         ParlayWidgetManager.prototype.getActiveWidget = function (uid) {
@@ -130,7 +131,6 @@
         ParlayWidgetManager.prototype.saveEntry = function (workspace) {
 
             // Copy active widgets so that when we sort and modify indices we aren't modifying the active widgets.
-
             var copy = angular.copy(this.active_widgets);
 
             // Sort the widgets by their zIndex and compact the zIndices so that they don't get too big.
@@ -143,17 +143,15 @@
                 });
                 toSave.zIndex = index + 1;
 
-                if (!!element.type && element.type === "StandardItem"){
-                    var directive = "parlayItemCard." + element.id + "_" + element.uid;
+                if (!!element.widget && element.widget.name === "promenadeStandardItem"){
+                    var directive = "parlayItemCard." + element.widget.id + "_" + element.uid;
                     toSave.stored_values = ParlayItemPersistence.collectDirective(directive);
                 }
 
             });
-
             workspace.data = JSON.stringify(copy, function (key, value) {
                 return !!value && value.constructor && value.constructor == ParlayProtocol ? value.protocol_name : value;
             });
-
             workspace.count = copy.length;
             workspace.timestamp = new Date();
 
@@ -180,23 +178,9 @@
                 return greatest_index > current_widget.zIndex ? greatest_index : parseInt(current_widget.zIndex, 10);
             }, widgetLastZIndex.value);
 
-            // Collect all UIDs in use.
-            var uids_in_use = this.active_widgets.map(function (widget) {
-                return widget.uid;
-            });
-
             this.active_widgets = workspace.data.map(function (widget) {
 
-                // If the widget's uid is already in use assign it another.
-                if (uids_in_use.indexOf(widget.uid) > -1) {
-                    // Ensure that the uid we generate isn't in use.
-                    while (uids_in_use.indexOf(next_uid) > -1) {
-                        next_uid++;
-                    }
-                    // Record the new uid that was generated.
-                    uids_in_use.push(next_uid);
-                    widget.uid = next_uid;
-                }
+                widget.uid = next_uid++;
 
                 return widget;
             });
@@ -208,6 +192,27 @@
                 loaded_items: loaded_items,
                 failed_items: failed_items
             };
+        };
+
+        ParlayWidgetManager.prototype.loadEntryByName = function(workspace_name) {
+            if (!workspace_name) return;
+
+            var workspace_to_load;
+            var workspaces = this.getWorkspaces();
+            for (var i = 0; i < workspaces.length; i++) {
+                if (workspaces[i].name === workspace_name) {
+                    workspace_to_load = workspaces[i];
+                    break;
+                }
+            }
+            if (!!workspace_to_load) {
+                this.loadEntry(workspace_to_load);
+            } else {
+                ParlayNotification.show({
+                    content: "URL referenced Workspace '" + workspace_name + "' could not be loaded",
+                    warning: true
+                });
+            }
         };
 
         /**
@@ -327,19 +332,37 @@
          * @param {String} type - type of the widget.  Either StandardWidget or StandardItem
          * @param {item} [item] - item ID of a parlay item. OR a widget template.
          */
-        ParlayWidgetManager.prototype.add = function (type, item) {
+        ParlayWidgetManager.prototype.add = function (type, item, options) {
             var uid = this.generateUID();
-            var new_widget ={uid: uid, zIndex: ++widgetLastZIndex.value, type: type};
+            var new_widget ={uid: uid, zIndex: ++widgetLastZIndex.value};
 
-            if (!!item) {
-                if (type === "StandardItem") {
-                    new_widget.item = item;
-                } else if (type === "StandardWidget") {
+            switch(type) {
+                case "StandardItem":
+                    new_widget.widget = {
+                        name: "promenadeStandardItem",
+                        id: item
+                    };
+                    break;
+                case "StandardWidget":
                     new_widget.widget = item;
+                    new_widget.configuration = {};
+                    if (!!options) {
+                        new_widget.name = !!options.name ? options.name : "";
+                        new_widget.widget.script = options.script;
+                    }
+                    break;
+            }
+            this.active_widgets.push(new_widget);
+            return new_widget;
+        };
+
+        ParlayWidgetManager.prototype.addWidgetByName = function(widget_name, options) {
+            var widgets = ParlayWidgetCollection.getAvailableWidgets();
+            for (var i = 0; i < widgets.length; i++) {
+                if (widgets[i].name === widget_name) {
+                    return this.add("StandardWidget", widgets[i], options);
                 }
             }
-
-            this.active_widgets.push(new_widget);
         };
 
         /**
@@ -349,9 +372,15 @@
          * @param {Number} uid - Unique ID given to a widget on add.
          */
         ParlayWidgetManager.prototype.remove = function (uid) {
-            this.active_widgets.splice(this.active_widgets.findIndex(function (container) {
+            widgetLastZIndex.value--;
+            var removeIndex = this.active_widgets.findIndex(function (container) {
                 return container.uid === uid;
-            }), 1);
+            });
+            for (var i = 0; i < this.active_widgets.length; i++) {
+                if (this.active_widgets[i].zIndex > this.active_widgets[removeIndex].zIndex)
+                    this.active_widgets[i].zIndex--;
+            }
+            this.active_widgets.splice(removeIndex, 1);
         };
 
         /**
@@ -365,17 +394,7 @@
                 return container.uid === old_uid;
             }));
 
-            var new_uid = 0;
-
-            var active_uids = this.active_widgets.map(function (container) {
-                return container.uid;
-            });
-
-            while (active_uids.indexOf(new_uid) !== -1) {
-                new_uid++;
-            }
-
-            copy.uid = new_uid;
+            copy.uid = this.generateUID();
 
             // TODO: Not following best practices here by mixing model management and view definition here.
             // If possible this should be moved down to be a directive responsibility.

@@ -39,7 +39,9 @@
 
         <parlay-navigation-container layout="column"></parlay-navigation-container>
 
-        <div class="view-container" ui-view flex></div>
+        <div layout="column" layout-fill flex>
+            <md-content class="view-container" flex ui-view></md-content>
+        </div>
 
         <parlay-notification-sidenav></parlay-notification-sidenav>
 

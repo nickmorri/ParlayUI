@@ -288,21 +288,20 @@
                 return;
             }
 
+            // Regex test on user agent string.  Ignores mobile devices using chrome or other chrome browsers that have the word
+            // "safari" in their UA string
+            if (/^((?!chrome|android).)*safari/i.test(navigator.userAgent)) {
+                alert("WARNING:  Download functionality is not supported in safari. If downloading is necessary, please try Chrome or Firefox.");
+                return;
+            }
+
 
             if (stringify === undefined)
                 stringify = true;
 
-            var pom = document.createElement('a');
             var contents = (!!stringify ? JSON.stringify(this.item) : this.item);
-            var url = URL.createObjectURL(new Blob([contents]));
 
-            pom.setAttribute('href', url);
-            pom.setAttribute('download', filename);
-            pom.setAttribute('target', '_blank');
-            var status = pom.dispatchEvent(new MouseEvent("click"));
-
-            URL.revokeObjectURL(url);
-            return status;
+            saveAs(new Blob([contents]), filename);
         };
 
         return ParlayObject;

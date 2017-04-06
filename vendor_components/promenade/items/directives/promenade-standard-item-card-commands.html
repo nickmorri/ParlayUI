@@ -36,6 +36,12 @@
                 <md-icon ng-md-icon icon="content_copy"></md-icon>
             </md-button>
 
+
+            <md-button ng-click="ctrl.createButton($event)" class="md-icon-button" aria-label="Create Button with built Command">
+                <md-tooltip>Create Button with built Command</md-tooltip>
+                <md-icon ng-md-icon icon="add_to_photos"></md-icon>
+            </md-button>
+
             <md-button ng-click="ctrl.toggleScriptBuilder($event)" class="md-icon-button" aria-label="Collapse script builder">
                 <md-tooltip>Collapse script builder</md-tooltip>
                 <md-icon ng-md-icon icon="{{ctrl.collapsible_state.script_builder ? 'expand_less' : 'expand_more'}}"></md-icon>

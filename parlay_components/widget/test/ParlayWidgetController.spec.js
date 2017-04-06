@@ -36,12 +36,6 @@
                 expect(manager.hasActiveWidgets).toHaveBeenCalled();
             });
             
-            it("add", function () {
-                spyOn(manager, "add");
-                controller.add();
-                expect(manager.add).toHaveBeenCalled();
-            });
-            
             it("remove", function () {
                 spyOn(manager, "remove");
                 controller.remove(0);

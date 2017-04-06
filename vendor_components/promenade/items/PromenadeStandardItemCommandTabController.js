@@ -2,7 +2,7 @@
     "use strict";
 
     var module_name = "promenade.items.standarditem.commands";
-    var module_dependencies = ["ngMessages", "RecursionHelper", "parlay.utility", "parlay.notification"];
+    var module_dependencies = ["ngMessages", "RecursionHelper", "parlay.utility", "parlay.notification", "parlay.widget.manager"];
 
     // Register module as [PromenadeStandardItem]{@link module:PromenadeStandardItem.PromenadeStandardItem} dependency.
     standard_item_dependencies.push(module_name);
@@ -47,7 +47,8 @@
             var message = this.collect(true);
 
             // Replace all spaces in the item name with underscores.
-            var var_name = "e_" + this.item_name.replace(/\s+/g, "_");
+            var var_name = "e_" + this.item_name.replace(/[^0-9a-zA-Z_]/g, "");
+            var_name = var_name.replace(/\s+/g, "_");
             var setup = var_name + " = get_item_by_name('" + this.item_name + "')";
 
             // If we are given an empty message return only the setup.
@@ -144,7 +145,7 @@
         return PromenadeStandardCommandMessage;
     }
 
-    PromenadeStandardItemCardCommandTabController.$inject = ["$scope", "ParlayNotification", "PromenadeStandardCommandMessage"];
+    PromenadeStandardItemCardCommandTabController.$inject = ["$scope", "$mdDialog", "ParlayNotification", "PromenadeStandardCommandMessage", "ParlayWidgetManager"];
     /**
      * Controller constructor for the command tab.
      * @constructor module:PromenadeStandardItem.PromenadeStandardItemCardCommandTabController
@@ -152,12 +153,13 @@
      * @param {Object} ParlayNotification - [ParlayNotification]{@link module:ParlayNotification.ParlayNotification} service.
      * @param {Object} PromenadeStandardCommandMessage - [PromenadeStandardCommandMessage]{@link module:PromenadeStandardItem.PromenadeStandardCommandMessage} factory.
      */
-    function PromenadeStandardItemCardCommandTabController ($scope, ParlayNotification, PromenadeStandardCommandMessage) {
+    function PromenadeStandardItemCardCommandTabController ($scope, $mdDialog, ParlayNotification, PromenadeStandardCommandMessage, ParlayWidgetManager) {
 
         var ctrl = this;
 
         ctrl.send = send;
         ctrl.copyCommand = copyCommand;
+        ctrl.createButton = createButton;
         ctrl.clearResponses = clearResponses;
         ctrl.toggleCommandBuilder = toggleCommandBuilder;
         ctrl.toggleScriptBuilder = toggleScriptBuilder;
@@ -365,6 +367,27 @@
                 ParlayNotification.show({content: "Cannot copy empty command."});
             }
 
+        }
+
+        function createButton() {
+
+            var command = $scope.wrapper.message.toPythonStatement();
+
+            var dialog = $mdDialog.prompt()
+                .title("Button Display Name")
+                .placeholder("Name")
+                .ariaLabel("Name")
+                .ok("Create")
+                .cancel("Cancel");
+
+            var widget;
+
+            $mdDialog.show(dialog).then(function (name) {
+                widget = ParlayWidgetManager.addWidgetByName("promenadeWidgetButton", {
+                    name: name,
+                    script: command
+                });
+            });
         }
 
         /**

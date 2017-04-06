@@ -5,6 +5,10 @@
             <h5 ng-if="ctrl.filter_text" ng-pluralize count="ctrl.getFilteredLog(ctrl.filter_text, ctrl.descending).length" when="{'0': 'No messages match filter', 'one': '1 message matches', 'other': '{} messages match'}"></h5>
             <h5 ng-if="!ctrl.filter_text" ng-pluralize count="ctrl.getFilteredLog(ctrl.filter_text, ctrl.descending).length" when="{'0': 'No messages logged', 'one': '1 message logged', 'other': '{} messages logged'}"></h5>
             <span flex></span>
+            <md-button class="md-icon-button" ng-click="ctrl.downloadLogs()">
+                <md-tooltip>Download Logs</md-tooltip>
+                <md-icon ng-md-icon icon="file_download"></md-icon>
+            </md-button>
 
         </div>
     </md-toolbar>

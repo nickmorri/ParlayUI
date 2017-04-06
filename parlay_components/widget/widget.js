@@ -40,6 +40,9 @@ var widgetRegistration = (function () {
      * @param {String} configuration_tabs[].label - Text to fill md-tab-label element with.
      * @param {String} configuration_tabs[].directive_name - Directive name.
      * @param {Function} configuration_tabs[].directive_function - Factory function for creating new instance of directives.
+     * @param {Object} api_helper - object that contains how to use the property api of a widget in other widgets in the form of python comments
+     * @param {String} api_helper.property - String tutorial on how to use the property api in other widgets
+     * @param {String} api_helper.local_data - String tutorial on how to use the bound local data in this widget (multi dimensional widget)
      *
      * @example
      *
@@ -82,16 +85,21 @@ var widgetRegistration = (function () {
      *          };
      *      }
      * }];
+     *
+     * var api_helper = {
+     *      property: "#how to use the properties in other widgets",
+     *      local_data: "#how to use the bound local data in this widget"
+     * }
      * 
-     * widgetRegistration(module_name, module_dependencies, directive_name, widget_type, directive_definition, configuration_tabs);
+     * widgetRegistration(module_name, module_dependencies, directive_name, widget_type, directive_definition, configuration_tabs, api_helper);
      *
      */
-    function widgetRegistration (display_name, module_name, submodule_dependencies, directive_name, widget_type, directive_definition, configuration_tabs) {
+    function widgetRegistration (display_name, module_name, submodule_dependencies, directive_name, widget_type, directive_definition, configuration_tabs, api_helper) {
         // Ensure that parlay.widget includes the given module as a dependency.
         module_dependencies.push(module_name);
 
         // Register the record Object for the given widget.
-        registered_widgets.push({display_name:display_name,  directive_name: directive_name, widget_type: widget_type, configuration_tabs: configuration_tabs});
+        registered_widgets.push({display_name:display_name,  directive_name: directive_name, widget_type: widget_type, configuration_tabs: configuration_tabs, api_helper: api_helper});
 
         var directive_function;
 
@@ -148,9 +156,6 @@ var widgetRegistration = (function () {
     ParlayWidgetsRun.$inject = ["ParlaySettings", "ParlayWidgetCollection", "ParlayData"];
     function ParlayWidgetsRun (ParlaySettings, ParlayWidgetCollection, ParlayData) {
         ParlayData.set('registered_widget_types', registered_widgets);
-        ParlayData.set('widget_top_position', 5);
-        ParlayData.set('widget_left_position', 5);
-        ParlayData.set('widget_iterations', 1);
 
         // Register the default ParlaySettings for widgets.
         ParlaySettings.registerDefault("widgets", {editing: true});

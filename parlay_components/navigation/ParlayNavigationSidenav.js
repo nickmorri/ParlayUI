@@ -38,7 +38,6 @@
         ctrl.requestDiscovery = requestDiscovery;
         ctrl.toggleWidgetEditing = toggleWidgetEditing;
         ctrl.openWidgetSaveLoadDialog = openWidgetSaveLoadDialog;
-        ctrl.openWidgetsDialog = openWidgetsDialog;
         ctrl.openItemsSidenav = openItemsSidenav;
         ctrl.openWidgetsSidenav = openWidgetsSidenav;
 
@@ -85,10 +84,6 @@
 
         function toggleWidgetEditing  () {
             ParlayWidgetManager.toggleEditing();
-        }
-
-        function openWidgetsDialog() {
-            ParlayWidgetManager.add("StandardWidget");
         }
 
         /**

@@ -260,7 +260,7 @@
 
             /**
              * on construction of the widget element, initialize the position of the element.
-             * TODO: if a spot cnanot be found during initialization, expand the view container
+             * if a spot cannot be found during initialization, the view container is expanded
              */
             function initPosition() {
                 // if a position already exists, don't initialize it
@@ -388,39 +388,6 @@
                         left: element[0].style.left,
                         top: element[0].style.top
                     };
-
-                    var viewContainer = document.querySelector(".view-container");
-                    var left = viewContainer.offsetLeft + element[0].offsetLeft;
-                    var right = viewContainer.offsetLeft + element[0].offsetLeft + element[0].offsetWidth;
-                    var top = viewContainer.offsetTop + element[0].offsetTop;
-                    var bottom = viewContainer.offsetTop + element[0].offsetTop + element[0].offsetHeight;
-
-                    var potentialOverlap = [
-                        document.elementsFromPoint(left, top),
-                        document.elementsFromPoint(left, bottom),
-                        document.elementsFromPoint(right, top),
-                        document.elementsFromPoint(right, bottom)
-                    ];
-
-                    var maxZIndex = 0;
-                    var overlappedElements = 0;
-
-                    for (var i = 0; i < potentialOverlap.length; i++) {
-                        for (var j = 0; j < potentialOverlap[i].length; j++) {
-
-                            var potentialOverlapElement = potentialOverlap[i][j];
-
-                            if (potentialOverlapElement.nodeName !== "PARLAY-WIDGET-BASE" || potentialOverlapElement === element[0])
-                                continue;
-
-                            var overlappedZIndex = parseInt(potentialOverlap[i][j].style.zIndex, 10);
-                            overlappedElements++;
-                            if (overlappedZIndex > maxZIndex)
-                                maxZIndex = overlappedZIndex;
-                        }
-                    }
-                    scope.item.zIndex = (overlappedElements > 0) ? maxZIndex + 1 : 0;
-                    element[0].zIndex = scope.item.zIndex;
                 }
 
                 // Function handler to process animation of card dropping
@@ -449,14 +416,14 @@
                         return;
 
                     var height = 1;
-                    var active_widgets = ParlayWidgetManager.active_widgets;
 
+                    var active_widgets = ParlayWidgetManager.active_widgets;
                     for (var i = 0; i < active_widgets.length; i++) {
-                        if (active_widgets[i].uid === scope.item.uid)
-                            continue;
-                        if (active_widgets[i].zIndex >= widgetLastZIndex.value)
+                        if (active_widgets[i].zIndex > scope.item.zIndex) {
                             active_widgets[i].zIndex--;
+                        }
                     }
+
                     scope.item.zIndex = widgetLastZIndex.value;
                     element[0].style.zIndex = scope.item.zIndex;
 

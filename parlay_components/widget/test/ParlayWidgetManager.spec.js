@@ -41,15 +41,15 @@
             it("adds widget", function () {
                 expect(ParlayWidgetManager.getActiveWidgets()).toEqual([]);
                 ParlayWidgetManager.add();
-                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0, zIndex: 0}]);
+                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0, zIndex: 1}]);
                 ParlayWidgetManager.add();
-                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0, zIndex: 0}, {uid: 1, zIndex: 0}]);
+                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0, zIndex: 1}, {uid: 1, zIndex: 2}]);
             });
 
             it("removes widget", function () {
                 expect(ParlayWidgetManager.getActiveWidgets()).toEqual([]);
                 ParlayWidgetManager.add();
-                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0, zIndex: 0}]);
+                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0, zIndex: 1}]);
                 ParlayWidgetManager.remove(0);
                 expect(ParlayWidgetManager.getActiveWidgets()).toEqual([]);
 
@@ -59,9 +59,9 @@
                 expect(ParlayWidgetManager.getActiveWidgets()).toEqual([]);
                 ParlayWidgetManager.add();
                 ParlayWidgetManager.active_widgets[0].position = {left: "10px", top: "10px"};
-                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0, zIndex: 0, position: {left: "10px", top: "10px"}}]);
+                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0, zIndex: 1, position: {left: "10px", top: "10px"}}]);
                 ParlayWidgetManager.duplicate(0);
-                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0, zIndex: 0, position: {left: "10px", top: "10px"}}, {uid: 1, zIndex: 1, position: {left: "30px", top: "30px"}}]);
+                expect(ParlayWidgetManager.getActiveWidgets()).toEqual([{uid: 0, zIndex: 1, position: {left: "10px", top: "10px"}}, {uid: 1, zIndex: 2, position: {left: "30px", top: "30px"}}]);
             });
 
             it("has active widgets", function () {

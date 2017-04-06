@@ -100,12 +100,16 @@
         }, display_name);
     }
 
-    var api_helper = "# Example script for the table widget\nfrom parlay.utils import *\nfrom parlay import widgets\n" +
+    var property_helper = "# Example script for the table widget\nfrom parlay.utils import *\nfrom parlay import widgets\n" +
         "setup()\n\n# Setting the value of the Nth Header Column (zero based indexing) in the table\n" +
         "widgets[{name}].headers[n] = \"new value\"\n\n# Getting the value of the Nth header column:\n" +
         "retrieved_value = widgets[{name}].headers[n]\n\n# Setting the value of the item at Row x and Column y\n" +
         "widgets[{name}].data[x][y] = \"new value\"\n\n# Getting the value of the item ar Row x and Column y:\n" +
         "retrieved_value = widgets[{name}].data[x][y]\n";
+
+    var api_helper = {
+        property: property_helper
+    };
 
     widgetRegistration(display_name, module_name, module_dependencies, directive_name, widget_type, directive_definition, [], api_helper);
 }());

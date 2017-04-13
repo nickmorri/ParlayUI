@@ -7,7 +7,7 @@
 
     var module_dependencies = ["parlay.socket", "parlay.notification", "parlay.utility",
         "parlay.notification.error", "parlay.settings", "promenade.items.standarditem",
-        "promenade.protocols.directmessage", "ngMaterial", "parlay.widget.manager"];
+        "promenade.protocols.directmessage", "ngMaterial", "parlay.widget.manager", "parlay.common.constants"];
 
     angular.module("promenade.broker", module_dependencies)
         .run(PromenadeBrokerRun)
@@ -23,10 +23,10 @@
 
     PromenadeBrokerFactory.$inject = ["ParlaySocket", "BrokerAddress", "ParlayNotification", "ParlayErrorDialog",
         "ParlaySettings", "PromenadeStandardItem", "PromenadeDirectMessageProtocol", "$q", "$location", "$timeout", "$window",
-        "$mdDialog", "ParlayObject", "ParlayWidgetManager"];
+        "$mdDialog", "ParlayObject", "ParlayWidgetManager", "WebsocketPort", "SecureWebsocketPort"];
     function PromenadeBrokerFactory (ParlaySocket, BrokerAddress, ParlayNotification, ParlayErrorDialog, ParlaySettings,
                                      PromenadeStandardItem, PromenadeDirectMessageProtocol, $q, $location, $timeout, $window,
-                                     $mdDialog, ParlayObject, ParlayWidgetManager) {
+                                     $mdDialog, ParlayObject, ParlayWidgetManager, WebsocketPort, SecureWebsocketPort) {
 
         /**
          * The PromenadeBroker is a implementation of a Broker that communicates using the Parlay communication
@@ -304,7 +304,7 @@
 
                 }
                 else {
-                    ParlaySocket.open($location.protocol === 'https:' ? 'wss://' + BrokerAddress + ':8086' : 'ws://' + BrokerAddress + ':8085');
+                    ParlaySocket.open($location.protocol === 'https:' ? 'wss://' + BrokerAddress + ':' + SecureWebsocketPort : 'ws://' + BrokerAddress + ':' + WebsocketPort);
                 }
 			}
 

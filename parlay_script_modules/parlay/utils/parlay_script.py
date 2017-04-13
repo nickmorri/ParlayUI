@@ -6,7 +6,7 @@ import time
 
 from native import ProxyItem, sendQuery
 
-DEFAULT_ENGINE_WEBSOCKET_PORT = 8085
+DEFAULT_ENGINE_WEBSOCKET_PORT = 58085
 
 class ParlayScript():
 

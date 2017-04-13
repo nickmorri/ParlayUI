@@ -167,7 +167,7 @@
                     it("connect opens ParlaySocket", function () {
                         spyOn(ParlaySocket, "open");
                         PromenadeBroker.connect();
-                        expect(ParlaySocket.open).toHaveBeenCalledWith("ws://localhost:8085");
+                        expect(ParlaySocket.open).toHaveBeenCalledWith("ws://localhost:58085");
                     });
 
                     it("sendMessage", function () {

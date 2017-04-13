@@ -9,7 +9,7 @@
      *
      */
 
-    var module_dependencies = [];
+    var module_dependencies = ["parlay.common.constants"];
 
     angular
         .module('parlay.socket', module_dependencies)
@@ -400,8 +400,9 @@
         return CallbackContainer;
     }
 
-    ParlaySocketFactory.$inject = ['BrokerAddress', '$location', '$window','$q', 'CallbackContainer'];
-    function ParlaySocketFactory (BrokerAddress, $location, $window, $q, CallbackContainer) {
+    ParlaySocketFactory.$inject = ['BrokerAddress', '$location', '$window','$q', 'CallbackContainer', 'WebsocketPort',
+        'SecureWebsocketPort'];
+    function ParlaySocketFactory (BrokerAddress, $location, $window, $q, CallbackContainer, WebsocketPort, SecureWebsocketPort) {
 
         /**
          * [ParlaySocket]{@link module:ParlaySocket.ParlaySocket} specific Error type that is thrown on invalid messages.
@@ -535,7 +536,7 @@
 
             }
             else {
-                parlay_socket.open($location.protocol === 'https:' ? 'wss://' + BrokerAddress + ':8086' : 'ws://' + BrokerAddress + ':8085');
+                parlay_socket.open($location.protocol === 'https:' ? 'wss://' + BrokerAddress + ':' + SecureWebsocketPort : 'ws://' + BrokerAddress + ':' + WebsocketPort);
             }
 
             /**

@@ -899,7 +899,7 @@
                 }));
 
                 it('gets address', inject(function (_ParlaySocket_) {
-                    expect(_ParlaySocket_.getAddress()).toBe('ws://localhost:8085');
+                    expect(_ParlaySocket_.getAddress()).toBe('ws://localhost:58085');
                 }));
             });
 
@@ -909,7 +909,7 @@
                 }));
 
                 it('gets address https', inject(function (_ParlaySocket_) {
-                    expect(_ParlaySocket_.getAddress()).toBe('wss://localhost:8086');
+                    expect(_ParlaySocket_.getAddress()).toBe('wss://localhost:58086');
                 }));
             });
 

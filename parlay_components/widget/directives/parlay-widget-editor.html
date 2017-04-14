@@ -1,0 +1,56 @@
+<md-dialog aria-label="Parlay Widget Editor" layout="column" fullscreen="true"
+           flex="90" flex-gt-md="70" ng-class="{'md-dialog-fullscreen' : $mdMedia}">
+    <md-toolbar class="md-toolbar-tools">
+        Widget Editor
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="editCtrl.closeEditor()">
+            <md-tooltip>Close Editor</md-tooltip>
+            <md-icon ng-md-icon icon="close"></md-icon>
+        </md-button>
+    </md-toolbar>
+
+    <div layout="row" style="min-height: 70vh">
+        <md-sidenav md-component-id="parlay-widget-editor" ng-hide="editCtrl.hideSidenav()"
+                    md-is-locked-open="$mdMedia('gt-sm')" md-whiteframe="4" flex-gt-md="25" flex="30">
+            <md-list class="parlay-item-list" ng-repeat="widget in editCtrl.activeWidgets()">
+                <md-list-item ng-if="widget.widget.name !== 'promenadeStandardItem'" class="parlay-navigation-list-small"
+                              ng-dblclick="editCtrl.openWidgetEditor(widget)">
+                    <div class="md-body-1">
+                        {{widget.name}}
+                    </div>
+                    <span flex></span>
+                </md-list-item>
+            </md-list>
+        </md-sidenav>
+
+        <div layout="column" flex>
+            <md-dialog-content flex layout-fill>
+                <md-tabs md-selected="selectedIndex" md-border-bottom md-dynamic-height="true" flex layout-fill>
+                    <md-tab ng-repeat="widget in editCtrl.openedWidgets()">
+                        <md-tab-label>
+                            {{widget.name}}
+                            <span flex></span>
+                            <md-button class="md-icon-button" ng-click="editCtrl.closeWidgetEditor(widget)">
+                                <md-icon ng-md-icon icon="close"></md-icon>
+                            </md-button>
+                        </md-tab-label>
+                        <md-tab-body layout-fill>
+                            <parlay-widget-base-configuration-editor item="widget"></parlay-widget-base-configuration-editor>
+                        </md-tab-body>
+                    </md-tab>
+                </md-tabs>
+            </md-dialog-content>
+            <md-dialog-actions layout="row">
+                <md-button class="md-icon-button" ng-click="editCtrl.toggleSidenav()">
+                    <md-tooltip>Toggle Active Widgets</md-tooltip>
+                    <md-icon ng-md-icon
+                             icon="{{editCtrl.toggleIcon()}}">
+                    </md-icon>
+                </md-button>
+                <span flex></span>
+                <md-button ng-click="editCtrl.cancelEditor()" class="md-warn">Cancel</md-button>
+                <md-button ng-click="editCtrl.confirmEditor()" class="md-primary">Ok</md-button>
+            </md-dialog-actions>
+        </div>
+    </div>
+</md-dialog>

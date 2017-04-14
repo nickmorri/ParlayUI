@@ -2,7 +2,8 @@
     "use strict";
 
     var module_dependencies = ["ngMaterial", "parlay.widget.base.configuration", "parlay.items.search",
-        "parlay.widget.controller", "parlay.items.manager", "parlay.item.persistence", "parlay.widget.manager"];
+        "parlay.widget.controller", "parlay.items.manager", "parlay.item.persistence", "parlay.widget.manager",
+        "parlay.widget.editor"];
 
     angular
         .module("parlay.widget.base", module_dependencies)
@@ -605,12 +606,12 @@
              */
             function edit () {
                 $mdDialog.show({
-                    templateUrl: "../parlay_components/widget/directives/parlay-widget-base-configuration-dialog.html",
+                    templateUrl: "../parlay_components/widget/directives/parlay-widget-editor.html",
                     clickOutsideToClose: false,
-                    controller: "ParlayWidgetBaseConfigurationDialogController",
-                    controllerAs: "dialogCtrl",
+                    controller: "ParlayWidgetEditorController",
+                    controllerAs: "editCtrl",
                     locals: {
-                        item: scope.item
+                        init: scope.item
                     }
                 });
             }

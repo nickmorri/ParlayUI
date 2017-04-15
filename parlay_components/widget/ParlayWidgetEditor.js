@@ -1,14 +1,15 @@
 (function() {
     "use strict";
 
-    var module_dependencies = ["parlay.widget.manager"];
+    var module_dependencies = ["parlay.widget.manager", "parlay.widget.editormanager"];
 
     angular
         .module("parlay.widget.editor", module_dependencies)
         .controller("ParlayWidgetEditorController", ParlayWidgetEditorController);
 
-    ParlayWidgetEditorController.$inject = ["$scope", "$mdDialog", "$mdSidenav", "ParlayWidgetManager", "init"];
-    function ParlayWidgetEditorController(scope, $mdDialog, $mdSidenav, ParlayWidgetManager, init) {
+    ParlayWidgetEditorController.$inject = ["$scope", "$mdDialog", "$mdSidenav", "ParlayWidgetManager",
+        "ParlayWidgetEditorManager", "init"];
+    function ParlayWidgetEditorController(scope, $mdDialog, $mdSidenav, ParlayWidgetManager, ParlayWidgetEditorManager, init) {
 
         var ctrl = this;
         ctrl.openWidgetEditor = openWidgetEditor;
@@ -19,43 +20,25 @@
         ctrl.hideSidenav = hideSidenav;
         ctrl.toggleIcon = toggleIcon;
 
-        scope.toggled = false;
-
         ctrl.closeEditor = $mdDialog.hide;
         ctrl.cancelEditor = $mdDialog.cancel;
-        ctrl.confirmEditor = $mdDialog.confirm;
-
-        scope.open_widgets = [];
-        var open_widgets = scope.open_widgets;
 
         function initWidgetEditor(init) {
-            var index = open_widgets.indexOf(init);
-            if (index === -1) {
-                open_widgets.splice(0, 0, init);
-                index = 0;
-            }
-            scope.selectedIndex = index;
+            ParlayWidgetEditorManager.sanitize();
+            scope.selectedIndex = ParlayWidgetEditorManager.initWidgetEditor(init);
         }
 
 
         function openWidgetEditor(widget) {
-            var index = open_widgets.indexOf(widget);
-            if (index === -1) {
-                open_widgets.push(widget);
-                index = open_widgets.length - 1;
-            }
-            scope.selectedIndex = index;
+            scope.selectedIndex = ParlayWidgetEditorManager.openWidgetEditor(widget);
         }
 
         function closeWidgetEditor(widget) {
-            var removeIndex = open_widgets.indexOf(widget);
-            if (removeIndex !== -1) {
-                open_widgets.splice(removeIndex, 1);
-            }
+            ParlayWidgetEditorManager.closeWidgetEditor(widget);
         }
 
         function openedWidgets() {
-            return open_widgets;
+            return ParlayWidgetEditorManager.opened_widgets;
         }
 
         function activeWidgets() {
@@ -63,22 +46,21 @@
         }
 
         function toggleSidenav() {
-            scope.toggled = !scope.toggled;
+            ParlayWidgetEditorManager.toggled = !ParlayWidgetEditorManager.toggled;
             if (!$mdSidenav('parlay-widget-editor').isLockedOpen()) {
                 $mdSidenav('parlay-widget-editor').toggle();
             }
         }
 
         function hideSidenav() {
-            return $mdSidenav('parlay-widget-editor').isLockedOpen() && scope.toggled;
+            return $mdSidenav('parlay-widget-editor').isLockedOpen() && ParlayWidgetEditorManager.toggled;
         }
 
         function toggleIcon() {
             if (!$mdSidenav('parlay-widget-editor').isLockedOpen())
                 return "keyboard_arrow_right";
-            return "keyboard_arrow_" + (scope.toggled ? "right" : "left");
+            return "keyboard_arrow_" + (ParlayWidgetEditorManager.toggled ? "right" : "left");
         }
-
 
         initWidgetEditor(init);
     }

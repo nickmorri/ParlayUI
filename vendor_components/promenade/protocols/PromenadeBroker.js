@@ -7,7 +7,7 @@
 
     var module_dependencies = ["parlay.socket", "parlay.notification", "parlay.utility",
         "parlay.notification.error", "parlay.settings", "promenade.items.standarditem",
-        "promenade.protocols.directmessage", "ngMaterial", "parlay.widget.manager"];
+        "promenade.protocols.directmessage", "ngMaterial", "parlay.widget.manager","parlay.itemtypemanager"];
 
     angular.module("promenade.broker", module_dependencies)
         .run(PromenadeBrokerRun)
@@ -21,12 +21,15 @@
         }
     }
 
+    //storage for item template types
+
+
     PromenadeBrokerFactory.$inject = ["ParlaySocket", "BrokerAddress", "ParlayNotification", "ParlayErrorDialog",
         "ParlaySettings", "PromenadeStandardItem", "PromenadeDirectMessageProtocol", "$q", "$location", "$timeout", "$window",
-        "$mdDialog", "ParlayObject", "ParlayWidgetManager"];
+        "$mdDialog", "ParlayObject", "ParlayWidgetManager", "ParlayItemTypeManager"];
     function PromenadeBrokerFactory (ParlaySocket, BrokerAddress, ParlayNotification, ParlayErrorDialog, ParlaySettings,
                                      PromenadeStandardItem, PromenadeDirectMessageProtocol, $q, $location, $timeout, $window,
-                                     $mdDialog, ParlayObject, ParlayWidgetManager) {
+                                     $mdDialog, ParlayObject, ParlayWidgetManager,ParlayItemTypeManager) {
 
         /**
          * The PromenadeBroker is a implementation of a Broker that communicates using the Parlay communication
@@ -54,7 +57,8 @@
                 //don't add the broker or items without IDs
                 if(data !== {} && data.TEMPLATE !== "Broker")
                 {
-                    broker.items.push(new broker.default_item_factory(data, broker.default_protocol));
+                    var template = ParlayItemTypeManager.lookupItemType(data.template, function(){ return broker.default_item_factory;});
+                    broker.items.push(new template(data, broker.default_protocol));
                 }
             };
 
@@ -114,6 +118,7 @@
             broker.getLastDiscovery = getLastDiscovery;
             broker.applySavedDiscovery = applySavedDiscovery;
             broker.getBrokerAddress = getBrokerAddress;
+
 
             // Register a callback on get_discovery_response. Call all registered discovery callbacks.
             broker.onMessage({"response": "get_discovery_response"}, function (response) {

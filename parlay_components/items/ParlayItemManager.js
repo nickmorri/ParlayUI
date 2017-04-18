@@ -84,6 +84,15 @@
             return PromenadeBroker.requestDiscovery();
         };
 
+        /**
+         *  Register an item template with it's constructor
+         * @param template
+         * @param constructor
+         */
+        ParlayItemManager.prototype.registerItemTemplate = function(template, constructor) {
+            PromenadeBroker.registerItemTemplate(template, constructor);
+        };
+
 
         return new ParlayItemManager();
     }

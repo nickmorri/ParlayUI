@@ -10,7 +10,9 @@
      * [ParlayProtocol]{@link ParlayProtocol}s are managed by the [ParlayProtocolManager]{@link module:ParlayProtocol.ParlayProtocolManager}.
      */
 
-    var module_dependencies = ["parlay.socket", "parlay.items.item", "parlay.settings"];
+    var module_dependencies = ["parlay.socket", "parlay.items.item", "parlay.settings", "parlay.itemtypemanager"];
+
+
 
     angular
         .module("parlay.protocols.protocol", module_dependencies)
@@ -26,8 +28,8 @@
         }
     }
 
-    ParlayProtocolFactory.$inject = ["ParlaySocket", "ParlayItem", "ParlaySettings", "$q"];
-    function ParlayProtocolFactory (ParlaySocket, ParlayItem, ParlaySettings, $q) {
+    ParlayProtocolFactory.$inject = ["ParlaySocket", "ParlayItem", "ParlaySettings", "ParlayItemTypeManager", "$q"];
+    function ParlayProtocolFactory (ParlaySocket, ParlayItem, ParlaySettings, ParlayItemTypeManager, $q) {
 
         /**
          *
@@ -253,9 +255,11 @@
             // set to an empty Array.
             this.available_items = Array.isArray(info.CHILDREN) ? info.CHILDREN.map(function (item) {
                 // Use the registered item_factory to produce models of the items.
-                return new this.item_factory(item, this);
+                var template = ParlayItemTypeManager.lookupItemType(item.TYPE, function () {return this.item_factory});
+                return new template(item, this);
             }, this) : [];
         };
+
 
         return ParlayProtocol;
     }

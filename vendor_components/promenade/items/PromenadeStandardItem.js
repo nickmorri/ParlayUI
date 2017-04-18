@@ -117,7 +117,8 @@ var standard_item_dependencies = ["parlay.items.item", "promenade.items.standard
             if (data.CHILDREN) {
 
                 data.CHILDREN.forEach(function(child) {
-                   this.children.push(new PromenadeStandardItem(child, protocol));
+                    var template = protocol.lookupItemType(info.TYPE, function () {return this.constructor});
+                    this.children.push(new template(child, protocol));
                 }.bind(this));
             }
         }

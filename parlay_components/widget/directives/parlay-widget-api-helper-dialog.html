@@ -1,0 +1,6 @@
+<md-card flex="70">
+    <md-toolbar class="md-toolbar-tools">Property Helper: {{editorHelperCtrl.name}}</md-toolbar>
+    <div ui-ace="{mode: 'python', onLoad: editorHelperCtrl.onEditorLoad}" class="transform-edit"
+         ng-model="editorHelperCtrl.sampleScript"></div>
+    <md-button ng-click="editorHelperCtrl.hide()" class="md-primary">Ok</md-button>
+</md-card>

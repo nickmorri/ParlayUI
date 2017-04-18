@@ -1,4 +1,5 @@
-<md-dialog aria-label="Parlay Widget Editor" layout="column" fullscreen="true"
+<!--<parlay-popup>-->
+<md-dialog aria-label="Parlay Widget Editor" layout="column"
            flex="90" flex-gt-md="70" ng-class="{'md-dialog-fullscreen' : $mdMedia}">
     <md-toolbar class="md-toolbar-tools">
         Widget Editor
@@ -14,11 +15,15 @@
                     md-is-locked-open="$mdMedia('gt-sm')" md-whiteframe="4" flex-gt-md="25" flex="30">
             <md-list class="parlay-item-list" ng-repeat="widget in editCtrl.activeWidgets()">
                 <md-list-item ng-if="widget.widget.name !== 'promenadeStandardItem'" class="parlay-navigation-list-small"
-                              ng-dblclick="editCtrl.openWidgetEditor(widget)">
+                              ng-dblclick="editCtrl.openWidgetEditor(widget )">
                     <div class="md-body-1">
                         {{widget.name}}
                     </div>
                     <span flex></span>
+                    <md-button ng-if="editCtrl.widgetHasProps(widget)" class="md-icon-button" ng-click="editCtrl.showHelper(widget)">
+                        <md-tooltip>View {{widget.name}}'s Property API</md-tooltip>
+                        <md-icon ng-md-icon icon="help_outline"></md-icon>
+                    </md-button>
                 </md-list-item>
             </md-list>
         </md-sidenav>
@@ -41,16 +46,28 @@
                 </md-tabs>
             </md-dialog-content>
             <md-dialog-actions layout="row">
-                <md-button class="md-icon-button" ng-click="editCtrl.toggleSidenav()">
+                <md-button class="md-icon-button" ng-click="editCtrl.toggleSidenav()" ng-disabled="showHelper">
                     <md-tooltip>Toggle Active Widgets</md-tooltip>
                     <md-icon ng-md-icon
                              icon="{{editCtrl.toggleIcon()}}">
                     </md-icon>
                 </md-button>
                 <span flex></span>
-                <md-button ng-click="editCtrl.cancelEditor()" class="md-warn">Cancel</md-button>
-                <md-button ng-click="editCtrl.closeEditor()" class="md-primary">Ok</md-button>
+                <md-button ng-click="editCtrl.cancelEditor()" class="md-warn" ng-disabled="showHelper">Cancel</md-button>
+                <md-button ng-click="editCtrl.closeEditor()" class="md-primary" ng-disabled="showHelper">Ok</md-button>
             </md-dialog-actions>
+        </div>
+
+        <div style="min-width:100%; position: absolute; z-index: 900" ng-show="showHelper" layout="row">
+            <span flex="5"></span>
+            <md-card md-whiteframe="15" flex="90">
+                <md-toolbar class="md-toolbar-tools">Property Helper: {{name}}</md-toolbar>
+                <div ui-ace="{mode: 'python', onLoad: editorCtrl.onEditorLoad}" class="transform-edit"
+                     ng-model="script"></div>
+                <md-button ng-click="editCtrl.hideHelper()" class="md-primary">Ok</md-button>
+            </md-card>
+            <span flex="5"></span>
         </div>
     </div>
 </md-dialog>
+<!--</parlay-popup>-->

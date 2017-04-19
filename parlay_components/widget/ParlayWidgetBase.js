@@ -9,7 +9,7 @@
         .module("parlay.widget.base", module_dependencies)
         .directive("parlayWidgetBase", ParlayWidgetBase);
 
-    ParlayWidgetBase.$inject = ["$mdDialog", "$window", "$timeout", "$compile", "$interval", "ParlayWidgetInputManager", "ParlayData",
+    ParlayWidgetBase.$inject = ["$mdDialog", "$timeout", "$compile", "$interval", "ParlayWidgetInputManager", "ParlayData",
         "ParlayWidgetTransformer", "widgetLastZIndex", "ParlayItemManager", "ParlayWidgetManager"];
     /**
      * Base directive of a ParlayWidget. Repeated inside the widget workspace and contains the chosen compiled widget
@@ -24,7 +24,7 @@
      * @param {Object} ParlayWidgetTransformer - [ParlayWidgetTransformer]{@link module:ParlayWidget.ParlayWidgetTransformer} factory.
      * @param {Object} widgetLastZIndex - zIndex of the highest ParlayWidget.
      */
-    function ParlayWidgetBase ($mdDialog, $window, $timeout, $compile, $interval, ParlayWidgetInputManager, ParlayData,
+    function ParlayWidgetBase ($mdDialog, $timeout, $compile, $interval, ParlayWidgetInputManager, ParlayData,
                                ParlayWidgetTransformer, widgetLastZIndex, ParlayItemManager, ParlayWidgetManager) {
         /**
          * @member module:ParlayWidget.ParlayWidgetBase#link

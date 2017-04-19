@@ -1,11 +1,10 @@
 (function() {
     "use strict";
 
-    var module_dependencies = ["parlay.widget.manager", "parlay.widget.editormanager", "parlay.common.genericpopup"];
+    var module_dependencies = ["parlay.widget.manager", "parlay.widget.editormanager"];
 
     angular
         .module("parlay.widget.editor", module_dependencies)
-        .directive("parlayWidgetEditor", ParlayWidgetEditor)
         .controller("ParlayWidgetEditorController", ParlayWidgetEditorController);
 
     ParlayWidgetEditorController.$inject = ["$scope", "$mdDialog", "$mdSidenav", "ParlayWidgetManager",
@@ -93,14 +92,5 @@
 
         initWidgetEditor(init);
     }
-
-    function ParlayWidgetEditor() {
-        return {
-            controller: "ParlayWidgetEditorController",
-            controllerAs: "editCtrl",
-            restrict: "E"
-        };
-    }
-
-
+    
 }());

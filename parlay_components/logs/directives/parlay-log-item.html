@@ -1,14 +1,15 @@
 <md-card>
-    <md-card-header>
+    <md-card-header style="padding:10px">
         <md-card-header-text>
             <span class="md-title">ID: {{message.TOPICS.MSG_ID}}</span>
+            <span class="md-subhead">TO: {{message.TOPICS.TO}}, FROM: {{message.TOPICS.FROM}}</span>
             <span class="md-subhead">STATUS: {{message.TOPICS.MSG_STATUS}}, TYPE: {{message.TOPICS.MSG_TYPE}}</span>
         </md-card-header-text>
     </md-card-header>
-    <md-card-content>
-        <md-list>
-            <md-list-item ng-repeat="(key, value) in message.CONTENTS">
-                <pre>{{key}} = {{value}}</pre><span ng-show="!$last">, </span>
+    <md-card-content style="padding:0">
+        <md-list style="padding:0">
+            <md-list-item ng-repeat="(key, value) in message.CONTENTS" ng-show="logCtrl.messageHasContents(message)">
+                <pre style="margin:0">{{key}} = {{value}}</pre><span ng-show="!$last">, </span>
             </md-list-item>
         </md-list>
     </md-card-content>

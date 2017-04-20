@@ -9,19 +9,21 @@
         .directive("parlayLogItem", ParlayLogItem);
 
 
-    ParlayLogsDialogController.$inject = ["$scope", "$mdDialog", "PromenadeBroker", "ParlayObject"];
+    ParlayLogsDialogController.$inject = ["scope", "$mdDialog", "PromenadeBroker", "ParlayObject"];
     function ParlayLogsDialogController(scope, $mdDialog, PromenadeBroker, ParlayObject) {
 
         var ctrl = this;
         ctrl.queryLogs = queryLogs;
+        ctrl.logsExist = logsExist;
         ctrl.downloadLogs = downloadLogs;
+        ctrl.messageHasContents = messageHasContents;
         ctrl.toggle = toggle;
         ctrl.hide = $mdDialog.hide;
 
-        scope.logQueryText = "";
-        scope.reverse = false;
+        ctrl.filter_text = "";
+        ctrl.reverse = false;
 
-        function queryLogs() {
+        function queryLogs(query) {
             function buildFilterOn(query) {
                 var lowercase_query = angular.lowercase(query);
 
@@ -39,11 +41,14 @@
 
                 };
             }
-            var query = scope.logQueryText;
             // If the filter_text isn't null or undefined return the messages that match the query.
-            var log = !!query ? PromenadeBroker.getLogs().filter(buildFilterOn(query)) : PromenadeBroker.getLogs();
-            return scope.reverse ? log.reverse() : log;
+            return query ? PromenadeBroker.getLogs().filter(buildFilterOn(query)) : PromenadeBroker.getLogs();
         }
+
+        function logsExist() {
+            return PromenadeBroker.getLogs().length > 0;
+        }
+
 
         function downloadLogs() {
             var download = new ParlayObject(queryLogs());
@@ -51,8 +56,12 @@
             download.download(filename);
         }
 
+        function messageHasContents(message) {
+            return Object.keys(message.CONTENTS).length > 0;
+        }
+
         function toggle() {
-            scope.reverse = !scope.reverse;
+            ctrl.reverse = !ctrl.reverse;
         }
     }
 
@@ -62,7 +71,8 @@
             restrict: "E",
             templateUrl: "../parlay_components/logs/directives/parlay-log-item.html",
             scope: {
-                message: "="
+                message: "=",
+                logCtrl: "="
             }
         };
     }

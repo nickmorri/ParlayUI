@@ -9,35 +9,32 @@
         </div>
     </md-toolbar>
 
-    <div layout="row">
-        <md-input-container flex>
+    <div layout="row" ng-show="logCtrl.logsExist()">
+        <md-input-container flex style="margin-bottom: 0">
             <label>Filter Logs on any value</label>
-            <input ng-model="logQueryText">
+            <input ng-model="logCtrl.filter_text">
         </md-input-container>
-        <md-button class="md-icon-button" ng-click="ctrl.toggle">
-            <md-icon ng-md-icon icon="{{reverse ? 'keyboard_arrow_down' : 'keyboard_arrow_up'}}"></md-icon>
+        <md-button class="md-primary" ng-click="logCtrl.toggle()">
+            ID<md-icon ng-md-icon icon="{{logCtrl.reverse ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}}"></md-icon>
         </md-button>
     </div>
 
+    <div ng-hide="logCtrl.logsExist()" class="md-headline" layout-padding>
+        No logs recorded!
+    </div>
 
+    <md-divider ng-show="logCtrl.logsExist()"></md-divider>
 
-    <md-divider></md-divider>
-
-    <md-dialog-content>
-        <md-virtual-repeat-container style="height: 292px;">
-            <div md-virtual-repeat="log in logCtrl.queryLogs()" md-item-size="5">
-                <parlay-log-item message="log"></parlay-log-item>
+    <md-dialog-content flex>
+        <md-virtual-repeat-container style="height: 60vh;" ng-show="logCtrl.logsExist()">
+            <div md-virtual-repeat="log in logCtrl.queryLogs(logCtrl.filter_text) | orderBy:'':logCtrl.reverse" md-auto-shrink>
+                <parlay-log-item message="log" log-ctrl="logCtrl"></parlay-log-item>
             </div>
         </md-virtual-repeat-container>
-
-        <div ng-if="logCtrl.queryLogs().length === 0" class="md-body-1">
-            No Logs Available!
-        </div>
-
     </md-dialog-content>
 
     <md-dialog-actions>
-        <md-button class="md-primary" ng-click="logCtrl.downloadLogs()">
+        <md-button class="md-primary" ng-click="logCtrl.downloadLogs()" ng-disabled="!logCtrl.logsExist()">
             <md-tooltip>Download Filtered Logs</md-tooltip>
             <md-icon ng-md-icon icon="file_download" aria-label="download logs"></md-icon>
             Download
@@ -46,7 +43,6 @@
             <md-tooltip>Close Logs</md-tooltip>
             Close
         </md-button>
-
     </md-dialog-actions>
 
 </md-dialog>

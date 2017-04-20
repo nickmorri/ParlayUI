@@ -204,7 +204,7 @@
         function toggleGraphing (stream) {
             if (ctrl.enabled_streams.indexOf(stream) == -1) {
                 ctrl.enabled_streams.push(stream);
-                stream.listen(false);
+                stream.listen(false, stream.rate);
             }
             else {
                 // Remove the stream from the Array of enabled streams.

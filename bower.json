@@ -14,7 +14,7 @@
     "svg-morpheus": "^0.1.8",
     "angular-order-object-by": "<1.6.0",
     "angular": "^1.6.0",
-    "smoothie": "^1.27.0",
+    "smoothie": "https://github.com/DanBeard/smoothie.git#78f5c28e4f4b63978151ec0c9c3dafa74a2330ff",
     "angular-ui-router": "^0.4.2",
     "angular-sanitize": "^1.6.0",
     "angular-ui-ace": "bower",

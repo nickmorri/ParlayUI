@@ -1,0 +1,52 @@
+<md-dialog flex="90" flex-gt-md="70" ng-class="{'md-dialog-fullscreen' : $mdMedia}">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2 style="text-transform: capitalize;">Parlay Logs</h2>
+            <span flex></span>
+            <md-button class="md-icon-button" ng-click="logCtrl.hide()" aria-label="Hide dialog">
+                <md-icon ng-md-icon icon="close" aria-label="Close dialog"></md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
+
+    <div layout="row">
+        <md-input-container flex>
+            <label>Filter Logs on any value</label>
+            <input ng-model="logQueryText">
+        </md-input-container>
+        <md-button class="md-icon-button" ng-click="ctrl.toggle">
+            <md-icon ng-md-icon icon="{{reverse ? 'keyboard_arrow_down' : 'keyboard_arrow_up'}}"></md-icon>
+        </md-button>
+    </div>
+
+
+
+    <md-divider></md-divider>
+
+    <md-dialog-content>
+        <md-virtual-repeat-container style="height: 292px;">
+            <div md-virtual-repeat="log in logCtrl.queryLogs()" md-item-size="5">
+                <parlay-log-item message="log"></parlay-log-item>
+            </div>
+        </md-virtual-repeat-container>
+
+        <div ng-if="logCtrl.queryLogs().length === 0" class="md-body-1">
+            No Logs Available!
+        </div>
+
+    </md-dialog-content>
+
+    <md-dialog-actions>
+        <md-button class="md-primary" ng-click="logCtrl.downloadLogs()">
+            <md-tooltip>Download Filtered Logs</md-tooltip>
+            <md-icon ng-md-icon icon="file_download" aria-label="download logs"></md-icon>
+            Download
+        </md-button>
+        <md-button class="md-primary" ng-click="logCtrl.hide()" aria-label="Hide Dialog">
+            <md-tooltip>Close Logs</md-tooltip>
+            Close
+        </md-button>
+
+    </md-dialog-actions>
+
+</md-dialog>

@@ -114,6 +114,7 @@
             broker.getLastDiscovery = getLastDiscovery;
             broker.applySavedDiscovery = applySavedDiscovery;
             broker.getBrokerAddress = getBrokerAddress;
+            broker.getLogs = getLogs;
 
             // Register a callback on get_discovery_response. Call all registered discovery callbacks.
             broker.onMessage({"response": "get_discovery_response"}, function (response) {
@@ -514,6 +515,10 @@
                         warning: true
                     }
                 );
+            }
+
+            function getLogs() {
+                return broker.default_protocol.getLog();
             }
 
         }

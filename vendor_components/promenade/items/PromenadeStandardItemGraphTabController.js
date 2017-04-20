@@ -48,6 +48,7 @@
         ctrl.openConfigurationDialog = openConfigurationDialog;
         ctrl.streamCount = streamCount;
         ctrl.convenienceOpen = convenienceOpen;
+        ctrl.downloadCSV = downloadCSV;
 
         // Persist enabled streams across sessions.
         ctrl.$postLink = function() {
@@ -150,6 +151,10 @@
             return ctrl.enabled_streams.length;
         }
 
+        function downloadCSV() {
+            ctrl.item.downloadCSV();
+        }
+
     }
 
     PromenadeStandardItemCardGraphTabConfigurationController.$inject = ["$scope", "$mdDialog", "$mdMedia"];
@@ -199,7 +204,7 @@
         function toggleGraphing (stream) {
             if (ctrl.enabled_streams.indexOf(stream) == -1) {
                 ctrl.enabled_streams.push(stream);
-                stream.listen(false);
+                stream.listen(false, stream.rate);
             }
             else {
                 // Remove the stream from the Array of enabled streams.

@@ -199,7 +199,8 @@
                     labels: {
                         fillStyle: '#000000',
                         fontSize: ParlaySettings.get("graph").label_size
-                    }
+                    },
+                    valueLabelFollowLine: false
                 });
 
                 // Attaches SmoothieChart to HTML5 Canvas element.

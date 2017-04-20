@@ -14,6 +14,7 @@
         .controller("ParlayWidgetBaseConfigurationTransformController", ParlayWidgetBaseConfigurationTransformController)
         .controller("ParlayWidgetBaseConfigurationApiHelperController", ParlayWidgetBaseConfigurationApiHelperController)
         .controller("ParlayWidgetBaseConfigurationCustomizationController", ParlayWidgetBaseConfigurationCustomizationController)
+        .directive("parlayWidgetBaseConfigurationEditor", ParlayWidgetBaseConfigurationEditorDirective)
         .directive("parlayWidgetBaseConfigurationTemplate", ParlayWidgetBaseConfigurationTemplateDirective)
         .directive("parlayWidgetBaseConfigurationEvent", ParlayWidgetBaseConfigurationEventDirective)
         .directive("parlayWidgetBaseConfigurationHandler", ParlayWidgetBaseConfigurationHandlerDirective)
@@ -43,7 +44,7 @@
         };
     }
 
-    ParlayWidgetBaseConfigurationDialogController.$inject = ["$scope", "$mdDialog", "item"];
+    ParlayWidgetBaseConfigurationDialogController.$inject = ["$scope", "$mdDialog"];
     /**
      * Base [$mdDialog]{@link https://material.angularjs.org/latest/api/service/$mdDialog} widget configuration controller.
      * @constructor module:ParlayWidget.ParlayWidgetBaseConfigurationDialogController
@@ -53,14 +54,14 @@
      * of the widget.
      * @param {Function} widgetCompiler - [widgetCompiler]{@link module:ParlayWidget.ParlayWidgetBase#compileWrapper}
      */
-    function ParlayWidgetBaseConfigurationDialogController ($scope, $mdDialog, item) {
+    function ParlayWidgetBaseConfigurationDialogController ($scope, $mdDialog) {
 
         var ctrl = this;
 
         // Attaches the configuration Object to the $scope Object to allow for user configuration.
         // Accessible by all the dialog controllers in the dialog.
-        $scope.configuration = item.configuration;
-        $scope.item = item; //attach the item too for more information
+        $scope.configuration = $scope.item.configuration;
+        // $scope.item = item; //attach the item too for more information
 
         // Attach $mdDialog controls to controller.
         ctrl.cancel = $mdDialog.cancel;
@@ -416,6 +417,18 @@
 
             fileReader.readAsDataURL(event.target.files[0]);
         }
+
+    }
+
+    function ParlayWidgetBaseConfigurationEditorDirective() {
+        return {
+            templateUrl: "../parlay_components/widget/directives/parlay-widget-base-configuration-editor.html",
+            controller: "ParlayWidgetBaseConfigurationDialogController",
+            controllerAs: "baseEditCtrl",
+            scope: {
+                item: "="
+            }
+        };
 
     }
 

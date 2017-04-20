@@ -3,7 +3,7 @@
 
     var module_dependencies = ["ngMaterial", "parlay.items.search", "parlay.protocols.list_controller",
         "parlay.settings.dialog", "parlay.common.genericsaveloaddialog",
-        "parlay.widget.manager", "parlay.widget.search"];
+        "parlay.widget.manager", "parlay.widget.search", "parlay.logs.logdialog"];
 
     angular
         .module("parlay.navigation.sidenav", module_dependencies)
@@ -40,6 +40,7 @@
         ctrl.openWidgetSaveLoadDialog = openWidgetSaveLoadDialog;
         ctrl.openItemsSidenav = openItemsSidenav;
         ctrl.openWidgetsSidenav = openWidgetsSidenav;
+        ctrl.openLogsDialog = openLogsDialog;
 
         /**
          * Reference the editing state of the [ParlayWidgetManager]{@link module:ParlayWidget.ParlayWidgetManager}.
@@ -169,6 +170,16 @@
 
         function openWidgetsSidenav() {
             $mdSidenav("parlay-widget-library").toggle();
+        }
+
+        function openLogsDialog(event) {
+            $mdDialog.show({
+                templateUrl: "../parlay_components/logs/directives/parlay-logs-dialog.html",
+                targetEvent: event,
+                controller: "ParlayLogsDialogController",
+                controllerAs: "logCtrl",
+                clickOutsideToClose: false
+            });
         }
 
     }

@@ -155,16 +155,21 @@
              * @param {Boolean} [stop] - If true it will stop the data stream broadcast.
              * @returns {$q.deferred.Promise} - Resolved on receipt of broad cast message.
              */
-            function listen (stop) {
+            function listen (stop, rate) {
+                var stream_msg = {
+                    STREAM: datastream.id,
+                    STOP: !!stop
+                };
+                if (!!rate) {
+                    stream_msg.RATE = rate;
+                }
+
                 return protocol.sendMessage({
                     TX_TYPE: "DIRECT",
                     MSG_TYPE: "STREAM",
                     TO: datastream.item_id
                 },
-                {
-                    STREAM: datastream.id,
-                    STOP: !!stop
-                },
+                stream_msg,
                 {
                     TX_TYPE: "DIRECT",
                     MSG_TYPE: "STREAM",

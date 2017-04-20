@@ -1,0 +1,48 @@
+<md-dialog flex="90" flex-gt-md="70" ng-class="{'md-dialog-fullscreen' : $mdMedia}">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2 style="text-transform: capitalize;">Parlay Logs</h2>
+            <span flex></span>
+            <md-button class="md-icon-button" ng-click="logCtrl.hide()" aria-label="Hide dialog">
+                <md-icon ng-md-icon icon="close" aria-label="Close dialog"></md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
+
+    <div layout="row" ng-show="logCtrl.logsExist()">
+        <md-input-container flex style="margin-bottom: 0">
+            <label>Filter Logs on any value</label>
+            <input ng-model="logCtrl.filter_text">
+        </md-input-container>
+        <md-button class="md-primary" ng-click="logCtrl.toggle()">
+            ID<md-icon ng-md-icon icon="{{logCtrl.reverse ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}}"></md-icon>
+        </md-button>
+    </div>
+
+    <div ng-hide="logCtrl.logsExist()" class="md-headline" layout-padding>
+        No logs recorded!
+    </div>
+
+    <md-divider ng-show="logCtrl.logsExist()"></md-divider>
+
+    <md-dialog-content flex>
+        <md-virtual-repeat-container style="height: 60vh;" ng-show="logCtrl.logsExist()">
+            <div md-virtual-repeat="log in logCtrl.queryLogs(logCtrl.filter_text) | orderBy:'':logCtrl.reverse" md-auto-shrink>
+                <parlay-log-item message="log" log-ctrl="logCtrl"></parlay-log-item>
+            </div>
+        </md-virtual-repeat-container>
+    </md-dialog-content>
+
+    <md-dialog-actions>
+        <md-button class="md-primary" ng-click="logCtrl.downloadLogs()" ng-disabled="!logCtrl.logsExist()">
+            <md-tooltip>Download Filtered Logs</md-tooltip>
+            <md-icon ng-md-icon icon="file_download" aria-label="download logs"></md-icon>
+            Download
+        </md-button>
+        <md-button class="md-primary" ng-click="logCtrl.hide()" aria-label="Hide Dialog">
+            <md-tooltip>Close Logs</md-tooltip>
+            Close
+        </md-button>
+    </md-dialog-actions>
+
+</md-dialog>

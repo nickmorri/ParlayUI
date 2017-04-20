@@ -66,7 +66,13 @@
 
                     <md-checkbox ng-checked="ctrl.isStreamEnabled(stream)" ng-click="ctrl.toggleGraphing(stream)"></md-checkbox>
 
-                    <p>{{stream.name}} <span ng-show="stream.value !== undefined">has value {{stream.getValue()}}</span></p>
+                    <p>{{stream.name}}</span></p>
+
+                    <span flex></span>
+
+                    <md-input-container style="margin-top: 36px; margin-bottom: 18px">
+                        <input ng-model="stream.rate" placeholder="Rate (Hz)"/>
+                    </md-input-container>
 
                     <md-button ng-disabled="ctrl.isStreamEnabled(stream)" class="md-secondary md-icon-button md-primary" ng-click="ctrl.toggleGraphing(stream)">
                         <md-tooltip>Listen to stream</md-tooltip>

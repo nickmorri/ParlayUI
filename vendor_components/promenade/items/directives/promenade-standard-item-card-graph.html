@@ -6,6 +6,11 @@
             <h5 ng-show="ctrl.hasStreamsAvailable()" ng-pluralize count="ctrl.streamCount()" when="{'0': 'No streams graphing', 'one': '1 stream graphing', 'other': '{} streams graphing'}"></h5>
             <span flex></span>
 
+            <md-button ng-show="ctrl.hasStreamsAvailable()" class="md-icon-button" ng-click="ctrl.downloadCSV()">
+                <md-tooltip>Download Stream Data as CSV</md-tooltip>
+                <md-icon ng-md-icon icon="file_download"></md-icon>
+            </md-button>
+
             <md-button ng-show="ctrl.hasStreamsAvailable()" class="md-icon-button" ng-click="ctrl.openConfigurationDialog($event)">
                 <md-tooltip>Configure graph</md-tooltip>
                 <md-icon ng-md-icon icon="settings"></md-icon>

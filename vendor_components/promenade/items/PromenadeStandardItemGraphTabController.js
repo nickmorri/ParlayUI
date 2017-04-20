@@ -48,6 +48,7 @@
         ctrl.openConfigurationDialog = openConfigurationDialog;
         ctrl.streamCount = streamCount;
         ctrl.convenienceOpen = convenienceOpen;
+        ctrl.downloadCSV = downloadCSV;
 
         // Persist enabled streams across sessions.
         ctrl.$postLink = function() {
@@ -148,6 +149,10 @@
          */
         function streamCount () {
             return ctrl.enabled_streams.length;
+        }
+
+        function downloadCSV() {
+            ctrl.item.downloadCSV();
         }
 
     }

@@ -1,6 +1,7 @@
 // Holds the module dependencies for StandardItem. Creating this Array on the Global scope allows for other modules,
 // such as tabs to include themselves as StandardItem dependencies.
-var standard_item_dependencies = ["parlay.items.item", "promenade.items.standarditem.toolbar", "promenade.items.datastream", "promenade.items.property", "promenade.items.command", "ngOrderObjectBy"];
+var standard_item_dependencies = ["parlay.items.item", "promenade.items.standarditem.toolbar", "promenade.items.datastream",
+    "promenade.items.property", "promenade.items.command", "ngOrderObjectBy", "parlay.utility"];
 
 (function (module_dependencies) {
     "use strict";
@@ -13,8 +14,8 @@ var standard_item_dependencies = ["parlay.items.item", "promenade.items.standard
         .module("promenade.items.standarditem", module_dependencies)
         .factory("PromenadeStandardItem", PromenadeStandardItemFactory);
 
-    PromenadeStandardItemFactory.$inject = ["ParlayItem", "PromenadeStandardDatastream", "PromenadeStandardProperty", "PromenadeStandardCommand"];
-    function PromenadeStandardItemFactory(ParlayItem, PromenadeStandardDatastream, PromenadeStandardProperty, PromenadeStandardCommand) {
+    PromenadeStandardItemFactory.$inject = ["ParlayItem", "PromenadeStandardDatastream", "PromenadeStandardProperty", "PromenadeStandardCommand", "ParlayObject"];
+    function PromenadeStandardItemFactory(ParlayItem, PromenadeStandardDatastream, PromenadeStandardProperty, PromenadeStandardCommand, ParlayObject) {
 
         /**
          * PromenadeStandardItem extends from [ParlayItem]{@link module:ParlayItem.ParlayItem} to better accommodate
@@ -202,6 +203,35 @@ var standard_item_dependencies = ["parlay.items.item", "promenade.items.standard
          */
         PromenadeStandardItem.prototype.sendMessage = function (contents) {
             return this.protocol.sendMessage(this.generateTopics(), contents, {}, true);
+        };
+
+        PromenadeStandardItem.prototype.downloadCSV = function() {
+            var data = new Map(); // Keys are stream ID, values are array of stream values
+            var csv = "STREAM ID, VALUES\n";
+
+            this.log.forEach(function(message) {
+                if (message.TOPICS.MSG_TYPE === "STREAM") {
+                    var stream_id = message.TOPICS.STREAM;
+                    var stream_value = message.CONTENTS.VALUE;
+                    if (data.has(stream_id))
+                        data.get(stream_id).push(stream_value);
+                    else
+                        data.set(stream_id, [stream_value]);
+                }
+            });
+            data.forEach(function(value, key) {
+                csv += key.toString() + ",";
+                value.forEach(function (val, index) {
+                    csv += val.toString();
+                    if (index !== value.length) {
+                        csv += ",";
+                    }
+                });
+                csv += "\n";
+            });
+
+            var csv_download = new ParlayObject(csv);
+            csv_download.download(this.name  + "_" + (new Date().toISOString()) + ".csv", false);
         };
 
         return PromenadeStandardItem;

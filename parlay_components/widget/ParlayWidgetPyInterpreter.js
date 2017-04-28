@@ -231,7 +231,7 @@
                         });
                     break;
                 case "item_property":
-                    var propObj = ParlayData.get(data.item + "." + data.property);
+                    var propObj = ParlayData.get(data.item + "." + data.property + "_property");
                     (data.operation === "set" ? propObj.set(data.value) : propObj.get())
                         .then(function (result) {
                             var res = result.CONTENTS.VALUE;

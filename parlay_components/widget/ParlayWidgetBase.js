@@ -256,7 +256,6 @@
                     right: viewContainer.offsetWidth,
                     bottom: heightStyle === "" ? viewContainer.offsetHeight : parseInt(heightStyle, 10)
                 };
-
             }
 
             /**

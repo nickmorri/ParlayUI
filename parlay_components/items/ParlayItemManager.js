@@ -58,11 +58,19 @@
          * @param name {String} - name of the ParlayItem
          */
         ParlayItemManager.prototype.getItemByID = function (id) {
-            var items = this.getAvailableItems();
-            for (var i = 0; i < items.length; ++i) {
-                if (items[i].id === id)
-                    return items[i];
+            function search(items, id) {
+                for (var i = 0; i < items.length; ++i) {
+                    if (items[i].id === id)
+                        return items[i];
+                    if (!!items[i].children) {
+                        var result = search(items[i].children, id);
+                        if (!!result) return result;
+                    }
+                }
             }
+
+            var items = this.getAvailableItems();
+            return search(items, id);
         };
 
         /**

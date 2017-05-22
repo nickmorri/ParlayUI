@@ -52,10 +52,17 @@
             broker.addItem = function(data)
             {
                 //don't add the broker or items without IDs
-                if(data !== {} && data.TEMPLATE !== "Broker")
+                if(data !== {} && data.TEMPLATE !== "Broker" && !!data.ID)
                 {
                     broker.items.push(new broker.default_item_factory(data, broker.default_protocol));
                 }
+                if (!!data.CHILDREN) {
+                    data.CHILDREN.forEach(function(item_data) {
+                        broker.items.push(new broker.default_item_factory(item_data, broker.default_protocol));
+                    });
+                }
+
+
             };
 
             /**
